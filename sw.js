@@ -1,5 +1,5 @@
 const CACHE='axis-v31-shell';
-const CORE=['./','./index.html','./manifest.webmanifest'];
+const CORE=['./','./manifest.webmanifest'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
 });
@@ -13,9 +13,9 @@ self.addEventListener('fetch',event=>{
   if(event.request.mode==='navigate'){
     event.respondWith(fetch(event.request).then(response=>{
       const copy=response.clone();
-      caches.open(CACHE).then(cache=>cache.put('./index.html',copy));
+      caches.open(CACHE).then(cache=>cache.put('./',copy));
       return response;
-    }).catch(()=>caches.match('./index.html')));
+    }).catch(()=>caches.match('./')));
     return;
   }
   event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{
