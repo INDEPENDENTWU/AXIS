@@ -3,255 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#0a0b0d">
+<meta name="theme-color" content="#090a0c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AXIS">
-<link rel="manifest" href="./manifest.webmanifest">
+<link rel="manifest" href="/manifest.webmanifest">
 <title>AXIS</title>
-<style>
-:root{
-  --bg:#0a0b0d;--panel:#101216;--panel2:#15181d;--line:#23272e;--text:#f2f1ed;--muted:#8d939d;--dim:#626873;
-  --accent:#6f78ff;--accentSoft:rgba(111,120,255,.13);--danger:#e47b74;--safe:#8eb79f;
-  --r:16px;--r2:12px;--pad:20px;--max:520px;
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Noto Sans TC","PingFang TC",Arial,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-body{min-height:100dvh;overscroll-behavior:none}
-button,input{font:inherit}
-button{border:0;-webkit-tap-highlight-color:transparent;cursor:pointer}
-button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.app{width:min(100%,var(--max));min-height:100dvh;margin:0 auto;position:relative;padding-bottom:104px}
-.topbar{height:calc(62px + env(safe-area-inset-top));padding:calc(8px + env(safe-area-inset-top)) var(--pad) 8px;display:grid;grid-template-columns:1fr 40px;align-items:center;position:sticky;top:0;z-index:30;background:linear-gradient(180deg,var(--bg) 78%,rgba(10,11,13,0))}
-.brand{height:44px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:720;letter-spacing:.2em}
-.mark{width:17px;height:17px;position:relative;transform:rotate(45deg)}
-.mark::before,.mark::after{content:"";position:absolute;width:7px;height:16px;border-radius:1px;background:var(--text)}
-.mark::before{left:0;top:0}.mark::after{right:0;bottom:0;background:var(--accent)}
-.iconbtn{width:40px;height:40px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:13px;background:transparent;color:var(--muted)}
-.iconbtn svg{display:block;width:18px;height:18px}
-.view{display:none;padding:0 var(--pad) 32px}.view.active{display:block}
-.pagehead{display:flex;align-items:end;justify-content:space-between;margin:16px 0 14px}
-.pagehead h1{margin:0;font-size:24px;line-height:1.1;font-weight:660;letter-spacing:-.035em}.date{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
-.session{padding:18px}.sessionTop{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.state{font-size:18px;font-weight:640;letter-spacing:-.02em}.sessionId{font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums;letter-spacing:.06em}
-.btn{min-height:50px;border-radius:13px;padding:0 16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:680;transition:transform .11s ease,opacity .11s ease}
-.btn:active{transform:scale(.985)}.primary{background:var(--text);color:#0a0b0d}.accent{background:var(--accent);color:white}.quiet{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.ghost{background:transparent;color:var(--muted)}.danger{background:rgba(228,123,116,.08);color:#efaaa5;border:1px solid rgba(228,123,116,.22)}.full{width:100%}
-.start{margin-top:18px}.dot{width:7px;height:7px;background:var(--accent);border-radius:50%}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.stat{padding:13px 12px}.stat b{display:block;font-size:19px;font-weight:650;letter-spacing:-.025em;font-variant-numeric:tabular-nums}.stat span{display:block;margin-top:5px;font-size:10px;color:var(--muted)}
-.section{display:flex;align-items:center;justify-content:space-between;margin:23px 0 9px}.section h2{margin:0;font-size:13px;font-weight:650}.section span{font-size:10px;color:var(--muted)}
-.next{padding:15px}.nextRow{display:flex;align-items:center;justify-content:space-between;gap:12px}.nextTitle{font-size:16px;font-weight:630;letter-spacing:-.02em}.tag{font-size:9px;color:#b7bcff;background:var(--accentSoft);border:1px solid rgba(111,120,255,.24);padding:5px 7px;border-radius:999px;white-space:nowrap}.nextMeta{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45}.nextActions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:13px}
-.liveHead{margin:14px 0 6px;display:flex;align-items:flex-end;justify-content:space-between}.timer{font-size:34px;font-weight:620;letter-spacing:-.045em;font-variant-numeric:tabular-nums}.live{font-size:9px;color:var(--muted);letter-spacing:.12em;margin-bottom:5px}.live i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:7px;box-shadow:0 0 0 4px var(--accentSoft)}.finish{background:transparent;color:var(--muted);font-size:12px;padding:10px 0}
-.progress{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 0}.progress .stat{padding:12px 0;border-top:1px solid var(--line);border-radius:0}.progress .stat b{font-size:18px}
-.coverage{padding:14px}.coverRow{display:grid;grid-template-columns:48px 1fr 18px;align-items:center;gap:10px;margin:9px 0}.coverRow span{font-size:10px;color:var(--muted)}.track{height:3px;background:#242830;border-radius:99px;overflow:hidden}.track i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px}
-.events{display:grid;gap:8px}.event{display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:12px;padding:10px}.thumb{width:54px;height:54px;border-radius:11px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;display:grid;place-items:center;color:var(--dim)}.thumb img{width:100%;height:100%;object-fit:cover}.event strong{display:block;font-size:12px;font-weight:630}.event small{display:block;font-size:10px;color:var(--muted);margin-top:4px}.time{font-size:9px;color:var(--dim);font-variant-numeric:tabular-nums}
-.empty{padding:22px 14px;border:1px dashed var(--line);border-radius:var(--r);font-size:11px;color:var(--muted);text-align:center}
-.captureDock{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:82px;width:min(100%,var(--max));padding:0 var(--pad);z-index:35;pointer-events:none}.captureDock.show{display:block}.captureDock button{pointer-events:auto;box-shadow:0 16px 42px rgba(0,0,0,.42)}
-.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(100%,var(--max));height:82px;padding:9px var(--pad) calc(10px + env(safe-area-inset-bottom));z-index:32;background:linear-gradient(180deg,rgba(10,11,13,0),var(--bg) 24%)}.navin{height:54px;display:grid;grid-template-columns:repeat(3,1fr);background:rgba(16,18,22,.96);border:1px solid var(--line);border-radius:15px;padding:4px;backdrop-filter:blur(18px)}.nav button{background:transparent;color:var(--dim);border-radius:11px;font-size:10px;font-weight:620;display:flex;align-items:center;justify-content:center;gap:6px}.nav button.active{background:#1a1d23;color:var(--text)}.nav svg{width:15px;height:15px}
-.historyItem{padding:15px;display:grid;grid-template-columns:1fr auto;gap:12px}.historyItem strong{font-size:13px}.historyItem small{display:block;font-size:10px;color:var(--muted);margin-top:5px}.score{font-size:20px;font-weight:640;text-align:right}.score span{display:block;font-size:8px;color:var(--dim);font-weight:500;margin-top:2px}
-.analyticsHero{padding:17px}.big{font-size:28px;font-weight:640;letter-spacing:-.04em}.big span{font-size:11px;color:var(--muted);font-weight:500}.week{height:74px;display:grid;grid-template-columns:repeat(7,1fr);align-items:end;gap:7px;margin-top:17px}.week i{display:block;min-height:4px;background:#252930;border-radius:2px}.week i.on{background:var(--accent)}
-.signals{display:grid;gap:8px}.signal{padding:12px 13px;display:grid;grid-template-columns:7px 1fr;gap:10px}.signal i{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:4px}.signal strong{font-size:11px;font-weight:630}.signal small{display:block;color:var(--muted);font-size:10px;margin-top:3px;line-height:1.4}
-.sheetWrap{position:fixed;inset:0;z-index:100;display:none;align-items:flex-end;justify-content:center;background:rgba(3,4,6,.68);backdrop-filter:blur(9px)}.sheetWrap.show{display:flex}.sheet{width:min(100%,var(--max));max-height:92dvh;overflow:auto;background:#0f1115;border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;padding:9px var(--pad) calc(20px + env(safe-area-inset-bottom));box-shadow:0 -28px 80px rgba(0,0,0,.5)}.handle{width:34px;height:3px;border-radius:99px;background:#373b43;margin:3px auto 18px}.sheetHead{display:grid;grid-template-columns:1fr 36px;align-items:center;gap:12px;margin-bottom:16px}.sheetTitle{font-size:17px;font-weight:650;letter-spacing:-.02em}.close{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:var(--panel2);color:var(--muted);font-size:18px}
-.field{margin:16px 0}.fieldTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.fieldTop span{font-size:10px;color:var(--muted)}.fieldTop b{font-size:11px;font-weight:620}.segment{display:grid;gap:6px}.c3{grid-template-columns:repeat(3,1fr)}.c4{grid-template-columns:repeat(4,1fr)}.c5{grid-template-columns:repeat(5,1fr)}.segment button{min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--muted);font-size:11px}.segment button.active{background:var(--accentSoft);border-color:rgba(111,120,255,.45);color:var(--text)}
-.sheetActions{position:sticky;bottom:-20px;display:grid;grid-template-columns:auto 1fr;gap:8px;padding:18px 0 1px;background:linear-gradient(180deg,rgba(15,17,21,0),#0f1115 26%)}.sheetActions.single{grid-template-columns:1fr}
-.capture{position:relative;aspect-ratio:4/3;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#090a0c;display:grid;place-items:center}.capture input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.captureHint{font-size:11px;color:var(--muted);text-align:center}.captureHint svg{display:block;width:22px;height:22px;margin:0 auto 8px;color:var(--text)}.capture img{width:100%;height:100%;object-fit:cover}.captureCorner{position:absolute;right:10px;bottom:10px;min-height:28px;padding:0 10px;border-radius:999px;background:rgba(8,9,11,.74);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;color:#f2f1ed;font-size:9px;pointer-events:none}.photoMeta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:7px;font-size:9px;color:var(--dim)}.photoMeta b{font-weight:600;color:var(--muted)}
-.search{width:100%;height:42px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);font-size:11px}.search::placeholder{color:var(--dim)}.chips{display:flex;gap:6px;overflow:auto;scrollbar-width:none;margin:8px 0}.chips::-webkit-scrollbar{display:none}.chip{flex:0 0 auto;min-height:31px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:9px}.chip.active{background:#1a1d23;color:var(--text)}.equipment{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:245px;overflow:auto}.eq{min-height:60px;text-align:left;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)}.eq.active{background:var(--accentSoft);border-color:rgba(111,120,255,.55)}.eq strong{display:block;font-size:11px;font-weight:620}.eq small{display:block;font-size:9px;color:var(--muted);margin-top:5px}.recordGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stepbox{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}.stepbox>span{display:block;font-size:9px;color:var(--muted);margin-bottom:8px}.stepper{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;gap:6px}.stepper button{width:34px;height:34px;border-radius:9px;background:var(--panel2);border:1px solid var(--line);color:var(--text);font-size:18px}.stepper b{text-align:center;font-size:18px;font-weight:650;font-variant-numeric:tabular-nums}.rirseg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.rirseg button{height:34px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-size:10px}.rirseg button.active{background:var(--accentSoft);border-color:rgba(111,120,255,.5);color:var(--text)}.range{width:100%;accent-color:var(--accent)}.rangeVal{display:block;text-align:right;margin-top:6px;font-size:18px}.mini{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
-.detailList{border-top:1px solid var(--line);margin-top:12px}.detailRow{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line);font-size:10px}.detailRow span:first-child{color:var(--muted)}.detailRow span:last-child{text-align:right;font-variant-numeric:tabular-nums}.detailPhoto{width:100%;border-radius:13px;border:1px solid var(--line);display:block}
-.toast{position:fixed;left:50%;bottom:98px;z-index:130;transform:translate(-50%,18px);opacity:0;pointer-events:none;background:var(--text);color:#0a0b0d;border-radius:9px;padding:9px 12px;font-size:10px;font-weight:650;transition:.18s ease;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
-.hidden{display:none!important}
-@media(min-width:700px){body{background:#050608}.app{border-left:1px solid #15181d;border-right:1px solid #15181d}}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
-</style>
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <div class="app">
-  <header class="topbar">
-    <div class="brand"><span class="mark" aria-hidden="true"></span>AXIS</div>
-    <button class="iconbtn" id="settingsBtn" aria-label="設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19 13.5v-3l-2-.6-.6-1.4 1-1.8-2.1-2.1-1.8 1-1.4-.6L11.5 3h-3L8 5l-1.4.6-1.8-1-2.1 2.1 1 1.8-.6 1.4-2 .6v3l2 .6.6 1.4-1 1.8 2.1 2.1 1.8-1 1.4.6.6 2h3l.6-2 1.4-.6 1.8 1 2.1-2.1-1-1.8.6-1.4z"/></svg></button>
-  </header>
-
-  <main>
-    <section class="view active" id="todayView">
-      <div class="pagehead"><h1>今天</h1><div class="date" id="todayDate"></div></div>
-      <div id="idleHome">
-        <div class="card session">
-          <div class="sessionTop"><div><div class="state">尚未開始</div><div class="sessionId" id="lastSession">—</div></div></div>
-          <button class="btn primary full start" id="startBtn"><span class="dot"></span>開始訓練</button>
-        </div>
-        <div class="stats">
-          <div class="card stat"><b id="weekMins">0</b><span>7D 分鐘</span></div>
-          <div class="card stat"><b id="weekSessions">0</b><span>7D 次數</span></div>
-          <div class="card stat"><b id="balance">—</b><span>平衡</span></div>
-        </div>
-        <div id="idleNextWrap" class="hidden"><div class="section"><h2>下一步</h2></div><div class="card next" id="idleNext"></div></div>
-      </div>
-
-      <div id="activeHome" class="hidden">
-        <div class="liveHead"><div><div class="live"><i></i>LIVE</div><div class="timer" id="liveTimer">00:00</div></div><button class="finish" id="finishBtn">結束</button></div>
-        <div class="progress"><div class="stat"><b id="liveItems">0</b><span>項目</span></div><div class="stat"><b id="liveSets">0</b><span>組數</span></div><div class="stat"><b id="liveScore">0</b><span>完整度</span></div></div>
-        <div class="section"><h2>下一步</h2><span id="pace">正常</span></div><div class="card next" id="liveNext"></div>
-        <div class="section"><h2>結構</h2></div><div class="card coverage" id="liveCoverage"></div>
-        <div class="section"><h2>時間線</h2><span id="eventCount">0</span></div><div class="events" id="eventList"></div>
-      </div>
-    </section>
-
-    <section class="view" id="historyView">
-      <div class="pagehead"><h1>紀錄</h1><div class="date" id="historyCount">0</div></div>
-      <div class="events" id="historyList"></div>
-    </section>
-
-    <section class="view" id="analyticsView">
-      <div class="pagehead"><h1>趨勢</h1></div>
-      <div class="card analyticsHero"><div class="big"><b id="analyticsMins">0</b> <span>分鐘 / 7D</span></div><div class="week" id="weekBars"></div></div>
-      <div class="section"><h2>30D 結構</h2></div><div class="card coverage" id="analyticsCoverage"></div>
-      <div class="section"><h2>訊號</h2></div><div class="signals" id="signals"></div>
-    </section>
-  </main>
-
-  <div class="captureDock" id="captureDock"><button class="btn accent full" id="captureBtn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>拍照記錄</button></div>
-  <nav class="nav"><div class="navin">
-    <button class="active" data-view="todayView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 11.5 12 5l8 6.5V20H4z"/></svg>今日</button>
-    <button data-view="historyView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>紀錄</button>
-    <button data-view="analyticsView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 19V9M12 19V5M19 19v-7"/></svg>趨勢</button>
-  </div></nav>
+<header class="topbar"><div class="brand"><span class="mark"></span>AXIS</div><button class="icon" id="settingsBtn" aria-label="設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 13.5v-3l-2-.6-.6-1.4 1-1.8-2.1-2.1-1.8 1-1.4-.6L11.5 3h-3L8 5l-1.4.6-1.8-1-2.1 2.1 1 1.8-.6 1.4-2 .6v3l2 .6.6 1.4-1 1.8 2.1 2.1 1.8-1 1.4.6.6 2h3l.6-2 1.4-.6 1.8 1 2.1-2.1-1-1.8.6-1.4z"/></svg></button></header>
+<main>
+<section class="view active" id="todayView"><div class="head"><h1>今天</h1><div class="date" id="todayDate"></div></div>
+<div id="idleHome"><div class="card session"><strong>尚未開始</strong><small id="lastSession">—</small><button class="btn primary full start" id="startBtn"><span class="dot"></span>開始訓練</button></div><div class="stats"><div class="card stat"><b id="weekMins">0</b><span>7D 分鐘</span></div><div class="card stat"><b id="weekSessions">0</b><span>7D 次數</span></div></div><div id="idleSignalWrap" class="hidden"><div class="section"><h2>最近</h2></div><div class="card signal" id="idleSignal"></div></div></div>
+<div id="activeHome" class="hidden"><div class="liveHead"><div><div class="liveLabel"><i></i>LIVE</div><div class="timer" id="liveTimer">00:00</div></div><button class="finish" id="finishBtn">結束</button></div><div class="liveStats"><div class="card stat"><b id="liveItems">0</b><span>已記錄</span></div><div class="card stat"><b id="liveSets">0</b><span>總組數</span></div></div><div id="liveSignalWrap" class="hidden"><div class="section"><h2>現在</h2><span id="pace">正常</span></div><div class="card signal" id="liveSignal"></div></div><div class="section"><h2>時間線</h2><span id="eventCount">0</span></div><div class="events" id="eventList"></div></div></section>
+<section class="view" id="historyView"><div class="head"><h1>紀錄</h1><div class="date" id="historyCount">0</div></div><div class="events" id="historyList"></div></section>
+<section class="view" id="insightsView"><div class="head"><h1>趨勢</h1></div><div class="stats"><div class="card stat"><b id="insightMins">0</b><span>7D 分鐘</span></div><div class="card stat"><b id="insightSessions">0</b><span>30D 次數</span></div></div><div class="section"><h2>30D 結構</h2></div><div class="card bars" id="patternBars"></div><div class="section"><h2>訊號</h2></div><div class="events" id="signals"></div></section>
+</main>
+<div class="dock" id="dock"><button class="btn accent full" id="scanBtn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>掃一下</button></div>
+<nav class="nav"><div class="navin"><button class="active" data-view="todayView">今日</button><button data-view="historyView">紀錄</button><button data-view="insightsView">趨勢</button></div></nav>
 </div>
 
-<div class="sheetWrap" id="startSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle">開始</div><button class="close" data-close="startSheet">×</button></div>
-  <div class="field"><div class="fieldTop"><span>場景</span><b id="modeLabel">健身房</b></div><div class="segment c3" data-group="mode"><button class="active" data-value="gym">健身房</button><button data-value="outdoor">戶外</button><button data-value="home">其他</button></div></div>
-  <div class="field"><div class="fieldTop"><span>狀態</span><b id="energyLabel">普通</b></div><div class="segment c5" data-group="energy"><button data-value="1">1</button><button data-value="2">2</button><button class="active" data-value="3">3</button><button data-value="4">4</button><button data-value="5">5</button></div></div>
-  <div class="field"><div class="fieldTop"><span>時間</span><b id="targetLabel">45 分鐘</b></div><div class="segment c4" data-group="target"><button data-value="30">30</button><button class="active" data-value="45">45</button><button data-value="60">60</button><button data-value="90">90</button></div></div>
-  <div class="sheetActions single"><button class="btn primary full" id="confirmStart">開始</button></div>
+<div class="sheetWrap" id="scanSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle">掃一下</div><button class="close" data-close="scanSheet">×</button></div>
+<div id="captureStage"><div class="camera" id="cameraBox"><video id="cameraVideo" playsinline muted></video><div class="fallback hidden" id="cameraFallback">相機不可用，可直接拍一張。</div><div class="scanState" id="scanState">READY</div></div><div class="captureActions"><button class="btn accent" id="liveScanBtn">掃 3 秒</button><button class="btn quiet tinyBtn" id="photoBtn">拍一張</button></div><input class="hiddenInput" id="photoInput" type="file" accept="image/*" capture="environment"></div>
+<div id="reviewStage" class="hidden"><div class="film" id="film"></div><div class="card result"><div class="row" id="equipmentRow"><span>器械 / 活動</span><b id="equipmentName">未識別</b></div><div class="row"><span>識別</span><b id="aiStatus">待確認</b></div></div><div id="strengthFields" class="recordGrid hidden"><div class="stepbox"><span>重量 kg</span><div class="stepper"><button data-step="weight" data-delta="-2.5">−</button><b id="weightView">20</b><button data-step="weight" data-delta="2.5">＋</button></div><input id="weight" type="hidden" value="20"></div><div class="stepbox"><span>次數</span><div class="stepper"><button data-step="reps" data-delta="-1">−</button><b id="repsView">10</b><button data-step="reps" data-delta="1">＋</button></div><input id="reps" type="hidden" value="10"></div><div class="stepbox"><span>組數</span><div class="stepper"><button data-step="sets" data-delta="-1">−</button><b id="setsView">3</b><button data-step="sets" data-delta="1">＋</button></div><input id="sets" type="hidden" value="3"></div></div><div id="cardioFields" class="recordGrid cardioGrid hidden"><div class="stepbox"><span>分鐘</span><div class="stepper"><button data-step="duration" data-delta="-5">−</button><b id="durationView">15</b><button data-step="duration" data-delta="5">＋</button></div><input id="duration" type="hidden" value="15"></div><div class="stepbox"><span>強度</span><div class="stepper"><button data-step="intensity" data-delta="-1">−</button><b id="intensityView">5</b><button data-step="intensity" data-delta="1">＋</button></div><input id="intensity" type="hidden" value="5"></div></div><div class="sheetActions"><button class="btn primary full" id="saveScan">記下</button></div></div>
 </div></div>
 
-<div class="sheetWrap" id="recordSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle">記錄</div><button class="close" data-close="recordSheet">×</button></div>
-  <div class="capture" id="captureBox"><div class="captureHint" id="captureHint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>拍攝</div><input id="photoInput" type="file" accept="image/*" capture="environment"></div>
-  <div class="photoMeta"><b id="photoStatus">未拍攝</b><span>AXIS LIVE</span></div>
-  <div class="field"><div class="fieldTop"><span>器械 / 活動</span><b id="eqLabel">未選</b></div><input class="search" id="eqSearch" type="search" placeholder="搜尋"><div class="chips" id="filters"><button class="chip active" data-filter="all">全部</button><button class="chip" data-filter="upper">上肢</button><button class="chip" data-filter="lower">下肢</button><button class="chip" data-filter="cardio">有氧</button><button class="chip" data-filter="free">自由</button></div><div class="equipment" id="eqGrid"></div></div>
-  <div class="field hidden" id="strengthFields"><div class="recordGrid">
-    <div class="stepbox"><span>重量 kg</span><div class="stepper"><button data-step="weight" data-delta="-2.5">−</button><b id="weightView">20</b><button data-step="weight" data-delta="2.5">＋</button></div><input id="weight" type="hidden" value="20"></div>
-    <div class="stepbox"><span>次數</span><div class="stepper"><button data-step="reps" data-delta="-1">−</button><b id="repsView">10</b><button data-step="reps" data-delta="1">＋</button></div><input id="reps" type="hidden" value="10"></div>
-    <div class="stepbox"><span>組數</span><div class="stepper"><button data-step="sets" data-delta="-1">−</button><b id="setsView">3</b><button data-step="sets" data-delta="1">＋</button></div><input id="sets" type="hidden" value="3"></div>
-    <div class="stepbox"><span>餘力</span><div class="rirseg" id="rirSeg"><button data-rir="0">0</button><button data-rir="1">1</button><button class="active" data-rir="2">2</button><button data-rir="3">3</button><button data-rir="4">4</button><button data-rir="5">5</button></div><input id="rir" type="hidden" value="2"></div>
-  </div></div>
-  <div class="field hidden" id="cardioFields"><div class="recordGrid">
-    <div class="stepbox"><span>分鐘</span><div class="stepper"><button data-step="duration" data-delta="-5">−</button><b id="durationView">15</b><button data-step="duration" data-delta="5">＋</button></div><input id="duration" type="hidden" value="15"></div>
-    <div class="stepbox"><span>強度</span><input id="intensity" class="range" type="range" min="1" max="10" step="1" value="5"><b class="rangeVal" id="intensityView">5</b></div>
-  </div></div>
-  <div class="sheetActions"><button class="btn ghost" id="withoutPhoto">無照片</button><button class="btn primary" id="saveRecord">儲存</button></div>
-</div></div>
-
-<div class="sheetWrap" id="finishSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle">結束</div><button class="close" data-close="finishSheet">×</button></div><div class="card coverage" id="finishCoverage"></div><div class="sheetActions"><button class="btn ghost" data-close="finishSheet">繼續</button><button class="btn primary" id="confirmFinish">確認結束</button></div></div></div>
-
+<div class="sheetWrap" id="eqSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle">器械 / 活動</div><button class="close" data-close="eqSheet">×</button></div><input class="search" id="eqSearch" placeholder="搜尋"><div class="eqList" id="eqList"></div></div></div>
 <div class="sheetWrap" id="detailSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle" id="detailTitle">詳情</div><button class="close" data-close="detailSheet">×</button></div><div id="detail"></div></div></div>
-
-<div class="sheetWrap" id="settingsSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle">AXIS</div><button class="close" data-close="settingsSheet">×</button></div><div class="detailList"><div class="detailRow"><span>版本</span><span>3.1</span></div><div class="detailRow"><span>照片</span><span>即時水印</span></div><div class="detailRow"><span>儲存</span><span>本機</span></div></div><div class="field"><button class="btn quiet full" id="exportBtn">匯出資料</button></div><div class="field"><button class="btn danger full" id="clearBtn">清除本機資料</button></div></div></div>
+<div class="sheetWrap" id="finishSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle">結束訓練</div><button class="close" data-close="finishSheet">×</button></div><div class="card signal" id="finishSummary"></div><div class="sheetActions"><button class="btn primary full" id="confirmFinish">結束</button></div></div></div>
+<div class="sheetWrap" id="settingsSheet"><div class="sheet"><div class="handle"></div><div class="sheetHead"><div class="sheetTitle">AXIS</div><button class="close" data-close="settingsSheet">×</button></div><div class="detailList"><div class="detailRow"><span>版本</span><span>4.0</span></div><div class="detailRow"><span>Capture</span><span>Live Scan</span></div><div class="detailRow"><span>AI</span><span id="aiHealth">檢查中</span></div><div class="detailRow"><span>資料</span><span>本機優先</span></div></div><div class="section"><h2>資料</h2></div><button class="btn quiet full" id="exportBtn">匯出</button><button class="btn danger full" style="margin-top:8px" id="clearBtn">清除本機資料</button></div></div>
 <div class="toast" id="toast"></div>
-
-<script>
-(function(){
-'use strict';
-var D=document, $=function(s,r){return (r||D).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||D).querySelectorAll(s))};
-var VERSION=31, KEY='axis_v31_state', DB='axis_v31_media';
-var PAT={push:'推',pull:'拉',knee:'腿',hinge:'後鏈',cardio:'有氧',core:'核心'};
-var EQ=[
-{id:'cable',name:'多功能龍門架',cat:'upper',pattern:'pull',type:'strength'},
-{id:'lat',name:'高位下拉',cat:'upper',pattern:'pull',type:'strength'},
-{id:'row',name:'坐姿 / 胸托划船',cat:'upper',pattern:'pull',type:'strength'},
-{id:'pec',name:'飛鳥 / 後三角',cat:'upper',pattern:'push',type:'strength'},
-{id:'chest',name:'胸推',cat:'upper',pattern:'push',type:'strength'},
-{id:'shoulder',name:'肩推',cat:'upper',pattern:'push',type:'strength'},
-{id:'dip',name:'雙槓 / 抬腿',cat:'upper',pattern:'core',type:'strength'},
-{id:'arms',name:'手臂',cat:'upper',pattern:'pull',type:'strength'},
-{id:'legpress',name:'坐姿腿推',cat:'lower',pattern:'knee',type:'strength'},
-{id:'hack',name:'哈克 / 斜腿推',cat:'lower',pattern:'knee',type:'strength'},
-{id:'legext',name:'腿屈伸',cat:'lower',pattern:'knee',type:'strength'},
-{id:'legcurl',name:'腿彎舉',cat:'lower',pattern:'hinge',type:'strength'},
-{id:'calf',name:'小腿',cat:'lower',pattern:'hinge',type:'strength'},
-{id:'dumbbell',name:'啞鈴',cat:'free',pattern:'push',type:'strength'},
-{id:'barbell',name:'槓鈴',cat:'free',pattern:'hinge',type:'strength'},
-{id:'bodyweight',name:'徒手',cat:'free',pattern:'core',type:'cardio'},
-{id:'elliptical',name:'橢圓機',cat:'cardio',pattern:'cardio',type:'cardio'},
-{id:'rower',name:'划船機',cat:'cardio',pattern:'cardio',type:'cardio'},
-{id:'treadmill',name:'跑步機 / 跑步',cat:'cardio',pattern:'cardio',type:'cardio'},
-{id:'walk',name:'步行',cat:'cardio',pattern:'cardio',type:'cardio'}];
-var state={sessions:[],active:null,eq:null,photo:null,filter:'all',search:''}, timer=null, toastTimer=null;
-function safeLoad(){try{var x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&x.version===VERSION){state.sessions=Array.isArray(x.sessions)?x.sessions:[];state.active=x.active||null}}catch(e){}}
-function safeSave(){try{localStorage.setItem(KEY,JSON.stringify({version:VERSION,sessions:state.sessions,active:state.active}))}catch(e){}}
-function uid(p){return p+'-'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,6).toUpperCase()}
-function pad(n){return String(n).padStart(2,'0')}
-function dlabel(t){var d=new Date(t);return d.getFullYear()+'.'+pad(d.getMonth()+1)+'.'+pad(d.getDate())}
-function tlabel(t){var d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes())}
-function mins(s){var end=s.end||Date.now();return Math.max(0,Math.round((end-s.start)/60000))}
-function ev(s){return s&&Array.isArray(s.events)?s.events:[]}
-function recent(days){var cut=Date.now()-days*864e5;return state.sessions.filter(function(s){return s.start>=cut}).concat(state.active&&state.active.start>=cut?[state.active]:[])}
-function counts(ss){var c={push:0,pull:0,knee:0,hinge:0,cardio:0,core:0};ss.forEach(function(s){ev(s).forEach(function(e){if(c[e.pattern]!=null)c[e.pattern]++})});return c}
-function volumeEvent(e){if(e.kind==='strength')return (Number(e.weight)||0)*(Number(e.reps)||0)*(Number(e.sets)||0);return (Number(e.duration)||0)*(Number(e.intensity)||0)*10}
-function score(s){var c=counts([s]), major=['push','pull','knee','hinge','cardio'].filter(function(k){return c[k]>0}).length, n=ev(s).length, m=mins(s);return Math.min(100,Math.round(major*13+Math.min(n,6)*6+Math.min(m,60)*.45))}
-function balanceScore(){var c=counts(recent(30)), a=['push','pull','knee','hinge','cardio'].map(function(k){return c[k]});var sum=a.reduce(function(x,y){return x+y},0);if(!sum)return '—';var ideal=sum/5, dev=a.reduce(function(x,y){return x+Math.abs(y-ideal)},0)/(2*sum);return Math.max(0,Math.round((1-dev)*100))}
-function bestNext(){var c=counts(recent(30)), activeC=state.active?counts([state.active]):null, order=['pull','push','knee','hinge','cardio'];if(activeC){var missing=order.filter(function(k){return activeC[k]===0});if(missing.length){missing.sort(function(a,b){return c[a]-c[b]});return missing[0]}}order.sort(function(a,b){return c[a]-c[b]});return order[0]}
-function recommend(){var p=bestNext(), map={pull:['拉','高位下拉 / 划船'],push:['推','胸推 / 肩推'],knee:['腿','腿推 / 腿屈伸'],hinge:['後鏈','腿彎舉 / 槓鈴'],cardio:['有氧','橢圓機 / 划船機']};return {pattern:p,title:map[p][1],tag:map[p][0]}}
-function toast(msg){var el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show')},1600)}
-function openSheet(id){var el=$('#'+id);if(el)el.classList.add('show')}
-function closeSheet(id){var el=$('#'+id);if(el)el.classList.remove('show')}
-function setText(id,v){var el=$(id);if(el)el.textContent=v}
-function renderCoverage(sel,c){var root=$(sel);if(!root)return;var keys=['push','pull','knee','hinge','cardio'];var max=Math.max(1,c.push,c.pull,c.knee,c.hinge,c.cardio);root.innerHTML=keys.map(function(k){var pct=Math.round(c[k]/max*100);return '<div class="coverRow"><span>'+PAT[k]+'</span><div class="track"><i style="width:'+pct+'%"></i></div><span>'+c[k]+'</span></div>'}).join('')}
-function eventHtml(e){var meta=e.kind==='strength'?(e.weight+'kg · '+e.reps+'×'+e.sets):(e.duration+'min · '+e.intensity+'/10');return '<button class="card event" data-event="'+e.id+'"><span class="thumb" '+(e.photoRef?'data-photo="'+e.photoRef+'"':'')+'>'+(e.photoRef?'':'•')+'</span><span><strong>'+escapeHtml(e.name)+'</strong><small>'+escapeHtml(meta)+'</small></span><span class="time">'+tlabel(e.time)+'</span></button>'}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
-function nextHtml(){var r=recommend();return '<div class="nextRow"><div class="nextTitle">'+r.title+'</div><span class="tag">'+r.tag+'</span></div>'+(state.active?'<div class="nextMeta">'+((counts([state.active])[r.pattern]||0)===0?'本次尚未覆蓋':'近期相對較少')+'</div><div class="nextActions"><button class="btn quiet" data-quick="'+r.pattern+'">選一項</button><button class="btn ghost" data-skip="1">略過</button></div>':'')}
-function render(){
-  setText('#todayDate',new Intl.DateTimeFormat('zh-Hant',{month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date()));
-  var rs=recent(7), wm=rs.reduce(function(a,s){return a+mins(s)},0), wc=rs.filter(function(s){return s!==state.active}).length+(state.active?1:0);
-  setText('#weekMins',wm);setText('#weekSessions',wc);setText('#balance',balanceScore());
-  if(state.sessions[0])setText('#lastSession',dlabel(state.sessions[0].start)+' · '+mins(state.sessions[0])+' MIN');else setText('#lastSession','—');
-  $('#idleHome').classList.toggle('hidden',!!state.active);$('#activeHome').classList.toggle('hidden',!state.active);$('#captureDock').classList.toggle('show',!!state.active);
-  var idleWrap=$('#idleNextWrap');if(state.sessions.length){idleWrap.classList.remove('hidden');$('#idleNext').innerHTML=nextHtml()}else idleWrap.classList.add('hidden');
-  if(state.active){renderLive();startTimer()}else stopTimer();
-  renderHistory();renderAnalytics();bindDynamic();hydratePhotos();
-}
-function renderLive(){var s=state.active, list=ev(s), c=counts([s]);setText('#liveItems',list.length);setText('#liveSets',list.reduce(function(a,e){return a+(e.kind==='strength'?Number(e.sets)||0:1)},0));setText('#liveScore',score(s));setText('#eventCount',list.length);$('#liveNext').innerHTML=nextHtml();renderCoverage('#liveCoverage',c);$('#eventList').innerHTML=list.length?list.slice().reverse().map(eventHtml).join(''):'<div class="empty">尚無紀錄</div>';var last=list.length?list[list.length-1].time:s.start, idle=(Date.now()-last)/60000;setText('#pace',idle>10?'已停 '+Math.floor(idle)+'m':idle>6?'休息偏久':'正常')}
-function startTimer(){stopTimer();function tick(){if(!state.active)return;var sec=Math.floor((Date.now()-state.active.start)/1000);setText('#liveTimer',pad(Math.floor(sec/60))+':'+pad(sec%60));renderLiveLight()}tick();timer=setInterval(tick,1000)}
-function renderLiveLight(){if(!state.active)return;var list=ev(state.active),last=list.length?list[list.length-1].time:state.active.start,idle=(Date.now()-last)/60000;setText('#pace',idle>10?'已停 '+Math.floor(idle)+'m':idle>6?'休息偏久':'正常')}
-function stopTimer(){if(timer){clearInterval(timer);timer=null}}
-function renderHistory(){setText('#historyCount',state.sessions.length);$('#historyList').innerHTML=state.sessions.length?state.sessions.map(function(s){return '<button class="card historyItem" data-session="'+s.id+'"><span><strong>'+dlabel(s.start)+' · '+mins(s)+' 分鐘</strong><small>'+ev(s).length+' 項 · '+(s.mode==='gym'?'健身房':s.mode==='outdoor'?'戶外':'其他')+'</small></span><span class="score">'+score(s)+'<span>SCORE</span></span></button>'}).join(''):'<div class="empty">尚無紀錄</div>'}
-function renderAnalytics(){var rs=recent(7), total=rs.reduce(function(a,s){return a+mins(s)},0);setText('#analyticsMins',total);var by={};rs.forEach(function(s){var k=new Date(s.start).toDateString();by[k]=(by[k]||0)+mins(s)});var bars=[];for(var i=6;i>=0;i--){var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);var v=by[d.toDateString()]||0;bars.push('<i class="'+(v?'on':'')+'" style="height:'+Math.max(5,Math.min(74,v/75*74))+'px"></i>')}$('#weekBars').innerHTML=bars.join('');renderCoverage('#analyticsCoverage',counts(recent(30)));var sig=[];var c=counts(recent(30));if(!state.sessions.length)sig.push(['開始建立基準','完成第一個 Session 後，AXIS 會開始形成趨勢。']);else{var n=bestNext();sig.push(['優先 '+PAT[n],recommend().title]);if(total<60)sig.push(['7D 頻率偏低',total+' 分鐘']);var bal=balanceScore();if(bal!=='—'&&bal<65)sig.push(['結構偏斜','平衡 '+bal]);else sig.push(['結構穩定','平衡 '+bal])}$('#signals').innerHTML=sig.map(function(x){return '<div class="card signal"><i></i><span><strong>'+x[0]+'</strong><small>'+x[1]+'</small></span></div>'}).join('')}
-function bindDynamic(){$$('[data-event]').forEach(function(b){b.onclick=function(){openEvent(b.dataset.event)}});$$('[data-session]').forEach(function(b){b.onclick=function(){openSession(b.dataset.session)}});$$('[data-quick]').forEach(function(b){b.onclick=function(){openRecord(b.dataset.quick)}});$$('[data-skip]').forEach(function(b){b.onclick=function(){openRecord()}})}
-function renderEq(){var q=state.search.toLowerCase().trim();var a=EQ.filter(function(e){return (state.filter==='all'||e.cat===state.filter)&&(!q||e.name.toLowerCase().indexOf(q)>=0)});$('#eqGrid').innerHTML=a.map(function(e){return '<button class="eq '+(state.eq===e.id?'active':'')+'" data-eq="'+e.id+'"><strong>'+e.name+'</strong><small>'+PAT[e.pattern]+'</small></button>'}).join('')||'<div class="empty" style="grid-column:1/-1">無結果</div>';$$('[data-eq]',$('#eqGrid')).forEach(function(b){b.onclick=function(){state.eq=b.dataset.eq;renderEq();updateFields()}})}
-function lastEvent(id){for(var i=0;i<state.sessions.length;i++){var es=ev(state.sessions[i]);for(var j=0;j<es.length;j++)if(es[j].equipmentId===id)return es[j]}return null}
-function syncViews(){[['weight','weightView'],['reps','repsView'],['sets','setsView'],['duration','durationView']].forEach(function(p){var i=$('#'+p[0]),v=$('#'+p[1]);if(i&&v)v.textContent=i.value});var r=$('#rir');if(r){$$('[data-rir]').forEach(function(b){b.classList.toggle('active',b.dataset.rir===r.value)})}var it=$('#intensity'),iv=$('#intensityView');if(it&&iv)iv.textContent=it.value}function updateFields(){var e=EQ.find(function(x){return x.id===state.eq});setText('#eqLabel',e?e.name:'未選');$('#strengthFields').classList.toggle('hidden',!e||e.type!=='strength');$('#cardioFields').classList.toggle('hidden',!e||e.type==='strength');if(e&&e.type==='strength'){var last=lastEvent(e.id);if(last){$('#weight').value=last.weight;$('#reps').value=last.reps;$('#sets').value=last.sets;$('#rir').value=last.rir}}if(e&&e.type!=='strength'){var lc=lastEvent(e.id);if(lc){$('#duration').value=lc.duration||15;$('#intensity').value=lc.intensity||5}}syncViews()}
-function openRecord(pattern){if(!state.active){toast('先開始訓練');return}state.photo=null;state.eq=null;state.search='';state.filter='all';$('#eqSearch').value='';$$('#filters .chip').forEach(function(x){x.classList.toggle('active',x.dataset.filter==='all')});resetCapture();renderEq();updateFields();if(pattern){var first=EQ.find(function(e){return e.pattern===pattern});if(first){state.eq=first.id;renderEq();updateFields()}}openSheet('recordSheet')}
-function resetCapture(){$('#captureBox').innerHTML='<div class="captureHint" id="captureHint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg>拍攝</div><input id="photoInput" type="file" accept="image/*" capture="environment">';setText('#photoStatus','未拍攝');bindPhoto()}
-function bindPhoto(){var input=$('#photoInput');if(!input)return;input.onchange=function(){var file=input.files&&input.files[0];if(file)processPhoto(file)}}
-function readImg(file){return new Promise(function(res,rej){var u=URL.createObjectURL(file),img=new Image();img.onload=function(){res({img:img,url:u})};img.onerror=function(){URL.revokeObjectURL(u);rej(new Error('image'))};img.src=u})}
-function digest(buf){if(window.crypto&&crypto.subtle)return crypto.subtle.digest('SHA-256',buf).then(function(h){return Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0')}).join('')});var a=new Uint8Array(buf),h=2166136261;for(var i=0;i<a.length;i++)h=Math.imul(h^a[i],16777619)>>>0;return Promise.resolve(('00000000'+h.toString(16)).slice(-8).repeat(8))}
-async function processPhoto(file){try{setText('#photoStatus','處理中');var r=await readImg(file),img=r.img,max=1600,scale=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.max(1,Math.round(img.naturalWidth*scale)),h=Math.max(1,Math.round(img.naturalHeight*scale)),cv=D.createElement('canvas');cv.width=w;cv.height=h;var ctx=cv.getContext('2d',{alpha:false});ctx.drawImage(img,0,0,w,h);URL.revokeObjectURL(r.url);var ts=Date.now(), sid=state.active?state.active.id:'NOSESSION', code=(sid.slice(-6)+'-'+String(ts).slice(-6)).toUpperCase(), font=Math.max(17,Math.round(w*.021)), padv=Math.max(18,Math.round(w*.024)), line=Math.round(font*1.42);ctx.save();ctx.textBaseline='bottom';ctx.font='650 '+font+'px -apple-system,BlinkMacSystemFont,Arial';var line1='AXIS  LIVE', line2=dlabel(ts)+'  '+new Date(ts).toLocaleTimeString('en-GB',{hour12:false}), line3=code, tw=Math.max(ctx.measureText(line1).width,ctx.measureText(line2).width,ctx.measureText(line3).width),boxW=tw+padv*1.5,boxH=line*3+padv;ctx.fillStyle='rgba(7,8,10,.76)';ctx.fillRect(padv,h-boxH-padv,boxW,boxH);ctx.fillStyle='#f7f6f2';ctx.fillText(line1,padv*1.5,h-padv-line*2);ctx.font='500 '+Math.round(font*.83)+'px -apple-system,BlinkMacSystemFont,Arial';ctx.fillText(line2,padv*1.5,h-padv-line);ctx.fillStyle='#aeb4ff';ctx.fillText(line3,padv*1.5,h-padv);ctx.restore();var blob=await new Promise(function(res){cv.toBlob(res,'image/jpeg',.88)});if(!blob)throw new Error('encode');var ab=await blob.arrayBuffer(),hash=await digest(ab);state.photo={blob:blob,ts:ts,hash:hash,proof:code};var url=URL.createObjectURL(blob);$('#captureBox').innerHTML='<img src="'+url+'" alt="已加水印照片"><div class="captureCorner">重拍</div><input id="photoInput" type="file" accept="image/*" capture="environment">';bindPhoto();setText('#photoStatus',code);toast('照片已封存')}catch(e){console.error(e);setText('#photoStatus','處理失敗');toast('照片處理失敗')}}
-function nval(id,min,max,def){var n=Number($(id).value);if(!Number.isFinite(n))n=def;return Math.max(min,Math.min(max,n))}
-async function saveRecord(requirePhoto){if(!state.active){toast('先開始訓練');return}var eq=EQ.find(function(x){return x.id===state.eq});if(!eq){toast('先選器械');return}if(requirePhoto&&!state.photo){toast('先拍照');return}var e={id:uid('E'),equipmentId:eq.id,name:eq.name,pattern:eq.pattern,kind:eq.type==='strength'?'strength':'cardio',time:Date.now(),sealed:true};if(e.kind==='strength'){e.weight=nval('#weight',0,1000,0);e.reps=nval('#reps',1,100,10);e.sets=nval('#sets',1,20,3);e.rir=nval('#rir',0,5,2)}else{e.duration=nval('#duration',1,300,15);e.intensity=nval('#intensity',1,10,5)}if(state.photo){e.photoRef='P-'+e.id;e.photoTime=state.photo.ts;e.photoHash=state.photo.hash;e.photoProof=state.photo.proof;try{await putPhoto(e.photoRef,state.photo.blob)}catch(err){console.error(err);toast('照片儲存失敗');return}}var prev=ev(state.active).length?ev(state.active)[ev(state.active).length-1].seal:state.active.id;e.prev=prev;e.seal=(await digest(new TextEncoder().encode(prev+'|'+JSON.stringify(e)))).slice(0,20);state.active.events.push(e);safeSave();state.photo=null;state.eq=null;closeSheet('recordSheet');render();toast('已儲存')}
-function openFinish(){if(!state.active)return;renderCoverage('#finishCoverage',counts([state.active]));openSheet('finishSheet')}
-async function finish(){if(!state.active)return;state.active.end=Date.now();state.active.seal=(await digest(new TextEncoder().encode(state.active.id+'|'+state.active.start+'|'+state.active.end+'|'+ev(state.active).map(function(e){return e.seal}).join('|')))).slice(0,24);state.sessions.unshift(state.active);state.active=null;safeSave();closeSheet('finishSheet');render();toast('已完成')}
-async function openEvent(id){var all=(state.active?[state.active]:[]).concat(state.sessions),f=null;for(var i=0;i<all.length;i++){var e=ev(all[i]).find(function(x){return x.id===id});if(e){f=e;break}}if(!f)return;$('#detailTitle').textContent=f.name;var photo='';if(f.photoRef){var u=await photoUrl(f.photoRef);if(u)photo='<img class="detailPhoto" src="'+u+'" alt="水印照片">'}var rows=f.kind==='strength'?[['重量',f.weight+' kg'],['次數',f.reps],['組數',f.sets],['RIR',f.rir]]:[['時間',f.duration+' 分鐘'],['強度',f.intensity+' / 10']];rows.push(['時間',dlabel(f.time)+' '+tlabel(f.time)]);if(f.photoProof)rows.push(['Photo',f.photoProof]);if(f.seal)rows.push(['Seal',f.seal]);$('#detail').innerHTML=photo+'<div class="detailList">'+rows.map(function(r){return '<div class="detailRow"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>'}).join('')+'</div>';openSheet('detailSheet')}
-function openSession(id){var s=state.sessions.find(function(x){return x.id===id});if(!s)return;$('#detailTitle').textContent=dlabel(s.start);$('#detail').innerHTML='<div class="events">'+ev(s).map(eventHtml).join('')+'</div>';openSheet('detailSheet');bindDynamic();hydratePhotos()}
-function openDb(){return new Promise(function(res,rej){var q=indexedDB.open(DB,1);q.onupgradeneeded=function(){if(!q.result.objectStoreNames.contains('photos'))q.result.createObjectStore('photos')};q.onsuccess=function(){res(q.result)};q.onerror=function(){rej(q.error)}})}
-function putPhoto(k,b){return openDb().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('photos','readwrite');tx.objectStore('photos').put(b,k);tx.oncomplete=function(){db.close();res()};tx.onerror=function(){db.close();rej(tx.error)}})})}
-function getPhoto(k){return openDb().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('photos','readonly'),q=tx.objectStore('photos').get(k);q.onsuccess=function(){db.close();res(q.result||null)};q.onerror=function(){db.close();rej(q.error)}})})}
-async function photoUrl(k){try{var b=await getPhoto(k);return b?URL.createObjectURL(b):null}catch(e){return null}}
-async function hydratePhotos(){var boxes=$$('[data-photo]');for(var i=0;i<boxes.length;i++){var b=boxes[i];if(b.dataset.loaded)continue;b.dataset.loaded='1';var u=await photoUrl(b.dataset.photo);if(u)b.innerHTML='<img src="'+u+'" alt="照片">'}}
-function clearPhotos(){return new Promise(function(res){var q=indexedDB.deleteDatabase(DB);q.onsuccess=q.onerror=q.onblocked=function(){res()}})}
-function bind(){
-  $('#startBtn').addEventListener('click',function(){openSheet('startSheet')});$('#settingsBtn').addEventListener('click',function(){openSheet('settingsSheet')});$('#captureBtn').addEventListener('click',function(){openRecord()});$('#finishBtn').addEventListener('click',openFinish);$('#confirmFinish').addEventListener('click',finish);
-  $$('[data-close]').forEach(function(b){b.addEventListener('click',function(){closeSheet(b.dataset.close)})});$$('.sheetWrap').forEach(function(w){w.addEventListener('click',function(e){if(e.target===w)closeSheet(w.id)})});
-  $$('.segment').forEach(function(seg){seg.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$$('button',seg).forEach(function(x){x.classList.remove('active')});b.classList.add('active');var g=seg.dataset.group,v=b.dataset.value;if(g==='mode')setText('#modeLabel',{gym:'健身房',outdoor:'戶外',home:'其他'}[v]);if(g==='energy')setText('#energyLabel',['','很低','偏低','普通','不錯','很好'][Number(v)]);if(g==='target')setText('#targetLabel',v+' 分鐘')})});
-  $('#confirmStart').addEventListener('click',function(){function val(g){var b=$('.segment[data-group="'+g+'"] button.active');return b?b.dataset.value:null}state.active={id:uid('S'),start:Date.now(),mode:val('mode')||'gym',energy:Number(val('energy')||3),target:Number(val('target')||45),events:[]};safeSave();closeSheet('startSheet');render();toast('已開始')});
-  $('#eqSearch').addEventListener('input',function(e){state.search=e.target.value;renderEq()});$('#filters').addEventListener('click',function(e){var b=e.target.closest('[data-filter]');if(!b)return;state.filter=b.dataset.filter;$$('#filters .chip').forEach(function(x){x.classList.toggle('active',x===b)});renderEq()});
-  $('#saveRecord').addEventListener('click',function(){saveRecord(true)});$('#withoutPhoto').addEventListener('click',function(){saveRecord(false)});bindPhoto();
-  D.addEventListener('click',function(e){var b=e.target.closest('[data-step]');if(b){var id=b.dataset.step,i=$('#'+id);if(!i)return;var min=id==='weight'?0:1,max=id==='weight'?1000:(id==='duration'?300:(id==='reps'?100:20)),n=Number(i.value)||0;n=Math.max(min,Math.min(max,n+Number(b.dataset.delta||0)));i.value=(id==='weight'?Math.round(n*10)/10:Math.round(n));syncViews();return}var r=e.target.closest('[data-rir]');if(r){$('#rir').value=r.dataset.rir;syncViews()}});$('#intensity').addEventListener('input',syncViews);
-  $$('.nav button').forEach(function(b){b.addEventListener('click',function(){$$('.nav button').forEach(function(x){x.classList.remove('active')});b.classList.add('active');$$('.view').forEach(function(v){v.classList.remove('active')});$('#'+b.dataset.view).classList.add('active');render()})});
-  $('#exportBtn').addEventListener('click',function(){var blob=new Blob([JSON.stringify({version:VERSION,exportedAt:new Date().toISOString(),sessions:state.sessions,active:state.active},null,2)],{type:'application/json'}),a=D.createElement('a');a.href=URL.createObjectURL(blob);a.download='AXIS-'+dlabel(Date.now())+'.json';D.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},500);toast('已匯出')});
-  $('#clearBtn').addEventListener('click',async function(){if(!window.confirm('清除本機 AXIS 資料？'))return;try{localStorage.removeItem(KEY)}catch(e){}await clearPhotos();state={sessions:[],active:null,eq:null,photo:null,filter:'all',search:''};closeSheet('settingsSheet');render();toast('已清除')});
-  D.addEventListener('visibilitychange',function(){if(!D.hidden)render()});window.addEventListener('pageshow',render);
-}
-safeLoad();bind();render();
-if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){})})}
-})();
-</script>
-</body>
-</html>
+<script src="/app.js" defer></script>
+</body></html>
