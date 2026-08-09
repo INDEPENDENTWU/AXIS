@@ -1,0 +1,11 @@
+{
+  "name": "AXIS Fitness",
+  "short_name": "AXIS",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0b0d",
+  "theme_color": "#0a0b0d",
+  "description": "Training capture, monitoring and supervision.",
+  "icons": []
+}
