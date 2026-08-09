@@ -1,1 +1,11 @@
-{"name":"AXIS","short_name":"AXIS","start_url":"/","scope":"/","display":"standalone","background_color":"#08090b","theme_color":"#08090b","description":"快速记录真实训练"}
+{
+  "name":"AXIS 训练记录",
+  "short_name":"AXIS",
+  "start_url":"/",
+  "scope":"/",
+  "display":"standalone",
+  "background_color":"#08090b",
+  "theme_color":"#08090b",
+  "description":"快速记录真实训练。",
+  "icons":[]
+}
