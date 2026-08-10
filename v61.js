@@ -31,4 +31,9 @@ observer.observe(D.documentElement,{subtree:true,attributes:true,attributeFilter
 const list=$('#eventList');if(list){lastEventCount=$('#eventCount')?.textContent||'';new MutationObserver(()=>{const now=$('#eventCount')?.textContent||'';if(saving&&now!==lastEventCount)finishCommit();lastEventCount=now}).observe(list,{childList:true,subtree:true})}
 ensureWatermarkHint();syncDock();
 window.addEventListener('pageshow',()=>{ensureWatermarkHint();syncDock()});
+function loadV7(){
+ if(!D.querySelector('link[data-axis-v7]')){const l=D.createElement('link');l.rel='stylesheet';l.href='/styles-v7.css?v=700';l.dataset.axisV7='1';D.head.appendChild(l)}
+ const p=D.createElement('script');p.src='/platform-v7.js?v=700';p.onload=()=>{const e=D.createElement('script');e.src='/enhance-v7.js?v=700';D.head.appendChild(e)};D.head.appendChild(p);
+}
+loadV7();
 })();
