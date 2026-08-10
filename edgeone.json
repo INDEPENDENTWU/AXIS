@@ -1,0 +1,52 @@
+{
+  "outputDirectory":".",
+  "headers":[
+    {
+      "source":"/",
+      "headers":[
+        {"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}
+      ]
+    },
+    {
+      "source":"/index.html",
+      "headers":[
+        {"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}
+      ]
+    },
+    {
+      "source":"/edge-bootstrap.js",
+      "headers":[
+        {"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}
+      ]
+    },
+    {
+      "source":"/app.js",
+      "headers":[
+        {"key":"Cache-Control","value":"max-age=0, must-revalidate"}
+      ]
+    },
+    {
+      "source":"/v61.js",
+      "headers":[
+        {"key":"Cache-Control","value":"max-age=0, must-revalidate"}
+      ]
+    },
+    {
+      "source":"/quick-v71.js",
+      "headers":[
+        {"key":"Cache-Control","value":"max-age=0, must-revalidate"}
+      ]
+    },
+    {
+      "source":"/sw.js",
+      "headers":[
+        {"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}
+      ]
+    }
+  ],
+  "cloudFunctions":{
+    "nodejs":{"maxDuration":30},
+    "mainlandRegions":["ap-guangzhou"],
+    "overseasRegions":["ap-singapore"]
+  }
+}
