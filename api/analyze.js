@@ -7,6 +7,8 @@ function parseJson(text){if(!text)return null;const s=String(text).replace(/^```
 function validId(id){return EQUIPMENT.some(([x])=>x===id)?id:null}
 function n(v,min,max){const x=Number(v);return Number.isFinite(x)&&x>=min&&x<=max?x:null}
 function text(v,max=32){return typeof v==='string'?v.replace(/[\r\n\t]+/g,' ').trim().slice(0,max):''}
+function normalize(p,model){const equipmentId=validId(p?.equipmentId),confidence=Math.max(0,Math.min(1,Number(p?.confidence)||0));const candidates=Array.isArray(p?.candidates)?p.candidates.map(x=>({id:validId(x?.id),confidence:Math.max(0,Math.min(1,Number(x?.confidence)||0))})).filter(x=>x.id).sort((a,b)=>b.confidence-a.confidence).slice(0,3):[];const cardio=p?.cardio&&typeof p.cardio==='object'?{durationMin:n(p.cardio.durationMin,0,600),distanceKm:n(p.cardio.distanceKm,0,1000),calories:n(p.cardio.calories,0,10000),resistance:n(p.cardio.resistance,0,100)}:null;const q=p?.quality&&typeof p.quality==='object'?{score:Math.max(0,Math.min(1,Number(p.quality.score)||0)),retake:!!p.quality.retake,hint:text(p.quality.hint,28)}:{score:confidence,retake:false,hint:''};return{equipmentId,candidates,weightKg:n(p?.weightKg,0,1000),cardio,quality:q,confidence,model}}
+async function callModel(c,model,content){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),c.timeoutMs);try{const r=await fetch(`${c.base}/chat/completions`,{method:'POST',signal:controller.signal,headers:{Authorization:`Bearer ${c.key}`,'Content-Type':'application/json'},body:JSON.stringify({model,messages:[{role:'user',content}],temperature:0.02,max_tokens:360,enable_thinking:false,response_format:{type:'json_object'}})});const raw=await r.json();if(!r.ok)throw new Error('upstream');const p=parseJson(raw?.choices?.[0]?.message?.content);if(!p)throw new Error('bad_response');return normalize(p,model)}finally{clearTimeout(timer)}}
 export default async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
   const c=getAIConfig();
@@ -23,16 +25,10 @@ export default async function handler(req,res){
   const recent=Array.isArray(body.recentEquipment)?body.recentEquipment.filter(validId).slice(0,8):[];
   const prompt=`你是AXIS的健身现场视觉解析器。用户会用手机从不同角度扫一台器械，画面可能含器械全貌、配重插销、杠片、屏幕，也可能拍得不完整。\n器械ID只能从：${CATALOG}\n用户最近使用：${recent.join(',')||'无'}\n规则：\n1. 宁可为空，不要猜。器械不确定时给最多3个候选。\n2. weightKg只有在数字、杠片组合或插销位置足够清楚时填写。\n3. 有氧屏幕可读时提取时间、距离、卡路里、阻力。\n4. 不推测次数、组数、RIR。\n5. 同时判断画面是否足够用于记录：若器械主体、配重区或屏幕缺失，给一句极短补拍建议。\n6. confidence为0到1。\n只返回JSON：{"equipmentId":string|null,"candidates":[{"id":string,"confidence":number}],"weightKg":number|null,"cardio":{"durationMin":number|null,"distanceKm":number|null,"calories":number|null,"resistance":number|null}|null,"quality":{"score":number,"retake":boolean,"hint":string},"confidence":number}`;
   const content=[...frames.map(url=>({type:'image_url',image_url:{url}})),{type:'text',text:prompt}];
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),c.timeoutMs);
   try{
-    const upstream=await fetch(`${c.base}/chat/completions`,{method:'POST',signal:controller.signal,headers:{Authorization:`Bearer ${c.key}`,'Content-Type':'application/json'},body:JSON.stringify({model:c.visionModel,messages:[{role:'user',content}],temperature:0.02,max_tokens:360,enable_thinking:false,response_format:{type:'json_object'}})});
-    const raw=await upstream.json();
-    if(!upstream.ok)return res.status(502).json({available:true,error:'upstream'});
-    const p=parseJson(raw?.choices?.[0]?.message?.content);if(!p)return res.status(502).json({available:true,error:'bad_response'});
-    const equipmentId=validId(p.equipmentId),confidence=Math.max(0,Math.min(1,Number(p.confidence)||0));
-    const candidates=Array.isArray(p.candidates)?p.candidates.map(x=>({id:validId(x?.id),confidence:Math.max(0,Math.min(1,Number(x?.confidence)||0))})).filter(x=>x.id).sort((a,b)=>b.confidence-a.confidence).slice(0,3):[];
-    const cardio=p.cardio&&typeof p.cardio==='object'?{durationMin:n(p.cardio.durationMin,0,600),distanceKm:n(p.cardio.distanceKm,0,1000),calories:n(p.cardio.calories,0,10000),resistance:n(p.cardio.resistance,0,100)}:null;
-    const q=p.quality&&typeof p.quality==='object'?{score:Math.max(0,Math.min(1,Number(p.quality.score)||0)),retake:!!p.quality.retake,hint:text(p.quality.hint,28)}:{score:confidence,retake:false,hint:''};
-    return res.status(200).json({available:true,result:{equipmentId,candidates,weightKg:n(p.weightKg,0,1000),cardio,quality:q,confidence,model:c.visionModel}});
-  }catch(e){console.error('axis analyze',e);return res.status(502).json({available:true,error:e?.name==='AbortError'?'timeout':'network'})}finally{clearTimeout(timer)}
+    let result=await callModel(c,c.visionModel,content),escalated=false;
+    const shouldEscalate=c.escalationEnabled&&c.visionFallbackModel&&result.confidence<c.escalateBelow&&result.quality.score>=c.escalateMinQuality&&!result.quality.retake;
+    if(shouldEscalate){try{const second=await callModel(c,c.visionFallbackModel,content);if(second.confidence>result.confidence){result=second;escalated=true}}catch(e){console.warn('axis vision fallback',e)}}
+    return res.status(200).json({available:true,result:{...result,escalated}})
+  }catch(e){console.error('axis analyze',e);return res.status(502).json({available:true,error:e?.name==='AbortError'?'timeout':e?.message||'network'})}
 }
