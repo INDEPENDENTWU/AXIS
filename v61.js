@@ -35,16 +35,15 @@ window.addEventListener('pageshow',()=>{ensureWatermarkHint();syncDock()});
 function css(href,key){if(D.querySelector(`link[data-${key}]`))return;const l=D.createElement('link');l.rel='stylesheet';l.href=href;l.setAttribute(`data-${key}`,'1');l.media='all';D.head.appendChild(l)}
 function orderedScript(src,key){if(D.querySelector(`script[data-${key}]`))return;const s=D.createElement('script');s.src=src;s.async=false;s.setAttribute(`data-${key}`,'1');s.onerror=()=>console.warn('AXIS optional asset unavailable',src);D.head.appendChild(s)}
 
-// Critical interaction assets are attached immediately and in deterministic
-// order. They do not wait for network AI/status calls or window.load.
-css('/styles-v71.css?v=715','axis-v71');
-orderedScript('/platform-v7.js?v=715','axis-platform');
-orderedScript('/quick-v71.js?v=715','axis-quick');
+// The entire record interaction path is available immediately.
+css('/styles-v71.css?v=716','axis-v71');
+orderedScript('/platform-v7.js?v=716','axis-platform');
+orderedScript('/quick-v71.js?v=716','axis-quick');
 
-// Heavier report/AI presentation layers are non-critical. Load them only after
-// the first interaction layer is already available, so taps stay immediate.
+// AI, branded reports and secondary intelligence must never hold the browser's
+// initial loading state open. Attach them only after the page has fully loaded.
 let slowLoaded=false;
-function loadSlow(){if(slowLoaded)return;slowLoaded=true;css('/styles-v7.css?v=715','axis-v7');css('/intelligence-v7.css?v=715','axis-intel');orderedScript('/enhance-v7.js?v=715','axis-enhance');orderedScript('/intelligence-v7.js?v=715','axis-intelligence')}
-const slowTimer=setTimeout(loadSlow,420);
-if('requestIdleCallback'in window)requestIdleCallback(()=>{clearTimeout(slowTimer);loadSlow()},{timeout:700});
+function loadSlow(){if(slowLoaded)return;slowLoaded=true;css('/styles-v7.css?v=716','axis-v7');css('/intelligence-v7.css?v=716','axis-intel');orderedScript('/enhance-v7.js?v=716','axis-enhance');orderedScript('/intelligence-v7.js?v=716','axis-intelligence')}
+function afterLoad(){setTimeout(loadSlow,80)}
+if(D.readyState==='complete')afterLoad();else window.addEventListener('load',afterLoad,{once:true});
 })();
