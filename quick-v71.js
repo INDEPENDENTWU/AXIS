@@ -37,7 +37,7 @@ function setCaptureCopy(){
 }
 function renderQuick(){
  const all=eqAll(),byId=new Map(all.map(e=>[e.id,e])),u=usageMap();
- const recent=[...u.entries()].sort((a,b)=>b[1].last-a[1].last).map(([id,x])=>({eq:byId.get(id),u:x})).filter(x=>x.eq).slice(0,5);
+ let recent=[...u.entries()].sort((a,b)=>b[1].last-a[1].last).map(([id,x])=>({eq:byId.get(id),u:x})).filter(x=>x.eq).slice(0,5);
  const used=[...u.entries()].sort((a,b)=>b[1].n-a[1].n||b[1].last-a[1].last).map(([id,x])=>({eq:byId.get(id),u:x})).filter(x=>x.eq);
  const custom=all.filter(e=>e.custom).map(eq=>({eq,u:u.get(eq.id)||{n:0,last:0,event:null}}));
  let mine=[];for(const x of used.concat(custom)){if(!mine.some(y=>y.eq.id===x.eq.id)&&!recent.some(y=>y.eq.id===x.eq.id))mine.push(x);if(mine.length>=5)break}
