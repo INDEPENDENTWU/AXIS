@@ -1,0 +1,145 @@
+(function(){'use strict';
+const D=document,$=(s,r)=>(r||D).querySelector(s),$$=(s,r)=>Array.from((r||D).querySelectorAll(s));
+const PREF_KEY='axis_v7_preferences',INSIGHT_KEY='axis_v7_insights',CORE_KEYS=['axis_v60_state','axis_v51_state','axis_v50_state'];
+const DEFAULT={vision:true,quality:true,insights:true,shareMode:'smart',shareFormat:'portrait',shareSeed:0};
+let pref=loadJson(PREF_KEY,DEFAULT),insightCache=loadJson(INSIGHT_KEY,{}),aiStatus={available:false,vision:false,insight:false,quality:false};
+function loadJson(k,d){try{return{...d,...JSON.parse(localStorage.getItem(k)||'{}')}}catch{return{...d}}}
+function savePref(){localStorage.setItem(PREF_KEY,JSON.stringify(pref));updateAISummary()}
+function core(){for(const k of CORE_KEYS){try{const x=JSON.parse(localStorage.getItem(k)||'null');if(x)return x}catch{}}return{sessions:[],profile:{},prefs:{}}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function pad(n){return String(n).padStart(2,'0')}
+function day(t){const d=new Date(t);return`${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`}
+function minutes(s){return Math.max(0,Math.round(((s.end||Date.now())-s.start)/60000))}
+function events(s){return Array.isArray(s?.events)?s.events:[]}
+function toast(t){const e=$('#toast');if(!e)return;e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1500)}
+
+/* AI is owner-configured. Users only control capability switches. */
+const rawFetch=window.fetch.bind(window);
+window.fetch=async function(input,init){
+  const url=typeof input==='string'?input:(input?.url||'');
+  if(url.includes('/api/analyze')&&!pref.vision&&String(init?.method||'GET').toUpperCase()==='POST'){
+    return new Response(JSON.stringify({available:false,error:'user_disabled'}),{status:503,headers:{'Content-Type':'application/json'}});
+  }
+  const r=await rawFetch(input,init);
+  if(url.includes('/api/analyze')&&String(init?.method||'GET').toUpperCase()==='POST'){
+    try{const j=await r.clone().json();if(j?.result)D.dispatchEvent(new CustomEvent('axis:vision-result',{detail:j.result}))}catch{}
+  }
+  return r;
+};
+
+function injectAISettings(){
+  if($('#axisAiSheet'))return;
+  const html=`<div class="sheetWrap" id="axisAiSheet"><div class="sheet"><div class="grabber"></div><div class="sheetHead"><b>智能功能</b><button class="closeBtn" data-v7-close="axisAiSheet">×</button></div><div class="aiStatusBar"><span>AXIS 智能</span><b id="axisAiState">检查中</b></div><div class="settingsList"><div class="settingPlain"><span>器械识别</span><button class="switch" id="axisVisionSwitch" role="switch"><i></i></button></div><div class="settingPlain"><span>画面检查</span><button class="switch" id="axisQualitySwitch" role="switch"><i></i></button></div><div class="settingPlain"><span>训练洞察</span><button class="switch" id="axisInsightSwitch" role="switch"><i></i></button></div></div><div class="aiFoot"><span>个人器械优先</span><span>必要时调用智能识别</span></div></div></div>`;
+  D.body.insertAdjacentHTML('beforeend',html);
+  $$('[data-v7-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.v7Close)?.classList.remove('show'));
+  $('#axisVisionSwitch').onclick=()=>{pref.vision=!pref.vision;savePref();renderAISettings()};
+  $('#axisQualitySwitch').onclick=()=>{pref.quality=!pref.quality;savePref();renderAISettings()};
+  $('#axisInsightSwitch').onclick=()=>{pref.insights=!pref.insights;savePref();renderAISettings()};
+}
+function injectAIEntry(){
+  const list=$('#settingsSheet .settingsList.second');if(!list||$('#axisAiBtn'))return;
+  $('#aiHealth')?.closest('.settingPlain')?.remove();
+  list.insertAdjacentHTML('beforeend','<button class="settingLink" id="axisAiBtn"><span>智能功能</span><b id="axisAiSummary">检查中</b><i>›</i></button>');
+  $('#axisAiBtn').onclick=async()=>{$('#settingsSheet')?.classList.remove('show');renderAISettings();$('#axisAiSheet')?.classList.add('show');await refreshAIStatus()};
+}
+function setSwitch(id,on){$(id)?.setAttribute('aria-checked',String(!!on))}
+function renderAISettings(){setSwitch('#axisVisionSwitch',pref.vision);setSwitch('#axisQualitySwitch',pref.quality);setSwitch('#axisInsightSwitch',pref.insights);const state=aiStatus.available?'可用':'未连接';if($('#axisAiState'))$('#axisAiState').textContent=state;updateAISummary()}
+function updateAISummary(){const n=[pref.vision,pref.quality,pref.insights].filter(Boolean).length;const e=$('#axisAiSummary');if(e)e.textContent=aiStatus.available?`${n}/3 开启`:'未连接'}
+async function refreshAIStatus(){try{const r=await rawFetch('/api/ai-status',{cache:'no-store'}),j=await r.json();aiStatus=j||aiStatus}catch{}renderAISettings()}
+
+D.addEventListener('axis:vision-result',e=>{
+  const r=e.detail||{};
+  if(pref.quality&&r.quality?.retake&&r.quality?.hint){const s=$('#aiStatus');if(s){s.textContent=r.quality.hint;s.classList.add('qualityHint')}}
+});
+
+function currentInsightPayload(session){
+  const c=core(),ss=(c.sessions||[]),eq=x=>x.name||x.equipmentId||'';
+  const compact=s=>({minutes:minutes(s),muscles:[...new Set(events(s).flatMap(e=>e.muscles||[]))],equipment:[...new Set(events(s).map(eq).filter(Boolean))]});
+  return{current:{...compact(session),items:events(session).length,sets:events(session).reduce((n,e)=>n+(e.kind==='strength'?Number(e.sets)||0:1),0)},history:ss.filter(s=>s.id!==session.id).slice(0,8).map(s=>({...compact(s),daysAgo:Math.max(0,Math.round((Date.now()-s.start)/864e5))})),profile:{goal:c.profile?.goal||'',freq:c.profile?.freq||'',years:c.profile?.years||''}};
+}
+function localInsight(session){
+  const es=events(session),mus={};es.flatMap(e=>e.muscles||[]).forEach(m=>mus[m]=(mus[m]||0)+1);const sorted=Object.entries(mus).sort((a,b)=>b[1]-a[1]),top=sorted[0]?.[0]||'训练',all=['胸肌','背部','肩部','股四头肌','腘绳肌','臀部','核心','心肺'],miss=all.find(m=>!mus[m]);return{headline:`今天以${top}为主`,observation:`${minutes(session)}分钟 · ${es.length}项真实记录`,next:miss?`下次可优先补${miss}`:'保持当前训练节奏',signal:'neutral',confidence:.5,local:true};
+}
+async function ensureInsight(session){
+  if(!session?.id)return null;if(insightCache[session.id])return insightCache[session.id];
+  let out=localInsight(session);
+  if(pref.insights&&aiStatus.insight){try{const r=await rawFetch('/api/insight',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(currentInsightPayload(session))}),j=await r.json();if(r.ok&&j?.result)out=j.result}catch{}}
+  insightCache[session.id]=out;localStorage.setItem(INSIGHT_KEY,JSON.stringify(insightCache));return out;
+}
+async function renderFinishInsight(){const sheet=$('#finishSheet');if(!sheet?.classList.contains('show'))return;const s=core().sessions?.[0];if(!s)return;const card=$('.finishCard',sheet);if(!card)return;let box=$('#axisFinishInsight');if(!box){box=D.createElement('div');box.id='axisFinishInsight';box.className='axisInsightCard';card.querySelector('.finishStats')?.after(box)}box.innerHTML='<span>AXIS洞察</span><b>正在整理</b>';const i=await ensureInsight(s);if(i)box.innerHTML=`<span>AXIS洞察</span><b>${esc(i.headline)}</b><p>${esc(i.observation)}</p><em>${esc(i.next)}</em>`}
+async function renderTrendInsight(){const v=$('#insightsView');if(!v?.classList.contains('active'))return;const s=core().sessions?.[0];if(!s)return;let box=$('#axisTrendInsight');if(!box){box=D.createElement('div');box.id='axisTrendInsight';box.className='axisTrendInsight';const hero=$('.insightHero',v);hero?.after(box)}const i=await ensureInsight(s);if(i)box.innerHTML=`<div><span>最近判断</span><b>${esc(i.headline)}</b></div><p>${esc(i.observation)}</p><em>${esc(i.next)}</em>`}
+
+/* AXIS Brand Share System: 12 families × 4 palettes × 2 formats = 96 coherent outputs. */
+const FAMILIES=['mono','axis','pulse','orbit','matrix','split','heat','cadence','progress','memory','signal','poster'];
+const PALETTES=[
+  {bg:'#F0EFEA',fg:'#0B0D10',muted:'#747A84',accent:'#6872FF',soft:'#D9DBFF'},
+  {bg:'#090A0D',fg:'#F4F2EC',muted:'#8B929D',accent:'#737CFF',soft:'#20254B'},
+  {bg:'#E9EEF4',fg:'#101318',muted:'#6D7680',accent:'#286CFF',soft:'#C7D9FF'},
+  {bg:'#111217',fg:'#F0EEE8',muted:'#9399A5',accent:'#9A7CFF',soft:'#30284C'}
+];
+const MODE_MAP={minimal:['mono','axis'],highlight:['progress','poster','pulse'],track:['orbit','cadence','memory','signal'],balance:['split','heat','matrix']};
+let reportUIReady=false;
+function reportSessions(range){const ss=core().sessions||[];if(range==='last')return ss.slice(0,1);const cut=Date.now()-Number(range||7)*864e5;return ss.filter(s=>s.start>=cut)}
+function reportRange(){return $('#reportRange .active')?.dataset.range||'last'}
+function reportStats(range=reportRange()){
+  const ss=reportSessions(range),es=ss.flatMap(events),mus={};es.flatMap(e=>e.muscles||[]).forEach(m=>mus[m]=(mus[m]||0)+1);const topMus=Object.entries(mus).sort((a,b)=>b[1]-a[1]);const eq={};es.forEach(e=>eq[e.name||e.equipmentId]=(eq[e.name||e.equipmentId]||0)+1);const topEq=Object.entries(eq).sort((a,b)=>b[1]-a[1]);const sets=es.reduce((n,e)=>n+(e.kind==='strength'?Number(e.sets)||0:1),0),mins=ss.reduce((n,s)=>n+minutes(s),0);let progress=null;const map={};es.filter(e=>e.kind==='strength').forEach(e=>(map[e.equipmentId]||(map[e.equipmentId]=[])).push(e));for(const a of Object.values(map)){a.sort((x,y)=>x.time-y.time);if(a.length>1&&Number(a.at(-1).weight)>Number(a[0].weight)){const d=Number(a.at(-1).weight)-Number(a[0].weight);if(!progress||d>progress.delta)progress={name:a.at(-1).name,from:Number(a[0].weight),to:Number(a.at(-1).weight),delta:d}}const vals=topMus.map(x=>x[1]),imbalance=vals.length>1?(Math.max(...vals)-Math.min(...vals))/(Math.max(...vals)||1):0;return{range,ss,es,sessions:ss.length,minutes:mins,items:es.length,sets,topMus,topEq,progress,imbalance,profile:core().profile||{},dateA:ss.length?day(ss.at(-1).start):day(Date.now()),dateB:ss.length?day(ss[0].start):day(Date.now())};
+}
+function chooseFamily(st){if(pref.shareMode!=='smart'){const a=MODE_MAP[pref.shareMode]||FAMILIES;return a[pref.shareSeed%a.length]}if(st.progress)return'progress';if(st.imbalance>.55)return'split';if(st.range==='30')return st.topMus.length>=5?'heat':'orbit';if(st.range==='7')return st.sessions>=3?'cadence':'matrix';if(st.sessions===1&&st.minutes>=50)return'poster';if(st.sessions===1)return'axis';return FAMILIES[pref.shareSeed%FAMILIES.length]}
+function design(st){const family=chooseFamily(st),fi=Math.max(0,FAMILIES.indexOf(family)),pal=PALETTES[(fi+st.sessions+pref.shareSeed)%PALETTES.length];return{family,pal,format:pref.shareFormat}}
+function rr(c,x,y,w,h,r){c.beginPath();if(c.roundRect)c.roundRect(x,y,w,h,r);else c.rect(x,y,w,h)}
+function line(c,x1,y1,x2,y2,col,w=2){c.strokeStyle=col;c.lineWidth=w;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()}
+function txt(c,t,x,y,size,weight,col,align='left'){c.fillStyle=col;c.font=`${weight} ${size}px -apple-system,BlinkMacSystemFont,"PingFang SC",Arial`;c.textAlign=align;c.textBaseline='alphabetic';c.fillText(String(t),x,y)}
+function mark(c,x,y,s,p){c.save();c.translate(x,y);c.rotate(Math.PI/4);c.fillStyle=p.fg;c.fillRect(-s*.45,-s*.5,s*.28,s*.72);c.fillStyle=p.accent;c.fillRect(s*.1,-s*.22,s*.28,s*.72);c.restore()}
+function drawMotif(c,w,h,f,p,st){
+  c.save();c.globalAlpha=.9;
+  if(f==='axis'){line(c,w*.63,-20,w*.94,h*.48,p.soft,34);line(c,w*.69,-20,w,h*.45,p.accent,5)}
+  if(f==='pulse'){for(let i=0;i<7;i++){const x=w*.55+i*42,y=h*.2+Math.sin(i*1.2)*40;c.fillStyle=i===4?p.accent:p.soft;c.beginPath();c.arc(x,y,6+i%2*3,0,Math.PI*2);c.fill()}line(c,w*.5,h*.2,w*.95,h*.2,p.soft,2)}
+  if(f==='orbit'){c.strokeStyle=p.soft;c.lineWidth=3;for(let r=110;r<360;r+=80){c.beginPath();c.arc(w*.82,h*.18,r,0,Math.PI*2);c.stroke()}c.fillStyle=p.accent;c.beginPath();c.arc(w*.82,h*.18,8,0,Math.PI*2);c.fill()}
+  if(f==='matrix'){for(let y=0;y<5;y++)for(let x=0;x<5;x++){c.fillStyle=(x+y+st.sessions)%4===0?p.accent:p.soft;c.globalAlpha=(x+y)%3===0?.85:.35;rr(c,w*.62+x*44,h*.08+y*44,28,28,8);c.fill()}c.globalAlpha=1}
+  if(f==='split'){c.fillStyle=p.soft;rr(c,w*.57,h*.06,w*.38,h*.28,32);c.fill();line(c,w*.76,h*.06,w*.76,h*.34,p.accent,4)}
+  if(f==='heat'){for(let i=0;i<24;i++){c.globalAlpha=.14+((i*7+st.items)%9)/12;c.fillStyle=i%5===0?p.accent:p.soft;rr(c,w*.58+(i%6)*42,h*.08+Math.floor(i/6)*42,30,30,7);c.fill()}c.globalAlpha=1}
+  if(f==='cadence'){for(let i=0;i<7;i++){const bh=30+((i*31+st.minutes)%120);c.fillStyle=i===5?p.accent:p.soft;rr(c,w*.58+i*42,h*.31-bh,20,bh,10);c.fill()}}
+  if(f==='progress'){line(c,w*.58,h*.3,w*.94,h*.09,p.soft,5);line(c,w*.58,h*.3,w*.82,h*.16,p.accent,8);c.fillStyle=p.accent;c.beginPath();c.arc(w*.82,h*.16,11,0,Math.PI*2);c.fill()}
+  if(f==='memory'){for(let i=0;i<5;i++){c.strokeStyle=i===4?p.accent:p.soft;c.lineWidth=i===4?4:2;rr(c,w*.61+i*22,h*.08+i*20,w*.27,h*.2,24);c.stroke()}}
+  if(f==='signal'){for(let i=0;i<9;i++){const x=w*.58+i*36,hb=18+((i*19+st.sets)%72);c.fillStyle=i===6?p.accent:p.soft;rr(c,x,h*.23-hb/2,10,hb,5);c.fill()}}
+  if(f==='poster'){c.fillStyle=p.accent;c.globalAlpha=.18;rr(c,w*.57,h*.045,w*.4,h*.34,42);c.fill();c.globalAlpha=1;txt(c,String(st.minutes||0).padStart(2,'0'),w*.77,h*.28,150,750,p.accent,'center')}
+  if(f==='mono'){line(c,w*.58,h*.12,w*.94,h*.12,p.soft,2);line(c,w*.58,h*.16,w*.84,h*.16,p.soft,2)}
+  c.restore();
+}
+function drawReport(canvas,st,out=false){const d=design(st),portrait=d.format!=='square',W=out?1080:540,H=portrait?(out?1350:675):(out?1080:540),scale=W/1080,p=d.pal,c=canvas.getContext('2d');canvas.width=W;canvas.height=H;c.fillStyle=p.bg;c.fillRect(0,0,W,H);const sx=x=>x*scale,sy=y=>y*(H/(portrait?1350:1080));
+  drawMotif(c,W,H,d.family,p,st);mark(c,sx(92),sy(94),sx(42),p);txt(c,'AXIS',sx(132),sy(106),sx(31),720,p.fg);txt(c,st.profile?.name?String(st.profile.name):'训练记录',sx(92),sy(186),sx(24),560,p.muted);txt(c,`${st.dateA} — ${st.dateB}`,sx(92),sy(232),sx(23),500,p.muted);
+  const hero=st.progress?`${st.progress.to}`:`${st.minutes}`;const unit=st.progress?'kg':'分钟';txt(c,hero,sx(92),sy(portrait?445:410),sx(150),670,p.fg);txt(c,unit,sx(92+c.measureText(hero).width/scale+12),sy(portrait?445:410),sx(29),560,p.muted);
+  if(st.progress){txt(c,`${st.progress.name} · ${st.progress.from} → ${st.progress.to} kg`,sx(94),sy(505),sx(28),630,p.accent)}else{const sub=st.topMus.slice(0,3).map(x=>x[0]).join(' · ')||'留下真实训练轨迹';txt(c,sub,sx(94),sy(505),sx(27),600,p.accent)}
+  line(c,sx(92),sy(580),sx(988),sy(580),p.soft,sx(2));const metrics=[[st.sessions,'训练'],[st.items,'项目'],[st.sets,'组']];metrics.forEach((m,i)=>{const x=92+i*298;txt(c,m[0],sx(x),sy(676),sx(54),650,p.fg);txt(c,m[1],sx(x),sy(718),sx(22),520,p.muted)});
+  line(c,sx(92),sy(774),sx(988),sy(774),p.soft,sx(2));let y=850;const rows=st.topEq.slice(0,4);if(rows.length){txt(c,'训练记忆',sx(92),sy(y),sx(24),650,p.fg);y+=58;rows.forEach(([name,n],i)=>{txt(c,name,sx(92),sy(y),sx(27),600,p.fg);txt(c,`${n}次`,sx(988),sy(y),sx(22),550,i===0?p.accent:p.muted,'right');line(c,sx(92),sy(y+28),sx(988),sy(y+28),p.soft,sx(1.5));y+=70})}
+  if(portrait){const chips=st.topMus.slice(0,4).map(x=>x[0]);let cx=92;chips.forEach((t,i)=>{const ww=92+t.length*24;c.fillStyle=i===0?p.soft:(p.bg==='#090A0D'||p.bg==='#111217'?'#171A22':'#E2E1DC');rr(c,sx(cx),sy(1212),sx(ww),sy(48),sy(24));c.fill();txt(c,t,sx(cx+ww/2),sy(1245),sx(20),570,i===0?p.accent:p.muted,'center');cx+=ww+12});txt(c,d.family.toUpperCase(),sx(988),sy(1288),sx(16),650,p.muted,'right');line(c,sx(92),sy(1306),sx(220),sy(1306),p.accent,sx(7))}else{line(c,sx(92),sy(1000),sx(220),sy(1000),p.accent,sx(7));txt(c,d.family.toUpperCase(),sx(988),sy(1006),sx(16),650,p.muted,'right')}
+  canvas.style.aspectRatio=`${W}/${H}`;canvas.dataset.family=d.family;
+}
+function injectReportControls(){const sheet=$('#reportSheet .sheet');if(!sheet||reportUIReady)return;reportUIReady=true;const range=$('#reportRange');range?.insertAdjacentHTML('afterend','<div class="axisShareControls"><div class="axisShareModes"><button data-share-mode="smart" class="active">智能</button><button data-share-mode="minimal">极简</button><button data-share-mode="highlight">高光</button><button data-share-mode="track">轨迹</button><button data-share-mode="balance">平衡</button></div><div class="axisShareTools"><button id="axisShuffle">换一款</button><div><button data-share-format="portrait" class="active">纵向</button><button data-share-format="square">方形</button></div></div></div>');
+  const preview=$('#reportPreview');if(preview){preview.className='axisReportStage';preview.innerHTML='<canvas id="axisReportCanvas"></canvas>'}
+  $$('[data-share-mode]').forEach(b=>b.onclick=()=>{pref.shareMode=b.dataset.shareMode;pref.shareSeed=0;savePref();syncShareControls();renderBrandReport()});
+  $$('[data-share-format]').forEach(b=>b.onclick=()=>{pref.shareFormat=b.dataset.shareFormat;savePref();syncShareControls();renderBrandReport()});
+  $('#axisShuffle').onclick=()=>{pref.shareSeed=(pref.shareSeed+1)%48;savePref();renderBrandReport();window.AXISPlatform?.haptic?.('light')};syncShareControls();
+}
+function syncShareControls(){$$('[data-share-mode]').forEach(b=>b.classList.toggle('active',b.dataset.shareMode===pref.shareMode));$$('[data-share-format]').forEach(b=>b.classList.toggle('active',b.dataset.shareFormat===pref.shareFormat))}
+function renderBrandReport(){injectReportControls();const cv=$('#axisReportCanvas');if(!cv)return;drawReport(cv,reportStats(),false)}
+async function shareBrandReport(){const st=reportStats();if(!st.sessions){toast('暂无记录');return}const cv=D.createElement('canvas');drawReport(cv,st,true);const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.94));if(!blob)return;const name=`AXIS-${st.range==='last'?'训练记录':st.range+'天'}-${day(Date.now())}.jpg`;const n=window.AXISPlatform;if(n?.capabilities?.().photosWrite){const x=await n.saveToPhotos(blob,name);if(x?.ok){toast('已保存到相册');return}}const x=await n?.share?.(blob,name);if(!x?.ok){const a=D.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}}
+
+function upgradeUI(){
+  injectAISettings();injectAIEntry();injectReportControls();$('.versionLine')&&($('.versionLine').textContent='版本 7.0');
+  const reportBtn=$('#reportBtn');if(reportBtn)reportBtn.textContent='生成训练报告';
+}
+D.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.id==='shareReport'){e.preventDefault();e.stopImmediatePropagation();shareBrandReport();return}
+  if(t.closest('#reportRange'))setTimeout(renderBrandReport,0);
+  if(t.dataset.view==='insightsView')setTimeout(renderTrendInsight,30);
+},true);
+
+const observer=new MutationObserver(ms=>{
+  for(const m of ms){if(m.type==='attributes'&&m.target.id==='reportSheet'&&m.target.classList.contains('show'))setTimeout(renderBrandReport,20);if(m.type==='attributes'&&m.target.id==='finishSheet'&&m.target.classList.contains('show'))setTimeout(renderFinishInsight,20)}
+});
+function boot(){upgradeUI();refreshAIStatus();observer.observe(D.body,{subtree:true,attributes:true,attributeFilter:['class']});setTimeout(()=>{renderTrendInsight();renderBrandReport()},300)}
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boot();
+window.AXISV7={version:'7.0',families:FAMILIES.slice(),palettes:PALETTES.length,designCount:FAMILIES.length*PALETTES.length*2,refreshAIStatus,renderBrandReport};
+})();
