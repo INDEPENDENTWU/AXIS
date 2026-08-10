@@ -32,10 +32,11 @@ const list=$('#eventList');if(list){lastEventCount=$('#eventCount')?.textContent
 ensureWatermarkHint();syncDock();
 window.addEventListener('pageshow',()=>{ensureWatermarkHint();syncDock()});
 function css(href,key){if(D.querySelector(`link[data-${key}]`))return;const l=D.createElement('link');l.rel='stylesheet';l.href=href;l.setAttribute(`data-${key}`,'1');D.head.appendChild(l)}
-function script(src,done){const s=D.createElement('script');s.src=src;if(done)s.onload=done;D.head.appendChild(s)}
+function script(src){if(D.querySelector(`script[src^="${src.split('?')[0]}"]`))return;const s=D.createElement('script');s.src=src;s.async=true;s.onerror=()=>console.warn('AXIS optional asset unavailable',src);D.head.appendChild(s)}
 function loadV7(){
- css('/styles-v7.css?v=711','axis-v7');css('/intelligence-v7.css?v=711','axis-intel');css('/styles-v71.css?v=711','axis-v71');
- script('/platform-v7.js?v=711',()=>script('/enhance-v7.js?v=711',()=>script('/intelligence-v7.js?v=711',()=>script('/quick-v71.js?v=711'))));
+ css('/styles-v7.css?v=712','axis-v7');css('/intelligence-v7.css?v=712','axis-intel');css('/styles-v71.css?v=712','axis-v71');
+ // Optional enhancement layers load in parallel. Core AXIS is already usable before any of them arrive.
+ script('/platform-v7.js?v=712');script('/enhance-v7.js?v=712');script('/intelligence-v7.js?v=712');script('/quick-v71.js?v=712');
 }
 loadV7();
 })();
