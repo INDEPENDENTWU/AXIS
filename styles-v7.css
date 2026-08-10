@@ -1,0 +1,21 @@
+:root{--axis-grid:8px}
+/* v7 keeps the interface quiet: one grid, one accent, no decorative cards without function. */
+#axisAiSheet .sheet,.axisReportStage{font-variant-numeric:tabular-nums}
+.aiStatusBar{height:72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.aiStatusBar span{font-size:13px;color:var(--muted)}.aiStatusBar b{font-size:13px;font-weight:650;color:var(--text)}
+.aiFoot{display:flex;justify-content:space-between;gap:16px;padding:18px 0 4px}.aiFoot span{font-size:11px;color:var(--dim)}
+.qualityHint{color:#c8ccff!important;font-weight:620}
+.axisInsightCard{margin:18px 0 0;padding:18px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);text-align:left}
+.axisInsightCard>span,.axisTrendInsight span{display:block;font-size:10px;letter-spacing:.08em;color:var(--dim)}
+.axisInsightCard>b{display:block;margin-top:8px;font-size:17px;font-weight:680}.axisInsightCard p{margin:7px 0 0;font-size:12px;color:var(--muted);line-height:1.55}.axisInsightCard em{display:block;margin-top:11px;font-size:12px;font-style:normal;color:#c8ccff}
+.axisTrendInsight{margin-top:22px;padding:18px 0;border-bottom:1px solid var(--line2)}.axisTrendInsight>div{display:flex;align-items:baseline;justify-content:space-between;gap:20px}.axisTrendInsight b{font-size:16px;font-weight:670;text-align:right}.axisTrendInsight p{margin:9px 0 0;font-size:12px;color:var(--muted);line-height:1.5}.axisTrendInsight em{display:block;margin-top:8px;font-style:normal;font-size:12px;color:#c8ccff}
+.axisShareControls{margin-top:14px}.axisShareModes{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;background:var(--s1);border-radius:16px}.axisShareModes button{height:36px;border-radius:12px;font-size:11px;color:var(--muted)}.axisShareModes button.active{background:var(--s3);color:var(--text);font-weight:650}
+.axisShareTools{height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line2)}.axisShareTools>button{height:40px;padding:0 4px;color:var(--accent2);font-size:12px}.axisShareTools>div{display:flex;gap:18px}.axisShareTools>div button{height:40px;color:var(--dim);font-size:12px;position:relative}.axisShareTools>div button.active{color:var(--text)}.axisShareTools>div button.active:after{content:"";position:absolute;left:50%;bottom:3px;width:14px;height:2px;border-radius:99px;background:var(--accent);transform:translateX(-50%)}
+.axisReportStage{margin-top:18px;background:transparent!important;color:inherit!important;border-radius:24px!important;padding:0!important;min-height:0!important;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.26)}.axisReportStage canvas{display:block;width:100%;height:auto;border-radius:24px;background:#f0efea}
+#reportSheet .saveRecord{margin-top:20px}
+/* tighten existing layout rhythm without making text oversized */
+.settingsList .settingLink,.settingsList .settingPlain{min-height:62px}.settingLink>span,.settingPlain>span{font-size:14px}.settingLink>b,.settingPlain>b{font-size:13px}
+.sheetHead>b{font-size:21px}.sheetHead{margin-bottom:20px}.sectionHead>b{font-size:17px}.resultRow span,.numberLabel>span,.choiceControl>span{font-size:14px}.resultRow b{font-size:17px}.musclePanel>span{font-size:13px}.recognitionLine{font-size:12px}
+.numberMain{height:72px}.numberMain input{font-size:39px}.quickValues button,.choiceStrip button{height:40px;font-size:13px}.choiceControl{min-height:78px}
+.saveRecord{height:64px;font-size:17px}.event strong,.history strong{font-size:16px}.event small,.history small{font-size:13px}.pageHead>span{font-size:14px}
+@media(max-width:380px){.axisShareModes button{font-size:10px}.axisShareTools>div{gap:12px}.settingLink>span,.settingPlain>span{font-size:13px}.numberMain input{font-size:36px}}
