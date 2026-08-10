@@ -34,9 +34,10 @@ window.addEventListener('pageshow',()=>{ensureWatermarkHint();syncDock()});
 function css(href,key){if(D.querySelector(`link[data-${key}]`))return;const l=D.createElement('link');l.rel='stylesheet';l.href=href;l.setAttribute(`data-${key}`,'1');l.media='all';D.head.appendChild(l)}
 function script(src){if(D.querySelector(`script[src^="${src.split('?')[0]}"]`))return;const s=D.createElement('script');s.src=src;s.async=true;s.onerror=()=>console.warn('AXIS optional asset unavailable',src);D.head.appendChild(s)}
 function loadV7(){
- css('/styles-v7.css?v=713','axis-v7');css('/intelligence-v7.css?v=713','axis-intel');css('/styles-v71.css?v=713','axis-v71');
- script('/platform-v7.js?v=713');script('/enhance-v7.js?v=713');script('/intelligence-v7.js?v=713');script('/quick-v71.js?v=713');
+ css('/styles-v7.css?v=714','axis-v7');css('/intelligence-v7.css?v=714','axis-intel');css('/styles-v71.css?v=714','axis-v71');
+ script('/platform-v7.js?v=714');script('/enhance-v7.js?v=714');script('/intelligence-v7.js?v=714');script('/quick-v71.js?v=714');
 }
-function loadEnhancements(){setTimeout(loadV7,0)}
-if(D.readyState==='complete')loadEnhancements();else window.addEventListener('load',loadEnhancements,{once:true});
+// v61.js itself is deferred, so DOM is already parsed here. Start the interaction
+// layer immediately instead of waiting for the full window load event.
+loadV7();
 })();
