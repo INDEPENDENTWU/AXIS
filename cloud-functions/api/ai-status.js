@@ -5,11 +5,8 @@ const json=(data,status=200)=>new Response(JSON.stringify(data),{
   headers:{'Content-Type':'application/json; charset=UTF-8','Cache-Control':'no-store'}
 });
 
-export function onRequestGet(context){
+export default function onRequest(context){
+  if(context.request.method!=='GET') return json({error:'method'},405);
   const c=getAIConfig(context.env||{});
   return json(publicAIConfig(c));
-}
-
-export function onRequest(){
-  return json({error:'method'},405);
 }
