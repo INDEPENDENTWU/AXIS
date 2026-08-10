@@ -1,0 +1,28 @@
+/* AXIS 6.1 interaction refinements */
+.captureDock.v61-hidden{display:none!important}
+.sheetWrap.v61-transition{background:rgba(2,3,5,.72)}
+.watermarkHint{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:2px 0 12px}
+.watermarkHint b{font-size:13px;font-weight:660;color:var(--text)}
+.watermarkHint span{font-size:11px;color:var(--muted);text-align:right}
+.watermarkPreview{isolation:isolate}
+.watermarkPreview>button{outline:0}
+.watermarkPreview>button:after{content:"";position:absolute;width:27px;height:27px;border:1px solid rgba(244,243,239,.26);border-radius:9px;opacity:.7;transition:border-color .16s,background .16s,box-shadow .16s,opacity .16s}
+.watermarkPreview>button[data-pos="tl"]:after{left:12px;top:12px}
+.watermarkPreview>button[data-pos="tr"]:after{right:12px;top:12px}
+.watermarkPreview>button[data-pos="bl"]:after{left:12px;bottom:12px}
+.watermarkPreview>button[data-pos="br"]:after{right:12px;bottom:12px}
+.watermarkPreview>button[data-selected="true"]:after{border-color:var(--accent);background:rgba(115,124,255,.18);box-shadow:0 0 0 4px rgba(115,124,255,.08);opacity:1}
+.watermarkPreview>button[data-selected="true"]:before{content:"";position:absolute;width:6px;height:6px;border-radius:50%;background:var(--accent);z-index:5}
+.watermarkPreview>button[data-pos="tl"][data-selected="true"]:before{left:23px;top:23px}
+.watermarkPreview>button[data-pos="tr"][data-selected="true"]:before{right:23px;top:23px}
+.watermarkPreview>button[data-pos="bl"][data-selected="true"]:before{left:23px;bottom:23px}
+.watermarkPreview>button[data-pos="br"][data-selected="true"]:before{right:23px;bottom:23px}
+.positionLabels{display:none!important}
+#saveScan.v61-committing{pointer-events:none;opacity:.78}
+.v61-savingPulse{position:fixed;left:50%;bottom:98px;transform:translateX(-50%);z-index:260;min-width:96px;height:38px;padding:0 16px;border-radius:999px;background:#f4f3ef;color:#0b0c0f;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:680;box-shadow:0 14px 45px rgba(0,0,0,.35);animation:v61in .18s ease-out}
+@keyframes v61in{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+/* keep all primary controls on the same optical grid */
+.settingLink,.settingPlain,.resultRow,.manageEq,.detailRow{min-height:62px}
+.closeBtn,.iconBtn{align-self:center;justify-self:end}
+.sheetHead{column-gap:10px}
+@media(max-width:380px){.watermarkHint{align-items:flex-start;flex-direction:column;gap:4px}.watermarkHint span{text-align:left}}
