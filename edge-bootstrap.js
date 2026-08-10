@@ -4,10 +4,13 @@ const nativeFetch=window.fetch.bind(window);
 window.fetch=(input,init={})=>{
   const url=typeof input==='string'?input:(input?.url||'');
   const method=String(init?.method||'GET').toUpperCase();
-  if(isEdgePreview&&method==='GET'&&(url==='/api/analyze'||url==='/api/ai-status')){
-    const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),2200);
-    return nativeFetch(input,{...init,signal:controller.signal}).finally(()=>clearTimeout(timer));
+  // Core app still performs a legacy GET /api/analyze health check at boot.
+  // On EdgeOne preview this request is unnecessary and can keep Safari busy,
+  // so answer it locally. Real POST recognition and /api/ai-status remain live.
+  if(isEdgePreview&&method==='GET'&&url==='/api/analyze'){
+    return Promise.resolve(new Response(JSON.stringify({available:false,preview:true}),{
+      status:200,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}
+    }));
   }
   return nativeFetch(input,init);
 };
