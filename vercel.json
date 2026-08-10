@@ -16,8 +16,10 @@
     {"source":"/enhance-v7.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/platform-v7.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/intelligence-v7.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
+    {"source":"/quick-v71.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/styles-v7.css","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/intelligence-v7.css","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
+    {"source":"/styles-v71.css","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/(.*)","headers":[
       {"key":"X-Content-Type-Options","value":"nosniff"},
       {"key":"Referrer-Policy","value":"no-referrer"},
