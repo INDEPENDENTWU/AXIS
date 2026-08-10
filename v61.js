@@ -31,13 +31,20 @@ observer.observe(D.documentElement,{subtree:true,attributes:true,attributeFilter
 const list=$('#eventList');if(list){lastEventCount=$('#eventCount')?.textContent||'';new MutationObserver(()=>{const now=$('#eventCount')?.textContent||'';if(saving&&now!==lastEventCount)finishCommit();lastEventCount=now}).observe(list,{childList:true,subtree:true})}
 ensureWatermarkHint();syncDock();
 window.addEventListener('pageshow',()=>{ensureWatermarkHint();syncDock()});
+
 function css(href,key){if(D.querySelector(`link[data-${key}]`))return;const l=D.createElement('link');l.rel='stylesheet';l.href=href;l.setAttribute(`data-${key}`,'1');l.media='all';D.head.appendChild(l)}
-function script(src){if(D.querySelector(`script[src^="${src.split('?')[0]}"]`))return;const s=D.createElement('script');s.src=src;s.async=true;s.onerror=()=>console.warn('AXIS optional asset unavailable',src);D.head.appendChild(s)}
-function loadV7(){
- css('/styles-v7.css?v=714','axis-v7');css('/intelligence-v7.css?v=714','axis-intel');css('/styles-v71.css?v=714','axis-v71');
- script('/platform-v7.js?v=714');script('/enhance-v7.js?v=714');script('/intelligence-v7.js?v=714');script('/quick-v71.js?v=714');
-}
-// v61.js itself is deferred, so DOM is already parsed here. Start the interaction
-// layer immediately instead of waiting for the full window load event.
-loadV7();
+function orderedScript(src,key){if(D.querySelector(`script[data-${key}]`))return;const s=D.createElement('script');s.src=src;s.async=false;s.setAttribute(`data-${key}`,'1');s.onerror=()=>console.warn('AXIS optional asset unavailable',src);D.head.appendChild(s)}
+
+// Critical interaction assets are attached immediately and in deterministic
+// order. They do not wait for network AI/status calls or window.load.
+css('/styles-v71.css?v=715','axis-v71');
+orderedScript('/platform-v7.js?v=715','axis-platform');
+orderedScript('/quick-v71.js?v=715','axis-quick');
+
+// Heavier report/AI presentation layers are non-critical. Load them only after
+// the first interaction layer is already available, so taps stay immediate.
+let slowLoaded=false;
+function loadSlow(){if(slowLoaded)return;slowLoaded=true;css('/styles-v7.css?v=715','axis-v7');css('/intelligence-v7.css?v=715','axis-intel');orderedScript('/enhance-v7.js?v=715','axis-enhance');orderedScript('/intelligence-v7.js?v=715','axis-intelligence')}
+const slowTimer=setTimeout(loadSlow,420);
+if('requestIdleCallback'in window)requestIdleCallback(()=>{clearTimeout(slowTimer);loadSlow()},{timeout:700});
 })();
