@@ -1,0 +1,10 @@
+(function(){'use strict';
+const D=document,$=(s,r)=>(r||D).querySelector(s),$$=(s,r)=>Array.from((r||D).querySelectorAll(s));
+function ensure(){let bar=$('#axisVisionChoices');if(bar)return bar;const line=$('.recognitionLine');if(!line)return null;bar=D.createElement('div');bar.id='axisVisionChoices';bar.className='axisVisionChoices hidden';line.after(bar);return bar}
+function choose(id){const row=$('#equipmentRow');row?.click();setTimeout(()=>{const b=$(`#eqSheet [data-eq="${CSS.escape(id)}"]`);b?.click()},20)}
+function rescan(){const b=$('#scanBtn');if(b)b.click()}
+D.addEventListener('axis:vision-result',e=>{const r=e.detail||{},bar=ensure();if(!bar)return;const candidates=Array.isArray(r.candidates)?r.candidates.filter(x=>x?.id).slice(0,3):[];const needs=r.quality?.retake&&r.quality?.hint;if(!needs&&(!candidates.length||r.confidence>=.82)){bar.classList.add('hidden');bar.innerHTML='';return}let html='';if(candidates.length&&r.confidence<.82){html+='<div class="axisCandidateList">'+candidates.map(x=>`<button data-axis-candidate="${x.id}">${label(x.id)}</button>`).join('')+'</div>'}if(needs)html+=`<button class="axisRescan" id="axisRescan">${escapeHtml(r.quality.hint||'补扫一次')} <i>↻</i></button>`;bar.innerHTML=html;bar.classList.remove('hidden');$$('[data-axis-candidate]',bar).forEach(b=>b.onclick=()=>choose(b.dataset.axisCandidate));$('#axisRescan',bar)?.addEventListener('click',rescan)});
+function label(id){const m={cable:'龙门架',lat:'高位下拉',row:'坐姿划船',pec:'飞鸟 / 后三角',chest:'胸推',shoulder:'肩推',dip:'双杠 / 抬腿',arms:'手臂',legpress:'坐姿腿推',hack:'哈克 / 斜腿推',legext:'腿屈伸',legcurl:'腿弯举',calf:'小腿',dumbbell:'哑铃',barbell:'杠铃',bodyweight:'徒手',elliptical:'椭圆机',rower:'划船机',treadmill:'跑步机',walk:'步行'};return m[id]||id}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+const obs=new MutationObserver(()=>{const review=$('#reviewStage'),bar=$('#axisVisionChoices');if(review?.classList.contains('hidden')&&bar){bar.classList.add('hidden');bar.innerHTML=''}});if(D.body)obs.observe(D.body,{subtree:true,attributes:true,attributeFilter:['class']});
+})();
