@@ -23,6 +23,17 @@ AXIS_AI_INSIGHT_RPM=8
 AXIS_AI_TIMEOUT_MS=12000
 ```
 
+Optional high-accuracy escalation is implemented but intentionally off by default:
+
+```text
+AXIS_AI_ESCALATION_ENABLED=false
+AXIS_VISION_FALLBACK_MODEL=qwen3.7-plus
+AXIS_AI_ESCALATE_BELOW=0.46
+AXIS_AI_ESCALATE_MIN_QUALITY=0.62
+```
+
+When enabled, AXIS only retries with the stronger model when the Flash result is genuinely ambiguous but the capture itself is clear. Low-quality captures are not escalated; the user receives a short re-scan hint instead. This keeps the default public experience low-cost while retaining a server-side quality ceiling switch.
+
 Optional endpoint override:
 
 ```text
@@ -41,6 +52,7 @@ Use the business-space-specific endpoint when available. The application falls b
 6. Training insight is generated at most once per completed session and cached on the user's device.
 7. If AI is unavailable, AXIS keeps working with manual confirmation and deterministic local insight.
 8. Server routes apply soft per-IP rate limits. For large public scale, move quotas to a durable KV/rate-limit service without changing the client contract.
+9. Optional model escalation is confidence- and image-quality-gated rather than applied to every request.
 
 ## API contract
 
