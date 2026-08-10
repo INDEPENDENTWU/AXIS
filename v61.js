@@ -34,8 +34,8 @@ window.addEventListener('pageshow',()=>{ensureWatermarkHint();syncDock()});
 function css(href,key){if(D.querySelector(`link[data-${key}]`))return;const l=D.createElement('link');l.rel='stylesheet';l.href=href;l.setAttribute(`data-${key}`,'1');D.head.appendChild(l)}
 function script(src,done){const s=D.createElement('script');s.src=src;if(done)s.onload=done;D.head.appendChild(s)}
 function loadV7(){
- css('/styles-v7.css?v=701','axis-v7');css('/intelligence-v7.css?v=701','axis-intel');
- script('/platform-v7.js?v=701',()=>script('/enhance-v7.js?v=701',()=>script('/intelligence-v7.js?v=701')));
+ css('/styles-v7.css?v=711','axis-v7');css('/intelligence-v7.css?v=711','axis-intel');css('/styles-v71.css?v=711','axis-v71');
+ script('/platform-v7.js?v=711',()=>script('/enhance-v7.js?v=711',()=>script('/intelligence-v7.js?v=711',()=>script('/quick-v71.js?v=711'))));
 }
 loadV7();
 })();
