@@ -15,8 +15,8 @@
 <div class="app">
   <header class="topbar">
     <div class="brand"><span class="mark" aria-hidden="true"></span><span>AXIS</span></div>
-    <button class="bareIcon" id="settingsBtn" aria-label="设置">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 13.5v-3l-2-.6-.6-1.4 1-1.8-2.1-2.1-1.8 1-1.4-.6L11.5 3h-3L8 5l-1.4.6-1.8-1-2.1 2.1 1 1.8-.6 1.4-2 .6v3l2 .6.6 1.4-1 1.8 2.1 2.1 1.8-1 1.4.6.6 2h3l.6-2 1.4-.6 1.8 1 2.1-2.1-1-1.8.6-1.4z"/></svg>
+    <button class="iconBtn" id="settingsBtn" aria-label="设置">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 13.5v-3l-2-.6-.6-1.4 1-1.8-2.1-2.1-1.8 1-1.4-.6L11.5 3h-3L8 5l-1.4.6-1.8-1-2.1 2.1 1 1.8-.6 1.4-2 .6v3l2 .6.6 1.4-1 1.8 2.1 2.1 1.8-1 1.4.6.6 2h3l.6-2 1.4-.6 1.8 1 2.1-2.1-1-1.8.6-1.4z"/></svg>
     </button>
   </header>
 
@@ -24,103 +24,112 @@
     <section class="view active" id="todayView">
       <div class="pageHead"><h1>今天</h1><span id="todayDate"></span></div>
       <div id="idleHome">
-        <div class="sessionHero">
-          <div><strong>尚未开始</strong><span id="lastSession">—</span></div>
+        <div class="sessionLead">
+          <div><strong id="helloTitle">尚未开始</strong><span id="lastSession">—</span></div>
           <button class="startBtn" id="startBtn"><i></i>开始训练</button>
         </div>
-        <div class="twoStats"><div class="metric"><b id="weekMins">0</b><span>7天分钟</span></div><div class="metric"><b id="weekSessions">0</b><span>7天次数</span></div></div>
-        <div id="idleSignalWrap" class="sectionBlock hidden"><div class="sectionTitle">最近</div><div class="signal" id="idleSignal"></div></div>
+        <div class="metricPair"><div><b id="weekMins">0</b><span>7天分钟</span></div><div><b id="weekSessions">0</b><span>7天次数</span></div></div>
+        <div class="section hidden" id="idleSignalWrap"><div class="sectionHead"><b>最近</b></div><div class="signal" id="idleSignal"></div></div>
       </div>
 
       <div id="activeHome" class="hidden">
-        <div class="liveTop">
-          <div><span class="liveTag"><i></i>进行中</span><b class="timer" id="liveTimer">00:00</b></div>
-          <button class="holdFinish" id="finishHold" aria-label="长按结束训练"><span>长按<br>结束</span><i></i></button>
+        <div class="liveHead">
+          <div><span class="liveTag"><i></i>进行中</span><b id="liveTimer">00:00</b></div>
+          <button class="holdFinish" id="finishHold" aria-label="长按结束"><span>长按<br>结束</span><i></i></button>
         </div>
-        <div class="twoStats compact"><div class="metric"><b id="liveItems">0</b><span>已记录</span></div><div class="metric"><b id="liveSets">0</b><span>总组数</span></div></div>
-        <div id="liveSignalWrap" class="sectionBlock hidden"><div class="sectionLine"><div class="sectionTitle">现在</div><span id="pace">正常</span></div><div class="signal" id="liveSignal"></div></div>
-        <div class="sectionBlock"><div class="sectionLine"><div class="sectionTitle">时间线</div><span id="eventCount">0</span></div><div class="events" id="eventList"></div></div>
+        <div class="metricPair compact"><div><b id="liveItems">0</b><span>已记录</span></div><div><b id="liveSets">0</b><span>总组数</span></div></div>
+        <div class="section hidden" id="liveSignalWrap"><div class="sectionHead"><b>现在</b><span id="pace">正常</span></div><div class="signal" id="liveSignal"></div></div>
+        <div class="section"><div class="sectionHead"><b>时间线</b><span id="eventCount">0</span></div><div class="events" id="eventList"></div></div>
       </div>
     </section>
 
-    <section class="view" id="historyView"><div class="pageHead"><h1>记录</h1><span id="historyCount">0</span></div><div class="events" id="historyList"></div></section>
+    <section class="view" id="historyView">
+      <div class="pageHead"><h1>记录</h1><span id="historyCount">0</span></div>
+      <div class="events" id="historyList"></div>
+    </section>
 
     <section class="view" id="insightsView">
-      <div class="pageHead"><h1>趋势</h1></div>
-      <div class="twoStats"><div class="metric"><b id="insightMins">0</b><span>7天分钟</span></div><div class="metric"><b id="insightSessions">0</b><span>30天次数</span></div></div>
-      <div class="sectionBlock"><div class="sectionTitle">30天训练</div><div class="bars" id="patternBars"></div></div>
-      <div class="sectionBlock"><div class="sectionTitle">变化</div><div class="events" id="signals"></div></div>
+      <div class="pageHead"><h1>趋势</h1><span>30天</span></div>
+      <div class="insightHero">
+        <div><span>训练</span><b id="insightSessions">0</b><em>次</em></div>
+        <div><span>时间</span><b id="insightMins">0</b><em>分钟</em></div>
+        <div><span>回访</span><b id="revisitRate">—</b><em>%</em></div>
+      </div>
+      <div class="section"><div class="sectionHead"><b>训练覆盖</b><span id="coverageMeta">—</span></div><div class="coverageGrid" id="coverageGrid"></div></div>
+      <div class="section"><div class="sectionHead"><b>进步证据</b></div><div class="evidenceList" id="evidenceList"></div></div>
+      <div class="section"><div class="sectionHead"><b>个人节奏</b></div><div class="rhythmGrid" id="rhythmGrid"></div></div>
+      <div class="section"><div class="sectionHead"><b>下一次</b></div><div class="nextCard" id="nextCard"></div></div>
     </section>
   </main>
 
   <div class="captureDock" id="dock">
-    <button class="scanPrimary" id="scanBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.1"/></svg><span>扫一下</span></button>
-    <button class="talkHold hidden" id="talkHold" aria-label="按住说"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 10a6 6 0 0 0 12 0M12 16v4M9 20h6"/></svg><span>按住说</span></button>
+    <button class="scanPrimary" id="scanBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg><span>扫一下</span></button>
   </div>
 
   <nav class="nav"><button class="active" data-view="todayView">今天</button><button data-view="historyView">记录</button><button data-view="insightsView">趋势</button></nav>
 </div>
 
 <div class="sheetWrap" id="scanSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b>扫一下</b><button class="plainClose" data-close="scanSheet" aria-label="关闭">×</button></div>
+  <div class="grabber"></div><div class="sheetHead"><b>扫一下</b><button class="closeBtn" data-close="scanSheet" aria-label="关闭">×</button></div>
   <div id="captureStage">
-    <div class="camera" id="cameraBox"><video id="cameraVideo" playsinline muted></video><div class="cameraFallback hidden" id="cameraFallback">相机不可用</div><div class="scanState" id="scanState">就绪</div></div>
-    <div class="captureChoice"><button class="captureMode active" id="liveScanBtn">扫3秒</button><button class="captureMode" id="photoBtn">拍一张</button></div>
-    <input class="hiddenInput" id="photoInput" type="file" accept="image/*" capture="environment">
+    <div class="camera"><video id="cameraVideo" playsinline muted></video><div class="cameraFallback hidden" id="cameraFallback">相机不可用</div><div class="scanState" id="scanState">就绪</div></div>
+    <div class="captureModes" id="captureModes"><button data-mode="3" class="active">扫3秒</button><button data-mode="5">扫5秒</button><button data-mode="photo">拍一张</button></div>
+    <button class="captureNow" id="captureNow">开始扫描</button>
+    <input id="photoInput" class="hiddenInput" type="file" accept="image/*" capture="environment">
   </div>
   <div id="reviewStage" class="hidden">
     <div class="film" id="film"></div>
     <button class="resultRow" id="equipmentRow"><span>器械 / 运动</span><b id="equipmentName">待确认</b><i>›</i></button>
-    <div class="musclePanel hidden" id="musclePanel"><div class="muscleTags" id="muscleTags"></div><span id="effectText"></span></div>
-    <div class="recognitionLine"><span id="aiStatus">手动确认</span><span id="lastValue" class="lastValue hidden"></span></div>
-    <div id="strengthFields" class="fieldGrid hidden">
-      <div class="valueField"><span>重量</span><div class="inlineStep"><button data-step="weight" data-delta="-2.5">−</button><input id="weight" inputmode="decimal" value="20"><em>kg</em><button data-step="weight" data-delta="2.5">＋</button></div></div>
-      <div class="valueField"><span>次数</span><div class="inlineStep"><button data-step="reps" data-delta="-1">−</button><input id="reps" inputmode="numeric" value="10"><button data-step="reps" data-delta="1">＋</button></div></div>
-      <div class="valueField"><span>组数</span><div class="inlineStep"><button data-step="sets" data-delta="-1">−</button><input id="sets" inputmode="numeric" value="3"><button data-step="sets" data-delta="1">＋</button></div></div>
+    <div class="musclePanel hidden" id="musclePanel"><div id="muscleTags"></div><span id="effectText"></span></div>
+    <div class="recognitionLine"><span id="aiStatus">识别中</span><span id="lastValue" class="hidden"></span></div>
+
+    <div id="strengthFields" class="recordFields hidden">
+      <div class="numberControl">
+        <div class="numberLabel"><span>重量</span><small id="weightHint"></small></div>
+        <div class="numberMain"><button data-step="weight" data-delta="-2.5">−</button><label><input id="weight" inputmode="decimal" value="20"><em>kg</em></label><button data-step="weight" data-delta="2.5">＋</button></div>
+        <div class="quickValues" id="weightQuick"></div>
+      </div>
+      <div class="choiceControl"><span>次数</span><div id="repsChoices" class="choiceStrip"></div></div>
+      <div class="choiceControl"><span>组数</span><div id="setsChoices" class="choiceStrip"></div></div>
     </div>
-    <div id="cardioFields" class="fieldGrid hidden">
-      <div class="valueField"><span>分钟</span><div class="inlineStep"><button data-step="duration" data-delta="-1">−</button><input id="duration" inputmode="numeric" value="15"><button data-step="duration" data-delta="1">＋</button></div></div>
-      <div class="valueField"><span>强度</span><div class="inlineStep"><button data-step="intensity" data-delta="-1">−</button><input id="intensity" inputmode="numeric" value="5"><em>/10</em><button data-step="intensity" data-delta="1">＋</button></div></div>
+
+    <div id="cardioFields" class="recordFields hidden">
+      <div class="numberControl">
+        <div class="numberLabel"><span>时间</span><small id="durationHint"></small></div>
+        <div class="numberMain"><button data-step="duration" data-delta="-1">−</button><label><input id="duration" inputmode="numeric" value="15"><em>分钟</em></label><button data-step="duration" data-delta="1">＋</button></div>
+        <div class="quickValues" id="durationQuick"></div>
+      </div>
+      <div class="choiceControl"><span>强度</span><div id="intensityChoices" class="choiceStrip"></div></div>
     </div>
+
     <button class="saveRecord" id="saveScan">记下</button>
   </div>
 </div></div>
 
-<div class="voiceOverlay" id="voiceOverlay"><div class="voiceOrb"><i></i></div><b>松开完成</b><span id="voiceLiveText">正在听</span></div>
-
-<div class="sheetWrap" id="voiceSheet"><div class="sheet smallSheet">
-  <div class="grabber"></div><div class="sheetHead"><b>语音记录</b><button class="plainClose" data-close="voiceSheet">×</button></div>
-  <div class="voiceTranscript" id="voiceTranscript"></div>
-  <button class="resultRow" id="voiceEquipmentRow"><span>器械 / 运动</span><b id="voiceEquipmentName">待确认</b><i>›</i></button>
-  <div class="musclePanel hidden" id="voiceMusclePanel"><div class="muscleTags" id="voiceMuscleTags"></div><span id="voiceEffectText"></span></div>
-  <div id="voiceStrengthFields" class="fieldGrid hidden">
-    <div class="valueField"><span>重量</span><div class="inlineStep"><button data-vstep="vWeight" data-delta="-2.5">−</button><input id="vWeight" inputmode="decimal" value="20"><em>kg</em><button data-vstep="vWeight" data-delta="2.5">＋</button></div></div>
-    <div class="valueField"><span>次数</span><div class="inlineStep"><button data-vstep="vReps" data-delta="-1">−</button><input id="vReps" inputmode="numeric" value="10"><button data-vstep="vReps" data-delta="1">＋</button></div></div>
-    <div class="valueField"><span>组数</span><div class="inlineStep"><button data-vstep="vSets" data-delta="-1">−</button><input id="vSets" inputmode="numeric" value="3"><button data-vstep="vSets" data-delta="1">＋</button></div></div>
-  </div>
-  <div id="voiceCardioFields" class="fieldGrid hidden">
-    <div class="valueField"><span>分钟</span><div class="inlineStep"><button data-vstep="vDuration" data-delta="-1">−</button><input id="vDuration" inputmode="numeric" value="15"><button data-vstep="vDuration" data-delta="1">＋</button></div></div>
-    <div class="valueField"><span>强度</span><div class="inlineStep"><button data-vstep="vIntensity" data-delta="-1">−</button><input id="vIntensity" inputmode="numeric" value="5"><em>/10</em><button data-vstep="vIntensity" data-delta="1">＋</button></div></div>
-  </div>
-  <button class="saveRecord" id="saveVoice">记下</button>
-</div></div>
-
 <div class="sheetWrap" id="eqSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b>器械 / 运动</b><button class="plainClose" data-close="eqSheet">×</button></div>
-  <input class="search" id="eqSearch" placeholder="搜索">
-  <div class="quickEq" id="quickEq"></div><div class="eqList" id="eqList"></div><button class="addCustom" id="addCustomEq">＋ 自定义</button>
+  <div class="grabber"></div><div class="sheetHead"><b>器械 / 运动</b><button class="closeBtn" data-close="eqSheet">×</button></div>
+  <input class="search" id="eqSearch" placeholder="搜索器械、动作或部位">
+  <div class="quickEq" id="quickEq"></div><div class="eqList" id="eqList"></div>
+  <button class="textAction" id="addCustomEq">＋ 新建自定义</button>
 </div></div>
 
 <div class="sheetWrap" id="customEqSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b>自定义运动</b><button class="plainClose" data-close="customEqSheet">×</button></div>
-  <label class="textField"><span>名称</span><input id="customName" maxlength="18" placeholder="例如：蓝色腿推"></label>
-  <div class="seg" id="customType"><button class="active" data-type="strength">力量</button><button data-type="cardio">有氧</button></div>
-  <div class="sectionMini">主要锻炼</div><div class="musclePicker" id="customMuscles"></div>
+  <div class="grabber"></div><div class="sheetHead"><b id="customEqTitle">自定义运动</b><button class="closeBtn" data-close="customEqSheet">×</button></div>
+  <label class="lineInput"><span>名称</span><input id="customName" maxlength="24" placeholder="例如：蓝色腿推"></label>
+  <div class="sectionLabel">类型</div><div class="seg" id="customType"><button class="active" data-type="strength">力量</button><button data-type="cardio">有氧</button></div>
+  <div class="sectionLabel">主要锻炼</div><div class="musclePicker" id="customMuscles"></div>
   <button class="saveRecord" id="saveCustomEq">保存</button>
+  <button class="dangerAction hidden" id="deleteCustomEq">删除此项</button>
+</div></div>
+
+<div class="sheetWrap" id="myEqSheet"><div class="sheet">
+  <div class="grabber"></div><div class="sheetHead"><b>我的器械</b><button class="closeBtn" data-close="myEqSheet">×</button></div>
+  <div class="manageEqList" id="manageEqList"></div>
+  <button class="textAction" id="newCustomEq">＋ 新建自定义</button>
 </div></div>
 
 <div class="sheetWrap" id="detailSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b id="detailTitle">详情</b><button class="plainClose" data-close="detailSheet">×</button></div><div id="detail"></div>
+  <div class="grabber"></div><div class="sheetHead"><b id="detailTitle">详情</b><button class="closeBtn" data-close="detailSheet">×</button></div><div id="detail"></div>
 </div></div>
 
 <div class="sheetWrap centerWrap" id="finishSheet"><div class="finishCard">
@@ -130,49 +139,63 @@
 </div></div>
 
 <div class="sheetWrap" id="settingsSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b>AXIS</b><button class="plainClose" data-close="settingsSheet">×</button></div>
-  <div class="settingsGroup">
-    <button class="settingRow linkRow" id="profileBtn"><span>个人档案</span><b id="profileSummary">未填写</b><i>›</i></button>
-    <button class="settingRow linkRow" id="customEqBtn"><span>个性器械</span><b id="memoryCount">0</b><i>›</i></button>
-    <button class="settingRow linkRow" id="watermarkBtn"><span>记录水印</span><b>已开启</b><i>›</i></button>
-    <button class="settingRow linkRow" id="storageBtn"><span>数据与空间</span><b id="storageBrief">计算中</b><i>›</i></button>
+  <div class="grabber"></div><div class="sheetHead"><b>AXIS</b><button class="closeBtn" data-close="settingsSheet">×</button></div>
+  <div class="settingsList">
+    <button class="settingLink" id="profileBtn"><span>个人档案</span><b id="profileSummary">未填写</b><i>›</i></button>
+    <button class="settingLink" id="myEqBtn"><span>我的器械</span><b id="customCount">0</b><i>›</i></button>
+    <button class="settingLink" id="watermarkBtn"><span>记录水印</span><b>已开启</b><i>›</i></button>
+    <button class="settingLink" id="storageBtn"><span>数据与空间</span><b id="storageBrief">计算中</b><i>›</i></button>
   </div>
-  <div class="settingsGroup"><div class="settingRow"><span>保留3秒视频</span><button class="switch" id="keepClipSwitch" role="switch" aria-checked="true"><i></i></button></div><div class="settingRow"><span>智能识别</span><b id="aiHealth">检查中</b></div></div>
+  <div class="settingsList second">
+    <div class="settingPlain"><span>默认扫描</span><div class="miniSeg" id="scanSeconds"><button data-sec="3" class="active">3秒</button><button data-sec="5">5秒</button></div></div>
+    <div class="settingPlain"><span>保留现场视频</span><button class="switch" id="keepClipSwitch" role="switch"><i></i></button></div>
+    <div class="settingPlain"><span>智能识别</span><b id="aiHealth">检查中</b></div>
+  </div>
   <button class="reportAction" id="reportBtn">生成训练报告</button>
-  <div class="versionLine">版本 5.0</div>
+  <div class="versionLine">版本 6.0</div>
 </div></div>
 
 <div class="sheetWrap" id="profileSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b>个人档案</b><button class="plainClose" data-close="profileSheet">×</button></div>
+  <div class="grabber"></div><div class="sheetHead"><b>个人档案</b><button class="closeBtn" data-close="profileSheet">×</button></div>
+  <label class="lineInput"><span>昵称</span><input id="profileName" maxlength="20" placeholder="你的称呼"></label>
   <div class="profileGrid">
-    <label class="profileField"><span>身高</span><div><input id="profileHeight" inputmode="decimal" placeholder="—"><em>cm</em></div></label>
-    <label class="profileField"><span>体重</span><div><input id="profileWeight" inputmode="decimal" placeholder="—"><em>kg</em></div></label>
-    <label class="profileField"><span>体脂率</span><div><input id="profileBodyFat" inputmode="decimal" placeholder="—"><em>%</em></div></label>
-    <label class="profileField"><span>训练年限</span><div><input id="profileYears" inputmode="decimal" placeholder="—"><em>年</em></div></label>
+    <label><span>身高</span><div><input id="profileHeight" inputmode="decimal" placeholder="—"><em>cm</em></div></label>
+    <label><span>体重</span><div><input id="profileWeight" inputmode="decimal" placeholder="—"><em>kg</em></div></label>
+    <label><span>体脂率</span><div><input id="profileBodyFat" inputmode="decimal" placeholder="—"><em>%</em></div></label>
+    <label><span>训练年限</span><div><input id="profileYears" inputmode="decimal" placeholder="—"><em>年</em></div></label>
   </div>
-  <div class="sectionMini">每周训练</div><div class="seg five" id="profileFreq"><button data-value="1">1</button><button data-value="2">2</button><button data-value="3">3</button><button data-value="4">4</button><button data-value="5">5+</button></div>
-  <div class="sectionMini">主要目标</div><div class="seg goalSeg" id="profileGoal"><button data-value="health">健康</button><button data-value="muscle">增肌</button><button data-value="fat">减脂</button><button data-value="strength">力量</button><button data-value="cardio">体能</button></div>
+  <div class="sectionLabel">每周训练</div><div class="seg five" id="profileFreq"><button data-value="1">1</button><button data-value="2">2</button><button data-value="3">3</button><button data-value="4">4</button><button data-value="5">5+</button></div>
+  <div class="sectionLabel">主要目标</div><div class="seg goal" id="profileGoal"><button data-value="health">健康</button><button data-value="muscle">增肌</button><button data-value="fat">减脂</button><button data-value="strength">力量</button><button data-value="cardio">体能</button></div>
   <button class="saveRecord" id="saveProfile">保存</button>
 </div></div>
 
 <div class="sheetWrap" id="watermarkSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b>记录水印</b><button class="plainClose" data-close="watermarkSheet">×</button></div>
-  <div class="settingsGroup"><div class="settingRow"><span>器械名称</span><button class="switch" id="wmName" role="switch"><i></i></button></div><div class="settingRow"><span>训练数据</span><button class="switch" id="wmData" role="switch"><i></i></button></div><div class="settingRow"><span>拍摄时间</span><button class="switch" id="wmTime" role="switch"><i></i></button></div><div class="settingRow"><span>AXIS标识</span><button class="switch" id="wmBrand" role="switch"><i></i></button></div></div>
-  <div class="sectionMini">位置</div><div class="positionGrid" id="wmPosition"><button data-pos="tl">左上</button><button data-pos="tr">右上</button><button data-pos="bl">左下</button><button data-pos="br">右下</button></div>
+  <div class="grabber"></div><div class="sheetHead"><b>记录水印</b><button class="closeBtn" data-close="watermarkSheet">×</button></div>
+  <div class="watermarkPreview" id="watermarkPreview"><div class="wmChip" id="wmChip"><b>AXIS</b><span>坐姿腿推 · 30kg · 10次 · 3组</span><small>2026.08.10 11:23</small></div><button data-pos="tl" aria-label="左上"></button><button data-pos="tr" aria-label="右上"></button><button data-pos="bl" aria-label="左下"></button><button data-pos="br" aria-label="右下"></button></div>
+  <div class="positionLabels"><span>左上</span><span>右上</span><span>左下</span><span>右下</span></div>
+  <div class="settingsList watermarkSettings">
+    <div class="settingPlain"><span>器械名称</span><button class="switch" id="wmName" role="switch"><i></i></button></div>
+    <div class="settingPlain"><span>训练数据</span><button class="switch" id="wmData" role="switch"><i></i></button></div>
+    <div class="settingPlain"><span>拍摄时间</span><button class="switch" id="wmTime" role="switch"><i></i></button></div>
+    <div class="settingPlain"><span>AXIS标识</span><button class="switch" id="wmBrand" role="switch"><i></i></button></div>
+  </div>
+  <div class="sectionLabel">保存版本</div>
+  <div class="mediaWatermark"><div><span>照片</span><div class="miniSeg" id="photoWmMode"><button data-value="wm" class="active">带水印</button><button data-value="raw">原片</button></div></div><div><span>视频</span><div class="miniSeg" id="videoWmMode"><button data-value="wm" class="active">带水印</button><button data-value="raw">原片</button></div></div></div>
 </div></div>
 
 <div class="sheetWrap" id="storageSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b>数据与空间</b><button class="plainClose" data-close="storageSheet">×</button></div>
-  <div class="storageHero"><b id="storageTotal">0 MB</b><span>本机占用</span><div class="storageBar"><i id="photoBar"></i><i id="videoBar"></i></div><div class="storageLegend"><span><i class="photoDot"></i>照片 <b id="photoSize">0 MB</b></span><span><i class="videoDot"></i>视频 <b id="videoSize">0 MB</b></span><span>记录 <b id="dataSize">0 KB</b></span></div></div>
+  <div class="grabber"></div><div class="sheetHead"><b>数据与空间</b><button class="closeBtn" data-close="storageSheet">×</button></div>
+  <div class="storageHero"><b id="storageTotal">0 MB</b><span>本机占用</span><div class="storageBar"><i id="photoBar"></i><i id="videoBar"></i></div><div class="storageLegend"><span>照片 <b id="photoSize">0 MB</b></span><span>视频 <b id="videoSize">0 MB</b></span><span>记录 <b id="dataSize">0 KB</b></span></div></div>
+  <div class="storageLocation"><div><span>保存位置</span><b>当前设备 · 浏览器本机</b></div><div><span>云端同步</span><b>未开启</b></div></div>
   <div class="storageActions"><button id="clearVideos">仅清理视频</button><button id="backupBtn">备份数据</button></div>
-  <div class="sectionLine storageTitle"><div class="sectionTitle">按训练删除</div><button id="selectAllSessions">全选</button></div>
-  <div class="sessionDeleteList" id="sessionDeleteList"></div>
+  <div class="sectionHead storageTitle"><b>按训练删除</b><button id="selectAllSessions">全选</button></div>
+  <div id="sessionDeleteList" class="sessionDeleteList"></div>
   <button class="deleteSelected" id="deleteSelected">删除所选</button>
-  <button class="clearAll" id="clearAll">清空全部记录</button>
+  <button class="dangerAction" id="clearAll">清空全部记录</button>
 </div></div>
 
 <div class="sheetWrap" id="reportSheet"><div class="sheet reportSheet">
-  <div class="grabber"></div><div class="sheetHead"><b>训练报告</b><button class="plainClose" data-close="reportSheet">×</button></div>
+  <div class="grabber"></div><div class="sheetHead"><b>训练报告</b><button class="closeBtn" data-close="reportSheet">×</button></div>
   <div class="seg reportRange" id="reportRange"><button class="active" data-range="last">最近一次</button><button data-range="7">7天</button><button data-range="30">30天</button></div>
   <div class="reportPreview" id="reportPreview"></div>
   <button class="saveRecord" id="shareReport">分享报告</button>
