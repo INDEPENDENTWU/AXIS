@@ -10,12 +10,12 @@ export default async function handler(req,res){
   const ip=String(req.headers['x-forwarded-for']||req.socket?.remoteAddress||'unknown').split(',')[0].trim();
   if(!allow(ip))return res.status(429).json({error:'rate_limited'});
   let body={};try{body=typeof req.body==='string'?JSON.parse(req.body||'{}'):(req.body||{})}catch{return res.status(400).json({error:'bad_json'})}
-  const audio=String(body.audio||''),mime=String(body.mime||'audio/mp4').slice(0,64);
+  const audio=String(body.audio||'');
   if(!/^data:audio\/[a-z0-9.+-]+;base64,/i.test(audio))return res.status(400).json({error:'bad_audio'});
   if(audio.length>4500000)return res.status(413).json({error:'too_large'});
   const base=(process.env.BAILIAN_BASE_URL||'https://dashscope.aliyuncs.com/compatible-mode/v1').replace(/\/$/,'');
   try{
-    const upstream=await fetch(`${base}/chat/completions`,{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model,messages:[{role:'user',content:[{type:'input_audio',input_audio:{data:audio,format:mime.split('/')[1]?.split(';')[0]||'mp4'}}]}],stream:false,asr_options:{language:'zh',enable_itn:true}})});
+    const upstream=await fetch(`${base}/chat/completions`,{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model,messages:[{role:'user',content:[{type:'input_audio',input_audio:{data:audio}}]}],stream:false,asr_options:{language:'zh',enable_itn:true}})});
     const raw=await upstream.json();
     if(!upstream.ok)return res.status(502).json({error:'upstream',detail:raw?.error?.message||raw?.message||'ASR error'});
     const text=String(raw?.choices?.[0]?.message?.content||'').trim();
