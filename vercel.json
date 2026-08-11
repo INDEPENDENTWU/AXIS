@@ -1,5 +1,8 @@
 {
   "$schema":"https://openapi.vercel.sh/vercel.json",
+  "buildCommand":"node scripts/build-vercel.mjs",
+  "installCommand":"echo AXIS-no-dependencies",
+  "outputDirectory":"dist",
   "cleanUrls":true,
   "trailingSlash":false,
   "functions":{
@@ -9,23 +12,11 @@
     "api/owner-config.js":{"maxDuration":10}
   },
   "headers":[
-    {"source":"/","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
-    {"source":"/index.html","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
+    {"source":"/","headers":[{"key":"Cache-Control","value":"public, max-age=0, must-revalidate"}]},
+    {"source":"/index.html","headers":[{"key":"Cache-Control","value":"public, max-age=0, must-revalidate"}]},
     {"source":"/owner.html","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
-    {"source":"/sw.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
-    {"source":"/edge-bootstrap.js","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]},
-    {"source":"/app.js","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]},
-    {"source":"/v61.js","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]},
-    {"source":"/styles.css","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]},
-    {"source":"/v61.css","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]},
+    {"source":"/sw.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"},{"key":"Service-Worker-Allowed","value":"/"}]},
     {"source":"/manifest.webmanifest","headers":[{"key":"Cache-Control","value":"public, max-age=86400, stale-while-revalidate=604800"}]},
-    {"source":"/enhance-v7.js","headers":[{"key":"Cache-Control","value":"public, max-age=86400"}]},
-    {"source":"/platform-v7.js","headers":[{"key":"Cache-Control","value":"public, max-age=86400"}]},
-    {"source":"/intelligence-v7.js","headers":[{"key":"Cache-Control","value":"public, max-age=86400"}]},
-    {"source":"/quick-v71.js","headers":[{"key":"Cache-Control","value":"public, max-age=86400"}]},
-    {"source":"/styles-v7.css","headers":[{"key":"Cache-Control","value":"public, max-age=86400"}]},
-    {"source":"/intelligence-v7.css","headers":[{"key":"Cache-Control","value":"public, max-age=86400"}]},
-    {"source":"/styles-v71.css","headers":[{"key":"Cache-Control","value":"public, max-age=86400"}]},
     {"source":"/(.*)","headers":[
       {"key":"X-Content-Type-Options","value":"nosniff"},
       {"key":"Referrer-Policy","value":"no-referrer"},
