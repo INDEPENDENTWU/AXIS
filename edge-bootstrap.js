@@ -10,8 +10,6 @@ window.fetch=(input,init={})=>{
   }
   return nativeFetch(input,init);
 };
-
-// Deterministic public-web boot: legacy Service Workers never own navigation.
 if('serviceWorker' in navigator){
   const sw=navigator.serviceWorker;
   try{Object.defineProperty(sw,'register',{configurable:true,value:()=>Promise.resolve(null)})}
@@ -20,86 +18,47 @@ if('serviceWorker' in navigator){
   clear();window.addEventListener('load',()=>setTimeout(clear,0),{once:true});
 }
 window.__AXIS_BOOT_READY__=true;
-
 function installRuntimeSandbox(){
   const NativeMO=window.MutationObserver;
   const nativeSetInterval=window.setInterval.bind(window);
   let restored=false;
-
   if(NativeMO){
     class AxisScopedObserver{
       constructor(callback){this.callback=callback;this.queue=[];this.timer=0;this.observers=[]}
-      _make(target,options){
-        const o=new NativeMO(records=>{
-          this.queue.push(...records);
-          if(this.timer)return;
-          this.timer=setTimeout(()=>{
-            this.timer=0;const batch=this.queue.splice(0);
-            try{this.callback(batch,this)}catch(e){console.warn('[AXIS] scoped observer skipped',e)}
-          },48);
-        });
-        o.observe(target,options);this.observers.push(o);
-      }
-      observe(target,options={}){
-        if(target===document.body&&options.subtree&&options.attributes){
-          const specs=[
-            ['#scanSheet',{attributes:true,attributeFilter:['class'],childList:true,subtree:true}],
-            ['#reviewStage',{attributes:true,attributeFilter:['class'],childList:true,subtree:true}],
-            ['#settingsSheet',{attributes:true,attributeFilter:['class'],childList:true,subtree:true}],
-            ['#finishSheet',{attributes:true,attributeFilter:['class'],childList:true,subtree:true}],
-            ['#todayView',{attributes:true,attributeFilter:['class']}],
-            ['#activeHome',{attributes:true,attributeFilter:['class']}]
-          ];
-          let n=0;for(const [sel,opts] of specs){const el=document.querySelector(sel);if(el){this._make(el,opts);n++}}
-          if(!n)this._make(document.body,{childList:true});
-          return;
-        }
-        this._make(target,options);
-      }
+      _make(target,options){const o=new NativeMO(records=>{this.queue.push(...records);if(this.timer)return;this.timer=setTimeout(()=>{this.timer=0;const batch=this.queue.splice(0);try{this.callback(batch,this)}catch(e){console.warn('[AXIS] scoped observer skipped',e)}},48)});o.observe(target,options);this.observers.push(o)}
+      observe(target,options={}){if(target===document.body&&options.subtree&&options.attributes){const specs=[['#scanSheet',{attributes:true,attributeFilter:['class'],childList:true,subtree:true}],['#reviewStage',{attributes:true,attributeFilter:['class'],childList:true,subtree:true}],['#settingsSheet',{attributes:true,attributeFilter:['class'],childList:true,subtree:true}],['#finishSheet',{attributes:true,attributeFilter:['class'],childList:true,subtree:true}],['#todayView',{attributes:true,attributeFilter:['class']}],['#activeHome',{attributes:true,attributeFilter:['class']}]];let n=0;for(const [sel,opts] of specs){const el=document.querySelector(sel);if(el){this._make(el,opts);n++}}if(!n)this._make(document.body,{childList:true});return}this._make(target,options)}
       disconnect(){clearTimeout(this.timer);this.timer=0;this.queue.length=0;this.observers.forEach(o=>o.disconnect());this.observers=[]}
       takeRecords(){return this.observers.flatMap(o=>o.takeRecords())}
     }
     window.MutationObserver=AxisScopedObserver;
   }
-
-  // Keep millisecond display, but cap enhancement-created sub-100ms loops.
   window.setInterval=(fn,delay,...args)=>nativeSetInterval(fn,Math.max(100,Number(delay)||0),...args);
-
-  return()=>{
-    if(restored)return;restored=true;
-    if(NativeMO)window.MutationObserver=NativeMO;
-    window.setInterval=nativeSetInterval;
-  };
+  return()=>{if(restored)return;restored=true;if(NativeMO)window.MutationObserver=NativeMO;window.setInterval=nativeSetInterval};
 }
-
-const loadScript=(src,done)=>{
-  const s=document.createElement('script');s.src=src;s.async=true;
-  s.onload=()=>done?.(true);s.onerror=()=>done?.(false);
-  (document.head||document.documentElement).appendChild(s);
-};
-
+const loadScript=(src,done)=>{const s=document.createElement('script');s.src=src;s.async=true;s.onload=()=>done?.(true);s.onerror=()=>done?.(false);(document.head||document.documentElement).appendChild(s)};
 const loadLatest=()=>{
   if(window.__AXIS_LATEST_LOADING__||window.__AXIS_LATEST_READY__)return;
   window.__AXIS_LATEST_LOADING__=true;
   const restore=installRuntimeSandbox();
   loadScript('/v82-runtime.js?v=836',ok=>{
     if(!ok){restore();window.__AXIS_LATEST_LOADING__=false;return}
-    // v82 schedules its actual initialization one turn after script evaluation.
     setTimeout(()=>{
       restore();window.__AXIS_82_READY__=true;
       loadScript('/v83-reminders.js?v=836',()=>{
         window.__AXIS_83_READY__=true;
-        // 8.4 is deliberately last and non-critical. It never participates in boot.
         loadScript('/v84-runtime.js?v=840',()=>{
-          window.__AXIS_LATEST_LOADING__=false;
-          window.__AXIS_LATEST_READY__=true;
+          window.__AXIS_84_READY__=true;
+          if(window.CanvasRenderingContext2D&&!window.__AXIS_NATIVE_DRAWIMAGE__)window.__AXIS_NATIVE_DRAWIMAGE__=CanvasRenderingContext2D.prototype.drawImage;
+          loadScript('/v85-runtime.js?v=850',ok85=>{
+            if(!ok85){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
+            window.__AXIS_85_READY__=true;
+            loadScript('/v85-canvas-fix.js?v=850',()=>{window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true});
+          });
         });
       });
     },900);
   });
 };
-
-// Core app + v61 become usable first. Enhancements are never on the critical path.
 if(document.readyState==='complete')setTimeout(loadLatest,350);
 else window.addEventListener('load',()=>setTimeout(loadLatest,350),{once:true});
 })();
