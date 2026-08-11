@@ -57,8 +57,14 @@ const loadLatest=()=>{
                 window.__AXIS_86_READY__=!!ok86;
                 if(!ok86){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
                 loadScript('/v86-gesture.js?v=860',()=>{
-                  window.__AXIS_LATEST_LOADING__=false;
-                  window.__AXIS_LATEST_READY__=true;
+                  loadScript('/v87-runtime.js?v=870',ok87=>{
+                    window.__AXIS_87_READY__=!!ok87;
+                    if(!ok87){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
+                    loadScript('/v87-fix.js?v=870',()=>{
+                      window.__AXIS_LATEST_LOADING__=false;
+                      window.__AXIS_LATEST_READY__=true;
+                    });
+                  });
                 });
               });
             });
