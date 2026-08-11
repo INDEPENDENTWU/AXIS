@@ -1,74 +1,9 @@
-const CACHE='axis-shell-v832';
-const SHELL_KEY='/';
-const RUNTIME='/axis-runtime-832.js';
-
-self.addEventListener('install',event=>{
-  event.waitUntil((async()=>{
-    const cache=await caches.open(CACHE);
-    try{
-      const [shell,runtime]=await Promise.all([
-        fetch('/?axis_shell=832',{cache:'reload'}),
-        fetch(RUNTIME,{cache:'reload'})
-      ]);
-      if(shell.ok)await cache.put(SHELL_KEY,shell.clone());
-      if(runtime.ok)await cache.put(RUNTIME,runtime.clone());
-    }catch{}
-    await self.skipWaiting();
-  })());
-});
-
-self.addEventListener('activate',event=>{
-  event.waitUntil((async()=>{
+self.addEventListener('install',event=>event.waitUntil(self.skipWaiting()));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+  try{
     const keys=await caches.keys();
-    await Promise.all(keys.filter(k=>k.startsWith('axis-shell-')&&k!==CACHE).map(k=>caches.delete(k)));
-    await self.clients.claim();
-  })());
-});
-
-self.addEventListener('fetch',event=>{
-  const req=event.request;
-  if(req.method!=='GET')return;
-  const url=new URL(req.url);
-  if(url.origin!==self.location.origin)return;
-  if(url.pathname.startsWith('/api/')||url.pathname==='/owner'||url.pathname==='/owner.html'||url.pathname==='/sw.js')return;
-
-  if(url.pathname===RUNTIME){
-    event.respondWith((async()=>{
-      const cache=await caches.open(CACHE);
-      const cached=await cache.match(RUNTIME);
-      if(cached)return cached;
-      try{
-        const live=await fetch(req,{cache:'reload'});
-        if(live.ok)await cache.put(RUNTIME,live.clone());
-        return live;
-      }catch{
-        return new Response('',{status:503,headers:{'Content-Type':'application/javascript'}});
-      }
-    })());
-    return;
-  }
-
-  if(req.mode!=='navigate'||url.pathname!=='/')return;
-
-  event.respondWith((async()=>{
-    const cache=await caches.open(CACHE);
-    const cached=await cache.match(SHELL_KEY);
-    const refresh=async()=>{
-      try{
-        const response=await fetch(req,{cache:'no-cache'});
-        if(response&&response.ok)await cache.put(SHELL_KEY,response.clone());
-        return response;
-      }catch{return null}
-    };
-    const forceFresh=url.searchParams.has('v')||url.searchParams.has('axis_fresh');
-    if(forceFresh){
-      const live=await refresh();
-      if(live)return live;
-      if(cached)return cached;
-    }
-    if(cached){event.waitUntil(refresh());return cached}
-    const live=await refresh();
-    if(live)return live;
-    return new Response('<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090b"><style>html,body{margin:0;background:#08090b;color:#f4f3ef;font-family:-apple-system,BlinkMacSystemFont,sans-serif}main{min-height:100dvh;display:grid;place-items:center;padding:24px}b{font-size:15px;letter-spacing:.16em}span{display:block;margin-top:10px;color:#9da4af;font-size:12px}</style><main><div><b>AXIS</b><span>当前网络不可用，请稍后重试。</span></div></main>',{status:503,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'}});
-  })());
-});
+    await Promise.all(keys.filter(k=>k.startsWith('axis-shell-')).map(k=>caches.delete(k)));
+  }catch{}
+  try{await self.registration.unregister()}catch{}
+  try{await self.clients.claim()}catch{}
+})()));
