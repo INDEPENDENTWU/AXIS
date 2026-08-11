@@ -14,8 +14,7 @@ window.fetch=(input,init={})=>{
   return nativeFetch(input,init);
 };
 
-// AXIS used a network-first Service Worker in older releases. During the
-// current public-web phase we prefer deterministic fresh assets on every host.
+// Keep startup deterministic: legacy Service Workers must never own navigation.
 if('serviceWorker' in navigator){
   const sw=navigator.serviceWorker;
   try{Object.defineProperty(sw,'register',{configurable:true,value:()=>Promise.resolve(null)})}
@@ -25,4 +24,25 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',()=>setTimeout(clear,0),{once:true});
 }
 window.__AXIS_BOOT_READY__=true;
+
+// Latest product layers are deliberately non-critical. AXIS core becomes usable
+// first; enhancements load only after the window load event and can never block boot.
+const loadLatest=()=>{
+  if(window.__AXIS_LATEST_LOADING__)return;
+  window.__AXIS_LATEST_LOADING__=true;
+  const load=(src,done)=>{
+    const s=document.createElement('script');
+    s.src=src;s.async=true;
+    s.onload=()=>done?.(true);
+    s.onerror=()=>done?.(false);
+    (document.head||document.documentElement).appendChild(s);
+  };
+  load('/v82-runtime.js?v=833',ok=>{
+    if(!ok){window.__AXIS_LATEST_LOADING__=false;return}
+    window.__AXIS_82_READY__=true;
+    load('/v83-reminders.js?v=833',()=>{window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true});
+  });
+};
+if(document.readyState==='complete')setTimeout(loadLatest,80);
+else window.addEventListener('load',()=>setTimeout(loadLatest,80),{once:true});
 })();
