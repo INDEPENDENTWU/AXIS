@@ -14,6 +14,10 @@ function restoreServiceWorker(){
   if(typeof reg!=='function')return;
   reg.call(sw,'/sw.js?v=831',{scope:'/',updateViaCache:'none'}).catch(()=>{});
 }
+function scheduleServiceWorker(){
+  const run=()=>setTimeout(restoreServiceWorker,80);
+  if(D.readyState==='complete')run();else window.addEventListener('load',run,{once:true});
+}
 
 function ctx(){
   if(!audioCtx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;audioCtx=new C()}
@@ -78,7 +82,7 @@ function injectSettings(){
   $('#v83TestSound').onclick=async()=>{const mode=readMeta().prefs.reminderSound||'soft';await unlockAudio(true,mode==='off'?'soft':mode)};
 }
 function boot(){
-  restoreServiceWorker();installSilentUnlock();setTimeout(injectSettings,60);setInterval(checkReminder,500);
+  scheduleServiceWorker();installSilentUnlock();setTimeout(injectSettings,60);setInterval(checkReminder,500);
   D.addEventListener('visibilitychange',()=>{if(!D.hidden){checkReminder();if((readMeta().prefs?.reminderSound||'off')!=='off')installSilentUnlock()}});
   $('#settingsBtn')?.addEventListener('click',()=>setTimeout(injectSettings,80));
   const v=$('.versionLine');if(v)v.textContent='版本 8.3';
