@@ -1,11 +1,11 @@
-const CACHE='axis-shell-v830';
+const CACHE='axis-shell-v831';
 const SHELL_KEY='/';
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
     const cache=await caches.open(CACHE);
     try{
-      const response=await fetch('/?axis_shell=830',{cache:'reload'});
+      const response=await fetch('/?axis_shell=831',{cache:'reload'});
       if(response.ok)await cache.put(SHELL_KEY,response.clone());
     }catch{}
     await self.skipWaiting();
