@@ -28,9 +28,7 @@ function installRuntimeSandbox(){
 
   if(NativeMO){
     class AxisScopedObserver{
-      constructor(callback){
-        this.callback=callback;this.queue=[];this.timer=0;this.observers=[];
-      }
+      constructor(callback){this.callback=callback;this.queue=[];this.timer=0;this.observers=[]}
       _make(target,options){
         const o=new NativeMO(records=>{
           this.queue.push(...records);
@@ -64,8 +62,7 @@ function installRuntimeSandbox(){
     window.MutationObserver=AxisScopedObserver;
   }
 
-  // A millisecond display does not need a 33ms DOM write loop. Keep the feature,
-  // but cap enhancement-created sub-100ms intervals to 100ms on mobile WebKit.
+  // Keep millisecond display, but cap enhancement-created sub-100ms loops.
   window.setInterval=(fn,delay,...args)=>nativeSetInterval(fn,Math.max(100,Number(delay)||0),...args);
 
   return()=>{
@@ -87,12 +84,16 @@ const loadLatest=()=>{
   const restore=installRuntimeSandbox();
   loadScript('/v82-runtime.js?v=836',ok=>{
     if(!ok){restore();window.__AXIS_LATEST_LOADING__=false;return}
-    // v82 schedules boot82 with setTimeout(0) after dynamic script evaluation.
-    // Keep the sandbox alive across that actual initialization turn.
+    // v82 schedules its actual initialization one turn after script evaluation.
     setTimeout(()=>{
       restore();window.__AXIS_82_READY__=true;
       loadScript('/v83-reminders.js?v=836',()=>{
-        window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;
+        window.__AXIS_83_READY__=true;
+        // 8.4 is deliberately last and non-critical. It never participates in boot.
+        loadScript('/v84-runtime.js?v=840',()=>{
+          window.__AXIS_LATEST_LOADING__=false;
+          window.__AXIS_LATEST_READY__=true;
+        });
       });
     },900);
   });
