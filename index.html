@@ -4,13 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#08090b">
+<meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AXIS">
 <link rel="manifest" href="/manifest.webmanifest">
 <title>AXIS</title>
-<link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/v61.css">
+<style>
+:root{color-scheme:dark;--bg:#08090b;--s1:#0e1014;--s2:#14171d;--line2:#1a1e25;--text:#f4f3ef;--muted:#9da4af;--dim:#747c88;--accent:#737cff;--max:520px;--pad:22px}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#08090b;color:#f4f3ef;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei","Noto Sans SC",Arial,sans-serif;-webkit-font-smoothing:antialiased}body{min-height:100dvh;overscroll-behavior:none}button{font:inherit;border:0;background:none;color:inherit;-webkit-tap-highlight-color:transparent}.hidden,.sheetWrap{display:none!important}.app{width:min(100%,var(--max));min-height:100dvh;margin:auto;position:relative;padding-bottom:108px}.topbar{height:calc(72px + env(safe-area-inset-top));padding:calc(14px + env(safe-area-inset-top)) var(--pad) 8px;display:grid;grid-template-columns:1fr 44px;align-items:center}.brand{height:44px;display:flex;align-items:center;gap:12px;font-size:15px;font-weight:730;letter-spacing:.22em}.mark{width:18px;height:18px;position:relative;transform:rotate(45deg)}.mark:before,.mark:after{content:"";position:absolute;width:7px;height:17px;border-radius:1px;background:var(--text)}.mark:before{left:0;top:0}.mark:after{right:0;bottom:0;background:var(--accent)}.iconBtn{width:44px;height:44px;display:grid;place-items:center;color:var(--muted)}.iconBtn svg{width:22px;height:22px}.view{display:none;padding:0 var(--pad) 34px}.view.active{display:block}.pageHead{display:flex;align-items:flex-end;justify-content:space-between;margin:24px 0 22px}.pageHead h1{margin:0;font-size:31px;line-height:1;font-weight:690;letter-spacing:-.045em}.pageHead>span{font-size:13px;color:var(--muted)}#idleHome .sessionLead{display:none}.metricPair{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);margin-top:30px}.metricPair>div{padding:20px 2px}.metricPair>div+div{border-left:1px solid var(--line2);padding-left:22px}.metricPair b{display:block;font-size:29px;line-height:1;font-weight:660;font-variant-numeric:tabular-nums}.metricPair span{display:block;margin-top:9px;font-size:12.5px;color:var(--muted)}.captureDock{display:grid;position:fixed;left:50%;transform:translateX(-50%);bottom:76px;width:min(100%,var(--max));padding:0 var(--pad);z-index:40}.scanPrimary{width:100%;height:64px;border-radius:20px;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;gap:10px;font-size:16px;font-weight:720}.scanPrimary svg{width:19px;height:19px}.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(100%,var(--max));height:76px;padding:8px var(--pad) calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,1fr);z-index:35;background:linear-gradient(180deg,rgba(8,9,11,0),#08090b 22%)}.nav button{position:relative;font-size:12.5px;color:var(--dim)}.nav button.active{color:var(--text);font-weight:650}.nav button.active:before{content:"";position:absolute;left:50%;top:4px;width:18px;height:2px;border-radius:9px;background:var(--accent);transform:translateX(-50%)}
+</style>
+<link rel="preload" href="/styles.css?v=821" as="style">
+<link rel="preload" href="/v61.css?v=821" as="style">
+<link rel="stylesheet" href="/styles.css?v=821" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="/v61.css?v=821" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/styles.css?v=821"><link rel="stylesheet" href="/v61.css?v=821"></noscript>
+<script src="/edge-bootstrap.js?v=821" defer></script>
+<script src="/app.js?v=821" defer></script>
+<script src="/v61.js?v=821" defer></script>
 </head>
 <body>
 <div class="app">
@@ -64,14 +74,14 @@
   </main>
 
   <div class="captureDock" id="dock">
-    <button class="scanPrimary" id="scanBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg><span>扫一下</span></button>
+    <button class="scanPrimary" id="scanBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.2"/></svg><span>拍摄记录</span></button>
   </div>
 
   <nav class="nav"><button class="active" data-view="todayView">今天</button><button data-view="historyView">记录</button><button data-view="insightsView">趋势</button></nav>
 </div>
 
 <div class="sheetWrap" id="scanSheet"><div class="sheet">
-  <div class="grabber"></div><div class="sheetHead"><b>扫一下</b><button class="closeBtn" data-close="scanSheet" aria-label="关闭">×</button></div>
+  <div class="grabber"></div><div class="sheetHead"><b>拍摄记录</b><button class="closeBtn" data-close="scanSheet" aria-label="关闭">×</button></div>
   <div id="captureStage">
     <div class="camera"><video id="cameraVideo" playsinline muted></video><div class="cameraFallback hidden" id="cameraFallback">相机不可用</div><div class="scanState" id="scanState">就绪</div></div>
     <div class="captureModes" id="captureModes"><button data-mode="3" class="active">扫3秒</button><button data-mode="5">扫5秒</button><button data-mode="photo">拍一张</button></div>
@@ -203,8 +213,5 @@
 </div></div>
 
 <div class="toast" id="toast"></div>
-<script src="/edge-bootstrap.js"></script>
-<script src="/app.js" defer></script>
-<script src="/v61.js" defer></script>
 </body>
 </html>
