@@ -1,0 +1,5 @@
+AXIS 8.3.3 Safe
+Stable core: app.js + v61.js
+Deferred enhancements: v82-runtime.js -> v83-reminders.js
+Owner console: /owner.html
+No Service Worker navigation dependency.
