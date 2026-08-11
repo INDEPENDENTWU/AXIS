@@ -5,11 +5,13 @@
   "functions":{
     "api/analyze.js":{"maxDuration":30},
     "api/insight.js":{"maxDuration":20},
-    "api/ai-status.js":{"maxDuration":10}
+    "api/ai-status.js":{"maxDuration":10},
+    "api/owner-config.js":{"maxDuration":10}
   },
   "headers":[
     {"source":"/","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/index.html","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
+    {"source":"/owner.html","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/edge-bootstrap.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/sw.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/app.js","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
