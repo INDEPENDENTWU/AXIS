@@ -55,8 +55,11 @@ const loadLatest=()=>{
             loadScript('/v85-canvas-fix.js?v=850',()=>{
               loadScript('/v86-runtime.js?v=860',ok86=>{
                 window.__AXIS_86_READY__=!!ok86;
-                window.__AXIS_LATEST_LOADING__=false;
-                window.__AXIS_LATEST_READY__=true;
+                if(!ok86){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
+                loadScript('/v86-gesture.js?v=860',()=>{
+                  window.__AXIS_LATEST_LOADING__=false;
+                  window.__AXIS_LATEST_READY__=true;
+                });
               });
             });
           });
