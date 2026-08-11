@@ -12,7 +12,7 @@ function restoreServiceWorker(){
   try{delete sw.register}catch{}
   const proto=Object.getPrototypeOf(sw),reg=proto&&proto.register;
   if(typeof reg!=='function')return;
-  reg.call(sw,'/sw.js?v=831',{scope:'/',updateViaCache:'none'}).catch(()=>{});
+  reg.call(sw,'/sw.js?v=832',{scope:'/',updateViaCache:'none'}).catch(()=>{});
 }
 function scheduleServiceWorker(){
   const run=()=>setTimeout(restoreServiceWorker,80);
@@ -85,7 +85,7 @@ function boot(){
   scheduleServiceWorker();installSilentUnlock();setTimeout(injectSettings,60);setInterval(checkReminder,500);
   D.addEventListener('visibilitychange',()=>{if(!D.hidden){checkReminder();if((readMeta().prefs?.reminderSound||'off')!=='off')installSilentUnlock()}});
   $('#settingsBtn')?.addEventListener('click',()=>setTimeout(injectSettings,80));
-  const v=$('.versionLine');if(v)v.textContent='版本 8.3';
+  const v=$('.versionLine');if(v)v.textContent='版本 8.3.2';
 }
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
