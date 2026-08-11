@@ -1,12 +1,17 @@
-const CACHE='axis-shell-v831';
+const CACHE='axis-shell-v832';
 const SHELL_KEY='/';
+const RUNTIME='/axis-runtime-832.js';
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
     const cache=await caches.open(CACHE);
     try{
-      const response=await fetch('/?axis_shell=831',{cache:'reload'});
-      if(response.ok)await cache.put(SHELL_KEY,response.clone());
+      const [shell,runtime]=await Promise.all([
+        fetch('/?axis_shell=832',{cache:'reload'}),
+        fetch(RUNTIME,{cache:'reload'})
+      ]);
+      if(shell.ok)await cache.put(SHELL_KEY,shell.clone());
+      if(runtime.ok)await cache.put(RUNTIME,runtime.clone());
     }catch{}
     await self.skipWaiting();
   })());
@@ -26,16 +31,41 @@ self.addEventListener('fetch',event=>{
   const url=new URL(req.url);
   if(url.origin!==self.location.origin)return;
   if(url.pathname.startsWith('/api/')||url.pathname==='/owner'||url.pathname==='/owner.html'||url.pathname==='/sw.js')return;
+
+  if(url.pathname===RUNTIME){
+    event.respondWith((async()=>{
+      const cache=await caches.open(CACHE);
+      const cached=await cache.match(RUNTIME);
+      if(cached)return cached;
+      try{
+        const live=await fetch(req,{cache:'reload'});
+        if(live.ok)await cache.put(RUNTIME,live.clone());
+        return live;
+      }catch{
+        return new Response('',{status:503,headers:{'Content-Type':'application/javascript'}});
+      }
+    })());
+    return;
+  }
+
   if(req.mode!=='navigate'||url.pathname!=='/')return;
 
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE);
     const cached=await cache.match(SHELL_KEY);
     const refresh=async()=>{
-      try{const response=await fetch(req,{cache:'no-cache'});if(response&&response.ok)await cache.put(SHELL_KEY,response.clone());return response}catch{return null}
+      try{
+        const response=await fetch(req,{cache:'no-cache'});
+        if(response&&response.ok)await cache.put(SHELL_KEY,response.clone());
+        return response;
+      }catch{return null}
     };
     const forceFresh=url.searchParams.has('v')||url.searchParams.has('axis_fresh');
-    if(forceFresh){const live=await refresh();if(live)return live;if(cached)return cached}
+    if(forceFresh){
+      const live=await refresh();
+      if(live)return live;
+      if(cached)return cached;
+    }
     if(cached){event.waitUntil(refresh());return cached}
     const live=await refresh();
     if(live)return live;
