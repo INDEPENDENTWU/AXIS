@@ -31,13 +31,13 @@ self.addEventListener('fetch',event=>{
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE);
     const cached=await cache.match(SHELL_KEY);
-    const refresh=fetch(req,{cache:'no-cache'}).then(async response=>{
-      if(response&&response.ok)await cache.put(SHELL_KEY,response.clone());
-      return response;
-    }).catch(()=>null);
-
-    if(cached){event.waitUntil(refresh);return cached}
-    const live=await refresh;
+    const refresh=async()=>{
+      try{const response=await fetch(req,{cache:'no-cache'});if(response&&response.ok)await cache.put(SHELL_KEY,response.clone());return response}catch{return null}
+    };
+    const forceFresh=url.searchParams.has('v')||url.searchParams.has('axis_fresh');
+    if(forceFresh){const live=await refresh();if(live)return live;if(cached)return cached}
+    if(cached){event.waitUntil(refresh());return cached}
+    const live=await refresh();
     if(live)return live;
     return new Response('<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090b"><style>html,body{margin:0;background:#08090b;color:#f4f3ef;font-family:-apple-system,BlinkMacSystemFont,sans-serif}main{min-height:100dvh;display:grid;place-items:center;padding:24px}b{font-size:15px;letter-spacing:.16em}span{display:block;margin-top:10px;color:#9da4af;font-size:12px}</style><main><div><b>AXIS</b><span>当前网络不可用，请稍后重试。</span></div></main>',{status:503,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'}});
   })());
