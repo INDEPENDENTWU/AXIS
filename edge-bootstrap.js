@@ -61,8 +61,11 @@ const loadLatest=()=>{
                     window.__AXIS_87_READY__=!!ok87;
                     if(!ok87){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
                     loadScript('/v87-fix.js?v=870',()=>{
-                      window.__AXIS_LATEST_LOADING__=false;
-                      window.__AXIS_LATEST_READY__=true;
+                      loadScript('/v871-fix.js?v=871',ok871=>{
+                        window.__AXIS_871_READY__=!!ok871;
+                        window.__AXIS_LATEST_LOADING__=false;
+                        window.__AXIS_LATEST_READY__=true;
+                      });
                     });
                   });
                 });
