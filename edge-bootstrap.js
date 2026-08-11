@@ -52,7 +52,13 @@ const loadLatest=()=>{
           loadScript('/v85-runtime.js?v=850',ok85=>{
             if(!ok85){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
             window.__AXIS_85_READY__=true;
-            loadScript('/v85-canvas-fix.js?v=850',()=>{window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true});
+            loadScript('/v85-canvas-fix.js?v=850',()=>{
+              loadScript('/v86-runtime.js?v=860',ok86=>{
+                window.__AXIS_86_READY__=!!ok86;
+                window.__AXIS_LATEST_LOADING__=false;
+                window.__AXIS_LATEST_READY__=true;
+              });
+            });
           });
         });
       });
