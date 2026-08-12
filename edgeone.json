@@ -1,52 +1,58 @@
 {
-  "outputDirectory":".",
-  "headers":[
+  "outputDirectory": ".",
+  "nodeVersion": "20.18.0",
+  "headers": [
     {
-      "source":"/",
-      "headers":[
-        {"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}
+      "source": "/",
+      "headers": [
+        {"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"}
       ]
     },
     {
-      "source":"/index.html",
-      "headers":[
-        {"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}
+      "source": "/index.html",
+      "headers": [
+        {"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"}
       ]
     },
     {
-      "source":"/edge-bootstrap.js",
-      "headers":[
-        {"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}
+      "source": "/owner.html",
+      "headers": [
+        {"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"}
       ]
     },
     {
-      "source":"/app.js",
-      "headers":[
-        {"key":"Cache-Control","value":"max-age=0, must-revalidate"}
+      "source": "/fresh/*",
+      "headers": [
+        {"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"}
       ]
     },
     {
-      "source":"/v61.js",
-      "headers":[
-        {"key":"Cache-Control","value":"max-age=0, must-revalidate"}
+      "source": "/*.js",
+      "headers": [
+        {"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"}
       ]
     },
     {
-      "source":"/quick-v71.js",
-      "headers":[
-        {"key":"Cache-Control","value":"max-age=0, must-revalidate"}
+      "source": "/*.css",
+      "headers": [
+        {"key": "Cache-Control", "value": "max-age=0, must-revalidate"}
       ]
     },
     {
-      "source":"/sw.js",
-      "headers":[
-        {"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}
+      "source": "/*",
+      "headers": [
+        {"key": "X-Content-Type-Options", "value": "nosniff"},
+        {"key": "Referrer-Policy", "value": "no-referrer"},
+        {"key": "X-Frame-Options", "value": "DENY"},
+        {"key": "Permissions-Policy", "value": "camera=(self), microphone=(), geolocation=(self), accelerometer=(self), gyroscope=(self)"}
       ]
     }
   ],
-  "cloudFunctions":{
-    "nodejs":{"maxDuration":30},
-    "mainlandRegions":["ap-guangzhou"],
-    "overseasRegions":["ap-singapore"]
+  "cloudFunctions": {
+    "mainlandRegions": ["ap-guangzhou"],
+    "overseasRegions": ["ap-singapore"],
+    "nodejs": {
+      "maxDuration": 30
+    }
   }
 }
