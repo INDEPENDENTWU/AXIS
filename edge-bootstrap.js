@@ -63,8 +63,11 @@ const loadLatest=()=>{
                     loadScript('/v87-fix.js?v=870',()=>{
                       loadScript('/v871-fix.js?v=871',ok871=>{
                         window.__AXIS_871_READY__=!!ok871;
-                        window.__AXIS_LATEST_LOADING__=false;
-                        window.__AXIS_LATEST_READY__=true;
+                        loadScript('/v872-fix.js?v=872',ok872=>{
+                          window.__AXIS_872_READY__=!!ok872;
+                          window.__AXIS_LATEST_LOADING__=false;
+                          window.__AXIS_LATEST_READY__=true;
+                        });
                       });
                     });
                   });
