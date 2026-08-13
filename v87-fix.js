@@ -1,1 +1,2 @@
 (()=>{'use strict';document.addEventListener('click',e=>{if(e.target.closest('#v87Session')){e.preventDefault();const s=document.querySelector('#v86TargetSheet');if(s)s.classList.add('show')}},true)})();
+/* AXIS 8.7.8 release asset rotation */
