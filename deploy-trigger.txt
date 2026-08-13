@@ -1,3 +1,3 @@
-AXIS EdgeOne redeploy trigger
-2026-08-12T15:40:00+08:00
-Reason: apply updated production environment variables including AXIS_OWNER_TOKEN.
+AXIS production redeploy trigger
+2026-08-13T15:08:00+08:00
+Reason: publish AXIS 8.7.3 multilingual exercise intelligence and adaptive set controls to Vercel and EdgeOne.
