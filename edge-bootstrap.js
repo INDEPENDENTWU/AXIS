@@ -79,9 +79,12 @@ const loadLatest=()=>{
                                     window.__AXIS_875_READY__=!!ok875;
                                     loadScript('/v876-runtime.js?v=876',ok876=>{
                                       window.__AXIS_876_READY__=!!ok876;
-                                      window.__AXIS_LATEST_LOADING__=false;
-                                      window.__AXIS_LATEST_READY__=true;
-                                      if(!ok876){document.getElementById('axisVersionBootStyle')?.remove();const v=document.querySelector('.versionLine');if(v)v.textContent=ok875?'版本 8.7.5':'版本 8.7.4'}
+                                      loadScript('/v877-runtime.js?v=877',ok877=>{
+                                        window.__AXIS_877_READY__=!!ok877;
+                                        window.__AXIS_LATEST_LOADING__=false;
+                                        window.__AXIS_LATEST_READY__=true;
+                                        if(!ok877){document.getElementById('axisVersionBootStyle')?.remove();const v=document.querySelector('.versionLine');if(v)v.textContent=ok876?'版本 8.7.6':(ok875?'版本 8.7.5':'版本 8.7.4')}
+                                      });
                                     });
                                   });
                                 });
