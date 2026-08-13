@@ -18,6 +18,7 @@ if('serviceWorker' in navigator){
   clear();window.addEventListener('load',()=>setTimeout(clear,0),{once:true});
 }
 window.__AXIS_BOOT_READY__=true;
+if(!document.getElementById('axisVersionBootStyle')){const s=document.createElement('style');s.id='axisVersionBootStyle';s.textContent='.versionLine{visibility:hidden!important}';(document.head||document.documentElement).appendChild(s)}
 function installRuntimeSandbox(){
   const NativeMO=window.MutationObserver;
   const nativeSetInterval=window.setInterval.bind(window);
@@ -41,7 +42,7 @@ const loadLatest=()=>{
   window.__AXIS_LATEST_LOADING__=true;
   const restore=installRuntimeSandbox();
   loadScript('/v82-runtime.js?v=836',ok=>{
-    if(!ok){restore();window.__AXIS_LATEST_LOADING__=false;return}
+    if(!ok){restore();window.__AXIS_LATEST_LOADING__=false;document.getElementById('axisVersionBootStyle')?.remove();return}
     setTimeout(()=>{
       restore();window.__AXIS_82_READY__=true;
       loadScript('/v83-reminders.js?v=836',()=>{
@@ -49,17 +50,18 @@ const loadLatest=()=>{
         loadScript('/v84-runtime.js?v=840',()=>{
           window.__AXIS_84_READY__=true;
           if(window.CanvasRenderingContext2D&&!window.__AXIS_NATIVE_DRAWIMAGE__)window.__AXIS_NATIVE_DRAWIMAGE__=CanvasRenderingContext2D.prototype.drawImage;
+          if(window.HTMLCanvasElement&&!window.__AXIS_NATIVE_TOBLOB__)window.__AXIS_NATIVE_TOBLOB__=HTMLCanvasElement.prototype.toBlob;
           loadScript('/v85-runtime.js?v=850',ok85=>{
-            if(!ok85){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
+            if(!ok85){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;document.getElementById('axisVersionBootStyle')?.remove();return}
             window.__AXIS_85_READY__=true;
             loadScript('/v85-canvas-fix.js?v=850',()=>{
               loadScript('/v86-runtime.js?v=860',ok86=>{
                 window.__AXIS_86_READY__=!!ok86;
-                if(!ok86){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
+                if(!ok86){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;document.getElementById('axisVersionBootStyle')?.remove();return}
                 loadScript('/v86-gesture.js?v=860',()=>{
                   loadScript('/v87-runtime.js?v=870',ok87=>{
                     window.__AXIS_87_READY__=!!ok87;
-                    if(!ok87){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;return}
+                    if(!ok87){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;document.getElementById('axisVersionBootStyle')?.remove();return}
                     loadScript('/v87-fix.js?v=870',()=>{
                       loadScript('/v871-fix.js?v=871',ok871=>{
                         window.__AXIS_871_READY__=!!ok871;
@@ -69,12 +71,16 @@ const loadLatest=()=>{
                             window.__AXIS_873_LIBRARY_READY__=!!ok873lib;
                             loadScript('/v873-smart-input.js?v=873',ok873=>{
                               window.__AXIS_873_READY__=!!ok873;
-                              loadScript('/v874-professional.js?v=874',ok874=>{
+                              loadScript('/v874-professional.js?v=875',ok874=>{
                                 window.__AXIS_874_READY__=!!ok874;
-                                loadScript('/v874-set-bridge.js?v=874',ok874b=>{
+                                loadScript('/v874-set-bridge.js?v=875',ok874b=>{
                                   window.__AXIS_874_SET_READY__=!!ok874b;
-                                  window.__AXIS_LATEST_LOADING__=false;
-                                  window.__AXIS_LATEST_READY__=true;
+                                  loadScript('/v875-polish.js?v=875',ok875=>{
+                                    window.__AXIS_875_READY__=!!ok875;
+                                    window.__AXIS_LATEST_LOADING__=false;
+                                    window.__AXIS_LATEST_READY__=true;
+                                    if(!ok875){document.getElementById('axisVersionBootStyle')?.remove();const v=document.querySelector('.versionLine');if(v)v.textContent='版本 8.7.4'}
+                                  });
                                 });
                               });
                             });
