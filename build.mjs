@@ -28,7 +28,8 @@ const enhanceModules=[
   ['v874-set-bridge.js','__AXIS_874_SET_READY__'],
   ['v875-polish.js','__AXIS_875_READY__'],
   ['v876-runtime.js','__AXIS_876_READY__'],
-  ['v877-runtime.js','__AXIS_877_READY__']
+  ['v877-runtime.js','__AXIS_877_READY__'],
+  ['v878-stability.js','__AXIS_878_READY__']
 ];
 const allModules=[...coreModules,...enhanceModules];
 
@@ -76,8 +77,16 @@ try{if('serviceWorker'in navigator){const sw=navigator.serviceWorker;try{Object.
 window.addEventListener('error',e=>{try{console.error('[AXIS runtime]',e.error||e.message||e)}catch{}},{passive:true});
 })();\n`+safeObserver;
 
+function normalizeReleaseVersion(src){
+  return src
+    .replace(/`版本 \$\{VERSION\}`/g,'`版本 ${window.__AXIS_RELEASE__||VERSION}`')
+    .replace(/\.dataset\.axisVersion=VERSION/g,'.dataset.axisVersion=window.__AXIS_RELEASE__||VERSION')
+    .replace(/window\.__AXIS_VERSION__=VERSION/g,'window.__AXIS_VERSION__=window.__AXIS_RELEASE__||VERSION');
+}
+
 function isolatedSource(file,flag,index,label){
-  const src=fs.readFileSync(path.join(ROOT,file),'utf8');
+  let src=fs.readFileSync(path.join(ROOT,file),'utf8');
+  src=normalizeReleaseVersion(src);
   return `\n/* ===== ${file} ===== */\nfunction __axis_${label}_${index}(){try{\n${src}\nwindow.${flag}=true;return true}catch(e){window.${flag}=false;console.error('[AXIS] ${file} isolated',e);return false}}\n`;
 }
 
@@ -100,6 +109,7 @@ try{
     if(i>0&&i%4===0)await frame();
   }
   window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;window.__AXIS_HYDRATING__=false;window.__AXIS_BOOT_WATCHDOG__='ready';
+  window.__AXIS_VERSION__=window.__AXIS_RELEASE__||'${VERSION}';
   document.documentElement.dataset.axisReady='1';
 }catch(e){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_HYDRATING__=false;window.__AXIS_BOOT_WATCHDOG__='degraded';console.error('[AXIS] enhancement hydration',e)}
 const v=document.querySelector('.versionLine');if(v){v.textContent='版本 ${VERSION}';v.style.visibility='visible';v.dataset.axisVersion='${VERSION}'}
@@ -152,8 +162,8 @@ const fresh=`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta
 fs.mkdirSync(path.join(ROOT,'fresh'),{recursive:true});fs.writeFileSync(path.join(ROOT,'fresh','index.html'),fresh);
 
 const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8');if(!/unregister\(\)/.test(sw)||!/skipWaiting\(\)/.test(sw))throw new Error('AXIS production gate: service worker kill switch missing');
-const info={version:VERSION,releaseHash,architecture:'progressive-core-enhance',assets:{core:coreHash,enhance:enhanceHash,css:cssHash},requests:{initialJavascript:1,deferredJavascript:1,stylesheet:1},boot:{coreModules:coreModules.map(x=>x[0]),enhanceModules:enhanceModules.map(x=>x[0]),bodyMutationObserverGuard:true,legacyDynamicVersionChain:false},gates:{javascriptSyntax:true,criticalDom:true,apiPresence:true,serviceWorkerKillSwitch:true,contentHashedAssets:true,legacyBootstrapRemoved:true},generatedAt:new Date().toISOString()};
+const info={version:VERSION,releaseHash,architecture:'progressive-core-enhance',assets:{core:coreHash,enhance:enhanceHash,css:cssHash},requests:{initialJavascript:1,deferredJavascript:1,stylesheet:1},boot:{coreModules:coreModules.map(x=>x[0]),enhanceModules:enhanceModules.map(x=>x[0]),bodyMutationObserverGuard:true,legacyDynamicVersionChain:false,releaseOwner:VERSION},gates:{javascriptSyntax:true,criticalDom:true,apiPresence:true,serviceWorkerKillSwitch:true,contentHashedAssets:true,legacyBootstrapRemoved:true,releaseVersionNormalized:true},generatedAt:new Date().toISOString()};
 fs.writeFileSync(path.join(ROOT,'axis-build.json'),JSON.stringify(info,null,2));
 console.log(`[AXIS] ${VERSION} production gate passed · ${releaseHash}`);
 console.log(`[AXIS] core ${(Buffer.byteLength(coreBundle)/1024).toFixed(1)} KiB · enhance ${(Buffer.byteLength(enhanceBundle)/1024).toFixed(1)} KiB · css ${(Buffer.byteLength(css)/1024).toFixed(1)} KiB`);
-console.log('[AXIS] boot: interactive core first; one deferred enhancement bundle; content-hashed cache keys; guarded body observers');
+console.log('[AXIS] boot: interactive core first; one deferred enhancement bundle; content-hashed cache keys; guarded body observers; single release owner');
