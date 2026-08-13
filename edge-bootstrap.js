@@ -71,8 +71,11 @@ const loadLatest=()=>{
                               window.__AXIS_873_READY__=!!ok873;
                               loadScript('/v874-professional.js?v=874',ok874=>{
                                 window.__AXIS_874_READY__=!!ok874;
-                                window.__AXIS_LATEST_LOADING__=false;
-                                window.__AXIS_LATEST_READY__=true;
+                                loadScript('/v874-set-bridge.js?v=874',ok874b=>{
+                                  window.__AXIS_874_SET_READY__=!!ok874b;
+                                  window.__AXIS_LATEST_LOADING__=false;
+                                  window.__AXIS_LATEST_READY__=true;
+                                });
                               });
                             });
                           });
