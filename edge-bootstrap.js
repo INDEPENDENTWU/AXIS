@@ -71,15 +71,18 @@ const loadLatest=()=>{
                             window.__AXIS_873_LIBRARY_READY__=!!ok873lib;
                             loadScript('/v873-smart-input.js?v=873',ok873=>{
                               window.__AXIS_873_READY__=!!ok873;
-                              loadScript('/v874-professional.js?v=875',ok874=>{
+                              loadScript('/v874-professional.js?v=876',ok874=>{
                                 window.__AXIS_874_READY__=!!ok874;
-                                loadScript('/v874-set-bridge.js?v=875',ok874b=>{
+                                loadScript('/v874-set-bridge.js?v=876',ok874b=>{
                                   window.__AXIS_874_SET_READY__=!!ok874b;
-                                  loadScript('/v875-polish.js?v=875',ok875=>{
+                                  loadScript('/v875-polish.js?v=876',ok875=>{
                                     window.__AXIS_875_READY__=!!ok875;
-                                    window.__AXIS_LATEST_LOADING__=false;
-                                    window.__AXIS_LATEST_READY__=true;
-                                    if(!ok875){document.getElementById('axisVersionBootStyle')?.remove();const v=document.querySelector('.versionLine');if(v)v.textContent='版本 8.7.4'}
+                                    loadScript('/v876-runtime.js?v=876',ok876=>{
+                                      window.__AXIS_876_READY__=!!ok876;
+                                      window.__AXIS_LATEST_LOADING__=false;
+                                      window.__AXIS_LATEST_READY__=true;
+                                      if(!ok876){document.getElementById('axisVersionBootStyle')?.remove();const v=document.querySelector('.versionLine');if(v)v.textContent=ok875?'版本 8.7.5':'版本 8.7.4'}
+                                    });
                                   });
                                 });
                               });
