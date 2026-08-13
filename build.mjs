@@ -3,7 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 const ROOT=process.cwd();
-const VERSION='8.7.9';
+const VERSION='8.7.10';
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex').slice(0,12);
 
 const coreModules=[
@@ -30,7 +30,13 @@ const enhanceModules=[
   ['v876-runtime.js','__AXIS_876_READY__'],
   ['v877-runtime.js','__AXIS_877_READY__'],
   ['v878-stability.js','__AXIS_878_READY__'],
-  ['v879-runtime.js','__AXIS_879_READY__']
+  ['v879-runtime.js','__AXIS_879_READY__'],
+  ['v8710-live-catalog.js','__AXIS_8710_LIVE_READY__'],
+  ['v8710-sonic-core.js','__AXIS_8710_SONIC_CORE_READY__'],
+  ['v8710-sonic-motifs.js','__AXIS_8710_SONIC_MOTIFS_READY__'],
+  ['v8710-sound-ui.js','__AXIS_8710_SOUND_READY__'],
+  ['v8710-report.js','__AXIS_8710_REPORT_READY__'],
+  ['v8710-watermark.js','__AXIS_8710_WATERMARK_READY__']
 ];
 const allModules=[...coreModules,...enhanceModules];
 
@@ -136,7 +142,7 @@ fs.writeFileSync(path.join(ROOT,'axis-core.js'),coreBundle);
 
 const cssFiles=['styles.css','v61.css'];
 let css=cssFiles.map(f=>`/* ===== ${f} ===== */\n${fs.readFileSync(path.join(ROOT,f),'utf8')}`).join('\n\n');
-css+=`\n/* AXIS 8.7.9 progressive boot */\nhtml:not([data-axis-core-ready="1"]) .versionLine{visibility:hidden}\n`;
+css+=`\n/* AXIS 8.7.10 progressive boot */\nhtml:not([data-axis-core-ready="1"]) .versionLine{visibility:hidden}\n`;
 if(Buffer.byteLength(css)<20000)throw new Error('AXIS production gate: stylesheet bundle unexpectedly small');
 const cssHash=hash(css);fs.writeFileSync(path.join(ROOT,'axis-style.css'),css);
 
@@ -159,7 +165,7 @@ if(/edge-bootstrap|\/app\.js|\/v61\.js|axis-runtime\.js/.test(html))throw new Er
 fs.writeFileSync(path.join(ROOT,'index.html'),html);
 
 const releaseHash=hash(coreHash+enhanceHash+cssHash);
-const fresh=`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08090b"><title>AXIS</title><style>html,body{margin:0;min-height:100%;background:#08090b;color:#f4f3ef;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}main{min-height:100dvh;display:grid;place-items:center;text-align:center}b{font-size:15px;letter-spacing:.22em}span{display:block;margin-top:12px;color:#9299a5;font-size:12px}</style></head><body><main><div><b>AXIS</b><span>8.7.9 · 正在清理旧启动缓存</span></div></main><script>(async()=>{try{if('serviceWorker'in navigator){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}if('caches'in window){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch{}location.replace('/?fresh=${releaseHash}')} )();</script></body></html>`;
+const fresh=`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08090b"><title>AXIS</title><style>html,body{margin:0;min-height:100%;background:#08090b;color:#f4f3ef;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}main{min-height:100dvh;display:grid;place-items:center;text-align:center}b{font-size:15px;letter-spacing:.22em}span{display:block;margin-top:12px;color:#9299a5;font-size:12px}</style></head><body><main><div><b>AXIS</b><span>8.7.10 · 正在清理旧启动缓存</span></div></main><script>(async()=>{try{if('serviceWorker'in navigator){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}if('caches'in window){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch{}location.replace('/?fresh=${releaseHash}')} )();</script></body></html>`;
 fs.mkdirSync(path.join(ROOT,'fresh'),{recursive:true});fs.writeFileSync(path.join(ROOT,'fresh','index.html'),fresh);
 
 const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8');if(!/unregister\(\)/.test(sw)||!/skipWaiting\(\)/.test(sw))throw new Error('AXIS production gate: service worker kill switch missing');
