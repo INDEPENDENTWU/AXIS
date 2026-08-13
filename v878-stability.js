@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const VERSION='8.7.8',TEXT=`版本 ${VERSION}`;
+const VERSION=window.__AXIS_RELEASE__||'8.7.8',TEXT=`版本 ${VERSION}`;
 let versionObserver=null;
 function reveal(){
   const v=document.querySelector('.versionLine');
@@ -20,10 +20,9 @@ function reveal(){
   document.getElementById('axisVersionBootStyle')?.remove();
   document.documentElement.dataset.axisRelease=VERSION;
   window.__AXIS_VERSION__=VERSION;
-  window.__AXIS_RELEASE__=VERSION;
   window.__AXIS_878_READY__=true;
 }
-function cleanUrl(){try{const u=new URL(location.href);if((u.pathname==='/'||u.pathname==='/index.html')&&(u.searchParams.has('axisboot')||u.searchParams.has('safe')||u.searchParams.has('fresh')||u.searchParams.get('v')==='878'))history.replaceState(history.state,'','/')}catch{}}
-window.addEventListener('pageshow',e=>{reveal();if(e.persisted&&!window.__AXIS_LATEST_READY__){try{const u=new URL(location.href);u.searchParams.set('axisboot','878');u.searchParams.set('v','878');location.replace(u.pathname+'?'+u.searchParams.toString())}catch{location.reload()}}});
+function cleanUrl(){try{const u=new URL(location.href);if((u.pathname==='/'||u.pathname==='/index.html')&&(u.searchParams.has('axisboot')||u.searchParams.has('safe')||u.searchParams.has('fresh')))history.replaceState(history.state,'','/')}catch{}}
+window.addEventListener('pageshow',()=>reveal());
 requestAnimationFrame(()=>{reveal();setTimeout(reveal,240);setTimeout(reveal,900);setTimeout(cleanUrl,980)});
 })();
