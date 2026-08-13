@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node build.mjs",
+  "buildCommand": "node build.mjs && node -e \"const fs=require('fs'),c=require('crypto'),h=s=>c.createHash('sha256').update(s).digest('hex').slice(0,12);let e=fs.readFileSync('axis-enhance.js','utf8').replace(/版本\\s+\\d+(?:\\.\\d+)+/g,'版本 8.7.8');fs.writeFileSync('axis-enhance.js',e);let eh=h(e),a=fs.readFileSync('axis-core.js','utf8').replace(/axis-enhance\\.js\\?v=[a-f0-9]+/g,'axis-enhance.js?v='+eh);fs.writeFileSync('axis-core.js',a);let ah=h(a),i=fs.readFileSync('index.html','utf8').replace(/axis-core\\.js\\?v=[a-f0-9]+/g,'axis-core.js?v='+ah);fs.writeFileSync('index.html',i);console.log('[AXIS] release 8.7.8 '+ah+' '+eh)\"",
   "outputDirectory": ".",
   "nodeVersion": "20.18.0",
   "headers": [
