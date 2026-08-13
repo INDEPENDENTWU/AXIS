@@ -1,3 +1,3 @@
 AXIS production redeploy trigger
-2026-08-13T19:05:00+08:00
-Reason: publish final AXIS 8.7.8 production architecture reset for both Vercel and EdgeOne — build-time syntax/integrity gate, one immutable production JavaScript bundle, one stylesheet bundle, immediate core boot plus post-load local hydration, zero browser-side dynamic version-script requests, no legacy bootstrap in built HTML, preserved API/cloud-function presence, and identical platform build command.
+2026-08-14T01:09:00+08:00
+Reason: publish AXIS 8.7.9 convergence release for Vercel and EdgeOne — in-place completion feedback, removal of floating undo/toast chrome, one-time active-item adjustment, two-size typography discipline, aligned numeric steppers and set-count controls, strict top-sheet scroll focus, compact long timelines, and reduced/editorial training report typography. Build remains progressive core + content-hashed enhancement bundle with guarded observers and a single release owner.
