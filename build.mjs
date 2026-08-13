@@ -46,20 +46,40 @@ for(const id of requiredDom){
 }
 
 const prologue=`(()=>{'use strict';\n`+
-`window.__AXIS_RELEASE__='${VERSION}';window.__AXIS_BUILD__='${BUILD}';window.__AXIS_BOOT_READY__=true;window.__AXIS_LATEST_LOADING__=true;window.__AXIS_ARCH__='single-runtime';\n`+
+`window.__AXIS_RELEASE__='${VERSION}';window.__AXIS_BUILD__='${BUILD}';window.__AXIS_BOOT_READY__=true;window.__AXIS_LATEST_LOADING__=true;window.__AXIS_ARCH__='single-runtime-two-phase';\n`+
 `try{if('serviceWorker'in navigator){const sw=navigator.serviceWorker;try{Object.defineProperty(sw,'register',{configurable:true,value:()=>Promise.resolve(null)})}catch{try{sw.register=()=>Promise.resolve(null)}catch{}}sw.getRegistrations?.().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{})}}catch{}\n`+
 `window.addEventListener('error',e=>{try{console.error('[AXIS runtime]',e.error||e.message||e)}catch{}},{passive:true});\n`+
 `})();\n`;
 
-let bundle=prologue;
-for(const [file,flag] of modules){
+let definitions='';
+modules.forEach(([file,flag],i)=>{
   const src=fs.readFileSync(path.join(ROOT,file),'utf8');
-  // Isolate runtime exceptions so one optional enhancement cannot blank the product.
-  bundle+=`\n/* ===== ${file} ===== */\ntry{\n${src}\nwindow.${flag}=true;\n}catch(e){window.${flag}=false;console.error('[AXIS] ${file} isolated',e);}\n`;
-}
-bundle+=`\n(()=>{window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;window.__AXIS_BOOT_WATCHDOG__='ready';window.__AXIS_VERSION__='${VERSION}';const v=document.querySelector('.versionLine');if(v){v.textContent='版本 ${VERSION}';v.style.visibility='visible';v.dataset.axisVersion='${VERSION}'}document.documentElement.dataset.axisReady='1';})();\n`;
+  definitions+=`\n/* ===== ${file} ===== */\nfunction __axisModule${i}(){try{\n${src}\nwindow.${flag}=true;return true;\n}catch(e){window.${flag}=false;console.error('[AXIS] ${file} isolated',e);return false;}}\n`;
+});
 
-// Syntax gate: deployment stops before production if any source became invalid JS.
+const controller=`\n(()=>{'use strict';\n`+
+`const mods=[${modules.map((_,i)=>`__axisModule${i}`).join(',')}];\n`+
+`const names=${JSON.stringify(modules.map(x=>x[0]))};\n`+
+`const yieldFrame=()=>new Promise(r=>requestAnimationFrame(()=>r()));\n`+
+`mods[0]();mods[1]();document.documentElement.dataset.axisCoreReady='1';\n`+
+`async function hydrate(){\n`+
+`window.__AXIS_HYDRATING__=true;\n`+
+`for(let i=2;i<mods.length;i++){\n`+
+`if(names[i]==='v85-runtime.js'){if(window.CanvasRenderingContext2D&&!window.__AXIS_NATIVE_DRAWIMAGE__)window.__AXIS_NATIVE_DRAWIMAGE__=CanvasRenderingContext2D.prototype.drawImage;if(window.HTMLCanvasElement&&!window.__AXIS_NATIVE_TOBLOB__)window.__AXIS_NATIVE_TOBLOB__=HTMLCanvasElement.prototype.toBlob;}\n`+
+`mods[i]();\n`+
+`if((i-1)%3===0)await yieldFrame();\n`+
+`}\n`+
+`window.__AXIS_HYDRATING__=false;window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;window.__AXIS_BOOT_WATCHDOG__='ready';window.__AXIS_VERSION__='${VERSION}';\n`+
+`const v=document.querySelector('.versionLine');if(v){v.textContent='版本 ${VERSION}';v.style.visibility='visible';v.dataset.axisVersion='${VERSION}'}\n`+
+`document.documentElement.dataset.axisReady='1';\n`+
+`}\n`+
+`const start=()=>setTimeout(()=>hydrate().catch(e=>{window.__AXIS_HYDRATING__=false;window.__AXIS_LATEST_LOADING__=false;window.__AXIS_BOOT_WATCHDOG__='degraded';console.error('[AXIS] hydration',e);const v=document.querySelector('.versionLine');if(v){v.textContent='版本 ${VERSION}';v.style.visibility='visible'}}),0);\n`+
+`if(document.readyState==='complete')start();else window.addEventListener('load',start,{once:true});\n`+
+`})();\n`;
+
+const bundle=prologue+definitions+controller;
+
+// Syntax gate: deployment stops before production if any source became invalid JavaScript.
 new Function(bundle);
 if(bundle.includes("loadScript('/v82-runtime.js")||bundle.includes('AXIS_LATEST_LOADING__||window.__AXIS_LATEST_READY__')){
   throw new Error('AXIS production gate: legacy dynamic bootstrap leaked into bundle');
@@ -70,7 +90,8 @@ if(!bundle.includes("VERSION='8.7.8'")&&!bundle.includes("VERSION='8.7.8';")){
 fs.writeFileSync(path.join(ROOT,'axis-runtime.js'),bundle);
 
 const cssFiles=['styles.css','v61.css'];
-const css=cssFiles.map(f=>`/* ===== ${f} ===== */\n${fs.readFileSync(path.join(ROOT,f),'utf8')}`).join('\n\n');
+let css=cssFiles.map(f=>`/* ===== ${f} ===== */\n${fs.readFileSync(path.join(ROOT,f),'utf8')}`).join('\n\n');
+css+=`\n/* AXIS 8.7.8 boot invariant */\n.versionLine{visibility:hidden}\nhtml[data-axis-ready="1"] .versionLine{visibility:visible}\n`;
 if(Buffer.byteLength(css)<20000)throw new Error('AXIS production gate: stylesheet bundle unexpectedly small');
 fs.writeFileSync(path.join(ROOT,'axis-style.css'),css);
 
@@ -99,8 +120,9 @@ fs.writeFileSync(path.join(ROOT,'fresh','index.html'),fresh);
 const buildInfo={
   version:VERSION,
   build:BUILD,
-  architecture:'single-runtime',
+  architecture:'single-runtime-two-phase',
   requests:{javascript:1,stylesheet:1},
+  boot:{coreModules:2,enhancements:modules.length-2,dynamicNetworkLoads:0,frameYieldEvery:3},
   modules:modules.map(x=>x[0]),
   gates:{javascriptSyntax:true,criticalDom:true,apiPresence:true,legacyBootstrapRemoved:true},
   generatedAt:new Date().toISOString()
@@ -109,4 +131,4 @@ fs.writeFileSync(path.join(ROOT,'axis-build.json'),JSON.stringify(buildInfo,null
 
 console.log(`[AXIS] ${VERSION} production gate passed`);
 console.log(`[AXIS] ${(Buffer.byteLength(bundle)/1024).toFixed(1)} KiB JS · ${(Buffer.byteLength(css)/1024).toFixed(1)} KiB CSS`);
-console.log('[AXIS] browser boot: 1 JS + 1 CSS; no dynamic version chain');
+console.log('[AXIS] boot: 1 JS + 1 CSS; immediate core + post-load local hydration; 0 dynamic JS requests');
