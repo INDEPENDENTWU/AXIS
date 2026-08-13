@@ -1,3 +1,3 @@
 AXIS production redeploy trigger
-2026-08-13T18:26:00+08:00
-Reason: publish AXIS 8.7.7 — beginner-friendly canonical exercise discovery over the standardized multilingual library, equipment-aware open-ended cardio resistance/intensity input, premium AXIS control entry, immediate settings behavior where supported, editorial three-plate training report system, and clearer high-resolution AXIS watermark composition with expanded opacity range.
+2026-08-13T18:51:00+08:00
+Reason: publish AXIS 8.7.8 boot-stability hardening for both Vercel and EdgeOne — bare-root versioned self-healing entry, deterministic runtime sequencing, hard script timeouts, fail-open watchdog, legacy service-worker cleanup, bfcache recovery, strengthened no-store boot headers, and stable /fresh recovery routing.
