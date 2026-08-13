@@ -65,8 +65,14 @@ const loadLatest=()=>{
                         window.__AXIS_871_READY__=!!ok871;
                         loadScript('/v872-fix.js?v=872',ok872=>{
                           window.__AXIS_872_READY__=!!ok872;
-                          window.__AXIS_LATEST_LOADING__=false;
-                          window.__AXIS_LATEST_READY__=true;
+                          loadScript('/v873-exercise-library.js?v=873',ok873lib=>{
+                            window.__AXIS_873_LIBRARY_READY__=!!ok873lib;
+                            loadScript('/v873-smart-input.js?v=873',ok873=>{
+                              window.__AXIS_873_READY__=!!ok873;
+                              window.__AXIS_LATEST_LOADING__=false;
+                              window.__AXIS_LATEST_READY__=true;
+                            });
+                          });
                         });
                       });
                     });
