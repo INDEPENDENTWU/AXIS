@@ -69,8 +69,11 @@ const loadLatest=()=>{
                             window.__AXIS_873_LIBRARY_READY__=!!ok873lib;
                             loadScript('/v873-smart-input.js?v=873',ok873=>{
                               window.__AXIS_873_READY__=!!ok873;
-                              window.__AXIS_LATEST_LOADING__=false;
-                              window.__AXIS_LATEST_READY__=true;
+                              loadScript('/v874-professional.js?v=874',ok874=>{
+                                window.__AXIS_874_READY__=!!ok874;
+                                window.__AXIS_LATEST_LOADING__=false;
+                                window.__AXIS_LATEST_READY__=true;
+                              });
                             });
                           });
                         });
