@@ -1,3 +1,3 @@
 AXIS production redeploy trigger
-2026-08-13T18:51:00+08:00
-Reason: publish AXIS 8.7.8 boot-stability hardening for both Vercel and EdgeOne — bare-root versioned self-healing entry, deterministic runtime sequencing, hard script timeouts, fail-open watchdog, legacy service-worker cleanup, bfcache recovery, strengthened no-store boot headers, and stable /fresh recovery routing.
+2026-08-13T19:05:00+08:00
+Reason: publish final AXIS 8.7.8 production architecture reset for both Vercel and EdgeOne — build-time syntax/integrity gate, one immutable production JavaScript bundle, one stylesheet bundle, immediate core boot plus post-load local hydration, zero browser-side dynamic version-script requests, no legacy bootstrap in built HTML, preserved API/cloud-function presence, and identical platform build command.
