@@ -1,3 +1,3 @@
 AXIS production redeploy trigger
-2026-08-14T20:58:00+08:00
-Reason: AXIS 8.7.11 production trigger for Vercel and EdgeOne — strict adaptive set-row grid, stable tabular live timer rendering, real four-corner watermark position preview and saved output, higher-clarity watermark typography, language-aware location labels with most-specific available reverse-geocode data, richer rhythmic AXIS micro-track sonic engine, concise two-size editorial reports without AI-style filler copy, grouped settings with high-value Screen Wake Lock preference, and expanded de-duplicated exercise/equipment aliases for structured cards and fuzzy search.
+2026-08-14T23:02:00+08:00
+Reason: emergency production restore after 8.7.12 boot regression. Main is restored to the last known-stable progressive boot/bundler architecture; v8712 runtime remains in repository but is not attached to production until re-integrated without touching the boot compiler. Trigger Vercel and EdgeOne rebuild from the stable production tree.
