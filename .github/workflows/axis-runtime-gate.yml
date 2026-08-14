@@ -1,0 +1,35 @@
+name: AXIS Runtime Gate
+
+on:
+  push:
+    branches: [main, next-runtime-hardening]
+  pull_request:
+    branches: [main]
+
+jobs:
+  browser-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Build stable base and non-blocking features
+        run: node build.mjs && node postbuild-features.mjs
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start local production server
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-http.log 2>&1 &
+          echo $! >/tmp/axis-http.pid
+          sleep 1
+      - name: Browser smoke and repeated cold boot
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+        run: node scripts/axis-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-http.log || true
