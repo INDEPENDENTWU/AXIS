@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '20.18.0'
       - name: Build hardened stable base and non-blocking features
-        run: node build-hardened.mjs && node postbuild-features.mjs
+        run: node run-hardened-build.mjs && node postbuild-features.mjs
       - name: Prepare browser harness
         run: |
           npm install --no-save playwright-core@1.55.0
