@@ -1,0 +1,59 @@
+/* AXIS stable shell geometry contract */
+:root{
+  --axis-shell-action:44px;
+  --axis-shell-topbar:72px;
+}
+
+.topbar{
+  min-height:calc(var(--axis-shell-topbar) + env(safe-area-inset-top))!important;
+  grid-template-columns:minmax(0,1fr) var(--axis-shell-action)!important;
+  contain:layout paint;
+}
+
+#settingsBtn{
+  width:var(--axis-shell-action)!important;
+  min-width:var(--axis-shell-action)!important;
+  max-width:var(--axis-shell-action)!important;
+  height:var(--axis-shell-action)!important;
+  min-height:var(--axis-shell-action)!important;
+  max-height:var(--axis-shell-action)!important;
+  padding:0!important;
+  margin:0!important;
+  justify-self:end!important;
+  align-self:center!important;
+  transform:none!important;
+  translate:none!important;
+  scale:1!important;
+  rotate:0deg!important;
+  transition:none!important;
+  animation:none!important;
+  contain:layout paint size;
+  overflow:hidden;
+}
+
+#settingsBtn>*{
+  max-width:100%;
+  max-height:100%;
+  pointer-events:none;
+}
+
+#dock{
+  min-height:64px;
+  contain:layout paint;
+}
+
+#scanBtn,#quickRecordBtn{
+  min-height:64px!important;
+  max-height:64px!important;
+  transition-property:background-color,color,opacity!important;
+}
+
+.nav{
+  contain:layout paint;
+}
+
+/* First paint must never be visually blocked by enhancement state. */
+html[data-axis-core-ready="1"] .app{
+  visibility:visible!important;
+  opacity:1!important;
+}
