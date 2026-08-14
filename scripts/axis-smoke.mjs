@@ -14,7 +14,7 @@ async function routeApis(page){
 async function uiState(page){
   return page.evaluate(()=>{
     const snap=id=>{const e=document.querySelector(id);if(!e)return null;const c=getComputedStyle(e);return{class:e.className,display:c.display,visibility:c.visibility,opacity:c.opacity,rect:[Math.round(e.getBoundingClientRect().width),Math.round(e.getBoundingClientRect().height)]}};
-    return{today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),quick:snap('#quickRecordBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,latestLoading:window.__AXIS_LATEST_LOADING__,hydrating:window.__AXIS_HYDRATING__,watchdog:window.__AXIS_BOOT_WATCHDOG__,feature:window.__AXIS_FEATURE_KERNEL__?.state||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
+    return{today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),quick:snap('#quickRecordBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,latestLoading:window.__AXIS_LATEST_LOADING__,hydrating:window.__AXIS_HYDRATING__,watchdog:window.__AXIS_BOOT_WATCHDOG__,stableComplete:window.__AXIS_STABLE_COMPLETE__,stableDegraded:window.__AXIS_STABLE_DEGRADED__,ready8711:window.__AXIS_8711_READY__,ready873Library:window.__AXIS_873_LIBRARY_READY__,featureKernel:window.__AXIS_FEATURE_KERNEL__||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
   });
 }
 
@@ -72,6 +72,7 @@ async function coreSmoke(viewport,full=false){
     await verifyIdleEntry(page);
     await page.waitForFunction(()=>window.__AXIS_FEATURE_KERNEL__?.state==='ready'||window.__AXIS_FEATURE_KERNEL__?.state==='base',{timeout:9000});
     const state=await page.evaluate(()=>window.__AXIS_FEATURE_KERNEL__?.state);
+    if(state!=='ready')console.error('[AXIS feature diagnostic]',JSON.stringify(await uiState(page),null,2));
     assert.equal(state,'ready','8.7.12 feature did not become ready in local smoke test');
     await page.locator('#settingsBtn').click();
     await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),{timeout:1500});
