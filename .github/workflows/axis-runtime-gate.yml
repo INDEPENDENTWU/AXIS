@@ -31,7 +31,7 @@ jobs:
       - name: Browser smoke and repeated cold boot
         env:
           AXIS_URL: http://127.0.0.1:4173
-        run: node scripts/axis-smoke.mjs
+        run: node scripts/run-smoke-guarded.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-http.log || true
