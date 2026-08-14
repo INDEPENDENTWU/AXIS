@@ -1,6 +1,6 @@
 {
   "$schema":"https://openapi.vercel.sh/vercel.json",
-  "buildCommand":"node build-hardened.mjs && node postbuild-features.mjs",
+  "buildCommand":"node prepare-legacy-runtime.mjs && node build-hardened.mjs && node postbuild-features-hardened.mjs",
   "outputDirectory":".",
   "cleanUrls":true,
   "trailingSlash":false,
