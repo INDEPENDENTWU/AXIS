@@ -1,3 +1,3 @@
 AXIS production redeploy trigger
-2026-08-14T01:09:00+08:00
-Reason: final AXIS 8.7.9 production trigger for Vercel and EdgeOne — convergence runtime active, floating completion/undo chrome removed, completion acknowledged in the timeline row, one-time active-item adjustment added, typography reduced to two UI sizes, numeric steppers aligned to one axis, lower sheets locked while a front sheet is active, long timelines compact by default, report annotations reduced, and all 8.7.9 observers scoped to event/sheet surfaces rather than whole-body attribute observation.
+2026-08-14T20:58:00+08:00
+Reason: AXIS 8.7.11 production trigger for Vercel and EdgeOne — strict adaptive set-row grid, stable tabular live timer rendering, real four-corner watermark position preview and saved output, higher-clarity watermark typography, language-aware location labels with most-specific available reverse-geocode data, richer rhythmic AXIS micro-track sonic engine, concise two-size editorial reports without AI-style filler copy, grouped settings with high-value Screen Wake Lock preference, and expanded de-duplicated exercise/equipment aliases for structured cards and fuzzy search.
