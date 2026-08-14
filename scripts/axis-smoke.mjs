@@ -13,36 +13,46 @@ async function routeApis(page){
 
 async function uiState(page){
   return page.evaluate(()=>{
-    const snap=id=>{const e=document.querySelector(id);if(!e)return null;const c=getComputedStyle(e);return{class:e.className,display:c.display,visibility:c.visibility,opacity:c.opacity,rect:[Math.round(e.getBoundingClientRect().width),Math.round(e.getBoundingClientRect().height)]}};
-    return{today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),quick:snap('#quickRecordBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,latestLoading:window.__AXIS_LATEST_LOADING__,hydrating:window.__AXIS_HYDRATING__,watchdog:window.__AXIS_BOOT_WATCHDOG__,stableComplete:window.__AXIS_STABLE_COMPLETE__,stableDegraded:window.__AXIS_STABLE_DEGRADED__,ready8711:window.__AXIS_8711_READY__,ready873Library:window.__AXIS_873_LIBRARY_READY__,featureKernel:window.__AXIS_FEATURE_KERNEL__||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
+    const snap=id=>{const e=document.querySelector(id);if(!e)return null;const c=getComputedStyle(e),r=e.getBoundingClientRect();return{class:e.className,display:c.display,visibility:c.visibility,opacity:c.opacity,rect:[+r.x.toFixed(2),+r.y.toFixed(2),+r.width.toFixed(2),+r.height.toFixed(2)]}};
+    return{settings:snap('#settingsBtn'),today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),quick:snap('#quickRecordBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,watchdog:window.__AXIS_BOOT_WATCHDOG__,stableComplete:window.__AXIS_STABLE_COMPLETE__,stableDegraded:window.__AXIS_STABLE_DEGRADED__,ready8711:window.__AXIS_8711_READY__,featureKernel:window.__AXIS_FEATURE_KERNEL__||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
   });
 }
 
-async function requireStableEnhance(page){
-  try{
-    await page.waitForFunction(()=>window.__AXIS_LATEST_READY__===true,{timeout:6500});
-  }catch(e){
-    console.error('[AXIS enhancement diagnostic]',JSON.stringify(await uiState(page),null,2));
-    throw new Error('stable 8.7.11 enhancement did not finish within 6.5s');
+async function waitGeometryStable(page,selector,budgetMs=900){
+  const started=Date.now();
+  let prev=null,same=0,last=null;
+  while(Date.now()-started<budgetMs){
+    const cur=await page.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return [r.x,r.y,r.width,r.height].map(x=>Math.round(x*10)/10)});
+    last=cur;
+    const eq=prev&&cur.every((v,i)=>Math.abs(v-prev[i])<=0.2);
+    same=eq?same+1:0;
+    if(same>=3)return{ms:Date.now()-started,rect:cur};
+    prev=cur;
+    await page.waitForTimeout(45);
   }
+  console.error('[AXIS geometry diagnostic]',selector,last,JSON.stringify(await uiState(page),null,2));
+  throw new Error(`${selector} geometry did not stabilize within ${budgetMs}ms`);
+}
+
+async function requireStableEnhance(page){
+  try{await page.waitForFunction(()=>window.__AXIS_LATEST_READY__===true,{timeout:6500})}
+  catch{console.error('[AXIS enhancement diagnostic]',JSON.stringify(await uiState(page),null,2));throw new Error('stable 8.7.11 enhancement did not finish within 6.5s')}
+  const diag=await page.evaluate(()=>window.__AXIS_ENHANCE_DIAG__||null);
+  assert.ok(diag,'missing stable enhancement diagnostics');
+  assert.equal(diag.errors?.length||0,0,`stable enhancement has module errors: ${JSON.stringify(diag.errors||[])}`);
+  assert.equal(await page.evaluate(()=>!!window.__AXIS_STABLE_DEGRADED__),false,'stable kernel marked degraded');
+  assert.ok((diag.totalMs||0)<1200,`stable enhancement too slow: ${diag.totalMs}ms`);
 }
 
 async function verifyIdleEntry(page){
-  const activeVisible=await page.locator('#activeHome').isVisible();
-  if(activeVisible)return 'active';
-  const idleVisible=await page.locator('#idleHome').isVisible();
-  assert.ok(idleVisible,'neither idle nor active home is visible');
-  const dockVisible=await page.locator('#dock').isVisible();
-  const scanVisible=await page.locator('#scanBtn').isVisible();
-  const quickVisible=await page.locator('#quickRecordBtn').isVisible();
-  if(!(dockVisible&&scanVisible&&quickVisible)){
-    console.error('[AXIS idle diagnostic]',JSON.stringify(await uiState(page),null,2));
-    assert.fail('current idle recording controls are not visible');
-  }
-  await page.locator('#quickRecordBtn').click({timeout:1500});
-  await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),{timeout:1500});
-  await page.locator('#quickClose').click();
-  return 'idle';
+  if(await page.locator('#activeHome').isVisible())return'active';
+  assert.ok(await page.locator('#idleHome').isVisible(),'neither idle nor active home is visible');
+  const ok=(await page.locator('#dock').isVisible())&&(await page.locator('#scanBtn').isVisible())&&(await page.locator('#quickRecordBtn').isVisible());
+  if(!ok){console.error('[AXIS idle diagnostic]',JSON.stringify(await uiState(page),null,2));assert.fail('current idle recording controls are not visible')}
+  await page.locator('#quickRecordBtn').click({timeout:2200});
+  await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),{timeout:1800});
+  await page.locator('#quickClose').click({timeout:1800});
+  return'idle';
 }
 
 async function coreSmoke(viewport,full=false){
@@ -58,14 +68,16 @@ async function coreSmoke(viewport,full=false){
   const coreMs=Date.now()-started;
   assert.ok(coreMs<5000,`core interactive too slow: ${coreMs}ms`);
 
-  await page.locator('#settingsBtn').click({timeout:1500});
-  await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),{timeout:1500});
-  await page.locator('[data-close="settingsSheet"]').click();
+  const geometry=await waitGeometryStable(page,'#settingsBtn',900);
+  assert.ok(geometry.ms<900,`settings geometry unstable for ${geometry.ms}ms`);
+  await page.locator('#settingsBtn').click({timeout:2500});
+  await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),{timeout:1800});
+  await page.locator('[data-close="settingsSheet"]').click({timeout:1800});
 
-  await page.locator('nav.nav [data-view="historyView"]').click();
-  await page.waitForFunction(()=>document.querySelector('#historyView')?.classList.contains('active'),{timeout:1200});
-  await page.locator('nav.nav [data-view="todayView"]').click();
-  await page.waitForFunction(()=>document.querySelector('#todayView')?.classList.contains('active'),{timeout:1200});
+  await page.locator('nav.nav [data-view="historyView"]').click({timeout:1800});
+  await page.waitForFunction(()=>document.querySelector('#historyView')?.classList.contains('active'),{timeout:1500});
+  await page.locator('nav.nav [data-view="todayView"]').click({timeout:1800});
+  await page.waitForFunction(()=>document.querySelector('#todayView')?.classList.contains('active'),{timeout:1500});
 
   await requireStableEnhance(page);
   if(full){
@@ -74,21 +86,23 @@ async function coreSmoke(viewport,full=false){
     const state=await page.evaluate(()=>window.__AXIS_FEATURE_KERNEL__?.state);
     if(state!=='ready')console.error('[AXIS feature diagnostic]',JSON.stringify(await uiState(page),null,2));
     assert.equal(state,'ready','8.7.12 feature did not become ready in local smoke test');
-    await page.locator('#settingsBtn').click();
-    await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),{timeout:1500});
+    await waitGeometryStable(page,'#settingsBtn',500);
+    await page.locator('#settingsBtn').click({timeout:2200});
+    await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),{timeout:1800});
     const version=(await page.locator('.versionLine').innerText()).trim();
     assert.equal(version,'版本 8.7.12',`unexpected version: ${version}`);
   }
 
   assert.deepEqual(pageErrors,[],`uncaught page errors:\n${pageErrors.join('\n')}`);
   await context.close();
-  return coreMs;
+  return{coreMs,geometryMs:geometry.ms};
 }
 
-const timings=[];
-for(let i=0;i<4;i++)timings.push(await coreSmoke({width:390,height:844},false));
-timings.push(await coreSmoke({width:430,height:932},true));
-timings.push(await coreSmoke({width:1440,height:900},false));
-console.log('[AXIS smoke] core ms:',timings.join(', '));
+const results=[];
+for(let i=0;i<4;i++)results.push(await coreSmoke({width:390,height:844},false));
+results.push(await coreSmoke({width:430,height:932},true));
+results.push(await coreSmoke({width:1440,height:900},false));
+console.log('[AXIS smoke] core ms:',results.map(x=>x.coreMs).join(', '));
+console.log('[AXIS smoke] settings stable ms:',results.map(x=>x.geometryMs).join(', '));
 console.log('[AXIS smoke] PASS');
 await browser.close();
