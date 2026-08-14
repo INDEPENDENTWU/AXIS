@@ -2,10 +2,14 @@
 :root{
   --axis-shell-action:44px;
   --axis-shell-topbar:72px;
+  --axis-shell-nav:76px;
+  --axis-shell-dock:64px;
 }
 
 .topbar{
+  height:calc(var(--axis-shell-topbar) + env(safe-area-inset-top))!important;
   min-height:calc(var(--axis-shell-topbar) + env(safe-area-inset-top))!important;
+  max-height:calc(var(--axis-shell-topbar) + env(safe-area-inset-top))!important;
   grid-template-columns:minmax(0,1fr) var(--axis-shell-action)!important;
   contain:layout paint;
 }
@@ -38,17 +42,38 @@
 }
 
 #dock{
-  min-height:64px;
+  min-height:var(--axis-shell-dock)!important;
   contain:layout paint;
 }
 
 #scanBtn,#quickRecordBtn{
-  min-height:64px!important;
-  max-height:64px!important;
+  min-height:var(--axis-shell-dock)!important;
+  max-height:var(--axis-shell-dock)!important;
+  transform:none!important;
+  animation:none!important;
   transition-property:background-color,color,opacity!important;
 }
 
 .nav{
+  height:var(--axis-shell-nav)!important;
+  min-height:var(--axis-shell-nav)!important;
+  max-height:var(--axis-shell-nav)!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  contain:layout paint;
+}
+
+.nav>button{
+  min-width:0!important;
+  height:calc(var(--axis-shell-nav) - 18px - env(safe-area-inset-bottom))!important;
+  min-height:44px!important;
+  padding:0!important;
+  margin:0!important;
+  transform:none!important;
+  translate:none!important;
+  scale:1!important;
+  rotate:0deg!important;
+  animation:none!important;
+  transition-property:background-color,color,opacity!important;
   contain:layout paint;
 }
 
