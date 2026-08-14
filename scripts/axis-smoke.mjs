@@ -19,19 +19,21 @@ async function uiState(page){
 }
 
 async function waitGeometryStable(page,selector,budgetMs=900){
-  const started=Date.now();
-  let prev=null,same=0,last=null;
+  const started=Date.now();let prev=null,same=0,last=null;
   while(Date.now()-started<budgetMs){
-    const cur=await page.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return [r.x,r.y,r.width,r.height].map(x=>Math.round(x*10)/10)});
-    last=cur;
-    const eq=prev&&cur.every((v,i)=>Math.abs(v-prev[i])<=0.2);
-    same=eq?same+1:0;
-    if(same>=3)return{ms:Date.now()-started,rect:cur};
-    prev=cur;
-    await page.waitForTimeout(45);
+    const cur=await page.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return[r.x,r.y,r.width,r.height].map(x=>Math.round(x*10)/10)});
+    last=cur;const eq=prev&&cur.every((v,i)=>Math.abs(v-prev[i])<=0.2);same=eq?same+1:0;
+    if(same>=3)return{ms:Date.now()-started,rect:cur};prev=cur;await page.waitForTimeout(45);
   }
   console.error('[AXIS geometry diagnostic]',selector,last,JSON.stringify(await uiState(page),null,2));
   throw new Error(`${selector} geometry did not stabilize within ${budgetMs}ms`);
+}
+
+async function measuredClick(page,selector,budgetMs=250){
+  const result=await page.evaluate(sel=>{const el=document.querySelector(sel);if(!el)return{ok:false,ms:0};const t=performance.now();el.click();return{ok:true,ms:performance.now()-t}},selector);
+  assert.ok(result.ok,`missing click target ${selector}`);
+  if(result.ms>budgetMs){console.error('[AXIS click diagnostic]',selector,result.ms,JSON.stringify(await uiState(page),null,2));throw new Error(`${selector} synchronous click work ${result.ms.toFixed(1)}ms exceeds ${budgetMs}ms`)}
+  return result.ms;
 }
 
 async function requireStableEnhance(page){
@@ -49,60 +51,45 @@ async function verifyIdleEntry(page){
   assert.ok(await page.locator('#idleHome').isVisible(),'neither idle nor active home is visible');
   const ok=(await page.locator('#dock').isVisible())&&(await page.locator('#scanBtn').isVisible())&&(await page.locator('#quickRecordBtn').isVisible());
   if(!ok){console.error('[AXIS idle diagnostic]',JSON.stringify(await uiState(page),null,2));assert.fail('current idle recording controls are not visible')}
-  await page.locator('#quickRecordBtn').click({timeout:2200});
+  await measuredClick(page,'#quickRecordBtn',250);
   await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),{timeout:1800});
-  await page.locator('#quickClose').click({timeout:1800});
+  await measuredClick(page,'#quickClose',180);
   return'idle';
 }
 
 async function coreSmoke(viewport,full=false){
-  const context=await browser.newContext({viewport,locale:'zh-CN'});
-  const page=await context.newPage();
-  await routeApis(page);
-  const pageErrors=[];
-  page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
-  const started=Date.now();
-  const res=await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000});
-  assert.ok(res&&res.ok(),`navigation failed ${res?.status()}`);
+  const context=await browser.newContext({viewport,locale:'zh-CN'});const page=await context.newPage();await routeApis(page);
+  const pageErrors=[];page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
+  const started=Date.now();const res=await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000});assert.ok(res&&res.ok(),`navigation failed ${res?.status()}`);
   await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&document.documentElement.dataset.axisCoreReady==='1',{timeout:5000});
-  const coreMs=Date.now()-started;
-  assert.ok(coreMs<5000,`core interactive too slow: ${coreMs}ms`);
+  const coreMs=Date.now()-started;assert.ok(coreMs<5000,`core interactive too slow: ${coreMs}ms`);
 
   const geometry=await waitGeometryStable(page,'#settingsBtn',900);
-  assert.ok(geometry.ms<900,`settings geometry unstable for ${geometry.ms}ms`);
-  await page.locator('#settingsBtn').click({timeout:2500});
+  const settingsClickMs=await measuredClick(page,'#settingsBtn',250);
   await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),{timeout:1800});
-  await page.locator('[data-close="settingsSheet"]').click({timeout:1800});
+  await measuredClick(page,'[data-close="settingsSheet"]',180);
 
-  await page.locator('nav.nav [data-view="historyView"]').click({timeout:1800});
+  await measuredClick(page,'nav.nav [data-view="historyView"]',180);
   await page.waitForFunction(()=>document.querySelector('#historyView')?.classList.contains('active'),{timeout:1500});
-  await page.locator('nav.nav [data-view="todayView"]').click({timeout:1800});
+  await measuredClick(page,'nav.nav [data-view="todayView"]',180);
   await page.waitForFunction(()=>document.querySelector('#todayView')?.classList.contains('active'),{timeout:1500});
 
   await requireStableEnhance(page);
   if(full){
     await verifyIdleEntry(page);
     await page.waitForFunction(()=>window.__AXIS_FEATURE_KERNEL__?.state==='ready'||window.__AXIS_FEATURE_KERNEL__?.state==='base',{timeout:9000});
-    const state=await page.evaluate(()=>window.__AXIS_FEATURE_KERNEL__?.state);
-    if(state!=='ready')console.error('[AXIS feature diagnostic]',JSON.stringify(await uiState(page),null,2));
+    const state=await page.evaluate(()=>window.__AXIS_FEATURE_KERNEL__?.state);if(state!=='ready')console.error('[AXIS feature diagnostic]',JSON.stringify(await uiState(page),null,2));
     assert.equal(state,'ready','8.7.12 feature did not become ready in local smoke test');
-    await waitGeometryStable(page,'#settingsBtn',500);
-    await page.locator('#settingsBtn').click({timeout:2200});
+    await waitGeometryStable(page,'#settingsBtn',500);await measuredClick(page,'#settingsBtn',250);
     await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),{timeout:1800});
-    const version=(await page.locator('.versionLine').innerText()).trim();
-    assert.equal(version,'版本 8.7.12',`unexpected version: ${version}`);
+    const version=(await page.locator('.versionLine').innerText()).trim();assert.equal(version,'版本 8.7.12',`unexpected version: ${version}`);
   }
 
-  assert.deepEqual(pageErrors,[],`uncaught page errors:\n${pageErrors.join('\n')}`);
-  await context.close();
-  return{coreMs,geometryMs:geometry.ms};
+  assert.deepEqual(pageErrors,[],`uncaught page errors:\n${pageErrors.join('\n')}`);await context.close();return{coreMs,geometryMs:geometry.ms,settingsClickMs};
 }
 
-const results=[];
-for(let i=0;i<4;i++)results.push(await coreSmoke({width:390,height:844},false));
-results.push(await coreSmoke({width:430,height:932},true));
-results.push(await coreSmoke({width:1440,height:900},false));
+const results=[];for(let i=0;i<4;i++)results.push(await coreSmoke({width:390,height:844},false));results.push(await coreSmoke({width:430,height:932},true));results.push(await coreSmoke({width:1440,height:900},false));
 console.log('[AXIS smoke] core ms:',results.map(x=>x.coreMs).join(', '));
 console.log('[AXIS smoke] settings stable ms:',results.map(x=>x.geometryMs).join(', '));
-console.log('[AXIS smoke] PASS');
-await browser.close();
+console.log('[AXIS smoke] settings click ms:',results.map(x=>x.settingsClickMs.toFixed(1)).join(', '));
+console.log('[AXIS smoke] PASS');await browser.close();
