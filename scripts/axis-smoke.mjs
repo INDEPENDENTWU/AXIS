@@ -12,16 +12,16 @@ async function routeApis(page){
   await page.route('**/api/insight**',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:false,disabled:true})}));
 }
 
-async function installSettingsTrace(page){
+async function installUiTrace(page){
   await page.evaluate(()=>{
-    if(window.__AXIS_SETTINGS_TRACE_INSTALLED__)return;
-    window.__AXIS_SETTINGS_TRACE_INSTALLED__=true;window.__AXIS_SETTINGS_TRACE__=[];
-    const target=()=>document.querySelector('#settingsSheet')?.classList;
+    if(window.__AXIS_UI_TRACE_INSTALLED__)return;
+    window.__AXIS_UI_TRACE_INSTALLED__=true;window.__AXIS_UI_TRACE__=[];
+    const targets=()=>[document.querySelector('#settingsSheet')?.classList,document.querySelector('#quickRecordSheet')?.classList].filter(Boolean);
     for(const name of ['add','remove','toggle']){
       const native=DOMTokenList.prototype[name];
       DOMTokenList.prototype[name]=function(...args){
-        const isTarget=this===target(),touches=args.includes('show');
-        if(isTarget&&touches)window.__AXIS_SETTINGS_TRACE__.push({name,args:[...args],at:performance.now(),stack:new Error('settings-class-'+name).stack});
+        const watched=targets().includes(this),touches=args.includes('show');
+        if(watched&&touches)window.__AXIS_UI_TRACE__.push({name,args:[...args],target:this===document.querySelector('#settingsSheet')?.classList?'settings':'quick',at:performance.now(),stack:new Error('axis-ui-class-'+name).stack});
         return native.apply(this,args);
       };
     }
@@ -30,9 +30,9 @@ async function installSettingsTrace(page){
 
 async function uiState(page){
   return page.evaluate(()=>{
-    const snap=id=>{const e=document.querySelector(id);if(!e)return null;const c=getComputedStyle(e),r=e.getBoundingClientRect();return{class:e.className,display:c.display,visibility:c.visibility,opacity:c.opacity,rect:[+r.x.toFixed(2),+r.y.toFixed(2),+r.width.toFixed(2),+r.height.toFixed(2)]}};
-    const settings=document.querySelector('#settingsBtn'),sheet=document.querySelector('#settingsSheet');
-    return{settings:snap('#settingsBtn'),settingsOnclick:typeof settings?.onclick,settingsSheetClass:sheet?.className||null,settingsTrace:window.__AXIS_SETTINGS_TRACE__||[],today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),quick:snap('#quickRecordBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,watchdog:window.__AXIS_BOOT_WATCHDOG__,stableComplete:window.__AXIS_STABLE_COMPLETE__,stableDegraded:window.__AXIS_STABLE_DEGRADED__,ready8711:window.__AXIS_8711_READY__,featureKernel:window.__AXIS_FEATURE_KERNEL__||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
+    const snap=id=>{const e=document.querySelector(id);if(!e)return null;const c=getComputedStyle(e),r=e.getBoundingClientRect();return{class:e.className,display:c.display,visibility:c.visibility,opacity:c.opacity,rect:[+r.x.toFixed(2),+r.y.toFixed(2),+r.width.toFixed(2),+r.height.toFixed(2)],onclick:typeof e.onclick}};
+    const sheet=document.querySelector('#settingsSheet'),quickSheet=document.querySelector('#quickRecordSheet');
+    return{settings:snap('#settingsBtn'),settingsSheetClass:sheet?.className||null,quick:snap('#quickRecordBtn'),quickSheetClass:quickSheet?.className||null,uiTrace:window.__AXIS_UI_TRACE__||[],today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,watchdog:window.__AXIS_BOOT_WATCHDOG__,stableComplete:window.__AXIS_STABLE_COMPLETE__,stableDegraded:window.__AXIS_STABLE_DEGRADED__,ready8711:window.__AXIS_8711_READY__,featureKernel:window.__AXIS_FEATURE_KERNEL__||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
   });
 }
 
@@ -69,14 +69,16 @@ async function verifyIdleEntry(page){
   assert.ok(await page.locator('#idleHome').isVisible(),'neither idle nor active home is visible');
   const ok=(await page.locator('#dock').isVisible())&&(await page.locator('#scanBtn').isVisible())&&(await page.locator('#quickRecordBtn').isVisible());
   if(!ok){console.error('[AXIS idle diagnostic]',JSON.stringify(await uiState(page),null,2));assert.fail('current idle recording controls are not visible')}
-  await measuredClick(page,'#quickRecordBtn',250);await wait(page,()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),1800);await measuredClick(page,'#quickClose',180);return'idle';
+  const before=await uiState(page);const click=await measuredClick(page,'#quickRecordBtn',250);await page.waitForTimeout(40);const after40=await uiState(page);
+  try{await wait(page,()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),800)}catch{console.error('[AXIS quick ownership diagnostic]',JSON.stringify({click,before,after40,final:await uiState(page)},null,2));throw new Error('quick record sheet did not remain open after click')}
+  await measuredClick(page,'#quickClose',180);return'idle';
 }
 
 async function coreSmoke(viewport,full=false){
   const context=await browser.newContext({viewport,locale:'zh-CN'});const page=await context.newPage();await routeApis(page);
   const pageErrors=[];page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
   const started=Date.now();const res=await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000});assert.ok(res&&res.ok(),`navigation failed ${res?.status()}`);
-  await wait(page,()=>window.__AXIS_CORE_INTERACTIVE__===true&&document.documentElement.dataset.axisCoreReady==='1',5000);await installSettingsTrace(page);
+  await wait(page,()=>window.__AXIS_CORE_INTERACTIVE__===true&&document.documentElement.dataset.axisCoreReady==='1',5000);await installUiTrace(page);
   const coreMs=Date.now()-started;assert.ok(coreMs<5000,`core interactive too slow: ${coreMs}ms`);
 
   const geometry=await waitGeometryStable(page,'#settingsBtn',900);
