@@ -35,5 +35,14 @@ for(const file of stableFiles){
   if(file==='v8710-watermark.js'&&src.includes('function render(){ensure();sync();'))throw new Error('AXIS legacy sanitizer: watermark recursion remains');
 }
 
+const hardeningPath=path.join(ROOT,'runtime-hardening.css');
+const stylesPath=path.join(ROOT,'styles.css');
+if(!fs.existsSync(hardeningPath))throw new Error('AXIS legacy sanitizer: missing runtime-hardening.css');
+let styles=fs.readFileSync(stylesPath,'utf8');
+const hardening=fs.readFileSync(hardeningPath,'utf8');
+const marker='/* AXIS stable shell geometry contract */';
+if(!styles.includes(marker))styles+=`\n\n${hardening}\n`;
+fs.writeFileSync(stylesPath,styles);
+
 if(helperFixes<2)throw new Error(`AXIS legacy sanitizer: expected legacy helper fixes, found ${helperFixes}`);
-console.log(`[AXIS] legacy sanitizer passed · ${helperFixes} null-safe helper fixes · ${watermarkFixes} recursion fix`);
+console.log(`[AXIS] legacy sanitizer passed · ${helperFixes} null-safe helper fixes · ${watermarkFixes} recursion fix · stable shell geometry locked`);
