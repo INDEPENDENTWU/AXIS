@@ -11,7 +11,23 @@ const stableFiles=[
 ];
 const unsafeHelper="$=(s,r=D)=>r.querySelector(s),$$=(s,r=D)=>Array.from(r.querySelectorAll(s))";
 const safeHelper="$=(s,r=D)=>r?.querySelector?.(s)||null,$$=(s,r=D)=>r?.querySelectorAll?Array.from(r.querySelectorAll(s)):[]";
-let helperFixes=0,watermarkFixes=0;
+let helperFixes=0,watermarkFixes=0,interactionFixes=0;
+
+const interactionRewrites={
+  'v876-runtime.js':[
+    ["if(e.target.closest('#settingsBtn'))setTimeout(()=>{injectAudio();syncCaptureSetting();installVersion()},120);",'']
+  ],
+  'v877-runtime.js':[
+    ["if(e.target.closest('#settingsBtn'))setTimeout(()=>{version();installControl()},70);",'']
+  ],
+  'v879-runtime.js':[
+    ["requestAnimationFrame(()=>{cleanLegacy();version();layer();editEntry()})",'']
+  ],
+  'v8711-runtime.js':[
+    ["if(e.target.closest('#settingsBtn'))setTimeout(()=>{ensureSettings();version()},100);",''],
+    ['requestAnimationFrame(queue)','']
+  ]
+};
 
 for(const file of stableFiles){
   const p=path.join(ROOT,file);
@@ -26,6 +42,11 @@ for(const file of stableFiles){
     src=src.replace(from,'function render(){sync();');
     watermarkFixes++;
   }
+  for(const [from,to] of interactionRewrites[file]||[]){
+    const hits=src.split(from).length-1;
+    if(hits!==1)throw new Error(`AXIS legacy sanitizer: interaction signature ${file} expected once, found ${hits}: ${from.slice(0,70)}`);
+    src=src.replace(from,to);interactionFixes++;
+  }
   fs.writeFileSync(p,src);
 }
 
@@ -33,6 +54,7 @@ for(const file of stableFiles){
   const src=fs.readFileSync(path.join(ROOT,file),'utf8');
   if(src.includes(unsafeHelper))throw new Error(`AXIS legacy sanitizer: unsafe scoped query remains in ${file}`);
   if(file==='v8710-watermark.js'&&src.includes('function render(){ensure();sync();'))throw new Error('AXIS legacy sanitizer: watermark recursion remains');
+  for(const [from] of interactionRewrites[file]||[])if(src.includes(from))throw new Error(`AXIS legacy sanitizer: redundant interaction work remains in ${file}`);
 }
 
 const hardeningPath=path.join(ROOT,'runtime-hardening.css');
@@ -45,4 +67,5 @@ if(!styles.includes(marker))styles+=`\n\n${hardening}\n`;
 fs.writeFileSync(stylesPath,styles);
 
 if(helperFixes<2)throw new Error(`AXIS legacy sanitizer: expected legacy helper fixes, found ${helperFixes}`);
-console.log(`[AXIS] legacy sanitizer passed · ${helperFixes} null-safe helper fixes · ${watermarkFixes} recursion fix · stable shell geometry locked`);
+if(interactionFixes!==5)throw new Error(`AXIS legacy sanitizer: expected 5 interaction-path fixes, found ${interactionFixes}`);
+console.log(`[AXIS] legacy sanitizer passed · ${helperFixes} null-safe helper fixes · ${watermarkFixes} recursion fix · ${interactionFixes} shell interaction fixes · stable shell geometry locked`);
