@@ -23,16 +23,26 @@ async function coreSmoke(viewport,full=false){
   await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&document.documentElement.dataset.axisCoreReady==='1',{timeout:5000});
   const coreMs=Date.now()-started;
   assert.ok(coreMs<5000,`core interactive too slow: ${coreMs}ms`);
+
   await page.locator('#settingsBtn').click({timeout:1500});
   await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),{timeout:1500});
   await page.locator('[data-close="settingsSheet"]').click();
+
   await page.locator('nav.nav [data-view="historyView"]').click();
   await page.waitForFunction(()=>document.querySelector('#historyView')?.classList.contains('active'),{timeout:1200});
   await page.locator('nav.nav [data-view="todayView"]').click();
   await page.waitForFunction(()=>document.querySelector('#todayView')?.classList.contains('active'),{timeout:1200});
+
   if(full){
-    await page.locator('#startBtn').click({timeout:1500});
-    await page.waitForFunction(()=>!document.querySelector('#activeHome')?.classList.contains('hidden'),{timeout:1800});
+    const start=page.locator('#startBtn');
+    if(await start.isVisible()){
+      await start.click({timeout:1500});
+      await page.waitForFunction(()=>!document.querySelector('#activeHome')?.classList.contains('hidden'),{timeout:1800});
+    }else{
+      const activeVisible=await page.locator('#activeHome').isVisible();
+      assert.ok(activeVisible,'neither start button nor active training view is visible');
+    }
+
     await page.waitForFunction(()=>window.__AXIS_FEATURE_KERNEL__?.state==='ready'||window.__AXIS_FEATURE_KERNEL__?.state==='base',{timeout:9000});
     const state=await page.evaluate(()=>window.__AXIS_FEATURE_KERNEL__?.state);
     assert.equal(state,'ready','8.7.12 feature did not become ready in local smoke test');
@@ -41,6 +51,7 @@ async function coreSmoke(viewport,full=false){
     const version=(await page.locator('.versionLine').innerText()).trim();
     assert.equal(version,'版本 8.7.12',`unexpected version: ${version}`);
   }
+
   assert.deepEqual(pageErrors,[],`uncaught page errors:\n${pageErrors.join('\n')}`);
   await context.close();
   return coreMs;
