@@ -9,7 +9,7 @@ on:
 jobs:
   browser-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,10 +17,12 @@ jobs:
           node-version: '20.18.0'
       - name: Build stable base and non-blocking features
         run: node build.mjs && node postbuild-features.mjs
-      - name: Install Playwright
+      - name: Prepare browser harness
         run: |
-          npm install --no-save playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Start local production server
         run: |
           python3 -m http.server 4173 >/tmp/axis-http.log 2>&1 &
