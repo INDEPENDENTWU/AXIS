@@ -12,11 +12,27 @@ async function routeApis(page){
   await page.route('**/api/insight**',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:false,disabled:true})}));
 }
 
+async function installSettingsTrace(page){
+  await page.evaluate(()=>{
+    if(window.__AXIS_SETTINGS_TRACE_INSTALLED__)return;
+    window.__AXIS_SETTINGS_TRACE_INSTALLED__=true;window.__AXIS_SETTINGS_TRACE__=[];
+    const target=()=>document.querySelector('#settingsSheet')?.classList;
+    for(const name of ['add','remove','toggle']){
+      const native=DOMTokenList.prototype[name];
+      DOMTokenList.prototype[name]=function(...args){
+        const isTarget=this===target(),touches=args.includes('show');
+        if(isTarget&&touches)window.__AXIS_SETTINGS_TRACE__.push({name,args:[...args],at:performance.now(),stack:new Error('settings-class-'+name).stack});
+        return native.apply(this,args);
+      };
+    }
+  });
+}
+
 async function uiState(page){
   return page.evaluate(()=>{
     const snap=id=>{const e=document.querySelector(id);if(!e)return null;const c=getComputedStyle(e),r=e.getBoundingClientRect();return{class:e.className,display:c.display,visibility:c.visibility,opacity:c.opacity,rect:[+r.x.toFixed(2),+r.y.toFixed(2),+r.width.toFixed(2),+r.height.toFixed(2)]}};
     const settings=document.querySelector('#settingsBtn'),sheet=document.querySelector('#settingsSheet');
-    return{settings:snap('#settingsBtn'),settingsOnclick:typeof settings?.onclick,settingsSheetClass:sheet?.className||null,today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),quick:snap('#quickRecordBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,watchdog:window.__AXIS_BOOT_WATCHDOG__,stableComplete:window.__AXIS_STABLE_COMPLETE__,stableDegraded:window.__AXIS_STABLE_DEGRADED__,ready8711:window.__AXIS_8711_READY__,featureKernel:window.__AXIS_FEATURE_KERNEL__||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
+    return{settings:snap('#settingsBtn'),settingsOnclick:typeof settings?.onclick,settingsSheetClass:sheet?.className||null,settingsTrace:window.__AXIS_SETTINGS_TRACE__||[],today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),quick:snap('#quickRecordBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,watchdog:window.__AXIS_BOOT_WATCHDOG__,stableComplete:window.__AXIS_STABLE_COMPLETE__,stableDegraded:window.__AXIS_STABLE_DEGRADED__,ready8711:window.__AXIS_8711_READY__,featureKernel:window.__AXIS_FEATURE_KERNEL__||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
   });
 }
 
@@ -60,13 +76,12 @@ async function coreSmoke(viewport,full=false){
   const context=await browser.newContext({viewport,locale:'zh-CN'});const page=await context.newPage();await routeApis(page);
   const pageErrors=[];page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
   const started=Date.now();const res=await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000});assert.ok(res&&res.ok(),`navigation failed ${res?.status()}`);
-  await wait(page,()=>window.__AXIS_CORE_INTERACTIVE__===true&&document.documentElement.dataset.axisCoreReady==='1',5000);
+  await wait(page,()=>window.__AXIS_CORE_INTERACTIVE__===true&&document.documentElement.dataset.axisCoreReady==='1',5000);await installSettingsTrace(page);
   const coreMs=Date.now()-started;assert.ok(coreMs<5000,`core interactive too slow: ${coreMs}ms`);
 
   const geometry=await waitGeometryStable(page,'#settingsBtn',900);
   const settingsResult=await measuredClick(page,'#settingsBtn',250,true);
-  if(!String(settingsResult.after||'').split(/\s+/).includes('show'))console.error('[AXIS settings ownership diagnostic]',settingsResult,JSON.stringify(await uiState(page),null,2));
-  await wait(page,()=>document.querySelector('#settingsSheet')?.classList.contains('show'),1800);
+  try{await wait(page,()=>document.querySelector('#settingsSheet')?.classList.contains('show'),600)}catch{console.error('[AXIS settings ownership diagnostic]',settingsResult,JSON.stringify(await uiState(page),null,2));throw new Error('settings sheet did not remain open after click')}
   await measuredClick(page,'[data-close="settingsSheet"]',180);
 
   await measuredClick(page,'nav.nav [data-view="historyView"]',180);await wait(page,()=>document.querySelector('#historyView')?.classList.contains('active'),1500);
@@ -78,7 +93,7 @@ async function coreSmoke(viewport,full=false){
     await wait(page,()=>window.__AXIS_FEATURE_KERNEL__?.state==='ready'||window.__AXIS_FEATURE_KERNEL__?.state==='base',9000);
     const state=await page.evaluate(()=>window.__AXIS_FEATURE_KERNEL__?.state);if(state!=='ready')console.error('[AXIS feature diagnostic]',JSON.stringify(await uiState(page),null,2));
     assert.equal(state,'ready','8.7.12 feature did not become ready in local smoke test');
-    await waitGeometryStable(page,'#settingsBtn',500);await measuredClick(page,'#settingsBtn',250,true);await wait(page,()=>document.querySelector('#settingsSheet')?.classList.contains('show'),1800);
+    await waitGeometryStable(page,'#settingsBtn',500);await measuredClick(page,'#settingsBtn',250,true);await wait(page,()=>document.querySelector('#settingsSheet')?.classList.contains('show'),1200);
     const version=(await page.locator('.versionLine').innerText()).trim();assert.equal(version,'版本 8.7.12',`unexpected version: ${version}`);
   }
 
