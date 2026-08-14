@@ -11,6 +11,13 @@ async function routeApis(page){
   await page.route('**/api/insight**',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:false,disabled:true})}));
 }
 
+async function uiState(page){
+  return page.evaluate(()=>{
+    const snap=id=>{const e=document.querySelector(id);if(!e)return null;const c=getComputedStyle(e);return{class:e.className,display:c.display,visibility:c.visibility,opacity:c.opacity,rect:[Math.round(e.getBoundingClientRect().width),Math.round(e.getBoundingClientRect().height)]}};
+    return{today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),start:snap('#startBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,feature:window.__AXIS_FEATURE_KERNEL__?.state||null};
+  });
+}
+
 async function coreSmoke(viewport,full=false){
   const context=await browser.newContext({viewport,locale:'zh-CN'});
   const page=await context.newPage();
@@ -35,12 +42,15 @@ async function coreSmoke(viewport,full=false){
 
   if(full){
     const start=page.locator('#startBtn');
-    if(await start.isVisible()){
+    const startVisible=await start.isVisible();
+    const activeVisible=await page.locator('#activeHome').isVisible();
+    if(!startVisible&&!activeVisible){
+      console.error('[AXIS smoke diagnostic]',JSON.stringify(await uiState(page),null,2));
+      assert.fail('neither start button nor active training view is visible');
+    }
+    if(startVisible){
       await start.click({timeout:1500});
       await page.waitForFunction(()=>!document.querySelector('#activeHome')?.classList.contains('hidden'),{timeout:1800});
-    }else{
-      const activeVisible=await page.locator('#activeHome').isVisible();
-      assert.ok(activeVisible,'neither start button nor active training view is visible');
     }
 
     await page.waitForFunction(()=>window.__AXIS_FEATURE_KERNEL__?.state==='ready'||window.__AXIS_FEATURE_KERNEL__?.state==='base',{timeout:9000});
