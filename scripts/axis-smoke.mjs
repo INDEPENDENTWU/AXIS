@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import { chromium } from 'playwright';
+import { chromium } from 'playwright-core';
 
 const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
-const browser=await chromium.launch({headless:true});
+const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']});
 
 async function routeApis(page){
   await page.route('**/api/ai-status**',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:true,enabled:false})}));
