@@ -3,7 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 const ROOT=process.cwd();
-const VERSION='8.7.10';
+const VERSION='8.7.11';
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex').slice(0,12);
 
 const coreModules=[
@@ -36,7 +36,8 @@ const enhanceModules=[
   ['v8710-sonic-motifs.js','__AXIS_8710_SONIC_MOTIFS_READY__'],
   ['v8710-sound-ui.js','__AXIS_8710_SOUND_READY__'],
   ['v8710-report.js','__AXIS_8710_REPORT_READY__'],
-  ['v8710-watermark.js','__AXIS_8710_WATERMARK_READY__']
+  ['v8710-watermark.js','__AXIS_8710_WATERMARK_READY__'],
+  ['v8711-runtime.js','__AXIS_8711_READY__']
 ];
 const allModules=[...coreModules,...enhanceModules];
 
@@ -45,11 +46,15 @@ const requiredFiles=[
   'api/analyze.js','api/insight.js','api/ai-status.js','api/owner-config.js',
   'cloud-functions/api/analyze.js','cloud-functions/api/insight.js','cloud-functions/api/ai-status.js','cloud-functions/api/owner-config.js'
 ];
-for(const file of requiredFiles){if(!fs.existsSync(path.join(ROOT,file)))throw new Error(`AXIS production gate: missing ${file}`)}
+for(const file of requiredFiles){
+  if(!fs.existsSync(path.join(ROOT,file))) throw new Error(`AXIS production gate: missing ${file}`);
+}
 
 const sourceIndex=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 const requiredDom=['settingsBtn','todayView','activeHome','eventList','scanSheet','reviewStage','equipmentName','settingsSheet','reportSheet','watermarkSheet','toast'];
-for(const id of requiredDom){if(!sourceIndex.includes(`id="${id}"`))throw new Error(`AXIS production gate: missing DOM #${id}`)}
+for(const id of requiredDom){
+  if(!sourceIndex.includes(`id="${id}"`)) throw new Error(`AXIS production gate: missing DOM #${id}`);
+}
 
 const safeObserver=`(()=>{'use strict';
 const NativeMO=window.MutationObserver;
@@ -79,8 +84,16 @@ if(NativeMO&&!window.__AXIS_NATIVE_MUTATION_OBSERVER__){
 })();\n`;
 
 const bootGuard=`(()=>{'use strict';
-window.__AXIS_RELEASE__='${VERSION}';window.__AXIS_ARCH__='progressive-core-enhance';window.__AXIS_BOOT_READY__=true;
-try{if('serviceWorker'in navigator){const sw=navigator.serviceWorker;try{Object.defineProperty(sw,'register',{configurable:true,value:()=>Promise.resolve(null)})}catch{try{sw.register=()=>Promise.resolve(null)}catch{}}sw.getRegistrations?.().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{})}}catch{}
+window.__AXIS_RELEASE__='${VERSION}';
+window.__AXIS_ARCH__='progressive-core-enhance';
+window.__AXIS_BOOT_READY__=true;
+try{
+  if('serviceWorker'in navigator){
+    const sw=navigator.serviceWorker;
+    try{Object.defineProperty(sw,'register',{configurable:true,value:()=>Promise.resolve(null)})}catch{try{sw.register=()=>Promise.resolve(null)}catch{}}
+    sw.getRegistrations?.().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{});
+  }
+}catch{}
 window.addEventListener('error',e=>{try{console.error('[AXIS runtime]',e.error||e.message||e)}catch{}},{passive:true});
 })();\n`+safeObserver;
 
@@ -90,11 +103,13 @@ function normalizeReleaseVersion(src){
     .replace(/\.dataset\.axisVersion=VERSION/g,'.dataset.axisVersion=window.__AXIS_RELEASE__||VERSION')
     .replace(/window\.__AXIS_VERSION__=VERSION/g,'window.__AXIS_VERSION__=window.__AXIS_RELEASE__||VERSION');
 }
-
 function isolatedSource(file,flag,index,label){
   let src=fs.readFileSync(path.join(ROOT,file),'utf8');
   src=normalizeReleaseVersion(src);
   return `\n/* ===== ${file} ===== */\nfunction __axis_${label}_${index}(){try{\n${src}\nwindow.${flag}=true;return true}catch(e){window.${flag}=false;console.error('[AXIS] ${file} isolated',e);return false}}\n`;
+}
+function syntaxGate(source,label){
+  try{new Function(source)}catch(e){throw new Error(`AXIS production gate: ${label} syntax ${e.message}`)}
 }
 
 let enhanceDefs='';
@@ -115,13 +130,22 @@ try{
     await turn();
     if(i>0&&i%4===0)await frame();
   }
-  window.__AXIS_LATEST_LOADING__=false;window.__AXIS_LATEST_READY__=true;window.__AXIS_HYDRATING__=false;window.__AXIS_BOOT_WATCHDOG__='ready';
+  window.__AXIS_LATEST_LOADING__=false;
+  window.__AXIS_LATEST_READY__=true;
+  window.__AXIS_HYDRATING__=false;
+  window.__AXIS_BOOT_WATCHDOG__='ready';
   window.__AXIS_VERSION__=window.__AXIS_RELEASE__||'${VERSION}';
   document.documentElement.dataset.axisReady='1';
-}catch(e){window.__AXIS_LATEST_LOADING__=false;window.__AXIS_HYDRATING__=false;window.__AXIS_BOOT_WATCHDOG__='degraded';console.error('[AXIS] enhancement hydration',e)}
-const v=document.querySelector('.versionLine');if(v){v.textContent='版本 ${VERSION}';v.style.visibility='visible';v.dataset.axisVersion='${VERSION}'}
+}catch(e){
+  window.__AXIS_LATEST_LOADING__=false;
+  window.__AXIS_HYDRATING__=false;
+  window.__AXIS_BOOT_WATCHDOG__='degraded';
+  console.error('[AXIS] enhancement hydration',e);
+}
+const v=document.querySelector('.versionLine');
+if(v){v.textContent='版本 ${VERSION}';v.style.visibility='visible';v.dataset.axisVersion='${VERSION}'}
 })();\n`;
-new Function(enhanceBundle);
+syntaxGate(enhanceBundle,'enhancement bundle');
 const enhanceHash=hash(enhanceBundle);
 fs.writeFileSync(path.join(ROOT,'axis-enhance.js'),enhanceBundle);
 
@@ -130,21 +154,36 @@ coreModules.forEach(([f,flag],i)=>coreDefs+=isolatedSource(f,flag,i,'core'));
 let coreBundle=bootGuard+coreDefs;
 coreBundle+=`\n(()=>{'use strict';
 __axis_core_0();__axis_core_1();
-window.__AXIS_VERSION__='${VERSION}';window.__AXIS_CORE_INTERACTIVE__=true;document.documentElement.dataset.axisCoreReady='1';
-const vv=document.querySelector('.versionLine');if(vv){vv.textContent='版本 ${VERSION}';vv.style.visibility='visible';vv.dataset.axisVersion='${VERSION}'}
+window.__AXIS_VERSION__='${VERSION}';
+window.__AXIS_CORE_INTERACTIVE__=true;
+document.documentElement.dataset.axisCoreReady='1';
+const vv=document.querySelector('.versionLine');
+if(vv){vv.textContent='版本 ${VERSION}';vv.style.visibility='visible';vv.dataset.axisVersion='${VERSION}'}
 const clean=()=>{try{const u=new URL(location.href);if(u.searchParams.has('boot')||u.searchParams.has('fresh')){u.searchParams.delete('boot');u.searchParams.delete('fresh');history.replaceState(history.state,'',u.pathname+(u.searchParams.size?'?'+u.searchParams.toString():'')+u.hash)}}catch{}};
-const loadEnhance=()=>{if(window.__AXIS_ENHANCE_REQUESTED__||window.__AXIS_LATEST_READY__)return;window.__AXIS_ENHANCE_REQUESTED__=true;window.__AXIS_HYDRATING__=true;const s=document.createElement('script');s.src='/axis-enhance.js?v=${enhanceHash}';s.async=true;s.onload=()=>{setTimeout(clean,80)};s.onerror=()=>{window.__AXIS_HYDRATING__=false;window.__AXIS_LATEST_LOADING__=false;window.__AXIS_BOOT_WATCHDOG__='core-only';console.error('[AXIS] enhancement network unavailable');clean()};(document.head||document.documentElement).appendChild(s)};
-if(document.readyState==='complete')setTimeout(loadEnhance,180);else window.addEventListener('load',()=>setTimeout(loadEnhance,180),{once:true});
+const loadEnhance=()=>{
+  if(window.__AXIS_ENHANCE_REQUESTED__||window.__AXIS_LATEST_READY__)return;
+  window.__AXIS_ENHANCE_REQUESTED__=true;
+  window.__AXIS_HYDRATING__=true;
+  const s=document.createElement('script');
+  s.src='/axis-enhance.js?v=${enhanceHash}';
+  s.async=true;
+  s.onload=()=>setTimeout(clean,80);
+  s.onerror=()=>{window.__AXIS_HYDRATING__=false;window.__AXIS_LATEST_LOADING__=false;window.__AXIS_BOOT_WATCHDOG__='core-only';console.error('[AXIS] enhancement network unavailable');clean()};
+  (document.head||document.documentElement).appendChild(s);
+};
+if(document.readyState==='complete')setTimeout(loadEnhance,180);
+else window.addEventListener('load',()=>setTimeout(loadEnhance,180),{once:true});
 })();\n`;
-new Function(coreBundle);
+syntaxGate(coreBundle,'core bundle');
 const coreHash=hash(coreBundle);
 fs.writeFileSync(path.join(ROOT,'axis-core.js'),coreBundle);
 
 const cssFiles=['styles.css','v61.css'];
 let css=cssFiles.map(f=>`/* ===== ${f} ===== */\n${fs.readFileSync(path.join(ROOT,f),'utf8')}`).join('\n\n');
-css+=`\n/* AXIS 8.7.10 progressive boot */\nhtml:not([data-axis-core-ready="1"]) .versionLine{visibility:hidden}\n`;
-if(Buffer.byteLength(css)<20000)throw new Error('AXIS production gate: stylesheet bundle unexpectedly small');
-const cssHash=hash(css);fs.writeFileSync(path.join(ROOT,'axis-style.css'),css);
+css+=`\n/* AXIS ${VERSION} progressive boot */\nhtml:not([data-axis-core-ready="1"]) .versionLine{visibility:hidden}\n`;
+if(Buffer.byteLength(css)<20000) throw new Error('AXIS production gate: stylesheet bundle unexpectedly small');
+const cssHash=hash(css);
+fs.writeFileSync(path.join(ROOT,'axis-style.css'),css);
 
 let html=sourceIndex
   .replace(/<link rel="stylesheet" href="\/styles\.css(?:\?[^\"]*)?">\s*/g,'')
@@ -165,12 +204,38 @@ if(/edge-bootstrap|\/app\.js|\/v61\.js|axis-runtime\.js/.test(html))throw new Er
 fs.writeFileSync(path.join(ROOT,'index.html'),html);
 
 const releaseHash=hash(coreHash+enhanceHash+cssHash);
-const fresh=`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08090b"><title>AXIS</title><style>html,body{margin:0;min-height:100%;background:#08090b;color:#f4f3ef;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}main{min-height:100dvh;display:grid;place-items:center;text-align:center}b{font-size:15px;letter-spacing:.22em}span{display:block;margin-top:12px;color:#9299a5;font-size:12px}</style></head><body><main><div><b>AXIS</b><span>8.7.10 · 正在清理旧启动缓存</span></div></main><script>(async()=>{try{if('serviceWorker'in navigator){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}if('caches'in window){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch{}location.replace('/?fresh=${releaseHash}')} )();</script></body></html>`;
-fs.mkdirSync(path.join(ROOT,'fresh'),{recursive:true});fs.writeFileSync(path.join(ROOT,'fresh','index.html'),fresh);
+const fresh=`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08090b"><title>AXIS</title><style>html,body{margin:0;min-height:100%;background:#08090b;color:#f4f3ef;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}main{min-height:100dvh;display:grid;place-items:center;text-align:center}b{font-size:15px;letter-spacing:.22em}span{display:block;margin-top:12px;color:#9299a5;font-size:12px}</style></head><body><main><div><b>AXIS</b><span>${VERSION} · 正在清理旧启动缓存</span></div></main><script>(async()=>{try{if('serviceWorker'in navigator){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}if('caches'in window){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch{}location.replace('/?fresh=${releaseHash}')} )();</script></body></html>`;
+fs.mkdirSync(path.join(ROOT,'fresh'),{recursive:true});
+fs.writeFileSync(path.join(ROOT,'fresh','index.html'),fresh);
 
-const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8');if(!/unregister\(\)/.test(sw)||!/skipWaiting\(\)/.test(sw))throw new Error('AXIS production gate: service worker kill switch missing');
-const info={version:VERSION,releaseHash,architecture:'progressive-core-enhance',assets:{core:coreHash,enhance:enhanceHash,css:cssHash},requests:{initialJavascript:1,deferredJavascript:1,stylesheet:1},boot:{coreModules:coreModules.map(x=>x[0]),enhanceModules:enhanceModules.map(x=>x[0]),bodyMutationObserverGuard:true,legacyDynamicVersionChain:false,releaseOwner:VERSION},gates:{javascriptSyntax:true,criticalDom:true,apiPresence:true,serviceWorkerKillSwitch:true,contentHashedAssets:true,legacyBootstrapRemoved:true,releaseVersionNormalized:true},generatedAt:new Date().toISOString()};
+const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8');
+if(!/unregister\(\)/.test(sw)||!/skipWaiting\(\)/.test(sw))throw new Error('AXIS production gate: service worker kill switch missing');
+
+const info={
+  version:VERSION,
+  releaseHash,
+  architecture:'progressive-core-enhance',
+  assets:{core:coreHash,enhance:enhanceHash,css:cssHash},
+  requests:{initialJavascript:1,deferredJavascript:1,stylesheet:1},
+  boot:{
+    coreModules:coreModules.map(x=>x[0]),
+    enhanceModules:enhanceModules.map(x=>x[0]),
+    bodyMutationObserverGuard:true,
+    legacyDynamicVersionChain:false,
+    releaseOwner:VERSION
+  },
+  gates:{
+    javascriptSyntax:true,
+    criticalDom:true,
+    apiPresence:true,
+    serviceWorkerKillSwitch:true,
+    contentHashedAssets:true,
+    legacyBootstrapRemoved:true,
+    releaseVersionNormalized:true
+  },
+  generatedAt:new Date().toISOString()
+};
 fs.writeFileSync(path.join(ROOT,'axis-build.json'),JSON.stringify(info,null,2));
 console.log(`[AXIS] ${VERSION} production gate passed · ${releaseHash}`);
 console.log(`[AXIS] core ${(Buffer.byteLength(coreBundle)/1024).toFixed(1)} KiB · enhance ${(Buffer.byteLength(enhanceBundle)/1024).toFixed(1)} KiB · css ${(Buffer.byteLength(css)/1024).toFixed(1)} KiB`);
-console.log('[AXIS] boot: interactive core first; one deferred enhancement bundle; content-hashed cache keys; guarded body observers; single release owner');
+console.log('[AXIS] boot: interactive core first; one deferred enhancement bundle; content-hashed cache keys; guarded observers.');
