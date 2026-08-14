@@ -93,7 +93,7 @@ for(const chunk of chunks){
   syntaxGate(runner,`chunk ${chunk.id}`);
   const h=hash(runner),file=`axis-enhance-${chunk.id}.js`;
   write(file,runner);
-  chunkAssets.push({id,file,hash:h,modules:chunk.modules.map(x=>x[0]),bytes:Buffer.byteLength(runner)});
+  chunkAssets.push({id:chunk.id,file,hash:h,modules:chunk.modules.map(x=>x[0]),bytes:Buffer.byteLength(runner)});
 }
 
 const bootGuard=`(()=>{'use strict';
