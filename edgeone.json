@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node build-hardened.mjs && node postbuild-features.mjs",
+  "buildCommand": "node prepare-legacy-runtime.mjs && node build-hardened.mjs && node postbuild-features-hardened.mjs",
   "outputDirectory": ".",
   "nodeVersion": "20.18.0",
   "headers": [
