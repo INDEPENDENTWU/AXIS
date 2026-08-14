@@ -14,8 +14,35 @@ async function routeApis(page){
 async function uiState(page){
   return page.evaluate(()=>{
     const snap=id=>{const e=document.querySelector(id);if(!e)return null;const c=getComputedStyle(e);return{class:e.className,display:c.display,visibility:c.visibility,opacity:c.opacity,rect:[Math.round(e.getBoundingClientRect().width),Math.round(e.getBoundingClientRect().height)]}};
-    return{today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),start:snap('#startBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,feature:window.__AXIS_FEATURE_KERNEL__?.state||null};
+    return{today:snap('#todayView'),idle:snap('#idleHome'),active:snap('#activeHome'),dock:snap('#dock'),scan:snap('#scanBtn'),quick:snap('#quickRecordBtn'),app:snap('.app'),openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),core:window.__AXIS_CORE_INTERACTIVE__,latest:window.__AXIS_LATEST_READY__,latestLoading:window.__AXIS_LATEST_LOADING__,hydrating:window.__AXIS_HYDRATING__,watchdog:window.__AXIS_BOOT_WATCHDOG__,feature:window.__AXIS_FEATURE_KERNEL__?.state||null,enhanceDiag:window.__AXIS_ENHANCE_DIAG__||null};
   });
+}
+
+async function requireStableEnhance(page){
+  try{
+    await page.waitForFunction(()=>window.__AXIS_LATEST_READY__===true,{timeout:6500});
+  }catch(e){
+    console.error('[AXIS enhancement diagnostic]',JSON.stringify(await uiState(page),null,2));
+    throw new Error('stable 8.7.11 enhancement did not finish within 6.5s');
+  }
+}
+
+async function verifyIdleEntry(page){
+  const activeVisible=await page.locator('#activeHome').isVisible();
+  if(activeVisible)return 'active';
+  const idleVisible=await page.locator('#idleHome').isVisible();
+  assert.ok(idleVisible,'neither idle nor active home is visible');
+  const dockVisible=await page.locator('#dock').isVisible();
+  const scanVisible=await page.locator('#scanBtn').isVisible();
+  const quickVisible=await page.locator('#quickRecordBtn').isVisible();
+  if(!(dockVisible&&scanVisible&&quickVisible)){
+    console.error('[AXIS idle diagnostic]',JSON.stringify(await uiState(page),null,2));
+    assert.fail('current idle recording controls are not visible');
+  }
+  await page.locator('#quickRecordBtn').click({timeout:1500});
+  await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),{timeout:1500});
+  await page.locator('#quickClose').click();
+  return 'idle';
 }
 
 async function coreSmoke(viewport,full=false){
@@ -40,19 +67,9 @@ async function coreSmoke(viewport,full=false){
   await page.locator('nav.nav [data-view="todayView"]').click();
   await page.waitForFunction(()=>document.querySelector('#todayView')?.classList.contains('active'),{timeout:1200});
 
+  await requireStableEnhance(page);
   if(full){
-    const start=page.locator('#startBtn');
-    const startVisible=await start.isVisible();
-    const activeVisible=await page.locator('#activeHome').isVisible();
-    if(!startVisible&&!activeVisible){
-      console.error('[AXIS smoke diagnostic]',JSON.stringify(await uiState(page),null,2));
-      assert.fail('neither start button nor active training view is visible');
-    }
-    if(startVisible){
-      await start.click({timeout:1500});
-      await page.waitForFunction(()=>!document.querySelector('#activeHome')?.classList.contains('hidden'),{timeout:1800});
-    }
-
+    await verifyIdleEntry(page);
     await page.waitForFunction(()=>window.__AXIS_FEATURE_KERNEL__?.state==='ready'||window.__AXIS_FEATURE_KERNEL__?.state==='base',{timeout:9000});
     const state=await page.evaluate(()=>window.__AXIS_FEATURE_KERNEL__?.state);
     assert.equal(state,'ready','8.7.12 feature did not become ready in local smoke test');
