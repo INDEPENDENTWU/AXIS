@@ -9,6 +9,7 @@ function removeSoundTest(){
 }
 function cleanWatermarkCorners(){
  const pv=$('#watermarkPreview');if(!pv)return;
+ for(const b of $$(':scope>button[data-pos]',pv)){b.style.opacity='0';b.style.pointerEvents='none';b.style.border='0';b.style.background='transparent';b.style.boxShadow='none';b.setAttribute('aria-hidden','true')}
  const overlays=$$('#v8711Corners',pv);overlays.slice(1).forEach(n=>n.remove());
 }
 function cleanRetiredOwners(){
@@ -75,8 +76,8 @@ function patch(){removeSoundTest();cleanWatermarkCorners();cleanRetiredOwners();
 function bind(){
  installBackFlow();patch();
  D.addEventListener('click',e=>{
-  if(e.target.closest('#settingsBtn,#v8711AudioGate,[data-v8711-fold="audio"]'))setTimeout(removeSoundTest,90);
-  if(e.target.closest('#watermarkBtn'))setTimeout(cleanWatermarkCorners,120);
+  if(e.target.closest('#settingsBtn,#v8711AudioGate,[data-v8711-fold="audio"]')){removeSoundTest();setTimeout(removeSoundTest,90)}
+  if(e.target.closest('#watermarkBtn')){cleanWatermarkCorners();setTimeout(cleanWatermarkCorners,120)}
   if(e.target.closest('#settingsBtn,#quickRecordBtn,#v8Other,#equipmentRow,#reportBtn,#watermarkBtn,#profileBtn,#myEqBtn'))setTimeout(cleanRetiredOwners,100);
  },true);
  window.addEventListener('pageshow',()=>setTimeout(patch,100));
