@@ -46,6 +46,17 @@ html body #settingsSheet .versionLine::before{content:attr(data-axis-public-labe
 /* Historical active-adjust controls may exist internally, but only the canonical action can paint. */
 #v87Now .v87Actions button[id*="Adjust"]:not(#v87AdjustBtn){display:none!important}
 
+/* Today bottom stack: one shared content edge and a deliberate 8 / 12 px vertical rhythm. */
+html body #dock.v8-dual{bottom:84px!important}
+html body .nav{padding-top:8px!important;padding-bottom:calc(10px + env(safe-area-inset-bottom))!important}
+html body #v87Now{bottom:160px!important;width:min(calc(100% - 44px),500px)!important;border-radius:20px!important}
+html body #v87Now .v87Main{padding:14px 14px 12px!important}
+html body #v87Now .v87Tools{gap:8px!important}
+html body #v87Now .v87Tool{width:44px!important;height:44px!important;border-radius:14px!important}
+html body #v87Now .v87Actions{min-height:44px!important;gap:8px!important;padding:0 14px 14px!important}
+html body #v87Now .v87Paused{padding:0 14px 14px!important}
+html body.v87-now .app{padding-bottom:308px!important}
+
 @media(max-width:390px){
  #customEqSheet .v874TypeGrid{gap:7px!important}
  #customEqSheet .v874TypeGrid button{font-size:12px!important}
