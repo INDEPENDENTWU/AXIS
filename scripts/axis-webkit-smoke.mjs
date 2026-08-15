@@ -76,7 +76,22 @@ const adjust=await page.evaluate(()=>{window.__AXIS_WK_ADJUST_OBSERVER__?.discon
 assert.ok(adjust.max<=1,`WebKit duplicate adjustment flashed: ${JSON.stringify(adjust)}`);assert.equal(adjust.now.length,1,`WebKit canonical adjustment missing/duplicated: ${JSON.stringify(adjust)}`);assert.equal(adjust.now[0].id,'v87AdjustBtn');
 assert.equal(await page.locator('#v8710EditOnce,#v879EditBtn').count(),0,'retired active adjustment owner returned in WebKit');
 
+console.log('[AXIS WebKit] canonical adjustment sheet is visible and commits once');
+const activeId=await page.locator('#v87Finish').getAttribute('data-id');
+assert.ok(activeId,'WebKit active event id missing before adjustment');
+await page.locator('#v87AdjustBtn').click();
+await page.waitForFunction(()=>document.querySelector('#v879Edit')?.classList.contains('show'),undefined,{timeout:1200});
+assert.ok(await page.locator('#v879Edit').isVisible(),'WebKit canonical adjustment sheet has show state but no visible geometry');
+const adjustBox=await page.locator('#v879Edit .sheet').boundingBox();
+assert.ok(adjustBox&&adjustBox.width>300&&adjustBox.height>100,`WebKit canonical adjustment sheet geometry invalid: ${JSON.stringify(adjustBox)}`);
+await page.locator('#v879Edit [data-v879-edit-step="w"][data-dir="1"]').click();
+await page.locator('#v879Save').click();
+await page.waitForFunction(()=>!document.querySelector('#v879Edit')?.classList.contains('show'),undefined,{timeout:1200});
+const editAt=await page.evaluate(id=>{try{return Number(JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.v879EditAt)||0}catch{return 0}},activeId);
+assert.ok(editAt>0,'WebKit canonical adjustment did not persist its one-time transaction');
+assert.equal(await page.locator('#v87AdjustBtn:visible').count(),0,'WebKit one-time adjustment remained available after commit');
+
 const toggle=page.locator('#v87Toggle');await toggle.click();await page.waitForTimeout(90);assert.equal((await toggle.innerText()).trim(),'▶','WebKit pause failed');await toggle.click();await page.waitForTimeout(90);assert.equal((await toggle.innerText()).trim(),'Ⅱ','WebKit resume failed');
 assert.deepEqual(errors,[],`WebKit uncaught page errors:\n${errors.join('\n')}`);
-console.log('[AXIS WebKit] PASS · canonical 8.8 · custom editor · location · recording · active session');
+console.log('[AXIS WebKit] PASS · canonical 8.8 · custom editor · location · recording · active session · visible adjustment transaction');
 await context.close();await browser.close();
