@@ -167,7 +167,7 @@ if(!runtime.includes("window.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCaptu
 if(/setTimeout\(applyCaptureMode|function applyCaptureMode\(/.test(runtime))fail('delayed capture correction survived canonical runtime');
 if(runtime.includes("Number(b.dataset.sec)===Number(state.prefs.scanSeconds)"))fail('legacy scan preference painter survived canonical runtime');
 if(runtime.includes("state.prefs.scanSeconds=Number(b.dataset.sec)"))fail('legacy scan preference click writer survived canonical runtime');
-if(runtime.includes("$('#captureModes button').forEach"))fail('canonical selector helper was corrupted to single-dollar query');
+if(/(^|[^$])\$\('#captureModes button'\)\.forEach/.test(runtime))fail('canonical selector helper was corrupted to single-dollar query');
 if(!runtime.includes("$$('#captureModes button').forEach"))fail('canonical multi-selector helper missing from capture owner');
 
 console.log(`[AXIS 8.8 canonical] single runtime ${runtimeHash} · ${(Buffer.byteLength(runtime)/1024).toFixed(1)} KiB source`);
