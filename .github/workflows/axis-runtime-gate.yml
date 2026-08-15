@@ -70,3 +70,30 @@ jobs:
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-http.log || true
+
+  webkit-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Build exact canonical AXIS 8.8 artifact
+        run: node build-release.mjs
+      - name: Prepare WebKit runtime
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Start local production server
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-webkit-http.log 2>&1 &
+          echo $! >/tmp/axis-webkit-http.pid
+          sleep 1
+      - name: iPhone WebKit product smoke
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+        run: node scripts/axis-webkit-smoke.mjs
+      - name: Print WebKit server log on failure
+        if: failure()
+        run: cat /tmp/axis-webkit-http.log || true
