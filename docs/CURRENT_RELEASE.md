@@ -44,6 +44,7 @@ A user must never be able to receive a mixture such as “8.8 shell + 8.7.11 cap
 | Custom exercise persistence / open / delete | `app.js` | One data transaction and one editor entry. |
 | Custom exercise professional UI | `v874-professional.js` | Sole subtype / detailed-muscle inference and selection owner. |
 | Custom search | `v873-smart-input.js` | Search/ranking only; it hands data to the editor and never writes editor truth. |
+| Equipment / exercise catalog | canonical v8710 renderer produced by `prepare-88-catalog-convergence.mjs` | `#v8710Cards` has one runtime painter. Categories use primary training muscle, retain compound exercises, and use one curated ordering before/after category taps. The v8712 catalog painter is retired. |
 | Recording draft / sets | `v61.js` | Single strength draft and save owner through `window.__AXIS_RECORDING__`. |
 | Default capture preference | v876 preference bridge | `photo` / `3` / `5` has one visible writer and one persisted truth; legacy `scanSeconds` is migration input only. |
 | Capture entry | canonical `#scanBtn` handler | The first visible capture frame already reflects the persisted canonical preference; no delayed correction is allowed. |
@@ -67,6 +68,7 @@ The final release must preserve **later intentional replacements over earlier fi
 5. **Watermark:** later v85/v8711 controls replace older name/placement controls. Completion leaves old corner nodes inert so there is only one clickable placement owner.
 6. **Trends:** v84 intentionally hides the pre-v84 coverage UI. Release tests must validate `.v84Trends`, never revive `coverageGrid` to satisfy an old test.
 7. **Report:** v8710 intentionally hides base/v877 report surfaces and owns the three-card report deck. Release tests validate `#v8710ReportDeck`, never revive `#reportPreview`.
+8. **Equipment catalog:** the richer later catalog ordering and the category-tap renderer are converged into one v8710 production owner. A compound movement is categorized by its primary training muscle; secondary triceps/biceps involvement may not pull a chest/back movement into Arms. v8712 may not repaint `#v8710Cards` after open, input or category taps.
 
 A future fix must not restore an older surface simply because a historical DOM node still exists.
 
@@ -79,6 +81,7 @@ A future fix must not restore an older surface simply because a historical DOM n
 - `v873-smart-input.js` custom-editor type/muscle writer;
 - `v876-runtime.js` duplicate custom draft/inference/save patcher outside its retained capture-preference responsibility;
 - `v8712-runtime.js` duplicate custom-editor ownership;
+- `v8712-runtime.js` secondary equipment-category painter / `polishCategory` routes;
 - base `scanSeconds` visual painter and click writer;
 - v876 delayed capture correction;
 - `v8710EditOnce` and the old `v879EditBtn` active-adjustment entries;
@@ -117,6 +120,7 @@ prepare-legacy-runtime.mjs
 prepare-product-convergence.mjs
 prepare-first-paint-shell.mjs
 prepare-88-convergence.mjs
+prepare-88-catalog-convergence.mjs
 build-hardened.mjs
 postbuild-kernel-priority.mjs
 postbuild-features-hardened.mjs
@@ -124,7 +128,7 @@ postbuild-8712-completion.mjs
 postbuild-88-canonical.mjs
 ```
 
-The first eight steps are compiler/convergence stages. Their intermediate files/log language may describe historical topology because they operate on compatibility inputs. **Only the final canonical artifact and `axis-build.json` define production delivery.** The final step removes the old network-loading topology. Provider configuration must never copy this step list; Vercel/EdgeOne/CI call `node build-release.mjs` only.
+The first nine steps are compiler/convergence stages. Their intermediate files/log language may describe historical topology because they operate on compatibility inputs. **Only the final canonical artifact and `axis-build.json` define production delivery.** The final step removes the old network-loading topology. Provider configuration must never copy this step list; Vercel/EdgeOne/CI call `node build-release.mjs` only.
 
 Long term, compiler inputs that have remained retired across releases should be physically removed. Until then, they are source compatibility material, not production layers.
 
@@ -139,6 +143,7 @@ A release is incomplete unless the following pass on the same exact source SHA:
 - capture-entry owner and first-frame preference diagnostic;
 - completion interaction regression;
 - AXIS 8.8 convergence smoke;
+- equipment-category single-owner regression in Chromium and iPhone WebKit: initial and post-tap catalog must use the same renderer/order, retain representative compound movements, preserve sufficient coverage across Chest / Back / Shoulder / Arms / Glutes-Legs / Core / Cardio, and keep retired base/v877 catalogs hidden;
 - one public 8.8 version presentation;
 - one custom-editor owner and valid automatic association/save;
 - no raw coordinate leakage;
