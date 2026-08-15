@@ -54,7 +54,8 @@ if(await page.locator('#v876Locate').count()){
 }
 
 console.log('[AXIS convergence] report containment + parent return');
-const parentScroll=await page.locator('#settingsSheet>.sheet').evaluate(el=>{el.scrollTop=Math.min(96,Math.max(0,el.scrollHeight-el.clientHeight));return el.scrollTop});
+await page.locator('#reportBtn').scrollIntoViewIfNeeded();
+const parentScroll=await page.locator('#settingsSheet>.sheet').evaluate(el=>el.scrollTop);
 await page.locator('#reportBtn').click();
 await page.waitForFunction(()=>document.querySelector('#reportSheet')?.classList.contains('show'),{timeout:1500});await page.waitForTimeout(160);
 assert.equal(await page.locator('#reportSheet .axisBack').count(),1,'report output must have one parent-return action');
