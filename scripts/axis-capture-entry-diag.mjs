@@ -19,9 +19,12 @@ await page.locator('#scanSeconds [data-v876-cap="5"]').click();await page.locato
 assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5');
 console.log('[AXIS capture entry before close]',JSON.stringify(await snap('before-close'),null,2));
 await page.locator('#settingsSheet [data-close="settingsSheet"]').click();await page.waitForTimeout(80);
-console.log('[AXIS capture entry after close]',JSON.stringify(await snap('after-close'),null,2));
+const afterClose=await snap('after-close');
+console.log('[AXIS capture entry after close]',JSON.stringify(afterClose,null,2));
 assert.equal(await page.locator('#settingsSheet.show').count(),0,'Settings did not close');
 assert.equal(await page.locator('#scanBtn').evaluate(x=>typeof x.onclick),'function','capture button lost its owner');
+const ownerSource=await page.locator('#scanBtn').evaluate(x=>String(x.onclick||''));
+assert.ok(ownerSource.includes('__AXIS_CAPTURE_PREF__')&&ownerSource.includes("openSheet('scanSheet')"),`unexpected capture owner: ${ownerSource.slice(0,900)}`);
 await page.locator('#scanBtn').click();
 console.log('[AXIS capture entry immediate]',JSON.stringify(await snap('immediate'),null,2));
 await page.waitForTimeout(200);
