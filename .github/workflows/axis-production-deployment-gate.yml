@@ -36,6 +36,7 @@ jobs:
           echo "Production URL: $AXIS_URL"
           for i in $(seq 1 20); do
             if curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/" >/tmp/axis-production-index.html; then
+              echo "Production edge reachable · $(wc -c </tmp/axis-production-index.html) bytes"
               exit 0
             fi
             sleep 3
@@ -43,22 +44,48 @@ jobs:
           echo "Production deployment never became reachable"
           exit 1
 
-      - name: Verify hardened production artifacts
+      - name: Verify hardened production manifest and immutable assets
         shell: bash
         run: |
           set -euo pipefail
           curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/axis-build.json" -o /tmp/axis-build.json
-          cat /tmp/axis-build.json
-          grep -q '"version"[[:space:]]*:[[:space:]]*"8.7.12"' /tmp/axis-build.json
-          grep -q 'hardened-chunk-kernel+nonblocking-feature' /tmp/axis-build.json
-          grep -q 'interactionPriorityKernel' /tmp/axis-build.json
-          grep -q 'optionalRuntimeNonBlocking' /tmp/axis-build.json
-          grep -q 'axis-core.js?v=' /tmp/axis-production-index.html
-          grep -q '__AXIS_FEATURE_KERNEL__' /tmp/axis-production-index.html
-          grep -q 'v8712-runtime.js' /tmp/axis-production-index.html
-          echo 'Production semantic markers:'
-          grep -o 'axis-core.js?v=[a-f0-9]*' /tmp/axis-production-index.html | head -1 || true
-          grep -o 'v8712-runtime.js[^"'"' ]*' /tmp/axis-production-index.html | head -1 || true
+          node <<'NODE'
+          const fs=require('fs');
+          const x=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8'));
+          const fail=m=>{throw new Error(m)};
+          if(x.version!=='8.7.12')fail(`unexpected version ${x.version}`);
+          if(x.baseVersion!=='8.7.11')fail(`unexpected base ${x.baseVersion}`);
+          if(x.architecture!=='hardened-chunk-kernel+nonblocking-feature')fail(`unexpected architecture ${x.architecture}`);
+          for(const k of ['interactionPriorityKernel','shellObserverIsolation','coreOwnsDockVisibility','optionalRuntimeNonBlocking'])if(x.gates?.[k]!==true)fail(`missing gate ${k}`);
+          if(!/^[a-f0-9]{12}$/.test(x.assets?.core||''))fail('invalid core hash');
+          if(!/^[a-f0-9]{12}$/.test(x.assets?.css||''))fail('invalid css hash');
+          if(!Array.isArray(x.assets?.chunks)||x.assets.chunks.length!==4)fail('expected four stable chunks');
+          if(x.featureKernel?.feature!=='v8712-runtime.js'||!/^[a-f0-9]{12}$/.test(x.featureKernel?.hash||''))fail('invalid optional feature contract');
+          const assets=[
+            ['core',`/axis-core.js?v=${x.assets.core}`,20000],
+            ['css',`/axis-style.css?v=${x.assets.css}`,10000],
+            ...x.assets.chunks.map(c=>[`chunk:${c.id}`,`/${c.file}?v=${c.hash}`,Math.max(4000,Math.min(20000,Math.floor((c.bytes||8000)*0.4)))]),
+            ['feature:8.7.12',`/${x.featureKernel.feature}?v=${x.featureKernel.hash}`,4000]
+          ];
+          for(const [name,url,min] of assets){if(!/^\/[A-Za-z0-9._-]+\.js\?v=[a-f0-9]{12}$/.test(url)&&!/^\/axis-style\.css\?v=[a-f0-9]{12}$/.test(url))fail(`unsafe asset ${name}: ${url}`)}
+          fs.writeFileSync('/tmp/axis-assets.tsv',assets.map(a=>a.join('\t')).join('\n')+'\n');
+          console.log(`[AXIS production manifest] ${x.version} · ${x.architecture} · ${assets.length} immutable assets`);
+          NODE
+
+          i=0
+          while IFS=$'\t' read -r name path min_bytes; do
+            test -n "$name" || continue
+            out="/tmp/axis-production-asset-$i"
+            curl -LfsS --connect-timeout 5 --max-time 20 "$AXIS_URL$path" -o "$out"
+            bytes=$(wc -c <"$out")
+            if [ "$bytes" -lt "$min_bytes" ]; then
+              echo "Asset too small: $name · $bytes bytes · expected >= $min_bytes"
+              exit 1
+            fi
+            echo "Asset OK · $name · $bytes bytes · $path"
+            i=$((i+1))
+          done </tmp/axis-assets.tsv
+          test "$i" -eq 7
 
       - name: Prepare real-browser harness
         shell: bash
