@@ -60,7 +60,7 @@ if(fs.existsSync('scripts/axis-first-paint-smoke.mjs')){
  let fp=read('scripts/axis-first-paint-smoke.mjs');
  fp=textOnce(fp,"version:document.querySelector('.versionLine')?.textContent?.trim()||'',","version:document.querySelector('.versionLine')?.getAttribute('aria-label')?.trim()||'',",'first-paint public version snapshot');
  fp=textOnce(fp,"await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('v879Front'),undefined,{timeout:1000});","await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show')&&!document.querySelector('#settingsSheet')?.classList.contains('show'),undefined,{timeout:1000});",'custom editor visibility smoke');
- fp=textOnce(fp,"assert.equal(typeof await page.locator('#saveCustomEq').evaluate(e=>e.onclick),'object' /* Playwright serializes function as null/object? */);","assert.equal(await page.evaluate(()=>typeof document.querySelector('#saveCustomEq')?.onclick),'function','shared custom save handler missing');",'custom editor save smoke');
+ fp=textOnce(fp,"assert.equal(typeof await page.locator('#saveCustomEq').evaluate(e=>e.onclick),'object');","assert.equal(await page.evaluate(()=>typeof document.querySelector('#saveCustomEq')?.onclick),'function','shared custom save handler missing');",'custom editor save smoke');
  write('scripts/axis-first-paint-smoke.mjs',fp);
 }
 
