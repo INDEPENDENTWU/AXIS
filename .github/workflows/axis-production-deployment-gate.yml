@@ -18,7 +18,8 @@ jobs:
     permissions:
       contents: read
     env:
-      AXIS_URL: ${{ github.event.deployment_status.environment_url }}
+      AXIS_DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
+      AXIS_EXPECTED_SHA: ${{ github.event.deployment.sha }}
     steps:
       - name: Checkout the exact deployed commit
         uses: actions/checkout@v4
@@ -29,34 +30,71 @@ jobs:
         with:
           node-version: '20.18.0'
 
-      - name: Wait for the production edge
+      - name: Resolve exact public Production alias
         shell: bash
         run: |
           set -euo pipefail
-          echo "Production URL: $AXIS_URL"
-          for i in $(seq 1 20); do
-            if curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/" >/tmp/axis-production-index.html; then
-              echo "Production edge reachable · $(wc -c </tmp/axis-production-index.html) bytes"
-              exit 0
-            fi
+          node <<'NODE' >/tmp/axis-production-candidates.txt
+          const deployment=new URL(process.env.AXIS_DEPLOYMENT_URL);
+          const project=(process.env.GITHUB_REPOSITORY||'repo/axis').split('/').pop().toLowerCase();
+          const out=[];
+          const add=x=>{if(x&&!out.includes(x))out.push(x.replace(/\/$/,''))};
+          add(process.env.AXIS_DEPLOYMENT_URL);
+          const host=deployment.hostname;
+          if(host.endsWith('.vercel.app')&&host.startsWith(project+'-')){
+            const rest=host.slice(project.length+1);
+            const cut=rest.indexOf('-');
+            if(cut>0)add(`https://${project}-${rest.slice(cut+1)}`);
+          }
+          add(`https://${project}.vercel.app`);
+          console.log(out.join('\n'));
+          NODE
+
+          echo "Deployment URL: $AXIS_DEPLOYMENT_URL"
+          echo "Expected source commit: $AXIS_EXPECTED_SHA"
+          echo 'Production candidates:'
+          cat /tmp/axis-production-candidates.txt
+
+          for attempt in $(seq 1 12); do
+            while IFS= read -r base; do
+              test -n "$base" || continue
+              if curl -LfsS --connect-timeout 5 --max-time 15 "$base/axis-build.json" -o /tmp/axis-candidate-build.json 2>/dev/null; then
+                if EXPECTED="$AXIS_EXPECTED_SHA" node <<'NODE'
+          const fs=require('fs');
+          try{
+            const x=JSON.parse(fs.readFileSync('/tmp/axis-candidate-build.json','utf8'));
+            process.exit(x.sourceCommit===process.env.EXPECTED&&x.version==='8.7.12'?0:1);
+          }catch{process.exit(1)}
+          NODE
+                then
+                  cp /tmp/axis-candidate-build.json /tmp/axis-build.json
+                  echo "AXIS_URL=$base" >> "$GITHUB_ENV"
+                  echo "Resolved exact Production alias: $base"
+                  curl -LfsS --connect-timeout 5 --max-time 15 "$base/" -o /tmp/axis-production-index.html
+                  echo "Production root · $(wc -c </tmp/axis-production-index.html) bytes"
+                  exit 0
+                fi
+              fi
+            done </tmp/axis-production-candidates.txt
+            echo "Exact alias not ready yet · attempt $attempt/12"
             sleep 3
           done
-          echo "Production deployment never became reachable"
+          echo 'No public Production alias served the exact deployed commit.'
           exit 1
 
       - name: Verify hardened production manifest and immutable assets
         shell: bash
         run: |
           set -euo pipefail
-          curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/axis-build.json" -o /tmp/axis-build.json
           node <<'NODE'
           const fs=require('fs');
           const x=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8'));
           const fail=m=>{throw new Error(m)};
+          if(x.sourceCommit!==process.env.AXIS_EXPECTED_SHA)fail(`source commit mismatch ${x.sourceCommit}`);
           if(x.version!=='8.7.12')fail(`unexpected version ${x.version}`);
           if(x.baseVersion!=='8.7.11')fail(`unexpected base ${x.baseVersion}`);
           if(x.architecture!=='hardened-chunk-kernel+nonblocking-feature')fail(`unexpected architecture ${x.architecture}`);
-          for(const k of ['interactionPriorityKernel','shellObserverIsolation','coreOwnsDockVisibility','optionalRuntimeNonBlocking'])if(x.gates?.[k]!==true)fail(`missing gate ${k}`);
+          for(const k of ['interactionPriorityKernel','shellObserverIsolation','coreOwnsDockVisibility','optionalRuntimeNonBlocking','sourceCommitStamped'])if(x.gates?.[k]!==true)fail(`missing gate ${k}`);
           if(!/^[a-f0-9]{12}$/.test(x.assets?.core||''))fail('invalid core hash');
           if(!/^[a-f0-9]{12}$/.test(x.assets?.css||''))fail('invalid css hash');
           if(!Array.isArray(x.assets?.chunks)||x.assets.chunks.length!==4)fail('expected four stable chunks');
@@ -67,9 +105,9 @@ jobs:
             ...x.assets.chunks.map(c=>[`chunk:${c.id}`,`/${c.file}?v=${c.hash}`,Math.max(4000,Math.min(20000,Math.floor((c.bytes||8000)*0.4)))]),
             ['feature:8.7.12',`/${x.featureKernel.feature}?v=${x.featureKernel.hash}`,4000]
           ];
-          for(const [name,url,min] of assets){if(!/^\/[A-Za-z0-9._-]+\.js\?v=[a-f0-9]{12}$/.test(url)&&!/^\/axis-style\.css\?v=[a-f0-9]{12}$/.test(url))fail(`unsafe asset ${name}: ${url}`)}
+          for(const [name,url] of assets){if(!/^\/[A-Za-z0-9._-]+\.js\?v=[a-f0-9]{12}$/.test(url)&&!/^\/axis-style\.css\?v=[a-f0-9]{12}$/.test(url))fail(`unsafe asset ${name}: ${url}`)}
           fs.writeFileSync('/tmp/axis-assets.tsv',assets.map(a=>a.join('\t')).join('\n')+'\n');
-          console.log(`[AXIS production manifest] ${x.version} · ${x.architecture} · ${assets.length} immutable assets`);
+          console.log(`[AXIS production manifest] ${x.version} · ${x.sourceCommit.slice(0,10)} · ${assets.length} immutable assets`);
           NODE
 
           i=0
