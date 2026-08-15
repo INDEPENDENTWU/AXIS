@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '20.18.0'
       - name: Sanitize legacy runtime and build hardened release
-        run: node prepare-legacy-runtime.mjs && node build-hardened.mjs && node postbuild-kernel-priority.mjs && node postbuild-features-hardened.mjs
+        run: node prepare-legacy-runtime.mjs && node build-hardened.mjs && node postbuild-kernel-priority.mjs && node postbuild-features-hardened.mjs && node postbuild-8712-completion.mjs
       - name: Prepare browser harness
         run: |
           npm install --no-save playwright-core@1.55.0
