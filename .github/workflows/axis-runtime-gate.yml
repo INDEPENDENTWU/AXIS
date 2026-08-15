@@ -2,22 +2,37 @@ name: AXIS Runtime Gate
 
 on:
   push:
-    branches: [main, next-runtime-hardening]
+    branches: [main, next-runtime-hardening, release/8.8-canonical-runtime-implementation2]
   pull_request:
     branches: [main]
 
 jobs:
   browser-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-      - name: Build hardened AXIS 8.8 release
+      - name: Build canonical AXIS 8.8 release
         run: node build-release.mjs
-      - name: Prepare browser harness
+      - name: Verify canonical artifact contract
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const m=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+          if(m.version!=='8.8'||m.baseVersion!=='8.8')throw new Error('release/base identity mismatch');
+          if(m.architecture!=='canonical-single-runtime')throw new Error(`unexpected architecture ${m.architecture}`);
+          if(m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('dynamic runtime chunks survived');
+          if(!m.gates?.canonicalSingleRuntime||!m.featureKernel?.embedded||!m.completionKernel?.embedded)throw new Error('canonical gates missing');
+          const html=fs.readFileSync('index.html','utf8');
+          const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(x=>x[1]);
+          if(scripts.length!==1||!scripts[0].startsWith('/axis-core.js?v='))throw new Error(`unexpected scripts ${scripts}`);
+          if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-/.test(html))throw new Error('legacy dynamic loader survived in HTML');
+          console.log('[AXIS canonical artifact] PASS · one runtime request · no silent legacy fallback');
+          NODE
+      - name: Prepare Chromium harness
         run: |
           npm install --no-save playwright-core@1.55.0
           CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
@@ -40,7 +55,7 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
         run: node scripts/axis-settings-diag.mjs
-      - name: Legacy completion interaction regression suite
+      - name: Completion interaction regression suite
         env:
           AXIS_URL: http://127.0.0.1:4173
         run: node scripts/axis-completion-smoke.mjs
