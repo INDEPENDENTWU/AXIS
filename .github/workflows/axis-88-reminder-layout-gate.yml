@@ -1,0 +1,47 @@
+name: AXIS 8.8 Reminder Layout Gate
+
+on:
+  push:
+    branches: [main, fix/8.8-reminder-layout-polish]
+  pull_request:
+    branches: [main]
+
+jobs:
+  reminder-layout:
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Build exact canonical AXIS 8.8 artifact
+        run: node build-release.mjs
+      - name: Install Playwright harness
+        run: npm install --no-save playwright@1.55.0
+      - name: Resolve Chromium runtime
+        if: matrix.engine == 'chromium'
+        run: |
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Install WebKit runtime
+        if: matrix.engine == 'webkit'
+        run: npx playwright install --with-deps webkit
+      - name: Start local production server
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-reminder-layout-http.log 2>&1 &
+          echo $! >/tmp/axis-reminder-layout-http.pid
+          sleep 1
+      - name: Verify reminder repaint and bottom-stack geometry
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: ${{ matrix.engine }}
+        run: node scripts/axis-reminder-layout-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-reminder-layout-http.log || true
