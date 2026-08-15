@@ -44,15 +44,15 @@ await page.reload({waitUntil:'domcontentloaded'});
 await page.waitForFunction(()=>window.__AXIS_COMPLETION_KERNEL__?.state==='ready',{timeout:12000});
 await page.locator('#quickRecordBtn').click();
 await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),{timeout:1000});
-const quick=page.locator('#v8Recent [data-v8eq]').first();
+const quick=page.locator('#v8Recent [data-v8eq]:visible').first();
 if(await quick.count()){
  await quick.click();
 }else{
  const other=page.locator('#v8Other');assert.ok(await other.count(),'missing other-equipment fallback');
  await other.click();
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),{timeout:1000});
- const strength=page.locator('#eqSheet [data-eq="cable"],#eqSheet [data-eq="lat"],#eqSheet [data-eq="chest"],#eqSheet [data-eq]').first();
- assert.ok(await strength.count(),'missing standard equipment choice');
+ const strength=page.locator('#eqSheet').getByRole('button',{name:/直臂下拉|高位下拉|胸推|杠铃卧推|多功能龙门架/}).first();
+ assert.ok(await strength.count(),'missing visible standard strength equipment choice');
  await strength.click();
 }
 await page.waitForFunction(()=>document.querySelectorAll('#v8SetEditor .v8SetRow').length>0,{timeout:1800});
