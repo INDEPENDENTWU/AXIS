@@ -26,11 +26,12 @@ jobs:
           if(m.architecture!=='canonical-single-runtime')throw new Error(`unexpected architecture ${m.architecture}`);
           if(m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('dynamic runtime chunks survived');
           if(!m.gates?.canonicalSingleRuntime||!m.featureKernel?.embedded||!m.completionKernel?.embedded)throw new Error('canonical gates missing');
+          if(!m.gates?.catalogCategorySingleOwner)throw new Error('catalog single-owner gate missing');
           const html=fs.readFileSync('index.html','utf8');
           const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(x=>x[1]);
           if(scripts.length!==1||!scripts[0].startsWith('/axis-core.js?v='))throw new Error(`unexpected scripts ${scripts}`);
           if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-/.test(html))throw new Error('legacy dynamic loader survived in HTML');
-          console.log('[AXIS canonical artifact] PASS · one runtime request · no silent legacy fallback');
+          console.log('[AXIS canonical artifact] PASS · one runtime request · no silent legacy fallback · one catalog owner');
           NODE
       - name: Static capture owner audit
         run: node scripts/axis-static-owner-audit.mjs
@@ -73,6 +74,11 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
         run: node scripts/axis-88-smoke.mjs
+      - name: Equipment category single-owner regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-catalog-smoke.mjs
       - name: Record-preference affordance diagnostic
         env:
           AXIS_URL: http://127.0.0.1:4173
@@ -108,6 +114,11 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
         run: node scripts/axis-webkit-smoke.mjs
+      - name: iPhone WebKit equipment category regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-catalog-smoke.mjs
       - name: Print WebKit server log on failure
         if: failure()
         run: cat /tmp/axis-webkit-http.log || true
