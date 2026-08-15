@@ -32,6 +32,8 @@ jobs:
           if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-/.test(html))throw new Error('legacy dynamic loader survived in HTML');
           console.log('[AXIS canonical artifact] PASS · one runtime request · no silent legacy fallback');
           NODE
+      - name: Static capture owner audit
+        run: node scripts/axis-static-owner-audit.mjs
       - name: Prepare Chromium harness
         run: |
           npm install --no-save playwright-core@1.55.0
