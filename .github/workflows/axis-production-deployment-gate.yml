@@ -54,7 +54,11 @@ jobs:
           grep -q 'interactionPriorityKernel' /tmp/axis-build.json
           grep -q 'optionalRuntimeNonBlocking' /tmp/axis-build.json
           grep -q 'axis-core.js?v=' /tmp/axis-production-index.html
-          grep -q 'AXIS_FEATURE_LOADER_START' /tmp/axis-production-index.html
+          grep -q '__AXIS_FEATURE_KERNEL__' /tmp/axis-production-index.html
+          grep -q 'v8712-runtime.js' /tmp/axis-production-index.html
+          echo 'Production semantic markers:'
+          grep -o 'axis-core.js?v=[a-f0-9]*' /tmp/axis-production-index.html | head -1 || true
+          grep -o 'v8712-runtime.js[^"'"' ]*' /tmp/axis-production-index.html | head -1 || true
 
       - name: Prepare real-browser harness
         shell: bash
