@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright-core';
+
+const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']});
+const context=await browser.newContext({viewport:{width:430,height:932},locale:'zh-CN'});
+const page=await context.newPage();
+const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(obj)});
+for(const [pattern,obj] of [['**/api/ai-status**',{ok:true,enabled:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{ok:false,disabled:true}],['**/api/insight**',{ok:false,disabled:true}]])await page.route(pattern,r=>json(r,obj));
+const errors=[];page.on('pageerror',e=>errors.push(String(e?.stack||e)));
+const snap=label=>page.evaluate(l=>({label:l,scanOnclick:typeof document.querySelector('#scanBtn')?.onclick,sheetClass:document.querySelector('#scanSheet')?.className||'',settingsClass:document.querySelector('#settingsSheet')?.className||'',openSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),openGates:[...document.querySelectorAll('.v8711SettingGate.open,.axisConfigGate.open')].map(x=>x.id),pref:window.__AXIS_CAPTURE_PREF__?.get?.()||null,activeModes:[...document.querySelectorAll('#captureModes button.active')].map(x=>x.dataset.mode),captureText:document.querySelector('#captureNow')?.textContent?.trim()||''}),label);
+
+assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
+await page.evaluate(()=>localStorage.clear());await page.reload({waitUntil:'domcontentloaded'});
+await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:6500});
+await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),undefined,{timeout:1200});
+await page.locator('#v8711RecordGate > .settingLink').click();await page.waitForFunction(()=>document.querySelector('#v8711RecordGate')?.classList.contains('open'),undefined,{timeout:1200});
+await page.locator('#scanSeconds [data-v876-cap="5"]').click();await page.locator('#keepClipSwitch').click();await page.waitForTimeout(80);
+assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5');
+console.log('[AXIS capture entry before close]',JSON.stringify(await snap('before-close'),null,2));
+await page.locator('#settingsSheet [data-close="settingsSheet"]').click();await page.waitForTimeout(80);
+console.log('[AXIS capture entry after close]',JSON.stringify(await snap('after-close'),null,2));
+assert.equal(await page.locator('#settingsSheet.show').count(),0,'Settings did not close');
+assert.equal(await page.locator('#scanBtn').evaluate(x=>typeof x.onclick),'function','capture button lost its owner');
+await page.locator('#scanBtn').click();
+console.log('[AXIS capture entry immediate]',JSON.stringify(await snap('immediate'),null,2));
+await page.waitForTimeout(200);
+console.log('[AXIS capture entry 200ms]',JSON.stringify(await snap('200ms'),null,2));
+assert.ok(await page.locator('#scanSheet.show').count(),'capture sheet did not remain open');
+assert.ok(await page.locator('#captureModes [data-mode="5"]').evaluate(x=>x.classList.contains('active')),'capture mode is not 5 seconds');
+assert.ok((await page.locator('#captureNow').innerText()).includes('5'),'capture action does not reflect 5 seconds');
+assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
+console.log('[AXIS capture entry diagnostic] PASS');
+await context.close();await browser.close();
