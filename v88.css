@@ -1,0 +1,54 @@
+/* AXIS 8.8 — converged presentation. Critical geometry only; behavior stays with canonical owners. */
+
+/* Public release is one label. Historical runtime text is never painted beside it. */
+html body #settingsSheet .versionLine{font-size:0!important;line-height:0!important;min-height:18px!important;visibility:visible!important}
+html body #settingsSheet .versionLine::before{content:attr(data-axis-public-label)!important;display:inline-block!important;font-size:11px!important;line-height:18px!important;letter-spacing:.01em!important;color:#5f6774!important;white-space:nowrap!important}
+
+/* Settings > My Equipment is a compact editable list, not a second editor. */
+#settingsSheet #manageEqList{border-top:1px solid var(--line2);margin-top:2px}
+#settingsSheet #manageEqList .manageEq{width:100%;min-height:62px;padding:11px 0;display:grid!important;grid-template-columns:minmax(0,1fr) 18px!important;align-items:center;gap:12px;border-bottom:1px solid var(--line2)!important;text-align:left!important}
+#settingsSheet #manageEqList .manageEq>span{min-width:0}
+#settingsSheet #manageEqList .manageEq b{display:block;font-size:14px!important;line-height:1.25!important;font-weight:660!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#settingsSheet #manageEqList .manageEq span span{display:block;margin-top:5px;font-size:11px!important;line-height:1.3!important;color:var(--dim)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#settingsSheet #manageEqList .manageEq>i{font-style:normal;font-size:18px!important;line-height:1!important;color:#68717e!important;text-align:right}
+#settingsSheet #newCustomEq{height:52px!important;margin-top:4px!important;border-bottom:1px solid var(--line2)!important;font-size:13px!important;color:var(--accent2)!important}
+
+/* The v874 professional selector is the only visible custom-exercise editor. */
+#customEqSheet #customType,#customEqSheet #customMuscles{display:none!important}
+#customEqSheet .v88HiddenLegacyLabel,#customEqSheet #v873TypeMode,#customEqSheet #v873MuscleMode,#customEqSheet #v873Sense,#customEqSheet #v874TypeMode,#customEqSheet #v874MuscleMode{display:none!important}
+#customEqSheet .v874ClassBlock{padding:18px 0 8px!important;border-top:1px solid var(--line2)!important}
+#customEqSheet .v874ClassHead{height:28px!important;margin:0 0 10px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important}
+#customEqSheet .v874ClassHead.second{margin-top:18px!important}
+#customEqSheet .v874ClassHead span{font-size:13px!important;line-height:1!important;color:var(--muted)!important}
+#customEqSheet .v874ClassHead b{display:none!important}
+#customEqSheet .v874TypeGrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+#customEqSheet .v874TypeGrid button{height:50px!important;padding:0 8px!important;border-radius:14px!important;background:#13161c!important;color:#9ba2ae!important;font-size:13px!important;line-height:1!important;font-weight:620!important}
+#customEqSheet .v874TypeGrid button.active{background:#2a2e39!important;color:#f3f2ee!important;box-shadow:inset 0 0 0 1px rgba(174,179,255,.14)!important}
+#customEqSheet .v874Summary{min-height:0!important;height:auto!important;margin:-2px 0 10px!important;color:#aeb3ff!important;font-size:11px!important;line-height:1.4!important;white-space:normal!important}
+#customEqSheet .v874Summary:empty{display:none!important}
+#customEqSheet .v874Regions{display:flex!important;gap:7px!important;overflow-x:auto!important;scrollbar-width:none!important;padding:0 0 10px!important}
+#customEqSheet .v874Regions::-webkit-scrollbar{display:none}
+#customEqSheet .v874Regions button{position:relative!important;flex:0 0 auto!important;min-width:56px!important;height:40px!important;padding:0 13px!important;border-radius:12px!important;background:#12151a!important;color:#747d89!important;font-size:12px!important}
+#customEqSheet .v874Regions button.active{background:rgba(115,124,255,.14)!important;color:#c5c9ff!important;box-shadow:inset 0 0 0 1px rgba(115,124,255,.10)!important}
+#customEqSheet .v874Regions i{right:5px!important;top:4px!important;font-size:8px!important;color:#aeb3ff!important}
+#customEqSheet .v874Details{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+#customEqSheet .v874Details button{min-height:48px!important;padding:8px 12px!important;border-radius:13px!important;background:#13161c!important;color:#a1a8b3!important;font-size:12px!important;line-height:1.3!important}
+#customEqSheet .v874Details button.active{background:#292e3a!important;color:#f3f2ee!important;box-shadow:inset 0 0 0 1px rgba(174,179,255,.16)!important}
+#customEqSheet #saveCustomEq{height:62px!important;margin-top:24px!important;border-radius:18px!important}
+#customEqSheet #deleteCustomEq{margin-top:12px!important}
+
+/* Coordinates remain internal precision data; the product surface shows a Chinese place name only. */
+#watermarkSheet #v876Coord,#watermarkSheet #v876WmCoord{display:none!important}
+#watermarkSheet .v876Location{padding:16px 0!important}
+#watermarkSheet .v876LocationHead{align-items:center!important}
+#watermarkSheet .v876LocationHead b{max-width:68%!important;font-size:12px!important;line-height:1.45!important;color:var(--text)!important}
+
+/* Historical active-adjust controls may exist internally, but only the canonical action can paint. */
+#v87Now .v87Actions button[id*="Adjust"]:not(#v87AdjustBtn){display:none!important}
+
+@media(max-width:390px){
+ #customEqSheet .v874TypeGrid{gap:7px!important}
+ #customEqSheet .v874TypeGrid button{font-size:12px!important}
+ #customEqSheet .v874Details{gap:7px!important}
+ #settingsSheet #manageEqList .manageEq{min-height:60px}
+}
