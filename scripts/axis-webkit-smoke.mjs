@@ -92,6 +92,23 @@ assert.ok(editAt>0,'WebKit canonical adjustment did not persist its one-time tra
 assert.equal(await page.locator('#v87AdjustBtn:visible').count(),0,'WebKit one-time adjustment remained available after commit');
 
 const toggle=page.locator('#v87Toggle');await toggle.click();await page.waitForTimeout(90);assert.equal((await toggle.innerText()).trim(),'▶','WebKit pause failed');await toggle.click();await page.waitForTimeout(90);assert.equal((await toggle.innerText()).trim(),'Ⅱ','WebKit resume failed');
+
+console.log('[AXIS WebKit] current v84 trends + current v8710 report');
+await page.locator('nav.nav [data-view="insightsView"]').click();
+await page.waitForFunction(()=>document.querySelector('#insightsView')?.classList.contains('active'),undefined,{timeout:900});
+assert.ok(await page.locator('#insightsView .v84Trends').isVisible(),'WebKit canonical v84 trends surface is hidden');
+assert.equal(await page.locator('#coverageGrid:visible').count(),0,'WebKit retired pre-v84 trends returned');
+await page.waitForFunction(()=>document.querySelector('#v84NowList [data-v84-eq]')&&document.querySelector('#v84Axis .v84AxisCol'),undefined,{timeout:900});
+for(const sel of ['#v84NowList','#v84Axis','#v84MemoryRows','#v84Rhythm'])assert.ok(await page.locator(sel).isVisible(),`WebKit canonical trends control missing/hidden ${sel}`);
+await openSettings();
+await page.locator('#reportBtn').click();
+await page.waitForFunction(()=>document.querySelector('#reportSheet')?.classList.contains('show'),undefined,{timeout:1200});
+await page.waitForFunction(()=>document.querySelector('#v8710ReportDeck')&&document.querySelectorAll('#v8710ReportDeck .v8710Plate').length===3,undefined,{timeout:1200});
+assert.equal(await page.locator('#reportPreview:visible,#v877ReportDeck:visible').count(),0,'WebKit retired report surface became visible');
+assert.ok(await page.locator('#v8710ReportDeck').isVisible(),'WebKit canonical v8710 report deck is hidden');
+assert.equal(await page.locator('#v8710ReportDeck .v8710Plate').count(),3,'WebKit canonical report does not contain three final cards');
+assert.ok(await page.locator('#v8710ShareReport').isVisible(),'WebKit canonical report share owner is missing/hidden');
+
 assert.deepEqual(errors,[],`WebKit uncaught page errors:\n${errors.join('\n')}`);
-console.log('[AXIS WebKit] PASS · canonical 8.8 · custom editor · location · recording · active session · visible adjustment transaction');
+console.log('[AXIS WebKit] PASS · canonical 8.8 · custom editor · location · recording · active session · visible adjustment · current trends · current report');
 await context.close();await browser.close();
