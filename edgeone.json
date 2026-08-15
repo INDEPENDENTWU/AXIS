@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node prepare-legacy-runtime.mjs && node prepare-product-convergence.mjs && node prepare-first-paint-shell.mjs && node build-hardened.mjs && node postbuild-kernel-priority.mjs && node postbuild-features-hardened.mjs && node postbuild-8712-completion.mjs",
+  "buildCommand": "node prepare-legacy-runtime.mjs && node prepare-product-convergence.mjs && node prepare-first-paint-shell.mjs && node prepare-88-convergence.mjs && node build-hardened.mjs && node postbuild-kernel-priority.mjs && node postbuild-features-hardened.mjs && node postbuild-8712-completion.mjs",
   "outputDirectory": ".",
   "nodeVersion": "20.18.0",
   "headers": [
