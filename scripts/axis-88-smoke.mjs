@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright-core';
 
+const annotate=e=>{const s=String(e?.stack||e||'AXIS 8.8 smoke failure').replace(/%/g,'%25').replace(/\r?\n/g,'%0A');console.error(`::error title=AXIS 8.8 smoke::${s}`)};
+process.on('uncaughtExceptionMonitor',annotate);process.on('unhandledRejection',annotate);
+
 const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
 const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']});
 const context=await browser.newContext({viewport:{width:390,height:844},locale:'zh-CN',permissions:['geolocation'],geolocation:{latitude:22.52325,longitude:113.38381,accuracy:18}});
