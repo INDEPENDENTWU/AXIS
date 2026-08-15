@@ -94,7 +94,7 @@ for(const file of stableFiles){
   }
   if(file==='v879-runtime.js'){
     src=replaceOnce(src,"function cleanLegacy(){for(const b of $$('[data-v875-step]')){b.removeAttribute('data-v875-step');b.removeAttribute('data-dir')}patchAdjust()}","function cleanLegacy(){for(const b of $$('[data-v875-step]')){b.removeAttribute('data-v875-step');b.removeAttribute('data-dir')}}",'retire v879 recording painter');retiredOwnerFixes++;
-    src=replaceOnce(src,'css();ensureNum();ensureEdit();cleanLegacy();version();layer();finishCue();timeline();editEntry();','css();cleanLegacy();version();layer();finishCue();timeline();','retire v879 duplicate active adjustment');retiredOwnerFixes++;
+    src=replaceOnce(src,'css();ensureNum();ensureEdit();cleanLegacy();version();layer();finishCue();timeline();editEntry();','css();ensureNum();ensureEdit();cleanLegacy();version();layer();finishCue();timeline();','retire v879 duplicate active adjustment');retiredOwnerFixes++;
     src=replaceOnce(src,"const sets=$('#v8Sets');if(sets){const MO=window.__AXIS_NATIVE_MUTATION_OBSERVER__||MutationObserver;new MO(queuePatch).observe(sets,{childList:true,subtree:true,characterData:true})}",'','retire v879 recording observer');retiredOwnerFixes++;
     src=replaceOnce(src,"new MO(()=>{finishCue();timeline();editEntry()}).observe(evl,{childList:true,subtree:true,characterData:true})","new MO(()=>{finishCue();timeline()}).observe(evl,{childList:true,subtree:true,characterData:true})",'retire v879 edit reinsertion');retiredOwnerFixes++;
   }
