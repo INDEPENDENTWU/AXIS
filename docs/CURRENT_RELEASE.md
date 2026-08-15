@@ -8,6 +8,12 @@ This file is the entry point for future AXIS work. Do not reconstruct the curren
 
 Historical `v8xx*.js` filenames are implementation history, not product-version truth. The public release is owned by the first-paint shell and its `data-axis-public-label`. The stable 8.7.11 implementation remains available internally as a fail-open baseline, but it must never repaint an older public version.
 
+## Canonical release metadata
+
+[`release-contract.json`](../release-contract.json) is the single machine-readable release contract shared by the release builder and production deployment gate. It owns the public version, stable fallback version, runtime architecture, feature/completion kernel names, stable chunk count, build command, and generated build-manifest name.
+
+Do not copy those values into deployment gates or provider configuration. `build-release.mjs` must fail when the generated `axis-build.json` disagrees with `release-contract.json`, and the production gate must read the same contract from the exact deployed commit.
+
 ## 8.8 ownership map
 
 | Product surface | Canonical owner | Contract |
@@ -21,6 +27,7 @@ Historical `v8xx*.js` filenames are implementation history, not product-version 
 | Watermark location | precise resolver internally; concise Chinese presentation externally | Lat/lon/accuracy may be stored for reverse geocoding but must not appear in normal product UI or watermark output. |
 | Settings custom list | `app.js` list + canonical editor | The list is editable; it must never create a second Settings-only editor. |
 | Release build sequence | `build-release.mjs` | CI, Vercel and EdgeOne execute the same deterministic release pipeline. Platform config files must not duplicate the step list. |
+| Release metadata | `release-contract.json` | Build and deployment verification read the same version/architecture contract. |
 
 ## Retired ownership in 8.8
 
@@ -67,11 +74,13 @@ postbuild-features-hardened.mjs
 postbuild-8712-completion.mjs
 ```
 
-Do not copy this chain into `vercel.json`, `edgeone.json`, CI YAML, or future platform configs. Vercel's top-level `buildCommand` is schema-limited, and duplicated command chains also create configuration drift.
+After those deterministic steps, `build-release.mjs` validates the generated build manifest against `release-contract.json`. A version, fallback, architecture, feature-kernel, completion-kernel, or stable-chunk mismatch is release-blocking.
+
+Do not copy the step chain into `vercel.json`, `edgeone.json`, CI YAML, or future platform configs. Provider configs should only call `node build-release.mjs`. Duplicated command chains and duplicated version constants create configuration drift.
 
 `prepare-88-convergence.mjs` is not a new client runtime layer. It is a build-time compiler/convergence step that removes duplicate historical owners and fails the build if the expected source signatures change.
 
-The generated `axis-88-contract.json` records the owner map in the built artifact.
+The generated `axis-88-contract.json` records the 8.8 UI ownership map in the built artifact. This is separate from the source-level `release-contract.json`, which owns release metadata across build and deployment.
 
 ## Mandatory gates before release
 
@@ -81,7 +90,8 @@ A release is not complete unless all of these pass in a real browser build:
 - first-paint geometry stability;
 - Settings ownership diagnostic;
 - legacy completion regression suite;
-- AXIS 8.8 convergence smoke.
+- AXIS 8.8 convergence smoke;
+- production deployment verification against the exact deployed commit when the hosting provider accepts the deployment.
 
 The 8.8 smoke specifically verifies:
 
@@ -96,7 +106,7 @@ The 8.8 smoke specifically verifies:
 
 ## Rule for future iterations
 
-Do not fix a visible conflict by adding another observer, delayed cleaner, duplicate click handler, or version-specific painter.
+Do not fix a visible conflict by adding another observer, delayed cleaner, duplicate click handler, version-specific painter, or provider-specific release constant.
 
 When a new implementation replaces an old one:
 
@@ -104,6 +114,7 @@ When a new implementation replaces an old one:
 2. move the capability to the intended owner;
 3. retire the old writer in the same change;
 4. add or extend a browser invariant that catches the original failure, including transient states where relevant;
-5. update this file when ownership changes.
+5. update `release-contract.json` when release metadata changes;
+6. update this file when ownership changes.
 
-If a future conversation lacks historical context, start here, then read `docs/RUNTIME_CONTRACT.md`, `build-release.mjs`, and the current browser gates. Historical chat context is not a dependency of the product architecture.
+If a future conversation lacks historical context, start here, then read `release-contract.json`, `docs/RUNTIME_CONTRACT.md`, `build-release.mjs`, and the current browser gates. Historical chat context is not a dependency of the product architecture.
