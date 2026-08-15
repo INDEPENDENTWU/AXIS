@@ -4,6 +4,11 @@
   --axis-shell-topbar:72px;
   --axis-shell-nav:76px;
   --axis-shell-dock:64px;
+  --axis-hit:44px;
+  --axis-control:60px;
+  --axis-radius:18px;
+  --axis-gap:12px;
+  --axis-rule:rgba(255,255,255,.055);
 }
 
 .topbar{
@@ -35,16 +40,9 @@
   overflow:hidden;
 }
 
-#settingsBtn>*{
-  max-width:100%;
-  max-height:100%;
-  pointer-events:none;
-}
+#settingsBtn>*{max-width:100%;max-height:100%;pointer-events:none}
 
-#dock{
-  min-height:var(--axis-shell-dock)!important;
-  contain:layout paint;
-}
+#dock{min-height:var(--axis-shell-dock)!important;contain:layout paint}
 
 #scanBtn,#quickRecordBtn{
   min-height:var(--axis-shell-dock)!important;
@@ -77,8 +75,391 @@
   contain:layout paint;
 }
 
-/* First paint must never be visually blocked by enhancement state. */
-html[data-axis-core-ready="1"] .app{
-  visibility:visible!important;
-  opacity:1!important;
+/* Critical sheet geometry is resolved before optional runtimes hydrate. */
+body .sheetWrap>.sheet>.sheetHead{
+  min-height:56px!important;
+  height:56px!important;
+  margin:0 0 20px!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) var(--axis-hit)!important;
+  column-gap:8px!important;
+  align-items:center!important;
+  box-sizing:border-box!important;
 }
+body .sheetWrap>.sheet>.sheetHead>b{
+  min-width:0!important;
+  margin:0!important;
+  font-size:22px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  letter-spacing:-.025em!important;
+  text-align:left!important;
+}
+body .sheetWrap>.sheet>.sheetHead>.closeBtn{
+  width:var(--axis-hit)!important;
+  height:var(--axis-hit)!important;
+  min-width:var(--axis-hit)!important;
+  min-height:var(--axis-hit)!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  justify-self:end!important;
+  line-height:1!important;
+  transform:none!important;
+  transition:none!important;
+}
+body .sheetWrap.axisHasBack>.sheet>.sheetHead{
+  grid-template-columns:var(--axis-hit) minmax(0,1fr) var(--axis-hit)!important;
+  column-gap:6px!important;
+}
+body .sheetWrap.axisHasBack>.sheet>.sheetHead>b{grid-column:2!important}
+.axisBack{
+  grid-column:1!important;
+  width:var(--axis-hit)!important;
+  height:var(--axis-hit)!important;
+  min-width:var(--axis-hit)!important;
+  min-height:var(--axis-hit)!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:transparent!important;
+  color:var(--muted)!important;
+  display:grid!important;
+  place-items:center!important;
+  justify-self:start!important;
+  -webkit-tap-highlight-color:transparent!important;
+  touch-action:manipulation!important;
+  transform:none!important;
+  transition:none!important;
+}
+.axisBack::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-left:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+  transform:rotate(45deg) translate(1px,-1px);
+  transform-origin:center;
+  border-radius:1px;
+}
+
+/* Recording: v61 is the only interactive owner. */
+body #scanSheet #v8Sets{
+  margin:18px 0 0!important;
+  padding:0!important;
+  border:0!important;
+  contain:layout paint;
+}
+body #scanSheet #v8Sets .v8SetHead{
+  min-height:78px!important;
+  height:78px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 154px!important;
+  align-items:center!important;
+  column-gap:14px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+}
+body #scanSheet #v8Sets .v8SetHead>div:first-child{min-width:0!important}
+body #scanSheet #v8Sets .v8SetHead>div:first-child>b{
+  font-size:22px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  letter-spacing:-.02em!important;
+}
+body #scanSheet #v8Sets .v8SetHead>div:first-child>span{
+  margin-top:7px!important;
+  color:var(--muted)!important;
+  font-size:15px!important;
+  line-height:1.25!important;
+}
+body #scanSheet #v8Sets .v8SetCount{
+  width:154px!important;
+  height:48px!important;
+  display:grid!important;
+  grid-template-columns:44px 66px 44px!important;
+  gap:0!important;
+  align-items:center!important;
+  justify-content:end!important;
+}
+body #scanSheet #v8Sets .v8SetCount>*{
+  width:100%!important;
+  height:44px!important;
+  min-width:0!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  line-height:1!important;
+  box-sizing:border-box!important;
+}
+body #scanSheet #v8Sets .v8SetCount>button{
+  font-size:24px!important;
+  color:var(--muted)!important;
+  background:transparent!important;
+  -webkit-tap-highlight-color:transparent!important;
+  touch-action:manipulation!important;
+}
+body #scanSheet #v8Sets .v8SetCount>b{
+  font-size:22px!important;
+  font-weight:680!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:-.02em!important;
+}
+body #scanSheet #v8Sets .v8SetRows{
+  border:0!important;
+  margin:6px 0 0!important;
+  display:grid!important;
+  gap:4px!important;
+}
+body #scanSheet #v8Sets .v8SetRow{
+  width:100%!important;
+  min-height:78px!important;
+  height:78px!important;
+  margin:0!important;
+  padding:0 12px!important;
+  border:0!important;
+  border-radius:0!important;
+  display:grid!important;
+  grid-template-columns:44px minmax(92px,1fr) minmax(92px,1fr) 58px!important;
+  column-gap:8px!important;
+  align-items:center!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  transition:none!important;
+  transform:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+  contain:layout paint;
+}
+body #scanSheet #v8Sets .v8SetRow.active{
+  background:linear-gradient(90deg,rgba(115,124,255,.105),rgba(115,124,255,.026) 78%,transparent)!important;
+}
+body #scanSheet #v8Sets .v8SetRow>i{
+  width:44px!important;
+  height:44px!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  color:var(--dim)!important;
+  font-size:15px!important;
+  line-height:1!important;
+  font-style:normal!important;
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:.045em!important;
+}
+body #scanSheet #v8Sets .v8SetRow>span{
+  min-width:0!important;
+  height:56px!important;
+  padding:0!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:baseline!important;
+  justify-content:center!important;
+  gap:6px!important;
+  white-space:nowrap!important;
+}
+body #scanSheet #v8Sets .v8SetRow>span>b{
+  font-size:22px!important;
+  line-height:1!important;
+  font-weight:660!important;
+  letter-spacing:-.02em!important;
+  font-variant-numeric:tabular-nums!important;
+}
+body #scanSheet #v8Sets .v8SetRow>span>small{
+  margin:0!important;
+  color:var(--muted)!important;
+  font-size:15px!important;
+  line-height:1!important;
+}
+body #scanSheet #v8Sets .v8SetRow>em{
+  width:52px!important;
+  min-width:52px!important;
+  max-width:52px!important;
+  height:38px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:12px!important;
+  display:grid!important;
+  place-items:center!important;
+  justify-self:end!important;
+  font-size:15px!important;
+  line-height:1!important;
+  font-style:normal!important;
+  white-space:nowrap!important;
+}
+body #scanSheet #v8Sets .v8Adjust{display:none!important}
+body #scanSheet #v8Sets .v81Reset{margin:0 0 4px!important;border:0!important}
+body #scanSheet .v875PlanEntry{
+  margin:8px 0 10px!important;
+  border:0!important;
+  min-height:58px!important;
+  background:transparent!important;
+}
+
+#axisSetControls{
+  width:100%;
+  margin:16px 0 4px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--axis-gap);
+  contain:layout paint;
+}
+#axisSetControls.hidden{display:none!important}
+.axisSetField{min-width:0;margin:0;padding:0;border:0}
+.axisSetLabel{
+  height:26px;
+  margin:0 0 8px;
+  display:flex;
+  align-items:center;
+  color:var(--muted);
+  font-size:15px;
+  line-height:1;
+}
+.axisSetStepper{
+  width:100%;
+  height:var(--axis-control);
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) 48px;
+  align-items:center;
+  border:0;
+  border-radius:var(--axis-radius);
+  background:var(--s2);
+  overflow:hidden;
+  box-sizing:border-box;
+  contain:layout paint;
+}
+.axisSetStepper>button{
+  width:48px;
+  height:var(--axis-control);
+  min-width:0;
+  padding:0;
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--muted);
+  display:grid;
+  place-items:center;
+  font-size:24px;
+  line-height:1;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:none!important;
+  transform:none!important;
+}
+.axisSetValue{
+  min-width:0;
+  height:var(--axis-control);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+}
+.axisSetValue>input{
+  width:3.2ch;
+  min-width:3.2ch;
+  max-width:5.5ch;
+  height:44px;
+  padding:0;
+  margin:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:var(--text);
+  text-align:right;
+  font:660 22px/1 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;
+  letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+  -webkit-appearance:none;
+  appearance:textfield;
+}
+.axisSetValue>input::-webkit-outer-spin-button,.axisSetValue>input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.axisSetValue>small{
+  flex:0 0 auto;
+  margin:0;
+  color:var(--muted);
+  font-size:15px;
+  line-height:1;
+}
+
+/* One active-session adjustment entry. v879's duplicate is retired at build time and hidden defensively. */
+#v879EditBtn,#v879Edit{display:none!important}
+body #v87Now{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  background:rgba(16,19,25,.985)!important;
+}
+body #v87Now .v87Actions{
+  min-height:46px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  padding:0 14px 14px!important;
+}
+body #v87Now .v87Actions>button{
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 14px!important;
+  border:0!important;
+  border-radius:13px!important;
+  font-size:13px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  transition:none!important;
+  transform:none!important;
+}
+
+/* Remove decorative separators where spacing already carries hierarchy. */
+body #settingsSheet .settingsList,
+body #settingsSheet .settingLink,
+body #settingsSheet .settingPlain,
+body #settingsSheet .v8711SettingGate,
+body #settingsSheet .v8711Wake,
+body #settingsSheet #reportBtn,
+body #scanSheet .musclePanel,
+body #scanSheet .choiceControl,
+body #watermarkSheet .v85Block,
+body #watermarkSheet .v876Opacity,
+body #watermarkSheet .v876Location{
+  border-top:0!important;
+  border-bottom:0!important;
+}
+body #settingsSheet .settingsList.second{margin-top:18px!important}
+body #settingsSheet .v8711SettingGate{margin-top:8px!important}
+body #activeHome #v8Time{border:0!important}
+body #activeHome .metricPair{border-color:var(--axis-rule)!important}
+body #activeHome #eventList>[data-event]{border-bottom-color:var(--axis-rule)!important}
+
+/* No high-frequency recording element may animate or transition during a value change. */
+#v8Sets,#v8Sets *,#axisSetControls,#axisSetControls *{
+  animation:none!important;
+  transition:none!important;
+}
+
+@media(max-width:390px){
+  body #scanSheet #v8Sets .v8SetHead{grid-template-columns:minmax(0,1fr) 146px!important;column-gap:8px!important}
+  body #scanSheet #v8Sets .v8SetCount{width:146px!important;grid-template-columns:42px 62px 42px!important}
+  body #scanSheet #v8Sets .v8SetRow{grid-template-columns:38px minmax(76px,1fr) minmax(76px,1fr) 50px!important;column-gap:5px!important;padding:0 7px!important}
+  body #scanSheet #v8Sets .v8SetRow>i{width:38px!important}
+  body #scanSheet #v8Sets .v8SetRow>em{width:48px!important;min-width:48px!important;max-width:48px!important}
+  #axisSetControls{gap:8px}
+  .axisSetStepper{grid-template-columns:44px minmax(0,1fr) 44px}
+  .axisSetStepper>button{width:44px}
+  .axisSetValue{gap:4px}
+  .axisSetValue>input{font-size:21px}
+}
+
+/* First paint must never be visually blocked by enhancement state. */
+html[data-axis-core-ready="1"] .app{visibility:visible!important;opacity:1!important}
