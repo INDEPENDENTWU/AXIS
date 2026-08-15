@@ -35,7 +35,7 @@ jobs:
           set -euo pipefail
           echo "Production URL: $AXIS_URL"
           for i in $(seq 1 20); do
-            if curl -fsS --connect-timeout 5 --max-time 15 "$AXIS_URL/" >/tmp/axis-production-index.html; then
+            if curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/" >/tmp/axis-production-index.html; then
               exit 0
             fi
             sleep 3
@@ -47,7 +47,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl -fsS --connect-timeout 5 --max-time 15 "$AXIS_URL/axis-build.json" -o /tmp/axis-build.json
+          curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/axis-build.json" -o /tmp/axis-build.json
           cat /tmp/axis-build.json
           grep -q '"version"[[:space:]]*:[[:space:]]*"8.7.12"' /tmp/axis-build.json
           grep -q 'hardened-chunk-kernel+nonblocking-feature' /tmp/axis-build.json
