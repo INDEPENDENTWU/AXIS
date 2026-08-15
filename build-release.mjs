@@ -6,6 +6,7 @@ const STEPS=[
   'prepare-product-convergence.mjs',
   'prepare-first-paint-shell.mjs',
   'prepare-88-convergence.mjs',
+  'prepare-88-catalog-convergence.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
@@ -31,6 +32,7 @@ if(contract.architecture==='canonical-single-runtime'){
   if(manifest.gates?.canonicalSingleRuntime!==true)fail('canonical single-runtime gate missing');
   if(manifest.requests?.dynamicJavascript!==0)fail(`dynamic runtime requests remain · ${manifest.requests?.dynamicJavascript}`);
   if(manifest.featureKernel?.embedded!==true||manifest.completionKernel?.embedded!==true)fail('8.8 feature/completion are not embedded');
+  if(manifest.gates?.catalogCategorySingleOwner!==true)fail('catalog category single-owner gate missing');
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
