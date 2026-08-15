@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright-core';
 
+const annotate=e=>{const s=String(e?.stack||e||'AXIS first-paint failure').replace(/%/g,'%25').replace(/\r?\n/g,'%0A');console.error(`::error title=AXIS first-paint smoke::${s}`)};
+process.on('uncaughtExceptionMonitor',annotate);process.on('unhandledRejection',annotate);
+
 const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
 const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']});
 const context=await browser.newContext({viewport:{width:390,height:844},locale:'zh-CN'});
@@ -49,7 +52,6 @@ assert.equal(final.settingsMarkup,first.settingsMarkup,'enhancement must not rep
 assert.equal(final.version,'版本 8.7.12','public version must never promote visibly');
 assert.equal(final.release,'8.7.12','public release identity must remain 8.7.12');
 
-/* Settings -> My equipment uses the exact same canonical custom editor as recording. */
 await page.locator('#settingsBtn').click();
 await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),undefined,{timeout:1000});
 await page.locator('#myEqBtn').click();
@@ -60,7 +62,7 @@ await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classLi
 await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('v879Front'),undefined,{timeout:1000});
 assert.equal(await page.locator('#customEqTitle').innerText(),'自定义运动');
 assert.ok(await page.locator('#customName').isVisible(),'shared custom editor did not become visible');
-assert.equal(typeof await page.locator('#saveCustomEq').evaluate(e=>e.onclick),'object' /* Playwright serializes function as null/object? */);
+assert.equal(typeof await page.locator('#saveCustomEq').evaluate(e=>e.onclick),'object');
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
 console.log('[AXIS first-paint] PASS · final chrome from first DOM · public 8.7.12 invariant · Settings custom editor visible');
