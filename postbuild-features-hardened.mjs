@@ -90,8 +90,11 @@ if(info.architecture!=='hardened-chunk-kernel')fail(`unexpected base architectur
 info.version=TARGET_VERSION;
 info.baseVersion=BASE_VERSION;
 info.architecture='hardened-chunk-kernel+nonblocking-feature';
+const sourceCommit=String(process.env.VERCEL_GIT_COMMIT_SHA||process.env.GITHUB_SHA||'').trim();
+if(sourceCommit&&!/^[a-f0-9]{40}$/i.test(sourceCommit))fail(`invalid source commit ${sourceCommit}`);
+info.sourceCommit=sourceCommit||null;
 info.featureKernel={blocking:false,feature:FEATURE_FILE,hash:featureHash,maxBytes:MAX_FEATURE_BYTES,timeoutMs:4500,loadAfter:'stable kernel complete + healthy + idle',fallback:BASE_VERSION,versionOwner:'monotonic'};
-info.gates={...(info.gates||{}),optionalRuntimeSyntax:true,optionalRuntimeBudget:true,optionalRuntimeContract:true,optionalRuntimeNonBlocking:true};
+info.gates={...(info.gates||{}),optionalRuntimeSyntax:true,optionalRuntimeBudget:true,optionalRuntimeContract:true,optionalRuntimeNonBlocking:true,sourceCommitStamped:!!sourceCommit};
 fs.writeFileSync(p('axis-build.json'),JSON.stringify(info,null,2));
 
 const fresh=p('fresh/index.html');
@@ -101,4 +104,5 @@ if(fs.existsSync(fresh)){
   fs.writeFileSync(fresh,f);
 }
 console.log(`[AXIS] hardened feature gate passed · ${TARGET_VERSION} · ${featureHash}`);
+console.log(`[AXIS] source commit · ${sourceCommit||'unavailable'}`);
 console.log('[AXIS] feature loads only after a healthy completed stable kernel; any failure stays on 8.7.11.');
