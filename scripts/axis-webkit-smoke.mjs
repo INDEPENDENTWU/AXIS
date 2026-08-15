@@ -34,7 +34,6 @@ const openSettings=async()=>{if(!await page.locator('#settingsSheet.show').count
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
 await page.evaluate(()=>localStorage.clear());await page.reload({waitUntil:'domcontentloaded'});await waitReady();
 assert.equal(await page.evaluate(()=>window.__AXIS_ARCH__),'canonical-single-runtime');
-assert.equal(document?.undefined,undefined);
 assert.equal((await page.locator('.versionLine').getAttribute('aria-label')||'').trim(),'版本 8.8');
 assert.equal(retiredRequests,0,'WebKit attempted a retired dynamic runtime request');
 assert.deepEqual([...new Set(scripts)],['/axis-core.js'],`WebKit loaded unexpected scripts: ${JSON.stringify(scripts)}`);
