@@ -227,6 +227,10 @@ await page.waitForFunction(()=>document.querySelector('#insightsView')?.classLis
 assert.ok(await page.locator('#insightsView .v84Trends').isVisible(),'canonical v84 trends surface did not render');
 assert.equal(await page.locator('#coverageGrid:visible').count(),0,'retired pre-v84 coverage grid became visible');
 for(const sel of ['#v84NowList','#v84Axis','#v84MemoryRows','#v84Rhythm'])assert.ok(await page.locator(sel).isVisible(),`canonical trends control missing/hidden ${sel}`);
+// v84 deliberately refreshes trends 60 ms after the navigation event. Wait for the
+// final product state, not an arbitrary sleep: the new record must become both the
+// current-item selector and an axis point within the interaction budget.
+await page.waitForFunction(()=>document.querySelector('#v84NowList [data-v84-eq]')&&document.querySelector('#v84Axis .v84AxisCol'),undefined,{timeout:900});
 assert.ok((await page.locator('#v84NowList').innerText()).trim().length>0,'canonical trends did not render the real recorded item');
 assert.ok(await page.locator('#v84Axis .v84AxisCol').count()>0,'canonical trend axis did not render the recorded item');
 await openSettings();
