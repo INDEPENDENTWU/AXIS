@@ -54,7 +54,7 @@ chunks=chunks.map((src,i)=>{
   const setterMatches=src.match(new RegExp(setter.source,'g'))||[];
   if(setterMatches.length!==1)fail(`v876 capture setter expected once, found ${setterMatches.length}`);
   src=src.replace(setter,m=>m+"\nwindow.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCapturePref};");
-  const correction=/function applyCaptureMode\(\)\{[\s\S]*?\}\nconst DETAIL_CORE=/;
+  const correction=/function applyCaptureMode\(\)\{[\s\S]*?\}\s*const DETAIL_CORE=/;
   const correctionMatches=src.match(new RegExp(correction.source,'g'))||[];
   if(correctionMatches.length!==1)fail(`v876 delayed capture correction expected once, found ${correctionMatches.length}`);
   src=src.replace(correction,'const DETAIL_CORE=');
