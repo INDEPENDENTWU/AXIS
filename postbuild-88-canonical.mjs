@@ -21,7 +21,7 @@ core=core.replace(manifestPattern,'const manifest=[];');
 
 /* The visible 8.8 default-capture selector belongs to v876. The base app used to
    open the capture sheet from its older numeric scanSeconds preference and v876
-   corrected it ~90 ms later. Read the canonical preference directly instead. */
+   corrected it later. Read the canonical preference directly instead. */
 const legacyScanOpen="$('#scanBtn').onclick=()=>{resetScan();captureMode=String(state.prefs.scanSeconds||3);$$('#captureModes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===captureMode));setText('#captureNow',captureMode==='photo'?'拍照':`开始扫描 ${captureMode} 秒`);openSheet('scanSheet');startCamera()};";
 const canonicalScanOpen="$('#scanBtn').onclick=()=>{resetScan();const preferred=window.__AXIS_CAPTURE_PREF__?.get?.();captureMode=['photo','3','5'].includes(String(preferred))?String(preferred):String(state.prefs.scanSeconds||3);$$('#captureModes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===captureMode));setText('#captureNow',captureMode==='photo'?'拍照':`开始扫描 ${captureMode} 秒`);openSheet('scanSheet');startCamera()};";
 if(core.split(legacyScanOpen).length-1!==1)fail('legacy capture-open preference signature missing');
@@ -42,8 +42,10 @@ chunks=chunks.map(src=>src.replace(/function version\(\)\{window\.__AXIS_RELEASE
 }));
 if(retiredVersionWriters!==2)fail(`expected exactly two historical release writers, retired ${retiredVersionWriters}`);
 
-/* Converge capture preference before the interaction chunk enters production. */
-let retiredCaptureCorrectionWriters=0;
+/* Converge capture preference before the interaction chunk enters production.
+   Earlier compiler stages may already have removed a legacy fragment. Zero is valid;
+   duplicates are not. The final runtime assertion below is the release invariant. */
+let retiredCaptureCorrectionFragments=0;
 chunks=chunks.map((src,i)=>{
   if(chunkFiles[i]!=='axis-enhance-interaction.js')return src;
   const captureFrom="function capturePref(){return meta().prefs.v876CaptureMode||'photo'}";
@@ -54,18 +56,20 @@ chunks=chunks.map((src,i)=>{
   const setterMatches=src.match(new RegExp(setter.source,'g'))||[];
   if(setterMatches.length!==1)fail(`v876 capture setter expected once, found ${setterMatches.length}`);
   src=src.replace(setter,m=>m+"\nwindow.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCapturePref};");
-  const correction=/function applyCaptureMode\(\)\{[\s\S]*?\}\s*const DETAIL_CORE=/;
-  const correctionMatches=src.match(new RegExp(correction.source,'g'))||[];
-  if(correctionMatches.length!==1)fail(`v876 delayed capture correction expected once, found ${correctionMatches.length}`);
-  src=src.replace(correction,'const DETAIL_CORE=');
+
+  const correctionExact="function applyCaptureMode(){const mode=capturePref(),sheet=$('#scanSheet');if(!sheet?.classList.contains('show'))return;const b=$(`#captureModes [data-mode=\"${mode}\"]`);if(b&&!b.classList.contains('active'))b.click()}";
+  const correctionCount=src.split(correctionExact).length-1;
+  if(correctionCount>1)fail(`v876 delayed capture function duplicated ${correctionCount} times`);
+  if(correctionCount===1){src=src.replace(correctionExact,'');retiredCaptureCorrectionFragments++}
+
   const delayed="if(e.target.closest('#scanBtn,.scanPrimary'))setTimeout(applyCaptureMode,90);";
-  if(src.split(delayed).length-1!==1)fail('v876 delayed capture click correction signature missing');
-  src=src.replace(delayed,'');
+  const delayedCount=src.split(delayed).length-1;
+  if(delayedCount>1)fail(`v876 delayed capture click correction duplicated ${delayedCount} times`);
+  if(delayedCount===1){src=src.replace(delayed,'');retiredCaptureCorrectionFragments++}
+
   if(/applyCaptureMode|setTimeout\(applyCaptureMode/.test(src))fail('delayed capture correction survived retirement');
-  retiredCaptureCorrectionWriters++;
   return src;
 });
-if(retiredCaptureCorrectionWriters!==1)fail(`expected one capture-correction retirement, got ${retiredCaptureCorrectionWriters}`);
 
 /* v8710 live catalog also carried an older active-item editor. v879 is the canonical
    active adjustment owner in 8.8, so the catalog's editor generation, polling and
@@ -122,7 +126,7 @@ info.boot={...(info.boot||{}),releaseOwner:VERSION,canonicalRuntime:true,legacyS
 info.featureKernel={blocking:true,embedded:true,feature:'v8712-runtime.js',hash:featureHash,maxBytes:Buffer.byteLength(feature),timeoutMs:0,loadAfter:'embedded in canonical runtime',fallback:null,versionOwner:'canonical-runtime'};
 info.completionKernel={blocking:true,embedded:true,feature:'v8712-completion.js',hash:completionHash,maxBytes:Buffer.byteLength(completion),timeoutMs:0,requires:['canonical runtime'],fallback:null,owns:['nested sheet return','watermark corner cleanup','sound audition cleanup']};
 info.gates={...(info.gates||{}),canonicalSingleRuntime:true,noDynamicRuntimeChunks:true,noVersionFallback:true,embeddedFeature:true,embeddedCompletion:true,historicalReleaseWriterRetired:true,legacyV8710ActiveAdjustRetired:true,capturePreferenceSingleOwner:true};
-info.canonical={version:VERSION,architecture:ARCH,runtimeHash,sourceInputs:['app.js','v61.js',...chunkFiles,'v8712-runtime.js','v8712-completion.js'],productionRequests:{javascript:1,stylesheet:1},retiredReleaseWriters:retiredVersionWriters,retiredActiveAdjustWriters,retiredCaptureCorrectionWriters};
+info.canonical={version:VERSION,architecture:ARCH,runtimeHash,sourceInputs:['app.js','v61.js',...chunkFiles,'v8712-runtime.js','v8712-completion.js'],productionRequests:{javascript:1,stylesheet:1},retiredReleaseWriters:retiredVersionWriters,retiredActiveAdjustWriters,captureCorrectionFragmentsRetired:retiredCaptureCorrectionFragments};
 write('axis-build.json',JSON.stringify(info,null,2));
 
 const finalScripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(m=>m[1]);
@@ -133,4 +137,4 @@ if(!runtime.includes("window.__AXIS_COMPLETION_KERNEL__={state:'ready'"))fail('e
 if(!runtime.includes("window.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCapturePref}"))fail('canonical capture preference bridge missing');
 if(/setTimeout\(applyCaptureMode|function applyCaptureMode\(/.test(runtime))fail('delayed capture correction survived canonical runtime');
 console.log(`[AXIS 8.8 canonical] single runtime ${runtimeHash} · ${(Buffer.byteLength(runtime)/1024).toFixed(1)} KiB source`);
-console.log(`[AXIS 8.8 canonical] retired release writers ${retiredVersionWriters} · active-adjust ${retiredActiveAdjustWriters} · capture-correction ${retiredCaptureCorrectionWriters} · 1 JS request · 0 dynamic runtime chunks`);
+console.log(`[AXIS 8.8 canonical] retired release writers ${retiredVersionWriters} · active-adjust ${retiredActiveAdjustWriters} · capture-correction fragments ${retiredCaptureCorrectionFragments} · 1 JS request · 0 dynamic runtime chunks`);
