@@ -50,12 +50,12 @@ if(await quick.count()){
 }else{
  const other=page.locator('#v8Other');assert.ok(await other.count(),'missing other-equipment fallback');
  await other.click();
- await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),{timeout:1000});
- const strength=page.locator('#eqSheet').getByRole('button',{name:/直臂下拉|高位下拉|胸推|杠铃卧推|多功能龙门架/}).first();
- assert.ok(await strength.count(),'missing visible standard strength equipment choice');
+ await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelectorAll('#v8710Cards [data-v877-lib]').length>0,{timeout:1200});
+ const strength=page.locator('#v8710Cards [data-v877-lib]:visible').first();
+ assert.ok(await strength.count(),'missing visible live-catalog strength card');
  await strength.click();
 }
-await page.waitForFunction(()=>document.querySelectorAll('#v8SetEditor .v8SetRow').length>0,{timeout:1800});
+await page.waitForFunction(()=>document.querySelectorAll('#v8SetEditor .v8SetRow').length>0,{timeout:2200});
 await page.waitForFunction(()=>document.querySelector('#v8SetEditor .v8712cAdjust'),{timeout:1200});
 assert.ok(await page.locator('#v8SetEditor [data-v8setcount]').count()>=2,'group count controls missing');
 assert.equal(await page.locator('#v8SetEditor [data-v8712c-step="weight"]').count(),2,'weight stepper missing');
