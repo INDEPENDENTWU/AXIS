@@ -2,7 +2,7 @@
 
 AXIS is a camera-first fitness memory tool: capture the real workout, keep the record, remember the equipment, compare what changed, and surface one useful next signal without turning training into a project-management app.
 
-## Current product — 8.7.12
+## Current product — 8.8
 
 - Mobile-first workout/session flow with no required workout plan.
 - Single-photo and short live-scan capture.
@@ -11,7 +11,7 @@ AXIS is a camera-first fitness memory tool: capture the real workout, keep the r
 - Fast strength recording with set-level weight/reps, direct numeric editing, previous-value reuse, and per-set completion state.
 - Cardio recording with duration/intensity controls.
 - Active workout execution with elapsed/estimated time, pause/resume, set completion, rest state, and finish behavior.
-- Custom equipment management and normal-language muscle/effect mapping.
+- Custom equipment management with one canonical editor, automatic exercise classification, and professional muscle/effect mapping.
 - Local-first workout/media storage with explicit storage management.
 - Training continuity, comparable progress evidence, coverage, rhythm, trend/report, and next-gap signals.
 - Owner-managed AI backend; end users never enter an API key or select models.
@@ -23,16 +23,19 @@ AXIS production uses a hardened core-first runtime:
 
 1. `app.js` + `v61.js` make the product interactive first.
 2. Four bounded stable enhancement chunks load after core interactivity.
-3. The optional 8.7.12 feature loads only after the verified stable kernel is healthy.
+3. The current optional feature layer loads only after the verified stable kernel is healthy.
 4. A small non-blocking completion shell handles nested-sheet return and narrow legacy cleanup.
 5. Feature/completion failure falls back to the verified stable experience rather than blocking the app.
 
-Critical product surfaces use a **single-owner rule**. In particular, `v61.js` is the canonical owner of the live strength draft and high-frequency weight/reps controls; historical parallel recording painters are retired before bundling.
+Critical product surfaces use a **single-owner rule**. In particular, `v61.js` is the canonical owner of the live strength draft and high-frequency weight/reps controls; `v874-professional.js` is the custom-exercise classification UI owner; historical parallel writers are retired before bundling.
 
 Critical geometry is bundled in first-paint CSS. High-frequency recording changes update values in place rather than rebuilding the active set row.
 
+The public release contract lives in [`release-contract.json`](release-contract.json). `build-release.mjs`, CI, and the production deployment gate validate against that contract rather than maintaining independent version constants.
+
 See:
 
+- [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) — current release ownership map and handoff entry point for future work.
 - [`docs/ENGINEERING_PLAYBOOK.md`](docs/ENGINEERING_PLAYBOOK.md) — product architecture, ownership, visual/performance rules, regression strategy, and convergence roadmap.
 - [`docs/RUNTIME_CONTRACT.md`](docs/RUNTIME_CONTRACT.md) — release-blocking runtime invariants.
 - [`docs/AI_BACKEND.md`](docs/AI_BACKEND.md) — owner-managed AI configuration.
@@ -50,7 +53,7 @@ AXIS uses a local-first routing strategy:
 
 ## Storage
 
-The current Web product stores workout metadata in browser LocalStorage and media in IndexedDB on the current device/browser. Vercel does not hold the user's workout media in this build. Cloud identity/sync can be added later without changing the product's capture model.
+The current Web product stores workout metadata in browser LocalStorage and media in IndexedDB on the current device/browser. The hosting platform does not hold the user's workout media in this build. Cloud identity/sync can be added later without changing the product's capture model.
 
 ## Web / native boundary
 
