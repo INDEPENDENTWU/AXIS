@@ -71,6 +71,10 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
         run: node scripts/axis-record-prefs-diag.mjs
+      - name: Canonical capture entry diagnostic
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+        run: node scripts/axis-capture-entry-diag.mjs
       - name: Full product operation matrix
         env:
           AXIS_URL: http://127.0.0.1:4173
