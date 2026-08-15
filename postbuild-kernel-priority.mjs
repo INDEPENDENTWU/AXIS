@@ -49,9 +49,9 @@ core=core.replace(`/axis-enhance-recording.js?v=${oldRecordingHash}`,`/axis-enha
 
 /*
  * Active-session adjustment has one owner and one visible action. v879 keeps the
- * already-proven one-time edit transaction, but no longer paints its legacy
- * button. v87 asks that owner to synchronize after its own active-card render,
- * so no MutationObserver or extra timer is needed.
+ * proven one-time edit transaction while v87 synchronizes it after active-card
+ * rendering. Any earlier adjustment painter is deterministically retired at the
+ * same boundary, including a one-frame late insertion, without an observer.
  */
 let interaction=fs.readFileSync(interactionChunk,'utf8');
 const oldInteractionHash=(core.match(/\/axis-enhance-interaction\.js\?v=([a-f0-9]+)/)||[])[1];
@@ -59,6 +59,12 @@ if(!oldInteractionHash)fail('interaction chunk hash missing from core manifest')
 const oldEditIds=(interaction.match(/v879EditBtn/g)||[]).length;if(oldEditIds<3)fail(`legacy active-adjust identity unexpectedly sparse: ${oldEditIds}`);
 interaction=interaction.replaceAll('v879EditBtn','v87AdjustBtn');
 const oldLabel="b.textContent='调整一次'";if(!interaction.includes(oldLabel))fail('active-adjust label contract changed');interaction=interaction.replace(oldLabel,"b.textContent='调整'");
+const editHead="function editEntry(){const id=activeId(),host=$('#v87Now .v87Actions');if(!id||!host)return;";
+const editHeadSafe="function editEntry(){const id=activeId(),host=$('#v87Now .v87Actions');if(!id||!host)return;const prune=()=>{let kept=false;for(const x of Array.from(host.querySelectorAll('button'))){if(!String(x.textContent||'').trim().startsWith('调整'))continue;if(x.id==='v87AdjustBtn'&&!kept){kept=true;continue}x.remove()}};prune();";
+if(!interaction.includes(editHead))fail('active-adjust entry contract changed');interaction=interaction.replace(editHead,editHeadSafe);
+const appendAdjust="b.onclick=()=>openEdit(id);host.appendChild(b)}}";
+const appendAdjustSafe="b.onclick=()=>openEdit(id);host.appendChild(b);queueMicrotask(prune);setTimeout(prune,120)}}";
+if(!interaction.includes(appendAdjust))fail('active-adjust append contract changed');interaction=interaction.replace(appendAdjust,appendAdjustSafe);
 const exposeNeedle='function openEdit(id){';if(!interaction.includes(exposeNeedle))fail('active-adjust opener contract changed');interaction=interaction.replace(exposeNeedle,'window.__AXIS_ACTIVE_ADJUST_SYNC__=editEntry;\nfunction openEdit(id){');
 try{new Function(interaction)}catch(e){fail(`patched ${interactionChunk} syntax ${e.message}`)}
 const newInteractionHash=hash(interaction);fs.writeFileSync(interactionChunk,interaction);
@@ -137,10 +143,10 @@ if(Array.isArray(info.assets.chunks)){
  set('foundation',newFoundationHash);set('recording',newRecordingHash);set('interaction',newInteractionHash);
 }
 info.performanceContract={...(info.performanceContract||{}),shellOwnsTopLevelInteraction:true,shellOwnsDockVisibility:true,hydrationStartsAfterQuietMs:850,initialHydrationDelayMs:900,topLevelSheetsExcludedFromLegacyBodyObservers:['settingsSheet','reportSheet','watermarkSheet'],redundantSettingsHooksRemoved:true,plannerCommitsAtomically:true,activeAdjustUsesRenderSync:true};
-info.gates={...(info.gates||{}),interactionPriorityKernel:true,shellObserverIsolation:true,shellDockOwnership:true,groupPlanRowContract:true,legacyPlanAutoSeedRetired:true,legacySetBridgeAutoSeedRetired:true,canonicalPlanTransaction:true,singleActiveAdjustmentOwner:true};
+info.gates={...(info.gates||{}),interactionPriorityKernel:true,shellObserverIsolation:true,shellDockOwnership:true,groupPlanRowContract:true,legacyPlanAutoSeedRetired:true,legacySetBridgeAutoSeedRetired:true,canonicalPlanTransaction:true,singleActiveAdjustmentOwner:true,activeAdjustDeterministicDedupe:true};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
 console.log(`[AXIS] interaction-priority kernel passed · core ${oldCoreHash} -> ${newHash}`);
 console.log(`[AXIS] chunks · foundation ${oldFoundationHash}->${newFoundationHash} · recording ${oldRecordingHash}->${newRecordingHash} · interaction ${oldInteractionHash}->${newInteractionHash}`);
 console.log('[AXIS] group-plan row contract normalized; planner commits atomically through the v61 recording owner.');
-console.log('[AXIS] active-session adjustment converged to one render-synchronized, one-time action.');
+console.log('[AXIS] active-session adjustment converged to one deterministic, render-synchronized, one-time action.');
 console.log('[AXIS] shell actions preempt hydration; core exclusively owns dock visibility after navigation/sheet interactions.');
