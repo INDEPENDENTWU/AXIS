@@ -5,29 +5,41 @@ AXIS is a camera-first fitness memory tool: capture the real workout, keep the r
 ## Current product — 8.8
 
 - Mobile-first workout/session flow with no required workout plan.
-- Single-photo and short live-scan capture.
+- Single-photo and short live-scan capture, with one canonical default capture preference (`photo` / `3s` / `5s`).
 - Immediate timestamp seal plus configurable final photo/video watermark.
 - Personal equipment memory and a broad canonical exercise library.
 - Fast strength recording with set-level weight/reps, direct numeric editing, previous-value reuse, and per-set completion state.
 - Cardio recording with duration/intensity controls.
-- Active workout execution with elapsed/estimated time, pause/resume, set completion, rest state, and finish behavior.
+- Active workout execution with elapsed/estimated time, pause/resume, set completion, rest state, finish behavior, and one visible one-time adjustment transaction.
 - Custom equipment management with one canonical editor, automatic exercise classification, and professional muscle/effect mapping.
 - Local-first workout/media storage with explicit storage management.
-- Training continuity, comparable progress evidence, coverage, rhythm, trend/report, and next-gap signals.
+- Current v84 training trends, continuity/memory signals, and current v8710 three-card training report.
 - Owner-managed AI backend; end users never enter an API key or select models.
 - Platform adapter for a future iOS native shell (Photos write, haptics, Passkey, background transfer).
 
 ## Runtime architecture
 
-AXIS production uses a hardened core-first runtime:
+AXIS 8.8 production is a **canonical single-runtime release**.
 
-1. `app.js` + `v61.js` make the product interactive first.
-2. Four bounded stable enhancement chunks load after core interactivity.
-3. The current optional feature layer loads only after the verified stable kernel is healthy.
-4. A small non-blocking completion shell handles nested-sheet return and narrow legacy cleanup.
-5. Feature/completion failure falls back to the verified stable experience rather than blocking the app.
+The browser receives:
 
-Critical product surfaces use a **single-owner rule**. In particular, `v61.js` is the canonical owner of the live strength draft and high-frequency weight/reps controls; `v874-professional.js` is the custom-exercise classification UI owner; historical parallel writers are retired before bundling.
+1. one external JavaScript runtime: `axis-core.js?v=<content hash>`;
+2. one external stylesheet: `axis-style.css?v=<content hash>`;
+3. zero dynamic historical runtime chunks;
+4. zero optional feature/completion runtime requests;
+5. no silent downgrade or fallback to an 8.7.x product while the public UI says 8.8.
+
+Historical modules remain in the repository as compiler inputs and implementation history. `build-release.mjs` runs the deterministic convergence pipeline and `postbuild-88-canonical.mjs` emits the one browser runtime. They are not independent production layers.
+
+Critical product surfaces use a **single-owner rule**. Current important owners include:
+
+- `v61.js` — live strength draft and high-frequency weight/reps recording;
+- `v874-professional.js` — canonical custom-exercise professional editor/inference UI;
+- v876 capture preference — the sole visible/default `photo` / `3s` / `5s` capture preference;
+- `#v87AdjustBtn` + the v879 one-time transaction sheet — the single active-session adjustment path;
+- v85/v8711 watermark controls — current name and four-corner placement owners, with historical placement hit targets retired;
+- `v84-runtime.js` — current Trends surface; pre-v84 coverage UI remains retired;
+- `v8710-report.js` — current three-card report deck and report-share owner; base/v877 report surfaces remain retired.
 
 Critical geometry is bundled in first-paint CSS. High-frequency recording changes update values in place rather than rebuilding the active set row.
 
@@ -40,6 +52,10 @@ See:
 - [`docs/RUNTIME_CONTRACT.md`](docs/RUNTIME_CONTRACT.md) — release-blocking runtime invariants.
 - [`docs/AI_BACKEND.md`](docs/AI_BACKEND.md) — owner-managed AI configuration.
 - [`docs/IOS_NATIVE_BRIDGE.md`](docs/IOS_NATIVE_BRIDGE.md) — web/native boundary.
+
+## Release verification
+
+The release-blocking browser gates verify the built artifact rather than only source structure. The current 8.8 matrix covers repeated cold boot, first-paint stability, Settings, profile, custom equipment, capture preference, sound/reminders, watermark, storage, direct strength recording, set count, active-session pause/resume/completion, visible one-time adjustment, history, current v84 Trends, and current v8710 report. A separate iPhone-sized WebKit gate verifies the canonical runtime and critical mobile interactions.
 
 ## AI architecture
 

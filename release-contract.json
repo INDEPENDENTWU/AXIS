@@ -1,10 +1,10 @@
 {
   "publicVersion": "8.8",
-  "stableBaseVersion": "8.7.11",
-  "architecture": "hardened-chunk-kernel+nonblocking-feature",
+  "stableBaseVersion": "8.8",
+  "architecture": "canonical-single-runtime",
   "featureKernel": "v8712-runtime.js",
   "completionKernel": "v8712-completion.js",
-  "stableChunkCount": 4,
+  "stableChunkCount": 0,
   "buildCommand": "node build-release.mjs",
   "buildManifest": "axis-build.json"
 }
