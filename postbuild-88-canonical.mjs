@@ -25,14 +25,14 @@ const completion=normalizedVersion(read('v8712-completion.js'));
 syntax(feature,'embedded feature');syntax(completion,'embedded completion');
 
 let chunks=chunkFiles.map(f=>read(f));
-/* v8711 used to claim the whole product release identity on patch/pageshow/click.
-   Keep its valid product capabilities, retire only that historical identity writer. */
+/* v879 and v8711 historically claimed the whole product release identity.
+   Preserve their product capabilities but remove those identity writers before shipping. */
 let retiredVersionWriters=0;
-chunks=chunks.map(src=>src.replace(/function version\(\)\{window\.__AXIS_RELEASE__=VERSION;[\s\S]*?\}\nfunction patch\(\)\{/g,m=>{
+chunks=chunks.map(src=>src.replace(/function version\(\)\{window\.__AXIS_RELEASE__=VERSION;[\s\S]*?\}\n(?=function [A-Za-z_$][\w$]*\()/g,()=>{
   retiredVersionWriters++;
-  return 'function version(){}\nfunction patch(){';
+  return 'function version(){}\n';
 }));
-if(retiredVersionWriters!==1)fail(`expected exactly one historical release writer, retired ${retiredVersionWriters}`);
+if(retiredVersionWriters!==2)fail(`expected exactly two historical release writers, retired ${retiredVersionWriters}`);
 for(let i=0;i<chunks.length;i++){
   if(/window\.__AXIS_RELEASE__\s*=/.test(chunks[i]))fail(`${chunkFiles[i]} still writes canonical release identity`);
   syntax(chunks[i],chunkFiles[i]);
