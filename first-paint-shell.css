@@ -1,0 +1,75 @@
+/* AXIS first-paint shell — user-visible chrome is final before runtime hydration. */
+
+/* The settings control never changes from gear -> sliders after boot. */
+#settingsBtn.v877Control{
+  width:46px!important;
+  min-width:46px!important;
+  max-width:46px!important;
+  height:46px!important;
+  min-height:46px!important;
+  max-height:46px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:15px!important;
+  background:linear-gradient(145deg,#181b22,#101218)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.075),0 8px 28px rgba(0,0,0,.2)!important;
+  color:#eef0f4!important;
+  display:grid!important;
+  place-items:center!important;
+  justify-self:end!important;
+  align-self:center!important;
+  contain:layout paint size!important;
+  overflow:hidden!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+}
+#settingsBtn .v877ControlGlyph{position:relative;width:20px;height:20px;display:block}
+#settingsBtn .v877ControlGlyph i{position:absolute;left:1px;right:1px;height:2px;background:#8b92a1;border-radius:10px}
+#settingsBtn .v877ControlGlyph i:nth-child(1){top:5px}
+#settingsBtn .v877ControlGlyph i:nth-child(2){bottom:5px}
+#settingsBtn .v877ControlGlyph b{position:absolute;width:6px;height:6px;border-radius:50%;background:#737cff;box-shadow:0 0 0 3px rgba(115,124,255,.13)}
+#settingsBtn .v877ControlGlyph b:nth-of-type(1){left:4px;top:3px}
+#settingsBtn .v877ControlGlyph b:nth-of-type(2){right:4px;bottom:3px}
+
+/* Recording dock structure exists in HTML; runtime only wires behavior. */
+#dock.v8-dual{
+  grid-template-columns:minmax(0,1fr) 116px!important;
+  gap:10px!important;
+  align-items:stretch!important;
+  contain:layout paint!important;
+}
+#dock.v8-dual #scanBtn,#dock.v8-dual #quickRecordBtn{
+  height:64px!important;
+  min-height:64px!important;
+  max-height:64px!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+}
+
+/* Navigation selection is a permanent, quiet surface — never an underline-only promotion. */
+.nav>button{
+  border-radius:18px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transition:none!important;
+  animation:none!important;
+}
+.nav>button.active{
+  background:rgba(22,25,31,.96)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)!important;
+}
+.nav>button.active::before,.nav>button.active::after{display:none!important}
+
+/* Public release text has one visual owner and never transitions between baseline/feature versions. */
+.versionLine{
+  font-variant-numeric:tabular-nums;
+  transition:none!important;
+  animation:none!important;
+}
+
+@media(max-width:390px){
+  #dock.v8-dual{grid-template-columns:minmax(0,1fr) 104px!important;gap:8px!important}
+}
