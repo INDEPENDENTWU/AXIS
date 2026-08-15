@@ -54,6 +54,7 @@ if(fs.existsSync('scripts/axis-smoke.mjs')){
  let smoke=read('scripts/axis-smoke.mjs');
  smoke=textOnce(smoke,"const version=(await page.locator('.versionLine').innerText()).trim();assert.equal(version,'版本 8.7.11',`failed feature must keep base version, got ${version}`);",`const version=(await page.locator('.versionLine').getAttribute('aria-label')||'').trim();assert.equal(version,'版本 ${PUBLIC}',\`public release presentation changed during internal fallback: \${version}\`);`,'fallback public-version presentation smoke');
  smoke=textOnce(smoke,"console.log('[AXIS feature fallback] PASS · 8.7.11 remained fully interactive');",`console.log('[AXIS feature fallback] PASS · stable baseline remained fully interactive under public ${PUBLIC}');`,'fallback smoke log');
+ smoke=smoke.replaceAll('8.7.12',PUBLIC);
  write('scripts/axis-smoke.mjs',smoke);
 }
 if(fs.existsSync('scripts/axis-first-paint-smoke.mjs')){
