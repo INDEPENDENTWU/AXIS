@@ -44,7 +44,12 @@ jobs:
           if(host.endsWith('.vercel.app')&&host.startsWith(project+'-')){
             const rest=host.slice(project.length+1);
             const cut=rest.indexOf('-');
-            if(cut>0)add(`https://${project}-${rest.slice(cut+1)}`);
+            if(cut>0){
+              const scopeHost=rest.slice(cut+1);
+              add(`https://${project}-${scopeHost}`);
+              add(`https://${project}-git-main-${scopeHost}`);
+              add(`https://${project}-main-${scopeHost}`);
+            }
           }
           add(`https://${project}.vercel.app`);
           console.log(out.join('\n'));
@@ -55,28 +60,32 @@ jobs:
           echo 'Production candidates:'
           cat /tmp/axis-production-candidates.txt
 
-          for attempt in $(seq 1 12); do
+          for attempt in $(seq 1 10); do
             while IFS= read -r base; do
               test -n "$base" || continue
-              if curl -LfsS --connect-timeout 5 --max-time 15 "$base/axis-build.json" -o /tmp/axis-candidate-build.json 2>/dev/null; then
-                if EXPECTED="$AXIS_EXPECTED_SHA" node <<'NODE'
+              meta=$(curl -LsS --connect-timeout 5 --max-time 12 -o /tmp/axis-candidate-build.json -w '%{http_code}\t%{url_effective}\t%{content_type}' "$base/axis-build.json" 2>/dev/null || true)
+              result=$(EXPECTED="$AXIS_EXPECTED_SHA" node <<'NODE'
           const fs=require('fs');
+          let out={kind:'unreadable',version:null,sourceCommit:null,bytes:0};
           try{
-            const x=JSON.parse(fs.readFileSync('/tmp/axis-candidate-build.json','utf8'));
-            process.exit(x.sourceCommit===process.env.EXPECTED&&x.version==='8.7.12'?0:1);
-          }catch{process.exit(1)}
+            const raw=fs.readFileSync('/tmp/axis-candidate-build.json','utf8');out.bytes=Buffer.byteLength(raw);
+            try{const x=JSON.parse(raw);out={kind:'json',version:x.version||null,sourceCommit:x.sourceCommit||null,bytes:out.bytes,exact:x.sourceCommit===process.env.EXPECTED&&x.version==='8.7.12'}}
+            catch{const m=raw.match(/<title[^>]*>([^<]{0,120})<\/title>/i);out.kind='html-or-text';out.title=m?.[1]||raw.slice(0,80).replace(/\s+/g,' ')}
+          }catch{}
+          process.stdout.write(JSON.stringify(out));
           NODE
-                then
-                  cp /tmp/axis-candidate-build.json /tmp/axis-build.json
-                  echo "AXIS_URL=$base" >> "$GITHUB_ENV"
-                  echo "Resolved exact Production alias: $base"
-                  curl -LfsS --connect-timeout 5 --max-time 15 "$base/" -o /tmp/axis-production-index.html
-                  echo "Production root · $(wc -c </tmp/axis-production-index.html) bytes"
-                  exit 0
-                fi
+              )
+              if [ "$attempt" -eq 1 ]; then echo "Candidate · $base · $meta · $result"; fi
+              if RESULT="$result" node -e "const x=JSON.parse(process.env.RESULT);process.exit(x.exact?0:1)"; then
+                cp /tmp/axis-candidate-build.json /tmp/axis-build.json
+                echo "AXIS_URL=$base" >> "$GITHUB_ENV"
+                echo "Resolved exact Production alias: $base"
+                curl -LfsS --connect-timeout 5 --max-time 15 "$base/" -o /tmp/axis-production-index.html
+                echo "Production root · $(wc -c </tmp/axis-production-index.html) bytes"
+                exit 0
               fi
             done </tmp/axis-production-candidates.txt
-            echo "Exact alias not ready yet · attempt $attempt/12"
+            echo "Exact alias not ready yet · attempt $attempt/10"
             sleep 3
           done
           echo 'No public Production alias served the exact deployed commit.'
