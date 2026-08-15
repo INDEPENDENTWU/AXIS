@@ -20,6 +20,7 @@ Historical `v8xx*.js` filenames are implementation history, not product-version 
 | Active-session adjustment | canonical postbuild `#v87AdjustBtn` | Exactly one visible adjustment action at every rendered frame. |
 | Watermark location | precise resolver internally; concise Chinese presentation externally | Lat/lon/accuracy may be stored for reverse geocoding but must not appear in normal product UI or watermark output. |
 | Settings custom list | `app.js` list + canonical editor | The list is editable; it must never create a second Settings-only editor. |
+| Release build sequence | `build-release.mjs` | CI, Vercel and EdgeOne execute the same deterministic release pipeline. Platform config files must not duplicate the step list. |
 
 ## Retired ownership in 8.8
 
@@ -47,7 +48,13 @@ The user should not need to understand the internal classification model.
 
 ## Release build
 
-The production build order is:
+Every environment must run exactly:
+
+```text
+node build-release.mjs
+```
+
+`build-release.mjs` is the single source of truth for release-step order. For 8.8 it executes:
 
 ```text
 prepare-legacy-runtime.mjs
@@ -59,6 +66,8 @@ postbuild-kernel-priority.mjs
 postbuild-features-hardened.mjs
 postbuild-8712-completion.mjs
 ```
+
+Do not copy this chain into `vercel.json`, `edgeone.json`, CI YAML, or future platform configs. Vercel's top-level `buildCommand` is schema-limited, and duplicated command chains also create configuration drift.
 
 `prepare-88-convergence.mjs` is not a new client runtime layer. It is a build-time compiler/convergence step that removes duplicate historical owners and fails the build if the expected source signatures change.
 
@@ -97,4 +106,4 @@ When a new implementation replaces an old one:
 4. add or extend a browser invariant that catches the original failure, including transient states where relevant;
 5. update this file when ownership changes.
 
-If a future conversation lacks historical context, start here, then read `docs/RUNTIME_CONTRACT.md`, the current build command, and the current browser gates. Historical chat context is not a dependency of the product architecture.
+If a future conversation lacks historical context, start here, then read `docs/RUNTIME_CONTRACT.md`, `build-release.mjs`, and the current browser gates. Historical chat context is not a dependency of the product architecture.
