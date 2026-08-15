@@ -14,28 +14,17 @@ const unsafeHelper="$=(s,r=D)=>r.querySelector(s),$$=(s,r=D)=>Array.from(r.query
 const safeHelper="$=(s,r=D)=>r?.querySelector?.(s)||null,$$=(s,r=D)=>r?.querySelectorAll?Array.from(r.querySelectorAll(s)):[]";
 let helperFixes=0,watermarkFixes=0,interactionFixes=0,versionOwnerFixes=0,recordingOwnerFixes=0,setBridgeOwnerFixes=0,retiredOwnerFixes=0;
 
-function textOnce(src,from,to,label){
-  const n=src.split(from).length-1;
-  if(n!==1)throw new Error(`AXIS legacy sanitizer: ${label} expected once, found ${n}`);
-  return src.replace(from,to);
-}
-function regexOnce(src,re,to,label){
-  const m=src.match(new RegExp(re.source,re.flags.includes('g')?re.flags:re.flags+'g'))||[];
-  if(m.length!==1)throw new Error(`AXIS legacy sanitizer: ${label} expected once, found ${m.length}`);
-  return src.replace(re,to);
-}
+function textOnce(src,from,to,label){const n=src.split(from).length-1;if(n!==1)throw new Error(`AXIS legacy sanitizer: ${label} expected once, found ${n}`);return src.replace(from,to)}
+function regexOnce(src,re,to,label){const m=src.match(new RegExp(re.source,re.flags.includes('g')?re.flags:re.flags+'g'))||[];if(m.length!==1)throw new Error(`AXIS legacy sanitizer: ${label} expected once, found ${m.length}`);return src.replace(re,to)}
 
 const interactionRewrites={
   'v876-runtime.js':[["if(e.target.closest('#settingsBtn'))setTimeout(()=>{injectAudio();syncCaptureSetting();installVersion()},120);",'']],
   'v877-runtime.js':[["if(e.target.closest('#settingsBtn'))setTimeout(()=>{version();installControl()},70);",'']],
   'v879-runtime.js':[["requestAnimationFrame(()=>{cleanLegacy();version();layer();editEntry()})",'']],
-  'v8711-runtime.js':[
-    ["if(e.target.closest('#settingsBtn'))setTimeout(()=>{ensureSettings();version()},100);",''],
-    ['requestAnimationFrame(queue)','']
-  ]
+  'v8711-runtime.js':[["if(e.target.closest('#settingsBtn'))setTimeout(()=>{ensureSettings();version()},100);",''],['requestAnimationFrame(queue)','']]
 };
 
-const quietSync=`function syncHidden(arr=draft){if(!arr.length)return;const usable=arr.filter(s=>s.state!=='unfinished'),knownW=usable.map(s=>s.weight).filter(v=>v!=null&&Number.isFinite(Number(v))),knownR=usable.map(s=>s.reps).filter(v=>v!=null&&Number.isFinite(Number(v)));if($('#weight'))$('#weight').value=knownW.length?Math.max(...knownW.map(Number)):0;const reps=knownR.length?Number(knownR[0]):1,n=Math.max(1,usable.length);let rb=$('#repsChoices [data-value="'+reps+'"]');if(!rb){$('#repsChoices')?.insertAdjacentHTML('beforeend','<button data-choice="reps" data-value="'+reps+'">'+reps+'</button>');rb=$('#repsChoices [data-value="'+reps+'"]')}$$('#repsChoices [data-choice="reps"]').forEach(b=>b.classList.toggle('active',b===rb));let sb=$('#setsChoices [data-value="'+n+'"]');if(!sb){$('#setsChoices')?.insertAdjacentHTML('beforeend','<button data-choice="sets" data-value="'+n+'">'+n+'</button>');sb=$('#setsChoices [data-value="'+n+'"]')}$$('#setsChoices [data-choice="sets"]').forEach(b=>b.classList.toggle('active',b===sb))}`;
+const quietSync=`function syncHidden(arr=draft){if(!arr.length)return;const usable=arr.filter(s=>s.state!=='unfinished'),knownW=usable.map(s=>s.weight).filter(v=>v!=null&&Number.isFinite(Number(v))),knownR=usable.map(s=>s.reps).filter(v=>v!=null&&Number.isFinite(Number(v)));const weight=document.querySelector('#weight');if(weight)weight.value=knownW.length?Math.max(...knownW.map(Number)):0;const reps=knownR.length?Number(knownR[0]):1,n=Math.max(1,usable.length),repsHost=document.querySelector('#repsChoices'),setsHost=document.querySelector('#setsChoices');let rb=document.querySelector('#repsChoices [data-value="'+reps+'"]');if(!rb&&repsHost){repsHost.insertAdjacentHTML('beforeend','<button data-choice="reps" data-value="'+reps+'">'+reps+'</button>');rb=document.querySelector('#repsChoices [data-value="'+reps+'"]')}for(const b of Array.from(document.querySelectorAll('#repsChoices [data-choice="reps"]')))b.classList.toggle('active',b===rb);let sb=document.querySelector('#setsChoices [data-value="'+n+'"]');if(!sb&&setsHost){setsHost.insertAdjacentHTML('beforeend','<button data-choice="sets" data-value="'+n+'">'+n+'</button>');sb=document.querySelector('#setsChoices [data-value="'+n+'"]')}for(const b of Array.from(document.querySelectorAll('#setsChoices [data-choice="sets"]')))b.classList.toggle('active',b===sb)}`;
 
 const recordingHelpers=`function recordingSnapshot(){const e=selected(),s=draft[sel]||null;return{equipmentId:e?.id||null,index:sel,count:draft.length,weight:s?.weight==null?null:Number(s.weight),reps:s?.reps==null?null:Number(s.reps)}}
 function emitRecording(type){try{D.dispatchEvent(new CustomEvent(type,{detail:recordingSnapshot()}))}catch{}}
@@ -57,31 +46,21 @@ window.addEventListener('pageshow',reveal);requestAnimationFrame(()=>{reveal();s
 })();\n`;
 
 for(const file of stableFiles){
-  const p=path.join(ROOT,file);
-  if(!fs.existsSync(p))throw new Error(`AXIS legacy sanitizer: missing ${file}`);
-  let src=fs.readFileSync(p,'utf8');
-  const helpers=src.split(unsafeHelper).length-1;
-  if(helpers){src=src.split(unsafeHelper).join(safeHelper);helperFixes+=helpers}
-
+  const p=path.join(ROOT,file);if(!fs.existsSync(p))throw new Error(`AXIS legacy sanitizer: missing ${file}`);let src=fs.readFileSync(p,'utf8');
+  const helpers=src.split(unsafeHelper).length-1;if(helpers){src=src.split(unsafeHelper).join(safeHelper);helperFixes+=helpers}
   if(file==='v61.js'){
-    src=regexOnce(src,/function syncHidden\(arr=draft\)\{[\s\S]*?\}\nfunction changeCount/,quietSync+'\nfunction changeCount','v61 quiet compatibility sync');recordingOwnerFixes++;
+    src=regexOnce(src,/function syncHidden\(arr=draft\)\{[\s\S]*?\}\nfunction changeCount/,quietSync+'\nfunction changeCount','v61 native compatibility sync');recordingOwnerFixes++;
     src=textOnce(src,';syncHidden(draft)}\nfunction hideSets',';syncHidden(draft);ensureRecordingControls();syncRecordingControls();emitRecording(\'axis:recording-render\')}\n'+recordingHelpers+'\nfunction hideSets','v61 recording owner injection');recordingOwnerFixes++;
     src=textOnce(src,"function hideSets(){$('#v8Sets')?.classList.add('hidden');$('#strengthFields')?.classList.remove('v8-hide-core')}","function hideSets(){$('#v8Sets')?.classList.add('hidden');$('#axisSetControls')?.classList.add('hidden');$('#strengthFields')?.classList.remove('v8-hide-core')}",'v61 control lifecycle');recordingOwnerFixes++;
     src=textOnce(src,"if(b.dataset.si!=null){sel=Number(b.dataset.si);renderSets()}else if(b.dataset.cnt)changeCount(Number(b.dataset.cnt));else if(b.dataset.w){draft[sel].weight=b.dataset.w==='unknown'?null:Number(b.dataset.w);renderSets()}else if(b.dataset.r){draft[sel].reps=b.dataset.r==='unknown'?null:Number(b.dataset.r);renderSets()}","if(b.dataset.si!=null){selectRecordingSet(Number(b.dataset.si))}else if(b.dataset.cnt)changeCount(Number(b.dataset.cnt));else if(b.dataset.w){patchActiveSetValue('weight',b.dataset.w==='unknown'?null:Number(b.dataset.w))}else if(b.dataset.r){patchActiveSetValue('reps',b.dataset.r==='unknown'?null:Number(b.dataset.r))}",'v61 in-place legacy mutation');recordingOwnerFixes++;
     src=textOnce(src,"const b=e.target.closest('button,[data-edit-eq]');if(!b)return;","const b=e.target.closest('button,[data-edit-eq]');if(!b)return;if(b.dataset.axisStep)return;",'v61 direct step routing');recordingOwnerFixes++;
   }
-
   if(file==='v874-set-bridge.js'){
     src=textOnce(src,"function patch(){const h=host();if(!h||h.classList.contains('hidden'))return;patchHeader();patchAdjust();if(!seedDone)seedOne()}","function patch(){const h=host();if(!h||h.classList.contains('hidden'))return;patchHeader();if(!seedDone)seedOne()}",'retire set-bridge value painter');setBridgeOwnerFixes++;
     src=textOnce(src,"const review=$('#reviewStage');if(review)new MutationObserver(()=>patch()).observe(review,{childList:true,subtree:true});","D.addEventListener('axis:recording-render',()=>patch());",'retire set-bridge review observer');setBridgeOwnerFixes++;
   }
-
-  if(file==='v8710-watermark.js'){
-    src=textOnce(src,'function render(){ensure();sync();','function render(){sync();','watermark recursion');watermarkFixes++;
-  }
-  if(file==='v875-polish.js'){
-    src=textOnce(src,legacy875VersionLock,safe875VersionLock,'v875 version observer');versionOwnerFixes++;
-  }
+  if(file==='v8710-watermark.js'){src=textOnce(src,'function render(){ensure();sync();','function render(){sync();','watermark recursion');watermarkFixes++}
+  if(file==='v875-polish.js'){src=textOnce(src,legacy875VersionLock,safe875VersionLock,'v875 version observer');versionOwnerFixes++}
   if(file==='v878-stability.js'){src=safe878;versionOwnerFixes++}
   if(file==='v879-runtime.js'){
     src=textOnce(src,"function cleanLegacy(){for(const b of $$('[data-v875-step]')){b.removeAttribute('data-v875-step');b.removeAttribute('data-dir')}patchAdjust()}","function cleanLegacy(){for(const b of Array.from(document.querySelectorAll('[data-v875-step]'))){b.removeAttribute('data-v875-step');b.removeAttribute('data-dir')}}",'retire v879 value painter');retiredOwnerFixes++;
@@ -94,35 +73,25 @@ for(const file of stableFiles){
 }
 
 for(const file of stableFiles){
-  const src=fs.readFileSync(path.join(ROOT,file),'utf8');
-  if(src.includes(unsafeHelper))throw new Error(`AXIS legacy sanitizer: unsafe scoped query remains in ${file}`);
+  const src=fs.readFileSync(path.join(ROOT,file),'utf8');if(src.includes(unsafeHelper))throw new Error(`AXIS legacy sanitizer: unsafe scoped query remains in ${file}`);
   if(file==='v61.js'){
     if(!src.includes('window.__AXIS_RECORDING__='))throw new Error('AXIS legacy sanitizer: recording API missing');
     const sync=src.match(/function syncHidden\(arr=draft\)\{[\s\S]*?\}\nfunction changeCount/)?.[0]||'';
     if(/\.click\s*\(/.test(sync))throw new Error('AXIS legacy sanitizer: compatibility sync still dispatches synthetic clicks');
+    if(/[\$]{1,2}\([^\n]*\)\.forEach/.test(sync))throw new Error('AXIS legacy sanitizer: compatibility sync still depends on legacy selector iteration');
+    if(!sync.includes('document.querySelectorAll'))throw new Error('AXIS legacy sanitizer: compatibility sync is not native');
     if(!src.includes("box.addEventListener('click',e=>{const b=e.target.closest('[data-axis-step]')"))throw new Error('AXIS legacy sanitizer: direct recording route missing');
     if(/dataset\.w[^\n]{0,180}renderSets\(\)/.test(src)||/dataset\.r[^\n]{0,180}renderSets\(\)/.test(src))throw new Error('AXIS legacy sanitizer: high-frequency recording still rebuilds editor');
   }
-  if(file==='v874-set-bridge.js'){
-    if(src.includes('patchHeader();patchAdjust()'))throw new Error('AXIS legacy sanitizer: set bridge still paints recording controls');
-    if(src.includes("new MutationObserver(()=>patch()).observe(review"))throw new Error('AXIS legacy sanitizer: set bridge still observes recording subtree');
-  }
-  if(file==='v879-runtime.js'){
-    if(src.includes('patchAdjust()}'))throw new Error('AXIS legacy sanitizer: v879 recording painter remains');
-    if(src.includes('new MO(queuePatch).observe(sets'))throw new Error('AXIS legacy sanitizer: v879 recording observer remains');
-    if(src.includes('timeline();editEntry()'))throw new Error('AXIS legacy sanitizer: v879 duplicate adjustment reinsertion remains');
-  }
+  if(file==='v874-set-bridge.js'){if(src.includes('patchHeader();patchAdjust()'))throw new Error('AXIS legacy sanitizer: set bridge still paints recording controls');if(src.includes("new MutationObserver(()=>patch()).observe(review"))throw new Error('AXIS legacy sanitizer: set bridge still observes recording subtree')}
+  if(file==='v879-runtime.js'){if(src.includes('patchAdjust()}'))throw new Error('AXIS legacy sanitizer: v879 recording painter remains');if(src.includes('new MO(queuePatch).observe(sets'))throw new Error('AXIS legacy sanitizer: v879 recording observer remains');if(src.includes('timeline();editEntry()'))throw new Error('AXIS legacy sanitizer: v879 duplicate adjustment reinsertion remains')}
   if(file==='v8710-watermark.js'&&src.includes('function render(){ensure();sync();'))throw new Error('AXIS legacy sanitizer: watermark recursion remains');
   if(file==='v875-polish.js'&&src.includes('new MutationObserver(()=>{if(v.textContent!==text)'))throw new Error('AXIS legacy sanitizer: v875 version observer remains');
   if(file==='v878-stability.js'&&/versionObserver|observe\(v,/.test(src))throw new Error('AXIS legacy sanitizer: v878 version observer remains');
   for(const [from] of interactionRewrites[file]||[])if(src.includes(from))throw new Error(`AXIS legacy sanitizer: redundant interaction work remains in ${file}`);
 }
 
-const hardeningPath=path.join(ROOT,'runtime-hardening.css'),stylesPath=path.join(ROOT,'styles.css');
-if(!fs.existsSync(hardeningPath))throw new Error('AXIS legacy sanitizer: missing runtime-hardening.css');
-let styles=fs.readFileSync(stylesPath,'utf8');const hardening=fs.readFileSync(hardeningPath,'utf8');
-if(!styles.includes('/* AXIS stable shell geometry contract */'))styles+=`\n\n${hardening}\n`;
-fs.writeFileSync(stylesPath,styles);
+const hardeningPath=path.join(ROOT,'runtime-hardening.css'),stylesPath=path.join(ROOT,'styles.css');if(!fs.existsSync(hardeningPath))throw new Error('AXIS legacy sanitizer: missing runtime-hardening.css');let styles=fs.readFileSync(stylesPath,'utf8');const hardening=fs.readFileSync(hardeningPath,'utf8');if(!styles.includes('/* AXIS stable shell geometry contract */'))styles+=`\n\n${hardening}\n`;fs.writeFileSync(stylesPath,styles);
 
 if(helperFixes<2)throw new Error(`AXIS legacy sanitizer: expected legacy helper fixes, found ${helperFixes}`);
 if(interactionFixes!==5)throw new Error(`AXIS legacy sanitizer: expected 5 interaction fixes, found ${interactionFixes}`);
@@ -131,5 +100,5 @@ if(recordingOwnerFixes!==5)throw new Error(`AXIS legacy sanitizer: expected 5 re
 if(setBridgeOwnerFixes!==2)throw new Error(`AXIS legacy sanitizer: expected 2 set-bridge retirements, found ${setBridgeOwnerFixes}`);
 if(retiredOwnerFixes!==4)throw new Error(`AXIS legacy sanitizer: expected 4 v879 retirements, found ${retiredOwnerFixes}`);
 console.log(`[AXIS] legacy sanitizer passed · ${helperFixes} null-safe helpers · ${watermarkFixes} recursion fix · ${interactionFixes} shell fixes · ${versionOwnerFixes} version-owner fixes`);
-console.log(`[AXIS] recording converged · ${recordingOwnerFixes} core fixes · ${setBridgeOwnerFixes} set-bridge retirements · ${retiredOwnerFixes} v879 retirements · synthetic click feedback removed`);
+console.log(`[AXIS] recording converged · ${recordingOwnerFixes} core fixes · ${setBridgeOwnerFixes} set-bridge retirements · ${retiredOwnerFixes} v879 retirements · native event-free compatibility sync`);
 console.log('[AXIS] versionLine and high-frequency recording each have one interactive owner.');
