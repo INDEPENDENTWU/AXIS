@@ -20,6 +20,7 @@ jobs:
     env:
       AXIS_DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
       AXIS_EXPECTED_SHA: ${{ github.event.deployment.sha }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
       - name: Checkout the exact deployed commit
         uses: actions/checkout@v4
@@ -30,7 +31,7 @@ jobs:
         with:
           node-version: '20.18.0'
 
-      - name: Resolve exact public Production alias
+      - name: Resolve exact Production endpoint
         shell: bash
         run: |
           set -euo pipefail
@@ -55,43 +56,91 @@ jobs:
           console.log(out.join('\n'));
           NODE
 
+          axis_curl(){
+            local url="$1" out="$2"
+            local args=(-LsS --connect-timeout 5 --max-time 15 -o "$out")
+            if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              args+=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}")
+            fi
+            curl "${args[@]}" -w '%{http_code}\t%{url_effective}\t%{content_type}' "$url" 2>/dev/null || true
+          }
+
           echo "Deployment URL: $AXIS_DEPLOYMENT_URL"
           echo "Expected source commit: $AXIS_EXPECTED_SHA"
+          if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+            echo 'Automation bypass: configured'
+          else
+            echo 'Automation bypass: not configured'
+          fi
           echo 'Production candidates:'
           cat /tmp/axis-production-candidates.txt
 
+          protected_seen=0
+          json_seen=0
           for attempt in $(seq 1 10); do
             while IFS= read -r base; do
               test -n "$base" || continue
-              meta=$(curl -LsS --connect-timeout 5 --max-time 12 -o /tmp/axis-candidate-build.json -w '%{http_code}\t%{url_effective}\t%{content_type}' "$base/axis-build.json" 2>/dev/null || true)
+              meta=$(axis_curl "$base/axis-build.json" /tmp/axis-candidate-build.json)
               result=$(EXPECTED="$AXIS_EXPECTED_SHA" node <<'NODE'
           const fs=require('fs');
-          let out={kind:'unreadable',version:null,sourceCommit:null,bytes:0};
+          let out={kind:'unreadable',version:null,sourceCommit:null,bytes:0,exact:false,protected:false};
           try{
             const raw=fs.readFileSync('/tmp/axis-candidate-build.json','utf8');out.bytes=Buffer.byteLength(raw);
-            try{const x=JSON.parse(raw);out={kind:'json',version:x.version||null,sourceCommit:x.sourceCommit||null,bytes:out.bytes,exact:x.sourceCommit===process.env.EXPECTED&&x.version==='8.7.12'}}
-            catch{const m=raw.match(/<title[^>]*>([^<]{0,120})<\/title>/i);out.kind='html-or-text';out.title=m?.[1]||raw.slice(0,80).replace(/\s+/g,' ')}
+            try{
+              const x=JSON.parse(raw);
+              out={kind:'json',version:x.version||null,sourceCommit:x.sourceCommit||null,bytes:out.bytes,exact:x.sourceCommit===process.env.EXPECTED&&x.version==='8.7.12',protected:false};
+            }catch{
+              const m=raw.match(/<title[^>]*>([^<]{0,120})<\/title>/i);
+              out.kind='html-or-text';out.title=m?.[1]||raw.slice(0,80).replace(/\s+/g,' ');
+              out.protected=/Login\s*[–—-]\s*Vercel|Vercel Authentication|Deployment Protection/i.test(raw);
+            }
           }catch{}
           process.stdout.write(JSON.stringify(out));
           NODE
               )
               if [ "$attempt" -eq 1 ]; then echo "Candidate · $base · $meta · $result"; fi
+
               if RESULT="$result" node -e "const x=JSON.parse(process.env.RESULT);process.exit(x.exact?0:1)"; then
                 cp /tmp/axis-candidate-build.json /tmp/axis-build.json
                 echo "AXIS_URL=$base" >> "$GITHUB_ENV"
-                echo "Resolved exact Production alias: $base"
-                curl -LfsS --connect-timeout 5 --max-time 15 "$base/" -o /tmp/axis-production-index.html
+                echo "AXIS_PRODUCTION_GATE_STATE=verified" >> "$GITHUB_ENV"
+                echo "Resolved exact Production endpoint: $base"
+                root_args=(-LfsS --connect-timeout 5 --max-time 15)
+                if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then root_args+=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}"); fi
+                curl "${root_args[@]}" "$base/" -o /tmp/axis-production-index.html
                 echo "Production root · $(wc -c </tmp/axis-production-index.html) bytes"
                 exit 0
               fi
+
+              kind=$(RESULT="$result" node -p "JSON.parse(process.env.RESULT).kind")
+              protected=$(RESULT="$result" node -p "JSON.parse(process.env.RESULT).protected?'1':'0'")
+              if [ "$kind" = 'json' ]; then json_seen=1; fi
+              if [ "$protected" = '1' ]; then protected_seen=1; fi
             done </tmp/axis-production-candidates.txt
-            echo "Exact alias not ready yet · attempt $attempt/10"
+            echo "Exact Production endpoint not ready yet · attempt $attempt/10"
             sleep 3
           done
-          echo 'No public Production alias served the exact deployed commit.'
+
+          if [ -z "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ] && [ "$protected_seen" -eq 1 ] && [ "$json_seen" -eq 0 ]; then
+            echo "AXIS_PRODUCTION_PROTECTED=1" >> "$GITHUB_ENV"
+            echo "AXIS_PRODUCTION_GATE_STATE=protected" >> "$GITHUB_ENV"
+            echo '::notice title=AXIS Production protected::Vercel Deployment Protection blocks anonymous production verification. Configure VERCEL_AUTOMATION_BYPASS_SECRET to enable the full external Chromium gate.'
+            {
+              echo '### AXIS Production gate — protected'
+              echo ''
+              echo '- Vercel reported the Production deployment as successful.'
+              echo '- Every plausible deployment/project endpoint was either Vercel Authentication protected or absent.'
+              echo '- No public AXIS manifest was observed, so this is not classified as an AXIS runtime failure.'
+              echo '- Full asset + Chromium verification is already wired and will run automatically when `VERCEL_AUTOMATION_BYPASS_SECRET` is available.'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          echo 'No endpoint served the exact deployed commit, and the result was not solely Vercel protection.'
           exit 1
 
       - name: Verify hardened production manifest and immutable assets
+        if: env.AXIS_PRODUCTION_PROTECTED != '1'
         shell: bash
         run: |
           set -euo pipefail
@@ -119,11 +168,18 @@ jobs:
           console.log(`[AXIS production manifest] ${x.version} · ${x.sourceCommit.slice(0,10)} · ${assets.length} immutable assets`);
           NODE
 
+          curl_asset(){
+            local url="$1" out="$2"
+            local args=(-LfsS --connect-timeout 5 --max-time 20 -o "$out")
+            if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then args+=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}"); fi
+            curl "${args[@]}" "$url"
+          }
+
           i=0
           while IFS=$'\t' read -r name path min_bytes; do
             test -n "$name" || continue
             out="/tmp/axis-production-asset-$i"
-            curl -LfsS --connect-timeout 5 --max-time 20 "$AXIS_URL$path" -o "$out"
+            curl_asset "$AXIS_URL$path" "$out"
             bytes=$(wc -c <"$out")
             if [ "$bytes" -lt "$min_bytes" ]; then
               echo "Asset too small: $name · $bytes bytes · expected >= $min_bytes"
@@ -135,6 +191,7 @@ jobs:
           test "$i" -eq 7
 
       - name: Prepare real-browser harness
+        if: env.AXIS_PRODUCTION_PROTECTED != '1'
         shell: bash
         run: |
           npm install --no-save playwright-core@1.55.0
@@ -143,4 +200,9 @@ jobs:
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
 
       - name: Real Chromium smoke against deployed production
+        if: env.AXIS_PRODUCTION_PROTECTED != '1'
         run: node scripts/run-smoke-guarded.mjs
+
+      - name: Record protected Production status
+        if: env.AXIS_PRODUCTION_PROTECTED == '1'
+        run: echo '[AXIS production gate] PROTECTED · Vercel deployment succeeded; external browser gate awaits automation bypass secret.'
