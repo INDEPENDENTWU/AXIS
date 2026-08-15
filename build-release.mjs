@@ -9,7 +9,8 @@ const STEPS=[
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
-  'postbuild-8712-completion.mjs'
+  'postbuild-8712-completion.mjs',
+  'postbuild-88-canonical.mjs'
 ];
 
 for(const step of STEPS){
@@ -26,5 +27,10 @@ if(manifest.architecture!==contract.architecture)fail(`architecture mismatch · 
 if(manifest.featureKernel?.feature!==contract.featureKernel)fail(`feature kernel mismatch · ${manifest.featureKernel?.feature}`);
 if(manifest.completionKernel?.feature!==contract.completionKernel)fail(`completion kernel mismatch · ${manifest.completionKernel?.feature}`);
 if(!Array.isArray(manifest.assets?.chunks)||manifest.assets.chunks.length!==contract.stableChunkCount)fail(`stable chunk count mismatch · ${manifest.assets?.chunks?.length}`);
-console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · manifest verified`);
+if(contract.architecture==='canonical-single-runtime'){
+  if(manifest.gates?.canonicalSingleRuntime!==true)fail('canonical single-runtime gate missing');
+  if(manifest.requests?.dynamicJavascript!==0)fail(`dynamic runtime requests remain · ${manifest.requests?.dynamicJavascript}`);
+  if(manifest.featureKernel?.embedded!==true||manifest.completionKernel?.embedded!==true)fail('8.8 feature/completion are not embedded');
+}
+console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
