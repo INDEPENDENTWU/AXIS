@@ -21,7 +21,8 @@ const waitReady=async()=>{
  await page.waitForFunction(()=>window.__AXIS_FEATURE_KERNEL__?.state==='ready',undefined,{timeout:12000});
  await page.waitForFunction(()=>window.__AXIS_COMPLETION_KERNEL__?.state==='ready',undefined,{timeout:6000});
 };
-const openSettings=async()=>{await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),undefined,{timeout:1200})};
+const openSettings=async()=>{if(!await page.locator('#settingsSheet.show').count())await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),undefined,{timeout:1200})};
+const openEquipmentGate=async()=>{if(!await page.locator('#axisConfigGate-equipment.open').count())await page.locator('#myEqBtn').click();await page.waitForFunction(()=>document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'),undefined,{timeout:1200})};
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
 await page.evaluate(()=>localStorage.clear());await page.reload({waitUntil:'domcontentloaded'});await waitReady();
@@ -31,7 +32,7 @@ const version=await page.locator('.versionLine').evaluate(el=>({aria:el.getAttri
 assert.equal(version.aria,'版本 8.8');assert.equal(version.label,'版本 8.8');assert.equal(version.font,'0px');assert.ok(String(version.before).includes('版本 8.8'),`missing public pseudo label: ${JSON.stringify(version)}`);
 
 console.log('[AXIS 8.8] one custom-editor owner + automatic association');
-await openSettings();await page.locator('#myEqBtn').click();await page.waitForFunction(()=>document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'),undefined,{timeout:1200});
+await openSettings();await openEquipmentGate();
 await page.locator('#newCustomEq').click();await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});
 assert.equal(await page.evaluate(()=>window.__AXIS_CUSTOM_EDITOR__?.owner),'v874');
 assert.equal(await page.locator('#v873TypeMode,#v873MuscleMode,#v873Sense,#v874TypeMode,#v874MuscleMode').count(),0,'retired custom mode prose returned');
@@ -46,13 +47,13 @@ assert.notEqual((await page.locator('#toast').innerText()).trim(),'请选择锻�
 const saved=await page.evaluate(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}').profile?.customEq||[]}catch{return[]}});assert.ok(saved.some(x=>x.name==='测试胸推'&&(x.muscles||[]).length),'custom item did not persist canonical muscles');
 
 console.log('[AXIS 8.8] Settings list reuses the same editor');
-await openSettings();await page.locator('#myEqBtn').click();await page.waitForFunction(()=>document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'),undefined,{timeout:1200});
+await openSettings();await openEquipmentGate();
 const row=page.locator('#manageEqList [data-edit-eq]').filter({hasText:'测试胸推'}).first();assert.ok(await row.count(),'saved custom item missing from Settings');await row.click();
 await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});assert.equal(await page.locator('#customName').inputValue(),'测试胸推');assert.equal(await page.evaluate(()=>window.__AXIS_CUSTOM_EDITOR__?.owner),'v874');
 await page.locator('#customEqSheet [data-close="customEqSheet"]').click();await page.waitForTimeout(80);
 
 console.log('[AXIS 8.8] location is Chinese place presentation, coordinates stay private');
-if(!await page.locator('#settingsSheet.show').count())await openSettings();await page.locator('#watermarkBtn').click();await page.waitForTimeout(100);
+await openSettings();if(!await page.locator('#axisConfigGate-watermark.open').count())await page.locator('#watermarkBtn').click();await page.waitForTimeout(100);
 if(await page.locator('#v876Locate').count()){await page.locator('#v876Locate').click();await page.waitForFunction(()=>{const t=document.querySelector('#v876LocationName')?.textContent||'';return t&&t!=='未获取'},undefined,{timeout:5000})}
 const loc=await page.evaluate(()=>({name:document.querySelector('#v876LocationName')?.textContent||'',coordDisplay:document.querySelector('#v876Coord')?getComputedStyle(document.querySelector('#v876Coord')).display:'absent',preview:(document.querySelector('#watermarkPreview')?.textContent||'')}));
 assert.ok(/[\u3400-\u9fff]/.test(loc.name),`location is not concise Chinese: ${JSON.stringify(loc)}`);assert.ok(!/(LAT|LON|纬度|经度|±\s*\d|22\.523|113\.383)/i.test(loc.name+' '+loc.preview),`raw geodata leaked into presentation: ${JSON.stringify(loc)}`);assert.ok(loc.coordDisplay==='none'||loc.coordDisplay==='absent','coordinate row is visible');
