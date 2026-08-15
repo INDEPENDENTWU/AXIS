@@ -43,10 +43,10 @@ let feature=read('postbuild-features-hardened.mjs');
 feature=textOnce(feature,"const fallback=(reason,err)=>{kernel.state='base';kernel.errors.push(String(reason));if(err)console.warn('[AXIS feature]',reason,err);setVersionText(BASE)};","const fallback=(reason,err)=>{kernel.state='base';kernel.errors.push(String(reason));if(err)console.warn('[AXIS feature]',reason,err);setVersionText(TARGET)};",'feature fallback presentation');
 write('postbuild-features-hardened.mjs',feature);
 
-/* One canonical editor implementation and one direct routing path. */
+/* One canonical editor implementation; dynamic Settings entry uses core-level event delegation. */
 let app=read('app.js');
 app=textOnce(app,'function saveCustomEq(){','window.__AXIS_OPEN_CUSTOM_EQUIPMENT__=openCustomEditor;\nfunction saveCustomEq(){','canonical custom editor API');
-app=textOnce(app,"$('#addCustomEq').onclick=()=>{closeSheet('eqSheet');openCustomEditor()};","$('#addCustomEq').onclick=()=>{closeSheet('eqSheet');openCustomEditor()};$('#newCustomEq').onclick=()=>{closeSheet('settingsSheet');openCustomEditor()};",'settings custom editor binding');
+app=textOnce(app,"$('#addCustomEq').onclick=()=>{closeSheet('eqSheet');openCustomEditor()};","$('#addCustomEq').onclick=()=>{closeSheet('eqSheet');openCustomEditor()};D.addEventListener('click',e=>{if(e.target.closest('#newCustomEq')){e.preventDefault();closeSheet('settingsSheet');openCustomEditor()}},true);",'delegated settings custom editor binding');
 write('app.js',app);
 
 /* Browser contracts assert presentation, not hidden baseline implementation state. */
