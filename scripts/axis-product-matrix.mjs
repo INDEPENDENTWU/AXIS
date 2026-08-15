@@ -122,7 +122,6 @@ assert.notEqual(await page.locator('#keepClipSwitch').getAttribute('aria-checked
 assert.equal(Boolean(core.prefs?.keepClip),beforeKeep==='false');
 assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5','capture preference bridge disagrees with visible setting');
 
-// The capture sheet must open on the canonical choice immediately, not be corrected later.
 await closeSettings();
 await page.locator('#scanBtn').click();
 await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:1200});
@@ -149,8 +148,6 @@ assert.equal(meta.prefs?.v8710SoundEnabled,true);
 
 console.log('[AXIS matrix] watermark gate controls are canonical, visible and persistent');
 await openGate('#watermarkBtn','#axisConfigGate-watermark');
-// v8711 owns the four interactive corner buttons. Completion deliberately retires the
-// four historical data-pos buttons so there is never a second clickable placement owner.
 const pos=page.locator('#v8711Corners button[data-p]:visible');
 assert.equal(await pos.count(),4,'watermark should expose exactly four canonical placement buttons');
 assert.equal(await page.locator('#watermarkPreview > button[data-pos][aria-hidden="true"]').count(),4,'legacy watermark placement buttons were not retired');
@@ -218,7 +215,7 @@ meta=await store('axis_v8_meta');
 assert.ok(Number(meta.events?.[activeId]?.v879EditAt)>0,'canonical active adjustment did not persist');
 assert.equal(await page.locator('#v8710EditOnce,#v879EditBtn').count(),0,'retired active adjustment owner reappeared');
 
-console.log('[AXIS matrix] history / canonical v84 trends / report after a real record');
+console.log('[AXIS matrix] history / canonical v84 trends / canonical v8710 report');
 await page.locator('nav.nav [data-view="historyView"]').click();
 await page.waitForFunction(()=>document.querySelector('#historyView')?.classList.contains('active'),undefined,{timeout:900});
 assert.ok((await page.locator('#historyList').innerText()).trim().length>0,'history did not render recorded event');
@@ -227,19 +224,22 @@ await page.waitForFunction(()=>document.querySelector('#insightsView')?.classLis
 assert.ok(await page.locator('#insightsView .v84Trends').isVisible(),'canonical v84 trends surface did not render');
 assert.equal(await page.locator('#coverageGrid:visible').count(),0,'retired pre-v84 coverage grid became visible');
 for(const sel of ['#v84NowList','#v84Axis','#v84MemoryRows','#v84Rhythm'])assert.ok(await page.locator(sel).isVisible(),`canonical trends control missing/hidden ${sel}`);
-// v84 deliberately refreshes trends 60 ms after the navigation event. Wait for the
-// final product state, not an arbitrary sleep: the new record must become both the
-// current-item selector and an axis point within the interaction budget.
 await page.waitForFunction(()=>document.querySelector('#v84NowList [data-v84-eq]')&&document.querySelector('#v84Axis .v84AxisCol'),undefined,{timeout:900});
 assert.ok((await page.locator('#v84NowList').innerText()).trim().length>0,'canonical trends did not render the real recorded item');
 assert.ok(await page.locator('#v84Axis .v84AxisCol').count()>0,'canonical trend axis did not render the recorded item');
 await openSettings();
 await page.locator('#reportBtn').click();
 await page.waitForFunction(()=>document.querySelector('#reportSheet')?.classList.contains('show'),undefined,{timeout:1200});
-assert.ok(await page.locator('#reportPreview').isVisible(),'report surface did not open');
-assert.ok((await page.locator('#reportPreview').innerText()).trim().length>0,'report did not render content');
+await page.waitForFunction(()=>document.querySelector('#v8710ReportDeck')&&document.querySelectorAll('#v8710ReportDeck .v8710Plate').length===3,undefined,{timeout:1200});
+assert.equal(await page.locator('#reportPreview:visible').count(),0,'retired base report preview became visible');
+assert.equal(await page.locator('#v877ReportDeck:visible').count(),0,'retired v877 report deck became visible');
+assert.ok(await page.locator('#v8710ReportDeck').isVisible(),'canonical v8710 report deck did not open visibly');
+assert.equal(await page.locator('#v8710ReportDeck .v8710Plate').count(),3,'canonical report must render exactly three final cards');
+assert.ok((await page.locator('#v8710ReportDeck').innerText()).trim().length>0,'canonical v8710 report deck rendered no content');
+assert.ok(await page.locator('#v8710ShareReport').isVisible(),'canonical report share owner is missing or hidden');
+assert.equal(await page.locator('#shareReport').count(),0,'retired base report share owner survived canonical report hydration');
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log('[AXIS product matrix] PASS · navigation · Settings · capture preference · persistence · recording · active session · history · canonical trends · report');
+console.log('[AXIS product matrix] PASS · navigation · Settings · capture preference · persistence · recording · active session · history · canonical trends · canonical report');
 await context.close();
 await browser.close();
