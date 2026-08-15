@@ -36,15 +36,16 @@ function addBack(child,parent,scroll=0){
  let b=$('.axisBack',head);
  if(!b){b=D.createElement('button');b.type='button';b.className='axisBack';b.setAttribute('aria-label','返回上一页');head.insertBefore(b,head.firstChild)}
 }
-function wireNewTopSheet(){
- clearTimeout(wireTimer);wireTimer=0;
- const child=topSheet(),snap=parentSnapshot;parentSnapshot=null;
- if(snap?.sheet&&child&&child!==snap.sheet)addBack(child,snap.sheet,snap.scroll);
- syncLayers();
-}
 function scheduleWire(){
- clearTimeout(wireTimer);
- requestAnimationFrame(()=>{wireNewTopSheet();wireTimer=setTimeout(wireNewTopSheet,90)});
+ clearTimeout(wireTimer);wireTimer=0;
+ const snap=parentSnapshot;parentSnapshot=null;
+ const wire=()=>{
+  const child=topSheet();
+  if(snap?.sheet&&child&&child!==snap.sheet)addBack(child,snap.sheet,snap.scroll);
+  syncLayers();
+ };
+ requestAnimationFrame(wire);
+ wireTimer=setTimeout(wire,90);
 }
 function closeToParent(sheet){
  if(!sheet)return;
