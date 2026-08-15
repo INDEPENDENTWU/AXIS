@@ -8,7 +8,7 @@ function textOnce(src,from,to,label){const n=src.split(from).length-1;if(n!==1)f
 function regexOnce(src,re,to,label){const flags=re.flags.includes('g')?re.flags:re.flags+'g',m=src.match(new RegExp(re.source,flags))||[];if(m.length!==1)fail(`${label} expected once, found ${m.length}`);return src.replace(re,to)}
 function syntax(src,label){try{new Function(src)}catch(e){fail(`${label} syntax ${e.message}`)}}
 
-for(const f of ['build-hardened.mjs','postbuild-features-hardened.mjs','app.js','v61.js','v873-smart-input.js','v874-professional.js','v876-runtime.js','v8710-watermark.js','v8712-runtime.js','v88.css'])read(f);
+for(const f of ['build-hardened.mjs','postbuild-features-hardened.mjs','app.js','v61.js','v873-smart-input.js','v874-professional.js','v876-runtime.js','v877-runtime.js','v8710-watermark.js','v8712-runtime.js','v88.css'])read(f);
 
 /* 8.8 critical presentation ships in the static stylesheet bundle. */
 {
@@ -89,6 +89,15 @@ for(const f of ['build-hardened.mjs','postbuild-features-hardened.mjs','app.js',
  syntax(src,'v876-runtime.js');write('v876-runtime.js',src);
 }
 
+/* v877 owns the later watermark preview/restamp; location remains place-only there too. */
+{
+ let src=read('v877-runtime.js');
+ src=textOnce(src,"const g=p.geo,coord=g?`${Number(g.lat).toFixed(5)}, ${Number(g.lon).toFixed(5)}`:'';$('#v877WmPlace').textContent=[p.place,coord].filter(Boolean).join(' · ');","const place=String(p.place||'').split('·').map(x=>x.trim()).filter(Boolean).slice(-2).join(' · ');$('#v877WmPlace').textContent=place;",'v877 preview location privacy');
+ src=textOnce(src,"if(p.location&&(p.place||p.geo)){c.fillStyle='rgba(242,244,248,.88)';c.fillText(p.place||'',x,y);y+=top?sm*1.25:-sm*1.25;if(p.geo)c.fillText(`${Number(p.geo.lat).toFixed(5)}, ${Number(p.geo.lon).toFixed(5)}`,x,y);y+=top?sm*1.25:-sm*1.25}","if(p.location&&p.place){const place=String(p.place||'').split('·').map(v=>v.trim()).filter(Boolean).slice(-2).join(' · ');c.fillStyle='rgba(242,244,248,.88)';c.fillText(place,x,y);y+=top?sm*1.25:-sm*1.25}",'v877 stamped-media location privacy');
+ if(/toFixed\(5\).*p\.geo|p\.geo\.lat.*toFixed\(5\)|p\.geo\.lon.*toFixed\(5\)/.test(src))fail('v877 raw coordinate painter survived');
+ syntax(src,'v877-runtime.js');write('v877-runtime.js',src);
+}
+
 /* The current watermark resolver may keep precise geodata internally, never in visible output. */
 {
  let src=read('v8710-watermark.js');
@@ -123,7 +132,7 @@ const contract={
   customPersistence:'app.js',customEditor:'v874-professional.js',customSearch:'v873-smart-input.js search only',
   recording:'v61.js',activeAdjustment:'postbuild canonical v87AdjustBtn',watermarkLocation:'resolver precision internal / Chinese place presentation'
  },
- retired:['v873 custom editor inference writer','v876 custom editor writer','v8712 custom editor writer','raw coordinate presentation','first-record instructional hint'],
+ retired:['v873 custom editor inference writer','v876 custom editor writer','v8712 custom editor writer','v877 raw coordinate painter','raw coordinate presentation','first-record instructional hint'],
  invariant:'one user-facing action has one interactive owner'
 };
 write('axis-88-contract.json',JSON.stringify(contract,null,2));
