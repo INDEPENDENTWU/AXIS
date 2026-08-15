@@ -1,0 +1,68 @@
+name: AXIS Production Deployment Gate
+
+on:
+  deployment_status:
+
+concurrency:
+  group: axis-production-${{ github.event.deployment.id }}
+  cancel-in-progress: true
+
+jobs:
+  production-browser-gate:
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment == 'Production' &&
+      github.event.deployment_status.environment_url != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    env:
+      AXIS_URL: ${{ github.event.deployment_status.environment_url }}
+    steps:
+      - name: Checkout the exact deployed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+
+      - name: Wait for the production edge
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Production URL: $AXIS_URL"
+          for i in $(seq 1 20); do
+            if curl -fsS --connect-timeout 5 --max-time 15 "$AXIS_URL/" >/tmp/axis-production-index.html; then
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "Production deployment never became reachable"
+          exit 1
+
+      - name: Verify hardened production artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS --connect-timeout 5 --max-time 15 "$AXIS_URL/axis-build.json" -o /tmp/axis-build.json
+          cat /tmp/axis-build.json
+          grep -q '"version"[[:space:]]*:[[:space:]]*"8.7.12"' /tmp/axis-build.json
+          grep -q 'hardened-chunk-kernel+nonblocking-feature' /tmp/axis-build.json
+          grep -q 'interactionPriorityKernel' /tmp/axis-build.json
+          grep -q 'optionalRuntimeNonBlocking' /tmp/axis-build.json
+          grep -q 'axis-core.js?v=' /tmp/axis-production-index.html
+          grep -q 'AXIS_FEATURE_LOADER_START' /tmp/axis-production-index.html
+
+      - name: Prepare real-browser harness
+        shell: bash
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+
+      - name: Real Chromium smoke against deployed production
+        run: node scripts/run-smoke-guarded.mjs
