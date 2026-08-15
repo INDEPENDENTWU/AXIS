@@ -1,135 +1,234 @@
 # AXIS Runtime Contract
 
-This file contains release-blocking runtime invariants. The wider engineering rationale and product rules live in [`ENGINEERING_PLAYBOOK.md`](ENGINEERING_PLAYBOOK.md).
+This file contains release-blocking runtime invariants. Product rationale and engineering practice live in [`ENGINEERING_PLAYBOOK.md`](ENGINEERING_PLAYBOOK.md). Release identity and the current ownership map live in [`CURRENT_RELEASE.md`](CURRENT_RELEASE.md).
 
-## Stable base
+## Canonical release identity
 
-`main` production must always boot a previously verified stable base. The current base is AXIS 8.7.11; 8.7.12 is promoted only after the stable kernel is healthy.
+AXIS 8.8 has one production runtime identity:
 
-The stable base owns:
+- public version: **8.8**;
+- runtime baseline: **8.8**;
+- architecture: **`canonical-single-runtime`**;
+- external JavaScript runtime requests: **1**;
+- dynamic historical runtime chunks: **0**;
+- silent fallback to an older product version: **forbidden**.
 
-- initial HTML and bundled critical CSS;
-- core interaction and local state compatibility;
-- the canonical quick/strength recording draft;
-- the verified stable enhancement bundle;
-- the only boot/hydration state used by the page shell.
+`release-contract.json` is the machine-readable source of truth. `axis-build.json` must match it exactly.
 
-Feature releases must never replace the base boot path as part of ordinary product iteration.
+Historical `v8xx*.js` files are source/compiler inputs only. They are not independent production release layers and may not be fetched dynamically by the browser.
+
+## Production artifact contract
+
+After `node build-release.mjs`, `postbuild-88-canonical.mjs` owns the browser artifact.
+
+The final page must contain exactly:
+
+- one external script: `axis-core.js?v=<content hash>`;
+- one bundled stylesheet: `axis-style.css?v=<content hash>`.
+
+The final HTML must not contain:
+
+- `AXIS_FEATURE_LOADER_START` or `AXIS_COMPLETION_LOADER_START`;
+- `axis-enhance-foundation.js` / `recording` / `interaction` / `product` requests;
+- independent `v8712-runtime.js` or `v8712-completion.js` requests.
+
+The canonical browser smoke actively blocks all of those retired URLs and requires the product to become fully ready anyway.
 
 ## Single-owner rule
 
-A user-facing interaction has one interactive owner.
+Every user-facing interaction has one interactive owner. A collaborator may read state or decorate a non-conflicting surface, but may not create a second action, second state writer, or later repaint of the same semantic control.
 
-Later modules may read state, add non-conflicting capability, or decorate a surface. They may not create a second implementation of the same action or repaint a control already owned by another module.
+Critical ownership in 8.8:
 
-Current critical ownership:
+- release identity and canonical readiness: canonical runtime;
+- base local data and custom-item persistence: `app.js`;
+- strength draft, set selection and save transaction: `v61.js`;
+- exercise library: `v873-exercise-library.js`;
+- custom search/ranking: `v873-smart-input.js`;
+- custom professional classification/detail selection: `v874-professional.js`;
+- active training execution: `v87` activity path;
+- active-session adjustment: canonical `#v87AdjustBtn` -> v879 edit transaction;
+- live catalog/search presentation: v8710 live catalog, excluding its retired active editor;
+- sound: v8710 sonic core/motifs/UI;
+- report: v8710 report;
+- watermark output: v8710 watermark with the converged Settings presentation;
+- nested-sheet return semantics: embedded completion behavior.
 
-- shell/boot: hardened kernel;
-- local base state: `app.js`;
-- strength draft and high-frequency weight/reps/set selection: `v61.js`;
-- active execution: verified activity runtime (`v87` path);
-- live catalog: `v8710-live-catalog.js` backed by the canonical exercise library;
-- sound: `v8710-sonic-core.js` and motifs/UI;
-- current watermark output: `v8710-watermark.js` with v8711 placement controls;
-- nested sheet return semantics: 8.7.12 completion shell;
-- release/version state: hardened release owner.
+Replacement and retirement are one change. Hiding a previous owner later is not retirement.
 
-When an owner is replaced, retirement of the previous owner is part of the same change.
+## Historical owner retirement
+
+The canonical packager must fail if known historical ownership signatures return.
+
+Current explicit retirements include:
+
+- v879 and v8711 release/version writers;
+- v873 custom-editor type/muscle writer;
+- v876 custom draft/inference/save patcher;
+- duplicate v8712 custom editor ownership;
+- v8710 `#v8710EditOnce` active-session editor/polling/click path;
+- old v879 visible adjustment entry superseded by canonical `#v87AdjustBtn`;
+- raw coordinate presentation;
+- retired first-record filler copy.
+
+Retired behavior must be absent from the executing canonical artifact, not cleaned after it appears.
+
+## Readiness contract
+
+`window.__AXIS_CORE_INTERACTIVE__ === true` means the product shell is already usable.
+
+Full canonical readiness requires:
+
+```text
+window.__AXIS_CANONICAL_88__.state === 'ready'
+window.__AXIS_FEATURE_KERNEL__.state === 'ready'
+window.__AXIS_COMPLETION_KERNEL__.state === 'ready'
+window.__AXIS_ARCH__ === 'canonical-single-runtime'
+```
+
+The feature/completion kernel objects remain as compatibility/readiness interfaces, but their implementations are embedded in the one runtime. They are not network-loaded optional releases.
+
+A canonical build may not deliberately report ready while an older release identity or competing owner remains active.
 
 ## High-frequency interaction rule
 
-Weight, reps, set selection, pause/resume, and other repeated controls must update the smallest stable subtree.
+Weight, reps, set selection, pause/resume and set completion must mutate the smallest stable data/DOM surface.
 
-For recording, weight/reps changes may not:
+Weight/reps changes may not:
 
-- replace the full set editor;
 - recreate the active set row;
-- depend on a MutationObserver to repaint the value;
-- synthesize hidden UI controls as the cross-module API.
+- replace the whole set editor;
+- depend on a MutationObserver feedback loop;
+- maintain a second strength draft;
+- use network work as part of the interaction.
 
-The browser gate verifies active-row node identity across weight/reps changes.
+The regression gate verifies node identity, geometry stability, direct numeric input, step changes and set-count behavior.
 
-## Critical CSS rule
+## Transient-state rule
 
-Geometry visible during first interaction belongs in bundled static CSS. This includes shell dimensions, recording controls, nested sheet headers/return controls, and active-session action geometry.
+A product defect includes a bad intermediate frame even if the final DOM is correct.
 
-Optional runtimes may inject non-critical decoration, but they may not change the dimensions of a core interaction after first paint.
+For active-session adjustment, the gate samples/mutates through the render transition and requires no frame with more than one visible semantic `调整` action. The old `#v8710EditOnce` and `#v879EditBtn` are release-blocking if they return.
 
-## Feature rules
+The same principle applies to moving controls, duplicated actions, sheet flashes and first-paint geometry.
 
-New product work is loaded only after the base is interactive and the stable enhancement bundle is ready.
+## Critical CSS and first paint
 
-A feature module must:
+Geometry visible during the first interaction belongs in bundled static CSS. Runtime code may not visibly transform an old shell into the final shell after the user can interact.
 
-- fail open: failure leaves the stable base usable;
-- have a hard size budget;
-- pass syntax validation before deployment;
-- not mutate AXIS global loading/hydration state;
-- not register or alter Service Workers;
-- not observe the whole document body;
-- not create permanent `setInterval` loops;
-- not force navigation/reload;
-- not replace `document.body` or `document.documentElement`;
-- not contain unbounded synchronous loops;
-- not become a parallel owner of an existing surface.
+The first-paint gate compares initial DOM geometry with core-ready and canonical-ready geometry for critical controls.
 
-A feature may promote the visible version only after its own ready flag is confirmed.
+## State contract
 
-### 8.7.12 completion shell
+Workout history is user data, not cache. Existing localStorage / IndexedDB compatibility must be preserved unless an explicit migration is implemented and tested.
 
-The completion shell is intentionally stricter:
+There must be no shadow source of truth for:
 
-- no `MutationObserver`;
-- no runtime stylesheet injection;
-- no recording ownership;
-- maximum 20 KiB source budget;
-- only nested-sheet return, watermark legacy cleanup, and obsolete sound-control cleanup.
+- current equipment;
+- strength draft;
+- active activity status;
+- custom exercise persistence;
+- release identity.
 
-## Performance contract
+Equipment identity uses canonical IDs where available; names and aliases are presentation/search data.
 
-- Core interactivity is tested independently from optional features.
-- The normal page must remain usable if every optional feature fails to load.
-- Immutable assets require content-derived cache keys.
-- HTML and boot metadata are never long cached.
-- Any new persistent observer or timer must have a documented owner and lifecycle.
-- DOM updates target the smallest stable subtree; no full-page render loop is allowed.
-- Stable enhancement must remain below the current browser-gate budget.
-- Repeated controls must preserve geometry while values change.
+## AI boundary
+
+AI enhances recognition and judgment but never owns the ability to record a workout.
+
+- AI/network failure must not block manual recording or save;
+- owner/provider configuration is not an end-user setup requirement;
+- media analysis may fail without corrupting workout state;
+- model changes may not redefine local workout semantics.
 
 ## Navigation contract
 
 A root sheet closes to the application. A child sheet returns to its parent.
 
-Child return must preserve:
+Return must preserve:
 
-- parent visibility;
-- parent state;
+- parent visibility and state;
 - parent scroll position;
-- a fixed 44 × 44 return hit target aligned with the close action.
+- fixed 44 × 44 return geometry aligned with close;
+- no reload or full render.
 
-Navigation is event-driven. Do not add document-wide observation to infer sheet state.
+Navigation is event-driven. Document-wide observation is not an acceptable navigation system.
 
 ## Build-time convergence
 
-`prepare-legacy-runtime.mjs` may retire historical behavior before bundling when compatibility source still contains superseded owners.
+The repository still contains historical implementation files because they encode valid capability and compatibility. The build pipeline is a compiler boundary, not the production runtime topology.
 
-Every retirement rewrite must be exact, counted, asserted, and fail the build if its expected source signature changes.
+Every build-time retirement must:
 
-A runtime patch is not an acceptable substitute for retiring a known conflicting owner when the conflict can be removed before execution.
+1. match an exact known source signature;
+2. be counted;
+3. fail if missing or duplicated;
+4. assert the retired writer no longer exists in the final executing source;
+5. preserve the capability through the canonical owner.
+
+Once a historical path has remained retired across releases, physical source deletion is preferred as a later cleanup.
+
+## Browser release gates
+
+AXIS 8.8 requires both engine families before merge.
+
+### Chromium gate
+
+Release-blocking checks include:
+
+- repeated 390 × 844, 430 × 932 and desktop cold boots;
+- one-script canonical artifact and zero retired dynamic requests;
+- first-paint stability;
+- Settings ownership/navigation;
+- custom exercise automatic association and save;
+- recording node/geometry/direct-input behavior;
+- configurable group plan;
+- active-session transient adjustment ownership;
+- complete 8.8 convergence smoke;
+- broad product operation matrix across navigation, Settings, persistence, recording, active session, history, trends and report;
+- zero uncaught page errors.
+
+### WebKit gate
+
+An iPhone-like WebKit run (mobile/touch/high device scale) verifies:
+
+- canonical single-runtime boot;
+- custom exercise inference/save;
+- concise Chinese location with raw coordinates private;
+- direct strength input;
+- active-session transient ownership;
+- pause/resume;
+- zero uncaught page errors.
+
+A Chromium pass alone is not sufficient for release.
+
+## Hosting / Production separation
+
+Vercel Deployment Protection / Security Checkpoint happens before AXIS executes. A protected endpoint is a hosting state, not an AXIS browser pass.
+
+Production verification must distinguish:
+
+- deployment succeeded;
+- exact source commit is served;
+- canonical manifest is served;
+- ordinary anonymous users can access the domain.
+
+Do not mark protection as a runtime success, and do not change AXIS code to work around a provider login challenge.
 
 ## Release flow
 
 1. `main` stays on the last verified production build.
-2. New work is committed to an isolated branch.
-3. Build gates validate syntax, ownership contracts, size budgets, retired-owner signatures, and critical DOM assumptions.
-4. Playwright performs repeated cold boots on mobile and desktop viewports.
-5. Smoke tests verify settings, navigation, training state, recording node stability, geometry, feature promotion, and stable fallback.
-6. Vercel Preview/deployment must succeed.
-7. Only after browser gates pass may the release be promoted to `main`.
-8. `main` runs the Runtime Gate again after merge.
-9. Vercel and EdgeOne use the same hardened build command and feature contract.
-10. Production browser verification runs when deployment protection permits automation; a protected endpoint must be reported as protected, not as a browser pass.
+2. Work occurs on an isolated release branch.
+3. `node build-release.mjs` emits the canonical artifact and validates the release contract.
+4. Chromium artifact, cold-boot, interaction, transient and product-matrix gates pass.
+5. iPhone-like WebKit gate passes on the exact same release build.
+6. A pull request targets `main`; pull-request gates pass again.
+7. Merge only the verified head SHA.
+8. `main` gates run again.
+9. Vercel deploys the merged source commit.
+10. Production manifest/sourceCommit/runtime architecture are verified against the exact deployment.
+11. Hosting protection is reported separately if it blocks anonymous access.
 
 ## Non-negotiable rule
 
-A feature regression may disable that feature. It is not allowed to make AXIS unable to open, and one historical module is not allowed to silently become a second owner of a working interaction.
+Do not repair a conflict by adding a later observer, delayed cleaner, duplicate handler, version painter or compatibility shadow state. Find the owner, preserve the valid capability, retire the competing writer, and add a regression invariant that catches the original final and transient failure states.
