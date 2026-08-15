@@ -24,7 +24,9 @@ core=core.replace(manifestPattern,'const manifest=[];');
 const legacyScanOpen="$('#scanBtn').onclick=()=>{resetScan();captureMode=String(state.prefs.scanSeconds||3);$$('#captureModes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===captureMode));setText('#captureNow',captureMode==='photo'?'拍照':`开始扫描 ${captureMode} 秒`);openSheet('scanSheet');startCamera()};";
 const canonicalScanOpen="$('#scanBtn').onclick=()=>{resetScan();const preferred=window.__AXIS_CAPTURE_PREF__?.get?.();captureMode=['photo','3','5'].includes(String(preferred))?String(preferred):String(state.prefs.scanSeconds||3);$$('#captureModes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===captureMode));setText('#captureNow',captureMode==='photo'?'拍照':`开始扫描 ${captureMode} 秒`);openSheet('scanSheet');startCamera()};";
 if(core.split(legacyScanOpen).length-1!==1)fail('legacy capture-open preference signature missing');
-core=core.replace(legacyScanOpen,canonicalScanOpen);
+/* Function-form replacement is required: String.replace replacement strings interpret
+   `$$` as one literal `$`, which would corrupt the canonical `$$()` selector helper. */
+core=core.replace(legacyScanOpen,()=>canonicalScanOpen);
 
 const legacyScanPainter=";$$('#scanSeconds button').forEach(b=>b.classList.toggle('active',Number(b.dataset.sec)===Number(state.prefs.scanSeconds)))";
 if(core.split(legacyScanPainter).length-1!==1)fail('legacy scan preference painter expected once');
@@ -152,7 +154,7 @@ info.requests={initialJavascript:1,stableChunks:0,dynamicJavascript:0,stylesheet
 info.boot={...(info.boot||{}),releaseOwner:VERSION,canonicalRuntime:true,legacySourceModulesCompileOnly:true,dynamicChunkLoading:false,embeddedFeature:true,embeddedCompletion:true};
 info.featureKernel={blocking:true,embedded:true,feature:'v8712-runtime.js',hash:featureHash,maxBytes:Buffer.byteLength(feature),timeoutMs:0,loadAfter:'embedded in canonical runtime',fallback:null,versionOwner:'canonical-runtime'};
 info.completionKernel={blocking:true,embedded:true,feature:'v8712-completion.js',hash:completionHash,maxBytes:Buffer.byteLength(completion),timeoutMs:0,requires:['canonical runtime'],fallback:null,owns:['nested sheet return','watermark corner cleanup','sound audition cleanup']};
-info.gates={...(info.gates||{}),canonicalSingleRuntime:true,noDynamicRuntimeChunks:true,noVersionFallback:true,embeddedFeature:true,embeddedCompletion:true,historicalReleaseWriterRetired:true,legacyV8710ActiveAdjustRetired:true,capturePreferenceSingleOwner:true,legacyScanPreferencePainterRetired:true,legacyScanPreferenceClickRetired:true};
+info.gates={...(info.gates||{}),canonicalSingleRuntime:true,noDynamicRuntimeChunks:true,noVersionFallback:true,embeddedFeature:true,embeddedCompletion:true,historicalReleaseWriterRetired:true,legacyV8710ActiveAdjustRetired:true,capturePreferenceSingleOwner:true,legacyScanPreferencePainterRetired:true,legacyScanPreferenceClickRetired:true,canonicalReplacementPreservesDoubleDollar:true};
 info.canonical={version:VERSION,architecture:ARCH,runtimeHash,sourceInputs:['app.js','v61.js',...chunkFiles,'v8712-runtime.js','v8712-completion.js'],productionRequests:{javascript:1,stylesheet:1},retiredReleaseWriters:retiredVersionWriters,retiredActiveAdjustWriters,captureCorrectionFragmentsRetired:retiredCaptureCorrectionFragments,captureMigrationRewrites};
 write('axis-build.json',JSON.stringify(info,null,2));
 
@@ -165,6 +167,8 @@ if(!runtime.includes("window.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCaptu
 if(/setTimeout\(applyCaptureMode|function applyCaptureMode\(/.test(runtime))fail('delayed capture correction survived canonical runtime');
 if(runtime.includes("Number(b.dataset.sec)===Number(state.prefs.scanSeconds)"))fail('legacy scan preference painter survived canonical runtime');
 if(runtime.includes("state.prefs.scanSeconds=Number(b.dataset.sec)"))fail('legacy scan preference click writer survived canonical runtime');
+if(runtime.includes("$('#captureModes button').forEach"))fail('canonical selector helper was corrupted to single-dollar query');
+if(!runtime.includes("$$('#captureModes button').forEach"))fail('canonical multi-selector helper missing from capture owner');
 
 console.log(`[AXIS 8.8 canonical] single runtime ${runtimeHash} · ${(Buffer.byteLength(runtime)/1024).toFixed(1)} KiB source`);
-console.log(`[AXIS 8.8 canonical] retired release ${retiredVersionWriters} · active-adjust ${retiredActiveAdjustWriters} · capture fragments ${retiredCaptureCorrectionFragments} · one capture owner · 1 JS request · 0 dynamic runtime chunks`);
+console.log(`[AXIS 8.8 canonical] retired release ${retiredVersionWriters} · active-adjust ${retiredActiveAdjustWriters} · capture fragments ${retiredCaptureCorrectionFragments} · one capture owner · selector helpers intact · 1 JS request · 0 dynamic runtime chunks`);
