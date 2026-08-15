@@ -147,21 +147,28 @@ await page.locator('#v8710On [data-v="on"]').click();
 meta=await store('axis_v8_meta');
 assert.equal(meta.prefs?.v8710SoundEnabled,true);
 
-console.log('[AXIS matrix] watermark gate controls are real and persistent');
+console.log('[AXIS matrix] watermark gate controls are canonical, visible and persistent');
 await openGate('#watermarkBtn','#axisConfigGate-watermark');
-// Only the four explicit corner buttons are placement targets. The rendered watermark rail
-// also carries a data-pos attribute as presentation state and must not be counted as a fifth control.
-const pos=page.locator('#watermarkPreview button[data-pos]:visible');
-assert.equal(await pos.count(),4,'watermark should expose exactly four placement buttons');
-const beforeName=await page.locator('#wmName').getAttribute('aria-checked');
-await page.locator('#wmName').click();
+// v8711 owns the four interactive corner buttons. Completion deliberately retires the
+// four historical data-pos buttons so there is never a second clickable placement owner.
+const pos=page.locator('#v8711Corners button[data-p]:visible');
+assert.equal(await pos.count(),4,'watermark should expose exactly four canonical placement buttons');
+assert.equal(await page.locator('#watermarkPreview > button[data-pos][aria-hidden="true"]').count(),4,'legacy watermark placement buttons were not retired');
+assert.equal(await page.locator('#wmName:visible').count(),0,'legacy watermark name switch unexpectedly became visible');
+const canonicalName=page.locator('#v85WmName');
+assert.ok(await canonicalName.isVisible(),'canonical watermark name switch is not visible');
+const beforeName=await canonicalName.getAttribute('aria-checked');
+await canonicalName.click();
 await page.locator('#photoWmMode [data-value="raw"]').click();
 await pos.nth(1).click();
 await page.waitForTimeout(80);
+meta=await store('axis_v8_meta');
 core=await store('axis_v60_state');
-assert.notEqual(await page.locator('#wmName').getAttribute('aria-checked'),beforeName);
-assert.equal(core.prefs?.watermark?.photoMode,'raw');
-assert.ok(['tl','tr','bl','br'].includes(core.prefs?.watermark?.pos),'watermark position not persisted');
+assert.notEqual(await canonicalName.getAttribute('aria-checked'),beforeName);
+assert.equal(Boolean(meta.prefs?.v85WmName),beforeName==='false','canonical watermark name preference did not persist');
+assert.equal(core.prefs?.watermark?.photoMode,'raw','photo watermark mode did not persist');
+assert.equal(meta.prefs?.v85WmPos,'tr','canonical watermark position did not persist through its sole owner');
+assert.ok(await pos.nth(1).evaluate(x=>x.classList.contains('active')),'canonical watermark position is not visibly active');
 
 console.log('[AXIS matrix] storage gate exposes real non-destructive controls');
 await openGate('#storageBtn','#axisConfigGate-storage');
