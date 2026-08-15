@@ -1,5 +1,9 @@
 /* AXIS first-paint shell — user-visible chrome is final before runtime hydration. */
 
+/* One horizontal rhythm owner from first paint through all enhancement layers. */
+html:root{--pad:22px!important}
+html body .topbar{padding-left:var(--pad)!important;padding-right:var(--pad)!important}
+
 /* The settings control never changes from gear -> sliders after boot. */
 #settingsBtn.v877Control{
   width:46px!important;
