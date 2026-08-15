@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node prepare-legacy-runtime.mjs && node build-hardened.mjs && node postbuild-kernel-priority.mjs && node postbuild-features-hardened.mjs",
+  "buildCommand": "node prepare-legacy-runtime.mjs && node build-hardened.mjs && node postbuild-kernel-priority.mjs && node postbuild-features-hardened.mjs && node postbuild-8712-completion.mjs",
   "outputDirectory": ".",
   "nodeVersion": "20.18.0",
   "headers": [
@@ -15,6 +15,7 @@
     {"source": "/axis-enhance-product.js", "headers": [{"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}]},
     {"source": "/axis-style.css", "headers": [{"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}]},
     {"source": "/v8712-runtime.js", "headers": [{"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}]},
+    {"source": "/v8712-completion.js", "headers": [{"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}]},
     {"source": "/axis-build.json", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
     {"source": "/*", "headers": [
       {"key": "X-Content-Type-Options", "value": "nosniff"},
