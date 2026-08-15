@@ -149,8 +149,10 @@ assert.equal(meta.prefs?.v8710SoundEnabled,true);
 
 console.log('[AXIS matrix] watermark gate controls are real and persistent');
 await openGate('#watermarkBtn','#axisConfigGate-watermark');
-const pos=page.locator('#watermarkPreview [data-pos]:visible');
-assert.equal(await pos.count(),4,'watermark should expose exactly four placement targets');
+// Only the four explicit corner buttons are placement targets. The rendered watermark rail
+// also carries a data-pos attribute as presentation state and must not be counted as a fifth control.
+const pos=page.locator('#watermarkPreview button[data-pos]:visible');
+assert.equal(await pos.count(),4,'watermark should expose exactly four placement buttons');
 const beforeName=await page.locator('#wmName').getAttribute('aria-checked');
 await page.locator('#wmName').click();
 await page.locator('#photoWmMode [data-value="raw"]').click();
