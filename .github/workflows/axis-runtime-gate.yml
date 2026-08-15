@@ -32,6 +32,10 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
         run: node scripts/run-smoke-guarded.mjs
+      - name: 8.7.12 completion interaction smoke
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+        run: node scripts/axis-completion-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-http.log || true
