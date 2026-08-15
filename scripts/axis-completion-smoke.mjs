@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright-core';
-
 const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
 const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']});
 const context=await browser.newContext({viewport:{width:430,height:932},locale:'zh-CN'});
@@ -30,42 +29,39 @@ if(await wm.count()){
  await page.waitForTimeout(220);
  assert.equal(await page.locator('#watermarkSheet .v8712cBack').count(),1,'watermark detail requires back button');
  assert.equal(await page.locator('#watermarkPreview #v8711Corners button[data-p]').count(),4,'exactly four visible watermark corner controls required');
- const baseCorners=await page.locator('#watermarkPreview>button[data-pos]').evaluateAll(xs=>xs.map(x=>({opacity:getComputedStyle(x).opacity,border:getComputedStyle(x).borderTopWidth})));
+ const baseCorners=await page.locator('#watermarkPreview>button[data-pos]').evaluateAll(xs=>xs.map(x=>({opacity:getComputedStyle(x).opacity,pointer:getComputedStyle(x).pointerEvents})));
  assert.ok(baseCorners.length===4,'base watermark hit targets missing');
- assert.ok(baseCorners.every(x=>Number(x.opacity)===0||x.border==='0px'),`base corner visuals must be suppressed: ${JSON.stringify(baseCorners)}`);
+ assert.ok(baseCorners.every(x=>Number(x.opacity)===0&&x.pointer==='none'),`base corner visuals must be inert: ${JSON.stringify(baseCorners)}`);
  await page.locator('#watermarkSheet .v8712cBack').click();
  await page.waitForTimeout(100);
  assert.equal(await page.locator('#watermarkSheet.show').count(),0,'watermark back did not close detail');
  assert.equal(await page.locator('#settingsSheet.show').count(),1,'watermark back did not restore settings');
 }
 
-console.log('[AXIS completion] strength record editor');
+console.log('[AXIS completion] current v61 strength editor');
 await page.reload({waitUntil:'domcontentloaded'});
 await page.waitForFunction(()=>window.__AXIS_COMPLETION_KERNEL__?.state==='ready',{timeout:12000});
 await page.locator('#quickRecordBtn').click();
-await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),{timeout:1000});
-const quick=page.locator('#v8Recent [data-v8eq]:visible').first();
-if(await quick.count()){
- await quick.click();
-}else{
- const other=page.locator('#v8Other');assert.ok(await other.count(),'missing other-equipment fallback');
- await other.click();
- await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelectorAll('#v8710Cards [data-v877-lib]').length>0,{timeout:1200});
- const strength=page.locator('#v8710Cards [data-v877-lib]:visible').first();
- assert.ok(await strength.count(),'missing visible live-catalog strength card');
- await strength.click();
-}
-await page.waitForFunction(()=>document.querySelectorAll('#v8SetEditor .v8SetRow').length>0,{timeout:2200});
-await page.waitForFunction(()=>document.querySelector('#v8SetEditor .v8712cAdjust'),{timeout:1200});
-assert.ok(await page.locator('#v8SetEditor [data-v8setcount]').count()>=2,'group count controls missing');
-assert.equal(await page.locator('#v8SetEditor [data-v8712c-step="weight"]').count(),2,'weight stepper missing');
-assert.equal(await page.locator('#v8SetEditor [data-v8712c-step="reps"]').count(),2,'rep stepper missing');
-const active=page.locator('#v8SetEditor .v8SetRow.active');
+await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show')&&document.querySelectorAll('#v8Recent [data-qid]').length>0,{timeout:1200});
+const quick=page.locator('#v8Recent [data-qid]:visible').first();
+assert.ok(await quick.count(),'missing current v61 quick-record item');
+await quick.click();
+await page.waitForFunction(()=>document.querySelectorAll('#v8Sets .v8SetRow').length>0,{timeout:2200});
+await page.waitForFunction(()=>document.querySelector('#v8Sets .v8712cAdjust'),{timeout:1400});
+assert.ok(await page.locator('#v8Sets [data-cnt]').count()>=2,'group count controls missing');
+assert.equal(await page.locator('#v8Sets [data-v8712c-step="weight"]').count(),2,'weight stepper missing');
+assert.equal(await page.locator('#v8Sets [data-v8712c-step="reps"]').count(),2,'rep stepper missing');
+const active=page.locator('#v8Sets .v8SetRow.active');
 const before=Number(await active.locator('span b').first().innerText());
-await page.locator('#v8SetEditor [data-v8712c-step="weight"][data-dir="1"]').click();
-await page.waitForTimeout(140);
-const after=Number(await page.locator('#v8SetEditor .v8SetRow.active span b').first().innerText());
+await page.locator('#v8Sets [data-v8712c-step="weight"][data-dir="1"]').click();
+await page.waitForTimeout(160);
+const after=Number(await page.locator('#v8Sets .v8SetRow.active span b').first().innerText());
 assert.ok(after>before,`weight did not change: ${before} -> ${after}`);
+const groupsBefore=await page.locator('#v8Sets .v8SetRow').count();
+await page.locator('#v8Sets [data-cnt="1"]').click();
+await page.waitForTimeout(130);
+const groupsAfter=await page.locator('#v8Sets .v8SetRow').count();
+assert.equal(groupsAfter,groupsBefore+1,'group count did not increase');
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
 console.log('[AXIS completion] PASS');
