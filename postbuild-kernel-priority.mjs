@@ -1,9 +1,24 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 
-const coreFile='axis-core.js',indexFile='index.html',infoFile='axis-build.json';
+const coreFile='axis-core.js',indexFile='index.html',infoFile='axis-build.json',featureRuntime='v8712-runtime.js';
 const fail=m=>{throw new Error(`AXIS interaction-priority gate: ${m}`)};
-for(const f of [coreFile,indexFile,infoFile])if(!fs.existsSync(f))fail(`missing ${f}`);
+for(const f of [coreFile,indexFile,infoFile,featureRuntime])if(!fs.existsSync(f))fail(`missing ${f}`);
+
+/*
+ * The recording query helper is normally Array-backed, but the convergence build
+ * may hand the group-plan runtime a NodeList when it retargets the canonical set
+ * container. Normalize at the contract boundary before the feature asset is
+ * hashed so preview/apply cannot fail at rows().map().
+ */
+let feature=fs.readFileSync(featureRuntime,'utf8');
+const legacyRowValues="function rowValues(){return rows().map(row=>{";
+const safeRowValues="function rowValues(){return Array.from(rows()).map(row=>{";
+if(!feature.includes(legacyRowValues))fail('group-plan rowValues contract changed');
+feature=feature.replace(legacyRowValues,safeRowValues);
+try{new Function(feature)}catch(e){fail(`patched ${featureRuntime} syntax ${e.message}`)}
+fs.writeFileSync(featureRuntime,feature);
+
 let core=fs.readFileSync(coreFile,'utf8');
 let html=fs.readFileSync(indexFile,'utf8');
 const oldCoreHash=(html.match(/\/axis-core\.js\?v=([a-f0-9]+)/)||[])[1];
@@ -70,7 +85,8 @@ fs.writeFileSync(indexFile,html);
 const info=JSON.parse(fs.readFileSync(infoFile,'utf8'));
 info.assets=info.assets||{};info.assets.core=newHash;
 info.performanceContract={...(info.performanceContract||{}),shellOwnsTopLevelInteraction:true,shellOwnsDockVisibility:true,hydrationStartsAfterQuietMs:850,initialHydrationDelayMs:900,topLevelSheetsExcludedFromLegacyBodyObservers:['settingsSheet','reportSheet','watermarkSheet'],redundantSettingsHooksRemoved:true};
-info.gates={...(info.gates||{}),interactionPriorityKernel:true,shellObserverIsolation:true,shellDockOwnership:true};
+info.gates={...(info.gates||{}),interactionPriorityKernel:true,shellObserverIsolation:true,shellDockOwnership:true,groupPlanRowContract:true};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
 console.log(`[AXIS] interaction-priority kernel passed · core ${oldCoreHash} -> ${newHash}`);
+console.log('[AXIS] group-plan row contract normalized before feature hashing.');
 console.log('[AXIS] shell actions preempt hydration; core exclusively owns dock visibility after navigation/sheet interactions.');
