@@ -40,24 +40,30 @@ const normalizedVersion=src=>src.replace("const VERSION='8.7.12'",`const VERSION
 let feature=normalizedVersion(read('v8712-runtime.js'));
 const completion=normalizedVersion(read('v8712-completion.js'));
 
-/* The live equipment catalog is owned by v8710 in 8.8. v8712 used to repaint the
-   same card surface after open/category changes, which made the first render and
-   post-tap render follow different taxonomies. Retire that second painter here. */
+/* prepare-88-convergence has already retired the v8712 custom-editor block, so the
+   catalog-only region now ends at rows(). Retire that entire second catalog writer
+   by named boundaries rather than depending on its original pre-convergence shape. */
 let retiredCatalogWriters=0;
-const featureCatalogBlock=/const CAT_RULES=\{[\s\S]*?function polishCategory\(\)\{[\s\S]*?\}\n\nconst DETAIL_CORE=/;
+const featureCatalogBlock=/const CAT_RULES=\{[\s\S]*?\nfunction rows\(\)/;
 const featureCatalogMatches=feature.match(new RegExp(featureCatalogBlock.source,'g'))||[];
-if(featureCatalogMatches.length!==1)fail(`v8712 catalog painter block expected once, found ${featureCatalogMatches.length}`);
-feature=feature.replace(featureCatalogBlock,'const DETAIL_CORE=');
-const featureCatalogClick="const cat=e.target.closest('#v8710Cats [data-v8710-cat]');if(cat){setTimeout(polishCategory,0);return}\n  if(e.target.closest('#equipmentRow')){setTimeout(polishCategory,140);return}\n  ";
-if(feature.split(featureCatalogClick).length-1!==1)fail('v8712 catalog click painter route expected once');
-feature=feature.replace(featureCatalogClick,'');
-const featureCatalogInput="D.addEventListener('input',e=>{if(e.target.id==='eqSearch'&&!e.target.value.trim())setTimeout(polishCategory,0)},false);\n ";
-if(feature.split(featureCatalogInput).length-1!==1)fail('v8712 catalog input painter route expected once');
-feature=feature.replace(featureCatalogInput,'');
-const featureCatalogPage="window.addEventListener('pageshow',()=>setTimeout(()=>{style();polishCategory()},120));";
-if(feature.split(featureCatalogPage).length-1!==1)fail('v8712 catalog pageshow painter route expected once');
+if(featureCatalogMatches.length!==1)fail(`v8712 catalog painter block expected once after convergence, found ${featureCatalogMatches.length}`);
+feature=feature.replace(featureCatalogBlock,'function rows()');
+
+const featureCatalogClick=/\s*const cat=e\.target\.closest\('#v8710Cats \[data-v8710-cat\]'\);if\(cat\)\{setTimeout\(polishCategory,0\);return\}\s*if\(e\.target\.closest\('#equipmentRow'\)\)\{setTimeout\(polishCategory,140\);return\}\s*/;
+const featureCatalogClickMatches=feature.match(new RegExp(featureCatalogClick.source,'g'))||[];
+if(featureCatalogClickMatches.length!==1)fail(`v8712 catalog click route expected once, found ${featureCatalogClickMatches.length}`);
+feature=feature.replace(featureCatalogClick,'\n');
+
+const featureCatalogInput=/\s*D\.addEventListener\('input',e=>\{if\(e\.target\.id==='eqSearch'&&!e\.target\.value\.trim\(\)\)setTimeout\(polishCategory,0\)\},false\);\s*/;
+const featureCatalogInputMatches=feature.match(new RegExp(featureCatalogInput.source,'g'))||[];
+if(featureCatalogInputMatches.length!==1)fail(`v8712 catalog input route expected once, found ${featureCatalogInputMatches.length}`);
+feature=feature.replace(featureCatalogInput,'\n');
+
+const featureCatalogPage=/window\.addEventListener\('pageshow',\(\)=>setTimeout\(\(\)=>\{style\(\);polishCategory\(\)\},120\)\);/;
+const featureCatalogPageMatches=feature.match(new RegExp(featureCatalogPage.source,'g'))||[];
+if(featureCatalogPageMatches.length!==1)fail(`v8712 catalog pageshow route expected once, found ${featureCatalogPageMatches.length}`);
 feature=feature.replace(featureCatalogPage,"window.addEventListener('pageshow',style);");
-if(/function polishCategory\(|setTimeout\(polishCategory/.test(feature))fail('v8712 catalog painter survived retirement');
+if(/CAT_RULES|function polishCategory\(|setTimeout\(polishCategory/.test(feature))fail('v8712 catalog painter survived retirement');
 retiredCatalogWriters=1;
 
 syntax(feature,'embedded feature');syntax(completion,'embedded completion');
@@ -185,7 +191,7 @@ if(!runtime.includes("window.__AXIS_ARCH__='canonical-single-runtime'"))fail('ca
 if(!runtime.includes("window.__AXIS_FEATURE_KERNEL__={state:'ready'"))fail('embedded feature compatibility marker missing');
 if(!runtime.includes("window.__AXIS_COMPLETION_KERNEL__={state:'ready'"))fail('embedded completion compatibility marker missing');
 if(!runtime.includes("window.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCapturePref}"))fail('canonical capture preference bridge missing');
-if(/function polishCategory\(|setTimeout\(polishCategory/.test(runtime))fail('legacy v8712 catalog painter survived canonical runtime');
+if(/CAT_RULES|function polishCategory\(|setTimeout\(polishCategory/.test(feature))fail('legacy v8712 catalog painter survived canonical runtime');
 if(!runtime.includes("function prioritized(cat)"))fail('canonical catalog prioritization missing');
 if(!runtime.includes("const all=prioritized(cat)"))fail('canonical catalog category renderer missing');
 if(/setTimeout\(applyCaptureMode|function applyCaptureMode\(/.test(runtime))fail('delayed capture correction survived canonical runtime');
