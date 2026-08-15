@@ -22,7 +22,7 @@ const waitReady=async()=>{
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
 await waitReady();
-assert.equal((await page.locator('.versionLine').innerText()).trim(),'版本 8.7.12');
+assert.equal((await page.locator('.versionLine').innerText()).trim(),'版本 8.8');
 
 console.log('[AXIS convergence] inline settings owner');
 await page.locator('#settingsBtn').click();
@@ -39,7 +39,7 @@ for(const [key,btn,sheet] of [['profile','#profileBtn','#profileSheet'],['equipm
  assert.equal(await page.locator(sheet).evaluate(el=>!!el.closest('#settingsSheet')),true,`${sheet} escaped settings ownership`);
 }
 
-console.log('[AXIS convergence] Chinese precise watermark location');
+console.log('[AXIS convergence] concise Chinese watermark location');
 await page.locator('#watermarkBtn').click();await page.waitForTimeout(90);
 assert.equal(await page.locator('#v8710WmControls,#v8710WmLang').count(),0,'watermark language controls must not exist');
 assert.equal(await page.locator('#watermarkPreview #v8711Corners button[data-p]').count(),4,'watermark must expose exactly four position hit targets');
@@ -47,9 +47,10 @@ const corners=await page.locator('#watermarkPreview>button[data-pos]').evaluateA
 assert.ok(corners.length===4&&corners.every(x=>Number(x.opacity)===0&&x.pointer==='none'),`legacy corner layer is active: ${JSON.stringify(corners)}`);
 if(await page.locator('#v876Locate').count()){
  await page.locator('#v876Locate').click();
- await page.waitForFunction(()=>/独立健身中心/.test(document.querySelector('#v876LocationName')?.textContent||''),{timeout:4500});
+ await page.waitForFunction(()=>/情侣北路88号/.test(document.querySelector('#v876LocationName')?.textContent||''),{timeout:4500});
  const place=(await page.locator('#v876LocationName').innerText()).trim();
- assert.ok(place.includes('独立健身中心')&&place.includes('情侣北路88号'),`precise Chinese POI/road missing: ${place}`);
+ assert.ok(place.includes('情侣北路88号')&&place.includes('唐家湾'),`concise Chinese road/locality missing: ${place}`);
+ assert.ok(!/(22\.40582|113\.54341|纬度|经度|±\s*\d)/.test(place+(await page.locator('#watermarkPreview').innerText())),`raw coordinate leaked into watermark presentation: ${place}`);
  assert.equal((await page.locator('#v8712PlaceCredit').innerText()).trim(),'地名 © OpenStreetMap contributors');
 }
 
