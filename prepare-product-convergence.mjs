@@ -28,7 +28,7 @@ for(const f of ['build-hardened.mjs','runtime-hardening.css','product-convergenc
  const helper=`const INLINE_SETTINGS=[['profile','profileBtn','profileSheet'],['equipment','myEqBtn','myEqSheet'],['watermark','watermarkBtn','watermarkSheet'],['storage','storageBtn','storageSheet']];
 function configGate(k){if(k==='record')return $('#v8711RecordGate');if(k==='audio')return $('#v8711AudioGate');if(String(k).startsWith('config-'))return $('#axisConfigGate-'+String(k).slice(7));return null}
 function setGate(g,on){if(!g)return;g.classList.toggle('open',!!on);g.querySelector(':scope>.settingLink')?.setAttribute('aria-expanded',on?'true':'false')}
-function closeOtherGates(except=null){for(const g of $$('#settingsSheet .v8711SettingGate.open'))if(g!==except)setGate(g,false)}
+function closeOtherGates(except=null){for(const g of Array.from(document.querySelectorAll('#settingsSheet .v8711SettingGate.open')))if(g!==except)setGate(g,false)}
 function ensureInlineSettings(){
  const root=$('#settingsSheet .settingsList');if(!root)return;
  for(const [key,buttonId,sheetId] of INLINE_SETTINGS){
