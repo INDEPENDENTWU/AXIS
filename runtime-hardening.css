@@ -394,8 +394,9 @@ body #scanSheet .v875PlanEntry{
   line-height:1;
 }
 
-/* One active-session adjustment entry. v879's duplicate is retired at build time and hidden defensively. */
-#v879EditBtn,#v879Edit{display:none!important}
+/* One active-session adjustment entry. The historical v879 entry button is retired,
+   while #v879Edit is the canonical one-time adjustment transaction opened by #v87AdjustBtn. */
+#v879EditBtn{display:none!important}
 body #v87Now{
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
@@ -451,15 +452,15 @@ body #activeHome #eventList>[data-event]{border-bottom-color:var(--axis-rule)!im
 @media(max-width:390px){
   body #scanSheet #v8Sets .v8SetHead{grid-template-columns:minmax(0,1fr) 146px!important;column-gap:8px!important}
   body #scanSheet #v8Sets .v8SetCount{width:146px!important;grid-template-columns:42px 62px 42px!important}
-  body #scanSheet #v8Sets .v8SetRow{grid-template-columns:38px minmax(76px,1fr) minmax(76px,1fr) 50px!important;column-gap:5px!important;padding:0 7px!important}
-  body #scanSheet #v8Sets .v8SetRow>i{width:38px!important}
+  body #scanSheet #v8Sets .v8SetRow{grid-template-columns:40px minmax(78px,1fr) minmax(78px,1fr) 50px!important;column-gap:5px!important;padding:0 8px!important}
+  body #scanSheet #v8Sets .v8SetRow>i{width:40px!important}
   body #scanSheet #v8Sets .v8SetRow>em{width:48px!important;min-width:48px!important;max-width:48px!important}
   #axisSetControls{gap:8px}
   .axisSetStepper{grid-template-columns:44px minmax(0,1fr) 44px}
   .axisSetStepper>button{width:44px}
-  .axisSetValue{gap:4px}
-  .axisSetValue>input{font-size:21px}
 }
 
-/* First paint must never be visually blocked by enhancement state. */
-html[data-axis-core-ready="1"] .app{visibility:visible!important;opacity:1!important}
+@media(min-width:900px){
+  body #scanSheet .sheet{max-width:560px!important}
+  #axisSetControls{gap:14px}
+}
