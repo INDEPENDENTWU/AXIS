@@ -115,14 +115,14 @@ assert.equal(await page.locator('#v8Sets').evaluate(el=>el.scrollWidth<=el.clien
 
 console.log('[AXIS convergence] configurable group plan');
 const planEntry=page.locator('#v8Sets [data-v875-plan],#v8Sets [data-v874-plan]').first();assert.ok(await planEntry.count(),'group plan entry missing');
-await planEntry.click();await page.waitForFunction(()=>document.querySelector('#v874PlanSheet')?.classList.contains('show'),{timeout:1500});
+await planEntry.click();await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show'),{timeout:1500});
 await page.waitForFunction(()=>document.querySelector('#v8712PlanBody'),{timeout:1500});
 await page.locator('[data-v8712-mode="up"]').click();await page.waitForFunction(()=>document.querySelector('[data-v8712-step-input="w"]'),{timeout:800});
 const step=page.locator('[data-v8712-step-input="w"]');await step.fill('3.5');await step.blur();await page.waitForTimeout(60);await page.locator('[data-v8712-count="3"]').click();await page.waitForTimeout(50);
 const planned=(await page.locator('.v8712PreviewRow b').allInnerTexts()).map(Number.parseFloat);
 assert.equal(planned.length,3,'plan preview count mismatch');
 assert.ok(near(planned[1]-planned[0],3.5,.01)&&near(planned[2]-planned[1],3.5,.01),`custom group-plan step failed: ${JSON.stringify(planned)}`);
-await page.locator('#v8712Apply').click();await page.waitForFunction(()=>!document.querySelector('#v874PlanSheet')?.classList.contains('show'),{timeout:1500});await page.waitForTimeout(100);
+await page.locator('#v8712Apply').click();await page.waitForFunction(()=>!document.querySelector('#v875PlanSheet')?.classList.contains('show'),{timeout:1500});await page.waitForTimeout(100);
 const applied=(await page.locator('#v8Sets .v8SetRow span:first-of-type b').allInnerTexts()).slice(0,3).map(Number);
 assert.deepEqual(applied,planned,'group plan did not apply to canonical recording draft');
 
