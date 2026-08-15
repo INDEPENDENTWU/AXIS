@@ -82,6 +82,7 @@ function dbGet(k){`,'watermark location rendering');
 /* Group plan reads the canonical rows, exposes editable step, and commits through v61. */
 {
  let src=read('v8712-runtime.js');
+ const stalePlanRefs=(src.match(/#v874PlanSheet/g)||[]).length;if(stalePlanRefs!==3)fail(`group-plan sheet contract expected 3 legacy refs, found ${stalePlanRefs}`);src=src.replaceAll('#v874PlanSheet','#v875PlanSheet');
  src=textOnce(src,"function rows(){return $$('#v8SetEditor .v8SetRow')}","function rows(){return $$('#v8Sets .v8SetRow')}",'canonical plan rows');
  src=regexOnce(src,/function smartWeightStep\(w\)\{[^\n]*\}/,"function smartWeightStep(w){if(w<10)return.5;if(w<30)return 2.5;if(w<220)return 5;return 10}",'group plan default step');
  src=regexOnce(src,/function stepOptions\(base\)\{[\s\S]*?\}\nfunction repStepDefault/,
@@ -113,4 +114,4 @@ async function applyPlan(){`,'canonical plan application');
 for(const f of ['v61.js','v8711-runtime.js','v8710-watermark.js','v876-runtime.js','v8712-runtime.js']){
  try{new Function(read(f))}catch(e){fail(`${f} syntax ${e.message}`)}
 }
-console.log('[AXIS] product convergence prepared · inline settings · Chinese precise place · editable group-plan step · static geometry');
+console.log('[AXIS] product convergence prepared · inline settings · Chinese precise place · editable group-plan step · static geometry · canonical plan sheet');
