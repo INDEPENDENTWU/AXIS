@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 
 const ROOT=process.cwd();
 const FEATURE='v8712-completion.js';
-const MAX_BYTES=48*1024;
+const MAX_BYTES=20*1024;
 const p=f=>path.join(ROOT,f);
 const read=f=>fs.readFileSync(p(f),'utf8');
 const fail=m=>{throw new Error(`AXIS 8.7.12 completion gate: ${m}`)};
@@ -16,7 +16,9 @@ try{new Function(src)}catch(e){fail(`${FEATURE} syntax ${e.message}`)}
 const forbidden=[
  ['global loading ownership',/__AXIS_LATEST_LOADING__|__AXIS_HYDRATING__|__AXIS_BOOT_WATCHDOG__/],
  ['service worker mutation',/navigator\.serviceWorker|serviceWorker\s*\./],
- ['full body observer',/\.observe\s*\(\s*document\.body/],
+ ['mutation observer',/MutationObserver/],
+ ['runtime stylesheet injection',/createElement\(\s*['"]style['"]\s*\)|insertRule\s*\(/],
+ ['recording ownership',/__AXIS_RECORDING__|axisSetControls|v8SetEditor|#v8Sets|data-axis-step/],
  ['permanent interval',/setInterval\s*\(/],
  ['forced navigation',/location\.(?:reload|replace|assign)\s*\(/],
  ['document replacement',/document\.(?:body|documentElement)\.innerHTML\s*=/]
@@ -53,7 +55,7 @@ html=html.replace('</body>',`${loader}\n</body>`);
 fs.writeFileSync(p('index.html'),html);
 
 const info=JSON.parse(read('axis-build.json'));
-info.completionKernel={blocking:false,feature:FEATURE,hash,maxBytes:MAX_BYTES,timeoutMs:3500,requires:['8.7.12 feature ready','core interactive'],fallback:'8.7.12 without completion'};
-info.gates={...(info.gates||{}),completionSyntax:true,completionBudget:true,completionContract:true,completionNonBlocking:true};
+info.completionKernel={blocking:false,feature:FEATURE,hash,maxBytes:MAX_BYTES,timeoutMs:3500,requires:['8.7.12 feature ready','core interactive'],fallback:'8.7.12 without completion',owns:['nested sheet return','watermark corner cleanup','sound audition cleanup']};
+info.gates={...(info.gates||{}),completionSyntax:true,completionBudget:true,completionContract:true,completionNonBlocking:true,completionNoObservers:true,completionNoRuntimeCss:true,completionNoRecordingOwner:true};
 fs.writeFileSync(p('axis-build.json'),JSON.stringify(info,null,2));
-console.log(`[AXIS] 8.7.12 completion gate passed · ${hash} · ${Buffer.byteLength(src)} bytes`);
+console.log(`[AXIS] 8.7.12 completion gate passed · ${hash} · ${Buffer.byteLength(src)} bytes · no observers · no runtime CSS · no recording ownership`);
