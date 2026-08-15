@@ -78,20 +78,23 @@ html body .nav>button.active{
 }
 html body .nav>button.active::before,html body .nav>button.active::after{display:none!important}
 
-/* Public release presentation is static. Runtime baseline/feature state may change internally without changing visible text. */
-.versionLine{
+/* Public release label has one visual owner. Runtime text remains internal state only. */
+html body #settingsSheet .versionLine,
+html body .versionLine{
   font-size:0!important;
+  line-height:0!important;
   font-variant-numeric:tabular-nums;
   visibility:visible!important;
   transition:none!important;
   animation:none!important;
 }
-.versionLine::before{
-  content:'版本 8.7.12';
-  display:inline-block;
-  font-size:13px;
-  line-height:1.35;
-  letter-spacing:.01em;
+html body #settingsSheet .versionLine::before,
+html body .versionLine::before{
+  content:attr(data-axis-public-label)!important;
+  display:inline-block!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+  letter-spacing:.01em!important;
   color:inherit;
   white-space:nowrap;
 }
