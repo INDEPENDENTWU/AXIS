@@ -67,6 +67,10 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
         run: node scripts/axis-88-smoke.mjs
+      - name: Full product operation matrix
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+        run: node scripts/axis-product-matrix.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-http.log || true
