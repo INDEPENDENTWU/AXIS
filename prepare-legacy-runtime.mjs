@@ -93,7 +93,7 @@ for(const file of stableFiles){
     src=safe878;versionOwnerFixes++;
   }
   if(file==='v879-runtime.js'){
-    src=replaceOnce(src,"function cleanLegacy(){for(const b of $$('[data-v875-step]')){b.removeAttribute('data-v875-step');b.removeAttribute('data-dir')}patchAdjust()}","function cleanLegacy(){for(const b of $$('[data-v875-step]')){b.removeAttribute('data-v875-step');b.removeAttribute('data-dir')}}",'retire v879 recording painter');retiredOwnerFixes++;
+    src=replaceOnce(src,"function cleanLegacy(){for(const b of $$('[data-v875-step]')){b.removeAttribute('data-v875-step');b.removeAttribute('data-dir')}patchAdjust()}","function cleanLegacy(){for(const b of Array.from(document.querySelectorAll('[data-v875-step]'))){b.removeAttribute('data-v875-step');b.removeAttribute('data-dir')}}",'retire v879 recording painter');retiredOwnerFixes++;
     src=replaceOnce(src,'css();ensureNum();ensureEdit();cleanLegacy();version();layer();finishCue();timeline();editEntry();','css();ensureNum();ensureEdit();cleanLegacy();version();layer();finishCue();timeline();','retire v879 duplicate active adjustment');retiredOwnerFixes++;
     src=replaceOnce(src,"const sets=$('#v8Sets');if(sets){const MO=window.__AXIS_NATIVE_MUTATION_OBSERVER__||MutationObserver;new MO(queuePatch).observe(sets,{childList:true,subtree:true,characterData:true})}",'','retire v879 recording observer');retiredOwnerFixes++;
     src=replaceOnce(src,"new MO(()=>{finishCue();timeline();editEntry()}).observe(evl,{childList:true,subtree:true,characterData:true})","new MO(()=>{finishCue();timeline()}).observe(evl,{childList:true,subtree:true,characterData:true})",'retire v879 edit reinsertion');retiredOwnerFixes++;
@@ -117,6 +117,7 @@ for(const file of stableFiles){
     if(src.includes('patchAdjust()}'))throw new Error('AXIS legacy sanitizer: v879 recording painter remains active');
     if(src.includes('new MO(queuePatch).observe(sets'))throw new Error('AXIS legacy sanitizer: v879 recording observer remains');
     if(src.includes('timeline();editEntry()'))throw new Error('AXIS legacy sanitizer: v879 duplicate adjust reinsertion remains');
+    if(!src.includes("Array.from(document.querySelectorAll('[data-v875-step]'))"))throw new Error('AXIS legacy sanitizer: v879 retired-owner cleanup must use direct DOM query');
   }
   if(file==='v8710-watermark.js'&&src.includes('function render(){ensure();sync();'))throw new Error('AXIS legacy sanitizer: watermark recursion remains');
   if(file==='v875-polish.js'&&src.includes('new MutationObserver(()=>{if(v.textContent!==text)'))throw new Error('AXIS legacy sanitizer: v875 version observer remains');
