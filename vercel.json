@@ -1,6 +1,6 @@
 {
   "$schema":"https://openapi.vercel.sh/vercel.json",
-  "buildCommand":"node prepare-legacy-runtime.mjs && node prepare-product-convergence.mjs && node build-hardened.mjs && node postbuild-kernel-priority.mjs && node postbuild-features-hardened.mjs && node postbuild-8712-completion.mjs",
+  "buildCommand":"node prepare-legacy-runtime.mjs && node prepare-product-convergence.mjs && node prepare-first-paint-shell.mjs && node build-hardened.mjs && node postbuild-kernel-priority.mjs && node postbuild-features-hardened.mjs && node postbuild-8712-completion.mjs",
   "outputDirectory":".",
   "cleanUrls":true,
   "trailingSlash":false,
