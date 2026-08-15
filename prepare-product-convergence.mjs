@@ -6,16 +6,23 @@ const write=(f,s)=>fs.writeFileSync(f,s);
 const textOnce=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:re.flags+'g',m=src.match(new RegExp(re.source,flags))||[];if(m.length!==1)fail(`${label} expected once, found ${m.length}`);return src.replace(re,to)};
 
-for(const f of ['build-hardened.mjs','runtime-hardening.css','product-convergence.css','v8711-runtime.js','v8710-watermark.js','v876-runtime.js','v8712-runtime.js'])if(!fs.existsSync(f))fail(`missing ${f}`);
+for(const f of ['build-hardened.mjs','runtime-hardening.css','product-convergence.css','v61.js','v8711-runtime.js','v8710-watermark.js','v876-runtime.js','v8712-runtime.js'])if(!fs.existsSync(f))fail(`missing ${f}`);
 
-/* First-paint geometry: the hardened stylesheet includes both permanent contracts. */
+/* First paint owns geometry. */
 {
  let src=read('build-hardened.mjs');
  src=textOnce(src,"const cssFiles=['styles.css','v61.css'];","const cssFiles=['styles.css','v61.css','runtime-hardening.css','product-convergence.css'];",'static convergence stylesheet list');
  write('build-hardened.mjs',src);
 }
 
-/* Settings: existing domain sheets are portalled into one accordion; their state/UI is never cloned. */
+/* The old detail-navigation rule must not close Settings now that configuration is inline. */
+{
+ let src=read('v61.js');
+ src=textOnce(src,"if(['profileBtn','myEqBtn','watermarkBtn','storageBtn','reportBtn'].includes(b.id))$('#settingsSheet')?.classList.remove('show');",'', 'retire legacy settings close');
+ write('v61.js',src);
+}
+
+/* Existing domain sheets are portalled into one exclusive Settings accordion; no form is cloned. */
 {
  let src=read('v8711-runtime.js');
  const helper=`const INLINE_SETTINGS=[['profile','profileBtn','profileSheet'],['equipment','myEqBtn','myEqSheet'],['watermark','watermarkBtn','watermarkSheet'],['storage','storageBtn','storageSheet']];
@@ -46,7 +53,7 @@ function ensureCorners(){`,'exclusive settings accordion');
  write('v8711-runtime.js',src);
 }
 
-/* Watermark: Chinese is the single product language; precise POI/address resolution is cached and fail-open. */
+/* Watermark is Chinese-first and precise-place-first; old language UI is retired. */
 {
  let src=read('v8710-watermark.js');
  src=regexOnce(src,/function selectedLang\(\)\{[^\n]*\}/,"function selectedLang(){return'zh'}",'Chinese-only watermark language');
@@ -65,14 +72,14 @@ function dbGet(k){`,'watermark location rendering');
  write('v8710-watermark.js',src);
 }
 
-/* The older resolver may fill a coarse name only until the canonical precise resolver has a result. */
+/* The previous coarse resolver is fallback-only once a precise name exists. */
 {
  let src=read('v876-runtime.js');
  src=textOnce(src,'if(name)mm.prefs.v876LocationNameAuto=name;','if(name&&!mm.prefs.v8712PlaceResolve?.name)mm.prefs.v876LocationNameAuto=name;','legacy location fallback guard');
  write('v876-runtime.js',src);
 }
 
-/* Group plan: first set remains the base; step is directly editable and application uses the v61 API. */
+/* Group plan reads the canonical rows, exposes editable step, and commits through v61. */
 {
  let src=read('v8712-runtime.js');
  src=textOnce(src,"function rows(){return $$('#v8SetEditor .v8SetRow')}","function rows(){return $$('#v8Sets .v8SetRow')}",'canonical plan rows');
@@ -93,6 +100,7 @@ function renderPlan(){`,'editable plan parameters');
 `async function setCount(n){n=clamp(n,1,10);for(let guard=0;guard<20;guard++){const cur=rows().length;if(cur===n)return;const b=$('#v8Sets [data-cnt="'+(cur<n?1:-1)+'"]');if(!b)return;b.click();await wait(22)}}
 async function setRow(i,w,r){const api=window.__AXIS_RECORDING__;if(!api?.select||!api?.set)return;api.select(i);await wait(5);api.set('weight',w);await wait(5);api.set('reps',r);await wait(5)}
 async function applyPlan(){`,'canonical plan application');
+ src=textOnce(src,"if(e.target.closest('[data-v874-plan]')){setTimeout(upgradePlan,0);return}","if(e.target.closest('[data-v875-plan],[data-v874-plan]')){setTimeout(upgradePlan,0);return}",'canonical plan entry trigger');
  const bindNeedle="const rs=e.target.closest('[data-v8712-rstep]');if(rs&&plan){plan.rStep=Number(rs.dataset.v8712Rstep)||plan.rStep;renderPlan();return}\n  if(e.target.closest('#v8712Apply')){applyPlan();return}";
  const bindReplace="const rs=e.target.closest('[data-v8712-rstep]');if(rs&&plan){plan.rStep=Number(rs.dataset.v8712Rstep)||plan.rStep;renderPlan();return}\n  const sa=e.target.closest('[data-v8712-step-adjust]');if(sa&&plan){const d=Number(sa.dataset.dir)||0;if(sa.dataset.v8712StepAdjust==='w')plan.wStep=Math.max(.5,Math.round((plan.wStep+d*.5)*2)/2);else plan.rStep=clamp(Math.round(plan.rStep+d),1,20);renderPlan();return}\n  if(e.target.closest('#v8712Apply')){applyPlan();return}";
  src=textOnce(src,bindNeedle,bindReplace,'group plan step buttons');
@@ -102,7 +110,7 @@ async function applyPlan(){`,'canonical plan application');
  write('v8712-runtime.js',src);
 }
 
-for(const f of ['v8711-runtime.js','v8710-watermark.js','v876-runtime.js','v8712-runtime.js']){
+for(const f of ['v61.js','v8711-runtime.js','v8710-watermark.js','v876-runtime.js','v8712-runtime.js']){
  try{new Function(read(f))}catch(e){fail(`${f} syntax ${e.message}`)}
 }
 console.log('[AXIS] product convergence prepared · inline settings · Chinese precise place · editable group-plan step · static geometry');
