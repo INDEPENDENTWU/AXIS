@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 
-const coreFile='axis-core.js',indexFile='index.html',infoFile='axis-build.json',featureRuntime='v8712-runtime.js',recordingChunk='axis-enhance-recording.js';
+const coreFile='axis-core.js',indexFile='index.html',infoFile='axis-build.json',featureRuntime='v8712-runtime.js';
+const recordingChunk='axis-enhance-recording.js',foundationChunk='axis-enhance-foundation.js',interactionChunk='axis-enhance-interaction.js';
 const fail=m=>{throw new Error(`AXIS interaction-priority gate: ${m}`)};
-for(const f of [coreFile,indexFile,infoFile,featureRuntime,recordingChunk])if(!fs.existsSync(f))fail(`missing ${f}`);
+for(const f of [coreFile,indexFile,infoFile,featureRuntime,recordingChunk,foundationChunk,interactionChunk])if(!fs.existsSync(f))fail(`missing ${f}`);
+const hash=s=>crypto.createHash('sha256').update(s).digest('hex').slice(0,12);
 
 /* Normalize the planner row contract and commit a plan through one canonical v61 transaction. */
 let feature=fs.readFileSync(featureRuntime,'utf8');
@@ -23,11 +25,7 @@ let html=fs.readFileSync(indexFile,'utf8');
 const oldCoreHash=(html.match(/\/axis-core\.js\?v=([a-f0-9]+)/)||[])[1];
 if(!oldCoreHash)fail('axis-core hash missing from index');
 
-/*
- * v61 remains the only recording owner. Give it a single low-frequency batch
- * transaction for planner commits; high-frequency +/- and direct input retain
- * their existing in-place mutation path.
- */
+/* v61 remains the only recording owner; planner application is one low-frequency batch transaction. */
 const legacyApi="window.__AXIS_RECORDING__={snapshot:recordingSnapshot,adjust:adjustRecordingValue,set:patchActiveSetValue,select:selectRecordingSet};";
 const atomicApi=`function applyRecordingPlan(values){
  if(!Array.isArray(values)||!values.length)return false;
@@ -38,7 +36,7 @@ window.__AXIS_RECORDING__={snapshot:recordingSnapshot,adjust:adjustRecordingValu
 if(!core.includes(legacyApi))fail('recording API contract changed');
 core=core.replace(legacyApi,atomicApi);
 
-/* Retire both pre-canonical one-set seeders; v61 already owns the one-set default. */
+/* Retire both pre-canonical one-set seeders; v61 already owns the default one-set draft. */
 let recording=fs.readFileSync(recordingChunk,'utf8');
 for(const [needle,label] of [['if(!seedDone)seedSingleSet()','professional auto-seed'],['if(!seedDone)seedOne()','set-bridge auto-seed']]){
  const count=recording.split(needle).length-1;if(count!==1)fail(`${label} expected once, found ${count}`);recording=recording.replace(needle,'');
@@ -46,9 +44,35 @@ for(const [needle,label] of [['if(!seedDone)seedSingleSet()','professional auto-
 try{new Function(recording)}catch(e){fail(`patched ${recordingChunk} syntax ${e.message}`)}
 const oldRecordingHash=(core.match(/\/axis-enhance-recording\.js\?v=([a-f0-9]+)/)||[])[1];
 if(!oldRecordingHash)fail('recording chunk hash missing from core manifest');
-const newRecordingHash=crypto.createHash('sha256').update(recording).digest('hex').slice(0,12);
-fs.writeFileSync(recordingChunk,recording);
+const newRecordingHash=hash(recording);fs.writeFileSync(recordingChunk,recording);
 core=core.replace(`/axis-enhance-recording.js?v=${oldRecordingHash}`,`/axis-enhance-recording.js?v=${newRecordingHash}`);
+
+/*
+ * Active-session adjustment has one owner and one visible action. v879 keeps the
+ * already-proven one-time edit transaction, but no longer paints its legacy
+ * button. v87 asks that owner to synchronize after its own active-card render,
+ * so no MutationObserver or extra timer is needed.
+ */
+let interaction=fs.readFileSync(interactionChunk,'utf8');
+const oldInteractionHash=(core.match(/\/axis-enhance-interaction\.js\?v=([a-f0-9]+)/)||[])[1];
+if(!oldInteractionHash)fail('interaction chunk hash missing from core manifest');
+const oldEditIds=(interaction.match(/v879EditBtn/g)||[]).length;if(oldEditIds<3)fail(`legacy active-adjust identity unexpectedly sparse: ${oldEditIds}`);
+interaction=interaction.replaceAll('v879EditBtn','v87AdjustBtn');
+const oldLabel="b.textContent='调整一次'";if(!interaction.includes(oldLabel))fail('active-adjust label contract changed');interaction=interaction.replace(oldLabel,"b.textContent='调整'");
+const exposeNeedle='function openEdit(id){';if(!interaction.includes(exposeNeedle))fail('active-adjust opener contract changed');interaction=interaction.replace(exposeNeedle,'window.__AXIS_ACTIVE_ADJUST_SYNC__=editEntry;\nfunction openEdit(id){');
+try{new Function(interaction)}catch(e){fail(`patched ${interactionChunk} syntax ${e.message}`)}
+const newInteractionHash=hash(interaction);fs.writeFileSync(interactionChunk,interaction);
+core=core.replace(`/axis-enhance-interaction.js?v=${oldInteractionHash}`,`/axis-enhance-interaction.js?v=${newInteractionHash}`);
+
+let foundation=fs.readFileSync(foundationChunk,'utf8');
+const oldFoundationHash=(core.match(/\/axis-enhance-foundation\.js\?v=([a-f0-9]+)/)||[])[1];
+if(!oldFoundationHash)fail('foundation chunk hash missing from core manifest');
+const renderTail="host.classList.add('show');D.body.classList.add('v87-now')}";
+const renderTailCount=foundation.split(renderTail).length-1;if(renderTailCount!==1)fail(`active-card render contract expected once, found ${renderTailCount}`);
+foundation=foundation.replace(renderTail,"host.classList.add('show');D.body.classList.add('v87-now');window.__AXIS_ACTIVE_ADJUST_SYNC__?.()}");
+try{new Function(foundation)}catch(e){fail(`patched ${foundationChunk} syntax ${e.message}`)}
+const newFoundationHash=hash(foundation);fs.writeFileSync(foundationChunk,foundation);
+core=core.replace(`/axis-enhance-foundation.js?v=${oldFoundationHash}`,`/axis-enhance-foundation.js?v=${newFoundationHash}`);
 
 const oldSelectors="const sels=['#scanSheet','#reviewStage','#settingsSheet','#finishSheet','#todayView','#activeHome','#idleHome','#eqSheet','#reportSheet','#watermarkSheet','#detailSheet'];";
 const newSelectors="const sels=['#scanSheet','#reviewStage','#finishSheet','#todayView','#activeHome','#idleHome','#eqSheet','#detailSheet'];";
@@ -104,19 +128,19 @@ setTimeout(sync,0);
 core+=shellDockOwner;
 
 try{new Function(core)}catch(e){fail(`patched core syntax ${e.message}`)}
-const newHash=crypto.createHash('sha256').update(core).digest('hex').slice(0,12);
-fs.writeFileSync(coreFile,core);
-html=html.replace(`/axis-core.js?v=${oldCoreHash}`,`/axis-core.js?v=${newHash}`);
-fs.writeFileSync(indexFile,html);
+const newHash=hash(core);fs.writeFileSync(coreFile,core);
+html=html.replace(`/axis-core.js?v=${oldCoreHash}`,`/axis-core.js?v=${newHash}`);fs.writeFileSync(indexFile,html);
 const info=JSON.parse(fs.readFileSync(infoFile,'utf8'));
 info.assets=info.assets||{};info.assets.core=newHash;
 if(Array.isArray(info.assets.chunks)){
-  const rec=info.assets.chunks.find(x=>x.id==='recording');if(!rec)fail('recording chunk metadata missing');rec.hash=newRecordingHash;
+ const set=(id,h)=>{const x=info.assets.chunks.find(v=>v.id===id);if(!x)fail(`${id} chunk metadata missing`);x.hash=h};
+ set('foundation',newFoundationHash);set('recording',newRecordingHash);set('interaction',newInteractionHash);
 }
-info.performanceContract={...(info.performanceContract||{}),shellOwnsTopLevelInteraction:true,shellOwnsDockVisibility:true,hydrationStartsAfterQuietMs:850,initialHydrationDelayMs:900,topLevelSheetsExcludedFromLegacyBodyObservers:['settingsSheet','reportSheet','watermarkSheet'],redundantSettingsHooksRemoved:true,plannerCommitsAtomically:true};
-info.gates={...(info.gates||{}),interactionPriorityKernel:true,shellObserverIsolation:true,shellDockOwnership:true,groupPlanRowContract:true,legacyPlanAutoSeedRetired:true,legacySetBridgeAutoSeedRetired:true,canonicalPlanTransaction:true};
+info.performanceContract={...(info.performanceContract||{}),shellOwnsTopLevelInteraction:true,shellOwnsDockVisibility:true,hydrationStartsAfterQuietMs:850,initialHydrationDelayMs:900,topLevelSheetsExcludedFromLegacyBodyObservers:['settingsSheet','reportSheet','watermarkSheet'],redundantSettingsHooksRemoved:true,plannerCommitsAtomically:true,activeAdjustUsesRenderSync:true};
+info.gates={...(info.gates||{}),interactionPriorityKernel:true,shellObserverIsolation:true,shellDockOwnership:true,groupPlanRowContract:true,legacyPlanAutoSeedRetired:true,legacySetBridgeAutoSeedRetired:true,canonicalPlanTransaction:true,singleActiveAdjustmentOwner:true};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
 console.log(`[AXIS] interaction-priority kernel passed · core ${oldCoreHash} -> ${newHash}`);
-console.log(`[AXIS] recording chunk ${oldRecordingHash} -> ${newRecordingHash} · legacy one-set seeders retired.`);
+console.log(`[AXIS] chunks · foundation ${oldFoundationHash}->${newFoundationHash} · recording ${oldRecordingHash}->${newRecordingHash} · interaction ${oldInteractionHash}->${newInteractionHash}`);
 console.log('[AXIS] group-plan row contract normalized; planner commits atomically through the v61 recording owner.');
+console.log('[AXIS] active-session adjustment converged to one render-synchronized, one-time action.');
 console.log('[AXIS] shell actions preempt hydration; core exclusively owns dock visibility after navigation/sheet interactions.');
