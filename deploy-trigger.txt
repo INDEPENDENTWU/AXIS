@@ -1,3 +1,5 @@
-AXIS production recovery trigger
-2026-08-15T03:12:00+08:00
-Reason: restore verified 8.7.11 stable production baseline before architecture hardening. Production boot is node build.mjs only; no postbuild or optional runtime participates in startup.
+AXIS production release trigger
+2026-08-15T23:26:00+08:00
+Release: 8.8
+Source baseline: 768ef065be8df993d708b65bd28ff3385410e48c
+Reason: deploy the already browser-gated AXIS 8.8 convergence release to Production after the prior Vercel build-rate-limit failure. Product logic is unchanged; this commit is deployment-only.
