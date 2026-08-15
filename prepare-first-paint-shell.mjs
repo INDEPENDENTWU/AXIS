@@ -43,17 +43,11 @@ let feature=read('postbuild-features-hardened.mjs');
 feature=textOnce(feature,"const fallback=(reason,err)=>{kernel.state='base';kernel.errors.push(String(reason));if(err)console.warn('[AXIS feature]',reason,err);setVersionText(BASE)};","const fallback=(reason,err)=>{kernel.state='base';kernel.errors.push(String(reason));if(err)console.warn('[AXIS feature]',reason,err);setVersionText(TARGET)};",'feature fallback presentation');
 write('postbuild-features-hardened.mjs',feature);
 
-/* One editor implementation is exposed to every custom-equipment entry point. */
+/* One canonical editor implementation and one direct routing path. */
 let app=read('app.js');
 app=textOnce(app,'function saveCustomEq(){','window.__AXIS_OPEN_CUSTOM_EQUIPMENT__=openCustomEditor;\nfunction saveCustomEq(){','canonical custom editor API');
+app=textOnce(app,"$('#addCustomEq').onclick=()=>{closeSheet('eqSheet');openCustomEditor()};","$('#addCustomEq').onclick=()=>{closeSheet('eqSheet');openCustomEditor()};$('#newCustomEq').onclick=()=>{closeSheet('settingsSheet');openCustomEditor()};",'settings custom editor binding');
 write('app.js',app);
-
-/* Settings adapter routes to the canonical editor and places that existing sheet above Settings. */
-let completion=read('v8712-completion.js');
-const customAdapter=`\n(()=>{\n const D=document,$=s=>D.querySelector(s);\n const restore=()=>{const p=$('#settingsSheet'),c=$('#customEqSheet');if(p?.classList.contains('show')){p.classList.remove('v879Under');p.classList.add('v879Front')}c?.classList.remove('v879Front')};\n D.addEventListener('click',e=>{\n  if(e.target.closest('#newCustomEq')){\n   e.preventDefault();e.stopImmediatePropagation();\n   window.__AXIS_OPEN_CUSTOM_EQUIPMENT__?.();\n   requestAnimationFrame(()=>{const p=$('#settingsSheet'),c=$('#customEqSheet');if(!c?.classList.contains('show'))return;p?.classList.remove('v879Front');p?.classList.add('v879Under');c.classList.remove('v879Under');c.classList.add('v879Front')});\n   return;\n  }\n  if(e.target.closest('#saveCustomEq,#deleteCustomEq,#customEqSheet .closeBtn'))setTimeout(restore,0);\n },true);\n})();\n`;
-if(completion.includes('__AXIS_SETTINGS_CUSTOM_ADAPTER__'))fail('custom adapter duplicated');
-completion+=`\nwindow.__AXIS_SETTINGS_CUSTOM_ADAPTER__=true;${customAdapter}`;
-write('v8712-completion.js',completion);
 
 /* Built-artifact tests keep the public release at 8.7.12 during internal feature fallback. */
 if(fs.existsSync('scripts/axis-smoke.mjs')){
@@ -64,6 +58,7 @@ if(fs.existsSync('scripts/axis-smoke.mjs')){
 }
 if(fs.existsSync('scripts/axis-first-paint-smoke.mjs')){
  let fp=read('scripts/axis-first-paint-smoke.mjs');
+ fp=textOnce(fp,"await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('v879Front'),undefined,{timeout:1000});","await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show')&&!document.querySelector('#settingsSheet')?.classList.contains('show'),undefined,{timeout:1000});",'custom editor visibility smoke');
  fp=textOnce(fp,"assert.equal(typeof await page.locator('#saveCustomEq').evaluate(e=>e.onclick),'object' /* Playwright serializes function as null/object? */);","assert.equal(await page.evaluate(()=>typeof document.querySelector('#saveCustomEq')?.onclick),'function','shared custom save handler missing');",'custom editor save smoke');
  write('scripts/axis-first-paint-smoke.mjs',fp);
 }
