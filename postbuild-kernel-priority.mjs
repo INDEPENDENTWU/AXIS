@@ -1,15 +1,14 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 
-const coreFile='axis-core.js',indexFile='index.html',infoFile='axis-build.json',featureRuntime='v8712-runtime.js';
+const coreFile='axis-core.js',indexFile='index.html',infoFile='axis-build.json',featureRuntime='v8712-runtime.js',recordingChunk='axis-enhance-recording.js';
 const fail=m=>{throw new Error(`AXIS interaction-priority gate: ${m}`)};
-for(const f of [coreFile,indexFile,infoFile,featureRuntime])if(!fs.existsSync(f))fail(`missing ${f}`);
+for(const f of [coreFile,indexFile,infoFile,featureRuntime,recordingChunk])if(!fs.existsSync(f))fail(`missing ${f}`);
 
 /*
- * The recording query helper is normally Array-backed, but the convergence build
- * may hand the group-plan runtime a NodeList when it retargets the canonical set
- * container. Normalize at the contract boundary before the feature asset is
- * hashed so preview/apply cannot fail at rows().map().
+ * Normalize the 8.7.12 group-plan row contract before feature hashing. The
+ * convergence build may retarget the canonical set container, so rowValues must
+ * accept either an Array or a NodeList without changing ownership.
  */
 let feature=fs.readFileSync(featureRuntime,'utf8');
 const legacyRowValues="function rowValues(){return rows().map(row=>{";
@@ -23,6 +22,27 @@ let core=fs.readFileSync(coreFile,'utf8');
 let html=fs.readFileSync(indexFile,'utf8');
 const oldCoreHash=(html.match(/\/axis-core\.js\?v=([a-f0-9]+)/)||[])[1];
 if(!oldCoreHash)fail('axis-core hash missing from index');
+
+/*
+ * v874 originally forced every newly opened strength record back to one set.
+ * That made sense before the canonical planner existed, but its review-stage
+ * observer can now fire while v8712 applies a multi-set plan and collapse the
+ * draft mid-transaction. Retire only that automatic seeding side effect; the
+ * normal recording count controls and default one-set creation remain owned by
+ * v61. Patch the already-built recording chunk and update the core manifest hash
+ * in the same gate so cache identity stays correct.
+ */
+let recording=fs.readFileSync(recordingChunk,'utf8');
+const legacyAutoSeed='if(!seedDone)seedSingleSet()';
+const autoSeedCount=recording.split(legacyAutoSeed).length-1;
+if(autoSeedCount!==1)fail(`legacy plan auto-seed expected once, found ${autoSeedCount}`);
+recording=recording.replace(legacyAutoSeed,'');
+try{new Function(recording)}catch(e){fail(`patched ${recordingChunk} syntax ${e.message}`)}
+const oldRecordingHash=(core.match(/\/axis-enhance-recording\.js\?v=([a-f0-9]+)/)||[])[1];
+if(!oldRecordingHash)fail('recording chunk hash missing from core manifest');
+const newRecordingHash=crypto.createHash('sha256').update(recording).digest('hex').slice(0,12);
+fs.writeFileSync(recordingChunk,recording);
+core=core.replace(`/axis-enhance-recording.js?v=${oldRecordingHash}`,`/axis-enhance-recording.js?v=${newRecordingHash}`);
 
 const oldSelectors="const sels=['#scanSheet','#reviewStage','#settingsSheet','#finishSheet','#todayView','#activeHome','#idleHome','#eqSheet','#reportSheet','#watermarkSheet','#detailSheet'];";
 const newSelectors="const sels=['#scanSheet','#reviewStage','#finishSheet','#todayView','#activeHome','#idleHome','#eqSheet','#detailSheet'];";
@@ -84,9 +104,15 @@ html=html.replace(`/axis-core.js?v=${oldCoreHash}`,`/axis-core.js?v=${newHash}`)
 fs.writeFileSync(indexFile,html);
 const info=JSON.parse(fs.readFileSync(infoFile,'utf8'));
 info.assets=info.assets||{};info.assets.core=newHash;
+if(Array.isArray(info.assets.chunks)){
+  const rec=info.assets.chunks.find(x=>x.id==='recording');
+  if(!rec)fail('recording chunk metadata missing');
+  rec.hash=newRecordingHash;
+}
 info.performanceContract={...(info.performanceContract||{}),shellOwnsTopLevelInteraction:true,shellOwnsDockVisibility:true,hydrationStartsAfterQuietMs:850,initialHydrationDelayMs:900,topLevelSheetsExcludedFromLegacyBodyObservers:['settingsSheet','reportSheet','watermarkSheet'],redundantSettingsHooksRemoved:true};
-info.gates={...(info.gates||{}),interactionPriorityKernel:true,shellObserverIsolation:true,shellDockOwnership:true,groupPlanRowContract:true};
+info.gates={...(info.gates||{}),interactionPriorityKernel:true,shellObserverIsolation:true,shellDockOwnership:true,groupPlanRowContract:true,legacyPlanAutoSeedRetired:true};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
 console.log(`[AXIS] interaction-priority kernel passed · core ${oldCoreHash} -> ${newHash}`);
+console.log(`[AXIS] recording chunk ${oldRecordingHash} -> ${newRecordingHash} · legacy plan auto-seed retired.`);
 console.log('[AXIS] group-plan row contract normalized before feature hashing.');
 console.log('[AXIS] shell actions preempt hydration; core exclusively owns dock visibility after navigation/sheet interactions.');
