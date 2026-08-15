@@ -218,13 +218,17 @@ meta=await store('axis_v8_meta');
 assert.ok(Number(meta.events?.[activeId]?.v879EditAt)>0,'canonical active adjustment did not persist');
 assert.equal(await page.locator('#v8710EditOnce,#v879EditBtn').count(),0,'retired active adjustment owner reappeared');
 
-console.log('[AXIS matrix] history / trends / report after a real record');
+console.log('[AXIS matrix] history / canonical v84 trends / report after a real record');
 await page.locator('nav.nav [data-view="historyView"]').click();
 await page.waitForFunction(()=>document.querySelector('#historyView')?.classList.contains('active'),undefined,{timeout:900});
 assert.ok((await page.locator('#historyList').innerText()).trim().length>0,'history did not render recorded event');
 await page.locator('nav.nav [data-view="insightsView"]').click();
 await page.waitForFunction(()=>document.querySelector('#insightsView')?.classList.contains('active'),undefined,{timeout:900});
-assert.ok(await page.locator('#coverageGrid').isVisible(),'trends coverage did not render');
+assert.ok(await page.locator('#insightsView .v84Trends').isVisible(),'canonical v84 trends surface did not render');
+assert.equal(await page.locator('#coverageGrid:visible').count(),0,'retired pre-v84 coverage grid became visible');
+for(const sel of ['#v84NowList','#v84Axis','#v84MemoryRows','#v84Rhythm'])assert.ok(await page.locator(sel).isVisible(),`canonical trends control missing/hidden ${sel}`);
+assert.ok((await page.locator('#v84NowList').innerText()).trim().length>0,'canonical trends did not render the real recorded item');
+assert.ok(await page.locator('#v84Axis .v84AxisCol').count()>0,'canonical trend axis did not render the recorded item');
 await openSettings();
 await page.locator('#reportBtn').click();
 await page.waitForFunction(()=>document.querySelector('#reportSheet')?.classList.contains('show'),undefined,{timeout:1200});
@@ -232,6 +236,6 @@ assert.ok(await page.locator('#reportPreview').isVisible(),'report surface did n
 assert.ok((await page.locator('#reportPreview').innerText()).trim().length>0,'report did not render content');
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log('[AXIS product matrix] PASS · navigation · Settings · capture preference · persistence · recording · active session · history · trends · report');
+console.log('[AXIS product matrix] PASS · navigation · Settings · capture preference · persistence · recording · active session · history · canonical trends · report');
 await context.close();
 await browser.close();
