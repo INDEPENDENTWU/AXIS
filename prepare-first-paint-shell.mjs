@@ -2,7 +2,7 @@ import fs from 'node:fs';
 
 const PUBLIC='8.7.12';
 const STABLE='8.7.11';
-const fail=m=>{throw new Error(`AXIS first-paint shell: ${m}`)};
+const fail=m=>{console.error(`::error title=AXIS first-paint shell::${m}`);throw new Error(`AXIS first-paint shell: ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
 function textOnce(src,from,to,label){const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)}
@@ -38,13 +38,9 @@ build=textOnce(build,"const VERSION='8.7.11';",`const VERSION='${PUBLIC}';`,'pub
 build=textOnce(build,"const cssFiles=['styles.css','v61.css','runtime-hardening.css','product-convergence.css'];","const cssFiles=['styles.css','v61.css','runtime-hardening.css','product-convergence.css','first-paint-shell.css'];",'first-paint stylesheet bundle');
 write('build-hardened.mjs',build);
 
+/* Internal fallback remains available, but it never paints an older public version. */
 let feature=read('postbuild-features-hardened.mjs');
-for(const [from,to,label] of [
- ['window.__AXIS_VERSION__=BASE;','window.__AXIS_VERSION__=PUBLIC;','fallback public AXIS_VERSION'],
- ['window.__AXIS_RELEASE__=BASE;','window.__AXIS_RELEASE__=PUBLIC;','fallback public AXIS_RELEASE'],
- ['setVersionText(BASE);','setVersionText(PUBLIC);','fallback visible version'],
- ['readyRoot.dataset.axisRelease=BASE;','readyRoot.dataset.axisRelease=PUBLIC;','fallback public dataset']
-])feature=textOnce(feature,from,to,label);
+feature=textOnce(feature,"const fallback=(reason,err)=>{kernel.state='base';kernel.errors.push(String(reason));if(err)console.warn('[AXIS feature]',reason,err);setVersionText(BASE)};","const fallback=(reason,err)=>{kernel.state='base';kernel.errors.push(String(reason));if(err)console.warn('[AXIS feature]',reason,err);setVersionText(TARGET)};",'feature fallback presentation');
 write('postbuild-features-hardened.mjs',feature);
 
 /* One editor implementation is exposed to every custom-equipment entry point. */
@@ -52,14 +48,14 @@ let app=read('app.js');
 app=textOnce(app,'function saveCustomEq(){','window.__AXIS_OPEN_CUSTOM_EQUIPMENT__=openCustomEditor;\nfunction saveCustomEq(){','canonical custom editor API');
 write('app.js',app);
 
-/* Settings adapter only routes to the canonical editor and places that existing sheet above Settings. */
+/* Settings adapter routes to the canonical editor and places that existing sheet above Settings. */
 let completion=read('v8712-completion.js');
 const customAdapter=`\n(()=>{\n const D=document,$=s=>D.querySelector(s);\n const restore=()=>{const p=$('#settingsSheet'),c=$('#customEqSheet');if(p?.classList.contains('show')){p.classList.remove('v879Under');p.classList.add('v879Front')}c?.classList.remove('v879Front')};\n D.addEventListener('click',e=>{\n  if(e.target.closest('#newCustomEq')){\n   e.preventDefault();e.stopImmediatePropagation();\n   window.__AXIS_OPEN_CUSTOM_EQUIPMENT__?.();\n   requestAnimationFrame(()=>{const p=$('#settingsSheet'),c=$('#customEqSheet');if(!c?.classList.contains('show'))return;p?.classList.remove('v879Front');p?.classList.add('v879Under');c.classList.remove('v879Under');c.classList.add('v879Front')});\n   return;\n  }\n  if(e.target.closest('#saveCustomEq,#deleteCustomEq,#customEqSheet .closeBtn'))setTimeout(restore,0);\n },true);\n})();\n`;
 if(completion.includes('__AXIS_SETTINGS_CUSTOM_ADAPTER__'))fail('custom adapter duplicated');
 completion+=`\nwindow.__AXIS_SETTINGS_CUSTOM_ADAPTER__=true;${customAdapter}`;
 write('v8712-completion.js',completion);
 
-/* Built-artifact tests intentionally keep the public release at 8.7.12 during internal feature fallback. */
+/* Built-artifact tests keep the public release at 8.7.12 during internal feature fallback. */
 if(fs.existsSync('scripts/axis-smoke.mjs')){
  let smoke=read('scripts/axis-smoke.mjs');
  smoke=textOnce(smoke,"assert.equal(version,'版本 8.7.11',`failed feature must keep base version, got ${version}`);","assert.equal(version,'版本 8.7.12',`public release must remain 8.7.12 during internal fallback, got ${version}`);",'fallback public-version smoke');
