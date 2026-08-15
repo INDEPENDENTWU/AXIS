@@ -85,11 +85,20 @@ assert.ok(geometry.buttons.every(b=>near(b.height,60,.75)),'recording +/- hit ge
 
 const active=page.locator('#v8Sets .v8SetRow.active');
 const before=Number(await active.locator('span b').first().innerText());
+const snapshotBefore=await page.evaluate(()=>window.__AXIS_RECORDING__.snapshot());
 await page.evaluate(()=>{window.__AXIS_TEST_ROW__=document.querySelector('#v8Sets .v8SetRow.active');window.__AXIS_TEST_RECT__=document.querySelector('#axisSetControls').getBoundingClientRect().toJSON()});
 await page.locator('#axisSetControls [data-axis-step="weight"][data-dir="1"]').click();
 await page.waitForTimeout(90);
 const after=Number(await page.locator('#v8Sets .v8SetRow.active span b').first().innerText());
-assert.ok(after>before,`weight did not change: ${before} -> ${after}`);
+const snapshotAfterClick=await page.evaluate(()=>window.__AXIS_RECORDING__.snapshot());
+if(!(after>before)){
+ await page.evaluate(()=>window.__AXIS_RECORDING__.adjust('weight',1));
+ await page.waitForTimeout(50);
+ const snapshotAfterDirect=await page.evaluate(()=>window.__AXIS_RECORDING__.snapshot());
+ const rowAfterDirect=Number(await page.locator('#v8Sets .v8SetRow.active span b').first().innerText());
+ console.error('[AXIS recording diagnostic]',JSON.stringify({before,rowAfterClick:after,rowAfterDirect,snapshotBefore,snapshotAfterClick,snapshotAfterDirect}));
+ assert.fail(`weight click route failed: ${before} -> ${after}`);
+}
 assert.equal(await page.evaluate(()=>window.__AXIS_TEST_ROW__===document.querySelector('#v8Sets .v8SetRow.active')),true,'weight adjustment rebuilt the active row and can visibly flicker');
 const afterRect=await page.locator('#axisSetControls').evaluate(el=>el.getBoundingClientRect().toJSON());
 const beforeRect=await page.evaluate(()=>window.__AXIS_TEST_RECT__);
