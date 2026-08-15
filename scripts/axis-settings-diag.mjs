@@ -1,0 +1,15 @@
+import {chromium} from 'playwright-core';
+const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']});
+const context=await browser.newContext({viewport:{width:430,height:932},locale:'zh-CN'}),page=await context.newPage();
+for(const [pat,body] of [['**/api/ai-status**','{"ok":true,"enabled":false}'],['**/api/owner-config**','{"ok":true}'],['**/api/analyze**','{"ok":false,"disabled":true}'],['**/api/insight**','{"ok":false,"disabled":true}']])await page.route(pat,r=>r.fulfill({status:200,contentType:'application/json',body}));
+const errors=[];page.on('pageerror',e=>errors.push(String(e?.stack||e)));page.on('console',m=>{if(m.type()==='error')console.error('[settings console]',m.text())});
+await page.goto(BASE,{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__AXIS_COMPLETION_KERNEL__?.state==='ready',{timeout:12000});
+await page.locator('#settingsBtn').click();await page.waitForTimeout(120);
+const before=await page.evaluate(()=>({settings:document.querySelector('#settingsSheet')?.className,button:{class:document.querySelector('#profileBtn')?.className,fold:document.querySelector('#profileBtn')?.dataset.v8711Fold,parent:document.querySelector('#profileBtn')?.parentElement?.id},gate:document.querySelector('#axisConfigGate-profile')?.className,profile:document.querySelector('#profileSheet')?.className,profileParent:document.querySelector('#profileSheet')?.parentElement?.dataset.axisInlineBody}));
+await page.locator('#profileBtn').click();
+const immediate=await page.evaluate(()=>({settings:document.querySelector('#settingsSheet')?.className,gate:document.querySelector('#axisConfigGate-profile')?.className,profile:document.querySelector('#profileSheet')?.className,open:[...document.querySelectorAll('#settingsSheet .v8711SettingGate.open')].map(x=>x.id)}));
+await page.waitForTimeout(120);
+const after=await page.evaluate(()=>({settings:document.querySelector('#settingsSheet')?.className,gate:document.querySelector('#axisConfigGate-profile')?.className,profile:document.querySelector('#profileSheet')?.className,open:[...document.querySelectorAll('#settingsSheet .v8711SettingGate.open')].map(x=>x.id),visibleSheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),diag:window.__AXIS_ENHANCE_DIAG__}));
+console.error('[AXIS settings diagnostic]',JSON.stringify({before,immediate,after,errors},null,2));
+await context.close();await browser.close();
