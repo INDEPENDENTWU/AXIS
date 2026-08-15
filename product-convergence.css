@@ -1,0 +1,270 @@
+/* AXIS product convergence — first-paint geometry and inline settings contract */
+
+/* Recording rows use one immutable four-column grid. */
+body #scanSheet #v8Sets .v8SetRows{
+  width:100%!important;
+  margin:8px 0 0!important;
+  gap:4px!important;
+  border:0!important;
+}
+body #scanSheet #v8Sets .v8SetRow{
+  width:100%!important;
+  height:78px!important;
+  min-height:78px!important;
+  padding:0 10px!important;
+  margin:0!important;
+  display:grid!important;
+  grid-template-columns:48px minmax(0,1fr) minmax(0,1fr) 64px!important;
+  column-gap:6px!important;
+  align-items:center!important;
+  justify-items:stretch!important;
+  border:0!important;
+  border-radius:0!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  contain:layout paint!important;
+}
+body #scanSheet #v8Sets .v8SetRow.active{
+  background:rgba(115,124,255,.082)!important;
+}
+body #scanSheet #v8Sets .v8SetRow>i{
+  width:100%!important;
+  height:44px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  margin:0!important;
+  font-size:15px!important;
+  line-height:1!important;
+  letter-spacing:.04em!important;
+  font-variant-numeric:tabular-nums!important;
+}
+body #scanSheet #v8Sets .v8SetRow>span{
+  width:100%!important;
+  height:56px!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:auto auto!important;
+  place-content:center!important;
+  align-items:baseline!important;
+  column-gap:6px!important;
+  padding:0!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+body #scanSheet #v8Sets .v8SetRow>span>b{
+  min-width:2ch!important;
+  text-align:right!important;
+  font-variant-numeric:tabular-nums!important;
+}
+body #scanSheet #v8Sets .v8SetRow>span>small{
+  min-width:1.5em!important;
+  text-align:left!important;
+}
+body #scanSheet #v8Sets .v8SetRow>em{
+  width:56px!important;
+  min-width:56px!important;
+  max-width:56px!important;
+  height:38px!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  justify-self:center!important;
+  border:0!important;
+  border-radius:12px!important;
+  font-variant-numeric:tabular-nums!important;
+}
+
+/* Top-level configuration stays inside the settings sheet. Existing domain DOM is portalled, never cloned. */
+body #settingsSheet .axisConfigGate{
+  width:100%!important;
+  margin:0!important;
+  border:0!important;
+}
+body #settingsSheet .axisConfigGate>.settingLink{
+  width:100%!important;
+  min-height:64px!important;
+  border:0!important;
+}
+body #settingsSheet .axisConfigGate>.v8711Fold{
+  width:100%!important;
+  padding:0 0 12px!important;
+  overflow:visible!important;
+}
+body #settingsSheet .axisInlineSheetWrap,
+body #settingsSheet .axisInlineSheetWrap.show{
+  position:static!important;
+  inset:auto!important;
+  z-index:auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  display:block!important;
+  align-items:initial!important;
+  justify-content:initial!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  overflow:visible!important;
+  pointer-events:auto!important;
+}
+body #settingsSheet .axisInlineSheetWrap>.sheet{
+  position:static!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  margin:0!important;
+  padding:8px 0 14px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+body #settingsSheet .axisInlineSheetWrap>.sheet>.grabber,
+body #settingsSheet .axisInlineSheetWrap>.sheet>.sheetHead{
+  display:none!important;
+}
+body #settingsSheet .axisInlineSheetWrap .saveRecord{
+  margin-top:18px!important;
+}
+body #settingsSheet .axisInlineSheetWrap .dangerAction{
+  margin-bottom:4px!important;
+}
+body #settingsSheet .v8711SettingGate{
+  border-top:0!important;
+  border-bottom:0!important;
+}
+body #settingsSheet .v8711SettingGate+.v8711SettingGate{
+  border-top:0!important;
+}
+
+/* The report plate is a hard clipping boundary: every visual must resolve inside it. */
+body #reportSheet .v8710ReportDeck{
+  width:100%!important;
+  min-width:0!important;
+  overflow-y:hidden!important;
+}
+body #reportSheet .v8710Plate{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  contain:layout paint!important;
+}
+body #reportSheet .v8710Plate>*{
+  max-width:100%!important;
+  min-width:0!important;
+  flex-shrink:0;
+}
+body #reportSheet .v8710Plate:nth-child(1) .v8710Bars{
+  height:auto!important;
+  min-height:126px!important;
+  flex:1 1 auto!important;
+  margin-top:24px!important;
+}
+body #reportSheet .v8710Plate:nth-child(2) .v8710Grid{
+  height:auto!important;
+  min-height:0!important;
+  flex:1 1 auto!important;
+  grid-template-rows:repeat(4,minmax(0,1fr))!important;
+  margin-top:22px!important;
+  overflow:hidden!important;
+}
+body #reportSheet .v8710Plate:nth-child(2) .v8710Grid>i{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  aspect-ratio:auto!important;
+}
+body #reportSheet .v8710Plate:nth-child(2) .v8710Focus{
+  flex:0 0 38px!important;
+  height:38px!important;
+  margin-top:16px!important;
+  flex-wrap:nowrap!important;
+  overflow:hidden!important;
+}
+body #reportSheet .v8710Plate:nth-child(2) .v8710Focus>span{
+  flex:0 1 auto!important;
+  min-width:0!important;
+  height:38px!important;
+}
+body #reportSheet .v8710Plate .v8710Foot{
+  flex:0 0 auto!important;
+  margin-top:16px!important;
+}
+
+/* Watermark location: no separate language configuration. */
+#v8710WmControls,#v8710WmLang{display:none!important}
+.v8712PlaceCredit{
+  display:block;
+  min-height:18px;
+  margin-top:8px;
+  color:var(--dim);
+  font-size:10px;
+  line-height:1.35;
+}
+.v8712PlaceCredit:empty{display:none}
+
+/* Group-plan step is editable without introducing a second numeric sheet. */
+.v8712StepEditor{
+  width:100%;
+  height:52px;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) 48px;
+  align-items:center;
+  margin-bottom:9px;
+  border-radius:15px;
+  background:var(--s2);
+  overflow:hidden;
+  contain:layout paint;
+}
+.v8712StepEditor>button{
+  width:48px;
+  height:52px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  color:var(--muted);
+  font-size:23px;
+}
+.v8712StepEditor>label{
+  min-width:0;
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.v8712StepEditor input{
+  width:5ch;
+  min-width:0;
+  height:42px;
+  padding:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:var(--text);
+  text-align:right;
+  font-size:20px;
+  font-weight:660;
+  font-variant-numeric:tabular-nums;
+  -webkit-appearance:none;
+  appearance:textfield;
+}
+.v8712StepEditor small{color:var(--muted);font-size:13px}
+.v8712StepEditor input::-webkit-outer-spin-button,.v8712StepEditor input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+@media(max-width:390px){
+  body #scanSheet #v8Sets .v8SetRow{
+    grid-template-columns:40px minmax(0,1fr) minmax(0,1fr) 58px!important;
+    column-gap:4px!important;
+    padding:0 6px!important;
+  }
+  body #scanSheet #v8Sets .v8SetRow>em{width:52px!important;min-width:52px!important;max-width:52px!important}
+  body #reportSheet .v8710Plate:nth-child(2) .v8710Grid{margin-top:18px!important}
+}
