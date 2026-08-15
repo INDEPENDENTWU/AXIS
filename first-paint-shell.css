@@ -1,6 +1,6 @@
 /* AXIS first-paint shell — user-visible chrome is final before runtime hydration. */
 
-/* One horizontal rhythm owner from first paint through all enhancement layers. */
+/* One rhythm owner from first paint through all enhancement layers. */
 html:root{--pad:22px!important}
 html body .topbar{padding-left:var(--pad)!important;padding-right:var(--pad)!important}
 
@@ -37,12 +37,15 @@ html body .topbar{padding-left:var(--pad)!important;padding-right:var(--pad)!imp
 #settingsBtn .v877ControlGlyph b:nth-of-type(1){left:4px;top:3px}
 #settingsBtn .v877ControlGlyph b:nth-of-type(2){right:4px;bottom:3px}
 
-/* Recording dock structure exists in HTML; runtime only wires behavior. */
+/* Recording dock structure and vertical geometry exist in the first DOM. */
 #dock.v8-dual{
+  bottom:76px!important;
   grid-template-columns:minmax(0,1fr) 116px!important;
   gap:10px!important;
   align-items:stretch!important;
   contain:layout paint!important;
+  transition:none!important;
+  animation:none!important;
 }
 #dock.v8-dual #scanBtn,#dock.v8-dual #quickRecordBtn{
   height:64px!important;
@@ -53,7 +56,15 @@ html body .topbar{padding-left:var(--pad)!important;padding-right:var(--pad)!imp
   animation:none!important;
 }
 
-/* Navigation selection is a permanent, quiet surface; late runtime CSS cannot swap it for an underline. */
+/* Navigation geometry and selected surface never change after boot. */
+html body .nav{
+  bottom:0!important;
+  height:76px!important;
+  padding-left:var(--pad)!important;
+  padding-right:var(--pad)!important;
+  transition:none!important;
+  animation:none!important;
+}
 html body .nav>button{
   border-radius:18px!important;
   background:transparent!important;
