@@ -55,6 +55,10 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
         run: node scripts/axis-settings-diag.mjs
+      - name: Active adjustment transient diagnostic
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+        run: node scripts/axis-active-adjust-diag.mjs
       - name: Completion interaction regression suite
         env:
           AXIS_URL: http://127.0.0.1:4173
