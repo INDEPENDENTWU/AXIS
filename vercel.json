@@ -4,6 +4,12 @@
   "outputDirectory":".",
   "cleanUrls":true,
   "trailingSlash":false,
+  "git":{
+    "deploymentEnabled":{
+      "**":false,
+      "main":true
+    }
+  },
   "functions":{
     "api/analyze.js":{"maxDuration":30},
     "api/insight.js":{"maxDuration":20},
