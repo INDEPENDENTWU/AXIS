@@ -13,7 +13,7 @@ jobs:
       github.event.deployment_status.state == 'success' &&
       github.event.deployment.environment == 'Production'
     runs-on: ubuntu-latest
-    timeout-minutes: 14
+    timeout-minutes: 18
     permissions:
       contents: read
     env:
@@ -27,19 +27,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-      - name: Load release contract
+      - name: Resolve identity from the same release build
         shell: bash
         run: |
           set -euo pipefail
+          node build-release.mjs
           node <<'NODE' >> "$GITHUB_ENV"
           const fs=require('fs');
-          const c=JSON.parse(fs.readFileSync('release-contract.json','utf8'));
-          for(const k of ['publicVersion','stableBaseVersion','architecture','stableChunkCount'])if(c[k]===undefined||c[k]===null||c[k]==='')throw new Error(`release-contract missing ${k}`);
-          console.log(`AXIS_EXPECTED_VERSION=${c.publicVersion}`);
-          console.log(`AXIS_EXPECTED_BASE=${c.stableBaseVersion}`);
-          console.log(`AXIS_EXPECTED_ARCH=${c.architecture}`);
+          const x=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+          for(const k of ['version','baseVersion','architecture'])if(x[k]===undefined||x[k]===null||x[k]==='')throw new Error(`axis-build missing ${k}`);
+          console.log(`AXIS_EXPECTED_VERSION=${x.version}`);
+          console.log(`AXIS_EXPECTED_BASE=${x.baseVersion}`);
+          console.log(`AXIS_EXPECTED_ARCH=${x.architecture}`);
           NODE
-      - name: Align browser assertions to current release contract
+      - name: Align browser assertions to built release identity
         run: node scripts/prepare-release-test-contract.mjs
       - name: Wait for fixed Production URL to serve exact source commit
         shell: bash
@@ -60,10 +61,10 @@ jobs:
                 exit 0
               fi
             fi
-            echo "Attempt $attempt · public Production not yet exact ($code) · waiting for $AXIS_EXPECTED_SHA"
+            echo "Attempt $attempt · public Production not yet exact ($code) · waiting for $AXIS_EXPECTED_SHA / $AXIS_EXPECTED_VERSION"
             sleep 3
           done
-          echo "::error title=AXIS Production stale or protected::${AXIS_URL} did not anonymously serve exact deployed commit ${AXIS_EXPECTED_SHA}."
+          echo "::error title=AXIS Production mismatch::${AXIS_URL} did not anonymously serve exact built release ${AXIS_EXPECTED_VERSION} at ${AXIS_EXPECTED_SHA}."
           exit 1
       - name: Verify canonical Production manifest and immutable assets
         shell: bash
@@ -84,7 +85,11 @@ jobs:
             'singleActiveAdjustmentOwner','legacyV8710ActiveAdjustRetired','catalogCategorySingleOwner','capturePreferenceSingleOwner','canonicalReplacementPreservesDoubleDollar',
             'watermarkFourSwitchContract','precisePlaceResolver','noRawCoordinatePresentation','watermarkSingleLocateOwner','watermarkPreferenceSingleWriter',
             'groupPlanUnitlessControls','groupPlanExpandedPresets','activeItemCountdown','activeItemCountdownTone','activeItemLongPressSuppressesTone','watermarkCenterBrand','watermarkBrandOpacitySingleTarget',
-            'homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog'
+            'homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog','mediaStoreWebKitSafe',
+            'learningAtlas811','learningAtlasUnique811','learningDialogueSixTurn811','learningConnectedSpeech811','learningSpelling811','learningSettingsConverged811','learningLegacyDiagnosticsPreserved811',
+            'learningJapanese132811','learningKorean132811','learningChinese132811','learningMultilingualSixTurn811','learningMultilingualNoLegacyExactOverlap811',
+            'trendsStateField811','trendsGoalAware811','trendsEvidenceOnly811','trendsLocalFirst811','trendsOneShotMotion811',
+            'serviceSettingsConverged811','serviceSettingsUserInvokedNetwork811','serviceSettingsNoTrainingOwner811'
           ];
           for(const k of required)if(x.gates?.[k]!==true)fail(`missing Production gate ${k}`);
           if(x.featureKernel?.embedded!==true||x.completionKernel?.embedded!==true)fail('feature/completion are not embedded');
@@ -95,13 +100,20 @@ jobs:
           if(x.canonical?.quickRecord?.customItems!==true||x.canonical?.quickRecord?.mediaModes?.join(',')!=='photo,3,5')fail('Quick Record 8.8.2 contract mismatch');
           if(x.canonical?.activeCard?.outerGeometryStable!==true)fail('active card geometry contract mismatch');
           if(x.canonical?.watermarkBrand?.text!=='AXIS'||x.canonical?.watermarkBrand?.opacityOwner!=='v876WmOpacity')fail('brand owner contract mismatch');
+          if(process.env.AXIS_EXPECTED_VERSION==='8.11'){
+            if(x.axis811?.release!==true)fail('AXIS 8.11 release descriptor missing');
+            if(x.axis811?.learning?.totalEnglish!==5736||x.axis811?.learning?.totalUnits!==6132||x.axis811?.learning?.dialogueTurns!==6)fail('AXIS 8.11 learning contract mismatch');
+            for(const [lang,n] of Object.entries({en:5736,ja:132,ko:132,zh:132}))if(x.axis811?.learning?.availableByLanguage?.[lang]!==n)fail(`AXIS 8.11 ${lang} count mismatch`);
+            if(x.axis811?.trends?.model!=='state-field-trajectory'||x.axis811?.trends?.fitnessScore!==false||x.axis811?.trends?.networkRequired!==false)fail('AXIS 8.11 State Field contract mismatch');
+            if(x.axis811?.services?.localFirst!==true||x.axis811?.services?.automaticNetwork!==false||x.axis811?.services?.clientSecrets!==false)fail('AXIS 8.11 cloud/AI contract mismatch');
+          }
           if(!/^[a-f0-9]{12}$/.test(x.assets?.core||'')||!/^[a-f0-9]{12}$/.test(x.assets?.css||''))fail('invalid immutable asset hash');
           const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(m=>m[1]);
           if(scripts.length!==1||scripts[0]!==`/axis-core.js?v=${x.assets.core}`)fail(`Production HTML script mismatch ${scripts}`);
           if(!html.includes(`data-axis-runtime="canonical-${process.env.AXIS_EXPECTED_VERSION}"`))fail('canonical HTML marker missing');
           if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-(foundation|recording|interaction|product)\.js/.test(html))fail('retired dynamic loader survives in Production HTML');
           fs.writeFileSync('/tmp/axis-assets.tsv',`core\t/axis-core.js?v=${x.assets.core}\t20000\ncss\t/axis-style.css?v=${x.assets.css}\t10000\n`);
-          console.log(`[AXIS Production] ${x.version} · ${x.sourceCommit.slice(0,10)} · canonical release contracts verified`);
+          console.log(`[AXIS Production] ${x.version} · ${x.sourceCommit.slice(0,10)} · inherited + 8.11 canonical contracts verified`);
           NODE
           while IFS=$'\t' read -r name path min_bytes; do
             test -n "$name" || continue
@@ -117,7 +129,7 @@ jobs:
           CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
-      - name: Real Chromium product gates against fixed Production URL
+      - name: Real Chromium inherited product gates against fixed Production URL
         run: |
           node scripts/run-smoke-guarded.mjs
           node scripts/axis-completion-smoke.mjs
@@ -127,3 +139,7 @@ jobs:
           AXIS_ENGINE=chromium node scripts/axis-881-smoke.mjs
           AXIS_ENGINE=chromium node scripts/axis-882-smoke.mjs
           node scripts/axis-product-matrix.mjs
+      - name: Real Chromium AXIS 8.11 experience against fixed Production URL
+        env:
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-811-browser-smoke.mjs
