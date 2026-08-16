@@ -94,13 +94,6 @@ axis891PanelRows=function(r){
  if(r?.followup)rows.push(['接下去',r.followup]);
  return rows
 };
-const axis811BaseDialogueTurns=axis8103DialogueTurns;
-axis8103DialogueTurns=function(r){
- if(r?.target&&r?.response&&r?.followup&&r?.closing)return [
-  {who:'你',text:r.target},{who:'对方',text:r.response},{who:'你',text:r.followup},{who:'对方',text:r.closing}
- ];
- return axis811BaseDialogueTurns(r)
-};
 const axis811BaseSnapshot=axis810Snapshot;
 function axis811AvailableSnapshot(){
  const x=axis811BaseSnapshot();
@@ -122,4 +115,4 @@ if(!src.includes(legacyPhraseOwner))fail('legacy diagnostic phrase owner not fou
 src=src.replace(legacyPhraseOwner,'phrases:()=>492,availablePhrases:()=>axis891AllPhrases().length,snapshot:axis810Snapshot,availableSnapshot:axis811AvailableSnapshot');
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.11 learning atlas] PASS · 5280 unique English units · 6 levels · four-turn dialogue · inherited 8.10 diagnostics preserved');
+console.log('[AXIS 8.11 learning atlas] PASS · 5280 unique English units · 6 levels · no 8.10.3 cross-scope dependency · inherited diagnostics preserved');
