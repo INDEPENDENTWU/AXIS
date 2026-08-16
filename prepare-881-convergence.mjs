@@ -39,10 +39,11 @@ function renderPlan(){`,'8.8.1 unitless group-plan parameters');
     'active item countdown presentation');
   src=once(src,
     "if(p.v86ItemReminder!==false&&a.estimateMs&&el>=a.estimateMs){const key=e.id+':'+a.startedAt;if(key!==lastItemKey){if(await unlockAudio())synth(p.v87Tone||'axis','item');lastItemKey=key}}",
-    "if(p.v86ItemReminder!==false&&a.estimateMs&&el>=a.estimateMs&&hold?.id!==e.id&&!a.itemReminderNotifiedAt){const key=e.id+':'+a.startedAt;if(key!==lastItemKey){if(await unlockAudio()){synth(p.v87Tone||'axis','item');const mm=readMeta(),aa=mm.events?.[e.id]?.activity;if(aa){aa.itemReminderNotifiedAt=now();writeMeta(mm)}}lastItemKey=key}}",
+    "if(p.v86ItemReminder!==false&&a.estimateMs&&el>=a.estimateMs&&hold?.id!==e.id&&!a.itemReminderNotifiedAt){const key=e.id+':'+a.startedAt;if(key!==lastItemKey){renderNow(true);if(await unlockAudio()){synth(p.v87Tone||'axis','item');const mm=readMeta(),aa=mm.events?.[e.id]?.activity;if(aa){aa.itemReminderNotifiedAt=now();writeMeta(mm)}}lastItemKey=key}}",
     'countdown completion tone contract');
   if(!src.includes("剩余 ${clock(remaining)}"))fail('countdown presentation missing');
   if(!src.includes("hold?.id!==e.id"))fail('long-press sound suppression missing');
+  if(!src.includes("key!==lastItemKey){renderNow(true);if(await unlockAudio()"))fail('zero-frame synchronization missing');
   syntax(src,FILE);write(FILE,src);
 }
 
@@ -81,4 +82,4 @@ function renderPlan(){`,'8.8.1 unitless group-plan parameters');
   write(FILE,css);
 }
 
-console.log('[AXIS 8.8.1] convergence passed · unitless plan controls · active countdown · centered AXIS brand · 4–48% opacity');
+console.log('[AXIS 8.8.1] convergence passed · unitless plan controls · active countdown · centered AXIS brand · 4–48% opacity · zero-before-tone');
