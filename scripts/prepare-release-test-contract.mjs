@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
 
 const contract=JSON.parse(fs.readFileSync('release-contract.json','utf8'));
 const version=String(contract.publicVersion||'').trim();
@@ -30,4 +31,9 @@ for(const file of files){
   if(stale.length)throw new Error(`${file} retains stale release assertion(s): ${stale.join(', ')}`);
 }
 
-console.log(`[AXIS test contract] browser assertions aligned to ${version} · no stale release assertions`);
+if(version==='8.8.2'){
+  if(!fs.existsSync('scripts/prepare-882-test-flow.mjs'))throw new Error('AXIS 8.8.2 test-flow convergence is missing');
+  execFileSync(process.execPath,['scripts/prepare-882-test-flow.mjs'],{stdio:'inherit'});
+}
+
+console.log(`[AXIS test contract] browser assertions aligned to ${version} · no stale release assertions · release flow aligned`);
