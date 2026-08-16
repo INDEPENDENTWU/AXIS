@@ -22,10 +22,17 @@ const current=patchFile('scripts/axis-882-smoke.mjs',[
     "await page.locator('#v87Paused button').first().click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});",
     "await page.locator('#v87Toggle').click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});",
     'canonical current-item resume action'
+  ],
+  [
+    "await upload();await page.locator('#equipmentRow').click();await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:800});await page.locator('#eqSheet [data-eq=\"lat\"]').click();assert.equal((await page.locator('#equipmentName').innerText()).trim(),'高位下拉');await page.locator('#saveScan').click();await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:2500});",
+    "await upload();await page.locator('#equipmentRow').click();await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:800});await page.locator('#eqSearch').fill('高位下拉');await page.waitForFunction(()=>{const x=[...document.querySelectorAll('#eqSheet [data-eq=\"lat\"]')].find(el=>{const c=getComputedStyle(el),r=el.getBoundingClientRect();return c.display!=='none'&&c.visibility!=='hidden'&&r.width>0&&r.height>0});return !!x},undefined,{timeout:1200});await page.locator('#eqSheet [data-eq=\"lat\"]:visible').click();assert.equal((await page.locator('#equipmentName').innerText()).trim(),'高位下拉');await page.locator('#saveScan').click();await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:2500});",
+    'manual equipment confirmation through visible search result'
   ]
 ]);
 if(current.includes("locator('#startBtn').click()"))throw new Error('[AXIS 8.8.2 test flow] hidden explicit-start click survived');
 if(current.includes("locator('#v87Paused button').first().click()"))throw new Error('[AXIS 8.8.2 test flow] current-item resume still targets secondary paused list');
+if(current.includes("locator('#eqSheet [data-eq=\"lat\"]').click()"))throw new Error('[AXIS 8.8.2 test flow] local-memory confirmation still clicks a hidden catalog node');
+if(!current.includes("locator('#eqSearch').fill('高位下拉')"))throw new Error('[AXIS 8.8.2 test flow] visible catalog search confirmation missing');
 if(!current.includes("window.__AXIS_QUICK_READY__===true"))throw new Error('[AXIS 8.8.2 test flow] Quick Record readiness invariant missing');
 
 const inherited=patchFile('scripts/axis-881-smoke.mjs',[[
@@ -35,4 +42,4 @@ const inherited=patchFile('scripts/axis-881-smoke.mjs',[[
 ]]);
 if(inherited.includes("locator('#v87Paused button').first().click()"))throw new Error('[AXIS 8.8.2 test flow] inherited current-item resume still targets secondary paused list');
 
-console.log('[AXIS 8.8.2 test flow] PASS · Quick Record is the user entry · first save auto-starts · current item resumes through v87Toggle');
+console.log('[AXIS 8.8.2 test flow] PASS · Quick Record user entry · first save auto-starts · v87Toggle resumes · local memory confirms through visible search result');
