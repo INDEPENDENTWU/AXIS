@@ -16,7 +16,7 @@ for(const [needle,label] of [
  ['id=\'v891SpeakPanel\'','micro-learning panel DOM missing'],
  ["patch:'8.9.1',stableShell:true",'stable detail shell marker missing']
 ])if(!runtime.includes(needle))fail(label);
-if(!css.includes('.v891SpeakPanel{display:block;position:fixed'))fail('micro-learning panel visual contract missing');
+if(!runtime.includes('.v891SpeakPanel{display:block;position:fixed'))fail('micro-learning panel visual contract missing');
 if(!css.includes('#detailSheet{display:flex!important;visibility:hidden!important;opacity:0!important'))fail('precomposed detail reveal contract missing');
 if(!css.includes('#detailSheet.axis891DetailSwap'))fail('in-place detail swap stability rule missing');
 if(/setInterval\s*\(\s*axis891|new\s+MutationObserver\s*\(\s*axis891|new\s+ResizeObserver\s*\(\s*axis891/.test(runtime))fail('8.9.1 accessory gained timer/observer ownership');
