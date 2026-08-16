@@ -46,6 +46,16 @@ function renderPlan(){`,'8.8.1 unitless group-plan parameters');
   syntax(src,FILE);write(FILE,src);
 }
 
+/* One opacity contract: v876 is the visible slider/persistence owner, v8710 is final presentation/media owner. */
+{
+  const FILE='v876-runtime.js';let src=read(FILE);
+  src=once(src,'opacity:Math.max(4,Math.min(32,Number(p.v876WmOpacity)||15))','opacity:Math.max(4,Math.min(48,Number(p.v876WmOpacity)||15))','brand opacity read range');
+  src=once(src,'m.prefs.v876WmOpacity=Math.max(4,Math.min(32,Number(v)||15))','m.prefs.v876WmOpacity=Math.max(4,Math.min(48,Number(v)||15))','brand opacity persistence range');
+  src=once(src,'id="v876OpacityRange" type="range" min="4" max="32" step="1"','id="v876OpacityRange" type="range" min="4" max="48" step="1"','brand opacity slider range');
+  if(/v876WmOpacity[^\n]{0,80}Math\.min\(32/.test(src)||src.includes('max="32" step="1" value="15"'))fail('legacy 32% brand-opacity ceiling survived');
+  syntax(src,FILE);write(FILE,src);
+}
+
 /* Final watermark: one centered AXIS wordmark in preview and saved media. Brand opacity controls only it. */
 {
   const FILE='v8710-watermark.js';let src=read(FILE);
@@ -71,4 +81,4 @@ function renderPlan(){`,'8.8.1 unitless group-plan parameters');
   write(FILE,css);
 }
 
-console.log('[AXIS 8.8.1] convergence passed · unitless plan controls · active countdown · centered AXIS brand');
+console.log('[AXIS 8.8.1] convergence passed · unitless plan controls · active countdown · centered AXIS brand · 4–48% opacity');
