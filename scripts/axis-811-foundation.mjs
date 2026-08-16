@@ -1,6 +1,14 @@
 import assert from 'node:assert/strict';
-import {getCloudAIConfig,publicCloudAIConfig,assertCloudAISecretsNeverPublic} from '../lib/cloud-ai-config.js';
-import {normalizeSyncEntity,compareSyncEntities,convergeSyncEntity,syncRequestId,validateSyncBatch,SYNC_CONTRACT} from '../lib/sync-contract.js';
+import fs from 'node:fs';
+
+const loadSourceModule=async relative=>{
+  const file=new URL(relative,import.meta.url),source=fs.readFileSync(file,'utf8');
+  return import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+};
+const cloud=await loadSourceModule('../lib/cloud-ai-config.js');
+const sync=await loadSourceModule('../lib/sync-contract.js');
+const {getCloudAIConfig,publicCloudAIConfig,assertCloudAISecretsNeverPublic}=cloud;
+const {normalizeSyncEntity,compareSyncEntities,convergeSyncEntity,syncRequestId,validateSyncBatch,SYNC_CONTRACT}=sync;
 
 console.log('[AXIS 8.11 foundation] safe public cloud/AI capability config');
 const off=publicCloudAIConfig(getCloudAIConfig({}));
