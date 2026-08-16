@@ -1,0 +1,33 @@
+name: AXIS Deployment Policy Gate
+
+on:
+  pull_request:
+    paths:
+      - 'vercel.json'
+      - 'scripts/verify-vercel-deployment-policy.mjs'
+      - '.github/workflows/axis-public-production-alias-gate.yml'
+      - '.github/workflows/axis-deployment-policy-gate.yml'
+      - 'docs/DEPLOYMENT_POLICY.md'
+  push:
+    branches:
+      - main
+    paths:
+      - 'vercel.json'
+      - 'scripts/verify-vercel-deployment-policy.mjs'
+      - '.github/workflows/axis-public-production-alias-gate.yml'
+      - '.github/workflows/axis-deployment-policy-gate.yml'
+      - 'docs/DEPLOYMENT_POLICY.md'
+
+jobs:
+  deployment-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Verify Vercel main-only deployment policy
+        run: node scripts/verify-vercel-deployment-policy.mjs
