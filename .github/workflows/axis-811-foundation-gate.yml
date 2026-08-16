@@ -1,0 +1,43 @@
+name: AXIS 8.11 Foundation Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/CLOUD_AI_811.md'
+      - 'lib/cloud-ai-config.js'
+      - 'lib/sync-contract.js'
+      - 'api/cloud-status.js'
+      - 'api/ai-capabilities.js'
+      - 'scripts/axis-811-foundation.mjs'
+      - '.github/workflows/axis-811-foundation-gate.yml'
+  workflow_dispatch:
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Syntax
+        run: |
+          node --input-type=module --check < lib/cloud-ai-config.js
+          node --input-type=module --check < lib/sync-contract.js
+          node --input-type=module --check < api/cloud-status.js
+          node --input-type=module --check < api/ai-capabilities.js
+          node --check scripts/axis-811-foundation.mjs
+      - name: Provider-neutral config + sync contract
+        run: node scripts/axis-811-foundation.mjs
+      - name: Verify local-first architecture guardrails
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const d=fs.readFileSync('docs/CLOUD_AI_811.md','utf8');
+          for(const n of ['axis_v60_state','axis_v8_meta','axis_v89_speak','CloudBase adapter','outbox','tombstones','AI is an accessory capability layer'])if(!d.includes(n))throw new Error('missing architecture guardrail: '+n);
+          const c=fs.readFileSync('lib/cloud-ai-config.js','utf8');
+          if(/OPENAI_API_KEY\s*[:=]/.test(c))throw new Error('client/server public config hard-coded a provider secret');
+          console.log('[AXIS 8.11 foundation] local-first ownership guardrails verified');
+          NODE
