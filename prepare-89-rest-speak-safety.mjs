@@ -52,9 +52,12 @@ src=regexOnce(src,/function renderRestLine\(rest,e,a\)\{[\s\S]*?\}\nfunction axi
 function axis89SpeakVoice`,'canonical rest first, accessory second');
 
 src=once(src,'renderRestLine(rest,e,a);','renderRestLine(rest,e,a,planDone);','pass canonical plan state into fail-open rest renderer');
+src=once(src,"if(e.target.closest('#settingsBtn'))setTimeout(()=>{injectAudio();injectRestSpeak()},90);","if(e.target.closest('#settingsBtn'))setTimeout(()=>{injectAudio();try{injectRestSpeak()}catch(err){console.warn('[AXIS Rest Speak] settings accessory skipped',err)}},90);",'settings accessory fail-open');
+src=once(src,'migrateAudio();injectAudio();injectRestSpeak();installEvents();','migrateAudio();injectAudio();try{injectRestSpeak()}catch(err){console.warn(\'[AXIS Rest Speak] boot accessory skipped\',err)}installEvents();','boot accessory fail-open');
 src=once(src,"window.__AXIS_REST_SPEAK__={version:'8.9',owner:'passive-rest-reader'","window.__AXIS_REST_SPEAK__={version:'8.9',owner:'passive-rest-reader',failOpen:true",'fail-open public diagnostic');
 
 if(/function renderRestLine[\s\S]{0,900}readMeta\(/.test(src))fail('Rest Speak renderer still reaches training metadata');
 if(!src.includes("el.textContent=rest?`休息 ${clock(rest)}`"))fail('canonical rest copy is not written before accessory enhancement');
+if(!src.includes("[AXIS Rest Speak] boot accessory skipped"))fail('accessory boot is not fail-open');
 syntax(src,FILE);write(FILE,src);
-console.log('[AXIS 8.9 speak safety] PASS · canonical active render first · accessory enhancement cannot abort training UI');
+console.log('[AXIS 8.9 speak safety] PASS · canonical active render first · boot/settings accessory cannot abort training UI');
