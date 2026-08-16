@@ -1,6 +1,7 @@
 import './prepare-811-dialogue-depth.mjs';
 import './prepare-811-multilingual-atlas.mjs';
 import './prepare-811-trends-motion.mjs';
+import './prepare-811-cloud-ai-settings.mjs';
 import fs from 'node:fs';
 
 const FILE='v87-runtime.js';
@@ -13,4 +14,4 @@ if(n!==1)fail(`deferred diagnostic owner expected once, found ${n}`);
 src=src.replace(from,to);
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.11 legacy compat] PASS · six-turn multilingual learning + State Field motion installed · inherited 8.10 diagnostics sealed');
+console.log('[AXIS 8.11 legacy compat] PASS · learning + State Field + cloud/AI settings installed · inherited 8.10 diagnostics sealed');
