@@ -23,6 +23,7 @@ console.log(`[AXIS 8.9 ${ENGINE}] release + passive owners`);
 assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.9');
 assert.equal(await page.evaluate(()=>window.__AXIS_LOCAL_VISION__?.version),2,'Local Vision v2 missing');
 assert.equal(await page.evaluate(()=>window.__AXIS_REST_SPEAK__?.owner),'passive-rest-reader','Rest Speak gained wrong owner');
+assert.equal(await page.evaluate(()=>window.__AXIS_REST_SPEAK__?.failOpen),true,'Rest Speak is not fail-open');
 assert.ok((await page.evaluate(()=>window.__AXIS_REST_SPEAK__?.phrases?.()))>=40,'Rest Speak phrase bank too small');
 assert.ok((await page.evaluate(()=>window.__AXIS_89_CATALOG__?.size||0))>80,'expanded canonical exercise catalog missing');
 
@@ -37,11 +38,7 @@ console.log(`[AXIS 8.9 ${ENGINE}] Rest Speak is off by default and geometry-neut
 await page.evaluate(()=>{
  const t=Date.now(),mk=(id,equipmentId,name,offset)=>({id,equipmentId,name,kind:'strength',time:t-offset,weight:20,reps:10,sets:1,muscles:['胸肌'],frameRefs:[]});
  const events=[
-  mk('E89R1','lat','高位下拉',420000),
-  mk('E89R2','row','坐姿划船',330000),
-  mk('E89R3','chest','胸推',240000),
-  mk('E89R4','legext','腿屈伸',150000),
-  mk('E89R5','shoulder','肩推',90000)
+  mk('E89R1','lat','高位下拉',420000),mk('E89R2','row','坐姿划船',330000),mk('E89R3','chest','胸推',240000),mk('E89R4','legext','腿屈伸',150000),mk('E89R5','shoulder','肩推',90000)
  ];
  const core={version:60,sessions:[],active:{id:'S89R',start:t-480000,events},selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{name:'',height:'',weight:'',bodyFat:'',years:'',freq:3,goal:'',memories:[],customEq:[]},prefs:{keepClip:true,scanSeconds:3,watermark:{name:true,data:true,time:true,brand:true,pos:'bl',photoMode:'wm',videoMode:'wm'}}};
  const act=(status,start,end=null,restStartedAt=null)=>({status,startedAt:start,lastResumedAt:start,pausedAt:status==='paused'?(end||t-60000):null,finishedAt:status==='finished'?(end||t-60000):null,estimateMs:180000,completedSets:status==='finished'?1:(restStartedAt?1:0),intervals:[{start,end:status==='active'?null:(end||t-60000)}],restStartedAt});
@@ -66,7 +63,7 @@ await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.cont
 const h1=await page.locator('#v87Now').evaluate(el=>el.getBoundingClientRect().height);
 assert.ok(Math.abs(h1-h0)<=1.5,`Rest Speak changed active-card geometry ${h0} -> ${h1}`);
 const restLines=await page.locator('#v87Now #v87Rest').evaluate(el=>({target:el.querySelector('span')?.textContent||'',meaning:el.querySelector('small')?.textContent||''}));
-assert.match(restLines.target,/休息.*(Could|Is |I'm|Go |No |That |Can |Where |Sounds)/i);
+assert.match(restLines.target,/^\d{2}:\d{2} · (Could|Is |I'm|Go |No |That |Can |Where |Sounds)/i);
 assert.ok(restLines.meaning.length>1,'Rest Speak meaning missing');
 assert.equal(await page.locator('#v87Now .v89Speak').count(),1,'Rest Speak escaped the existing rest slot');
 assert.equal(await page.locator('.axis883TimelineSafe').count(),0,'8.9 reintroduced dynamic timeline safe zone');
