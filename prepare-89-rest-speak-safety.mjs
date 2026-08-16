@@ -46,7 +46,7 @@ src=regexOnce(src,/function renderRestLine\(rest,e,a\)\{[\s\S]*?\}\nfunction axi
   const p=axis89SpeakPrefs();if(!p?.on)return;
   const x=axis89PickPhrase(e.id+':'+String(a.restStartedAt));if(!x)return;
   el.classList.add('v89Speak');el.dataset.lang=x.lang;el.dataset.speak=x.target;
-  el.innerHTML='<span>'+clock(rest)+' · '+esc(x.target)+'</span><small>'+esc(axis89SpeakMeaning(x,p))+'</small>'
+  el.innerHTML='<span>休息 '+clock(rest)+' · '+esc(x.target)+'</span><small>'+esc(axis89SpeakMeaning(x,p))+'</small>'
  }catch{}
 }
 function axis89SpeakVoice`,'canonical rest first, accessory second');
@@ -58,6 +58,7 @@ src=once(src,"window.__AXIS_REST_SPEAK__={version:'8.9',owner:'passive-rest-read
 
 if(/function renderRestLine[\s\S]{0,900}readMeta\(/.test(src))fail('Rest Speak renderer still reaches training metadata');
 if(!src.includes("el.textContent=rest?`休息 ${clock(rest)}`"))fail('canonical rest copy is not written before accessory enhancement');
+if(!src.includes("el.innerHTML='<span>休息 '+clock(rest)+' · '"))fail('enhanced rest line lost canonical rest context');
 if(!src.includes("[AXIS Rest Speak] boot accessory skipped"))fail('accessory boot is not fail-open');
 syntax(src,FILE);write(FILE,src);
-console.log('[AXIS 8.9 speak safety] PASS · canonical active render first · boot/settings accessory cannot abort training UI');
+console.log('[AXIS 8.9 speak safety] PASS · canonical rest context preserved · boot/settings accessory cannot abort training UI');
