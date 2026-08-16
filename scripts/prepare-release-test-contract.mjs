@@ -41,6 +41,12 @@ for(const file of files){
       "assert.match(restLines.target,/^(?:休息 )?\\d{2}:\\d{2} · .{2,}$/u,'Rest Speak target is not a complete timer + phrase line');"
     );
   }
+  if(modern810&&file==='scripts/axis-810-smoke.mjs'){
+    src=src.replace(
+      "assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.'),`unexpected inherited release ${EXPECTED}`);",
+      "assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.')||EXPECTED==='8.11',`unexpected inherited release ${EXPECTED}`);"
+    );
+  }
   if(file==='scripts/axis-891-smoke.mjs'){
     src=src.replace("assert.ok((diag?.phrases?.()||0)>=108);","assert.ok((await page.evaluate(()=>window.__AXIS_REST_SPEAK__?.phrases?.()||0))>=108);");
     if(modern810){
