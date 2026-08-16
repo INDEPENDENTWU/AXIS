@@ -1,0 +1,99 @@
+name: AXIS Public Production Alias Gate
+
+on:
+  deployment_status:
+
+concurrency:
+  group: axis-public-production-${{ github.event.deployment.id }}
+  cancel-in-progress: true
+
+jobs:
+  verify-fixed-production-alias:
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment == 'Production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      AXIS_PUBLIC_URL: https://axis-five-puce.vercel.app
+      AXIS_EXPECTED_SHA: ${{ github.event.deployment.sha }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - name: Checkout exact deployed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha }}
+      - name: Load release contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE' >> "$GITHUB_ENV"
+          const fs=require('fs');
+          const c=JSON.parse(fs.readFileSync('release-contract.json','utf8'));
+          console.log(`AXIS_EXPECTED_VERSION=${c.publicVersion}`);
+          console.log(`AXIS_EXPECTED_ARCH=${c.architecture}`);
+          NODE
+      - name: Wait for fixed public alias to serve exact release
+        shell: bash
+        run: |
+          set -euo pipefail
+          axis_curl(){
+            local out="$1"
+            local args=(-LfsS --connect-timeout 5 --max-time 15 -o "$out")
+            if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              args+=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}")
+            fi
+            curl "${args[@]}" "$AXIS_PUBLIC_URL/axis-build.json"
+          }
+          for attempt in $(seq 1 20); do
+            if axis_curl /tmp/axis-public-build.json 2>/dev/null; then
+              if EXPECTED="$AXIS_EXPECTED_SHA" VERSION="$AXIS_EXPECTED_VERSION" ARCH="$AXIS_EXPECTED_ARCH" node <<'NODE'
+          const fs=require('fs');
+          const x=JSON.parse(fs.readFileSync('/tmp/axis-public-build.json','utf8'));
+          const requiredGates=[
+            'canonicalSingleRuntime',
+            'noDynamicRuntimeChunks',
+            'noVersionFallback',
+            'historicalReleaseWriterRetired',
+            'singleActiveAdjustmentOwner',
+            'legacyV8710ActiveAdjustRetired',
+            'catalogCategorySingleOwner',
+            'capturePreferenceSingleOwner',
+            'canonicalReplacementPreservesDoubleDollar',
+            'sourceCommitStamped'
+          ];
+          const ok=x.sourceCommit===process.env.EXPECTED &&
+            x.version===process.env.VERSION &&
+            x.baseVersion===process.env.VERSION &&
+            x.architecture===process.env.ARCH &&
+            x.architecture==='canonical-single-runtime' &&
+            x.requests?.initialJavascript===1 &&
+            x.requests?.dynamicJavascript===0 &&
+            Array.isArray(x.assets?.chunks) && x.assets.chunks.length===0 &&
+            x.canonical?.retiredCatalogWriters===1 &&
+            requiredGates.every(k=>x.gates?.[k]===true);
+          if(!ok){
+            console.error(JSON.stringify({
+              sourceCommit:x.sourceCommit,
+              version:x.version,
+              baseVersion:x.baseVersion,
+              architecture:x.architecture,
+              requests:x.requests,
+              retiredCatalogWriters:x.canonical?.retiredCatalogWriters,
+              gates:Object.fromEntries(requiredGates.map(k=>[k,x.gates?.[k]]))
+            },null,2));
+            process.exit(1);
+          }
+          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · canonical catalog/runtime verified`);
+          NODE
+              then
+                exit 0
+              fi
+            fi
+            echo "Attempt $attempt: fixed alias has not converged to $AXIS_EXPECTED_SHA yet"
+            sleep 3
+          done
+          echo "::error title=AXIS fixed Production stale::${AXIS_PUBLIC_URL} did not serve exact deployed commit ${AXIS_EXPECTED_SHA}."
+          exit 1
