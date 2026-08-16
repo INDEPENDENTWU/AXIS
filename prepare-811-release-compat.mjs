@@ -17,6 +17,11 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 {
+ const f='postbuild-882-contract.mjs';let s=read(f);
+ s=once(s,"const sessionDurationExtension=CURRENT_VERSION==='8.10.3';","const sessionDurationExtension=['8.10.3','8.11'].includes(CURRENT_VERSION);",'8.8.2 inherited session-duration extension allowance');
+ write(f,s);
+}
+{
  const f='postbuild-810-contract.mjs';let s=read(f);
  s=once(s,"if(!['8.10','8.10.1','8.10.2','8.10.3'].includes(version))","if(!['8.10','8.10.1','8.10.2','8.10.3','8.11'].includes(version))",'8.10 inherited version allowance');
  write(f,s);
@@ -48,4 +53,4 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  s=once(s,"assert.equal(EXPECTED,'8.10.3');","assert.ok(['8.10.3','8.11'].includes(EXPECTED),`unexpected inherited 8.10.3 release ${EXPECTED}`);",'8.10.3 inherited browser version allowance');
  write(f,s);
 }
-console.log('[AXIS 8.11 release compat] PASS · 8.11 identity · 8.10.x capabilities remain inherited, not rewritten');
+console.log('[AXIS 8.11 release compat] PASS · 8.11 identity · 8.10.x capabilities including total-duration sound remain inherited');
