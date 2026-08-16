@@ -7,6 +7,17 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
 const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:re.flags+'g',n=(src.match(new RegExp(re.source,flags))||[]).length;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(re,()=>to)};
 const syntax=(src,label)=>{const f=`.axis-882-owner-${label}.js`;fs.writeFileSync(f,src);try{new Function(src)}catch(e){fail(`${label} syntax ${e.message}`)}finally{try{fs.unlinkSync(f)}catch{}}};
 
+/* First-paint may own the Quick Record button node; v61 always owns interactive mounting. */
+{
+  const FILE='v61.js';let src=read(FILE);
+  src=regexOnce(src,/function injectQuick\(\)\{[\s\S]*?\}\nfunction recentDistinct/,
+`function injectQuick(){let b=$('#quickRecordBtn');const d=$('#dock');if(!d)return;d.classList.add('v8-dual');if(!b){d.insertAdjacentHTML('beforeend','<button id="quickRecordBtn" class="v8QuickBtn"><span>＋</span><b>快速记录</b></button>');b=$('#quickRecordBtn')}if(!$('#quickRecordSheet'))D.body.insertAdjacentHTML('beforeend','<div class="sheetWrap" id="quickRecordSheet"><div class="sheet v8QuickSheet"><div class="grabber"></div><div class="sheetHead"><b>快速记录</b><button class="closeBtn" id="quickClose">×</button></div><div class="v8Block"><span>最近</span><div id="v8Recent"></div></div><div class="v8Block v882QuickMine hidden" id="v882QuickMine"><span>我的</span><div id="v882QuickCustom"></div></div><button class="v8Other" id="v8Other">其他器械 / 运动 <i>›</i></button><button class="v8New" id="v8New">＋ 新建自定义</button></div></div>');else if(!$('#v882QuickMine')){const recent=$('#v8Recent')?.closest('.v8Block');recent?.insertAdjacentHTML('afterend','<div class="v8Block v882QuickMine hidden" id="v882QuickMine"><span>我的</span><div id="v882QuickCustom"></div></div>')}b.onclick=openQuick;const close=$('#quickClose');if(close)close.onclick=()=>{$('#quickRecordSheet')?.classList.remove('show');syncDock()};const recent=$('#v8Recent');if(recent)recent.onclick=e=>{const q=e.target.closest('[data-qid]');if(q)chooseQuick(q.dataset.qid)};const mine=$('#v882QuickCustom');if(mine)mine.onclick=e=>{const q=e.target.closest('[data-qid]');if(q)chooseQuick(q.dataset.qid)};const other=$('#v8Other');if(other)other.onclick=()=>{quickOther=true;$('#quickRecordSheet')?.classList.remove('show');$('#equipmentRow')?.click()};const add=$('#v8New');if(add)add.onclick=()=>{$('#quickRecordSheet')?.classList.remove('show');$('#addCustomEq')?.click()}}
+function recentDistinct`,'v61 idempotent Quick Record interactive mount');
+  if(src.includes("function injectQuick(){if($('#quickRecordBtn'))return"))fail('Quick Record still treats first-paint button existence as interactive readiness');
+  if(!src.includes("b.onclick=openQuick")||!src.includes("id=\"v882QuickMine\""))fail('v61 Quick Record owner did not mount handler/custom section');
+  syntax(src,'v61');write(FILE,src);
+}
+
 /* v83 is a historical rest-sound owner. Keep its old settings compatibility but retire automatic checks. */
 {
   const FILE='v83-reminders.js';let src=read(FILE);
@@ -81,4 +92,4 @@ function setPref(`,'retire v876 automatic reminder function');
   syntax(src,'v8710-sound');write(FILE,src);
 }
 
-console.log('[AXIS 8.8.2 owners] PASS · v83/v84/v85/v86/v87/v876 automatic sound retired · v8710 sole automatic sound · countdown zero only');
+console.log('[AXIS 8.8.2 owners] PASS · v61 Quick Record idempotent mount · v83/v84/v85/v86/v87/v876 automatic sound retired · v8710 sole automatic sound · countdown zero only');
