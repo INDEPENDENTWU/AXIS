@@ -41,10 +41,17 @@ function dbPut(k,b){const s=window.__AXIS_MEDIA_STORE__;return s?.put?s.put(k,b)
   write(FILE,src);
 }
 
-for(const file of ['app.js','v877-runtime.js','v8710-watermark.js']){
-  const src=read(file);
-  if(file!=='app.js'&&/indexedDB\.open\(DB,1\)/.test(src))fail(`${file} retained parallel axis media DB owner`);
+const directOwners=[];
+for(const ent of fs.readdirSync('.',{withFileTypes:true})){
+  if(!ent.isFile()||!ent.name.endsWith('.js'))continue;
+  const src=read(ent.name),hits=(src.match(/indexedDB\.open\(DB,1\)/g)||[]).length;
+  if(hits)directOwners.push({file:ent.name,hits,declaresMediaDb:/axis_v42_media/.test(src)});
 }
+console.log('[AXIS 8.8.2 media direct DB owners]',JSON.stringify(directOwners));
+const foreign=directOwners.filter(x=>x.file!=='app.js');
+if(foreign.length)fail(`parallel direct media DB owner(s) remain · ${foreign.map(x=>`${x.file}:${x.hits}`).join(', ')}`);
+if(directOwners.length!==1||directOwners[0].hits!==1)fail(`canonical app media DB open count unexpected · ${JSON.stringify(directOwners)}`);
+
 const app=read('app.js');
 if(!app.includes("AXIS_MEDIA_FORMAT='axis-media-arraybuffer-v1'"))fail('arraybuffer media format missing');
 if(!app.includes('window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia'))fail('canonical media store bridge missing');
