@@ -22,6 +22,12 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 {
+ const f='postbuild-891-contract.mjs';let s=read(f);
+ s=once(s,"if(!(version==='8.9.1'||version.startsWith('8.10')))fail(`unexpected public version ${version}`);","if(!(version==='8.9.1'||version.startsWith('8.10')||version==='8.11'))fail(`unexpected public version ${version}`);",'8.9.1 inherited version allowance');
+ s=once(s,"const modern=version.startsWith('8.10'),patch=modern?'8.10':'8.9.1',rich=modern?'richEnglish:456':'richEnglish:72';","const modern=version.startsWith('8.10')||version==='8.11',patch=modern?'8.10':'8.9.1',rich=modern?'richEnglish:456':'richEnglish:72';",'8.9.1 modern curriculum inheritance');
+ write(f,s);
+}
+{
  const f='postbuild-810-contract.mjs';let s=read(f);
  s=once(s,"if(!['8.10','8.10.1','8.10.2','8.10.3'].includes(version))","if(!['8.10','8.10.1','8.10.2','8.10.3','8.11'].includes(version))",'8.10 inherited version allowance');
  write(f,s);
@@ -53,4 +59,4 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  s=once(s,"assert.equal(EXPECTED,'8.10.3');","assert.ok(['8.10.3','8.11'].includes(EXPECTED),`unexpected inherited 8.10.3 release ${EXPECTED}`);",'8.10.3 inherited browser version allowance');
  write(f,s);
 }
-console.log('[AXIS 8.11 release compat] PASS · 8.11 identity · 8.10.x capabilities including total-duration sound remain inherited');
+console.log('[AXIS 8.11 release compat] PASS · 8.11 identity · inherited sound, 8.9.1 learning and 8.10.x capabilities remain sealed');
