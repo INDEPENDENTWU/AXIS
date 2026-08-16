@@ -40,6 +40,7 @@ const STEPS=[
   'postbuild-features-hardened.mjs',
   'postbuild-8712-completion.mjs',
   'postbuild-88-canonical.mjs',
+  'postbuild-891-event-target-safety.mjs',
   'postbuild-881-inherited-contract.mjs',
   'postbuild-882-contract.mjs',
   'postbuild-89-contract.mjs',
