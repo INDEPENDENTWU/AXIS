@@ -24,10 +24,4 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
   write(f,s);
 }
 
-for(const f of ['scripts/axis-smoke.mjs','scripts/axis-88-smoke.mjs','scripts/axis-first-paint-smoke.mjs','scripts/axis-webkit-smoke.mjs','scripts/axis-completion-smoke.mjs']){
-  let s=read(f);
-  s=s.replaceAll('版本 8.8',`版本 ${VERSION}`).replaceAll("'8.8'",`'${VERSION}'`).replaceAll('canonical-8.8',`canonical-${VERSION}`);
-  write(f,s);
-}
-
-console.log(`[AXIS 8.8.2] release identity converged · ${VERSION}`);
+console.log(`[AXIS 8.8.2] release identity converged · ${VERSION} · browser assertions remain independently release-aware`);
