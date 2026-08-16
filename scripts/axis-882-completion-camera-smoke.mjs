@@ -50,12 +50,22 @@ await page.locator('#quickRecordBtn').click();
 await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show')&&document.querySelector('#v882QuickCustom [data-qid="quick-camera-test"]'),undefined,{timeout:1600});
 await page.locator('#v882QuickCustom [data-qid="quick-camera-test"]').click();
 await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#v882QuickMedia [data-v882-media="photo"]'),undefined,{timeout:1800});
+assert.ok(await page.locator('#reviewStage').isVisible(),'Quick Record editor did not open');
 await page.locator('#v882QuickMedia [data-v882-media="photo"]').click();
-await page.waitForFunction(()=>document.querySelector('#cameraOverlay')?.classList.contains('show'),undefined,{timeout:1600});
-assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE__?.owner),'v882-camera-owner');
-await page.evaluate(()=>window.__AXIS_CAPTURE__?.close?.());
-await page.waitForFunction(()=>!document.querySelector('#cameraOverlay')?.classList.contains('show'),undefined,{timeout:1200});
+await page.waitForFunction(()=>{const s=document.querySelector('#scanSheet'),c=document.querySelector('#captureStage');return s?.classList.contains('show')&&!s.classList.contains('v8-quick')&&s.classList.contains('v882-quick-media')&&c&&!c.classList.contains('hidden')},undefined,{timeout:1800});
+assert.ok(await page.locator('#captureStage').isVisible(),'补拍照片 is still hidden by the Quick Record editor CSS');
+assert.equal(await page.locator('#reviewStage').isVisible(),false,'Quick Record review remained over the camera');
+assert.equal((await page.locator('#scanSheet .sheetHead>b').innerText()).trim(),'拍摄记录');
+assert.equal((await page.locator('#captureNow').innerText()).trim(),'拍照');
+assert.ok(await page.locator('#captureModes [data-mode="photo"].active').count(),'photo mode is not selected');
+assert.deepEqual(await page.evaluate(()=>window.__AXIS_CAPTURE__?.snapshot?.()),{mode:'photo',selectedEq:'quick-camera-test',owner:'canonical',intent:'quick-media'});
 
-assert.deepEqual([],[]);
+await page.locator('#scanSheet [data-close="scanSheet"]').click();await page.waitForTimeout(80);
+await page.locator('#scanBtn').click();
+await page.waitForFunction(()=>document.querySelector('#scanSheet')?.dataset.captureIntent==='record',undefined,{timeout:1600});
+const normal=await page.evaluate(()=>window.__AXIS_CAPTURE__?.snapshot?.());
+assert.equal(normal?.owner,'canonical');assert.equal(normal?.intent,'record');
+assert.ok(await page.locator('#captureStage').isVisible(),'normal camera surface changed while sharing the owner');
+
+console.log(`[AXIS completion + camera ${ENGINE}] PASS · concise completed Home · honest interval · no duplicate continue · canonical Quick Record camera`);
 await context.close();await browser.close();
-console.log(`[AXIS completed Home ${ENGINE}] PASS · concise completion + honest interval + canonical Quick camera`);
