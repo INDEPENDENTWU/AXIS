@@ -12,6 +12,12 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 {
+ const f='postbuild-891-contract.mjs';let s=read(f);
+ s=once(s,"[\"patch:'${patch}',owner:'passive-rest-reader'\",'Rest Speak patch marker missing'],","[\"patch:'${patch}',owner:'passive-rest-reader'\",'Rest Speak patch marker missing'],",'preserve rest-speak inherited marker');
+ s=once(s,"[\"patch:'8.9.1',stableShell:true\",'stable detail shell marker missing']","[\"patch:'8.10.2',stableShell:true\",'stable detail shell marker missing']",'refined detail shell marker');
+ write(f,s);
+}
+{
  const f='postbuild-810-contract.mjs';let s=read(f);
  s=once(s,"if(!['8.10','8.10.1'].includes(version))","if(!['8.10','8.10.1','8.10.2'].includes(version))",'8.10 inherited version allowance');
  write(f,s);
@@ -24,4 +30,4 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 
-console.log('[AXIS 8.10.2 release compat] PASS · 8.10 + 8.10.1 contracts inherited without weakening gates');
+console.log('[AXIS 8.10.2 release compat] PASS · inherited contracts preserved across refined detail + learning surfaces');
