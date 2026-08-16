@@ -50,7 +50,8 @@ await page.locator('#v87Paused button').first().click();
 await page.waitForFunction(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.status==='active',nextResume,{timeout:1400});
 
 await page.waitForFunction(()=>document.querySelector('#axis884ArchiveToggle')&&document.querySelector('#v876Timeline'),undefined,{timeout:1800});
-assert.match((await page.locator('#axis884ArchiveToggle').innerText()).replace(/\s+/g,' '),/已完成 2 项.*展开/);
+assert.equal(await page.locator('#axis884ArchiveToggle').evaluate(el=>el.parentElement?.classList.contains('sectionHead')),true,'completed archive control is not in the sticky timeline header');
+assert.match((await page.locator('#axis884ArchiveToggle').innerText()).replace(/\s+/g,' '),/5 · 已完成 2.*展开/);
 for(const id of ['E1','E5'])assert.equal(await page.locator(`#eventList [data-event="${id}"]`).evaluate(el=>el.classList.contains('axis884Archived')),true,`${id} was not archived`);
 await page.locator('#axis884ArchiveToggle').click();
 for(const id of ['E1','E5'])assert.equal(await page.locator(`#eventList [data-event="${id}"]`).evaluate(el=>el.classList.contains('axis884Archived')),false,`${id} did not expand`);
