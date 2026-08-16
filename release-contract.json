@@ -1,6 +1,6 @@
 {
-  "publicVersion": "8.8",
-  "stableBaseVersion": "8.8",
+  "publicVersion": "8.8.1",
+  "stableBaseVersion": "8.8.1",
   "architecture": "canonical-single-runtime",
   "featureKernel": "v8712-runtime.js",
   "completionKernel": "v8712-completion.js",
