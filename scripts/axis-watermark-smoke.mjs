@@ -7,15 +7,16 @@ const launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
 const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
 const context=await browser.newContext({viewport:{width:390,height:844},locale:'zh-CN',permissions:['geolocation'],geolocation:{latitude:22.52325,longitude:113.38381,accuracy:12}});
 const page=await context.newPage();
-const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(obj)});
-for(const [pattern,obj] of [
-  ['**/api/ai-status**',{ok:true,enabled:false}],
-  ['**/api/owner-config**',{ok:true}],
-  ['**/api/analyze**',{ok:false,disabled:true}],
-  ['**/api/insight**',{ok:false,disabled:true}],
-  ['**/nominatim.openstreetmap.org/reverse**',{name:'香洲健身中心',address:{road:'金玉路',house_number:'18号',neighbourhood:'莲新社区',city_district:'香洲区',city:'珠海市'}}],
-  ['**/api.bigdatacloud.net/data/reverse-geocode-client**',{locality:'金玉路',city:'珠海市',principalSubdivision:'广东省',localityInfo:{informative:[],administrative:[]}}]
-])await page.route(pattern,r=>json(r,obj));
+const counts={osm:0,bdc:0};
+const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(obj)});
+for(const [pattern,obj,key] of [
+  ['**/api/ai-status**',{ok:true,enabled:false},null],
+  ['**/api/owner-config**',{ok:true},null],
+  ['**/api/analyze**',{ok:false,disabled:true},null],
+  ['**/api/insight**',{ok:false,disabled:true},null],
+  ['**/nominatim.openstreetmap.org/reverse**',{name:'香洲健身中心',namedetails:{'name:zh':'香洲健身中心'},address:{road:'金玉路',house_number:'18号',neighbourhood:'莲新社区',city_district:'香洲区',city:'珠海市'}},'osm'],
+  ['**/api.bigdatacloud.net/data/reverse-geocode-client**',{locality:'金玉路',city:'珠海市',principalSubdivision:'广东省',localityInfo:{informative:[],administrative:[]}},'bdc']
+])await page.route(pattern,r=>{if(key)counts[key]++;return json(r,obj)});
 const errors=[];page.on('pageerror',e=>errors.push(String(e?.stack||e)));
 
 const ready=async()=>{
@@ -37,6 +38,7 @@ const setSwitch=async(id,on)=>{
   assert.equal((await b.getAttribute('aria-checked'))==='true',on,`${id} visible state mismatch`);
 };
 const visible=async sel=>page.locator(sel).evaluate(el=>getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden'&&!!(el.offsetWidth||el.offsetHeight||el.getClientRects().length));
+const diag=()=>page.evaluate(()=>{let m={};try{m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}')}catch{}return{lastGeo:m.prefs?.v85LastGeo,resolve:m.prefs?.v8712PlaceResolve,place:m.prefs?.v8710PlaceName,auto:m.prefs?.v876LocationNameAuto,cache:m.prefs?.v8711PlaceCache,visibleName:document.querySelector('#v876LocationName')?.textContent,preview:document.querySelector('#v8710WmLoc')?.textContent,locationSwitch:document.querySelector('#v85WmLocation')?.getAttribute('aria-checked')}});
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
 await page.evaluate(()=>localStorage.clear());
@@ -52,13 +54,18 @@ await openWatermark();
 for(const id of ['#v85WmName','#v85WmData','#v85WmLocation','#v85WmTime'])assert.ok(await page.locator(id).isVisible(),`missing canonical watermark switch ${id}`);
 await setSwitch('#v85WmName',true);
 await setSwitch('#v85WmData',true);
+await setSwitch('#v85WmLocation',true);
 await setSwitch('#v85WmTime',true);
 
 console.log(`[AXIS watermark ${ENGINE}] precise location`);
 await page.locator('#v876Locate').click();
-await page.waitForFunction(()=>document.querySelector('#v876LocationName')?.textContent.includes('香洲健身中心'),undefined,{timeout:4500});
+try{
+  await page.waitForFunction(()=>document.querySelector('#v876LocationName')?.textContent.includes('香洲健身中心'),undefined,{timeout:4500});
+}catch(e){console.log('[AXIS watermark locate diagnostic]',JSON.stringify({counts,...await diag()},null,2));throw e}
 await page.waitForFunction(()=>document.querySelector('#v8710WmLoc')?.textContent.includes('香洲健身中心'),undefined,{timeout:1200});
-assert.ok((await page.locator('#v876LocationName').innerText()).includes('金玉路 18号'),'precise road / house number missing');
+assert.ok(counts.osm>=1,'precise OSM resolver was not requested');
+assert.equal(counts.bdc,0,'fallback geocoder should not run when OSM resolves precisely');
+assert.ok((await page.locator('#v876LocationName').innerText()).includes('金玉路18号'),'precise road / house number missing');
 assert.ok((await page.locator('#v876LocationName').innerText()).includes('莲新社区'),'precise neighbourhood missing');
 const visibleText=await page.locator('#watermarkSheet').innerText();
 assert.ok(!/22\.523|113\.383|纬度|经度|LAT\s|LON\s|±\d+m/.test(visibleText),`raw coordinates leaked into visible watermark UI: ${visibleText}`);
@@ -89,7 +96,7 @@ for(const [id,preview,key] of [
 
 const meta=await store();
 assert.ok(String(meta.prefs?.v8710PlaceName||'').includes('香洲健身中心'),'precise canonical place not persisted');
-assert.ok(String(meta.prefs?.v8711PlaceCache?.zh||'').includes('金玉路 18号'),'language place cache not persisted');
+assert.ok(String(meta.prefs?.v8711PlaceCache?.zh||'').includes('金玉路18号'),'language place cache not persisted');
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
 console.log(`[AXIS watermark ${ENGINE}] PASS · four switches sync preview/persistence · precise OSM place · no raw coordinates`);
 await context.close();await browser.close();
