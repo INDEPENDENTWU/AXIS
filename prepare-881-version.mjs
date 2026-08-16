@@ -20,16 +20,13 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
   const f='postbuild-88-canonical.mjs';let s=read(f);
   s=once(s,"const VERSION='8.8';",`const VERSION='${VERSION}';`,'canonical public version');
   s=once(s,"document.documentElement.dataset.axisCanonical='8.8';","document.documentElement.dataset.axisCanonical='${VERSION}';",'canonical dataset version');
-  s=once(s,'<html lang="zh-CN">','<html lang="zh-CN">','canonical html anchor');
   s=s.replace('canonical-8.8">',`canonical-${VERSION}">`);
   write(f,s);
 }
 
-// Existing regression suites remain the same behavior contracts; only their exact
-// public-version assertions advance with the release.
-for(const f of ['scripts/axis-smoke.mjs','scripts/axis-88-smoke.mjs']){
+for(const f of ['scripts/axis-smoke.mjs','scripts/axis-88-smoke.mjs','scripts/axis-first-paint-smoke.mjs','scripts/axis-webkit-smoke.mjs']){
   let s=read(f);
-  s=s.replaceAll("'版本 8.8'",`'版本 ${VERSION}'`).replaceAll("'8.8'",`'${VERSION}'`).replaceAll('canonical-8.8',`canonical-${VERSION}`);
+  s=s.replaceAll('版本 8.8',`版本 ${VERSION}`).replaceAll("'8.8'",`'${VERSION}'`).replaceAll('canonical-8.8',`canonical-${VERSION}`);
   write(f,s);
 }
 
