@@ -16,6 +16,7 @@ const STEPS=[
   'prepare-882-local-vision.mjs',
   'prepare-882-final-owners.mjs',
   'prepare-882-lifecycle.mjs',
+  'prepare-882-media-store.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
@@ -51,7 +52,7 @@ if(contract.architecture==='canonical-single-runtime'){
   if(manifest.gates?.watermarkSingleLocateOwner!==true)fail('watermark single-locate-owner gate missing');
   if(manifest.gates?.watermarkPreferenceSingleWriter!==true)fail('watermark preference single-writer gate missing');
   for(const gate of ['groupPlanUnitlessControls','groupPlanExpandedPresets','activeItemCountdown','activeItemCountdownTone','activeItemLongPressSuppressesTone','watermarkCenterBrand','watermarkBrandOpacitySingleTarget'])if(manifest.gates?.[gate]!==true)fail(`8.8.1 gate missing · ${gate}`);
-  for(const gate of ['homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog'])if(manifest.gates?.[gate]!==true)fail(`8.8.2 gate missing · ${gate}`);
+  for(const gate of ['homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog','mediaStoreWebKitSafe'])if(manifest.gates?.[gate]!==true)fail(`8.8.2 gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
