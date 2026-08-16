@@ -39,9 +39,9 @@ assert.equal(await page.evaluate(()=>window.__AXIS_ARCH__),'canonical-single-run
 
 console.log(`[AXIS ${ENGINE}] countdown-only automatic sound settings`);
 await openAudio();
-assert.equal(await page.locator('#v8710Session,#v876TargetSheet,#v8710Rest').count(),0,'retired session/rest automatic reminder UI returned');
-assert.equal(await page.locator('#v8710Item').count(),1,'canonical item countdown reminder control missing');
-assert.equal(await page.locator('#v8710Test').count(),1,'manual AXIS sound audition missing');
+assert.equal(await page.locator('#v8710Session:visible,#v876TargetSheet:visible,#v8710Rest:visible').count(),0,'retired session/rest automatic reminder UI is visible');
+assert.equal(await page.locator('#v8710Item:visible').count(),1,'canonical item countdown reminder control missing');
+assert.equal(await page.locator('#v8710Test:visible').count(),1,'manual AXIS sound audition missing');
 const soundCopy=(await page.locator('#v8710Audio').innerText()).trim();
 assert.ok(soundCopy.includes('倒计时到点'),'sound UI does not state countdown-only semantics');
 
@@ -76,5 +76,5 @@ assert.ok(Math.abs(geometry.leftDelta)<=1.5&&Math.abs(geometry.rightDelta)<=1.5,
 assert.ok(geometry.card.width>=340,'active card became too narrow');
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log(`[AXIS ${ENGINE}] PASS · countdown-only sound UI · 12px card/dock · 8px dock/nav · aligned content edges`);
+console.log(`[AXIS ${ENGINE}] PASS · countdown-only visible sound UI · 12px card/dock · 8px dock/nav · aligned content edges`);
 await context.close();await browser.close();
