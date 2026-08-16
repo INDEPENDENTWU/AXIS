@@ -10,7 +10,9 @@ const assert=(x,m)=>{if(!x)throw new Error(`[AXIS 8.11 browser] ${m}`)};
 try{
  await page.goto(url,{waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_STABLE_COMPLETE__===true||document.documentElement.dataset.axisReady==='1',{timeout:12000});
- await page.waitForFunction(()=>window.__AXIS_811_LEARNING__&&window.__AXIS_811_MULTILINGUAL__&&window.__AXIS_811_TRENDS__&&window.__AXIS_811_SERVICE_SETTINGS__,{timeout:8000});
+ await page.waitForTimeout(700);
+ const boot=await page.evaluate(()=>({learning:!!window.__AXIS_811_LEARNING__,multi:!!window.__AXIS_811_MULTILINGUAL__,trends:!!window.__AXIS_811_TRENDS__,services:!!window.__AXIS_811_SERVICE_SETTINGS__,rest:!!window.__AXIS_REST_SPEAK__,voice:!!window.__AXIS_8103_VOICE__,stable:window.__AXIS_STABLE_COMPLETE__,degraded:window.__AXIS_STABLE_DEGRADED__,diag:window.__AXIS_ENHANCE_DIAG__?.errors||[],stateField:!!document.querySelector('#v811StateField')}));
+ assert(boot.learning&&boot.multi&&boot.trends&&boot.services,'candidate runtime did not mount · '+JSON.stringify(boot)+' · pageErrors='+errors.join(' | '));
  const diag=await page.evaluate(()=>({learning:window.__AXIS_811_LEARNING__,multi:window.__AXIS_811_MULTILINGUAL__,dialogue:window.__AXIS_811_DIALOGUE__,trend:window.__AXIS_811_TRENDS__,motion:window.__AXIS_811_TREND_MOTION__,services:window.__AXIS_811_SERVICE_SETTINGS__,legacy:{richEnglish:window.__AXIS_REST_SPEAK__?.richEnglish,totalUnits:window.__AXIS_REST_SPEAK__?.totalUnits,phrases:window.__AXIS_REST_SPEAK__?.phrases?.(),snap:window.__AXIS_REST_SPEAK__?.snapshot?.()}}));
  assert(diag.learning.atlasEnglish===5280&&diag.learning.totalEnglish===5736&&diag.learning.totalUnits===6132,'learning counts');
  assert(diag.multi.available.ja===132&&diag.multi.available.ko===132&&diag.multi.available.zh===132&&diag.multi.sixTurn===true,'multilingual counts/depth');
@@ -42,11 +44,7 @@ try{
  if(await page.locator('#settingsSheet').evaluate(el=>el.classList.contains('show')))await page.click('#settingsSheet [data-close="settingsSheet"]');
 
  const now=Date.now(),day=86400000;
- await page.evaluate(({now,day})=>{
-  const mk=(id,start,weight,reps,muscles)=>({id,start,end:start+45*60000,events:[{id:'e'+id,kind:'strength',equipmentId:'bench',name:'卧推',weight,reps,sets:3,time:start+60000,muscles}]});
-  const state={version:60,sessions:[mk('3',now-1*day,50,10,['胸肌','肱三头肌']),mk('2',now-5*day,47.5,10,['胸肌','肱三头肌']),mk('1',now-10*day,45,8,['胸肌','肱三头肌'])],active:null,profile:{name:'Test',freq:'3',goal:'strength',height:'',weight:'',bodyFat:'',years:'1',customEq:[],memories:[]},prefs:{}};
-  localStorage.setItem('axis_v60_state',JSON.stringify(state));
- },{now,day});
+ await page.evaluate(({now,day})=>{const mk=(id,start,weight,reps,muscles)=>({id,start,end:start+45*60000,events:[{id:'e'+id,kind:'strength',equipmentId:'bench',name:'卧推',weight,reps,sets:3,time:start+60000,muscles}]});const state={version:60,sessions:[mk('3',now-1*day,50,10,['胸肌','肱三头肌']),mk('2',now-5*day,47.5,10,['胸肌','肱三头肌']),mk('1',now-10*day,45,8,['胸肌','肱三头肌'])],active:null,profile:{name:'Test',freq:'3',goal:'strength',height:'',weight:'',bodyFat:'',years:'1',customEq:[],memories:[]},prefs:{}};localStorage.setItem('axis_v60_state',JSON.stringify(state))},{now,day});
  await page.click('[data-view="insightsView"]');
  await page.waitForSelector('#insightsView.active');
  await page.waitForTimeout(100);
