@@ -6,6 +6,9 @@ const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 
 {
+ const f='release-contract.json',x=JSON.parse(read(f));x.publicVersion='8.10.3';x.stableBaseVersion='8.10.3';write(f,JSON.stringify(x,null,2)+'\n');
+}
+{
  const f='prepare-882-version.mjs';let s=read(f);
  s=once(s,"const VERSION='8.10.2';","const VERSION='8.10.3';",'release version');
  s=s.replaceAll('AXIS 8.10.2','AXIS 8.10.3');
@@ -37,4 +40,4 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 
-console.log('[AXIS 8.10.3 release compat] PASS · inherited 8.10.x contracts + Home compiler variants preserved');
+console.log('[AXIS 8.10.3 release compat] PASS · release identity + inherited 8.10.x contracts + Home compiler variants preserved');
