@@ -1,0 +1,74 @@
+name: AXIS 8.11 Browser Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lib/learning-atlas-811.mjs'
+      - 'lib/learning-atlas-811/**'
+      - 'lib/multilingual-atlas-811.mjs'
+      - 'prepare-811-*.mjs'
+      - 'postbuild-811-contract.mjs'
+      - 'scripts/axis-811-*.mjs'
+      - 'build-release.mjs'
+      - '.github/workflows/axis-811-browser-gate.yml'
+  workflow_dispatch:
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Build candidate on sealed release
+        run: node build-release.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve artifact
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-811-chromium.log 2>&1 &
+          echo $! >/tmp/axis-811-chromium.pid
+          sleep 1
+      - name: AXIS 8.11 real browser experience
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-811-browser-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-811-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Build candidate on sealed release
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve artifact
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-811-webkit.log 2>&1 &
+          echo $! >/tmp/axis-811-webkit.pid
+          sleep 1
+      - name: AXIS 8.11 iPhone WebKit experience
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-811-browser-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-811-webkit.log || true
