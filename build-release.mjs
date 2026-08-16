@@ -13,11 +13,13 @@ const STEPS=[
   'prepare-88-watermark-location-owner.mjs',
   'prepare-881-convergence.mjs',
   'prepare-882-convergence-driver.mjs',
+  'prepare-882-final-owners.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
   'postbuild-8712-completion.mjs',
   'postbuild-88-canonical.mjs',
+  'postbuild-881-inherited-contract.mjs',
   'postbuild-882-contract.mjs',
   'verify-88-watermark.mjs'
 ];
