@@ -12,14 +12,15 @@ const page=await context.newPage();
 const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(obj)});
 for(const [pattern,obj] of [['**/api/ai-status**',{ok:true,enabled:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{ok:false,disabled:true}],['**/api/insight**',{ok:false,disabled:true}]])await page.route(pattern,r=>json(r,obj));
 const errors=[];page.on('pageerror',e=>errors.push(String(e?.stack||e)));
-const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:5000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:8000})};
+const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:5000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:8000});await page.waitForFunction(()=>window.__AXIS_QUICK_READY__===true,undefined,{timeout:1200})};
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
 await page.evaluate(()=>localStorage.clear());await page.reload({waitUntil:'domcontentloaded'});await ready();
 assert.equal((await page.locator('.versionLine').getAttribute('aria-label')||'').trim(),`版本 ${VERSION}`);
 
 console.log(`[AXIS inherited 8.8.1 ${ENGINE}] unitless group-plan controls + expanded presets`);
-await page.locator('#startBtn').click();await page.waitForFunction(()=>document.querySelector('#dock')?.classList.contains('show'),undefined,{timeout:1200});
+assert.equal(await page.locator('#startBtn').isVisible(),false,'legacy explicit start entry unexpectedly returned');
+assert.ok(await page.locator('#quickRecordBtn').isVisible(),'Quick Record is not the ready-state entry');
 await page.locator('#quickRecordBtn').click();await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show')&&document.querySelector('#v8Recent [data-qid]'),undefined,{timeout:1600});
 await page.locator('#v8Recent [data-qid]:visible').first().click();await page.waitForFunction(()=>document.querySelector('#v8Sets .v8SetRow')&&document.querySelector('.v875PlanEntry'),undefined,{timeout:2400});
 await page.locator('.v875PlanEntry').click();await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show')&&document.querySelector('[data-v8712-mode="pyramid"]'),undefined,{timeout:1400});await page.locator('[data-v8712-mode="pyramid"]').click();await page.waitForTimeout(80);
