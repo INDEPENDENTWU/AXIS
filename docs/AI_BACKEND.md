@@ -1,69 +1,95 @@
-# AXIS AI v3 — Owner configuration
+# AXIS AI v4 — Local-first frontier verification
 
-AXIS users never enter an API key or choose a model. The product owner configures AI once in the hosting environment. The client only exposes product-level switches: 器械识别、画面检查、训练洞察。
+AXIS users never enter an API key or choose a model. AI is a server-side owner capability. The client only sees product outcomes such as `已识别`, `请确认` or manual selection.
 
-## Required
+## Vision order
 
-- `DASHSCOPE_API_KEY` — Alibaba Cloud Model Studio / 百炼 API key. Never expose this value to the browser or repository.
+AXIS 8.9 uses:
 
-## Recommended production configuration
+`Local Vision v2 -> frontier vision -> optional ambiguity verification -> user confirmation`
+
+Local recognition always runs first. A strong local result preselects immediately instead of making the user wait for a network model. Frontier vision verifies in the background when available.
+
+## Provider configuration
+
+`AXIS_VISION_PROVIDER=auto` is recommended. In auto mode the configured provider order is:
+
+1. OpenAI
+2. Gemini
+3. Bailian
+
+Only providers with a key are used.
+
+### Highest-quality OpenAI path
+
+```text
+OPENAI_API_KEY=...
+AXIS_OPENAI_VISION_MODEL=gpt-5.6-sol
+AXIS_OPENAI_REASONING=low
+```
+
+### Optional independent verifier
+
+```text
+GEMINI_API_KEY=...
+AXIS_GEMINI_VISION_MODEL=gemini-3.1-pro-preview
+```
+
+### Existing China-friendly fallback
+
+```text
+DASHSCOPE_API_KEY=...
+AXIS_VISION_MODEL=qwen3.6-flash
+AXIS_VISION_FALLBACK_MODEL=qwen3.7-plus
+```
+
+The existing Bailian configuration remains valid. `api/insight` continues to use the Bailian-compatible text path unless that route is changed separately.
+
+## Recommended production settings
 
 ```text
 AXIS_AI_ENABLED=true
 AXIS_AI_VISION_ENABLED=true
 AXIS_AI_QUALITY_ENABLED=true
-AXIS_AI_INSIGHT_ENABLED=true
-AXIS_VISION_MODEL=qwen3.6-flash
-AXIS_INSIGHT_MODEL=qwen3.6-flash
-AXIS_AI_MAX_FRAMES=2
-AXIS_AI_MIN_CONFIDENCE=0.58
-AXIS_AI_MAX_IMAGE_CHARS=1800000
+AXIS_AI_ESCALATION_ENABLED=true
+AXIS_AI_MAX_FRAMES=3
+AXIS_AI_MIN_CONFIDENCE=0.60
+AXIS_AI_ACCEPT_CONFIDENCE=0.82
+AXIS_AI_ESCALATE_BELOW=0.78
+AXIS_AI_ESCALATE_MIN_QUALITY=0.48
+AXIS_AI_ARBITRATION_MARGIN=0.12
+AXIS_AI_MAX_CATALOG=220
+AXIS_AI_MAX_IMAGE_CHARS=2600000
 AXIS_AI_VISION_RPM=12
-AXIS_AI_INSIGHT_RPM=8
 AXIS_AI_TIMEOUT_MS=12000
 ```
 
-Optional high-accuracy escalation is implemented but intentionally off by default:
+## Canonical catalog contract
 
-```text
-AXIS_AI_ESCALATION_ENABLED=false
-AXIS_VISION_FALLBACK_MODEL=qwen3.7-plus
-AXIS_AI_ESCALATE_BELOW=0.46
-AXIS_AI_ESCALATE_MIN_QUALITY=0.62
+The browser sends a compact sanitized view of the exact AXIS equipment/exercise catalog currently available to the user:
+
+```json
+{"id":"machine-incline-press","name":"器械上斜胸推","type":"strength","muscles":["胸肌","肩部","肱三头肌"]}
 ```
 
-When enabled, AXIS only retries with the stronger model when the Flash result is genuinely ambiguous but the capture itself is clear. Low-quality captures are not escalated; the user receives a short re-scan hint instead. This keeps the default public experience low-cost while retaining a server-side quality ceiling switch.
+The server builds a valid-ID set from that request. `equipmentId` and every candidate returned by a model are filtered through that set. A model-generated free-form equipment name is never accepted into product state.
 
-Optional endpoint override:
+Custom equipment may participate when it has a safe local ID/name. The AI still returns the exact client catalog ID.
 
-```text
-BAILIAN_BASE_URL=https://<WorkspaceId>.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
-```
+## Ambiguity policy
 
-Use the business-space-specific endpoint when available. The application falls back to the public DashScope compatible endpoint when this variable is not set.
+A second configured provider/model is not called on every capture. AXIS escalates only when:
 
-## Cost and latency strategy
+- top confidence is below the configured threshold;
+- no top ID is returned; or
+- a strong Local Vision prior materially conflicts with a non-dominant model result.
 
-1. Personal visual memory runs first on-device. A strong match skips the model call.
-2. Visual AI receives at most two compressed key frames, not the whole 3–5 second clip.
-3. `qwen3.6-flash` is the default vision and text model.
-4. Thinking mode is explicitly disabled for capture recognition and short training insight.
-5. Visual outputs use JSON mode and strict small schemas.
-6. Training insight is generated at most once per completed session and cached on the user's device.
-7. If AI is unavailable, AXIS keeps working with manual confirmation and deterministic local insight.
-8. Server routes apply soft per-IP rate limits. For large public scale, move quotas to a durable KV/rate-limit service without changing the client contract.
-9. Optional model escalation is confidence- and image-quality-gated rather than applied to every request.
-
-## API contract
-
-- `GET /api/ai-status` — public capability status; never returns provider credentials or internal model configuration.
-- `POST /api/analyze` — equipment, readable load/cardio values, candidates, confidence, capture-quality feedback.
-- `POST /api/insight` — receives compact workout statistics only; no photos or videos. Returns one headline, one observation and one next action.
+Agreement strengthens the result. A clear winner may replace the first result. Close disagreement deliberately returns `equipmentId: null` with up to three canonical candidates and `needsConfirmation: true`.
 
 ## Privacy boundary
 
-Media is stored locally in the current AXIS Web build. Only the selected compressed scan frames are temporarily sent to the vision endpoint when 器械识别 is enabled. Training insight receives aggregated workout fields, not media.
+Media remains stored locally in AXIS. Only up to three selected scan frames are sent to `/api/analyze`. The request also contains compact catalog rows, recent equipment IDs and Local Vision candidate scores. The user's local visual-memory database is never uploaded.
 
-## iOS migration
+## Failure behavior
 
-`platform-v7.js` is the platform boundary. The future native shell can expose `window.AXISNative` methods for Photos writing, haptics, Passkey identity and background upload. Product logic and Vercel AI routes remain unchanged.
+AI is not required for recording. If every configured provider is unavailable, times out or is rate-limited, AXIS preserves the local preselection when available and falls back to one-tap/manual confirmation.
