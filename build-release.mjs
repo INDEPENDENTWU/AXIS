@@ -14,6 +14,7 @@ const STEPS=[
   'prepare-881-convergence.mjs',
   'prepare-882-convergence-driver.mjs',
   'prepare-882-final-owners.mjs',
+  'prepare-882-lifecycle.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
