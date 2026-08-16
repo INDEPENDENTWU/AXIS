@@ -11,9 +11,10 @@ for(const [k,n] of Object.entries(audit.levelCounts))if(n!==880)fail(`level ${k}
 for(const needle of [
  'const AXIS811_LEVELS=',
  'function axis811SpeakAtlas(){',
- "atlasEnglish:5280",
- "richEnglish=5736",
- "totalUnits=5772",
+ "atlasEnglish=5280",
+ "availableEnglish=5736",
+ "availableUnits=5772",
+ "legacyDiagnosticsPreserved:true",
  "dialogue:'unit-specific-four-turn'",
  "connectedSpeech:true",
  "spelling:true",
@@ -27,6 +28,7 @@ for(const needle of [
  "networkRequired:false",
  "evidenceOnly:true"
 ])if(!runtime.includes(needle))fail(`runtime contract missing ${needle}`);
+for(const needle of ['legacy.richEnglish=456','legacy.totalUnits=492','legacy.phrases=()=>492','legacy.snapshot=axis810Snapshot'])if(!runtime.includes(needle))fail(`legacy 8.10 diagnostic compatibility missing ${needle}`);
 for(const id of ['insightSessions','insightMins','revisitRate','coverageMeta','coverageGrid','evidenceList','rhythmGrid','nextCard']){
  const n=(index.match(new RegExp(`id="${id}"`,'g'))||[]).length;if(n!==1)fail(`legacy insight #${id} expected once, found ${n}`)
 }
@@ -48,6 +50,7 @@ Object.assign(info.gates,{
  learningConnectedSpeech811:true,
  learningSpelling811:true,
  learningSettingsConverged811:true,
+ learningLegacyDiagnosticsPreserved811:true,
  trendsStateField811:true,
  trendsGoalAware811:true,
  trendsEvidenceOnly811:true,
@@ -61,6 +64,7 @@ info.axis811Candidate={
   atlasEnglish:5280,
   totalEnglish:5736,
   totalUnits:5772,
+  legacyDiagnostics:{richEnglish:456,totalUnits:492,phrases:492},
   exactTargetDuplicates:0,
   levels:audit.levelCounts,
   tracks:audit.trackCounts,
@@ -84,4 +88,4 @@ info.axis811Candidate={
  ownership:{trainingState:false,trainingControls:false,cloudRequired:false,aiRequired:false}
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-console.log('[AXIS 8.11 experience contract] PASS · 5280 unique atlas · converged schedule · state-field trajectory · old capability gates preserved');
+console.log('[AXIS 8.11 experience contract] PASS · 5280 unique atlas · converged schedule · state-field trajectory · inherited diagnostics preserved');
