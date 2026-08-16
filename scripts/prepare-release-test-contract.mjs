@@ -16,7 +16,8 @@ const files=[
   'scripts/axis-89-smoke.mjs',
   'scripts/axis-891-smoke.mjs',
   'scripts/axis-810-smoke.mjs',
-  'scripts/axis-8101-smoke.mjs'
+  'scripts/axis-8101-smoke.mjs',
+  'scripts/axis-product-matrix.mjs'
 ];
 
 for(const file of files){
@@ -69,6 +70,12 @@ for(const file of files){
       "assert.equal(entry.b,'智能');",
       "assert.equal(entry.b,'自定','explicit every-rest cadence should render the compact custom status');"
     );
+  }
+  if(version==='8.10.3'&&file==='scripts/axis-product-matrix.mjs'){
+    const stale="assert.equal(await page.locator('#v876TargetSheet,#v876Target,#v8710Rest,#v8710Session').count(),0,'retired rest/session automatic reminder controls returned');";
+    const current="assert.equal(await page.locator('#v876TargetSheet,#v876Target,#v8710Rest').count(),0,'retired rest automatic reminder controls returned');assert.equal(await page.locator('#v8710Session').count(),1,'8.10.3 total-workout duration reminder is missing');assert.equal(await page.locator('#v8710SessionPreset button').count(),5,'8.10.3 duration presets are incomplete');";
+    if(!src.includes(stale)&&!src.includes(current))throw new Error('AXIS 8.10.3 product matrix reminder assertion shape changed');
+    src=src.replace(stale,current);
   }
   if(src!==before)fs.writeFileSync(file,src);
   const wrongCanonical=[...src.matchAll(/canonical-(\d+(?:\.\d+)+)/g)].map(m=>m[1]).filter(v=>v!==version);
