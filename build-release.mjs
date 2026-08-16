@@ -7,7 +7,7 @@ const STEPS=[
   'prepare-first-paint-shell.mjs',
   'prepare-88-convergence.mjs',
   'prepare-88-catalog-convergence.mjs',
-  'prepare-88-watermark-convergence.mjs',
+  'prepare-88-watermark-final.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
