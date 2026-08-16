@@ -32,6 +32,11 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 {
+ const f='scripts/axis-8102-smoke.mjs';let s=read(f);
+ s=once(s,"assert.equal(EXPECTED,'8.10.2');","assert.ok(['8.10.2','8.10.3'].includes(EXPECTED),`unexpected inherited 8.10.2 release ${EXPECTED}`);",'8.10.2 inherited browser version allowance');
+ write(f,s);
+}
+{
  const f='prepare-8103-home-sound.mjs';let s=read(f);
  const old=` src=once(src,"parts.push('完成于 '+tlabel(end));","parts.unshift('开始 '+tlabel(last.start));parts.push('完成 '+tlabel(end));",'completed start/end facts');`;
  const next=` if(src.includes("parts.push('完成于 '+tlabel(end));"))src=src.replace("parts.push('完成于 '+tlabel(end));","parts.unshift('开始 '+tlabel(last.start));parts.push('完成 '+tlabel(end));");else{src=once(src,"return{...base,scope:'complete'","parts.unshift('开始 '+tlabel(last.start));return{...base,scope:'complete'",'completed start fact fallback');src=src.replaceAll('完成于 ','完成 ')}`;
@@ -42,4 +47,4 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 
-console.log('[AXIS 8.10.3 release compat] PASS · release identity + inherited item countdown + 8.10.x contracts preserved');
+console.log('[AXIS 8.10.3 release compat] PASS · release identity + inherited 8.10.2 browser + item countdown contracts preserved');
