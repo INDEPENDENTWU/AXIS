@@ -38,8 +38,7 @@ assert.equal(new Set(lib.map(x=>x.id)).size,lib.length,'exercise library contain
 assert.ok(lib.find(x=>x.name==='45°罗马椅背伸')?.muscles?.includes('腰部'),'back extension is not mapped to waist');
 
 console.log(`[AXIS 8.8.2 ${ENGINE}] Quick Record always exposes saved custom items + media bridge`);
-await page.locator('#startBtn').click();await page.waitForFunction(()=>document.querySelector('#dock')?.classList.contains('show'),undefined,{timeout:1200});
-await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='session',undefined,{timeout:1800});
+assert.equal(await page.locator('#startBtn').isVisible(),false,'legacy explicit start entry unexpectedly returned');
 await page.locator('#quickRecordBtn').click();await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:1200});
 assert.ok(await page.locator('#v882QuickMine').isVisible(),'saved custom section is hidden');
 const mine=page.locator('#v882QuickCustom [data-qid="custom-waist"]');assert.equal(await mine.count(),1,'saved custom item missing from Quick Record');
@@ -82,7 +81,7 @@ await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='warn',undefin
 await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity;a.restStartedAt=Date.now()-225000;localStorage.setItem(k,JSON.stringify(m))},activeId);
 await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='danger',undefined,{timeout:1800});assert.match((await page.locator('#axisNowTitle').innerText()).trim(),/休息过久/);
 await page.locator('#v87Toggle').click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='paused',undefined,{timeout:1800});
-await page.locator('#v87Paused button').first().click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});
+assert.equal((await page.locator('#v87Toggle').innerText()).trim(),'▶','single paused item did not expose canonical resume control');await page.locator('#v87Toggle').click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});
 
 console.log(`[AXIS 8.8.2 ${ENGINE}] manual long-press finish is silent`);
 await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity,t=Date.now();a.estimateMs=600000;a.startedAt=t;a.lastResumedAt=t;a.intervals=[{start:t,end:null}];a.restStartedAt=null;m.prefs.v8710SoundEnabled=true;m.prefs.v876ItemReminder=true;localStorage.setItem(k,JSON.stringify(m));window.__AXIS_882_CUES__=[]},activeId);
