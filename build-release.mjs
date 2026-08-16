@@ -21,6 +21,7 @@ const STEPS=[
   'prepare-882-lifecycle.mjs',
   'prepare-882-media-store.mjs',
   'prepare-883-convergence.mjs',
+  'prepare-883-inherited-brand-fix.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
