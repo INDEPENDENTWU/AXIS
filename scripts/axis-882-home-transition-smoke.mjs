@@ -17,16 +17,7 @@ await page.reload({waitUntil:'domcontentloaded'});await ready();
 console.log(`[AXIS home transition ${ENGINE}] idle Now layer is available`);
 assert.ok(await page.locator('#axisNowHero').isVisible());
 
-await page.locator('#startBtn').click();
-await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='session',undefined,{timeout:1800});
-console.log(`[AXIS home transition ${ENGINE}] 8.8.1 active-session hierarchy owns training state`);
-assert.equal(await page.locator('#axisNowHero').isVisible(),false,'Now hero duplicates an active session');
-assert.ok(await page.locator('#activeHome').isVisible(),'8.8.1 active home disappeared');
-assert.ok(await page.locator('#liveTimer').isVisible(),'8.8.1 session timer disappeared');
-assert.ok(await page.locator('#finishHold').isVisible(),'8.8.1 long-press finish disappeared');
-const spacing=await page.evaluate(()=>({live:getComputedStyle(document.querySelector('#activeHome>.liveHead')).marginTop,metrics:getComputedStyle(document.querySelector('#activeHome>.metricPair.compact')).marginTop,head:getComputedStyle(document.querySelector('#todayView>.pageHead')).marginBottom}));
-assert.deepEqual(spacing,{live:'6px',metrics:'20px',head:'22px'},`8.8.1 active spacing changed: ${JSON.stringify(spacing)}`);
-
+/* Canonical session entry: first real Quick Record starts the session; the retired hidden start button is not used. */
 await page.locator('#quickRecordBtn').click();
 await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show')&&document.querySelector('#v882QuickCustom [data-qid="transition-test"]'),undefined,{timeout:1600});
 await page.locator('#v882QuickCustom [data-qid="transition-test"]').click();
@@ -34,9 +25,15 @@ await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.c
 await page.locator('#saveScan').click();
 await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:2500});
 await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});
-assert.equal(await page.locator('#axisNowHero').isVisible(),false,'Now hero duplicates the v87 active item');
+
+console.log(`[AXIS home transition ${ENGINE}] 8.8.1 active hierarchy owns active training`);
+assert.equal(await page.locator('#axisNowHero').isVisible(),false,'Now hero duplicates the active session/item');
+assert.ok(await page.locator('#activeHome').isVisible(),'8.8.1 active home disappeared');
+assert.ok(await page.locator('#liveTimer').isVisible(),'8.8.1 session timer disappeared');
+assert.ok(await page.locator('#finishHold').isVisible(),'8.8.1 long-press finish disappeared');
 assert.ok(await page.locator('#v87Now').isVisible(),'v87 active item changed');
-assert.ok(await page.locator('#finishHold').isVisible(),'session long-press finish changed while item active');
+const spacing=await page.evaluate(()=>({live:getComputedStyle(document.querySelector('#activeHome>.liveHead')).marginTop,metrics:getComputedStyle(document.querySelector('#activeHome>.metricPair.compact')).marginTop,head:getComputedStyle(document.querySelector('#todayView>.pageHead')).marginBottom}));
+assert.deepEqual(spacing,{live:'6px',metrics:'20px',head:'22px'},`8.8.1 active spacing changed: ${JSON.stringify(spacing)}`);
 
 const id=await page.locator('#v87Finish').getAttribute('data-id');
 assert.ok(id,'active item id missing');
