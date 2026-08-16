@@ -10,7 +10,7 @@ function homeUsualGap(){const xs=(state.sessions||[]).slice(0,9).map(s=>Number(s
 function homeRestThreshold(m,e){const v=String(m.prefs?.reminderTiming||'auto');if(v==='90')return 90000;if(v==='120')return 120000;if(v==='180')return 180000;const vals=[];for(const h of (state.sessions||[]).flatMap(s=>ev(s)).filter(x=>x.equipmentId===e?.equipmentId).slice(0,8)){const ts=(m.events?.[h.id]?.sets||[]).map(s=>Number(s.doneAt)||0).filter(Boolean).sort((a,b)=>a-b);for(let i=1;i<ts.length;i++){const d=ts[i]-ts[i-1]-45000;if(d>=45000&&d<=360000)vals.push(d)}}return vals.length>=2?Math.max(75000,Math.min(240000,homeMedian(vals))):120000}
 function deriveHomeState(t=Date.now()){
   const r7=recent(7),weekMins=r7.reduce((a,s)=>a+mins(s),0),weekSessions=r7.length;
-  const base={mode:'ready',title:'准备开始',value:'—',meta:'今天还没有训练记录',progress:0,dial:'—',aLabel:'本周',a:weekMins+' 分钟',bLabel:'训练',b:weekSessions+' 次'};
+  const base={visible:true,scope:'idle',mode:'ready',title:'准备开始',value:'—',meta:'今天还没有训练记录',progress:0,dial:'—',aLabel:'本周',a:weekMins+' 分钟',bLabel:'训练',b:weekSessions+' 次'};
   const s=state.active,m=homeMeta();
   if(s){
     const sesMs=Math.max(0,t-s.start);
@@ -21,25 +21,27 @@ function deriveHomeState(t=Date.now()){
       const e=active.e,a=active.a,actual=homeActivityElapsed(a,t),est=Math.max(60000,Number(a.estimateMs)||actual||60000),total=homePlanned(e,m),done=Math.max(0,Number(a.completedSets)||0),rest=a.restStartedAt?Math.max(0,t-a.restStartedAt):0;
       if(rest){
         const th=homeRestThreshold(m,e),over=Math.max(0,rest-th),mode=over>120000?'danger':over>0?'warn':'rest',title=over>120000?'休息过久':over>0?'休息偏久':'组间休息';
-        return{...base,mode,title,value:homeClock(rest),meta:e.name+' · 建议 '+homeClock(th),progress:Math.min(1,rest/th),dial:over?'+'+homeClock(over):Math.max(0,Math.round((th-rest)/1000))+'s',aLabel:'完成',a:e.kind==='strength'?done+'/'+total+' 组':'进行中',bLabel:over?'已超出':'还剩',b:over?homeClock(over):homeClock(Math.max(0,th-rest))};
+        return{...base,visible:false,scope:'activity',mode,title,value:homeClock(rest),meta:e.name+' · 建议 '+homeClock(th),progress:Math.min(1,rest/th),dial:over?'+'+homeClock(over):Math.max(0,Math.round((th-rest)/1000))+'s',aLabel:'完成',a:e.kind==='strength'?done+'/'+total+' 组':'进行中',bLabel:over?'已超出':'还剩',b:over?homeClock(over):homeClock(Math.max(0,th-rest))};
       }
       const itemSuffix=e.kind==='strength'?' · '+done+'/'+total+'组':'';
-      return{...base,mode:'active',title:'正在训练',value:homeClock(actual),meta:e.name+itemSuffix+' · 剩余 '+homeClock(Math.max(0,est-actual)),progress:Math.min(1,actual/est),dial:Math.round(Math.min(1,actual/est)*100)+'%',aLabel:'本次',a:homeClock(sesMs),bLabel:'已记录',b:ev(s).length+' 项'};
+      return{...base,visible:false,scope:'activity',mode:'active',title:'正在训练',value:homeClock(actual),meta:e.name+itemSuffix+' · 剩余 '+homeClock(Math.max(0,est-actual)),progress:Math.min(1,actual/est),dial:Math.round(Math.min(1,actual/est)*100)+'%',aLabel:'本次',a:homeClock(sesMs),bLabel:'已记录',b:ev(s).length+' 项'};
     }
     if(paused){
       const e=paused.e,a=paused.a,pause=Math.max(0,t-(a.pausedAt||t)),actual=homeActivityElapsed(a,t),total=homePlanned(e,m),done=Math.max(0,Number(a.completedSets)||0);
-      return{...base,mode:'paused',title:'项目暂停',value:homeClock(pause),meta:e.name+' · 实际 '+homeClock(actual),progress:0,dial:'Ⅱ',aLabel:'完成',a:e.kind==='strength'?done+'/'+total+' 组':'暂停',bLabel:'本次',b:homeClock(sesMs)};
+      return{...base,visible:false,scope:'activity',mode:'paused',title:'项目暂停',value:homeClock(pause),meta:e.name+' · 实际 '+homeClock(actual),progress:0,dial:'Ⅱ',aLabel:'完成',a:e.kind==='strength'?done+'/'+total+' 组':'暂停',bLabel:'本次',b:homeClock(sesMs)};
     }
     const events=ev(s);
     if(events.length){
-      const last=events[events.length-1],la=m.events?.[last.id]?.activity,end=Number(la?.finishedAt)||Number(last.time)||s.start,gap=Math.max(0,t-end),th=Math.max(180000,homeRestThreshold(m,last)*1.5),over=Math.max(0,gap-th),mode=over>180000?'danger':over>0?'warn':'between',title=over>180000?'休息过久':over>0?'休息偏久':'准备下一项';
-      return{...base,mode,title,value:homeClock(gap),meta:last.name+' 已完成 · 本次 '+homeClock(sesMs),progress:Math.min(1,gap/th),dial:over?'+'+homeClock(over):Math.round(Math.min(1,gap/th)*100)+'%',aLabel:'已记录',a:events.length+' 项',bLabel:over?'已超出':'建议切换',b:over?homeClock(over):homeClock(Math.max(0,th-gap))};
+      const last=events[events.length-1],la=m.events?.[last.id]?.activity,end=Number(la?.finishedAt)||Number(last.time)||s.start,gap=Math.max(0,t-end),th=Math.max(180000,homeRestThreshold(m,last)*1.5),over=Math.max(0,gap-th),mode=over>180000?'danger':over>0?'warn':'between';
+      const title=over>180000?'间歇过长':over>0?'可以开始下一项':'项目间歇';
+      const meta=over?last.name+' 已完成 · 已超出建议 '+homeClock(over):last.name+' 已完成 · 建议间隔 '+homeClock(th);
+      return{...base,visible:true,scope:'transition',mode,title,value:homeClock(gap),meta,progress:Math.min(1,gap/th),dial:over?'+'+homeClock(over):homeClock(Math.max(0,th-gap)),aLabel:'',a:'',bLabel:'',b:''};
     }
-    return{...base,mode:'session',title:'训练已开始',value:homeClock(sesMs),meta:'等待第一项记录',progress:0,dial:'●',aLabel:'已记录',a:'0 项',bLabel:'状态',b:'进行中'};
+    return{...base,visible:false,scope:'activity',mode:'session',title:'训练已开始',value:homeClock(sesMs),meta:'等待第一项记录',progress:0,dial:'●',aLabel:'已记录',a:'0 项',bLabel:'状态',b:'进行中'};
   }
   const last=state.sessions?.[0];
   if(!last)return base;
   const gap=Math.max(0,t-homeSessionEnd(last)),usual=homeUsualGap(),ratio=usual?gap/usual:0,mode=ratio>1.35?'warn':ratio>=.72?'ready':'recovery',title=ratio>1.35?'休息较久':ratio>=.72?'可以训练':'恢复中';
-  return{...base,mode,title,value:homeGap(gap),meta:'距上次训练 · 常见间隔约 '+homeGap(usual),progress:Math.min(1.25,ratio)/1.25,dial:ratio>1?'+'+Math.round((ratio-1)*100)+'%':Math.round(Math.min(1,ratio)*100)+'%',aLabel:'上次',a:mins(last)+' 分钟',bLabel:'本周',b:weekSessions+' 次'};
+  return{...base,scope:'recovery',mode,title,value:homeGap(gap),meta:'距上次训练 · 常见间隔约 '+homeGap(usual),progress:Math.min(1.25,ratio)/1.25,dial:ratio>1?'+'+Math.round((ratio-1)*100)+'%':Math.round(Math.min(1,ratio)*100)+'%',aLabel:'上次',a:mins(last)+' 分钟',bLabel:'本周',b:weekSessions+' 次'};
 }
-function renderHomeState(t=Date.now()){const x=deriveHomeState(t),h=$('#axisNowHero');if(!h)return;h.dataset.mode=x.mode;setText('#axisNowClock',tlabel(t));setText('#axisNowTitle',x.title);setText('#axisNowValue',x.value);setText('#axisNowMeta',x.meta);setText('#axisNowDialText',x.dial);setText('#axisNowFactALabel',x.aLabel);setText('#axisNowFactA',x.a);setText('#axisNowFactBLabel',x.bLabel);setText('#axisNowFactB',x.b);h.style.setProperty('--axis-now-p',String(Math.max(0,Math.min(1,x.progress||0))*360)+'deg');const r=$('#axisNowRailFill');if(r)r.style.width=Math.max(0,Math.min(1,x.progress||0))*100+'%';window.__AXIS_HOME_STATE__=x}
+function renderHomeState(t=Date.now()){const x=deriveHomeState(t),h=$('#axisNowHero');if(!h)return;const show=x.visible!==false;h.hidden=!show;h.dataset.scope=x.scope||'idle';h.dataset.mode=x.mode;const tv=$('#todayView');if(tv)tv.classList.toggle('axisNowVisible',show);setText('#axisNowClock',tlabel(t));setText('#axisNowTitle',x.title);setText('#axisNowValue',x.value);setText('#axisNowMeta',x.meta);setText('#axisNowDialText',x.dial);setText('#axisNowFactALabel',x.aLabel);setText('#axisNowFactA',x.a);setText('#axisNowFactBLabel',x.bLabel);setText('#axisNowFactB',x.b);h.style.setProperty('--axis-now-p',String(Math.max(0,Math.min(1,x.progress||0))*360)+'deg');const r=$('#axisNowRailFill');if(r)r.style.width=Math.max(0,Math.min(1,x.progress||0))*100+'%';window.__AXIS_HOME_STATE__=x}
