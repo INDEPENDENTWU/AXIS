@@ -107,11 +107,9 @@ function axis811AvailableSnapshot(){
  return {...x,version:'8.11-candidate',atlasEnglish:axis811SpeakAtlas().length,availableEnglish:axis891Pool('en').length,availableTotal:axis891AllPhrases().length}
 }
 axis810Snapshot=function(){const x=axis811BaseSnapshot();return {...x,english:456,total:492}};
+try{window.__AXIS_811_LEARNING__={version:'8.11-candidate',owner:'local-accessory',atlasEnglish:5280,totalEnglish:5736,totalUnits:5772,levels:AXIS811_LEVELS.slice(),lazy:true,networkRequired:false,dialogue:'unit-specific-four-turn',connectedSpeech:true,spelling:true,dictation:true,shadow:true,legacyDiagnosticsPreserved:true}}catch{}
 try{
- const legacy=window.__AXIS_REST_SPEAK__;
- legacy.richEnglish=456;legacy.totalUnits=492;legacy.phrases=()=>492;legacy.snapshot=axis810Snapshot;
- legacy.atlasEnglish=5280;legacy.availableEnglish=5736;legacy.availableUnits=5772;legacy.availablePhrases=()=>axis891AllPhrases().length;legacy.availableSnapshot=axis811AvailableSnapshot;
- window.__AXIS_811_LEARNING__={version:'8.11-candidate',owner:'local-accessory',atlasEnglish:5280,totalEnglish:5736,totalUnits:5772,levels:AXIS811_LEVELS.slice(),lazy:true,networkRequired:false,dialogue:'unit-specific-four-turn',connectedSpeech:true,spelling:true,dictation:true,shadow:true,legacyDiagnosticsPreserved:true}
+ const legacy=window.__AXIS_REST_SPEAK__;if(legacy){legacy.richEnglish=456;legacy.totalUnits=492;legacy.phrases=()=>492;legacy.snapshot=axis810Snapshot;legacy.atlasEnglish=5280;legacy.availableEnglish=5736;legacy.availableUnits=5772;legacy.availablePhrases=()=>axis891AllPhrases().length;legacy.availableSnapshot=axis811AvailableSnapshot}
 }catch{}
 `;
 const runtimeBlock=block
@@ -119,6 +117,9 @@ const runtimeBlock=block
  .replace('__AXIS811_SCENES__',JSON.stringify(SOURCE_SCENES));
 
 src=src.slice(0,end)+runtimeBlock+'\n'+src.slice(end);
+const legacyPhraseOwner='phrases:()=>axis891AllPhrases().length,snapshot:axis810Snapshot';
+if(!src.includes(legacyPhraseOwner))fail('legacy diagnostic phrase owner not found');
+src=src.replace(legacyPhraseOwner,'phrases:()=>492,availablePhrases:()=>axis891AllPhrases().length,snapshot:axis810Snapshot,availableSnapshot:axis811AvailableSnapshot');
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
 console.log('[AXIS 8.11 learning atlas] PASS · 5280 unique English units · 6 levels · four-turn dialogue · inherited 8.10 diagnostics preserved');
