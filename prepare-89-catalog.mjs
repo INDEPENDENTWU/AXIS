@@ -69,4 +69,15 @@ const AXIS89_DUPLICATE_IDS=[];
  syntax(src,FILE);write(FILE,src);
  console.log(`[AXIS 8.9 catalog] source ids ${ids.length} · source duplicates ${dupIds.join(', ')||'none'} · skipped 8.9 collisions ${skipped.join(', ')||'none'}`);
 }
-console.log('[AXIS 8.9 catalog] PASS · runtime canonical ids converge before exposure');
+
+{
+ const FILE='v8711-runtime.js';let src=read(FILE);
+ const from="function addExercise(x){if(!x?.name)return;const k=norm(x.name),same=LIB.find(i=>norm(i.name)===k||(i.aliases||[]).some(a=>norm(a)===k));if(same){const a=new Set([...(same.aliases||[]),...(x.aliases||[])]);same.aliases=[...a];same.muscles=[...new Set([...(same.muscles||[]),...(x.muscles||[])])];return}LIB.push(x)}";
+ const to="function addExercise(x){if(!x?.name)return;const id=String(x.id||'').trim(),k=norm(x.name),same=(id?LIB.find(i=>String(i?.id||'').trim()===id):null)||LIB.find(i=>norm(i.name)===k||(i.aliases||[]).some(a=>norm(a)===k));if(same){same.aliases=[...new Set([...(same.aliases||[]),...(x.aliases||[]),x.name].filter(Boolean))];same.muscles=[...new Set([...(same.muscles||[]),...(x.muscles||[])])];return}LIB.push(x)}";
+ src=once(src,from,to,'late catalog extension canonical id convergence');
+ if(!src.includes("LIB.find(i=>String(i?.id||'').trim()===id)"))fail('late catalog extension is not id-first');
+ syntax(src,FILE);write(FILE,src);
+ console.log('[AXIS 8.9 catalog] late v8711 extensions converge by canonical id before semantic alias matching');
+}
+
+console.log('[AXIS 8.9 catalog] PASS · canonical ids stay unique through late runtime extensions');
