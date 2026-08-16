@@ -11,7 +11,6 @@ const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers
 for(const [pattern,obj] of [['**/api/ai-status**',{ok:true,enabled:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{ok:false,disabled:true}],['**/api/insight**',{ok:false,disabled:true}]])await page.route(pattern,r=>json(r,obj));
 const errors=[];page.on('pageerror',e=>errors.push(String(e?.stack||e)));
 const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:5000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:7000})};
-const store=()=>page.evaluate(()=>{try{return JSON.parse(localStorage.getItem('axis_v8_meta')||'{}')}catch{return{}}});
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
 await page.evaluate(()=>localStorage.clear());await page.reload({waitUntil:'domcontentloaded'});await ready();
@@ -59,17 +58,17 @@ await page.locator('#quickRecordBtn').click();await page.waitForFunction(()=>doc
 await page.locator('#v8Recent [data-qid]:visible').first().click();await page.waitForFunction(()=>document.querySelector('#saveScan')&&document.querySelector('#v8Sets .v8SetRow'),undefined,{timeout:2200});
 await page.locator('#saveScan').click();await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:3500});
 const activeId=await page.locator('#v87Finish').getAttribute('data-id');assert.ok(activeId);
-await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity,t=Date.now();if(!a)throw new Error('active activity missing');a.status='active';a.estimateMs=4200;a.startedAt=t-900;a.lastResumedAt=t-900;a.intervals=[{start:t-900,end:null}];delete a.itemReminderNotifiedAt;m.prefs=m.prefs||{};m.prefs.v87SoundEnabled=true;m.prefs.v86ItemReminder=true;localStorage.setItem(k,JSON.stringify(m))},activeId);
+await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity,t=Date.now();if(!a)throw new Error('active activity missing');a.status='active';a.estimateMs=60000;a.startedAt=t-56000;a.lastResumedAt=t-56000;a.intervals=[{start:t-56000,end:null}];delete a.itemReminderNotifiedAt;m.prefs=m.prefs||{};m.prefs.v87SoundEnabled=true;m.prefs.v86ItemReminder=true;localStorage.setItem(k,JSON.stringify(m))},activeId);
 await page.waitForTimeout(650);
-assert.match((await page.locator('#v87Meta').innerText()).trim(),/^剩余 \d{2}:\d{2}/,'active item does not show countdown');
+assert.match((await page.locator('#v87Meta').innerText()).trim(),/^剩余 00:0[2-4]/,'active item does not show normalized countdown');
 const toggle=page.locator('#v87Toggle');await toggle.click();await page.waitForTimeout(620);const paused=(await page.locator('#v87Meta').innerText()).trim();await page.waitForTimeout(1050);assert.equal((await page.locator('#v87Meta').innerText()).trim(),paused,'countdown moved while paused');
 await toggle.click();await page.waitForTimeout(700);assert.notEqual((await page.locator('#v87Meta').innerText()).trim(),paused,'countdown did not resume');
-await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity;if(!a)throw new Error('activity missing');const elapsed=(a.intervals||[]).reduce((n,x)=>n+Math.max(0,(x.end||Date.now())-x.start),0);a.estimateMs=elapsed+650;a.startedAt=Date.now();delete a.itemReminderNotifiedAt;localStorage.setItem(k,JSON.stringify(m))},activeId);
+await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity,t=Date.now();if(!a)throw new Error('activity missing');a.status='active';a.estimateMs=60000;a.startedAt=t-59400;a.lastResumedAt=t-59400;a.intervals=[{start:t-59400,end:null}];delete a.itemReminderNotifiedAt;localStorage.setItem(k,JSON.stringify(m))},activeId);
 await page.waitForFunction(id=>{try{return Number(JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.itemReminderNotifiedAt)>0}catch{return false}},activeId,{timeout:3000});
-assert.equal((await page.locator('#v87Meta').innerText()).trim().startsWith('剩余 00:00'),true,'countdown did not settle at zero');
+await page.waitForFunction(()=>document.querySelector('#v87Meta')?.textContent.trim().startsWith('剩余 00:00'),undefined,{timeout:800});
 
 console.log(`[AXIS 8.8.1 ${ENGINE}] long-press finish suppresses pending countdown tone`);
-await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity;if(!a)throw new Error('activity missing');const elapsed=(a.intervals||[]).reduce((n,x)=>n+Math.max(0,(x.end||Date.now())-x.start),0);a.estimateMs=elapsed+500;a.startedAt=Date.now()+7;delete a.itemReminderNotifiedAt;localStorage.setItem(k,JSON.stringify(m))},activeId);
+await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity,t=Date.now();if(!a)throw new Error('activity missing');a.status='active';a.estimateMs=60000;a.startedAt=t;a.lastResumedAt=t-59700;a.intervals=[{start:t-59700,end:null}];delete a.itemReminderNotifiedAt;localStorage.setItem(k,JSON.stringify(m))},activeId);
 const box=await page.locator('#v87Finish').boundingBox();assert.ok(box);
 await page.locator('#v87Finish').dispatchEvent('pointerdown',{pointerId:41,pointerType:'touch',isPrimary:true,buttons:1,clientX:box.x+box.width/2,clientY:box.y+box.height/2});
 await page.waitForTimeout(1750);
