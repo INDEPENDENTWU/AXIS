@@ -48,6 +48,14 @@ for(const file of files){
         "prefs:{enabled:true,native:'zh',target:'en'}",
         "prefs:{enabled:true,native:'zh',target:'en',mode:'standard',track:'auto',cadence:'every',level:'adaptive',dailyTarget:0,opportunity:'auto'}"
       );
+      src=src.replace(
+        "await page.evaluate(()=>{window.__AXIS_891_DIRECT__=[];let n=40;const loop=()=>{const s=document.querySelector('#detailSheet');if(s?.classList.contains('show'))window.__AXIS_891_DIRECT__.push({title:document.querySelector('#detailTitle')?.textContent||'',body:(document.querySelector('#detail')?.innerText||'').replace(/\\s+/g,' ').trim(),pre:s.classList.contains('axis884Prepaint')});if(n-->0)requestAnimationFrame(loop)};requestAnimationFrame(loop)});",
+        "await page.evaluate(()=>{const s=document.querySelector('#detailSheet');window.__AXIS_891_DIRECT__=[];window.__AXIS_891_DIRECT_OBS__?.disconnect?.();const snap=()=>{if(s?.classList.contains('show'))window.__AXIS_891_DIRECT__.push({title:document.querySelector('#detailTitle')?.textContent||'',body:(document.querySelector('#detail')?.innerText||'').replace(/\\s+/g,' ').trim(),pre:s.classList.contains('axis884Prepaint')})};const o=new MutationObserver(snap);if(s)o.observe(s,{attributes:true,attributeFilter:['class'],subtree:true,childList:true,characterData:true});window.__AXIS_891_DIRECT_OBS__=o;snap()});"
+      );
+      src=src.replace(
+        "const direct=await page.evaluate(()=>window.__AXIS_891_DIRECT__||[]);",
+        "const direct=await page.evaluate(()=>{window.__AXIS_891_DIRECT_OBS__?.disconnect?.();return window.__AXIS_891_DIRECT__||[]});"
+      );
     }
   }
   if(version==='8.10.1'&&file==='scripts/axis-810-smoke.mjs'){
