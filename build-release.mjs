@@ -35,6 +35,7 @@ const STEPS=[
   'prepare-891-speak-curriculum.mjs',
   'prepare-891-speak-panel.mjs',
   'prepare-891-speak-ui.mjs',
+  'prepare-891-event-target-safety.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
