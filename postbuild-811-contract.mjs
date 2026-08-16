@@ -5,7 +5,8 @@ import {buildAxis811Multilingual,auditAxis811Multilingual} from './lib/multiling
 const fail=m=>{throw new Error(`[AXIS 8.11 experience contract] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const contract=JSON.parse(read('release-contract.json')),runtime=read('axis-core.js'),index=read('index.html'),info=JSON.parse(read('axis-build.json'));
-if(String(contract.publicVersion)!=='8.10.3')fail(`8.11 candidate must not silently change sealed public identity: ${contract.publicVersion}`);
+if(String(contract.publicVersion)!=='8.11'||String(contract.stableBaseVersion)!=='8.11')fail(`unexpected 8.11 release identity ${contract.publicVersion}/${contract.stableBaseVersion}`);
+if(info.version!=='8.11'||info.baseVersion!=='8.11')fail(`8.11 manifest identity mismatch ${info.version}/${info.baseVersion}`);
 const audit=auditAxis811Atlas(buildAxis811Atlas()),multi=auditAxis811Multilingual(buildAxis811Multilingual());
 if(audit.count!==5280||audit.duplicateTargets!==0||audit.missing.length||audit.unresolved.length||!audit.fourTurn||!audit.sixTurn)fail('English learning atlas audit failed');
 if(multi.count!==360||multi.per.ja!==120||multi.per.ko!==120||multi.per.zh!==120||multi.missing.length||!multi.sixTurn||Object.values(multi.dup).some(Boolean))fail('multilingual atlas audit failed');
@@ -50,12 +51,12 @@ Object.assign(info.gates,{
  trendsStateField811:true,trendsGoalAware811:true,trendsEvidenceOnly811:true,trendsLocalFirst811:true,trendsOneShotMotion811:true,
  serviceSettingsConverged811:true,serviceSettingsUserInvokedNetwork811:true,serviceSettingsNoTrainingOwner811:true
 });
-info.axis811Candidate={
- publicVersionUnchanged:true,
+info.axis811={
+ release:true,
  learning:{owner:'axis_v89_speak',baseEnglish:456,atlasEnglish:5280,totalEnglish:5736,totalUnits:6132,availableByLanguage:{en:5736,ja:132,ko:132,zh:132},newMultilingual:{ja:120,ko:120,zh:120},legacyDiagnostics:{richEnglish:456,totalUnits:492,phrases:492},exactTargetDuplicates:0,levels:audit.levelCounts,tracks:audit.trackCounts,dialogueTurns:6,connectedSpeech:true,spelling:true,dictation:true,shadow:true,settings:{visibleCore:['goal','intensity','level'],fineTunePreserves:['mode','track','cadence','level','dailyTarget','opportunity']}},
  trends:{model:'state-field-trajectory',states:['未成形','起点','成形','推进','稳定','待续'],goals:['health','muscle','fat','strength','cardio'],fitnessScore:false,socialComparison:false,evidenceOnly:true,networkRequired:false,legacyInsightIdsPreserved:true,oneShotMotion:true,reducedMotionSafe:true},
  services:{surface:'cloud-and-ai',localFirst:true,userInvokedStatusNetwork:true,automaticNetwork:false,cloudModes:['off','data','media'],aiModes:['off','assist','smart'],clientSecrets:false},
  ownership:{trainingState:false,trainingControls:false,cloudRequired:false,aiRequired:false}
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-console.log('[AXIS 8.11 experience contract] PASS · 6132 learning units · six-turn · State Field · converged cloud/AI settings · inherited diagnostics preserved');
+console.log('[AXIS 8.11 contract] PASS · public 8.11 · 6132 learning units · six-turn · State Field · converged cloud/AI settings · inherited diagnostics preserved');
