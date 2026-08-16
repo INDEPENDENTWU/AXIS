@@ -13,7 +13,7 @@ jobs:
       matrix:
         engine: [chromium, webkit]
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 9
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -42,6 +42,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: ${{ matrix.engine }}
         run: node scripts/axis-882-home-transition-smoke.mjs
+      - name: Verify completed Home and canonical Quick camera
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: ${{ matrix.engine }}
+        run: node scripts/axis-882-completion-camera-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-home-transition.log || true
