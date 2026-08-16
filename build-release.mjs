@@ -31,6 +31,10 @@ const STEPS=[
   'prepare-89-rest-speak.mjs',
   'prepare-89-rest-speak-fix.mjs',
   'prepare-89-rest-speak-safety.mjs',
+  'prepare-891-detail.mjs',
+  'prepare-891-speak-curriculum.mjs',
+  'prepare-891-speak-panel.mjs',
+  'prepare-891-speak-ui.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
@@ -39,6 +43,7 @@ const STEPS=[
   'postbuild-881-inherited-contract.mjs',
   'postbuild-882-contract.mjs',
   'postbuild-89-contract.mjs',
+  'postbuild-891-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 
@@ -69,6 +74,7 @@ if(contract.architecture==='canonical-single-runtime'){
   for(const gate of ['groupPlanUnitlessControls','groupPlanExpandedPresets','activeItemCountdown','activeItemCountdownTone','activeItemLongPressSuppressesTone','watermarkCenterBrand','watermarkBrandOpacitySingleTarget'])if(manifest.gates?.[gate]!==true)fail(`8.8.1 gate missing · ${gate}`);
   for(const gate of ['homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog','mediaStoreWebKitSafe'])if(manifest.gates?.[gate]!==true)fail(`8.8.2 gate missing · ${gate}`);
   for(const gate of ['detailAtomicHandoff','localVisionV2','frontierVisionCatalogContract','frontierVisionProviderRouter','restSpeakPassive','restSpeakNoGeometryOwner','expandedSearchVocabulary'])if(manifest.gates?.[gate]!==true)fail(`8.9 gate missing · ${gate}`);
+  for(const gate of ['restSpeakInlineComplete','restSpeakMicroLearning','restSpeakRichEnglish','restSpeakNoAutoplay','restSpeakSpacedExposure','detailStableReveal','detailStableInPlaceSwap','detailNoBlurFlash'])if(manifest.gates?.[gate]!==true)fail(`8.9.1 gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
