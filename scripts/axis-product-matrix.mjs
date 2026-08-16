@@ -130,20 +130,24 @@ assert.ok((await page.locator('#captureNow').innerText()).includes('5'),'capture
 await page.locator('#scanSheet [data-close="scanSheet"]').click();
 await page.waitForTimeout(80);
 
-console.log('[AXIS matrix] reminder + sound gate persistence');
+console.log('[AXIS matrix] countdown-only sound gate persistence');
 await openGate('#v8711AudioGate > .settingLink','#v8711AudioGate');
 await page.locator('#v8710On [data-v="off"]').click();
 await page.locator('#v8710Tone [data-v="vector"]').click();
 await page.locator('#v8710Repeat [data-v="once"]').click();
-await page.locator('#v8710Rest [data-v="90"]').click();
+assert.equal(await page.locator('#v8710Rest:visible,#v8710Session:visible,#v876TargetSheet:visible').count(),0,'retired rest/session automatic reminder controls returned');
+assert.equal(await page.locator('#v8710Item:visible').count(),1,'canonical item countdown reminder control missing');
+await page.locator('#v8710Item').click();
 await page.waitForTimeout(80);
 meta=await store('axis_v8_meta');
 assert.equal(meta.prefs?.v8710SoundEnabled,false);
 assert.equal(meta.prefs?.v8710SoundSet,'vector');
 assert.equal(meta.prefs?.v8710Repeat,'once');
-assert.equal(meta.prefs?.reminderTiming,'90');
+assert.equal(meta.prefs?.v876ItemReminder,false);
+await page.locator('#v8710Item').click();
 await page.locator('#v8710On [data-v="on"]').click();
 meta=await store('axis_v8_meta');
+assert.equal(meta.prefs?.v876ItemReminder,true);
 assert.equal(meta.prefs?.v8710SoundEnabled,true);
 
 console.log('[AXIS matrix] watermark gate controls are canonical, visible and persistent');

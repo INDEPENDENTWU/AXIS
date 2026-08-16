@@ -9,31 +9,34 @@ on:
 jobs:
   browser-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-      - name: Build canonical AXIS 8.8.1 release
+      - name: Build canonical AXIS release
         run: node build-release.mjs
+      - name: Align browser assertions to current release contract
+        run: node scripts/prepare-release-test-contract.mjs
       - name: Verify canonical artifact contract
         run: |
           node - <<'NODE'
           const fs=require('fs');
+          const c=JSON.parse(fs.readFileSync('release-contract.json','utf8'));
           const m=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
-          if(m.version!=='8.8.1'||m.baseVersion!=='8.8.1')throw new Error('release/base identity mismatch');
+          if(m.version!==c.publicVersion||m.baseVersion!==c.stableBaseVersion)throw new Error(`release/base identity mismatch ${m.version}/${m.baseVersion}`);
           if(m.architecture!=='canonical-single-runtime')throw new Error(`unexpected architecture ${m.architecture}`);
           if(m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('dynamic runtime chunks survived');
           if(!m.gates?.canonicalSingleRuntime||!m.featureKernel?.embedded||!m.completionKernel?.embedded)throw new Error('canonical gates missing');
-          if(!m.gates?.catalogCategorySingleOwner)throw new Error('catalog single-owner gate missing');
-          if(!m.gates?.watermarkFourSwitchContract||!m.gates?.precisePlaceResolver||!m.gates?.noRawCoordinatePresentation)throw new Error('watermark canonical gates missing');
+          for(const k of ['catalogCategorySingleOwner','watermarkFourSwitchContract','precisePlaceResolver','noRawCoordinatePresentation','watermarkSingleLocateOwner','watermarkPreferenceSingleWriter'])if(!m.gates?.[k])throw new Error(`canonical inherited gate missing ${k}`);
           for(const k of ['groupPlanUnitlessControls','groupPlanExpandedPresets','activeItemCountdown','activeItemCountdownTone','activeItemLongPressSuppressesTone','watermarkCenterBrand','watermarkBrandOpacitySingleTarget'])if(!m.gates?.[k])throw new Error(`8.8.1 gate missing ${k}`);
+          for(const k of ['homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog'])if(!m.gates?.[k])throw new Error(`8.8.2 gate missing ${k}`);
           const html=fs.readFileSync('index.html','utf8');
           const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(x=>x[1]);
           if(scripts.length!==1||!scripts[0].startsWith('/axis-core.js?v='))throw new Error(`unexpected scripts ${scripts}`);
           if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-/.test(html))throw new Error('legacy dynamic loader survived in HTML');
-          console.log('[AXIS canonical artifact] PASS · 8.8.1 · one runtime · planner/countdown/brand contracts');
+          console.log(`[AXIS canonical artifact] PASS · ${c.publicVersion} · one runtime · inherited + 8.8.2 contracts`);
           NODE
       - name: Static capture owner audit
         run: node scripts/axis-static-owner-audit.mjs
@@ -49,32 +52,25 @@ jobs:
           echo $! >/tmp/axis-http.pid
           sleep 1
       - name: Canonical capture entry diagnostic
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-capture-entry-diag.mjs
       - name: Browser smoke and repeated cold boot
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/run-smoke-guarded.mjs
       - name: First-paint shell stability
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-first-paint-smoke.mjs
       - name: Inline settings ownership diagnostic
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-settings-diag.mjs
       - name: Active adjustment transient diagnostic
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-active-adjust-diag.mjs
       - name: Completion interaction regression suite
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-completion-smoke.mjs
-      - name: AXIS 8.8.1 convergence smoke
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+      - name: AXIS 8.8 ownership convergence smoke
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-88-smoke.mjs
       - name: Equipment category single-owner regression
         env:
@@ -86,18 +82,21 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-watermark-smoke.mjs
-      - name: AXIS 8.8.1 planner + countdown + brand regression
+      - name: Inherited AXIS 8.8.1 planner + countdown + brand regression
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-881-smoke.mjs
-      - name: Record-preference affordance diagnostic
+      - name: AXIS 8.8.2 home + local memory + quick media + sound + geometry regression
         env:
           AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-882-smoke.mjs
+      - name: Record-preference affordance diagnostic
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-record-prefs-diag.mjs
       - name: Full product operation matrix
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-product-matrix.mjs
       - name: Print server log on failure
         if: failure()
@@ -105,14 +104,16 @@ jobs:
 
   webkit-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 14
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-      - name: Build exact canonical AXIS 8.8.1 artifact
+      - name: Build exact canonical AXIS artifact
         run: node build-release.mjs
+      - name: Align browser assertions to current release contract
+        run: node scripts/prepare-release-test-contract.mjs
       - name: Prepare WebKit runtime
         run: |
           npm install --no-save playwright@1.55.0
@@ -123,8 +124,7 @@ jobs:
           echo $! >/tmp/axis-webkit-http.pid
           sleep 1
       - name: iPhone WebKit product smoke
-        env:
-          AXIS_URL: http://127.0.0.1:4173
+        env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-webkit-smoke.mjs
       - name: iPhone WebKit equipment category regression
         env:
@@ -136,11 +136,16 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-watermark-smoke.mjs
-      - name: iPhone WebKit AXIS 8.8.1 planner + countdown + brand regression
+      - name: iPhone WebKit inherited AXIS 8.8.1 regression
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-881-smoke.mjs
+      - name: iPhone WebKit AXIS 8.8.2 regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-882-smoke.mjs
       - name: Print WebKit server log on failure
         if: failure()
         run: cat /tmp/axis-webkit-http.log || true
