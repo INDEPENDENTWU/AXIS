@@ -10,5 +10,9 @@ const replacement=`  {const from="const fp=fpFromCanvas(cv),ts=captureSeal(cv),b
 const hits=src.split(block).length-1;
 if(hits!==1)throw new Error(`AXIS 8.8.2 convergence driver: dual-frame compiler block expected once, found ${hits}`);
 src=src.replace(block,replacement);
+const syntaxOld="const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax ${e.message}`)}};";
+const syntaxNew="const syntax=(src,label)=>{const f='.axis-syntax-'+String(label).replace(/[^a-z0-9.-]+/gi,'_')+'.js';fs.writeFileSync(f,src);try{execFileSync(process.execPath,['--check',f],{stdio:'pipe'})}catch(e){console.error(String(e.stderr||e.stdout||e));fail(`${label} syntax check failed`)}finally{try{fs.unlinkSync(f)}catch{}}};";
+if(src.split(syntaxOld).length-1!==1)throw new Error('AXIS 8.8.2 convergence driver: syntax helper contract changed');
+src=src.replace("import fs from 'node:fs';","import fs from 'node:fs';\nimport {execFileSync} from 'node:child_process';").replace(syntaxOld,syntaxNew);
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
