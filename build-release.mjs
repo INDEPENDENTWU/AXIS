@@ -44,6 +44,7 @@ const STEPS=[
   'prepare-8101-home-timer.mjs',
   'prepare-8101-learning-immersion.mjs',
   'prepare-8102-interaction-stability.mjs',
+  'prepare-8102-standalone-polish.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
