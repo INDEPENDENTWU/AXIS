@@ -31,7 +31,7 @@ const detailFrames=await page.evaluate(()=>new Promise(resolve=>{const out=[];le
 assert.ok(detailFrames.every(x=>!x.min),'detail drill-down still exposes an intermediate inherited min-height');assert.ok(detailFrames.every(x=>x.title==='杠铃深蹲'),'detail title changed across composed frames');
 await page.locator('#detailSheet [data-close="detailSheet"]').click();
 
-console.log(`[AXIS 8.10.2 ${ENGINE}] standalone learning is available outside a workout and remains accessory-only`);
+console.log(`[AXIS 8.10.2 ${ENGINE}] standalone learning is available outside a workout and survives idle Home repaint ticks`);
 const coreBeforeStandalone=await page.evaluate(()=>localStorage.getItem('axis_v60_state')),metaBeforeStandalone=await page.evaluate(()=>localStorage.getItem('axis_v8_meta'));
 await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show')&&document.querySelector('#v810ConfigEntry'));
 await page.locator('#v810ConfigEntry').click();await page.waitForFunction(()=>document.querySelector('#v810ConfigPanel')?.classList.contains('show'));
@@ -41,7 +41,8 @@ assert.equal(await page.evaluate(()=>window.__AXIS_8102_SPEAK_CALLS__),0,'standa
 await standaloneStart.click();await page.waitForFunction(()=>document.querySelector('#v891SpeakPanel')?.classList.contains('show')&&document.querySelector('#v891SpeakPanel')?.dataset.axis8102Source==='standalone',undefined,{timeout:1800});
 assert.equal(await page.evaluate(()=>window.__AXIS_8102_SPEAK_CALLS__),0,'standalone learning autoplayed on open');assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v60_state')),coreBeforeStandalone,'standalone learning changed core training state');assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v8_meta')),metaBeforeStandalone,'standalone learning changed training metadata');
 assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),3,'standalone learning lost dialogue/echo/shadow modes');
-await page.locator('#v891SpeakPanel [data-v891-action="close"]').click();
+await page.waitForTimeout(1650);assert.equal(await page.locator('#v891SpeakPanel').evaluate(el=>el.classList.contains('show')),true,'standalone learning panel was closed by idle Home repaint');assert.equal(await page.locator('#v891SpeakPanel').getAttribute('data-axis8102-source'),'standalone');
+await page.locator('#v891SpeakPanel [data-v891-action="close"]').click();await page.waitForFunction(()=>!document.querySelector('#v891SpeakPanel')?.classList.contains('show'));
 
 console.log(`[AXIS 8.10.2 ${ENGINE}] paused learning panel survives repeated training repaint ticks`);
 await page.evaluate(()=>{const t=Date.now(),event={id:'EP1',equipmentId:'rower',name:'坐姿划船机',kind:'cardio',time:t-3600000,duration:15,intensity:5,muscles:['背部'],frameRefs:[]};const core=JSON.parse(localStorage.getItem('axis_v60_state'));core.sessions=[];core.active={id:'SP1',start:t-9000000,events:[event]};localStorage.setItem('axis_v60_state',JSON.stringify(core));localStorage.setItem('axis_v8_meta',JSON.stringify({prefs:{},events:{EP1:{activity:{status:'paused',startedAt:t-9000000,lastResumedAt:t-9000000,pausedAt:t-30000,finishedAt:null,estimateMs:900000,completedSets:0,intervals:[{start:t-9000000,end:t-30000}],restStartedAt:null},sets:[]}}}));const s=JSON.parse(localStorage.getItem('axis_v89_speak'));s.current=null;s.prefs.opportunity='pause';s.prefs.standalone='off';localStorage.setItem('axis_v89_speak',JSON.stringify(s))});
@@ -51,4 +52,4 @@ await page.locator('#v87Rest').click();await page.waitForFunction(()=>document.q
 await page.waitForTimeout(1650);assert.equal(await page.locator('#v891SpeakPanel').evaluate(el=>el.classList.contains('show')),true,'paused learning panel was closed by a subsequent render tick');assert.equal(await page.locator('#v891SpeakPanel').getAttribute('data-axis8102-source'),'opportunity');
 assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v8_meta')),metaBaseline,'paused learning changed training metadata');assert.equal(await page.evaluate(()=>window.__AXIS_ACTIVE_CONTROL__?.owner),'v87-direct-884');assert.equal(await page.evaluate(()=>window.__AXIS_8102_SPEAK_CALLS__),0,'opening paused learning started sound');
 
-assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);await browser.close();console.log(`[AXIS 8.10.2 ${ENGINE}] PASS · stable detail drill-down · persistent paused learning · standalone learning · no autoplay · training isolation`);
+assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);await browser.close();console.log(`[AXIS 8.10.2 ${ENGINE}] PASS · stable detail drill-down · persistent paused + standalone learning · no autoplay · training isolation`);
