@@ -32,6 +32,10 @@ for(const file of files){
       "prefs:{enabled:true,native:'zh',target:'en'}",
       "prefs:{enabled:true,native:'zh',target:'en',mode:'standard',track:'auto',cadence:'every',level:'adaptive',dailyTarget:0}"
     );
+    src=src.replace(
+      "assert.match(restLines.target,/^(?:休息 )?\\d{2}:\\d{2} · (Could|Is |I'm|Go |No |That |Can |Where |Sounds)/i);",
+      "assert.match(restLines.target,/^(?:休息 )?\\d{2}:\\d{2} · .{2,}$/u,'Rest Speak target is not a complete timer + phrase line');"
+    );
   }
   if(file==='scripts/axis-891-smoke.mjs'){
     src=src.replace("assert.ok((diag?.phrases?.()||0)>=108);","assert.ok((await page.evaluate(()=>window.__AXIS_REST_SPEAK__?.phrases?.()||0))>=108);");
