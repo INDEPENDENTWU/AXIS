@@ -31,6 +31,6 @@ src=once(src,'function injectRestSpeak(){axis89SpeakStyle();axis891SpeakStyle();
 src=once(src,'host.appendChild(box)}renderRestSpeakSettings()}','host.appendChild(box)}axis810EnsureSettings(box);renderRestSpeakSettings();axis810RenderSettings()}','8.10 controls mount');
 src=once(src,'axis89SaveSpeak(s);renderRestSpeakSettings();renderNow(true)}','axis89SaveSpeak(s);renderRestSpeakSettings();axis810RenderSettings();renderNow(true)}','refresh settings after language preference');
 src=once(src,"migrateAudio();injectAudio();axis891SpeakStyle();try{injectRestSpeak()}","migrateAudio();injectAudio();axis891SpeakStyle();axis810SpeakStyle();try{injectRestSpeak()}",'boot 8.10 settings style');
-if(!src.includes('data-v810-key="track"')||!src.includes('function axis810OpenRecap('))fail('8.10 configurable learning controls missing');
+if(!src.includes('data-v810-options="track"')||!src.includes('function axis810OpenRecap(')||!src.includes('AXIS810_SETTING_GROUPS'))fail('8.10 configurable learning controls missing');
 syntax(src,FILE);write(FILE,src);
 console.log('[AXIS 8.10 learning settings] PASS · mode · track · cadence · level · daily target · today recap');
