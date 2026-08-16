@@ -1,5 +1,5 @@
 AXIS production release trigger
-2026-08-16T18:07:46+08:00
-Release: 8.9
-Source baseline: dc0a09ca25f0715bd484f1d079fe1c4d50d0e3fb
-Reason: redeploy the fully browser-gated AXIS 8.9 canonical release to Vercel and EdgeOne after aligning Production verification to the canonical.version manifest authority. Product/runtime logic is unchanged; this is deployment and verification convergence only.
+2026-08-16T23:25:00+08:00
+Release: 8.10.3
+Source baseline: f38eb8fa6e31b61459d9eb56d0a9ac1eda1dc5e1
+Reason: force a fresh Vercel + EdgeOne production build after the first 8.10.3 deployment reused the final PR-head artifact identity. Product/runtime behavior is unchanged. The new production artifact must stamp the exact merged main source commit and pass both fixed-alias and production-browser verification gates.
