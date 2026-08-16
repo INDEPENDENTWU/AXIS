@@ -16,8 +16,8 @@ jobs:
           node-version: '20.18.0'
       - name: Static server/API syntax
         run: |
-          node --check api/analyze.js
-          node --check lib/ai-config.js
+          node --input-type=module --check < api/analyze.js
+          node --input-type=module --check < lib/ai-config.js
           node --check prepare-89-detail.mjs
           node --check prepare-89-vision.mjs
           node --check prepare-89-catalog.mjs
