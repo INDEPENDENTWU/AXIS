@@ -16,10 +16,10 @@ for(const [needle,label] of [
  ['function axis810SessionCap(','session budget missing'],
  ['function axis810Review(','due review scheduler missing'],
  ['function axis810OpenRecap(','today learning recap missing'],
- ['data-v810-key="track"','track controls missing'],
- ['data-v810-key="cadence"','cadence controls missing'],
- ['data-v810-key="level"','level controls missing'],
- ['data-v810-key="dailyTarget"','daily target controls missing'],
+ ['data-v810-options="track"','track controls missing'],
+ ['data-v810-options="cadence"','cadence controls missing'],
+ ['data-v810-options="level"','level controls missing'],
+ ['data-v810-options="dailyTarget"','daily target controls missing'],
  ["p.cadence==='manual'",'manual cadence missing'],
  ["p.cadence==='long'&&rest<45000",'long-rest cadence threshold missing']
 ])if(!runtime.includes(needle))fail(label);
