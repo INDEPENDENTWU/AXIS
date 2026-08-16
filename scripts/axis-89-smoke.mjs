@@ -82,9 +82,9 @@ await page.evaluate(async()=>{
  localStorage.removeItem('axis_v89_speak');
  const t=Date.now(),event={id:'E89D',equipmentId:'chest',name:'胸推',kind:'strength',time:t-60000,weight:20,reps:10,sets:5,muscles:['胸肌','肱三头肌','肩部'],frameRefs:['F-E89D-0'],photoBytes:80};
  const core=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');core.active=null;core.sessions=[{id:'S89D',start:t-120000,end:t-43000,events:[event]}];localStorage.setItem('axis_v60_state',JSON.stringify(core));
- const req=indexedDB.open('axis_v42_media',1);await new Promise((res,rej)=>{req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('media'))req.result.createObjectStore('media')};req.onsuccess=res;req.onerror=rej});const db=req.result;
+ const media=window.__AXIS_MEDIA_STORE__;if(!media?.put)throw new Error('canonical media store unavailable');
  const png=Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII='),c=>c.charCodeAt(0));
- await new Promise((res,rej)=>{const tx=db.transaction('media','readwrite');tx.objectStore('media').put(new Blob([png],{type:'image/png'}),'F-E89D-0');tx.oncomplete=res;tx.onerror=rej});db.close();
+ await media.put('F-E89D-0',new Blob([png],{type:'image/png'}));
 });
 await page.reload({waitUntil:'domcontentloaded'});await ready();await page.locator('.nav button[data-view="historyView"]').click();await page.locator('[data-session="S89D"]').click();
 await page.waitForFunction(()=>document.querySelector('#detailSheet')?.classList.contains('show')&&document.querySelector('#detail')?.innerText.includes('训练时间'),undefined,{timeout:1800});
