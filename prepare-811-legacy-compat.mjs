@@ -1,3 +1,4 @@
+import './prepare-811-dialogue-depth.mjs';
 import fs from 'node:fs';
 
 const FILE='v87-runtime.js';
@@ -10,4 +11,4 @@ if(n!==1)fail(`deferred diagnostic owner expected once, found ${n}`);
 src=src.replace(from,to);
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.11 legacy compat] PASS · inherited 8.10 phrase/snapshot counters stay 492/456 while 8.11 availability remains additive');
+console.log('[AXIS 8.11 legacy compat] PASS · six-turn dialogue installed · inherited 8.10 phrase/snapshot counters stay 492/456');
