@@ -63,7 +63,7 @@ await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.cont
 const h1=await page.locator('#v87Now').evaluate(el=>el.getBoundingClientRect().height);
 assert.ok(Math.abs(h1-h0)<=1.5,`Rest Speak changed active-card geometry ${h0} -> ${h1}`);
 const restLines=await page.locator('#v87Now #v87Rest').evaluate(el=>({target:el.querySelector('span')?.textContent||'',meaning:el.querySelector('small')?.textContent||''}));
-assert.match(restLines.target,/^\d{2}:\d{2} · (Could|Is |I'm|Go |No |That |Can |Where |Sounds)/i);
+assert.match(restLines.target,/^(?:休息 )?\d{2}:\d{2} · (Could|Is |I'm|Go |No |That |Can |Where |Sounds)/i);
 assert.ok(restLines.meaning.length>1,'Rest Speak meaning missing');
 assert.equal(await page.locator('#v87Now .v89Speak').count(),1,'Rest Speak escaped the existing rest slot');
 assert.equal(await page.locator('.axis883TimelineSafe').count(),0,'8.9 reintroduced dynamic timeline safe zone');
