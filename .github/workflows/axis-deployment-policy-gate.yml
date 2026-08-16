@@ -5,7 +5,9 @@ on:
     paths:
       - 'vercel.json'
       - 'scripts/verify-vercel-deployment-policy.mjs'
+      - 'scripts/prepare-release-test-contract.mjs'
       - '.github/workflows/axis-public-production-alias-gate.yml'
+      - '.github/workflows/axis-production-deployment-gate.yml'
       - '.github/workflows/axis-deployment-policy-gate.yml'
       - 'docs/DEPLOYMENT_POLICY.md'
   push:
@@ -14,7 +16,9 @@ on:
     paths:
       - 'vercel.json'
       - 'scripts/verify-vercel-deployment-policy.mjs'
+      - 'scripts/prepare-release-test-contract.mjs'
       - '.github/workflows/axis-public-production-alias-gate.yml'
+      - '.github/workflows/axis-production-deployment-gate.yml'
       - '.github/workflows/axis-deployment-policy-gate.yml'
       - 'docs/DEPLOYMENT_POLICY.md'
 
@@ -31,3 +35,21 @@ jobs:
           node-version: '20.18.0'
       - name: Verify Vercel main-only deployment policy
         run: node scripts/verify-vercel-deployment-policy.mjs
+      - name: Verify release-aware browser test contract
+        run: |
+          node scripts/prepare-release-test-contract.mjs
+          node <<'NODE'
+          const fs=require('fs');
+          const version=JSON.parse(fs.readFileSync('release-contract.json','utf8')).publicVersion;
+          const files=['scripts/axis-smoke.mjs','scripts/axis-completion-smoke.mjs','scripts/axis-88-smoke.mjs','scripts/axis-first-paint-smoke.mjs','scripts/axis-webkit-smoke.mjs','scripts/axis-881-smoke.mjs'];
+          for(const file of files){
+            if(!fs.existsSync(file))continue;
+            const src=fs.readFileSync(file,'utf8');
+            for(const m of src.matchAll(/canonical-(\d+(?:\.\d+)+)/g))if(m[1]!==version)throw new Error(`${file} stale canonical version ${m[1]} != ${version}`);
+            for(const m of src.matchAll(/版本 (\d+(?:\.\d+)+)/g))if(m[1]!==version)throw new Error(`${file} stale public version ${m[1]} != ${version}`);
+            for(const m of src.matchAll(/canonical\?\.version\s*,\s*['"](\d+(?:\.\d+)+)['"]/g))if(m[1]!==version)throw new Error(`${file} stale canonical assertion ${m[1]} != ${version}`);
+          }
+          const prod=fs.readFileSync('.github/workflows/axis-production-deployment-gate.yml','utf8');
+          if(!prod.includes('node scripts/prepare-release-test-contract.mjs'))throw new Error('Production Gate does not align browser assertions to release contract');
+          console.log(`[AXIS deployment policy] release-aware browser tests verified · ${version}`);
+          NODE

@@ -39,6 +39,8 @@ jobs:
           console.log(`AXIS_EXPECTED_BASE=${c.stableBaseVersion}`);
           console.log(`AXIS_EXPECTED_ARCH=${c.architecture}`);
           NODE
+      - name: Align browser assertions to current release contract
+        run: node scripts/prepare-release-test-contract.mjs
       - name: Wait for fixed Production URL to serve exact source commit
         shell: bash
         run: |
@@ -63,7 +65,7 @@ jobs:
           done
           echo "::error title=AXIS Production stale or protected::${AXIS_URL} did not anonymously serve exact deployed commit ${AXIS_EXPECTED_SHA}."
           exit 1
-      - name: Verify 8.8.1 canonical Production manifest and immutable assets
+      - name: Verify canonical Production manifest and immutable assets
         shell: bash
         run: |
           set -euo pipefail
@@ -94,7 +96,7 @@ jobs:
           if(!html.includes(`data-axis-runtime="canonical-${process.env.AXIS_EXPECTED_VERSION}"`))fail('canonical HTML marker missing');
           if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-(foundation|recording|interaction|product)\.js/.test(html))fail('retired dynamic loader survives in Production HTML');
           fs.writeFileSync('/tmp/axis-assets.tsv',`core\t/axis-core.js?v=${x.assets.core}\t20000\ncss\t/axis-style.css?v=${x.assets.css}\t10000\n`);
-          console.log(`[AXIS Production] ${x.version} · ${x.sourceCommit.slice(0,10)} · canonical 8.8.1 contracts verified`);
+          console.log(`[AXIS Production] ${x.version} · ${x.sourceCommit.slice(0,10)} · canonical release contracts verified`);
           NODE
           while IFS=$'\t' read -r name path min_bytes; do
             test -n "$name" || continue
