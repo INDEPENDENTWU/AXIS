@@ -99,7 +99,7 @@ jobs:
             x.canonical?.locateOwner==='v8710 canonical precise resolver' &&
             x.canonical?.preferenceOwner==='v85 setWm event bridge' &&
             x.canonical?.rawCoordinatePresentation===false &&
-            x.canonical?.minorRelease===process.env.VERSION &&
+            x.canonical?.version===process.env.VERSION &&
             x.canonical?.watermarkBrand?.text==='AXIS' &&
             x.canonical?.watermarkBrand?.opacityOwner==='v876WmOpacity' &&
             x.canonical?.activeCountdown?.toneOwner==='v8710-sound-ui.js' &&

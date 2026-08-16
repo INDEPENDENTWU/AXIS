@@ -88,7 +88,7 @@ jobs:
           ];
           for(const k of required)if(x.gates?.[k]!==true)fail(`missing Production gate ${k}`);
           if(x.featureKernel?.embedded!==true||x.completionKernel?.embedded!==true)fail('feature/completion are not embedded');
-          if(x.canonical?.minorRelease!==process.env.AXIS_EXPECTED_VERSION)fail(`minor release contract mismatch ${x.canonical?.minorRelease}`);
+          if(x.canonical?.version!==process.env.AXIS_EXPECTED_VERSION)fail(`canonical version contract mismatch ${x.canonical?.version}`);
           if(x.canonical?.activeCountdown?.toneOwner!=='v8710-sound-ui.js'||x.canonical?.activeCountdown?.longPressSuppressesTone!==true)fail('countdown owner contract mismatch');
           if(x.canonical?.sound?.automaticTrigger!=='active-item-countdown-zero-only'||x.canonical?.sound?.setCue!==false||x.canonical?.sound?.manualFinishCue!==false||x.canonical?.sound?.restCue!==false||x.canonical?.sound?.sessionCue!==false)fail('automatic sound contract mismatch');
           if(x.canonical?.homeState?.owner!=='app.js'||x.canonical?.localVisualMemory?.networkRequired!==false)fail('home/local-memory contract mismatch');
@@ -101,7 +101,7 @@ jobs:
           if(!html.includes(`data-axis-runtime="canonical-${process.env.AXIS_EXPECTED_VERSION}"`))fail('canonical HTML marker missing');
           if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-(foundation|recording|interaction|product)\.js/.test(html))fail('retired dynamic loader survives in Production HTML');
           fs.writeFileSync('/tmp/axis-assets.tsv',`core\t/axis-core.js?v=${x.assets.core}\t20000\ncss\t/axis-style.css?v=${x.assets.css}\t10000\n`);
-          console.log(`[AXIS Production] ${x.version} · ${x.sourceCommit.slice(0,10)} · canonical 8.8.2 contracts verified`);
+          console.log(`[AXIS Production] ${x.version} · ${x.sourceCommit.slice(0,10)} · canonical release contracts verified`);
           NODE
           while IFS=$'\t' read -r name path min_bytes; do
             test -n "$name" || continue
