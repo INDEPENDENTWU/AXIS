@@ -11,7 +11,8 @@ const files=[
   'scripts/axis-88-smoke.mjs',
   'scripts/axis-first-paint-smoke.mjs',
   'scripts/axis-webkit-smoke.mjs',
-  'scripts/axis-881-smoke.mjs'
+  'scripts/axis-881-smoke.mjs',
+  'scripts/axis-882-smoke.mjs'
 ];
 
 for(const file of files){
@@ -34,6 +35,10 @@ for(const file of files){
 if(version==='8.8.2'){
   if(!fs.existsSync('scripts/prepare-882-test-flow.mjs'))throw new Error('AXIS 8.8.2 test-flow convergence is missing');
   execFileSync(process.execPath,['scripts/prepare-882-test-flow.mjs'],{stdio:'inherit'});
+}
+if(version==='8.9'){
+  if(!fs.existsSync('scripts/prepare-89-test-flow.mjs'))throw new Error('AXIS 8.9 test-flow convergence is missing');
+  execFileSync(process.execPath,['scripts/prepare-89-test-flow.mjs'],{stdio:'inherit'});
 }
 
 console.log(`[AXIS test contract] browser assertions aligned to ${version} · no stale release assertions · release flow aligned`);

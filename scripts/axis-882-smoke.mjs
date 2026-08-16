@@ -38,8 +38,7 @@ assert.equal(new Set(lib.map(x=>x.id)).size,lib.length,'exercise library contain
 assert.ok(lib.find(x=>x.name==='45°罗马椅背伸')?.muscles?.includes('腰部'),'back extension is not mapped to waist');
 
 console.log(`[AXIS 8.8.2 ${ENGINE}] Quick Record always exposes saved custom items + media bridge`);
-await page.locator('#startBtn').click();await page.waitForFunction(()=>document.querySelector('#dock')?.classList.contains('show'),undefined,{timeout:1200});
-await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='session',undefined,{timeout:1800});
+assert.equal(await page.locator('#startBtn').isVisible(),false,'legacy explicit start entry unexpectedly returned');
 await page.locator('#quickRecordBtn').click();await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:1200});
 assert.ok(await page.locator('#v882QuickMine').isVisible(),'saved custom section is hidden');
 const mine=page.locator('#v882QuickCustom [data-qid="custom-waist"]');assert.equal(await mine.count(),1,'saved custom item missing from Quick Record');
@@ -61,7 +60,7 @@ await page.locator('#customEqSheet [data-close="customEqSheet"]').click();await 
 console.log(`[AXIS 8.8.2 ${ENGINE}] Personal Visual Memory works with AI disabled`);
 const svg=Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480"><rect width="640" height="480" fill="#11151b"/><rect x="82" y="58" width="120" height="360" rx="20" fill="#727b8d"/><rect x="438" y="58" width="120" height="360" rx="20" fill="#727b8d"/><path d="M152 140H488M152 300H488" stroke="#d8dde8" stroke-width="22"/><circle cx="320" cy="220" r="68" fill="#424a5b"/><path d="M260 220h120" stroke="#f4f5f8" stroke-width="18"/></svg>`);
 const upload=async()=>{await page.locator('#scanBtn').click();await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:1200});await page.locator('#photoInput').setInputFiles({name:'known-machine.svg',mimeType:'image/svg+xml',buffer:svg});await page.waitForFunction(()=>document.querySelector('#reviewStage')&&!document.querySelector('#reviewStage').classList.contains('hidden'),undefined,{timeout:1800})};
-await upload();await page.locator('#equipmentRow').click();await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:800});await page.locator('#eqSheet [data-eq="lat"]').click();assert.equal((await page.locator('#equipmentName').innerText()).trim(),'高位下拉');await page.locator('#saveScan').click();await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:2500});
+await upload();await page.locator('#equipmentRow').click();await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#v8710Cards'),undefined,{timeout:1000});await page.locator('#eqSearch').fill('高位下拉');await page.waitForFunction(()=>{const el=document.querySelector('#v8710Cards [data-v877-lib="lat-pulldown"]');return !!el&&el.offsetParent!==null},undefined,{timeout:1600});await page.locator('#v8710Cards [data-v877-lib="lat-pulldown"]:visible').click();await page.waitForFunction(()=>!document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#equipmentName')?.textContent.trim()==='高位下拉',undefined,{timeout:1600});assert.equal((await page.locator('#equipmentName').innerText()).trim(),'高位下拉');await page.locator('#saveScan').click();await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:2500});
 await upload();await page.waitForFunction(()=>document.querySelector('#aiStatus')?.textContent?.includes('本地认出'),undefined,{timeout:1800});
 assert.equal((await page.locator('#equipmentName').innerText()).trim(),'高位下拉');assert.equal((await page.locator('#aiStatus').innerText()).trim(),'本地认出');
 await page.locator('#scanSheet [data-close="scanSheet"]').click();await page.waitForTimeout(80);
@@ -82,7 +81,7 @@ await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='warn',undefin
 await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity;a.restStartedAt=Date.now()-225000;localStorage.setItem(k,JSON.stringify(m))},activeId);
 await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='danger',undefined,{timeout:1800});assert.match((await page.locator('#axisNowTitle').innerText()).trim(),/休息过久/);
 await page.locator('#v87Toggle').click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='paused',undefined,{timeout:1800});
-await page.locator('#v87Paused button').first().click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});
+assert.equal((await page.locator('#v87Toggle').innerText()).trim(),'▶','single paused item did not expose canonical resume control');await page.locator('#v87Toggle').click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});
 
 console.log(`[AXIS 8.8.2 ${ENGINE}] manual long-press finish is silent`);
 await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity,t=Date.now();a.estimateMs=600000;a.startedAt=t;a.lastResumedAt=t;a.intervals=[{start:t,end:null}];a.restStartedAt=null;m.prefs.v8710SoundEnabled=true;m.prefs.v876ItemReminder=true;localStorage.setItem(k,JSON.stringify(m));window.__AXIS_882_CUES__=[]},activeId);
