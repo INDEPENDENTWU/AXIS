@@ -28,5 +28,12 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  s=once(s,"if(info.version!=='8.10.2'||info.baseVersion!=='8.10.2')fail(`release identity mismatch ${info.version}/${info.baseVersion}`);","if(info.version!==version||info.baseVersion!==version)fail(`release identity mismatch ${info.version}/${info.baseVersion}`);",'8.10.2 inherited manifest identity');
  write(f,s);
 }
+{
+ const f='prepare-8103-home-sound.mjs';let s=read(f);
+ const old=` src=once(src,"parts.push('完成于 '+tlabel(end));","parts.unshift('开始 '+tlabel(last.start));parts.push('完成 '+tlabel(end));",'completed start/end facts');`;
+ const next=` if(src.includes("parts.push('完成于 '+tlabel(end));"))src=src.replace("parts.push('完成于 '+tlabel(end));","parts.unshift('开始 '+tlabel(last.start));parts.push('完成 '+tlabel(end));");else{src=once(src,"return{...base,scope:'complete'","parts.unshift('开始 '+tlabel(last.start));return{...base,scope:'complete'",'completed start fact fallback');src=src.replaceAll('完成于 ','完成 ')}`;
+ s=once(s,old,next,'Home completed-facts compiler compatibility');
+ write(f,s);
+}
 
-console.log('[AXIS 8.10.3 release compat] PASS · inherited 8.10.x contracts preserved');
+console.log('[AXIS 8.10.3 release compat] PASS · inherited 8.10.x contracts + Home compiler variants preserved');
