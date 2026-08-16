@@ -37,7 +37,9 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  const next=` if(src.includes("parts.push('完成于 '+tlabel(end));"))src=src.replace("parts.push('完成于 '+tlabel(end));","parts.unshift('开始 '+tlabel(last.start));parts.push('完成 '+tlabel(end));");else{src=once(src,"return{...base,scope:'complete'","parts.unshift('开始 '+tlabel(last.start));return{...base,scope:'complete'",'completed start fact fallback');src=src.replaceAll('完成于 ','完成 ')}`;
  s=once(s,old,next,'Home completed-facts compiler compatibility');
  s=once(s,"const dial=$('#axisNowDial');if(dial)dial.hidden=!x.dial;","const axis8103DialEl=$('#axisNowDial');if(axis8103DialEl)axis8103DialEl.hidden=!x.dial;",'unique Home dial binding');
+ s=once(s,"const due=Math.max(0,Number(a.estimateMs)||0);","const due=Math.max(60000,Number(a.estimateMs)||0);",'normalized item countdown floor');
+ s=once(s,"elapsed(a,t)>=due&&!D.querySelector('#v87Hold.show')","elapsed(a)>=due&&!D.querySelector('#v87Hold.show')",'inherited countdown suppression signature');
  write(f,s);
 }
 
-console.log('[AXIS 8.10.3 release compat] PASS · release identity + inherited 8.10.x contracts + Home compiler variants preserved');
+console.log('[AXIS 8.10.3 release compat] PASS · release identity + inherited item countdown + 8.10.x contracts preserved');
