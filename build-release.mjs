@@ -3,6 +3,7 @@ import fs from 'node:fs';
 
 const STEPS=[
   'prepare-8102-release-compat.mjs',
+  'prepare-8103-release-compat.mjs',
   'prepare-882-version.mjs',
   'prepare-legacy-runtime.mjs',
   'prepare-product-convergence.mjs',
@@ -45,6 +46,8 @@ const STEPS=[
   'prepare-8101-learning-immersion.mjs',
   'prepare-8102-interaction-stability.mjs',
   'prepare-8102-standalone-polish.mjs',
+  'prepare-8103-home-sound.mjs',
+  'prepare-8103-learning-voice.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
@@ -58,6 +61,7 @@ const STEPS=[
   'postbuild-810-contract.mjs',
   'postbuild-8101-contract.mjs',
   'postbuild-8102-contract.mjs',
+  'postbuild-8103-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 
@@ -92,6 +96,7 @@ if(contract.architecture==='canonical-single-runtime'){
   for(const gate of ['restSpeakExpanded456','restSpeakAutonomousCadence','restSpeakUserCadenceControl','restSpeakTrackControl','restSpeakAdaptiveLevel','restSpeakDailyBudget','restSpeakSessionBudget','restSpeakDueReview','restSpeakLearningRecap','restSpeakTrainingMetadataIsolated','restSpeakNoAutoplay810'])if(manifest.gates?.[gate]!==true)fail(`8.10 gate missing · ${gate}`);
   for(const gate of ['settingsLearningNativeRow','homeTimerStablePaint','restSpeakDialoguePractice','restSpeakEchoPractice','restSpeakShadowPractice','restSpeakEphemeralRecording','restSpeakOpportunityRail','restSpeakOpportunityControl','restSpeakNoAutoplay8101','restSpeakNoTrainingOwnership8101'])if(manifest.gates?.[gate]!==true)fail(`8.10.1 gate missing · ${gate}`);
   for(const gate of ['detailSingleCompositionSwap','detailNoLegacyHeightHold','restSpeakOpportunityPanelPersistent','restSpeakOpportunitySingleEventOwner','restSpeakStandaloneLearning','restSpeakStandaloneControl','restSpeakStandalonePanelPersistent','restSpeakStandaloneNoTrainingOwnership','restSpeakNoAutoplay8102'])if(manifest.gates?.[gate]!==true)fail(`8.10.2 gate missing · ${gate}`);
+  for(const gate of ['homeIdleNoFalseFinish','homeCompletedCopyConcise','homeCompletedStartEndFacts','activeAdjustCornerAnchor','totalWorkoutDurationReminder','totalWorkoutDurationSinglePreference','restSpeakDialogueFourTurn','restSpeakEchoShadowDistinct','restSpeakShadowAutoRecordAB','restSpeakFourLanguageVoiceRouting','restSpeakBestAvailableLocalVoice','practiceMicrophoneSameOrigin','releaseFreshnessEventDriven'])if(manifest.gates?.[gate]!==true)fail(`8.10.3 gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
