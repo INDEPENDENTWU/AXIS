@@ -72,9 +72,8 @@ function axis811ConvergeLearningSettings(){
   '<div class="v811CoreGroup"><div class="v811CoreHead"><span>强度</span><b>一天出现多少</b></div>'+axis811CoreButtons('intensity',[['light','轻量'],['adaptive','自适应'],['deep','深入']],p)+'</div>'+
   '<div class="v811CoreGroup"><div class="v811CoreHead"><span>难度</span><b>内容复杂度</b></div>'+axis811CoreButtons('level',[['adaptive','自适应'],['foundation','起步'],['progress','实用'],['advanced','高阶']],p)+'</div>';
  const fine=$('#v811FineTuneState',details);if(fine)fine.textContent=custom?'已自定':'';
- /* Fresh/default users see three decisions only. Existing/custom users keep their exact old controls immediately visible. */
  details.open=custom;
- const summary=$('#v810ConfigSummary');if(summary)summary.textContent=p.focus==='ielts8'?'IELTS 8+':p.focus==='natural'?'真实口语':'智能';
+ const summary=$('#v810ConfigSummary');if(summary)summary.textContent=p.focus==='ielts8'?'IELTS 8+':p.focus==='natural'?'真实口语':custom?'自定':'智能';
 }
 const axis811BaseRenderLearningSettings=axis810RenderSettings;
 axis810RenderSettings=function(){axis811BaseRenderLearningSettings();axis811ConvergeLearningSettings()};
@@ -83,4 +82,4 @@ try{window.__AXIS_811_LEARNING_SETTINGS__={version:'8.11-candidate',visibleCore:
 src=src.slice(0,end)+block+'\n'+src.slice(end);
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.11 learning settings] PASS · 3 core decisions by default · custom/legacy fine-tune remains immediately usable');
+console.log('[AXIS 8.11 learning settings] PASS · 3 core decisions by default · custom/legacy fine-tune remains immediately usable and summarized as 自定');
