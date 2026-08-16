@@ -23,6 +23,7 @@ const STEPS=[
   'prepare-883-convergence.mjs',
   'prepare-883-inherited-brand-fix.mjs',
   'prepare-883-watermark-contract-bridge.mjs',
+  'prepare-884-field-fix.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
