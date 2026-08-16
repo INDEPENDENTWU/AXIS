@@ -12,7 +12,7 @@ const STEPS=[
   'prepare-88-watermark-state-sync.mjs',
   'prepare-88-watermark-location-owner.mjs',
   'prepare-881-convergence.mjs',
-  'prepare-882-convergence.mjs',
+  'prepare-882-convergence-driver.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
