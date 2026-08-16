@@ -19,6 +19,9 @@ if(!/async function reminderTick\(\)\s*\{\s*return false\s*\}/.test(runtime))fai
 const calls=reminderContexts();if(calls.length){console.error('[AXIS 8.8.2 reminder call contexts]\n'+calls.join('\n---\n'));fail(`v87 reminder polling call survived canonical runtime · ${calls.length} occurrence(s)`)}
 if(!runtime.includes("add.style.visibility=planDone?'visible':'hidden'")||!css.includes('#v87Now .v87Actions{display:grid!important;grid-template-columns:96px minmax(0,1fr) 68px!important'))fail('active-card stable geometry contract missing');
 if(!css.includes('#axisNowHero{--axis-now-accent')||!css.includes('.axisNowDial'))fail('home visual system missing');
+if(!runtime.includes("AXIS_MEDIA_FORMAT='axis-media-arraybuffer-v1'")||!runtime.includes('window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia'))fail('canonical WebKit-safe media store missing');
+const mediaDbOwners=(runtime.match(/indexedDB\.open\(DB,1\)/g)||[]).length;if(mediaDbOwners!==1)fail(`media IndexedDB ownership is not singular · ${mediaDbOwners}`);
+if(!runtime.includes("new Blob([v.bytes],{type:v.type||'application/octet-stream'})"))fail('legacy-compatible media decode contract missing');
 if(!fs.existsSync('docs/releases/8.8.2.md'))fail('durable 8.8.2 release log missing');
 if(!html.includes(`canonical-${VERSION}`))fail('HTML canonical version marker missing');
 
@@ -33,7 +36,8 @@ Object.assign(manifest.gates,{
   countdownOnlyAutomaticSound:true,
   expandedExerciseLibrary:true,
   waistAnatomyRegion:true,
-  durableReleaseLog:true
+  durableReleaseLog:true,
+  mediaStoreWebKitSafe:true
 });
 manifest.canonical=manifest.canonical||{};
 manifest.canonical.minorRelease=VERSION;
@@ -43,5 +47,6 @@ manifest.canonical.quickRecord={owner:'v61.js',customItems:true,mediaBridge:'win
 manifest.canonical.sound={owner:'v8710-sound-ui.js',automaticTrigger:'active-item-countdown-zero-only',manualPreview:true,setCue:false,manualFinishCue:false,restCue:false,sessionCue:false,v87AutomaticReminder:false,longPressSuppressed:true};
 manifest.canonical.activeCard={owner:'v87',outerGeometryStable:true,actionColumns:[96,'1fr',68],setCompletionRebuild:false};
 manifest.canonical.exerciseLibrary={owner:'v873-exercise-library.js',waistRegionOwner:'v874-professional.js',newCanonicalMuscles:['腰部','前臂','内收肌','髋屈肌','胫骨前肌','前锯肌']};
+manifest.canonical.mediaStore={owner:'app.js',database:'axis_v42_media',store:'media',writeFormat:'arraybuffer-v1',legacyBlobRead:true,delegates:['v877-runtime.js','v8710-watermark.js'],webkitSafe:true};
 fs.writeFileSync('axis-build.json',JSON.stringify(manifest,null,2)+'\n');
-console.log('[AXIS 8.8.2 artifact] PASS · home · local memory · quick media · library · immutable geometry · sole countdown sound owner · release log');
+console.log('[AXIS 8.8.2 artifact] PASS · home · local memory · quick media · library · immutable geometry · sole countdown sound owner · WebKit-safe media store · release log');
