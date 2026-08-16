@@ -13,7 +13,6 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
 }
 {
  const f='postbuild-891-contract.mjs';let s=read(f);
- s=once(s,"[\"patch:'${patch}',owner:'passive-rest-reader'\",'Rest Speak patch marker missing'],","[\"patch:'${patch}',owner:'passive-rest-reader'\",'Rest Speak patch marker missing'],",'preserve rest-speak inherited marker');
  s=once(s,"[\"patch:'8.9.1',stableShell:true\",'stable detail shell marker missing']","[\"patch:'8.10.2',stableShell:true\",'stable detail shell marker missing']",'refined detail shell marker');
  write(f,s);
 }
