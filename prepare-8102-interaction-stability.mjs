@@ -24,7 +24,9 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  })
 }`;
  src=regexOnce(src,/function axis89CommitDetail\(txn,title,stage,urls,bind\)\{[\s\S]*?\n\}\nasync function openEvent/,fn+'\nasync function openEvent','single-composition event detail swap');
- if(/host\.style\.minHeight|style\.removeProperty\('min-height'\)/.test(src.match(/function axis89CommitDetail[\s\S]*?async function openEvent/)?.[0]||''))fail('legacy detail height hold survived');
+ const commit=(src.match(/function axis89CommitDetail[\s\S]*?async function openEvent/)||[''])[0];
+ if(/host\.style\.minHeight|style\.removeProperty\('min-height'\)/.test(commit))fail('legacy detail height hold survived');
+ if(!commit.includes("patch:'8.10.2'"))fail('8.10.2 detail diagnostic missing');
  syntax(src,FILE);write(FILE,src);
 }
 
@@ -78,13 +80,22 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
   "if(e.target?.closest?.('[data-v810-standalone-start]')){e.preventDefault();e.stopPropagation();axis8102OpenStandalone();return}if(e.target?.closest?.('[data-v810-recap=\"open\"]')){e.preventDefault();e.stopPropagation();axis810OpenRecap()}",
   'standalone launcher event');
 
- const helpers=`function axis8102PanelSource(){return $('#v891SpeakPanel')?.dataset?.axis8102Source||''}
+ const css=`
+/* AXIS 8.10.2 learning lifetime + isolated standalone surface. */
+.v8102StandaloneBlock .v8102StandaloneStart{width:100%;height:40px;margin-top:8px;border-radius:12px;background:rgba(115,124,255,.14);color:#c6c9ff;font-size:11px;font-weight:680}
+.v8102StandaloneBlock .v8102StandaloneStart[hidden]{display:none!important}
+.v891SpeakPanel.v8102Standalone{z-index:219!important;bottom:max(22px,calc(env(safe-area-inset-bottom) + 18px))!important;max-height:min(78dvh,680px)!important}
+@media(max-width:380px){.v891SpeakPanel.v8102Standalone{bottom:max(16px,calc(env(safe-area-inset-bottom) + 12px))!important;max-height:80dvh!important}}
+`;
+ const helpers=`function axis8102Style(){if($('#v8102Style'))return;const s=D.createElement('style');s.id='v8102Style';s.textContent=${JSON.stringify(css)};D.head.appendChild(s)}
+function axis8102PanelSource(){return $('#v891SpeakPanel')?.dataset?.axis8102Source||''}
 function axis8102SetPanelSource(source){const p=$('#v891SpeakPanel');if(!p)return;p.dataset.axis8102Source=source||'';p.classList.toggle('v8102Standalone',source==='standalone');if(source==='standalone'){p.style.removeProperty('bottom');p.style.removeProperty('max-height')}}
 function axis8102OpenPhrase(x,key,source){if(!x)return;const el=D.createElement('span');el.dataset.phraseId=x.id;el.dataset.key=key;el.dataset.restMs='0';axis891OpenSpeak(el);axis8102SetPanelSource(source);axis8101SetMode('dialogue')}
 function axis8102OpenStandalone(){const p=axis89SpeakPrefs();if(!p?.on||p.standalone==='off')return;const key='standalone:'+axis810DayKey()+':'+Date.now().toString(36),x=axis810SelectPhrase(key,45000,{force:true});if(!x)return;axis810CloseConfig();requestAnimationFrame(()=>axis8102OpenPhrase(x,key,'standalone'))}
 function axis8102KeepOpportunityOpen(a,planDone){const p=$('#v891SpeakPanel');return !!(axis8101OpportunityAllowed(a,planDone)&&p?.classList.contains('show')&&p.dataset.axis8102Source==='opportunity')}
 `;
  src=once(src,'function axis8101OpportunityAllowed(a,planDone){',helpers+'function axis8101OpportunityAllowed(a,planDone){','8.10.2 learning helpers');
+ src=once(src,'function axis8101Install(){axis8101Style();',"function axis8101Install(){axis8101Style();axis8102Style();",'8.10.2 style mount');
 
  src=once(src,
   "function axis8101OpenOpportunity(el){const p=axis89SpeakPrefs(),key=el?.dataset?.key||('opportunity:'+Date.now()),x=axis810SelectPhrase(key,45000,{force:true});if(!x||!el)return;el.dataset.phraseId=x.id;el.dataset.key=key;el.dataset.restMs='0';axis891OpenSpeak(el);axis8101SetMode('dialogue')}",
@@ -111,26 +122,13 @@ function axis8102KeepOpportunityOpen(a,planDone){const p=$('#v891SpeakPanel');re
 }
 function axis891MasterSpeak`,'standalone-safe next phrase');
 
- const css=`
-/* AXIS 8.10.2 learning lifetime + isolated standalone surface. */
-.v8102StandaloneBlock .v8102StandaloneStart{width:100%;height:40px;margin-top:8px;border-radius:12px;background:rgba(115,124,255,.14);color:#c6c9ff;font-size:11px;font-weight:680}
-.v8102StandaloneBlock .v8102StandaloneStart[hidden]{display:none!important}
-.v891SpeakPanel.v8102Standalone{z-index:219!important;bottom:max(22px,calc(env(safe-area-inset-bottom) + 18px))!important;max-height:min(78dvh,680px)!important}
-@media(max-width:380px){.v891SpeakPanel.v8102Standalone{bottom:max(16px,calc(env(safe-area-inset-bottom) + 12px))!important;max-height:80dvh!important}}
-`;
  src=once(src,"window.__AXIS_8101_PRACTICE__={version:'8.10.1',dialogue:true,echo:true,shadow:true,localRecording:true,autoplay:false,opportunity:true,storage:'axis_v89_speak-practice-counters-only'}",
   "window.__AXIS_8101_PRACTICE__={version:'8.10.1',dialogue:true,echo:true,shadow:true,localRecording:true,autoplay:false,opportunity:true,storage:'axis_v89_speak-practice-counters-only'};window.__AXIS_8102_STABILITY__={version:'8.10.2',opportunityPanelPersistent:true,standaloneLearning:true,standaloneModes:['off','manual','daily'],autoplay:false,trainingOwner:false}",
   '8.10.2 learning diagnostic');
- src=once(src,'const helpers=`let AXIS8101_PRACTICE=',`const helpers=\`let AXIS8101_PRACTICE=`,'noop guard placeholder');
- // The previous replacement is intentionally reverted below; it only verifies the source has a single helper declaration boundary.
- src=once(src,'const helpers=`let AXIS8101_PRACTICE=', 'const helpers=`let AXIS8101_PRACTICE=', 'restore helper declaration boundary');
- // Inject CSS into the already-created 8.10.1 style payload instead of adding another geometry owner.
- src=once(src,'@media(max-width:380px){.v8101Turn{grid-template-columns:32px minmax(0,1fr)}.v8101ShadowLine{font-size:14px}.v8101PracticeActions button{font-size:9px}}',
-  '@media(max-width:380px){.v8101Turn{grid-template-columns:32px minmax(0,1fr)}.v8101ShadowLine{font-size:14px}.v8101PracticeActions button{font-size:9px}}'+css,
-  '8.10.2 learning CSS');
 
- for(const needle of ["standalone:['off','manual','daily']",'function axis8102OpenStandalone(','function axis8102KeepOpportunityOpen(',"p.dataset.axis8102Source==='opportunity'",'e.stopImmediatePropagation()',"patch:'8.10.2'"])if(!src.includes(needle))fail(`missing ${needle}`);
- if(/writeMeta\(|writeCore\(/.test((src.match(/function axis8102OpenStandalone\([\s\S]*?(?=\nfunction )/)||[''])[0]))fail('standalone learning writes training state');
+ for(const needle of ["standaloneModes:['off','manual','daily']",'function axis8102OpenStandalone(','function axis8102KeepOpportunityOpen(',"p.dataset.axis8102Source==='opportunity'",'e.stopImmediatePropagation()'])if(!src.includes(needle))fail(`missing ${needle}`);
+ const standaloneFn=(src.match(/function axis8102OpenStandalone\([\s\S]*?(?=\nfunction )/)||[''])[0];
+ if(/writeMeta\(|writeCore\(|axis_v8_meta|axis_v60_state/.test(standaloneFn))fail('standalone learning writes training state');
  syntax(src,FILE);write(FILE,src);
 }
 
