@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 
-const VERSION='8.10';
-const fail=m=>{throw new Error(`AXIS 8.10 version convergence: ${m}`)};
+const VERSION='8.10.1';
+const fail=m=>{throw new Error(`AXIS 8.10.1 version convergence: ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
@@ -24,4 +24,4 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
   write(f,s);
 }
 
-console.log(`[AXIS 8.10] release identity converged · ${VERSION} · inherited contracts preserved`);
+console.log(`[AXIS 8.10.1] release identity converged · ${VERSION} · inherited contracts preserved`);

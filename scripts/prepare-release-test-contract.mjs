@@ -15,7 +15,8 @@ const files=[
   'scripts/axis-882-smoke.mjs',
   'scripts/axis-89-smoke.mjs',
   'scripts/axis-891-smoke.mjs',
-  'scripts/axis-810-smoke.mjs'
+  'scripts/axis-810-smoke.mjs',
+  'scripts/axis-8101-smoke.mjs'
 ];
 
 for(const file of files){
@@ -27,10 +28,11 @@ for(const file of files){
   src=src.replace(/(canonical\?\.version\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
   src=src.replace(/((?:first|core|final)\.release\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
   src=src.replace(/(window\.__AXIS_RELEASE__\s*\)\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
-  if(version==='8.10'&&file==='scripts/axis-89-smoke.mjs'){
+  src=src.replace(/assert\.equal\(EXPECTED,['"]\d+(?:\.\d+)+['"]\)/g,`assert.equal(EXPECTED,'${version}')`);
+  if(version.startsWith('8.10')&&file==='scripts/axis-89-smoke.mjs'){
     src=src.replace(
       "prefs:{enabled:true,native:'zh',target:'en'}",
-      "prefs:{enabled:true,native:'zh',target:'en',mode:'standard',track:'auto',cadence:'every',level:'adaptive',dailyTarget:0}"
+      "prefs:{enabled:true,native:'zh',target:'en',mode:'standard',track:'auto',cadence:'every',level:'adaptive',dailyTarget:0,opportunity:'auto'}"
     );
     src=src.replace(
       "assert.match(restLines.target,/^(?:休息 )?\\d{2}:\\d{2} · (Could|Is |I'm|Go |No |That |Can |Where |Sounds)/i);",
@@ -39,14 +41,34 @@ for(const file of files){
   }
   if(file==='scripts/axis-891-smoke.mjs'){
     src=src.replace("assert.ok((diag?.phrases?.()||0)>=108);","assert.ok((await page.evaluate(()=>window.__AXIS_REST_SPEAK__?.phrases?.()||0))>=108);");
-    if(version==='8.10'){
+    if(version.startsWith('8.10')){
       src=src.replace("assert.equal(diag?.patch,'8.9.1');","assert.ok(['8.9.1','8.10'].includes(diag?.patch));");
       src=src.replace("assert.equal(diag?.richEnglish,72);","assert.ok((diag?.richEnglish||0)>=72);");
       src=src.replace(
         "prefs:{enabled:true,native:'zh',target:'en'}",
-        "prefs:{enabled:true,native:'zh',target:'en',mode:'standard',track:'auto',cadence:'every',level:'adaptive',dailyTarget:0}"
+        "prefs:{enabled:true,native:'zh',target:'en',mode:'standard',track:'auto',cadence:'every',level:'adaptive',dailyTarget:0,opportunity:'auto'}"
+      );
+      src=src.replace(
+        "await page.evaluate(()=>{window.__AXIS_891_DIRECT__=[];let n=40;const loop=()=>{const s=document.querySelector('#detailSheet');if(s?.classList.contains('show'))window.__AXIS_891_DIRECT__.push({title:document.querySelector('#detailTitle')?.textContent||'',body:(document.querySelector('#detail')?.innerText||'').replace(/\\s+/g,' ').trim(),pre:s.classList.contains('axis884Prepaint')});if(n-->0)requestAnimationFrame(loop)};requestAnimationFrame(loop)});",
+        "await page.evaluate(()=>{const s=document.querySelector('#detailSheet');window.__AXIS_891_DIRECT__=[];window.__AXIS_891_DIRECT_OBS__?.disconnect?.();const snap=()=>{if(s?.classList.contains('show'))window.__AXIS_891_DIRECT__.push({title:document.querySelector('#detailTitle')?.textContent||'',body:(document.querySelector('#detail')?.innerText||'').replace(/\\s+/g,' ').trim(),pre:s.classList.contains('axis884Prepaint')})};const o=new MutationObserver(snap);if(s)o.observe(s,{attributes:true,attributeFilter:['class'],subtree:true,childList:true,characterData:true});window.__AXIS_891_DIRECT_OBS__=o;snap()});"
+      );
+      src=src.replace(
+        "const direct=await page.evaluate(()=>window.__AXIS_891_DIRECT__||[]);",
+        "const direct=await page.evaluate(()=>{window.__AXIS_891_DIRECT_OBS__?.disconnect?.();return window.__AXIS_891_DIRECT__||[]});"
       );
     }
+  }
+  if(version==='8.10.1'&&file==='scripts/axis-810-smoke.mjs'){
+    src=src.replace(
+      "assert.match(await page.locator('#v810ConfigSummary').innerText(),/日常.*长休.*每日 12/);",
+      "assert.equal((await page.locator('#v810ConfigSummary').innerText()).trim(),'自定','8.10.1 top-level learning summary should stay compact after custom scheduling');"
+    );
+  }
+  if(version==='8.10.1'&&file==='scripts/axis-8101-smoke.mjs'){
+    src=src.replace(
+      "assert.equal(entry.b,'智能');",
+      "assert.equal(entry.b,'自定','explicit every-rest cadence should render the compact custom status');"
+    );
   }
   if(src!==before)fs.writeFileSync(file,src);
   const wrongCanonical=[...src.matchAll(/canonical-(\d+(?:\.\d+)+)/g)].map(m=>m[1]).filter(v=>v!==version);
@@ -62,7 +84,7 @@ if(version==='8.8.2'){
   if(!fs.existsSync('scripts/prepare-882-test-flow.mjs'))throw new Error('AXIS 8.8.2 test-flow convergence is missing');
   execFileSync(process.execPath,['scripts/prepare-882-test-flow.mjs'],{stdio:'inherit'});
 }
-if(version==='8.9'||version.startsWith('8.9.')||version==='8.10'){
+if(version==='8.9'||version.startsWith('8.9.')||version.startsWith('8.10')){
   if(!fs.existsSync('scripts/prepare-89-test-flow.mjs'))throw new Error('AXIS 8.9 test-flow convergence is missing');
   execFileSync(process.execPath,['scripts/prepare-89-test-flow.mjs'],{stdio:'inherit'});
 }
