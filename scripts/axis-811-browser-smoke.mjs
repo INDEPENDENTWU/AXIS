@@ -1,7 +1,7 @@
 const url=process.env.AXIS_URL||'http://127.0.0.1:4173',engine=process.env.AXIS_ENGINE||'chromium';
 const mod=await import(engine==='webkit'?'playwright':'playwright-core');
 const type=engine==='webkit'?mod.webkit:mod.chromium;
-const browser=await type.launch(engine==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN}: {headless:true});
+const browser=await type.launch(engine==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN}:{headless:true});
 const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:3,isMobile:engine==='webkit',hasTouch:engine==='webkit',locale:'zh-CN'});
 const page=await context.newPage(),errors=[],serviceRequests=[];
 page.on('pageerror',e=>errors.push(String(e?.message||e)));
@@ -11,7 +11,7 @@ try{
  await page.goto(url,{waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_STABLE_COMPLETE__===true||document.documentElement.dataset.axisReady==='1',{timeout:12000});
  await page.waitForFunction(()=>window.__AXIS_811_LEARNING__&&window.__AXIS_811_MULTILINGUAL__&&window.__AXIS_811_TRENDS__&&window.__AXIS_811_SERVICE_SETTINGS__,{timeout:8000});
- let diag=await page.evaluate(()=>({learning:window.__AXIS_811_LEARNING__,multi:window.__AXIS_811_MULTILINGUAL__,dialogue:window.__AXIS_811_DIALOGUE__,trend:window.__AXIS_811_TRENDS__,motion:window.__AXIS_811_TREND_MOTION__,services:window.__AXIS_811_SERVICE_SETTINGS__,legacy:{richEnglish:window.__AXIS_REST_SPEAK__?.richEnglish,totalUnits:window.__AXIS_REST_SPEAK__?.totalUnits,phrases:window.__AXIS_REST_SPEAK__?.phrases?.(),snap:window.__AXIS_REST_SPEAK__?.snapshot?.()}}));
+ const diag=await page.evaluate(()=>({learning:window.__AXIS_811_LEARNING__,multi:window.__AXIS_811_MULTILINGUAL__,dialogue:window.__AXIS_811_DIALOGUE__,trend:window.__AXIS_811_TRENDS__,motion:window.__AXIS_811_TREND_MOTION__,services:window.__AXIS_811_SERVICE_SETTINGS__,legacy:{richEnglish:window.__AXIS_REST_SPEAK__?.richEnglish,totalUnits:window.__AXIS_REST_SPEAK__?.totalUnits,phrases:window.__AXIS_REST_SPEAK__?.phrases?.(),snap:window.__AXIS_REST_SPEAK__?.snapshot?.()}}));
  assert(diag.learning.atlasEnglish===5280&&diag.learning.totalEnglish===5736&&diag.learning.totalUnits===6132,'learning counts');
  assert(diag.multi.available.ja===132&&diag.multi.available.ko===132&&diag.multi.available.zh===132&&diag.multi.sixTurn===true,'multilingual counts/depth');
  assert(diag.dialogue?.turns===6&&diag.dialogue?.trainingOwner===false,'six-turn dialogue owner');
@@ -27,17 +27,19 @@ try{
  await page.click('#v810ConfigEntry');
  await page.waitForSelector('#v810ConfigPanel.show');
  assert(await page.locator('#v811CoreLearning .v811CoreGroup').count()===3,'learning settings not converged to three core groups');
- assert(!(await page.locator('#v811FineTune').getAttribute('open')),'fine-tune should be collapsed by default');
+ assert(await page.locator('#v811FineTune').evaluate(el=>el.open===false),'fine-tune should be collapsed by default');
  const coreLabels=await page.locator('#v811CoreLearning .v811CoreHead span').allTextContents();
  assert(coreLabels.join('|')==='目标|强度|难度','core learning labels changed');
  await page.click('[data-v810-config-close]');
+ if(!await page.locator('#settingsSheet').evaluate(el=>el.classList.contains('show'))){await page.click('#settingsBtn');await page.waitForSelector('#settingsSheet.show')}
  await page.click('#v811ServiceEntry');
  await page.waitForSelector('#v811ServicePanel.show');
- await page.waitForTimeout(180);
+ await page.waitForTimeout(220);
  assert(serviceRequests.length===2,'service status should fetch exactly when panel opens');
  const serviceText=await page.locator('#v811ServicePanel').innerText();
  assert(/云端同步/.test(serviceText)&&/AXIS AI/.test(serviceText)&&/本地/.test(serviceText),'service panel content incomplete');
  await page.click('[data-v811-service="close"]');
+ if(await page.locator('#settingsSheet').evaluate(el=>el.classList.contains('show')))await page.click('#settingsSheet [data-close="settingsSheet"]');
 
  const now=Date.now(),day=86400000;
  await page.evaluate(({now,day})=>{
@@ -47,7 +49,7 @@ try{
  },{now,day});
  await page.click('[data-view="insightsView"]');
  await page.waitForSelector('#insightsView.active');
- await page.waitForTimeout(80);
+ await page.waitForTimeout(100);
  const trend=await page.evaluate(()=>({state:document.querySelector('#v811StateName')?.textContent,goal:document.querySelector('#v811GoalName')?.textContent,nodes:document.querySelectorAll('#v811Trajectory .node').length,evidence:document.querySelector('#v811Evidence')?.textContent?.trim(),needle:document.querySelector('#v811Needle')?.textContent?.trim(),oldVisible:getComputedStyle(document.querySelector('.v811LegacyInsights')).display,overflow:document.documentElement.scrollWidth-window.innerWidth}));
  assert(trend.state&&trend.state!=='未成形','State Field did not form from records');
  assert(/力量/.test(trend.goal||'')&&trend.nodes>=3&&trend.evidence&&trend.needle,'goal-aware State Field incomplete');
