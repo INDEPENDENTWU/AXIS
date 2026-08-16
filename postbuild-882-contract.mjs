@@ -12,7 +12,7 @@ const reminderContexts=()=>[...runtime.matchAll(reminderCall)].map((m,i)=>{const
 if(!CURRENT_VERSION||manifest.version!==CURRENT_VERSION||manifest.baseVersion!==STABLE_BASE)fail(`release identity mismatch ${manifest.version}/${manifest.baseVersion} · contract ${CURRENT_VERSION}/${STABLE_BASE}`);
 if(manifest.architecture!=='canonical-single-runtime')fail(`architecture ${manifest.architecture}`);
 if(!html.includes('id="axisNowHero"')||!runtime.includes('function deriveHomeState(')||!runtime.includes('window.__AXIS_HOME_STATE__=x'))fail('single home-state model missing');
-if(!runtime.includes('function visualSigFromCanvas(')||!runtime.includes('function localVisualDistance(')||!runtime.includes('本地认出'))fail('local personal visual memory missing');
+if(!runtime.includes('function visualSigFromCanvas(')||!runtime.includes('function localVisualDistance(')||!runtime.includes('function memoryGuess(')||!runtime.includes('function learnMemory('))fail('local personal visual memory missing');
 if(!runtime.includes('v882QuickMine')||!runtime.includes('v882QuickMedia')||!runtime.includes('window.__AXIS_CAPTURE__')||!runtime.includes('beginQuickMedia'))fail('quick custom/media contract missing');
 if(!runtime.includes("label:'腰'")||!runtime.includes("['back-extension','45°罗马椅背伸'")||!runtime.includes("['nordic-curl','北欧腿弯举'"))fail('expanded movement / waist anatomy contract missing');
 if(/sets>old\.sets\)cue\('set'\)|status==='finished'.*cue\('item'\)|cue\('rest'\)|cue\('session'\)/.test(runtime))fail('non-countdown automatic sonic cue survived');
