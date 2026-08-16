@@ -18,10 +18,14 @@ jobs:
         run: |
           node --input-type=module --check < api/analyze.js
           node --input-type=module --check < lib/ai-config.js
+          node --input-type=module --check < cloud-functions/api/analyze.js
+          node --input-type=module --check < cloud-functions/_shared/ai-config.js
+          node --input-type=module --check < cloud-functions/api/owner-config.js
           node --check prepare-89-detail.mjs
           node --check prepare-89-vision.mjs
           node --check prepare-89-catalog.mjs
           node --check prepare-89-rest-speak.mjs
+          node --check prepare-89-rest-speak-fix.mjs
           node --check postbuild-89-contract.mjs
       - name: Build AXIS 8.9
         run: node build-release.mjs
