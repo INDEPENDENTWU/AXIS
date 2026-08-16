@@ -40,6 +40,8 @@ const STEPS=[
   'prepare-810-learning-budget-fix.mjs',
   'prepare-810-learning-settings.mjs',
   'prepare-810-learning-entry-fix.mjs',
+  'prepare-8101-home-timer.mjs',
+  'prepare-8101-learning-immersion.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
@@ -51,6 +53,7 @@ const STEPS=[
   'postbuild-89-contract.mjs',
   'postbuild-891-contract.mjs',
   'postbuild-810-contract.mjs',
+  'postbuild-8101-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 
@@ -83,6 +86,7 @@ if(contract.architecture==='canonical-single-runtime'){
   for(const gate of ['detailAtomicHandoff','localVisionV2','frontierVisionCatalogContract','frontierVisionProviderRouter','restSpeakPassive','restSpeakNoGeometryOwner','expandedSearchVocabulary'])if(manifest.gates?.[gate]!==true)fail(`8.9 gate missing · ${gate}`);
   for(const gate of ['restSpeakInlineComplete','restSpeakMicroLearning','restSpeakRichEnglish','restSpeakNoAutoplay','restSpeakSpacedExposure','detailStableReveal','detailStableInPlaceSwap','detailNoBlurFlash'])if(manifest.gates?.[gate]!==true)fail(`8.9.1 gate missing · ${gate}`);
   for(const gate of ['restSpeakExpanded456','restSpeakAutonomousCadence','restSpeakUserCadenceControl','restSpeakTrackControl','restSpeakAdaptiveLevel','restSpeakDailyBudget','restSpeakSessionBudget','restSpeakDueReview','restSpeakLearningRecap','restSpeakTrainingMetadataIsolated','restSpeakNoAutoplay810'])if(manifest.gates?.[gate]!==true)fail(`8.10 gate missing · ${gate}`);
+  for(const gate of ['settingsLearningNativeRow','homeTimerStablePaint','restSpeakDialoguePractice','restSpeakEchoPractice','restSpeakShadowPractice','restSpeakEphemeralRecording','restSpeakOpportunityRail','restSpeakOpportunityControl','restSpeakNoAutoplay8101','restSpeakNoTrainingOwnership8101'])if(manifest.gates?.[gate]!==true)fail(`8.10.1 gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
