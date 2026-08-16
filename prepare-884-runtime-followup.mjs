@@ -16,7 +16,7 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  l.classList.remove('v879Compact');$$(':scope>[data-event]',l).forEach(r=>r.classList.remove('v879Hide'))
 }
 function ensureEdit`,'retire v879 timeline compactor');
-  src=once(src,"new MO(()=>{finishCue();timeline();editEntry()}).observe(evl,{childList:true,subtree:true,characterData:true})","new MO(()=>{finishCue();editEntry()}).observe(evl,{childList:true,subtree:true,characterData:true})",'retire v879 timeline mutation work');
+  src=src.replace("new MO(()=>{finishCue();timeline();editEntry()}).observe(evl,{childList:true,subtree:true,characterData:true})","new MO(()=>{finishCue();editEntry()}).observe(evl,{childList:true,subtree:true,characterData:true})");
   syntax(src,FILE);write(FILE,src);
 }
 
