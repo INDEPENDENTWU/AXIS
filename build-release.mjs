@@ -2,6 +2,7 @@ import {execFileSync} from 'node:child_process';
 import fs from 'node:fs';
 
 const STEPS=[
+  'prepare-881-version.mjs',
   'prepare-legacy-runtime.mjs',
   'prepare-product-convergence.mjs',
   'prepare-first-paint-shell.mjs',
@@ -10,11 +11,13 @@ const STEPS=[
   'prepare-88-watermark-final.mjs',
   'prepare-88-watermark-state-sync.mjs',
   'prepare-88-watermark-location-owner.mjs',
+  'prepare-881-convergence.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
   'postbuild-8712-completion.mjs',
   'postbuild-88-canonical.mjs',
+  'postbuild-881-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 
@@ -42,6 +45,7 @@ if(contract.architecture==='canonical-single-runtime'){
   if(manifest.gates?.noRawCoordinatePresentation!==true)fail('raw-coordinate presentation gate missing');
   if(manifest.gates?.watermarkSingleLocateOwner!==true)fail('watermark single-locate-owner gate missing');
   if(manifest.gates?.watermarkPreferenceSingleWriter!==true)fail('watermark preference single-writer gate missing');
+  for(const gate of ['groupPlanUnitlessControls','groupPlanExpandedPresets','activeItemCountdown','activeItemCountdownTone','activeItemLongPressSuppressesTone','watermarkCenterBrand','watermarkBrandOpacitySingleTarget'])if(manifest.gates?.[gate]!==true)fail(`8.8.1 gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
