@@ -16,8 +16,16 @@ function mediaDecodeValue(v){if(v instanceof Blob)return v;if(v&&v.__axisMedia==
 async function openDb(){return new Promise((res,rej)=>{const q=indexedDB.open(DB,1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('media'))q.result.createObjectStore('media')};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error||new Error('media-db-open-failed'))})}
 async function putMedia(k,b){const db=await openDb(),value=await mediaEncodeValue(b);return new Promise((res,rej)=>{let tx=null,q=null,settled=false;const bad=e=>{if(settled)return;settled=true;const raw=q?.error||tx?.error||e?.target?.error||e;try{db.close()}catch{}rej(raw instanceof Error||raw instanceof DOMException?raw:new Error('media-write-failed'))};try{tx=db.transaction('media','readwrite');q=tx.objectStore('media').put(value,k)}catch(e){bad(e);return}q.onerror=bad;tx.onabort=bad;tx.onerror=()=>{};tx.oncomplete=()=>{if(settled)return;settled=true;db.close();res()}})}
 async function getMedia(k){const db=await openDb();return new Promise((res,rej)=>{let tx=null,q=null,settled=false;const bad=e=>{if(settled)return;settled=true;const raw=q?.error||tx?.error||e?.target?.error||e;try{db.close()}catch{}rej(raw instanceof Error||raw instanceof DOMException?raw:new Error('media-read-failed'))};try{tx=db.transaction('media','readonly');q=tx.objectStore('media').get(k)}catch(e){bad(e);return}q.onsuccess=()=>{if(settled)return;settled=true;db.close();res(mediaDecodeValue(q.result))};q.onerror=bad;tx.onabort=bad;tx.onerror=()=>{}})}
-window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia,format:AXIS_MEDIA_FORMAT};`;
+window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia,del:deleteMedia,format:AXIS_MEDIA_FORMAT};`;
   src=once(src,old,next,'canonical app media store');
+  write(FILE,src);
+}
+
+{
+  const FILE='v61.js';let src=read(FILE);
+  const old=`async function deleteMediaKey(key){if(!key||!indexedDB)return;try{const db=await new Promise((res,rej)=>{const q=indexedDB.open(DB,1);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});await new Promise((res,rej)=>{const tx=db.transaction('media','readwrite');tx.objectStore('media').delete(key);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch{}}`;
+  const next=`async function deleteMediaKey(key){if(!key)return;try{const s=window.__AXIS_MEDIA_STORE__;if(!s?.del)throw new Error('canonical-media-store-unavailable');await s.del(key)}catch{}}`;
+  src=once(src,old,next,'v61 delegates media deletion');
   write(FILE,src);
 }
 
@@ -54,5 +62,5 @@ if(directOwners.length!==1||directOwners[0].hits!==1)fail(`canonical app media D
 
 const app=read('app.js');
 if(!app.includes("AXIS_MEDIA_FORMAT='axis-media-arraybuffer-v1'"))fail('arraybuffer media format missing');
-if(!app.includes('window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia'))fail('canonical media store bridge missing');
-console.log('[AXIS 8.8.2 media store] PASS · app.js sole IndexedDB media owner · Blob compatibility read · ArrayBuffer structured-clone write · watermark delegates');
+if(!app.includes('window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia,del:deleteMedia'))fail('canonical media store bridge missing');
+console.log('[AXIS 8.8.2 media store] PASS · app.js sole IndexedDB media owner · Blob compatibility read · ArrayBuffer structured-clone write · v61/v877/watermark delegate');
