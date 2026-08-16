@@ -1,4 +1,4 @@
-name: AXIS 8.10.1 Gate
+name: AXIS 8.10.2 Gate
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
 jobs:
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 16
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,14 +37,18 @@ jobs:
           node --check prepare-810-learning-settings.mjs
           node --check prepare-8101-home-timer.mjs
           node --check prepare-8101-learning-immersion.mjs
+          node --check prepare-8102-release-compat.mjs
+          node --check prepare-8102-interaction-stability.mjs
           node --check postbuild-89-contract.mjs
           node --check postbuild-891-contract.mjs
           node --check postbuild-810-contract.mjs
           node --check postbuild-8101-contract.mjs
+          node --check postbuild-8102-contract.mjs
           node --check scripts/axis-891-smoke.mjs
           node --check scripts/axis-810-smoke.mjs
           node --check scripts/axis-8101-smoke.mjs
-      - name: Build AXIS 8.10.1
+          node --check scripts/axis-8102-smoke.mjs
+      - name: Build AXIS 8.10.2
         run: node build-release.mjs
       - name: Align browser assertions to current release contract
         run: node scripts/prepare-release-test-contract.mjs
@@ -56,7 +60,7 @@ jobs:
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Serve artifact
         run: |
-          python3 -m http.server 4173 >/tmp/axis-8101-chromium.log 2>&1 &
+          python3 -m http.server 4173 >/tmp/axis-8102-chromium.log 2>&1 &
           sleep 1
       - name: AXIS 8.9 inherited product regression
         env:
@@ -73,24 +77,29 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-810-smoke.mjs
-      - name: AXIS 8.10.1 timer + immersion regression
+      - name: AXIS 8.10.1 inherited timer + immersion regression
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-8101-smoke.mjs
+      - name: AXIS 8.10.2 detail + learning lifetime regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8102-smoke.mjs
       - name: Print log on failure
         if: failure()
-        run: cat /tmp/axis-8101-chromium.log || true
+        run: cat /tmp/axis-8102-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-      - name: Build exact AXIS 8.10.1 artifact
+      - name: Build exact AXIS 8.10.2 artifact
         run: node build-release.mjs
       - name: Align browser assertions to current release contract
         run: node scripts/prepare-release-test-contract.mjs
@@ -100,7 +109,7 @@ jobs:
           npx playwright install --with-deps webkit
       - name: Serve artifact
         run: |
-          python3 -m http.server 4173 >/tmp/axis-8101-webkit.log 2>&1 &
+          python3 -m http.server 4173 >/tmp/axis-8102-webkit.log 2>&1 &
           sleep 1
       - name: AXIS 8.9 inherited iPhone regression
         env:
@@ -117,11 +126,16 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-810-smoke.mjs
-      - name: AXIS 8.10.1 iPhone timer + immersion regression
+      - name: AXIS 8.10.1 inherited iPhone timer + immersion regression
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-8101-smoke.mjs
+      - name: AXIS 8.10.2 iPhone detail + learning lifetime regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8102-smoke.mjs
       - name: Print log on failure
         if: failure()
-        run: cat /tmp/axis-8101-webkit.log || true
+        run: cat /tmp/axis-8102-webkit.log || true
