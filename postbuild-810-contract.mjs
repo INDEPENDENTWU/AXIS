@@ -2,9 +2,9 @@ import fs from 'node:fs';
 
 const fail=m=>{throw new Error(`[AXIS 8.10 contract] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
-const contract=JSON.parse(read('release-contract.json')),runtime=read('axis-core.js'),info=JSON.parse(read('axis-build.json'));
-if(String(contract.publicVersion)!=='8.10')fail(`unexpected public version ${contract.publicVersion}`);
-if(info.version!=='8.10'||info.baseVersion!=='8.10')fail(`release identity mismatch ${info.version}/${info.baseVersion}`);
+const contract=JSON.parse(read('release-contract.json')),runtime=read('axis-core.js'),info=JSON.parse(read('axis-build.json')),version=String(contract.publicVersion||'');
+if(!['8.10','8.10.1'].includes(version))fail(`unexpected public version ${contract.publicVersion}`);
+if(info.version!==version||info.baseVersion!==version)fail(`release identity mismatch ${info.version}/${info.baseVersion}`);
 for(const [needle,label] of [
  ["patch:'8.10',owner:'passive-rest-reader'",'8.10 Rest Speak marker missing'],
  ['richEnglish:456','456 English unit marker missing'],
@@ -51,4 +51,4 @@ info.axis810={
  ownership:{trainingState:false,timer:false,geometry:false,sound:false,storage:'axis_v89_speak'}
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-console.log('[AXIS 8.10 contract] PASS · 456 English · autonomous cadence · user control · due review · recap · training isolation');
+console.log(`[AXIS 8.10 contract] PASS inherited on ${version} · 456 English · autonomous cadence · due review · training isolation`);
