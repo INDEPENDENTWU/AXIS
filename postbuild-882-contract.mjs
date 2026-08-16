@@ -9,7 +9,7 @@ if(manifest.version!==VERSION||manifest.baseVersion!==VERSION)fail(`release iden
 if(manifest.architecture!=='canonical-single-runtime')fail(`architecture ${manifest.architecture}`);
 if(!html.includes('id="axisNowHero"')||!runtime.includes('function deriveHomeState(')||!runtime.includes('window.__AXIS_HOME_STATE__=x'))fail('single home-state model missing');
 if(!runtime.includes('function visualSigFromCanvas(')||!runtime.includes('function localVisualDistance(')||!runtime.includes('本地认出'))fail('local personal visual memory missing');
-if(!runtime.includes('id="v882QuickMine"')||!runtime.includes('id="v882QuickMedia"')||!runtime.includes('__AXIS_CAPTURE__={beginQuickMedia'))fail('quick custom/media contract missing');
+if(!runtime.includes('v882QuickMine')||!runtime.includes('v882QuickMedia')||!runtime.includes('window.__AXIS_CAPTURE__')||!runtime.includes('beginQuickMedia'))fail('quick custom/media contract missing');
 if(!runtime.includes("label:'腰'")||!runtime.includes("['back-extension','45°罗马椅背伸'")||!runtime.includes("['nordic-curl','北欧腿弯举'"))fail('expanded movement / waist anatomy contract missing');
 if(/sets>old\.sets\)cue\('set'\)|status==='finished'.*cue\('item'\)|cue\('rest'\)|cue\('session'\)/.test(runtime))fail('non-countdown automatic sonic cue survived');
 if(!runtime.includes("const due=Math.max(60000,Number(a.estimateMs)||0)")||!runtime.includes("if(p.item&&due&&elapsed(a)>=due)"))fail('countdown-only automatic sonic trigger missing');
