@@ -24,6 +24,7 @@ const STEPS=[
   'prepare-883-inherited-brand-fix.mjs',
   'prepare-883-watermark-contract-bridge.mjs',
   'prepare-884-field-fix.mjs',
+  'prepare-884-runtime-followup.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
