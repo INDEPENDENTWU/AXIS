@@ -38,6 +38,7 @@ const STEPS=[
   'prepare-810-learning-curriculum.mjs',
   'prepare-810-learning-engine.mjs',
   'prepare-810-learning-settings.mjs',
+  'prepare-810-learning-entry-fix.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
