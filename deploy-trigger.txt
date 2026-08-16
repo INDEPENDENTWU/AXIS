@@ -1,5 +1,5 @@
 AXIS production release trigger
-2026-08-15T23:26:00+08:00
-Release: 8.8
-Source baseline: 768ef065be8df993d708b65bd28ff3385410e48c
-Reason: deploy the already browser-gated AXIS 8.8 convergence release to Production after the prior Vercel build-rate-limit failure. Product logic is unchanged; this commit is deployment-only.
+2026-08-16T18:07:46+08:00
+Release: 8.9
+Source baseline: dc0a09ca25f0715bd484f1d079fe1c4d50d0e3fb
+Reason: redeploy the fully browser-gated AXIS 8.9 canonical release to Vercel and EdgeOne after aligning Production verification to the canonical.version manifest authority. Product/runtime logic is unchanged; this is deployment and verification convergence only.
