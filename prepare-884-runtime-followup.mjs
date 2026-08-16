@@ -7,8 +7,11 @@ const fail=m=>{throw new Error(`[AXIS 8.8.4 follow-up] ${m}`)};
   const hits=src.match(new RegExp(re.source,'g'))||[];if(hits.length!==1)fail(`archive row declaration expected once, found ${hits.length}`);
   src=src.replace(re,"const rows=Array.from(list.querySelectorAll('[data-event]')),finished=rows.filter(r=>done.has(r.dataset.event));let bar=");
   const resetFrom="rows.forEach(r=>r.classList.remove('axis884Archived'))";
-  const n=src.split(resetFrom).length-1;if(n!==1)fail(`archive reset expected once, found ${n}`);
+  let n=src.split(resetFrom).length-1;if(n!==1)fail(`archive reset expected once, found ${n}`);
+  const mountFrom='list.prepend(bar)';
+  n=src.split(mountFrom).length-1;if(n!==1)fail(`archive mount expected once, found ${n}`);src=src.replace(mountFrom,'list.append(bar)');
   if(!src.includes("const rows=Array.from(list.querySelectorAll('[data-event]'))"))fail('native archive row query missing');
+  if(src.includes('list.prepend(bar)'))fail('archive toggle can still be hidden under sticky section header');
   try{new Function(src)}catch(e){fail(`v87 syntax ${e.message}`)}
   fs.writeFileSync(FILE,src);
 }
@@ -20,4 +23,4 @@ const fail=m=>{throw new Error(`[AXIS 8.8.4 follow-up] ${m}`)};
   try{new Function(src)}catch(e){fail(`v8712 syntax ${e.message}`)}
   fs.writeFileSync(FILE,src);
 }
-console.log('[AXIS 8.8.4 follow-up] PASS · completed archive uses native row collection · active timeline cannot extend below the active-card safe edge');
+console.log('[AXIS 8.8.4 follow-up] PASS · archive is native + below sticky header · active timeline cannot extend below the active-card safe edge');
