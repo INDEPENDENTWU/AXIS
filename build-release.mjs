@@ -9,6 +9,7 @@ const STEPS=[
   'prepare-88-catalog-convergence.mjs',
   'prepare-88-watermark-final.mjs',
   'prepare-88-watermark-state-sync.mjs',
+  'prepare-88-watermark-location-owner.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
@@ -40,6 +41,7 @@ if(contract.architecture==='canonical-single-runtime'){
   if(manifest.gates?.precisePlaceResolver!==true)fail('precise place resolver gate missing');
   if(manifest.gates?.noRawCoordinatePresentation!==true)fail('raw-coordinate presentation gate missing');
   if(manifest.gates?.watermarkSingleLocateOwner!==true)fail('watermark single-locate-owner gate missing');
+  if(manifest.gates?.watermarkPreferenceSingleWriter!==true)fail('watermark preference single-writer gate missing');
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
