@@ -50,6 +50,12 @@ for(const file of files){
       );
     }
   }
+  if(version==='8.10.1'&&file==='scripts/axis-810-smoke.mjs'){
+    src=src.replace(
+      "assert.match(await page.locator('#v810ConfigSummary').innerText(),/日常.*长休.*每日 12/);",
+      "assert.equal((await page.locator('#v810ConfigSummary').innerText()).trim(),'自定','8.10.1 top-level learning summary should stay compact after custom scheduling');"
+    );
+  }
   if(src!==before)fs.writeFileSync(file,src);
   const wrongCanonical=[...src.matchAll(/canonical-(\d+(?:\.\d+)+)/g)].map(m=>m[1]).filter(v=>v!==version);
   const wrongLabels=[...src.matchAll(/版本 (\d+(?:\.\d+)+)/g)].map(m=>m[1]).filter(v=>v!==version);
