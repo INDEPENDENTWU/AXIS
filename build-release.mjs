@@ -7,11 +7,13 @@ const STEPS=[
   'prepare-first-paint-shell.mjs',
   'prepare-88-convergence.mjs',
   'prepare-88-catalog-convergence.mjs',
+  'prepare-88-watermark-convergence.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
   'postbuild-8712-completion.mjs',
-  'postbuild-88-canonical.mjs'
+  'postbuild-88-canonical.mjs',
+  'verify-88-watermark.mjs'
 ];
 
 for(const step of STEPS){
@@ -33,6 +35,9 @@ if(contract.architecture==='canonical-single-runtime'){
   if(manifest.requests?.dynamicJavascript!==0)fail(`dynamic runtime requests remain · ${manifest.requests?.dynamicJavascript}`);
   if(manifest.featureKernel?.embedded!==true||manifest.completionKernel?.embedded!==true)fail('8.8 feature/completion are not embedded');
   if(manifest.gates?.catalogCategorySingleOwner!==true)fail('catalog category single-owner gate missing');
+  if(manifest.gates?.watermarkFourSwitchContract!==true)fail('watermark four-switch gate missing');
+  if(manifest.gates?.precisePlaceResolver!==true)fail('precise place resolver gate missing');
+  if(manifest.gates?.noRawCoordinatePresentation!==true)fail('raw-coordinate presentation gate missing');
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
