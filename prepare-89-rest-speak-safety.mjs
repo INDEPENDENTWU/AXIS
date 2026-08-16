@@ -37,6 +37,19 @@ src=regexOnce(src,/function axis89PickPhrase\(key\)\{[\s\S]*?\}\nfunction axis89
 }
 function axis89SpeakMeaning`,'safe phrase selection');
 
+src=regexOnce(src,/function renderRestSpeakSettings\(\)\{[^\n]*\}\nwindow\.__AXIS_REST_SPEAK__=/,`function renderRestSpeakSettings(){
+ try{
+  const box=$('#v89SpeakSettings');if(!box)return;
+  const p=axis89SpeakPrefs()||{on:false,native:'zh',target:'en'};
+  const target=$('#v89SpeakTarget',box),opts=p.native==='zh'?[['en','English'],['ja','日本語'],['ko','한국어']]:[['zh','中文'],['ja','日本語'],['ko','한국어']];
+  if(target)target.innerHTML=opts.map(x=>'<button data-v="'+x[0]+'" class="'+(x[0]===p.target?'active':'')+'">'+x[1]+'</button>').join('');
+  box.classList.toggle('on',!!p.on);
+  for(const b of $$('#v89SpeakOn button',box))b.classList.toggle('active',b.dataset.v===(p.on?'on':'off'));
+  for(const b of $$('#v89SpeakNative button',box))b.classList.toggle('active',b.dataset.v===p.native)
+ }catch(err){console.warn('[AXIS Rest Speak] settings render skipped',err)}
+}
+window.__AXIS_REST_SPEAK__=`,'safe settings renderer');
+
 src=regexOnce(src,/function renderRestLine\(rest,e,a\)\{[\s\S]*?\}\nfunction axis89SpeakVoice/,`function renderRestLine(rest,e,a,planDone){
  const el=$('#v87Now #v87Rest');if(!el)return;
  el.classList.remove('v89Speak');delete el.dataset.lang;delete el.dataset.speak;
@@ -46,7 +59,7 @@ src=regexOnce(src,/function renderRestLine\(rest,e,a\)\{[\s\S]*?\}\nfunction axi
   const p=axis89SpeakPrefs();if(!p?.on)return;
   const x=axis89PickPhrase(e.id+':'+String(a.restStartedAt));if(!x)return;
   el.classList.add('v89Speak');el.dataset.lang=x.lang;el.dataset.speak=x.target;
-  el.innerHTML='<span>休息 '+clock(rest)+' · '+esc(x.target)+'</span><small>'+esc(axis89SpeakMeaning(x,p))+'</small>'
+  el.innerHTML='<span>'+clock(rest)+' · '+esc(x.target)+'</span><small>'+esc(axis89SpeakMeaning(x,p))+'</small>'
  }catch{}
 }
 function axis89SpeakVoice`,'canonical rest first, accessory second');
@@ -58,7 +71,8 @@ src=once(src,"window.__AXIS_REST_SPEAK__={version:'8.9',owner:'passive-rest-read
 
 if(/function renderRestLine[\s\S]{0,900}readMeta\(/.test(src))fail('Rest Speak renderer still reaches training metadata');
 if(!src.includes("el.textContent=rest?`休息 ${clock(rest)}`"))fail('canonical rest copy is not written before accessory enhancement');
-if(!src.includes("el.innerHTML='<span>休息 '+clock(rest)+' · '"))fail('enhanced rest line lost canonical rest context');
+if(!src.includes("el.innerHTML='<span>'+clock(rest)+' · '"))fail('compact timer-first Rest Speak presentation missing');
+if(!src.includes("[AXIS Rest Speak] settings render skipped"))fail('settings renderer is not fail-open');
 if(!src.includes("[AXIS Rest Speak] boot accessory skipped"))fail('accessory boot is not fail-open');
 syntax(src,FILE);write(FILE,src);
-console.log('[AXIS 8.9 speak safety] PASS · canonical rest context preserved · boot/settings accessory cannot abort training UI');
+console.log('[AXIS 8.9 speak safety] PASS · compact rest phrase · settings/boot accessory cannot abort training UI');
