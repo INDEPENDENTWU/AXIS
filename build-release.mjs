@@ -37,6 +37,7 @@ const STEPS=[
   'prepare-891-speak-ui.mjs',
   'prepare-810-learning-curriculum.mjs',
   'prepare-810-learning-engine.mjs',
+  'prepare-810-learning-budget-fix.mjs',
   'prepare-810-learning-settings.mjs',
   'prepare-810-learning-entry-fix.mjs',
   'build-hardened.mjs',
