@@ -4,6 +4,7 @@ import fs from 'node:fs';
 const STEPS=[
   'prepare-8102-release-compat.mjs',
   'prepare-8103-release-compat.mjs',
+  'prepare-811-release-compat.mjs',
   'prepare-882-version.mjs',
   'prepare-legacy-runtime.mjs',
   'prepare-product-convergence.mjs',
@@ -103,7 +104,7 @@ if(contract.architecture==='canonical-single-runtime'){
   for(const gate of ['settingsLearningNativeRow','homeTimerStablePaint','restSpeakDialoguePractice','restSpeakEchoPractice','restSpeakShadowPractice','restSpeakEphemeralRecording','restSpeakOpportunityRail','restSpeakOpportunityControl','restSpeakNoAutoplay8101','restSpeakNoTrainingOwnership8101'])if(manifest.gates?.[gate]!==true)fail(`8.10.1 gate missing · ${gate}`);
   for(const gate of ['detailSingleCompositionSwap','detailNoLegacyHeightHold','restSpeakOpportunityPanelPersistent','restSpeakOpportunitySingleEventOwner','restSpeakStandaloneLearning','restSpeakStandaloneControl','restSpeakStandalonePanelPersistent','restSpeakStandaloneNoTrainingOwnership','restSpeakNoAutoplay8102'])if(manifest.gates?.[gate]!==true)fail(`8.10.2 gate missing · ${gate}`);
   for(const gate of ['homeIdleNoFalseFinish','homeCompletedCopyConcise','homeCompletedStartEndFacts','activeAdjustCornerAnchor','totalWorkoutDurationReminder','totalWorkoutDurationSinglePreference','restSpeakDialogueFourTurn','restSpeakEchoShadowDistinct','restSpeakShadowAutoRecordAB','restSpeakFourLanguageVoiceRouting','restSpeakBestAvailableLocalVoice','practiceMicrophoneSameOrigin','releaseFreshnessEventDriven'])if(manifest.gates?.[gate]!==true)fail(`8.10.3 gate missing · ${gate}`);
-  for(const gate of ['learningAtlas811','learningAtlasUnique811','learningDialogueFourTurn811','learningConnectedSpeech811','learningSpelling811','learningSettingsConverged811','learningLegacyDiagnosticsPreserved811','trendsStateField811','trendsGoalAware811','trendsEvidenceOnly811','trendsLocalFirst811'])if(manifest.gates?.[gate]!==true)fail(`8.11 candidate gate missing · ${gate}`);
+  for(const gate of ['learningAtlas811','learningAtlasUnique811','learningDialogueFourTurn811','learningDialogueSixTurn811','learningConnectedSpeech811','learningSpelling811','learningSettingsConverged811','learningLegacyDiagnosticsPreserved811','learningJapanese132811','learningKorean132811','learningChinese132811','learningMultilingualSixTurn811','learningMultilingualNoLegacyExactOverlap811','trendsStateField811','trendsGoalAware811','trendsEvidenceOnly811','trendsLocalFirst811','trendsOneShotMotion811','serviceSettingsConverged811','serviceSettingsUserInvokedNetwork811','serviceSettingsNoTrainingOwner811'])if(manifest.gates?.[gate]!==true)fail(`8.11 gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
