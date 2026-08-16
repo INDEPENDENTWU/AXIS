@@ -16,7 +16,8 @@ const files=[
   'scripts/axis-89-smoke.mjs',
   'scripts/axis-891-smoke.mjs',
   'scripts/axis-810-smoke.mjs',
-  'scripts/axis-8101-smoke.mjs'
+  'scripts/axis-8101-smoke.mjs',
+  'scripts/axis-product-matrix.mjs'
 ];
 
 for(const file of files){
@@ -69,6 +70,40 @@ for(const file of files){
       "assert.equal(entry.b,'智能');",
       "assert.equal(entry.b,'自定','explicit every-rest cadence should render the compact custom status');"
     );
+  }
+  if(version==='8.10.3'&&file==='scripts/axis-product-matrix.mjs'){
+    const stale="assert.equal(await page.locator('#v8710Rest:visible,#v8710Session:visible,#v876TargetSheet:visible').count(),0,'retired rest/session automatic reminder controls returned');";
+    const current="assert.equal(await page.locator('#v8710Rest:visible,#v876TargetSheet:visible').count(),0,'retired rest automatic reminder controls returned');assert.equal(await page.locator('#v8710Session:visible').count(),1,'8.10.3 total-workout duration reminder is missing');assert.equal(await page.locator('#v8710SessionPreset button:visible').count(),5,'8.10.3 duration presets are incomplete');";
+    if(!src.includes(stale)&&!src.includes(current))throw new Error('AXIS 8.10.3 product matrix reminder assertion shape changed');
+    src=src.replace(stale,current);
+    const oldItemFlow=`await page.locator('#v8710Item').click();
+await page.waitForTimeout(80);
+meta=await store('axis_v8_meta');
+assert.equal(meta.prefs?.v8710SoundEnabled,false);
+assert.equal(meta.prefs?.v8710SoundSet,'vector');
+assert.equal(meta.prefs?.v8710Repeat,'once');
+assert.equal(meta.prefs?.v876ItemReminder,false);
+await page.locator('#v8710Item').click();
+await page.locator('#v8710On [data-v="on"]').click();
+meta=await store('axis_v8_meta');
+assert.equal(meta.prefs?.v876ItemReminder,true);
+assert.equal(meta.prefs?.v8710SoundEnabled,true);`;
+    const newItemFlow=`await page.locator('#v8710Item [data-v="off"]').click();
+await page.waitForTimeout(80);
+meta=await store('axis_v8_meta');
+assert.equal(meta.prefs?.v8710SoundEnabled,false);
+assert.equal(meta.prefs?.v8710SoundSet,'vector');
+assert.equal(meta.prefs?.v8710Repeat,'once');
+assert.equal(meta.prefs?.v876ItemReminder,false);
+await page.locator('#v8710Item [data-v="on"]').click();
+await page.locator('#v8710SessionPreset [data-v="45"]').click();
+await page.locator('#v8710On [data-v="on"]').click();
+meta=await store('axis_v8_meta');
+assert.equal(meta.prefs?.v876ItemReminder,true);
+assert.equal(meta.prefs?.v876SessionTarget,45);
+assert.equal(meta.prefs?.v8710SoundEnabled,true);`;
+    if(!src.includes(oldItemFlow)&&!src.includes(newItemFlow))throw new Error('AXIS 8.10.3 sound interaction matrix shape changed');
+    src=src.replace(oldItemFlow,newItemFlow);
   }
   if(src!==before)fs.writeFileSync(file,src);
   const wrongCanonical=[...src.matchAll(/canonical-(\d+(?:\.\d+)+)/g)].map(m=>m[1]).filter(v=>v!==version);

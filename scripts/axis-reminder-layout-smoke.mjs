@@ -37,14 +37,17 @@ await page.reload({waitUntil:'domcontentloaded'});
 await waitReady();
 assert.equal(await page.evaluate(()=>window.__AXIS_ARCH__),'canonical-single-runtime');
 
-console.log(`[AXIS ${ENGINE}] countdown-only automatic sound settings`);
+console.log(`[AXIS ${ENGINE}] item countdown + total-workout duration sound settings`);
 await openAudio();
-assert.equal(await page.locator('#v8710Session:visible,#v876TargetSheet:visible,#v8710Rest:visible').count(),0,'retired session/rest automatic reminder UI is visible');
+assert.equal(await page.locator('#v876TargetSheet:visible,#v8710Rest:visible').count(),0,'retired rest/session target overlays are visible');
 assert.equal(await page.locator('#v8710Item:visible').count(),1,'canonical item countdown reminder control missing');
+assert.equal(await page.locator('#v8710Session:visible').count(),1,'total workout duration reminder control missing');
+assert.equal(await page.locator('#v8710SessionPreset button:visible').count(),5,'duration target presets missing');
 assert.equal(await page.locator('#v8710Tone button:visible').count(),4,'canonical AXIS sound choices missing');
 assert.equal(await page.locator('#v8710Test:visible').count(),0,'retired standalone audition action returned');
 const soundCopy=(await page.locator('#v8710Audio').innerText()).trim();
-assert.ok(soundCopy.includes('倒计时到点'),'sound UI does not state countdown-only semantics');
+assert.ok(soundCopy.includes('倒计时到点'),'sound UI does not state countdown semantics');
+assert.ok(soundCopy.includes('总锻炼时长提醒'),'sound UI lost total workout duration reminder');
 
 console.log(`[AXIS ${ENGINE}] current item / capture dock / nav share one geometry rhythm`);
 await page.locator('#settingsSheet [data-close="settingsSheet"]').click();await page.waitForTimeout(60);
@@ -77,5 +80,5 @@ assert.ok(Math.abs(geometry.leftDelta)<=1.5&&Math.abs(geometry.rightDelta)<=1.5,
 assert.ok(geometry.card.width>=340,'active card became too narrow');
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log(`[AXIS ${ENGINE}] PASS · countdown-only visible sound UI · four AXIS choices · 12px card/dock · 8px dock/nav · aligned content edges`);
+console.log(`[AXIS ${ENGINE}] PASS · item + total duration sound · four AXIS choices · 12px card/dock · 8px dock/nav · aligned content edges`);
 await context.close();await browser.close();

@@ -21,13 +21,15 @@ console.log(`[AXIS completed Home ${ENGINE}] same-day finish is a calm completio
 await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.scope==='complete',undefined,{timeout:1600});
 assert.ok(await page.locator('#axisNowHero').isVisible());
 assert.equal((await page.locator('.axisNowTop>span').innerText()).trim(),'今天完成');
-assert.equal((await page.locator('#axisNowTitle').innerText()).trim(),'训练已记录');
+assert.equal((await page.locator('#axisNowTitle').innerText()).trim(),'','completed Home restored redundant 训练已记录 copy');
 assert.match((await page.locator('#axisNowValue').innerText()).trim(),/32分钟/);
 const completeCopy=((await page.locator('#axisNowHero').innerText())||'').trim();
-assert.doesNotMatch(completeCopy,/恢复中|0%|100%/,'completed Home retained recovery dashboard copy');
+assert.doesNotMatch(completeCopy,/训练已记录|恢复中|0%|100%/,'completed Home retained redundant/recovery dashboard copy');
 assert.equal(await page.locator('#axisNowDial').isVisible(),false,'completed Home still shows percentage dial');
 assert.equal(await page.locator('.axisNowRail').isVisible(),false,'completed Home still shows progress rail');
 assert.equal(await page.locator('.axisNowFacts').isVisible(),false,'completed Home still shows duplicate facts');
+assert.match((await page.locator('#axisNowMeta').innerText()).trim(),/开始/);
+assert.match((await page.locator('#axisNowMeta').innerText()).trim(),/完成/);
 assert.match((await page.locator('#axisNowMeta').innerText()).trim(),/1项/);
 assert.match((await page.locator('#axisNowMeta').innerText()).trim(),/3组/);
 assert.equal(await page.locator('#v81Continue').count(),0,'duplicate 接着上次 block remains on Home');
@@ -65,5 +67,5 @@ const normal=await page.evaluate(()=>window.__AXIS_CAPTURE__?.snapshot?.());
 assert.equal(normal?.owner,'canonical');assert.equal(normal?.intent,'record');
 assert.ok(await page.locator('#captureStage').isVisible(),'normal camera surface changed while sharing the owner');
 
-console.log(`[AXIS completion + camera ${ENGINE}] PASS · restrained completed Home · honest interval · no duplicate continue · canonical Quick Record camera`);
+console.log(`[AXIS completion + camera ${ENGINE}] PASS · concise completed Home · honest interval · no duplicate continue · canonical Quick Record camera`);
 await context.close();await browser.close();
