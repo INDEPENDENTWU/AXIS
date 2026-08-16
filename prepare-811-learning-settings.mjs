@@ -66,19 +66,21 @@ function axis811ConvergeLearningSettings(){
   const body=$('#v811FineTuneBody',details);
   [...controls.querySelectorAll(':scope > .v810SpeakBlock')].forEach(x=>body.appendChild(x))
  }
- const p=axis89SpeakPrefs();
+ const p=axis89SpeakPrefs(),custom=axis811LearningFineCustom(p);
  core.innerHTML=
   '<div class="v811CoreGroup"><div class="v811CoreHead"><span>目标</span><b>你要得到什么</b></div>'+axis811CoreButtons('focus',[['auto','智能'],['natural','真实口语'],['ielts8','IELTS 8+']],p)+'</div>'+
   '<div class="v811CoreGroup"><div class="v811CoreHead"><span>强度</span><b>一天出现多少</b></div>'+axis811CoreButtons('intensity',[['light','轻量'],['adaptive','自适应'],['deep','深入']],p)+'</div>'+
   '<div class="v811CoreGroup"><div class="v811CoreHead"><span>难度</span><b>内容复杂度</b></div>'+axis811CoreButtons('level',[['adaptive','自适应'],['foundation','起步'],['progress','实用'],['advanced','高阶']],p)+'</div>';
- const fine=$('#v811FineTuneState',details);if(fine)fine.textContent=axis811LearningFineCustom(p)?'已自定':'';
+ const fine=$('#v811FineTuneState',details);if(fine)fine.textContent=custom?'已自定':'';
+ /* Fresh/default users see three decisions only. Existing/custom users keep their exact old controls immediately visible. */
+ details.open=custom;
  const summary=$('#v810ConfigSummary');if(summary)summary.textContent=p.focus==='ielts8'?'IELTS 8+':p.focus==='natural'?'真实口语':'智能';
 }
 const axis811BaseRenderLearningSettings=axis810RenderSettings;
 axis810RenderSettings=function(){axis811BaseRenderLearningSettings();axis811ConvergeLearningSettings()};
-try{window.__AXIS_811_LEARNING_SETTINGS__={version:'8.11-candidate',visibleCore:['goal','intensity','level'],fineTunePreserves:['mode','track','cadence','level','dailyTarget','opportunity'],legacyPrefsPreserved:true,trainingOwner:false}}catch{}
+try{window.__AXIS_811_LEARNING_SETTINGS__={version:'8.11-candidate',visibleCore:['goal','intensity','level'],fineTunePreserves:['mode','track','cadence','level','dailyTarget','opportunity'],defaultFineTuneCollapsed:true,customFineTuneVisible:true,legacyPrefsPreserved:true,trainingOwner:false}}catch{}
 `;
 src=src.slice(0,end)+block+'\n'+src.slice(end);
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.11 learning settings] PASS · 3 core decisions · legacy fine-tune preserved');
+console.log('[AXIS 8.11 learning settings] PASS · 3 core decisions by default · custom/legacy fine-tune remains immediately usable');
