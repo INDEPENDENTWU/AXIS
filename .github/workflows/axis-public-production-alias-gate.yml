@@ -67,6 +67,13 @@ jobs:
             'noRawCoordinatePresentation',
             'watermarkSingleLocateOwner',
             'watermarkPreferenceSingleWriter',
+            'groupPlanUnitlessControls',
+            'groupPlanExpandedPresets',
+            'activeItemCountdown',
+            'activeItemCountdownTone',
+            'activeItemLongPressSuppressesTone',
+            'watermarkCenterBrand',
+            'watermarkBrandOpacitySingleTarget',
             'sourceCommitStamped'
           ];
           const ok=x.sourceCommit===process.env.EXPECTED &&
@@ -81,6 +88,11 @@ jobs:
             x.canonical?.locateOwner==='v8710 canonical precise resolver' &&
             x.canonical?.preferenceOwner==='v85 setWm event bridge' &&
             x.canonical?.rawCoordinatePresentation===false &&
+            x.canonical?.minorRelease===process.env.VERSION &&
+            x.canonical?.watermarkBrand?.text==='AXIS' &&
+            x.canonical?.watermarkBrand?.opacityOwner==='v876WmOpacity' &&
+            x.canonical?.activeCountdown?.toneOwner==='v87' &&
+            x.canonical?.activeCountdown?.longPressSuppressesTone===true &&
             requiredGates.every(k=>x.gates?.[k]===true);
           if(!ok){
             console.error(JSON.stringify({
@@ -89,15 +101,12 @@ jobs:
               baseVersion:x.baseVersion,
               architecture:x.architecture,
               requests:x.requests,
-              retiredCatalogWriters:x.canonical?.retiredCatalogWriters,
-              locateOwner:x.canonical?.locateOwner,
-              preferenceOwner:x.canonical?.preferenceOwner,
-              rawCoordinatePresentation:x.canonical?.rawCoordinatePresentation,
+              canonical:x.canonical,
               gates:Object.fromEntries(requiredGates.map(k=>[k,x.gates?.[k]]))
             },null,2));
             process.exit(1);
           }
-          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · canonical runtime/catalog/watermark verified`);
+          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · canonical runtime/catalog/watermark/planner/countdown verified`);
           NODE
               then
                 exit 0
