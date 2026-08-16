@@ -39,11 +39,13 @@ const setSwitch=async(id,on)=>{
 };
 const visible=async sel=>page.locator(sel).evaluate(el=>getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden'&&!!(el.offsetWidth||el.offsetHeight||el.getClientRects().length));
 const diag=()=>page.evaluate(()=>{let m={};try{m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}')}catch{}return{lastGeo:m.prefs?.v85LastGeo,resolve:m.prefs?.v8712PlaceResolve,place:m.prefs?.v8710PlaceName,auto:m.prefs?.v876LocationNameAuto,cache:m.prefs?.v8711PlaceCache,visibleName:document.querySelector('#v876LocationName')?.textContent,preview:document.querySelector('#v8710WmLoc')?.textContent,locationSwitch:document.querySelector('#v85WmLocation')?.getAttribute('aria-checked')}});
+const switchDiag=(id,preview,key)=>page.evaluate(({id,preview,key})=>{let m={};try{m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}')}catch{}const b=document.querySelector(id),p=document.querySelector(preview),cs=p?getComputedStyle(p):null;return{key,persisted:m.prefs?.[key],aria:b?.getAttribute('aria-checked'),events:window.__AXIS_WM_TEST_EVENTS||[],previewText:p?.textContent,inlineDisplay:p?.style?.display,computedDisplay:cs?.display,visibility:cs?.visibility,offset:[p?.offsetWidth,p?.offsetHeight],html:p?.outerHTML}}, {id,preview,key});
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
 await page.evaluate(()=>localStorage.clear());
 await page.reload({waitUntil:'domcontentloaded'});
 await ready();
+await page.evaluate(()=>{window.__AXIS_WM_TEST_EVENTS=[];window.addEventListener('axis:watermark-pref-change',e=>window.__AXIS_WM_TEST_EVENTS.push(e.detail));});
 assert.equal(await page.evaluate(()=>window.__AXIS_ARCH__),'canonical-single-runtime');
 await page.evaluate(()=>{
   const n=document.querySelector('#equipmentName');if(n)n.textContent='杠铃卧推';
@@ -86,7 +88,9 @@ for(const [id,preview,key] of [
   ['#v85WmTime','#v8710WmTime','v85WmTime']
 ]){
   await setSwitch(id,false);
-  assert.equal(await visible(preview),false,`${preview} did not hide with ${id}`);
+  const hidden=!(await visible(preview));
+  if(!hidden)console.log('[AXIS watermark switch diagnostic]',JSON.stringify(await switchDiag(id,preview,key),null,2));
+  assert.equal(hidden,true,`${preview} did not hide with ${id}`);
   let m=await store();assert.equal(m.prefs?.[key],false,`${key} did not persist false`);
   await setSwitch(id,true);
   await page.waitForTimeout(100);
