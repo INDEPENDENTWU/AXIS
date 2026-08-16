@@ -3,14 +3,11 @@ import fs from 'node:fs';
 const fail=m=>{throw new Error(`[AXIS 8.8.4 follow-up] ${m}`)};
 {
   const FILE='v87-runtime.js';let src=fs.readFileSync(FILE,'utf8');
-  const rowsFrom="const rows=$$('#eventList [data-event]')";
-  const rowsTo="const rows=Array.from(list.querySelectorAll('[data-event]'))";
-  let n=src.split(rowsFrom).length-1;if(n!==1)fail(`archive row query expected once, found ${n}`);src=src.replace(rowsFrom,rowsTo);
-  const filterFrom="finished=rows.filter(r=>done.has(r.dataset.event))";
-  const filterTo="finished=rows.filter(r=>done.has(r.dataset.event))";
-  n=src.split(filterFrom).length-1;if(n!==1)fail(`archive filter expected once, found ${n}`);src=src.replace(filterFrom,filterTo);
+  const re=/const rows=[^\n;]*?,finished=rows\.filter\(r=>done\.has\(r\.dataset\.event\)\);let bar=/;
+  const hits=src.match(new RegExp(re.source,'g'))||[];if(hits.length!==1)fail(`archive row declaration expected once, found ${hits.length}`);
+  src=src.replace(re,"const rows=Array.from(list.querySelectorAll('[data-event]')),finished=rows.filter(r=>done.has(r.dataset.event));let bar=");
   const resetFrom="rows.forEach(r=>r.classList.remove('axis884Archived'))";
-  n=src.split(resetFrom).length-1;if(n!==1)fail(`archive reset expected once, found ${n}`);
+  const n=src.split(resetFrom).length-1;if(n!==1)fail(`archive reset expected once, found ${n}`);
   if(!src.includes("const rows=Array.from(list.querySelectorAll('[data-event]'))"))fail('native archive row query missing');
   try{new Function(src)}catch(e){fail(`v87 syntax ${e.message}`)}
   fs.writeFileSync(FILE,src);
