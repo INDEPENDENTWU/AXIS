@@ -6,9 +6,15 @@ on:
     paths:
       - 'lib/learning-atlas-811.mjs'
       - 'lib/learning-atlas-811/**'
+      - 'lib/multilingual-atlas-811.mjs'
       - 'prepare-811-learning-atlas.mjs'
+      - 'prepare-811-dialogue-depth.mjs'
+      - 'prepare-811-multilingual-atlas.mjs'
       - 'prepare-811-learning-settings.mjs'
       - 'prepare-811-trends.mjs'
+      - 'prepare-811-trends-motion.mjs'
+      - 'prepare-811-cloud-ai-settings.mjs'
+      - 'prepare-811-legacy-compat.mjs'
       - 'postbuild-811-contract.mjs'
       - 'scripts/axis-811-experience-smoke.mjs'
       - 'build-release.mjs'
@@ -28,9 +34,15 @@ jobs:
         run: |
           for f in lib/learning-atlas-811/*.mjs; do node --check "$f"; done
           node --check lib/learning-atlas-811.mjs
+          node --check lib/multilingual-atlas-811.mjs
           node --check prepare-811-learning-atlas.mjs
+          node --check prepare-811-dialogue-depth.mjs
+          node --check prepare-811-multilingual-atlas.mjs
           node --check prepare-811-learning-settings.mjs
           node --check prepare-811-trends.mjs
+          node --check prepare-811-trends-motion.mjs
+          node --check prepare-811-cloud-ai-settings.mjs
+          node --check prepare-811-legacy-compat.mjs
           node --check postbuild-811-contract.mjs
           node --check scripts/axis-811-experience-smoke.mjs
       - name: Build full inherited release
