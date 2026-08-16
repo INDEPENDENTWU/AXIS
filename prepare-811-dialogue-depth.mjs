@@ -1,8 +1,11 @@
 import fs from 'node:fs';
+import {buildAxis811Atlas,auditAxis811Atlas} from './lib/learning-atlas-811.mjs';
 
 const FILE='v87-runtime.js';
 const fail=m=>{throw new Error(`[AXIS 8.11 dialogue depth] ${m}`)};
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
+const audit=auditAxis811Atlas(buildAxis811Atlas());
+if(audit.count!==5280||audit.duplicateTargets!==0||!audit.fourTurn||!audit.sixTurn)fail('six-turn Atlas audit failed');
 let src=fs.readFileSync(FILE,'utf8');
 const helper=`function axis811DialogueTail(kind,track,seed){
  const functional=[['Thanks — that helps.','No problem.'],['Perfect, that clears it up.','Glad to help.'],['Great, that was all I needed.','Anytime.'],['Got it — thanks for checking.','Of course.']];
@@ -34,7 +37,9 @@ const to=`axis8103DialogueTurns=function(r){
 const axis811BasePracticeHtml=axis8101PracticeHtml;
 axis8101PracticeHtml=function(mode,r){const html=axis811BasePracticeHtml(mode,r);return mode==='dialogue'&&Array.isArray(r?.conversation)&&r.conversation.length>=6?html.replace('四轮语境练习','真实六轮语境'):html};`;
 src=once(src,from,to,'six-turn practice renderer');
-src=once(src,"dialogue:'unit-specific-four-turn'","dialogue:'unit-specific-six-turn'",'dialogue diagnostic');
+const marker="try{window.__AXIS_811_LEARNING__=";
+if(!src.includes(marker))fail('8.11 learning diagnostic marker missing');
+src=src.replace(marker,"try{window.__AXIS_811_DIALOGUE__={version:'8.11-candidate',turns:6,unitSpecific:true,autoplay:false,trainingOwner:false};window.__AXIS_811_LEARNING__=");
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.11 dialogue depth] PASS · Atlas dialogue expands to six turns without new playback/timer ownership');
+console.log('[AXIS 8.11 dialogue depth] PASS · 5280 six-turn Atlas units · old four-turn diagnostic remains compatible');
