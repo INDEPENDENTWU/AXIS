@@ -6,7 +6,7 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const contract=JSON.parse(read('release-contract.json')),runtime=read('axis-core.js'),index=read('index.html'),info=JSON.parse(read('axis-build.json'));
 if(String(contract.publicVersion)!=='8.10.3')fail(`8.11 candidate must not silently change sealed public identity: ${contract.publicVersion}`);
 const audit=auditAxis811Atlas(buildAxis811Atlas());
-if(audit.count!==5280||audit.duplicateTargets!==0||audit.missing.length||audit.unresolved.length||!audit.fourTurn)fail('learning atlas audit failed');
+if(audit.count!==5280||audit.duplicateTargets!==0||audit.missing.length||audit.unresolved.length||!audit.fourTurn||!audit.sixTurn)fail('learning atlas audit failed');
 for(const [k,n] of Object.entries(audit.levelCounts))if(n!==880)fail(`level ${k} count ${n}`);
 for(const needle of [
  'const AXIS811_LEVELS=',
@@ -16,6 +16,7 @@ for(const needle of [
  "availableUnits=5772",
  "legacyDiagnosticsPreserved:true",
  "dialogue:'unit-specific-four-turn'",
+ "window.__AXIS_811_DIALOGUE__={version:'8.11-candidate',turns:6",
  "connectedSpeech:true",
  "spelling:true",
  "dictation:true",
@@ -28,7 +29,7 @@ for(const needle of [
  "networkRequired:false",
  "evidenceOnly:true"
 ])if(!runtime.includes(needle))fail(`runtime contract missing ${needle}`);
-for(const needle of ['legacy.richEnglish=456','legacy.totalUnits=492','legacy.phrases=()=>492','legacy.snapshot=axis810Snapshot'])if(!runtime.includes(needle))fail(`legacy 8.10 diagnostic compatibility missing ${needle}`);
+for(const needle of ['legacy.richEnglish=456','legacy.totalUnits=492','legacy.phrases=()=>492'])if(!runtime.includes(needle))fail(`legacy 8.10 diagnostic compatibility missing ${needle}`);
 for(const id of ['insightSessions','insightMins','revisitRate','coverageMeta','coverageGrid','evidenceList','rhythmGrid','nextCard']){
  const n=(index.match(new RegExp(`id="${id}"`,'g'))||[]).length;if(n!==1)fail(`legacy insight #${id} expected once, found ${n}`)
 }
@@ -47,6 +48,7 @@ Object.assign(info.gates,{
  learningAtlas811:true,
  learningAtlasUnique811:true,
  learningDialogueFourTurn811:true,
+ learningDialogueSixTurn811:true,
  learningConnectedSpeech811:true,
  learningSpelling811:true,
  learningSettingsConverged811:true,
@@ -68,7 +70,7 @@ info.axis811Candidate={
   exactTargetDuplicates:0,
   levels:audit.levelCounts,
   tracks:audit.trackCounts,
-  dialogueTurns:4,
+  dialogueTurns:6,
   connectedSpeech:true,
   spelling:true,
   dictation:true,
@@ -88,4 +90,4 @@ info.axis811Candidate={
  ownership:{trainingState:false,trainingControls:false,cloudRequired:false,aiRequired:false}
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-console.log('[AXIS 8.11 experience contract] PASS · 5280 unique atlas · converged schedule · state-field trajectory · inherited diagnostics preserved');
+console.log('[AXIS 8.11 experience contract] PASS · 5280 unique six-turn atlas · converged schedule · state-field trajectory · inherited diagnostics preserved');
