@@ -74,6 +74,17 @@ jobs:
             'activeItemLongPressSuppressesTone',
             'watermarkCenterBrand',
             'watermarkBrandOpacitySingleTarget',
+            'homeStateSingleOwner',
+            'homeStateAdaptiveRest',
+            'localVisualMemory',
+            'quickCustomEquipment',
+            'quickMediaAttachment',
+            'activeCardGeometryStable',
+            'countdownOnlyAutomaticSound',
+            'expandedExerciseLibrary',
+            'waistAnatomyRegion',
+            'durableReleaseLog',
+            'mediaStoreWebKitSafe',
             'sourceCommitStamped'
           ];
           const ok=x.sourceCommit===process.env.EXPECTED &&
@@ -91,8 +102,12 @@ jobs:
             x.canonical?.minorRelease===process.env.VERSION &&
             x.canonical?.watermarkBrand?.text==='AXIS' &&
             x.canonical?.watermarkBrand?.opacityOwner==='v876WmOpacity' &&
-            x.canonical?.activeCountdown?.toneOwner==='v87' &&
+            x.canonical?.activeCountdown?.toneOwner==='v8710-sound-ui.js' &&
             x.canonical?.activeCountdown?.longPressSuppressesTone===true &&
+            x.canonical?.activeCountdown?.automaticTrigger==='countdown-zero-only' &&
+            x.canonical?.mediaStore?.owner==='app.js' &&
+            x.canonical?.mediaStore?.writeFormat==='arraybuffer-v1' &&
+            x.canonical?.mediaStore?.webkitSafe===true &&
             requiredGates.every(k=>x.gates?.[k]===true);
           if(!ok){
             console.error(JSON.stringify({
@@ -106,7 +121,7 @@ jobs:
             },null,2));
             process.exit(1);
           }
-          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · canonical runtime/catalog/watermark/planner/countdown verified`);
+          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · exact alias · home/local-memory/quick-media/geometry/countdown-only sound/media-store verified`);
           NODE
               then
                 exit 0
