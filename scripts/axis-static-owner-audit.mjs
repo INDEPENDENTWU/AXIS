@@ -14,8 +14,15 @@ for(const needle of needles){
 }
 const unique=[];for(const x of snippets)if(!unique.some(y=>y.text===x.text))unique.push(x);
 console.log('[AXIS static owner audit] scan click contexts',JSON.stringify(unique,null,2));
-const canonical=unique.filter(x=>x.text.includes('__AXIS_CAPTURE_PREF__')&&x.text.includes("openSheet('scanSheet')"));
-assert.equal(canonical.length,1,`expected one canonical scan owner context, got ${canonical.length}`);
+
+const ownerCount=(src.match(/function openCanonicalCamera\(/g)||[]).length;
+assert.equal(ownerCount,1,`expected exactly one openCanonicalCamera lifecycle owner, got ${ownerCount}`);
+assert.equal((src.match(/function beginQuickMedia\(mode,id\)\{return openCanonicalCamera\(mode,id,true\)\}/g)||[]).length,1,'Quick Record media is not delegated to the canonical camera owner');
+
+const canonical=unique.filter(x=>x.text.includes('__AXIS_CAPTURE_PREF__')&&x.text.includes('openCanonicalCamera(mode,null,false)'));
+assert.equal(canonical.length,1,`expected one canonical main-capture delegation context, got ${canonical.length}`);
 const suspicious=unique.filter(x=>/scanBtn[^]{0,300}onclick\s*=|onclick\s*=[^]{0,300}scanBtn/.test(x.text)&&!canonical.includes(x));
 assert.equal(suspicious.length,0,`competing scan click owner contexts: ${JSON.stringify(suspicious)}`);
-console.log('[AXIS static owner audit] PASS · one canonical capture owner context');
+assert.equal((src.match(/startCamera\(\)/g)||[]).length>=1,true,'camera lifecycle implementation missing');
+assert.equal(/scanBtn[^]{0,360}startCamera\(\)/.test(src),false,'main capture still owns camera lifecycle inline');
+console.log('[AXIS static owner audit] PASS · one camera lifecycle owner · main + Quick Record delegate');
