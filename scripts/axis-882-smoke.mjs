@@ -29,7 +29,7 @@ assert.equal(await page.locator('#idleSignalWrap').evaluate(el=>getComputedStyle
 assert.equal(await page.locator('#liveSignalWrap').evaluate(el=>getComputedStyle(el).display),'none');
 const hero=await rect('#axisNowHero');assert.ok(hero.x>=-1&&hero.x+hero.w<=391&&hero.h>=175,'home hero geometry invalid');
 assert.equal(await page.evaluate(()=>window.__AXIS_HOME_STATE__?.mode),'ready');
-assert.ok(await page.locator('#axisNowDial').isVisible());assert.ok(await page.locator('#axisNowRailFill').count());
+const idleDialVisible=await page.locator('#axisNowDial').isVisible();if(VERSION==='8.10.3')assert.equal(idleDialVisible,false,'8.10.3 idle Home exposes a false finish-like dial');else assert.ok(idleDialVisible);assert.ok(await page.locator('#axisNowRailFill').count());
 
 console.log(`[AXIS 8.8.2 ${ENGINE}] expanded movement + waist anatomy`);
 const lib=await page.evaluate(()=>window.__AXIS_873_LIBRARY__?.map(x=>({id:x.id,name:x.name,muscles:x.muscles}))||[]);
@@ -96,6 +96,9 @@ const dueId=await page.locator('#v87Finish').getAttribute('data-id');assert.ok(d
 await page.evaluate(id=>{window.__AXIS_882_CUES__=[];const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity,t=Date.now();if(!a)throw new Error('due activity missing');a.status='active';a.estimateMs=60000;a.startedAt=t-59400;a.lastResumedAt=t-59400;a.intervals=[{start:t-59400,end:null}];a.restStartedAt=null;m.prefs=m.prefs||{};m.prefs.v8710SoundEnabled=true;m.prefs.v876ItemReminder=true;localStorage.setItem(k,JSON.stringify(m))},dueId);
 await page.waitForFunction(()=>window.__AXIS_882_CUES__?.length===1,undefined,{timeout:3200});assert.deepEqual(await page.evaluate(()=>window.__AXIS_882_CUES__),['item']);await page.waitForTimeout(1200);assert.deepEqual(await page.evaluate(()=>window.__AXIS_882_CUES__),['item'],'countdown zero repeated the cue');await page.waitForFunction(()=>document.querySelector('#v87Meta')?.textContent.trim().startsWith('剩余 00:00'),undefined,{timeout:1000});
 
-assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log(`[AXIS 8.8.2 ${ENGINE}] PASS · home intelligence · local memory · quick custom/media · waist library · immutable active card · countdown-only sound`);
+console.log(`[AXIS 8.8.2 ${ENGINE}] card remains stable when completion makes 加一组 visible`);
+const b2=await rect('#v87Now');await page.locator('#v87Primary').click();const i2=await rect('#v87Now');const r2=await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{const r=document.querySelector('#v87Now').getBoundingClientRect();resolve({x:r.x,y:r.y,w:r.width,h:r.height})}))));await page.waitForTimeout(120);const a2=await rect('#v87Now');stable(b2,i2,'plan-complete immediate');stable(b2,r2,'plan-complete rAF');stable(b2,a2,'plan-complete settled');assert.equal(await page.locator('#v87Add').isVisible(),true,'加一组 not exposed after plan complete');
+
+assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
 await context.close();await browser.close();
+console.log(`[AXIS 8.8.2 ${ENGINE}] PASS · home · local memory · quick custom/media · library · stable card · countdown sound`);
