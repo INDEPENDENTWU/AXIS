@@ -50,6 +50,11 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 {
+ const f='scripts/axis-882-smoke.mjs';let s=read(f);
+ s=once(s,"if(VERSION==='8.10.3')assert.equal(idleDialVisible,false,'8.10.3 idle Home exposes a false finish-like dial');else assert.ok(idleDialVisible);","if(['8.10.3','8.11'].includes(VERSION))assert.equal(idleDialVisible,false,'modern idle Home exposes a false finish-like dial');else assert.ok(idleDialVisible);",'8.8.2 inherited idle Home contract');
+ write(f,s);
+}
+{
  const f='scripts/axis-8102-smoke.mjs';let s=read(f);
  s=once(s,"assert.ok(['8.10.2','8.10.3'].includes(EXPECTED),`unexpected inherited 8.10.2 release ${EXPECTED}`);","assert.ok(['8.10.2','8.10.3','8.11'].includes(EXPECTED),`unexpected inherited 8.10.2 release ${EXPECTED}`);",'8.10.2 inherited browser version allowance');
  write(f,s);
@@ -59,4 +64,4 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  s=once(s,"assert.equal(EXPECTED,'8.10.3');","assert.ok(['8.10.3','8.11'].includes(EXPECTED),`unexpected inherited 8.10.3 release ${EXPECTED}`);",'8.10.3 inherited browser version allowance');
  write(f,s);
 }
-console.log('[AXIS 8.11 release compat] PASS · 8.11 identity · inherited sound, 8.9.1 learning and 8.10.x capabilities remain sealed');
+console.log('[AXIS 8.11 release compat] PASS · 8.11 identity · inherited idle Home, sound, 8.9.1 learning and 8.10.x capabilities remain sealed');
