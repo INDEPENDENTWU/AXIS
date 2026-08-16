@@ -12,6 +12,7 @@ for(const [needle,label] of [
  ["p.dataset.axis8102Source==='opportunity'",'opportunity source guard missing'],
  ['e.stopImmediatePropagation()','opportunity single event owner missing'],
  ['function axis8102OpenStandalone(','standalone learning launcher missing'],
+ ["keepStandalone=!sheet&&axis8102PanelSource()==='standalone'",'standalone panel is not protected from idle Home repaint'],
  ['data-v810-options="standalone"','standalone learning schedule control missing'],
  ['data-v810-standalone-start','standalone learning start action missing'],
  ["standaloneModes:['off','manual','daily']",'standalone learning modes missing'],
@@ -33,13 +34,14 @@ Object.assign(info.gates,{
  restSpeakOpportunitySingleEventOwner:true,
  restSpeakStandaloneLearning:true,
  restSpeakStandaloneControl:true,
+ restSpeakStandalonePanelPersistent:true,
  restSpeakStandaloneNoTrainingOwnership:true,
  restSpeakNoAutoplay8102:true
 });
 info.axis8102={
  detail:{owner:'atomic-handoff',sameSheetSwap:'single-composition',legacyHeightHold:false,transitionDuringSwap:false},
- learning:{opportunityLifetime:'explicit-panel-owned',standalone:true,standaloneModes:['off','manual','daily'],entry:'learning-schedule',autoplay:false},
+ learning:{opportunityLifetime:'explicit-panel-owned',standalone:true,standaloneModes:['off','manual','daily'],standaloneLifetime:'independent-of-idle-home',entry:'learning-schedule',autoplay:false},
  ownership:{trainingState:false,trainingControls:false,geometryPersistent:false,timer:false,observer:false,soundAutomatic:false,learningStore:'axis_v89_speak'}
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-console.log('[AXIS 8.10.2 contract] PASS · single-composition detail · persistent opportunity panel · standalone learning · training isolation');
+console.log('[AXIS 8.10.2 contract] PASS · single-composition detail · persistent opportunity + standalone panels · training isolation');
