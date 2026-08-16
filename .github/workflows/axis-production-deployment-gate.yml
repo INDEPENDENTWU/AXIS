@@ -11,118 +11,111 @@ jobs:
   production-browser-gate:
     if: >-
       github.event.deployment_status.state == 'success' &&
-      github.event.deployment.environment == 'Production' &&
-      github.event.deployment_status.environment_url != ''
+      github.event.deployment.environment == 'Production'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       contents: read
     env:
-      AXIS_DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
+      AXIS_URL: https://axis-five-puce.vercel.app
       AXIS_EXPECTED_SHA: ${{ github.event.deployment.sha }}
-      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
-      - name: Checkout the exact deployed commit
+      - name: Checkout exact deployed commit
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.deployment.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-      - name: Load canonical release contract
+      - name: Load release contract
         shell: bash
         run: |
           set -euo pipefail
           node <<'NODE' >> "$GITHUB_ENV"
           const fs=require('fs');
           const c=JSON.parse(fs.readFileSync('release-contract.json','utf8'));
-          const required=['publicVersion','stableBaseVersion','architecture','stableChunkCount'];
-          for(const k of required)if(c[k]===undefined||c[k]===null||c[k]==='')throw new Error(`release-contract missing ${k}`);
+          for(const k of ['publicVersion','stableBaseVersion','architecture','stableChunkCount'])if(c[k]===undefined||c[k]===null||c[k]==='')throw new Error(`release-contract missing ${k}`);
           console.log(`AXIS_EXPECTED_VERSION=${c.publicVersion}`);
           console.log(`AXIS_EXPECTED_BASE=${c.stableBaseVersion}`);
           console.log(`AXIS_EXPECTED_ARCH=${c.architecture}`);
-          console.log(`AXIS_EXPECTED_CHUNKS=${c.stableChunkCount}`);
           NODE
-      - name: Resolve exact Production endpoint
+      - name: Wait for fixed Production URL to serve exact source commit
         shell: bash
         run: |
           set -euo pipefail
-          node <<'NODE' >/tmp/axis-production-candidates.txt
-          const deployment=new URL(process.env.AXIS_DEPLOYMENT_URL);
-          const project=(process.env.GITHUB_REPOSITORY||'repo/axis').split('/').pop().toLowerCase();
-          const out=[];const add=x=>{if(x&&!out.includes(x))out.push(x.replace(/\/$/,'') )};
-          add(process.env.AXIS_DEPLOYMENT_URL);
-          const host=deployment.hostname;
-          if(host.endsWith('.vercel.app')&&host.startsWith(project+'-')){
-            const rest=host.slice(project.length+1),cut=rest.indexOf('-');
-            if(cut>0){const scopeHost=rest.slice(cut+1);add(`https://${project}-${scopeHost}`);add(`https://${project}-git-main-${scopeHost}`);add(`https://${project}-main-${scopeHost}`)}
-          }
-          add(`https://${project}.vercel.app`);console.log(out.join('\n'));
+          for attempt in $(seq 1 24); do
+            code=$(curl -LsS --connect-timeout 5 --max-time 15 -o /tmp/axis-build.json -w '%{http_code}' "$AXIS_URL/axis-build.json" || true)
+            if [ "$code" = "200" ]; then
+              if EXPECTED="$AXIS_EXPECTED_SHA" VERSION="$AXIS_EXPECTED_VERSION" ARCH="$AXIS_EXPECTED_ARCH" node <<'NODE'
+          const fs=require('fs');
+          try{
+            const x=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8'));
+            process.exit(x.sourceCommit===process.env.EXPECTED&&x.version===process.env.VERSION&&x.baseVersion===process.env.VERSION&&x.architecture===process.env.ARCH?0:1);
+          }catch{process.exit(1)}
           NODE
-          axis_curl(){ local url="$1" out="$2"; local args=(-LsS --connect-timeout 5 --max-time 15 -o "$out"); if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then args+=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}"); fi; curl "${args[@]}" -w '%{http_code}\t%{url_effective}\t%{content_type}' "$url" 2>/dev/null || true; }
-          echo "Deployment URL: $AXIS_DEPLOYMENT_URL"; echo "Expected source commit: $AXIS_EXPECTED_SHA"; echo "Expected release: $AXIS_EXPECTED_VERSION"; echo 'Production candidates:'; cat /tmp/axis-production-candidates.txt
-          protected_seen=0;json_seen=0
-          for attempt in $(seq 1 10); do
-            while IFS= read -r base; do
-              test -n "$base" || continue
-              meta=$(axis_curl "$base/axis-build.json" /tmp/axis-candidate-build.json)
-              result=$(EXPECTED="$AXIS_EXPECTED_SHA" VERSION="$AXIS_EXPECTED_VERSION" ARCH="$AXIS_EXPECTED_ARCH" node <<'NODE'
-          const fs=require('fs');let out={kind:'unreadable',version:null,sourceCommit:null,architecture:null,bytes:0,exact:false,protected:false};
-          try{const raw=fs.readFileSync('/tmp/axis-candidate-build.json','utf8');out.bytes=Buffer.byteLength(raw);try{const x=JSON.parse(raw);out={kind:'json',version:x.version||null,sourceCommit:x.sourceCommit||null,architecture:x.architecture||null,bytes:out.bytes,exact:x.sourceCommit===process.env.EXPECTED&&x.version===process.env.VERSION&&x.architecture===process.env.ARCH,protected:false}}catch{const m=raw.match(/<title[^>]*>([^<]{0,120})<\/title>/i);out.kind='html-or-text';out.title=m?.[1]||raw.slice(0,80).replace(/\s+/g,' ');out.protected=/Login\s*[–—-]\s*Vercel|Vercel Authentication|Deployment Protection/i.test(raw)}}catch{}process.stdout.write(JSON.stringify(out));
-          NODE
-              )
-              if [ "$attempt" -eq 1 ]; then echo "Candidate · $base · $meta · $result"; fi
-              if RESULT="$result" node -e "const x=JSON.parse(process.env.RESULT);process.exit(x.exact?0:1)"; then
-                cp /tmp/axis-candidate-build.json /tmp/axis-build.json; echo "AXIS_URL=$base" >> "$GITHUB_ENV"; echo "AXIS_PRODUCTION_GATE_STATE=verified" >> "$GITHUB_ENV"; echo "Resolved exact Production endpoint: $base"
-                root_args=(-LfsS --connect-timeout 5 --max-time 15); if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then root_args+=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}"); fi; curl "${root_args[@]}" "$base/" -o /tmp/axis-production-index.html; exit 0
+              then
+                curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/" -o /tmp/axis-production-index.html
+                exit 0
               fi
-              kind=$(RESULT="$result" node -p "JSON.parse(process.env.RESULT).kind"); protected=$(RESULT="$result" node -p "JSON.parse(process.env.RESULT).protected?'1':'0'"); if [ "$kind" = 'json' ]; then json_seen=1; fi; if [ "$protected" = '1' ]; then protected_seen=1; fi
-            done </tmp/axis-production-candidates.txt
+            fi
+            echo "Attempt $attempt · public Production not yet exact ($code) · waiting for $AXIS_EXPECTED_SHA"
             sleep 3
           done
-          if [ -z "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ] && [ "$protected_seen" -eq 1 ] && [ "$json_seen" -eq 0 ]; then echo "AXIS_PRODUCTION_PROTECTED=1" >> "$GITHUB_ENV"; echo "AXIS_PRODUCTION_GATE_STATE=protected" >> "$GITHUB_ENV"; echo '::notice title=AXIS Production protected::Vercel Deployment Protection blocks anonymous production verification.'; exit 0; fi
-          echo 'No endpoint served the exact deployed canonical commit, and the result was not solely deployment protection.'; exit 1
-      - name: Verify canonical Production manifest and immutable assets
-        if: env.AXIS_PRODUCTION_PROTECTED != '1'
+          echo "::error title=AXIS Production stale or protected::${AXIS_URL} did not anonymously serve exact deployed commit ${AXIS_EXPECTED_SHA}."
+          exit 1
+      - name: Verify 8.8.1 canonical Production manifest and immutable assets
         shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
-          const fs=require('fs'),x=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8')),html=fs.readFileSync('/tmp/axis-production-index.html','utf8');const fail=m=>{throw new Error(m)};
+          const fs=require('fs');
+          const x=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8'));
+          const html=fs.readFileSync('/tmp/axis-production-index.html','utf8');
+          const fail=m=>{throw new Error(m)};
           if(x.sourceCommit!==process.env.AXIS_EXPECTED_SHA)fail(`source commit mismatch ${x.sourceCommit}`);
-          if(x.version!==process.env.AXIS_EXPECTED_VERSION)fail(`unexpected version ${x.version}`);
-          if(x.baseVersion!==process.env.AXIS_EXPECTED_BASE)fail(`unexpected base ${x.baseVersion}`);
-          if(x.architecture!==process.env.AXIS_EXPECTED_ARCH)fail(`unexpected architecture ${x.architecture}`);
-          if(x.architecture!=='canonical-single-runtime')fail('Production is not canonical single-runtime');
-          if(!Array.isArray(x.assets?.chunks)||x.assets.chunks.length!==0||Number(process.env.AXIS_EXPECTED_CHUNKS)!==0)fail('historical dynamic chunks survived');
-          if(x.requests?.dynamicJavascript!==0||x.requests?.initialJavascript!==1)fail(`unexpected JS topology ${JSON.stringify(x.requests)}`);
-          for(const k of ['canonicalSingleRuntime','noDynamicRuntimeChunks','noVersionFallback','historicalReleaseWriterRetired','legacyV8710ActiveAdjustRetired','sourceCommitStamped'])if(x.gates?.[k]!==true)fail(`missing canonical gate ${k}`);
+          if(x.version!==process.env.AXIS_EXPECTED_VERSION||x.baseVersion!==process.env.AXIS_EXPECTED_BASE)fail(`release identity mismatch ${x.version}/${x.baseVersion}`);
+          if(x.architecture!=='canonical-single-runtime'||x.architecture!==process.env.AXIS_EXPECTED_ARCH)fail(`unexpected architecture ${x.architecture}`);
+          if(x.requests?.initialJavascript!==1||x.requests?.dynamicJavascript!==0)fail(`unexpected JS topology ${JSON.stringify(x.requests)}`);
+          if(!Array.isArray(x.assets?.chunks)||x.assets.chunks.length!==0)fail('historical dynamic chunks survived');
+          const required=[
+            'canonicalSingleRuntime','noDynamicRuntimeChunks','noVersionFallback','historicalReleaseWriterRetired','sourceCommitStamped',
+            'singleActiveAdjustmentOwner','legacyV8710ActiveAdjustRetired','catalogCategorySingleOwner','capturePreferenceSingleOwner','canonicalReplacementPreservesDoubleDollar',
+            'watermarkFourSwitchContract','precisePlaceResolver','noRawCoordinatePresentation','watermarkSingleLocateOwner','watermarkPreferenceSingleWriter',
+            'groupPlanUnitlessControls','groupPlanExpandedPresets','activeItemCountdown','activeItemCountdownTone','activeItemLongPressSuppressesTone','watermarkCenterBrand','watermarkBrandOpacitySingleTarget'
+          ];
+          for(const k of required)if(x.gates?.[k]!==true)fail(`missing Production gate ${k}`);
           if(x.featureKernel?.embedded!==true||x.completionKernel?.embedded!==true)fail('feature/completion are not embedded');
-          if(!/^[a-f0-9]{12}$/.test(x.assets?.core||''))fail('invalid core hash');if(!/^[a-f0-9]{12}$/.test(x.assets?.css||''))fail('invalid css hash');
-          const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(m=>m[1]);if(scripts.length!==1||scripts[0]!==`/axis-core.js?v=${x.assets.core}`)fail(`Production HTML script mismatch ${scripts}`);
+          if(x.canonical?.minorRelease!==process.env.AXIS_EXPECTED_VERSION)fail(`minor release contract mismatch ${x.canonical?.minorRelease}`);
+          if(x.canonical?.activeCountdown?.toneOwner!=='v87'||x.canonical?.activeCountdown?.longPressSuppressesTone!==true)fail('countdown owner contract mismatch');
+          if(x.canonical?.watermarkBrand?.text!=='AXIS'||x.canonical?.watermarkBrand?.opacityOwner!=='v876WmOpacity')fail('brand owner contract mismatch');
+          if(!/^[a-f0-9]{12}$/.test(x.assets?.core||'')||!/^[a-f0-9]{12}$/.test(x.assets?.css||''))fail('invalid immutable asset hash');
+          const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(m=>m[1]);
+          if(scripts.length!==1||scripts[0]!==`/axis-core.js?v=${x.assets.core}`)fail(`Production HTML script mismatch ${scripts}`);
+          if(!html.includes(`data-axis-runtime="canonical-${process.env.AXIS_EXPECTED_VERSION}"`))fail('canonical HTML marker missing');
           if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-(foundation|recording|interaction|product)\.js/.test(html))fail('retired dynamic loader survives in Production HTML');
-          if(!html.includes('data-axis-runtime="canonical-8.8"'))fail('canonical HTML marker missing');
-          const assets=[['core',`/axis-core.js?v=${x.assets.core}`,20000],['css',`/axis-style.css?v=${x.assets.css}`,10000]];
-          fs.writeFileSync('/tmp/axis-assets.tsv',assets.map(a=>a.join('\t')).join('\n')+'\n');
-          console.log(`[AXIS Production canonical manifest] ${x.version} · ${x.sourceCommit.slice(0,10)} · one runtime + one stylesheet`);
+          fs.writeFileSync('/tmp/axis-assets.tsv',`core\t/axis-core.js?v=${x.assets.core}\t20000\ncss\t/axis-style.css?v=${x.assets.css}\t10000\n`);
+          console.log(`[AXIS Production] ${x.version} · ${x.sourceCommit.slice(0,10)} · canonical 8.8.1 contracts verified`);
           NODE
-          curl_asset(){ local url="$1" out="$2"; local args=(-LfsS --connect-timeout 5 --max-time 20 -o "$out"); if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then args+=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}"); fi; curl "${args[@]}" "$url"; }
-          i=0; while IFS=$'\t' read -r name path min_bytes; do test -n "$name" || continue; out="/tmp/axis-production-asset-$i"; curl_asset "$AXIS_URL$path" "$out"; bytes=$(wc -c <"$out"); if [ "$bytes" -lt "$min_bytes" ]; then echo "Asset too small: $name · $bytes bytes · expected >= $min_bytes"; exit 1; fi; echo "Asset OK · $name · $bytes bytes · $path"; i=$((i+1)); done </tmp/axis-assets.tsv
-          test "$i" -eq 2
-      - name: Prepare real-browser harness
-        if: env.AXIS_PRODUCTION_PROTECTED != '1'
-        shell: bash
+          while IFS=$'\t' read -r name path min_bytes; do
+            test -n "$name" || continue
+            out="/tmp/axis-production-$name"
+            curl -LfsS --connect-timeout 5 --max-time 20 "$AXIS_URL$path" -o "$out"
+            bytes=$(wc -c <"$out")
+            test "$bytes" -ge "$min_bytes" || { echo "$name asset too small: $bytes"; exit 1; }
+            echo "Asset OK · $name · $bytes bytes"
+          done </tmp/axis-assets.tsv
+      - name: Prepare real Chromium harness
         run: |
           npm install --no-save playwright-core@1.55.0
-          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"; test -n "$CHROME_BIN"; echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
-      - name: Real Chromium product gates against deployed Production
-        if: env.AXIS_PRODUCTION_PROTECTED != '1'
-        shell: bash
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Real Chromium product gates against fixed Production URL
         run: |
           node scripts/run-smoke-guarded.mjs
           node scripts/axis-completion-smoke.mjs
           node scripts/axis-88-smoke.mjs
+          AXIS_ENGINE=chromium node scripts/axis-catalog-smoke.mjs
+          AXIS_ENGINE=chromium node scripts/axis-watermark-smoke.mjs
+          AXIS_ENGINE=chromium node scripts/axis-881-smoke.mjs
           node scripts/axis-product-matrix.mjs
-      - name: Record protected Production status
-        if: env.AXIS_PRODUCTION_PROTECTED == '1'
-        run: echo '[AXIS Production gate] PROTECTED · deployment succeeded, but Vercel protection prevents anonymous runtime verification. Product health and public accessibility are reported separately.'

@@ -2,15 +2,18 @@
 
 AXIS is a camera-first fitness memory tool: capture the real workout, keep the record, remember the equipment, compare what changed, and surface one useful next signal without turning training into a project-management app.
 
-## Current product — 8.8
+## Current product — 8.8.1
 
 - Mobile-first workout/session flow with no required workout plan.
 - Single-photo and short live-scan capture, with one canonical default capture preference (`photo` / `3s` / `5s`).
 - Immediate timestamp seal plus configurable final photo/video watermark.
+- Four independent watermark information switches (name / training data / location / time) plus a centered AXIS brand wordmark whose opacity is controlled independently from the information rail.
+- Precise place refresh through the canonical OSM resolver, with coordinates kept private from normal UI and final watermark text.
 - Personal equipment memory and a broad canonical exercise library.
 - Fast strength recording with set-level weight/reps, direct numeric editing, previous-value reuse, and per-set completion state.
+- Group-plan editing with unitless centered step controls and expanded weight/repetition quick presets.
 - Cardio recording with duration/intensity controls.
-- Active workout execution with elapsed/estimated time, pause/resume, set completion, rest state, finish behavior, and one visible one-time adjustment transaction.
+- Active workout execution with a pause-aware per-item countdown, the existing AXIS completion tone at zero, pause/resume, set completion, rest state, finish behavior, and one visible one-time adjustment transaction. Intentional long-press finish suppresses the countdown-completion tone.
 - Custom equipment management with one canonical editor, automatic exercise classification, and professional muscle/effect mapping.
 - Local-first workout/media storage with explicit storage management.
 - Current v84 training trends, continuity/memory signals, and current v8710 three-card training report.
@@ -19,7 +22,7 @@ AXIS is a camera-first fitness memory tool: capture the real workout, keep the r
 
 ## Runtime architecture
 
-AXIS 8.8 production is a **canonical single-runtime release**.
+AXIS 8.8.1 production is a **canonical single-runtime release**.
 
 The browser receives:
 
@@ -27,7 +30,7 @@ The browser receives:
 2. one external stylesheet: `axis-style.css?v=<content hash>`;
 3. zero dynamic historical runtime chunks;
 4. zero optional feature/completion runtime requests;
-5. no silent downgrade or fallback to an 8.7.x product while the public UI says 8.8.
+5. no silent downgrade or fallback to an older product while the public UI says 8.8.1.
 
 Historical modules remain in the repository as compiler inputs and implementation history. `build-release.mjs` runs the deterministic convergence pipeline and `postbuild-88-canonical.mjs` emits the one browser runtime. They are not independent production layers.
 
@@ -35,9 +38,11 @@ Critical product surfaces use a **single-owner rule**. Current important owners 
 
 - `v61.js` — live strength draft and high-frequency weight/reps recording;
 - `v874-professional.js` — canonical custom-exercise professional editor/inference UI;
+- canonical v8712 planner output — one group-plan renderer, with 8.8.1 unitless centered parameters and expanded quick presets;
 - v876 capture preference — the sole visible/default `photo` / `3s` / `5s` capture preference;
+- v87 active-session owner — the sole item countdown and completion-tone owner; it derives remaining time from the existing activity intervals so pause/resume never creates a second timer;
 - `#v87AdjustBtn` + the v879 one-time transaction sheet — the single active-session adjustment path;
-- v85/v8711 watermark controls — current name and four-corner placement owners, with historical placement hit targets retired;
+- v85/v8711/v8710 watermark chain — four information switches, one precise location resolver, one centered AXIS brand presentation, and one independent brand-opacity preference;
 - `v84-runtime.js` — current Trends surface; pre-v84 coverage UI remains retired;
 - `v8710-report.js` — current three-card report deck and report-share owner; base/v877 report surfaces remain retired.
 
@@ -55,7 +60,7 @@ See:
 
 ## Release verification
 
-The release-blocking browser gates verify the built artifact rather than only source structure. The current 8.8 matrix covers repeated cold boot, first-paint stability, Settings, profile, custom equipment, capture preference, sound/reminders, watermark, storage, direct strength recording, set count, active-session pause/resume/completion, visible one-time adjustment, history, current v84 Trends, and current v8710 report. A separate iPhone-sized WebKit gate verifies the canonical runtime and critical mobile interactions.
+The release-blocking browser gates verify the built artifact rather than only source structure. The current 8.8.1 matrix covers repeated cold boot, first-paint stability, Settings, profile, custom equipment, capture preference, sound/reminders, watermark, storage, direct strength recording, group-plan parameters, per-item countdown/tone/long-press suppression, set count, active-session pause/resume/completion, visible one-time adjustment, history, current v84 Trends, and current v8710 report. A separate iPhone-sized WebKit gate verifies the canonical runtime and critical mobile interactions, including the 8.8.1 planner/countdown/brand regression.
 
 ## AI architecture
 
