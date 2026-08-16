@@ -4,6 +4,8 @@ const VERSION='8.8.2';
 const fail=m=>{throw new Error(`AXIS 8.8.2 artifact gate: ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const runtime=read('axis-core.js'),css=read('axis-style.css'),html=read('index.html'),manifest=JSON.parse(read('axis-build.json'));
+const reminderCall=/renderTimeline\(\)\s*;\s*reminderTick\(\)/g;
+const reminderContexts=()=>[...runtime.matchAll(reminderCall)].map((m,i)=>{const at=m.index||0,start=Math.max(0,at-520),end=Math.min(runtime.length,at+520);return `#${i+1} @${at}\n${runtime.slice(start,end)}`});
 
 if(manifest.version!==VERSION||manifest.baseVersion!==VERSION)fail(`release identity mismatch ${manifest.version}/${manifest.baseVersion}`);
 if(manifest.architecture!=='canonical-single-runtime')fail(`architecture ${manifest.architecture}`);
@@ -14,7 +16,7 @@ if(!runtime.includes("label:'腰'")||!runtime.includes("['back-extension','45°�
 if(/sets>old\.sets\)cue\('set'\)|status==='finished'.*cue\('item'\)|cue\('rest'\)|cue\('session'\)/.test(runtime))fail('non-countdown automatic sonic cue survived');
 if(!runtime.includes("const due=Math.max(60000,Number(a.estimateMs)||0)")||!runtime.includes("elapsed(a)>=due&&!D.querySelector('#v87Hold.show')"))fail('countdown-zero / long-press sound contract missing');
 if(!/async function reminderTick\(\)\s*\{\s*return false\s*\}/.test(runtime))fail('v87 reminderTick is not a no-op in canonical runtime');
-if(/renderTimeline\(\)\s*;\s*reminderTick\(\)/.test(runtime))fail('v87 reminder polling call survived canonical runtime');
+const calls=reminderContexts();if(calls.length){console.error('[AXIS 8.8.2 reminder call contexts]\n'+calls.join('\n---\n'));fail(`v87 reminder polling call survived canonical runtime · ${calls.length} occurrence(s)`)}
 if(!runtime.includes("add.style.visibility=planDone?'visible':'hidden'")||!css.includes('#v87Now .v87Actions{display:grid!important;grid-template-columns:96px minmax(0,1fr) 68px!important'))fail('active-card stable geometry contract missing');
 if(!css.includes('#axisNowHero{--axis-now-accent')||!css.includes('.axisNowDial'))fail('home visual system missing');
 if(!fs.existsSync('docs/releases/8.8.2.md'))fail('durable 8.8.2 release log missing');
