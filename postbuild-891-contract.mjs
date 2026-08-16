@@ -4,9 +4,9 @@ const fail=m=>{throw new Error(`[AXIS 8.9.1 inherited contract] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const contract=JSON.parse(read('release-contract.json')),runtime=read('axis-core.js'),css=read('axis-style.css'),info=JSON.parse(read('axis-build.json'));
 const version=String(contract.publicVersion||'');
-if(!['8.9.1','8.10'].includes(version))fail(`unexpected public version ${version}`);
+if(!(version==='8.9.1'||version.startsWith('8.10')))fail(`unexpected public version ${version}`);
 if(info.version!==version||info.baseVersion!==String(contract.stableBaseVersion||version))fail(`release identity mismatch ${info.version}/${info.baseVersion}`);
-const patch=version==='8.10'?'8.10':'8.9.1',rich=version==='8.10'?'richEnglish:456':'richEnglish:72';
+const modern=version.startsWith('8.10'),patch=modern?'8.10':'8.9.1',rich=modern?'richEnglish:456':'richEnglish:72';
 for(const [needle,label] of [
  [`patch:'${patch}',owner:'passive-rest-reader'`,'Rest Speak patch marker missing'],
  ['userInvokedPanel:true','user-invoked learning panel contract missing'],
@@ -26,6 +26,6 @@ if(!runtime.includes("if(a==='voice')"))fail('explicit pronunciation action miss
 
 info.gates=info.gates||{};
 Object.assign(info.gates,{restSpeakInlineComplete:true,restSpeakMicroLearning:true,restSpeakRichEnglish:true,restSpeakNoAutoplay:true,restSpeakSpacedExposure:true,detailStableReveal:true,detailStableInPlaceSwap:true,detailNoBlurFlash:true});
-info.axis891={restSpeak:{mode:'passive-inline-plus-user-invoked-depth',englishUnits:version==='8.10'?456:72,totalUnits:version==='8.10'?492:108,mastery:'local-accessory-store',pronunciation:'contextual-coaching',autoplay:false},detail:{owner:'atomic-handoff',stableShell:true,precomposedReveal:true,detailBackdropBlur:false}};
+info.axis891={restSpeak:{mode:'passive-inline-plus-user-invoked-depth',englishUnits:modern?456:72,totalUnits:modern?492:108,mastery:'local-accessory-store',pronunciation:'contextual-coaching',autoplay:false},detail:{owner:'atomic-handoff',stableShell:true,precomposedReveal:true,detailBackdropBlur:false}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 console.log(`[AXIS 8.9.1 inherited contract] PASS · ${version} · complete inline phrase · micro learning · stable detail reveal`);
