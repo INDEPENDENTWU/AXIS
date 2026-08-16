@@ -21,25 +21,14 @@ const helper=`function axis811DialogueTail(kind,track,seed){
 src=once(src,'function axis811SpeakAtlas(){',helper+'function axis811SpeakAtlas(){','dialogue helper');
 src=once(src,"const v={a:av[0],az:av[1],b:bv[0],bz:bv[1]},target=axis811Fill(tpl[0],v),speech=axis811Connected(target),dialogue=kind.dialogue.map(x=>axis811Fill(x,v));","const v={a:av[0],az:av[1],b:bv[0],bz:bv[1]},target=axis811Fill(tpl[0],v),speech=axis811Connected(target),dialogue=kind.dialogue.map(x=>axis811Fill(x,v)),tail=axis811DialogueTail(scene.kind,scene.track,seq+1);",'dialogue tail selection');
 src=once(src,'response:dialogue[0],followup:dialogue[1],closing:dialogue[2],','response:dialogue[0],followup:dialogue[1],closing:dialogue[2],turn5:tail[0],turn6:tail[1],conversation:[target,dialogue[0],dialogue[1],dialogue[2],tail[0],tail[1]],','six-turn unit fields');
-const from=`axis8103DialogueTurns=function(r){
- if(r?.target&&r?.response&&r?.followup&&r?.closing)return [
-  {who:'你',text:r.target},{who:'对方',text:r.response},{who:'你',text:r.followup},{who:'对方',text:r.closing}
- ];
- return axis811BaseDialogueTurns(r)
-};`;
-const to=`axis8103DialogueTurns=function(r){
- if(r?.target&&r?.response&&r?.followup&&r?.closing&&r?.turn5&&r?.turn6)return [
-  {who:'你',text:r.target},{who:'对方',text:r.response},{who:'你',text:r.followup},{who:'对方',text:r.closing},{who:'你',text:r.turn5},{who:'对方',text:r.turn6}
- ];
- if(r?.target&&r?.response&&r?.followup&&r?.closing)return [{who:'你',text:r.target},{who:'对方',text:r.response},{who:'你',text:r.followup},{who:'对方',text:r.closing}];
- return axis811BaseDialogueTurns(r)
-};
-const axis811BasePracticeHtml=axis8101PracticeHtml;
-axis8101PracticeHtml=function(mode,r){const html=axis811BasePracticeHtml(mode,r);return mode==='dialogue'&&Array.isArray(r?.conversation)&&r.conversation.length>=6?html.replace('四轮语境练习','真实六轮语境'):html};`;
-src=once(src,from,to,'six-turn practice renderer');
+const oldOwner="function axis8103DialogueTurns(r){const lang=axis8103Lang(),out=[{who:'你',text:r?.target||''},{who:'对方',text:r?.response||''}];if(r?.target)out.push({who:'你',text:axis8103Ack(lang)});out.push({who:'对方',text:axis8103Close(lang)});return out.filter(x=>x.text)}";
+const newOwner="function axis8103DialogueTurns(r){if(r?.target&&r?.response&&r?.followup&&r?.closing&&r?.turn5&&r?.turn6)return [{who:'你',text:r.target},{who:'对方',text:r.response},{who:'你',text:r.followup},{who:'对方',text:r.closing},{who:'你',text:r.turn5},{who:'对方',text:r.turn6}];const lang=axis8103Lang(),out=[{who:'你',text:r?.target||''},{who:'对方',text:r?.response||''}];if(r?.target)out.push({who:'你',text:axis8103Ack(lang)});out.push({who:'对方',text:axis8103Close(lang)});return out.filter(x=>x.text)}";
+src=once(src,oldOwner,newOwner,'owning 8.10.3 dialogue function');
+src=once(src,'四轮语境练习 · 录音只留在当前页面。','多轮真实语境 · 录音只留在当前页面。','dialogue practice label');
+src=once(src,'听完整四轮对话 · 留意自然停顿和接话速度','听完整对话 · 留意自然停顿和接话速度','dialogue playback label');
 const marker="try{window.__AXIS_811_LEARNING__=";
 if(!src.includes(marker))fail('8.11 learning diagnostic marker missing');
 src=src.replace(marker,"try{window.__AXIS_811_DIALOGUE__={version:'8.11-candidate',turns:6,unitSpecific:true,autoplay:false,trainingOwner:false};window.__AXIS_811_LEARNING__=");
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.11 dialogue depth] PASS · 5280 six-turn Atlas units · old four-turn diagnostic remains compatible');
+console.log('[AXIS 8.11 dialogue depth] PASS · six-turn rendering patched inside 8.10.3 voice owner scope · no cross-scope runtime dependency');
