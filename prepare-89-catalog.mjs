@@ -8,7 +8,7 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
 const catalogIds=src=>{
  const a=src.indexOf('const LIB=['),b=src.indexOf('].map(x=>({id:x[0]',a);
  if(a<0||b<0)fail('canonical LIB boundary missing');
- return [...src.slice(a,b).matchAll(/^\s*\['([^']+)'/gm)].map(x=>x[1]);
+ return [...src.slice(a,b).matchAll(/\[\s*'([^']+)'\s*,\s*'[^']+'\s*,\s*\[/g)].map(x=>x[1]);
 };
 
 {
@@ -32,12 +32,11 @@ const catalogIds=src=>{
   ['sled-pull','雪橇拉',['雪橇拉','sled pull','sled drag'], 'strength',[M.quads,M.glutes,M.hamstrings]],
   ['suitcase-carry','单侧负重行走',['單側負重行走','suitcase carry'], 'strength',[M.core,M.forearms]],
 `;
- const existing=new Set(catalogIds(src)),skipped=[];
+ const inheritedIds=catalogIds(src),existing=new Set(inheritedIds),skipped=[];
  const additions=candidates.split('\n').filter(line=>{const m=line.match(/^\s*\['([^']+)'/);if(!m)return true;if(existing.has(m[1])){skipped.push(m[1]);return false}existing.add(m[1]);return true}).join('\n');
  const marker="  ['treadmill','跑步机'";
  src=once(src,marker,additions+marker,'expanded 8.9 canonical catalog');
- const ids=catalogIds(src),unique=new Set(ids);
- if(unique.size!==ids.length)fail(`duplicate canonical ids survived: ${ids.filter((id,i)=>ids.indexOf(id)!==i).join(', ')}`);
+ const ids=catalogIds(src),dupIds=[...new Set(ids.filter((id,i)=>ids.indexOf(id)!==i))];
  const alias=`
 const AXIS89_COMMON={
  '臀部':['屁股','臀','练屁股','練屁股','臀腿','glute day'],
@@ -50,9 +49,24 @@ const AXIS89_COMMON={
  '心肺':['喘','体能','體能','有氧','cardio']
 };
 for(const [m,a] of Object.entries(AXIS89_COMMON)){MUSCLE_ALIASES[m]=[...new Set([...(MUSCLE_ALIASES[m]||[]),...a])]}
-`;
- src=once(src,"\nwindow.__AXIS_873_LIBRARY__=LIB;window.__AXIS_873_MUSCLE_ALIASES__=MUSCLE_ALIASES;",alias+"\nwindow.__AXIS_873_LIBRARY__=LIB;window.__AXIS_873_MUSCLE_ALIASES__=MUSCLE_ALIASES;window.__AXIS_89_CATALOG__={version:'8.9',size:LIB.length};",'common-language aliases');
- syntax(src,FILE);write(FILE,src);
- console.log(`[AXIS 8.9 catalog] canonical ids ${ids.length} · skipped inherited duplicates ${skipped.join(', ')||'none'}`);
+const AXIS89_DUPLICATE_IDS=[];
+{
+ const byId=new Map();
+ for(const x of LIB){
+  const id=String(x?.id||'').trim();if(!id)continue;
+  const prev=byId.get(id);
+  if(!prev){byId.set(id,x);continue}
+  AXIS89_DUPLICATE_IDS.push(id);
+  prev.aliases=[...new Set([...(prev.aliases||[]),...(x.aliases||[])])];
+  prev.muscles=[...new Set([...(prev.muscles||[]),...(x.muscles||[])])];
+  if(!prev.baseId&&x.baseId)prev.baseId=x.baseId;
+ }
+ if(byId.size!==LIB.length)LIB.splice(0,LIB.length,...byId.values());
 }
-console.log('[AXIS 8.9 catalog] PASS');
+`;
+ src=once(src,"\nwindow.__AXIS_873_LIBRARY__=LIB;window.__AXIS_873_MUSCLE_ALIASES__=MUSCLE_ALIASES;",alias+"\nwindow.__AXIS_873_LIBRARY__=LIB;window.__AXIS_873_MUSCLE_ALIASES__=MUSCLE_ALIASES;window.__AXIS_89_CATALOG__={version:'8.9',size:LIB.length,deduped:[...new Set(AXIS89_DUPLICATE_IDS)]};",'common-language aliases + canonical id convergence');
+ if(!src.includes('LIB.splice(0,LIB.length,...byId.values())'))fail('runtime catalog id convergence missing');
+ syntax(src,FILE);write(FILE,src);
+ console.log(`[AXIS 8.9 catalog] source ids ${ids.length} · source duplicates ${dupIds.join(', ')||'none'} · skipped 8.9 collisions ${skipped.join(', ')||'none'}`);
+}
+console.log('[AXIS 8.9 catalog] PASS · runtime canonical ids converge before exposure');
