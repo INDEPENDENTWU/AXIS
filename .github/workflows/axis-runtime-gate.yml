@@ -27,11 +27,12 @@ jobs:
           if(m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('dynamic runtime chunks survived');
           if(!m.gates?.canonicalSingleRuntime||!m.featureKernel?.embedded||!m.completionKernel?.embedded)throw new Error('canonical gates missing');
           if(!m.gates?.catalogCategorySingleOwner)throw new Error('catalog single-owner gate missing');
+          if(!m.gates?.watermarkFourSwitchContract||!m.gates?.precisePlaceResolver||!m.gates?.noRawCoordinatePresentation)throw new Error('watermark canonical gates missing');
           const html=fs.readFileSync('index.html','utf8');
           const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(x=>x[1]);
           if(scripts.length!==1||!scripts[0].startsWith('/axis-core.js?v='))throw new Error(`unexpected scripts ${scripts}`);
           if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-/.test(html))throw new Error('legacy dynamic loader survived in HTML');
-          console.log('[AXIS canonical artifact] PASS · one runtime request · no silent legacy fallback · one catalog owner');
+          console.log('[AXIS canonical artifact] PASS · one runtime request · no silent legacy fallback · canonical catalog + watermark owners');
           NODE
       - name: Static capture owner audit
         run: node scripts/axis-static-owner-audit.mjs
@@ -79,6 +80,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-catalog-smoke.mjs
+      - name: Watermark preference + precise place regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-watermark-smoke.mjs
       - name: Record-preference affordance diagnostic
         env:
           AXIS_URL: http://127.0.0.1:4173
@@ -119,6 +125,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-catalog-smoke.mjs
+      - name: iPhone WebKit watermark preference + precise place regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-watermark-smoke.mjs
       - name: Print WebKit server log on failure
         if: failure()
         run: cat /tmp/axis-webkit-http.log || true
