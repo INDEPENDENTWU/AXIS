@@ -62,6 +62,11 @@ jobs:
             'catalogCategorySingleOwner',
             'capturePreferenceSingleOwner',
             'canonicalReplacementPreservesDoubleDollar',
+            'watermarkFourSwitchContract',
+            'precisePlaceResolver',
+            'noRawCoordinatePresentation',
+            'watermarkSingleLocateOwner',
+            'watermarkPreferenceSingleWriter',
             'sourceCommitStamped'
           ];
           const ok=x.sourceCommit===process.env.EXPECTED &&
@@ -73,6 +78,9 @@ jobs:
             x.requests?.dynamicJavascript===0 &&
             Array.isArray(x.assets?.chunks) && x.assets.chunks.length===0 &&
             x.canonical?.retiredCatalogWriters===1 &&
+            x.canonical?.locateOwner==='v8710 canonical precise resolver' &&
+            x.canonical?.preferenceOwner==='v85 setWm event bridge' &&
+            x.canonical?.rawCoordinatePresentation===false &&
             requiredGates.every(k=>x.gates?.[k]===true);
           if(!ok){
             console.error(JSON.stringify({
@@ -82,11 +90,14 @@ jobs:
               architecture:x.architecture,
               requests:x.requests,
               retiredCatalogWriters:x.canonical?.retiredCatalogWriters,
+              locateOwner:x.canonical?.locateOwner,
+              preferenceOwner:x.canonical?.preferenceOwner,
+              rawCoordinatePresentation:x.canonical?.rawCoordinatePresentation,
               gates:Object.fromEntries(requiredGates.map(k=>[k,x.gates?.[k]]))
             },null,2));
             process.exit(1);
           }
-          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · canonical catalog/runtime verified`);
+          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · canonical runtime/catalog/watermark verified`);
           NODE
               then
                 exit 0
