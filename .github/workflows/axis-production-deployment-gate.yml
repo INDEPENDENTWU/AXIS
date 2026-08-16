@@ -95,7 +95,9 @@ jobs:
           if(x.featureKernel?.embedded!==true||x.completionKernel?.embedded!==true)fail('feature/completion are not embedded');
           if(x.canonical?.version!==process.env.AXIS_EXPECTED_VERSION)fail(`canonical version contract mismatch ${x.canonical?.version}`);
           if(x.canonical?.activeCountdown?.toneOwner!=='v8710-sound-ui.js'||x.canonical?.activeCountdown?.longPressSuppressesTone!==true)fail('countdown owner contract mismatch');
-          if(x.canonical?.sound?.automaticTrigger!=='active-item-countdown-zero-only'||x.canonical?.sound?.setCue!==false||x.canonical?.sound?.manualFinishCue!==false||x.canonical?.sound?.restCue!==false||x.canonical?.sound?.sessionCue!==false)fail('automatic sound contract mismatch');
+          const durationSound=['8.10.3','8.11'].includes(process.env.AXIS_EXPECTED_VERSION);
+          const expectedTrigger=durationSound?'active-item-countdown-zero + explicit-workout-duration-threshold':'active-item-countdown-zero-only';
+          if(x.canonical?.sound?.automaticTrigger!==expectedTrigger||x.canonical?.sound?.setCue!==false||x.canonical?.sound?.manualFinishCue!==false||x.canonical?.sound?.restCue!==false||x.canonical?.sound?.sessionCue!==durationSound)fail(`automatic sound contract mismatch ${JSON.stringify(x.canonical?.sound)}`);
           if(x.canonical?.homeState?.owner!=='app.js'||x.canonical?.localVisualMemory?.networkRequired!==false)fail('home/local-memory contract mismatch');
           if(x.canonical?.quickRecord?.customItems!==true||x.canonical?.quickRecord?.mediaModes?.join(',')!=='photo,3,5')fail('Quick Record 8.8.2 contract mismatch');
           if(x.canonical?.activeCard?.outerGeometryStable!==true)fail('active card geometry contract mismatch');
