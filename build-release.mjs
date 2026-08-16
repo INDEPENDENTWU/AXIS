@@ -49,6 +49,9 @@ const STEPS=[
   'prepare-8103-home-sound.mjs',
   'prepare-8103-learning-voice.mjs',
   'prepare-8103-final-compat.mjs',
+  'prepare-811-learning-atlas.mjs',
+  'prepare-811-learning-settings.mjs',
+  'prepare-811-trends.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
@@ -63,6 +66,7 @@ const STEPS=[
   'postbuild-8101-contract.mjs',
   'postbuild-8102-contract.mjs',
   'postbuild-8103-contract.mjs',
+  'postbuild-811-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 
@@ -98,6 +102,7 @@ if(contract.architecture==='canonical-single-runtime'){
   for(const gate of ['settingsLearningNativeRow','homeTimerStablePaint','restSpeakDialoguePractice','restSpeakEchoPractice','restSpeakShadowPractice','restSpeakEphemeralRecording','restSpeakOpportunityRail','restSpeakOpportunityControl','restSpeakNoAutoplay8101','restSpeakNoTrainingOwnership8101'])if(manifest.gates?.[gate]!==true)fail(`8.10.1 gate missing · ${gate}`);
   for(const gate of ['detailSingleCompositionSwap','detailNoLegacyHeightHold','restSpeakOpportunityPanelPersistent','restSpeakOpportunitySingleEventOwner','restSpeakStandaloneLearning','restSpeakStandaloneControl','restSpeakStandalonePanelPersistent','restSpeakStandaloneNoTrainingOwnership','restSpeakNoAutoplay8102'])if(manifest.gates?.[gate]!==true)fail(`8.10.2 gate missing · ${gate}`);
   for(const gate of ['homeIdleNoFalseFinish','homeCompletedCopyConcise','homeCompletedStartEndFacts','activeAdjustCornerAnchor','totalWorkoutDurationReminder','totalWorkoutDurationSinglePreference','restSpeakDialogueFourTurn','restSpeakEchoShadowDistinct','restSpeakShadowAutoRecordAB','restSpeakFourLanguageVoiceRouting','restSpeakBestAvailableLocalVoice','practiceMicrophoneSameOrigin','releaseFreshnessEventDriven'])if(manifest.gates?.[gate]!==true)fail(`8.10.3 gate missing · ${gate}`);
+  for(const gate of ['learningAtlas811','learningAtlasUnique811','learningDialogueFourTurn811','learningConnectedSpeech811','learningSpelling811','learningSettingsConverged811','trendsStateField811','trendsGoalAware811','trendsEvidenceOnly811','trendsLocalFirst811'])if(manifest.gates?.[gate]!==true)fail(`8.11 candidate gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);
