@@ -110,7 +110,7 @@ await page.evaluate(()=>{document.querySelector('#detailSheet')?.classList.remov
 await page.reload({waitUntil:'domcontentloaded'});await ready();await page.waitForFunction(()=>document.querySelector('#activeHome')&&!document.querySelector('#activeHome').classList.contains('hidden'),undefined,{timeout:1200});
 await page.locator('#finishHold').dispatchEvent('pointerdown',{pointerId:77,pointerType:'touch',isPrimary:true,clientX:340,clientY:210,button:0,buttons:1});
 await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active===null,undefined,{timeout:2200});
-assert.ok(await page.locator('#finishSheet.show').count(),'session finish sheet did not open after long press');
+assert.ok(await page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}').sessions?.some(s=>s.id==='STOP884')),'session long press did not archive the completed session');
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
 console.log(`[AXIS 8.8.4 ${ENGINE}] PASS · one timeline owner · multi-item pause/resume · both long presses · completed archive · stable history detail · watermark/location retained`);
