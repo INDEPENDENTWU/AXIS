@@ -13,7 +13,8 @@ const files=[
   'scripts/axis-webkit-smoke.mjs',
   'scripts/axis-881-smoke.mjs',
   'scripts/axis-882-smoke.mjs',
-  'scripts/axis-89-smoke.mjs'
+  'scripts/axis-89-smoke.mjs',
+  'scripts/axis-891-smoke.mjs'
 ];
 
 for(const file of files){
@@ -25,6 +26,9 @@ for(const file of files){
   src=src.replace(/(canonical\?\.version\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
   src=src.replace(/((?:first|core|final)\.release\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
   src=src.replace(/(window\.__AXIS_RELEASE__\s*\)\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
+  if(file==='scripts/axis-891-smoke.mjs'){
+    src=src.replace("assert.ok((diag?.phrases?.()||0)>=108);","assert.ok((await page.evaluate(()=>window.__AXIS_REST_SPEAK__?.phrases?.()||0))>=108);");
+  }
   if(src!==before)fs.writeFileSync(file,src);
   const wrongCanonical=[...src.matchAll(/canonical-(\d+(?:\.\d+)+)/g)].map(m=>m[1]).filter(v=>v!==version);
   const wrongLabels=[...src.matchAll(/版本 (\d+(?:\.\d+)+)/g)].map(m=>m[1]).filter(v=>v!==version);
