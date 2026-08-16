@@ -13,7 +13,7 @@ jobs:
       github.event.deployment_status.state == 'success' &&
       github.event.deployment.environment == 'Production'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 7
     permissions:
       contents: read
     env:
@@ -25,15 +25,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.deployment.sha }}
-      - name: Load release contract
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Resolve identity from the same release build
         shell: bash
         run: |
           set -euo pipefail
+          node build-release.mjs
           node <<'NODE' >> "$GITHUB_ENV"
           const fs=require('fs');
-          const c=JSON.parse(fs.readFileSync('release-contract.json','utf8'));
-          console.log(`AXIS_EXPECTED_VERSION=${c.publicVersion}`);
-          console.log(`AXIS_EXPECTED_ARCH=${c.architecture}`);
+          const x=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+          for(const k of ['version','baseVersion','architecture'])if(x[k]===undefined||x[k]===null||x[k]==='')throw new Error(`axis-build missing ${k}`);
+          console.log(`AXIS_EXPECTED_VERSION=${x.version}`);
+          console.log(`AXIS_EXPECTED_BASE=${x.baseVersion}`);
+          console.log(`AXIS_EXPECTED_ARCH=${x.architecture}`);
           NODE
       - name: Wait for fixed public alias to serve exact release
         shell: bash
@@ -49,7 +55,7 @@ jobs:
           }
           for attempt in $(seq 1 20); do
             if axis_curl /tmp/axis-public-build.json 2>/dev/null; then
-              if EXPECTED="$AXIS_EXPECTED_SHA" VERSION="$AXIS_EXPECTED_VERSION" ARCH="$AXIS_EXPECTED_ARCH" node <<'NODE'
+              if EXPECTED="$AXIS_EXPECTED_SHA" VERSION="$AXIS_EXPECTED_VERSION" BASE="$AXIS_EXPECTED_BASE" ARCH="$AXIS_EXPECTED_ARCH" node <<'NODE'
           const fs=require('fs');
           const x=JSON.parse(fs.readFileSync('/tmp/axis-public-build.json','utf8'));
           const requiredGates=[
@@ -85,11 +91,44 @@ jobs:
             'waistAnatomyRegion',
             'durableReleaseLog',
             'mediaStoreWebKitSafe',
-            'sourceCommitStamped'
+            'sourceCommitStamped',
+            'learningAtlas811',
+            'learningAtlasUnique811',
+            'learningDialogueSixTurn811',
+            'learningConnectedSpeech811',
+            'learningSpelling811',
+            'learningSettingsConverged811',
+            'learningLegacyDiagnosticsPreserved811',
+            'learningJapanese132811',
+            'learningKorean132811',
+            'learningChinese132811',
+            'learningMultilingualSixTurn811',
+            'learningMultilingualNoLegacyExactOverlap811',
+            'trendsStateField811',
+            'trendsGoalAware811',
+            'trendsEvidenceOnly811',
+            'trendsLocalFirst811',
+            'trendsOneShotMotion811',
+            'serviceSettingsConverged811',
+            'serviceSettingsUserInvokedNetwork811',
+            'serviceSettingsNoTrainingOwner811'
           ];
+          const axis811Ok=process.env.VERSION!=='8.11'||(
+            x.axis811?.release===true &&
+            x.axis811?.learning?.totalEnglish===5736 &&
+            x.axis811?.learning?.totalUnits===6132 &&
+            x.axis811?.learning?.dialogueTurns===6 &&
+            x.axis811?.learning?.availableByLanguage?.ja===132 &&
+            x.axis811?.learning?.availableByLanguage?.ko===132 &&
+            x.axis811?.learning?.availableByLanguage?.zh===132 &&
+            x.axis811?.trends?.model==='state-field-trajectory' &&
+            x.axis811?.trends?.fitnessScore===false &&
+            x.axis811?.services?.localFirst===true &&
+            x.axis811?.services?.automaticNetwork===false
+          );
           const ok=x.sourceCommit===process.env.EXPECTED &&
             x.version===process.env.VERSION &&
-            x.baseVersion===process.env.VERSION &&
+            x.baseVersion===process.env.BASE &&
             x.architecture===process.env.ARCH &&
             x.architecture==='canonical-single-runtime' &&
             x.requests?.initialJavascript===1 &&
@@ -108,27 +147,25 @@ jobs:
             x.canonical?.mediaStore?.owner==='app.js' &&
             x.canonical?.mediaStore?.writeFormat==='arraybuffer-v1' &&
             x.canonical?.mediaStore?.webkitSafe===true &&
-            requiredGates.every(k=>x.gates?.[k]===true);
+            requiredGates.every(k=>x.gates?.[k]===true) && axis811Ok;
           if(!ok){
             console.error(JSON.stringify({
-              sourceCommit:x.sourceCommit,
-              version:x.version,
-              baseVersion:x.baseVersion,
-              architecture:x.architecture,
+              expected:{sourceCommit:process.env.EXPECTED,version:process.env.VERSION,baseVersion:process.env.BASE,architecture:process.env.ARCH},
+              actual:{sourceCommit:x.sourceCommit,version:x.version,baseVersion:x.baseVersion,architecture:x.architecture},
               requests:x.requests,
-              canonical:x.canonical,
+              axis811:x.axis811,
               gates:Object.fromEntries(requiredGates.map(k=>[k,x.gates?.[k]]))
             },null,2));
             process.exit(1);
           }
-          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · exact alias · home/local-memory/quick-media/geometry/countdown-only sound/media-store verified`);
+          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · exact alias · inherited + 8.11 contracts verified`);
           NODE
               then
                 exit 0
               fi
             fi
-            echo "Attempt $attempt: fixed alias has not converged to $AXIS_EXPECTED_SHA yet"
+            echo "Attempt $attempt: fixed alias has not converged to $AXIS_EXPECTED_SHA / $AXIS_EXPECTED_VERSION yet"
             sleep 3
           done
-          echo "::error title=AXIS fixed Production stale::${AXIS_PUBLIC_URL} did not serve exact deployed commit ${AXIS_EXPECTED_SHA}."
+          echo "::error title=AXIS fixed Production mismatch::${AXIS_PUBLIC_URL} did not serve exact built release ${AXIS_EXPECTED_VERSION} at ${AXIS_EXPECTED_SHA}."
           exit 1
