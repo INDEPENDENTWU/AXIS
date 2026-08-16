@@ -35,6 +35,11 @@ const STEPS=[
   'prepare-891-speak-curriculum.mjs',
   'prepare-891-speak-panel.mjs',
   'prepare-891-speak-ui.mjs',
+  'prepare-810-learning-curriculum.mjs',
+  'prepare-810-learning-engine.mjs',
+  'prepare-810-learning-budget-fix.mjs',
+  'prepare-810-learning-settings.mjs',
+  'prepare-810-learning-entry-fix.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
@@ -45,6 +50,7 @@ const STEPS=[
   'postbuild-882-contract.mjs',
   'postbuild-89-contract.mjs',
   'postbuild-891-contract.mjs',
+  'postbuild-810-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 
@@ -76,6 +82,7 @@ if(contract.architecture==='canonical-single-runtime'){
   for(const gate of ['homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog','mediaStoreWebKitSafe'])if(manifest.gates?.[gate]!==true)fail(`8.8.2 gate missing · ${gate}`);
   for(const gate of ['detailAtomicHandoff','localVisionV2','frontierVisionCatalogContract','frontierVisionProviderRouter','restSpeakPassive','restSpeakNoGeometryOwner','expandedSearchVocabulary'])if(manifest.gates?.[gate]!==true)fail(`8.9 gate missing · ${gate}`);
   for(const gate of ['restSpeakInlineComplete','restSpeakMicroLearning','restSpeakRichEnglish','restSpeakNoAutoplay','restSpeakSpacedExposure','detailStableReveal','detailStableInPlaceSwap','detailNoBlurFlash'])if(manifest.gates?.[gate]!==true)fail(`8.9.1 gate missing · ${gate}`);
+  for(const gate of ['restSpeakExpanded456','restSpeakAutonomousCadence','restSpeakUserCadenceControl','restSpeakTrackControl','restSpeakAdaptiveLevel','restSpeakDailyBudget','restSpeakSessionBudget','restSpeakDueReview','restSpeakLearningRecap','restSpeakTrainingMetadataIsolated','restSpeakNoAutoplay810'])if(manifest.gates?.[gate]!==true)fail(`8.10 gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);

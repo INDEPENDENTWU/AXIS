@@ -1,0 +1,92 @@
+[
+  {
+    "track": "gym",
+    "scenario": "健身房 · 器械占用",
+    "level": "B1",
+    "register": "自然礼貌口语",
+    "target": "Are you still using {x}?",
+    "zh": "你还在用{z}吗？",
+    "alt": "Is {x2} free?",
+    "response": "{r}",
+    "pattern": "Are you still using + 物品?",
+    "note": "共享器械时先确认占用状态，短句比解释背景更自然。",
+    "ielts": "适合任何共享设施的占用确认。",
+    "mistake": "using 后不要漏掉 -ing。",
+    "anchor": "still using = 还在用",
+    "slots": [
+      {"x":"this bench","z":"这张训练凳","x2":"this bench","r":"Just one more set."},
+      {"x":"this rack","z":"这个深蹲架","x2":"this rack","r":"I'm almost done."},
+      {"x":"these dumbbells","z":"这些哑铃","x2":"either of these dumbbells","r":"No, you can take them."},
+      {"x":"this cable station","z":"这个龙门架位置","x2":"this cable station","r":"Give me a minute."},
+      {"x":"this machine","z":"这台器械","x2":"this machine","r":"Go ahead."},
+      {"x":"this mat","z":"这张垫子","x2":"this mat","r":"I'm finished with it."},
+      {"x":"this platform","z":"这个训练台","x2":"this platform","r":"One more set."},
+      {"x":"this attachment","z":"这个把手附件","x2":"this attachment","r":"No, I'm done."}
+    ]
+  },
+  {
+    "track":"gym","scenario":"健身房 · 轮流与组数","level":"B1–B2","register":"合作型口语","target":"{x}","zh":"{z}","alt":"{alt}","response":"{r}","pattern":"take turns / work in / sets left","note":"健身房共用设备时，清楚说明轮流方式和剩余组数能显著降低摩擦。","ielts":"这些表达可迁移到其他轮流使用资源的场景。","mistake":"work in 在健身房里是“穿插训练”，不是工作。","anchor":"sets left = 剩余组数",
+    "slots":[
+      {"x":"Can we take turns?","z":"我们可以轮流吗？","alt":"Can we alternate?","r":"Sure."},
+      {"x":"Do you mind if I work in?","z":"介意我穿插着练吗？","alt":"Could we alternate sets?","r":"No problem."},
+      {"x":"I've got two sets left.","z":"我还剩两组。","alt":"Two more sets.","r":"No rush."},
+      {"x":"I've only got one more set.","z":"我只剩最后一组。","alt":"Just one more.","r":"Take your time."},
+      {"x":"I should be done in about five minutes.","z":"我大概五分钟后结束。","alt":"I'll be finished in around five minutes.","r":"Sounds good."},
+      {"x":"You can work in between my sets.","z":"你可以在我组间穿插使用。","alt":"Feel free to work in.","r":"Thanks."},
+      {"x":"Let's alternate so neither of us has to wait.","z":"我们轮流吧，这样谁都不用一直等。","alt":"We can alternate and keep moving.","r":"Good idea."},
+      {"x":"I'll let you know when I'm finished.","z":"我结束了会告诉你。","alt":"I'll tell you when it's free.","r":"Thanks."}
+    ]
+  },
+  {
+    "track":"gym","scenario":"健身房 · 请求辅助","level":"B1–B2","register":"安全礼貌口语","target":"Could you help me {x}?","zh":"能帮我{z}吗？","alt":"{alt}","response":"{r}","pattern":"Could you help me + 动词?","note":"请求训练辅助时把具体动作说清楚，比只说 help 更安全。","ielts":"可训练精确请求和动作动词。","mistake":"help me 后接动词原形。","anchor":"help me + 动作",
+    "slots":[
+      {"x":"unrack this","z":"把这个从架上起出来","alt":"Could you help me get this off the rack?","r":"Sure."},
+      {"x":"adjust the seat","z":"调一下座椅","alt":"Can you show me how to move the seat?","r":"Of course."},
+      {"x":"move this bench","z":"挪一下这张训练凳","alt":"Could you give me a hand moving this bench?","r":"Yep."},
+      {"x":"load this plate","z":"装上这片杠铃片","alt":"Can you help me put this plate on?","r":"Sure."},
+      {"x":"take this plate off","z":"把这片杠铃片卸下来","alt":"Could you help me unload this side?","r":"No problem."},
+      {"x":"check my setup","z":"看一下我的准备姿势","alt":"Could you take a quick look at my setup?","r":"Sure."},
+      {"x":"spot this set","z":"保护这一组","alt":"Could you give me a spot for this set?","r":"Absolutely."},
+      {"x":"find the right attachment","z":"找一下合适的把手","alt":"Do you know which attachment I need?","r":"Try the rope handle."}
+    ]
+  },
+  {
+    "track":"gym","scenario":"健身房 · 技术与发力","level":"B2","register":"训练交流口语","target":"{x}","zh":"{z}","alt":"{alt}","response":"{r}","pattern":"Should I / Am I / I can feel...","note":"讨论动作时聚焦一个技术变量：幅度、关节位置、发力或速度，比问“对不对”更有效。","ielts":"可用于训练中的具体反馈，也训练身体部位词汇。","mistake":"feel it in + 部位；不要用 on。","anchor":"form cue = 动作提示",
+    "slots":[
+      {"x":"Should I keep my elbows closer in?","z":"我的手肘应该再夹一点吗？","alt":"Should my elbows stay closer to my body?","r":"A little, yes."},
+      {"x":"Am I going too deep on this?","z":"我这个下得太深了吗？","alt":"Is this range too deep?","r":"Your depth looks fine."},
+      {"x":"I can feel it more in my shoulders than my chest.","z":"我肩膀的感觉比胸更明显。","alt":"My shoulders are taking over.","r":"Try lowering the load."},
+      {"x":"Should I slow down the lowering phase?","z":"下放阶段要再慢一点吗？","alt":"Should I control the eccentric more?","r":"Yes, keep it controlled."},
+      {"x":"Does my back look too rounded here?","z":"我这里背部看起来太圆了吗？","alt":"Am I rounding my back too much?","r":"A little."},
+      {"x":"Should my knees track over my toes?","z":"我的膝盖应该顺着脚尖方向吗？","alt":"Is my knee path okay?","r":"That looks better."},
+      {"x":"I lose tension near the bottom.","z":"我在底部附近会失去张力。","alt":"I lose tightness at the bottom.","r":"Try shortening the range slightly."},
+      {"x":"The last few reps get messy.","z":"最后几次动作会开始乱。","alt":"My form breaks down on the last reps.","r":"Lower the weight a bit."}
+    ]
+  },
+  {
+    "track":"gym","scenario":"健身房 · 休息与身体感受","level":"B1–B2","register":"自然训练口语","target":"{x}","zh":"{z}","alt":"{alt}","response":"{r}","pattern":"I need / I'm feeling / I'm going to...","note":"描述恢复和不适时，应表达感受与训练选择，不把日常口语包装成医学诊断。","ielts":"可训练自我状态描述与合理暂停表达。","mistake":"feel off = 状态不对；不是诊断词。","anchor":"listen to how it feels",
+    "slots":[
+      {"x":"I need another minute.","z":"我还需要一分钟。","alt":"Give me another minute.","r":"No problem."},
+      {"x":"I'm still catching my breath.","z":"我还在缓气。","alt":"I need a moment to catch my breath.","r":"Take your time."},
+      {"x":"My knee feels a bit off today.","z":"我今天膝盖感觉有点不对劲。","alt":"My knee doesn't feel quite right.","r":"Maybe take it easy."},
+      {"x":"I'm going to lower the weight and see how it feels.","z":"我准备减轻重量看看感觉。","alt":"I'll drop the load and reassess.","r":"Sounds sensible."},
+      {"x":"I'm stopping this set because the movement doesn't feel right.","z":"我会停下这一组，因为动作感觉不对。","alt":"I'm calling the set here.","r":"Good call."},
+      {"x":"My grip is giving out before my back.","z":"我的握力比背部先撑不住。","alt":"My grip is failing first.","r":"You could use straps."},
+      {"x":"I need a little more recovery before the next set.","z":"下一组前我还需要多恢复一下。","alt":"I need a bit longer before I go again.","r":"Sure."},
+      {"x":"My heart rate's still pretty high, so I'm going to wait.","z":"我心率还挺高，所以我再等一会。","alt":"I'm going to give it another minute.","r":"Makes sense."}
+    ]
+  },
+  {
+    "track":"gym","scenario":"健身房 · 礼仪与训练目标","level":"B2","register":"自然社交口语","target":"{x}","zh":"{z}","alt":"{alt}","response":"{r}","pattern":"Would you mind / I'm working on / I'm training for...","note":"健身房社交应短、具体、尊重空间；谈目标时用 working on / training for 很自然。","ielts":"这些表达适合真实健身房 small talk。","mistake":"不要把训练目标说成夸张口号；用当前重点更自然。","anchor":"working on = 正在改善",
+    "slots":[
+      {"x":"Would you mind moving your bag for a second?","z":"介意把包挪一下吗？","alt":"Could you move your bag for a moment?","r":"Sure, sorry."},
+      {"x":"Could we keep this area a little clearer?","z":"这里能不能尽量留空一点？","alt":"Would you mind leaving a bit more space?","r":"Yeah, sure."},
+      {"x":"I'm working on my pull-ups at the moment.","z":"我最近在练引体向上。","alt":"I'm trying to improve my pull-ups.","r":"Nice."},
+      {"x":"I'm mainly training for strength right now.","z":"我现在主要练力量。","alt":"Strength is my main focus at the moment.","r":"Same here."},
+      {"x":"I'm trying to get stronger without sacrificing form.","z":"我想变强，但不想牺牲动作质量。","alt":"I want strength gains without letting my technique fall apart.","r":"That's a good approach."},
+      {"x":"Do I need to book this class in advance?","z":"这个课需要提前预约吗？","alt":"Should I reserve a spot beforehand?","r":"Yes, through the app."},
+      {"x":"Is this area reserved for personal training?","z":"这个区域是私教专用的吗？","alt":"Is this section for PT sessions only?","r":"Only during peak hours."},
+      {"x":"Are these plates in pounds or kilos?","z":"这些杠铃片是磅还是公斤？","alt":"Are these marked in pounds or kilograms?","r":"They're in pounds."}
+    ]
+  }
+]
