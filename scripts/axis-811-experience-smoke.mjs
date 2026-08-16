@@ -1,0 +1,23 @@
+import fs from 'node:fs';
+import {buildAxis811Atlas,auditAxis811Atlas} from '../lib/learning-atlas-811.mjs';
+import {buildAxis811Multilingual,auditAxis811Multilingual} from '../lib/multilingual-atlas-811.mjs';
+
+const fail=m=>{throw new Error(`[AXIS 8.11 experience smoke] ${m}`)};
+const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
+const atlas=buildAxis811Atlas(),audit=auditAxis811Atlas(atlas),multi=auditAxis811Multilingual(buildAxis811Multilingual());
+if(audit.count!==5280||audit.duplicateTargets!==0||audit.missing.length||audit.unresolved.length||!audit.fourTurn||!audit.sixTurn)fail('English atlas audit failed');
+if(multi.count!==360||multi.per.ja!==120||multi.per.ko!==120||multi.per.zh!==120||multi.missing.length||!multi.sixTurn||Object.values(multi.dup).some(Boolean))fail('multilingual atlas audit failed');
+for(const level of ['A1','A2','B1','B2','C1','C1+'])if(audit.levelCounts[level]!==880)fail(`bad ${level} count`);
+const runtime=read('axis-core.js'),index=read('index.html'),info=JSON.parse(read('axis-build.json')),build=read('build-release.mjs');
+if(info.version!=='8.11'||info.baseVersion!=='8.11')fail(`release identity ${info.version}/${info.baseVersion}`);
+for(const step of ['prepare-811-release-compat.mjs','prepare-811-learning-atlas.mjs','prepare-811-learning-settings.mjs','prepare-811-trends.mjs','prepare-811-legacy-compat.mjs','postbuild-811-contract.mjs'])if(!build.includes(step))fail(`build missing ${step}`);
+for(const gate of ['learningAtlas811','learningAtlasUnique811','learningDialogueSixTurn811','learningSettingsConverged811','learningLegacyDiagnosticsPreserved811','learningJapanese132811','learningKorean132811','learningChinese132811','learningMultilingualSixTurn811','learningMultilingualNoLegacyExactOverlap811','trendsStateField811','trendsGoalAware811','trendsEvidenceOnly811','trendsLocalFirst811','trendsOneShotMotion811','serviceSettingsConverged811','serviceSettingsUserInvokedNetwork811','serviceSettingsNoTrainingOwner811'])if(info.gates?.[gate]!==true)fail(`manifest gate missing ${gate}`);
+if(info.axis811?.release!==true||info.axis811?.learning?.atlasEnglish!==5280||info.axis811?.learning?.totalEnglish!==5736||info.axis811?.learning?.totalUnits!==6132||info.axis811?.learning?.dialogueTurns!==6)fail('manifest learning/release contract wrong');
+for(const [lang,n] of Object.entries({en:5736,ja:132,ko:132,zh:132}))if(info.axis811?.learning?.availableByLanguage?.[lang]!==n)fail(`manifest ${lang} count wrong`);
+if(info.axis811?.learning?.legacyDiagnostics?.richEnglish!==456||info.axis811?.learning?.legacyDiagnostics?.totalUnits!==492||info.axis811?.learning?.legacyDiagnostics?.phrases!==492)fail('legacy learning diagnostics were not preserved');
+if(info.axis811?.trends?.fitnessScore!==false||info.axis811?.trends?.evidenceOnly!==true||info.axis811?.trends?.oneShotMotion!==true)fail('trend evidence/motion contract wrong');
+if(info.axis811?.services?.localFirst!==true||info.axis811?.services?.userInvokedStatusNetwork!==true||info.axis811?.services?.automaticNetwork!==false||info.axis811?.services?.clientSecrets!==false)fail('service settings contract wrong');
+for(const id of ['v811StateField','v811Trajectory','v811Evidence','v811Needle'])if(!index.includes(`id="${id}"`))fail(`built index missing ${id}`);
+for(const needle of ["legacyPrefsPreserved:true","networkRequired:false","window.__AXIS_811_DIALOGUE__={version:'8.11-candidate',turns:6","window.__AXIS_811_MULTILINGUAL__={version:'8.11-candidate',newPerLanguage:120",'legacy.richEnglish=456','legacy.totalUnits=492','legacy.phrases=()=>492','availableEnglish=5736','availableUnits=6132',"window.__AXIS_811_TREND_MOTION__={version:'8.11-candidate',oneShot:true","window.__AXIS_811_SERVICE_SETTINGS__={version:'8.11-candidate'","userInvokedNetwork:true","automaticNetwork:false"])if(!runtime.includes(needle))fail(`runtime missing ${needle}`);
+if(/setInterval\s*\([^)]*axis811|new\s+MutationObserver\s*\([^)]*axis811|new\s+ResizeObserver\s*\([^)]*axis811/.test(runtime))fail('persistent owner introduced');
+console.log(`[AXIS 8.11 experience smoke] PASS · public 8.11 · ${audit.count} English Atlas + ${multi.count} multilingual · six-turn · State Field · cloud/AI settings · legacy contracts green`);
