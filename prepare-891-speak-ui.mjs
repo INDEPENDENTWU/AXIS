@@ -35,7 +35,7 @@ src=once(src,'function injectRestSpeak(){axis89SpeakStyle();','function injectRe
 src=once(src,'migrateAudio();injectAudio();try{injectRestSpeak()}catch(err)','migrateAudio();injectAudio();axis891SpeakStyle();try{injectRestSpeak()}catch(err)','boot learning style');
 
 src=regexOnce(src,/function installEvents\(\)\{D\.addEventListener\('click',async e=>\{const speak=e\.target\.closest\('#v87Rest\.v89Speak'\);if\(speak\)\{axis89SpeakVoice\(speak\);return\}/,
-`function installEvents(){D.addEventListener('click',async e=>{const speak=e.target.closest('#v87Rest.v89Speak');if(speak){axis891OpenSpeak(speak);return}const learn=e.target.closest('#v891SpeakPanel [data-v891-action]');if(learn){const a=learn.dataset.v891Action;if(a==='close')axis891CloseSpeak();else if(a==='voice'){const panel=$('#v891SpeakPanel'),x=axis891Phrase(panel?.dataset?.phraseId);if(x){const proxy={dataset:{speak:x.target,lang:x.lang}};axis89SpeakVoice(proxy)}}else if(a==='next')axis891NextSpeak();else if(a==='master')axis891MasterSpeak();else if(a==='more')axis891ToggleMore();return}`,
+`function installEvents(){D.addEventListener('click',async e=>{if(!(e.target instanceof Element))return;const speak=e.target.closest('#v87Rest.v89Speak');if(speak){axis891OpenSpeak(speak);return}const learn=e.target.closest('#v891SpeakPanel [data-v891-action]');if(learn){const a=learn.dataset.v891Action;if(a==='close')axis891CloseSpeak();else if(a==='voice'){const panel=$('#v891SpeakPanel'),x=axis891Phrase(panel?.dataset?.phraseId);if(x){const proxy={dataset:{speak:x.target,lang:x.lang}};axis89SpeakVoice(proxy)}}else if(a==='next')axis891NextSpeak();else if(a==='master')axis891MasterSpeak();else if(a==='more')axis891ToggleMore();return}`,
 'learning panel event route');
 
 src=once(src,"if(!target||!today||sheet){host.classList.remove('show');D.body.classList.remove('v87-now');return}",
@@ -49,4 +49,4 @@ src=once(src,"window.__AXIS_REST_SPEAK__={version:'8.9',owner:'passive-rest-read
 if(/setInterval\s*\(\s*axis891|new\s+MutationObserver\s*\(\s*axis891|new\s+ResizeObserver\s*\(\s*axis891/.test(src))fail('8.9.1 learning accessory gained forbidden timing/observer owner');
 if(!src.includes("userInvokedPanel:true")||!src.includes("richEnglish:72"))fail('8.9.1 public learning marker missing');
 syntax(src,FILE);write(FILE,src);
-console.log('[AXIS 8.9.1 speak UI] PASS · dedicated language rail · complete phrase · explicit learning panel · no autoplay/timer/observer');
+console.log('[AXIS 8.9.1 speak UI] PASS · dedicated language rail · complete phrase · guarded event target · explicit learning panel · no autoplay/timer/observer');
