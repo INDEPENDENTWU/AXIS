@@ -5,10 +5,15 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax ${e.message}`)}};
+const catalogIds=src=>{
+ const a=src.indexOf('const LIB=['),b=src.indexOf('].map(x=>({id:x[0]',a);
+ if(a<0||b<0)fail('canonical LIB boundary missing');
+ return [...src.slice(a,b).matchAll(/^\s*\['([^']+)'/gm)].map(x=>x[1]);
+};
 
 {
  const FILE='v873-exercise-library.js';let src=read(FILE);
- const additions=`  ['plate-chest-press','杠片式胸推',['槓片式胸推','杠片胸推','plate loaded chest press','iso lateral chest press','推胸机器'], 'strength',[M.chest,M.triceps,M.shoulder]],
+ const candidates=`  ['plate-chest-press','杠片式胸推',['槓片式胸推','杠片胸推','plate loaded chest press','iso lateral chest press','推胸机器'], 'strength',[M.chest,M.triceps,M.shoulder]],
   ['machine-incline-press','器械上斜胸推',['器械上斜胸推','上斜推胸机','incline chest press machine','incline machine press'], 'strength',[M.chest,M.shoulder,M.triceps]],
   ['machine-decline-press','器械下斜胸推',['器械下斜胸推','decline chest press machine'], 'strength',[M.chest,M.triceps]],
   ['high-row-machine','高位划船机',['高位划船機','high row machine','iso lateral high row'], 'strength',[M.back,M.biceps]],
@@ -27,8 +32,12 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
   ['sled-pull','雪橇拉',['雪橇拉','sled pull','sled drag'], 'strength',[M.quads,M.glutes,M.hamstrings]],
   ['suitcase-carry','单侧负重行走',['單側負重行走','suitcase carry'], 'strength',[M.core,M.forearms]],
 `;
+ const existing=new Set(catalogIds(src)),skipped=[];
+ const additions=candidates.split('\n').filter(line=>{const m=line.match(/^\s*\['([^']+)'/);if(!m)return true;if(existing.has(m[1])){skipped.push(m[1]);return false}existing.add(m[1]);return true}).join('\n');
  const marker="  ['treadmill','跑步机'";
- src=once(src,marker,additions+marker,'expanded 8.9 non-duplicate catalog');
+ src=once(src,marker,additions+marker,'expanded 8.9 canonical catalog');
+ const ids=catalogIds(src),unique=new Set(ids);
+ if(unique.size!==ids.length)fail(`duplicate canonical ids survived: ${ids.filter((id,i)=>ids.indexOf(id)!==i).join(', ')}`);
  const alias=`
 const AXIS89_COMMON={
  '臀部':['屁股','臀','练屁股','練屁股','臀腿','glute day'],
@@ -44,5 +53,6 @@ for(const [m,a] of Object.entries(AXIS89_COMMON)){MUSCLE_ALIASES[m]=[...new Set(
 `;
  src=once(src,"\nwindow.__AXIS_873_LIBRARY__=LIB;window.__AXIS_873_MUSCLE_ALIASES__=MUSCLE_ALIASES;",alias+"\nwindow.__AXIS_873_LIBRARY__=LIB;window.__AXIS_873_MUSCLE_ALIASES__=MUSCLE_ALIASES;window.__AXIS_89_CATALOG__={version:'8.9',size:LIB.length};",'common-language aliases');
  syntax(src,FILE);write(FILE,src);
+ console.log(`[AXIS 8.9 catalog] canonical ids ${ids.length} · skipped inherited duplicates ${skipped.join(', ')||'none'}`);
 }
 console.log('[AXIS 8.9 catalog] PASS');
