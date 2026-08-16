@@ -30,6 +30,7 @@ const STEPS=[
   'prepare-89-catalog.mjs',
   'prepare-89-rest-speak.mjs',
   'prepare-89-rest-speak-fix.mjs',
+  'prepare-89-rest-speak-safety.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
