@@ -48,6 +48,7 @@ const STEPS=[
   'prepare-8102-standalone-polish.mjs',
   'prepare-8103-home-sound.mjs',
   'prepare-8103-learning-voice.mjs',
+  'prepare-8103-final-compat.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
