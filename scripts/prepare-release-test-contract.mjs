@@ -27,11 +27,21 @@ for(const file of files){
   src=src.replace(/(canonical\?\.version\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
   src=src.replace(/((?:first|core|final)\.release\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
   src=src.replace(/(window\.__AXIS_RELEASE__\s*\)\s*,\s*)['"]\d+(?:\.\d+)+['"]/g,`$1'${version}'`);
+  if(version==='8.10'&&file==='scripts/axis-89-smoke.mjs'){
+    src=src.replace(
+      "prefs:{enabled:true,native:'zh',target:'en'}",
+      "prefs:{enabled:true,native:'zh',target:'en',mode:'standard',track:'auto',cadence:'every',level:'adaptive',dailyTarget:0}"
+    );
+  }
   if(file==='scripts/axis-891-smoke.mjs'){
     src=src.replace("assert.ok((diag?.phrases?.()||0)>=108);","assert.ok((await page.evaluate(()=>window.__AXIS_REST_SPEAK__?.phrases?.()||0))>=108);");
     if(version==='8.10'){
       src=src.replace("assert.equal(diag?.patch,'8.9.1');","assert.ok(['8.9.1','8.10'].includes(diag?.patch));");
       src=src.replace("assert.equal(diag?.richEnglish,72);","assert.ok((diag?.richEnglish||0)>=72);");
+      src=src.replace(
+        "prefs:{enabled:true,native:'zh',target:'en'}",
+        "prefs:{enabled:true,native:'zh',target:'en',mode:'standard',track:'auto',cadence:'every',level:'adaptive',dailyTarget:0}"
+      );
     }
   }
   if(src!==before)fs.writeFileSync(file,src);
