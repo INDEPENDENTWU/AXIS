@@ -14,6 +14,8 @@ const STEPS=[
   'prepare-881-convergence.mjs',
   'prepare-882-convergence-driver.mjs',
   'prepare-882-home-transition-refine.mjs',
+  'prepare-882-home-completion-refine.mjs',
+  'prepare-882-quick-camera-owner.mjs',
   'prepare-882-local-vision.mjs',
   'prepare-882-final-owners.mjs',
   'prepare-882-lifecycle.mjs',

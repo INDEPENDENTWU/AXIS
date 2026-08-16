@@ -1,0 +1,69 @@
+import assert from 'node:assert/strict';
+const ENGINE=process.env.AXIS_ENGINE||'chromium';
+const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core');
+const launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
+const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},locale:'zh-CN'});
+const page=await context.newPage();
+const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(obj)});
+for(const [pattern,obj] of [['**/api/ai-status**',{ok:true,enabled:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{ok:false,disabled:true}],['**/api/insight**',{ok:false,disabled:true}]])await page.route(pattern,r=>json(r,obj));
+const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:5000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:8000});await page.waitForFunction(()=>window.__AXIS_QUICK_READY__===true,undefined,{timeout:1600})};
+const profile={name:'',height:'',weight:'',bodyFat:'',years:'',freq:3,goal:'',memories:[],customEq:[{id:'quick-camera-test',name:'补拍测试器械',type:'strength',pattern:'pull',muscles:['背部'],effect:'背部',custom:true}]};
+const prefs={keepClip:true,scanSeconds:3,watermark:{name:true,data:true,time:true,brand:true,pos:'bl',photoMode:'wm',videoMode:'wm'}};
+
+assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
+const now=Date.now(),end=now-5*60000,start=end-32*60000,eventTime=end-60000;
+await page.evaluate(({profile,prefs,start,end,eventTime})=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[{id:'S-DONE',start,end,events:[{id:'E-DONE',equipmentId:'quick-camera-test',name:'补拍测试器械',pattern:'pull',kind:'strength',muscles:['背部'],effect:'背部',time:eventTime,weight:20,reps:10,sets:3,frameRefs:[]}]}],active:null,profile,prefs}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{'E-DONE':{sets:[{weight:20,reps:10,state:'done'},{weight:20,reps:10,state:'done'},{weight:20,reps:10,state:'done'}]}},prefs:{}}))},{profile,prefs,start,end,eventTime});
+await page.reload({waitUntil:'domcontentloaded'});await ready();
+
+console.log(`[AXIS completed Home ${ENGINE}] same-day finish is a calm completion summary`);
+await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.scope==='complete',undefined,{timeout:1600});
+assert.ok(await page.locator('#axisNowHero').isVisible());
+assert.equal((await page.locator('.axisNowTop>span').innerText()).trim(),'今天完成');
+assert.equal((await page.locator('#axisNowTitle').innerText()).trim(),'训练已记录');
+assert.match((await page.locator('#axisNowValue').innerText()).trim(),/32分钟/);
+const completeCopy=((await page.locator('#axisNowHero').innerText())||'').trim();
+assert.doesNotMatch(completeCopy,/恢复中|0%|100%/,'completed Home retained recovery dashboard copy');
+assert.equal(await page.locator('#axisNowDial').isVisible(),false,'completed Home still shows percentage dial');
+assert.equal(await page.locator('.axisNowRail').isVisible(),false,'completed Home still shows progress rail');
+assert.equal(await page.locator('.axisNowFacts').isVisible(),false,'completed Home still shows duplicate facts');
+assert.match((await page.locator('#axisNowMeta').innerText()).trim(),/1项/);
+assert.match((await page.locator('#axisNowMeta').innerText()).trim(),/3组/);
+assert.equal(await page.locator('#v81Continue').count(),0,'duplicate 接着上次 block remains on Home');
+assert.equal(await page.evaluate(()=>window.__AXIS_HOME_TIMER_MS__),60000,'idle Home still repaints every second');
+
+console.log(`[AXIS completed Home ${ENGINE}] older session becomes honest training interval, not recovery percentage`);
+await page.evaluate(({profile,prefs})=>{const t=Date.now()-2*86400000,end=t-60000,start=end-41*60000;localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[{id:'S-OLD',start,end,events:[{id:'E-OLD',equipmentId:'quick-camera-test',name:'补拍测试器械',pattern:'pull',kind:'strength',muscles:['背部'],effect:'背部',time:end-60000,weight:20,reps:10,sets:3,frameRefs:[]}]}],active:null,profile,prefs}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))},{profile,prefs});
+await page.reload({waitUntil:'domcontentloaded'});await ready();
+await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.scope==='recovery',undefined,{timeout:1600});
+assert.equal((await page.locator('.axisNowTop>span').innerText()).trim(),'训练间隔');
+assert.equal((await page.locator('#axisNowTitle').innerText()).trim(),'距上次训练');
+assert.equal(await page.locator('#axisNowDial').isVisible(),false);
+assert.equal(await page.locator('.axisNowFacts').isVisible(),false);
+assert.doesNotMatch((await page.locator('#axisNowHero').innerText()).trim(),/恢复中|%/);
+
+console.log(`[AXIS quick camera ${ENGINE}] Quick Record photo enters the canonical camera surface`);
+await page.locator('#quickRecordBtn').click();
+await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show')&&document.querySelector('#v882QuickCustom [data-qid="quick-camera-test"]'),undefined,{timeout:1600});
+await page.locator('#v882QuickCustom [data-qid="quick-camera-test"]').click();
+await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#v882QuickMedia [data-v882-media="photo"]'),undefined,{timeout:1800});
+assert.ok(await page.locator('#reviewStage').isVisible(),'Quick Record editor did not open');
+await page.locator('#v882QuickMedia [data-v882-media="photo"]').click();
+await page.waitForFunction(()=>{const s=document.querySelector('#scanSheet'),c=document.querySelector('#captureStage');return s?.classList.contains('show')&&!s.classList.contains('v8-quick')&&s.classList.contains('v882-quick-media')&&c&&!c.classList.contains('hidden')},undefined,{timeout:1800});
+assert.ok(await page.locator('#captureStage').isVisible(),'补拍照片 is still hidden by the Quick Record editor CSS');
+assert.equal(await page.locator('#reviewStage').isVisible(),false,'Quick Record review remained over the camera');
+assert.equal((await page.locator('#scanSheet .sheetHead>b').innerText()).trim(),'拍摄记录');
+assert.equal((await page.locator('#captureNow').innerText()).trim(),'拍照');
+assert.ok(await page.locator('#captureModes [data-mode="photo"].active').count(),'photo mode is not selected');
+assert.deepEqual(await page.evaluate(()=>window.__AXIS_CAPTURE__?.snapshot?.()),{mode:'photo',selectedEq:'quick-camera-test',owner:'canonical',intent:'quick-media'});
+
+await page.locator('#scanSheet [data-close="scanSheet"]').click();await page.waitForTimeout(80);
+await page.locator('#scanBtn').click();
+await page.waitForFunction(()=>document.querySelector('#scanSheet')?.dataset.captureIntent==='record',undefined,{timeout:1600});
+const normal=await page.evaluate(()=>window.__AXIS_CAPTURE__?.snapshot?.());
+assert.equal(normal?.owner,'canonical');assert.equal(normal?.intent,'record');
+assert.ok(await page.locator('#captureStage').isVisible(),'normal camera surface changed while sharing the owner');
+
+console.log(`[AXIS completion + camera ${ENGINE}] PASS · restrained completed Home · honest interval · no duplicate continue · canonical Quick Record camera`);
+await context.close();await browser.close();
