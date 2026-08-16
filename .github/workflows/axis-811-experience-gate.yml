@@ -17,6 +17,7 @@ on:
       - 'prepare-811-legacy-compat.mjs'
       - 'postbuild-811-contract.mjs'
       - 'scripts/axis-811-experience-smoke.mjs'
+      - 'scripts/axis-811-overlap-audit.mjs'
       - 'build-release.mjs'
       - '.github/workflows/axis-811-experience-gate.yml'
   workflow_dispatch:
@@ -45,6 +46,9 @@ jobs:
           node --check prepare-811-legacy-compat.mjs
           node --check postbuild-811-contract.mjs
           node --check scripts/axis-811-experience-smoke.mjs
+          node --check scripts/axis-811-overlap-audit.mjs
+      - name: Audit inherited English overlap
+        run: node scripts/axis-811-overlap-audit.mjs
       - name: Build full inherited release
         run: node build-release.mjs
       - name: Experience smoke
