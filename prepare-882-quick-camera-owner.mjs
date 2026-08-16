@@ -38,4 +38,26 @@ function setVal`,'canonical camera entry');
   fs.writeFileSync(FILE,src);
 }
 
-console.log('[AXIS 8.8.2 quick camera] PASS · normal capture and Quick Record media share one canonical camera owner · quick camera escapes v8-quick capture hiding');
+/* postbuild-88-canonical previously required the retired inline scan opener. Converge
+   that contract so v876 still owns the persisted capture preference while both entry
+   points delegate actual camera lifecycle to openCanonicalCamera(). */
+{
+  const FILE='postbuild-88-canonical.mjs';let src=read(FILE);
+  const old=`const legacyScanOpen="$('#scanBtn').onclick=()=>{resetScan();captureMode=String(state.prefs.scanSeconds||3);$$('#captureModes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===captureMode));setText('#captureNow',captureMode==='photo'?'拍照':\`开始扫描 ${'${captureMode}'} 秒\`);openSheet('scanSheet');startCamera()};";
+const canonicalScanOpen="$('#scanBtn').onclick=()=>{resetScan();const preferred=window.__AXIS_CAPTURE_PREF__?.get?.();captureMode=['photo','3','5'].includes(String(preferred))?String(preferred):String(state.prefs.scanSeconds||3);$$('#captureModes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===captureMode));setText('#captureNow',captureMode==='photo'?'拍照':\`开始扫描 ${'${captureMode}'} 秒\`);openSheet('scanSheet');startCamera()};";
+if(core.split(legacyScanOpen).length-1!==1)fail('legacy capture-open preference signature missing');
+/* Function-form replacement is required: String.replace replacement strings interpret
+   \`$$\` as one literal \`$\`, which would corrupt the canonical \`$$()\` selector helper. */
+core=core.replace(legacyScanOpen,()=>canonicalScanOpen);`;
+  const next=`const delegatedScanOpen="$('#scanBtn').onclick=()=>openCanonicalCamera(String(state.prefs.scanSeconds||3),null,false);";
+const canonicalScanOpen="$('#scanBtn').onclick=()=>{const preferred=window.__AXIS_CAPTURE_PREF__?.get?.(),mode=['photo','3','5'].includes(String(preferred))?String(preferred):String(state.prefs.scanSeconds||3);openCanonicalCamera(mode,null,false)};";
+if(core.split(delegatedScanOpen).length-1!==1)fail('canonical camera delegation signature missing');
+if((core.match(/function openCanonicalCamera\\(/g)||[]).length!==1)fail('canonical camera owner must exist exactly once');
+if((core.match(/function beginQuickMedia\\(mode,id\\)\\{return openCanonicalCamera\\(mode,id,true\\)\\}/g)||[]).length!==1)fail('Quick Record media does not delegate to canonical camera owner');
+core=core.replace(delegatedScanOpen,()=>canonicalScanOpen);
+if(/#scanBtn'\\]\\.onclick=.*startCamera|#scanBtn'\\)\\.onclick=.*startCamera/.test(core))fail('main capture retained an inline camera lifecycle writer');`;
+  src=once(src,old,next,'canonical postbuild capture contract');
+  fs.writeFileSync(FILE,src);
+}
+
+console.log('[AXIS 8.8.2 quick camera] PASS · one canonical camera lifecycle owner · main capture and Quick Record delegate · persisted preference remains v876-owned');
