@@ -37,15 +37,15 @@ console.log(`[AXIS 8.9 ${ENGINE}] Rest Speak is off by default and geometry-neut
 await page.evaluate(()=>{
  const t=Date.now(),event={id:'E89R',equipmentId:'chest',name:'胸推',kind:'strength',time:t-120000,weight:20,reps:10,sets:3,muscles:['胸肌'],frameRefs:[]};
  const core={version:60,sessions:[],active:{id:'S89R',start:t-180000,events:[event]},selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{name:'',height:'',weight:'',bodyFat:'',years:'',freq:3,goal:'',memories:[],customEq:[]},prefs:{keepClip:true,scanSeconds:3,watermark:{name:true,data:true,time:true,brand:true,pos:'bl',photoMode:'wm',videoMode:'wm'}}};
- const meta={prefs:{v89SpeakEnabled:false},events:{E89R:{activity:{status:'active',startedAt:t-120000,lastResumedAt:t-120000,estimateMs:180000,completedSets:1,intervals:[{start:t-120000,end:null}],restStartedAt:t-16000},sets:[{state:'done',doneAt:t-16000},{state:'assumed',doneAt:null},{state:'assumed',doneAt:null}]}}};
+ const meta={prefs:{v89SpeakEnabled:true,v89SpeakNative:'zh',v89SpeakTarget:'en'},events:{E89R:{activity:{status:'active',startedAt:t-120000,lastResumedAt:t-120000,estimateMs:180000,completedSets:1,intervals:[{start:t-120000,end:null}],restStartedAt:t-16000},sets:[{state:'done',doneAt:t-16000},{state:'assumed',doneAt:null},{state:'assumed',doneAt:null}]}}};
  localStorage.setItem('axis_v60_state',JSON.stringify(core));localStorage.setItem('axis_v8_meta',JSON.stringify(meta));
 });
 await page.reload({waitUntil:'domcontentloaded'});await ready();await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:1800});
 assert.match(await page.locator('#v87Now #v87Rest').innerText(),/^休息/);
-assert.equal(await page.locator('#v87Rest.v89Speak').count(),0,'Rest Speak appears while disabled');
+assert.equal(await page.locator('#v87Rest.v89Speak').count(),0,'Rest Speak leaked from training metadata or appears while disabled');
 const h0=await page.locator('#v87Now').evaluate(el=>el.getBoundingClientRect().height);
-await page.evaluate(()=>{const m=JSON.parse(localStorage.getItem('axis_v8_meta'));m.prefs.v89SpeakEnabled=true;m.prefs.v89SpeakNative='zh';m.prefs.v89SpeakTarget='en';localStorage.setItem('axis_v8_meta',JSON.stringify(m))});
-await page.reload({waitUntil:'domcontentloaded'});await ready();await page.waitForFunction(()=>document.querySelector('#v87Now #v87Rest')?.classList.contains('v89Speak'),undefined,{timeout:1800});
+await page.evaluate(()=>localStorage.setItem('axis_v89_speak',JSON.stringify({seen:{},current:null,prefs:{enabled:true,native:'zh',target:'en'}})));
+await page.reload({waitUntil:'domcontentloaded'});await ready();await page.waitForFunction(()=>document.querySelector('#v87Now #v87Rest')?.classList.contains('v89Speak'),undefined,{timeout:2400});
 const h1=await page.locator('#v87Now').evaluate(el=>el.getBoundingClientRect().height);
 assert.ok(Math.abs(h1-h0)<=1.5,`Rest Speak changed active-card geometry ${h0} -> ${h1}`);
 const restLines=await page.locator('#v87Now #v87Rest').evaluate(el=>({target:el.querySelector('span')?.textContent||'',meaning:el.querySelector('small')?.textContent||''}));
