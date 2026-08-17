@@ -115,7 +115,12 @@ export const AXIS_812_FIXTURES = Object.freeze({
     core: {
       version: 60,
       active: { id: 'return', start: NOW - 2 * 60000, events: [] },
-      sessions: history.map((session) => ({ ...session, start: session.start - 10 * DAY, end: session.end - 10 * DAY })),
+      sessions: history.map((session) => ({
+        ...session,
+        start: session.start - 10 * DAY,
+        end: session.end - 10 * DAY,
+        events: session.events.map((event) => ({ ...event, time: event.time - 10 * DAY })),
+      })),
     },
     meta: { events: {} },
   },
