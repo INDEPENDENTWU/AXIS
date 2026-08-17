@@ -4,7 +4,7 @@ import {execFileSync} from 'node:child_process';
 const contract=JSON.parse(fs.readFileSync('release-contract.json','utf8'));
 const version=String(contract.publicVersion||'').trim();
 if(!/^\d+(?:\.\d+)+$/.test(version))throw new Error(`invalid publicVersion: ${version}`);
-const modern810=version.startsWith('8.10')||version==='8.11';
+const modern810=version.startsWith('8.10')||['8.11','8.12'].includes(version);
 
 const files=[
   'scripts/axis-smoke.mjs',
@@ -44,7 +44,7 @@ for(const file of files){
   if(modern810&&file==='scripts/axis-810-smoke.mjs'){
     src=src.replace(
       "assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.'),`unexpected inherited release ${EXPECTED}`);",
-      "assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.')||EXPECTED==='8.11',`unexpected inherited release ${EXPECTED}`);"
+      "assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.')||['8.11','8.12'].includes(EXPECTED),`unexpected inherited release ${EXPECTED}`);"
     );
   }
   if(file==='scripts/axis-891-smoke.mjs'){
@@ -86,7 +86,7 @@ for(const file of files){
       "assert.equal(entry.b,'自定','explicit every-rest cadence should render the compact custom status');"
     );
   }
-  if(['8.10.3','8.11'].includes(version)&&file==='scripts/axis-product-matrix.mjs'){
+  if(['8.10.3','8.11','8.12'].includes(version)&&file==='scripts/axis-product-matrix.mjs'){
     const stale="assert.equal(await page.locator('#v8710Rest:visible,#v8710Session:visible,#v876TargetSheet:visible').count(),0,'retired rest/session automatic reminder controls returned');";
     const current="assert.equal(await page.locator('#v8710Rest:visible,#v876TargetSheet:visible').count(),0,'retired rest automatic reminder controls returned');assert.equal(await page.locator('#v8710Session:visible').count(),1,'8.10.3 total-workout duration reminder is missing');assert.equal(await page.locator('#v8710SessionPreset button:visible').count(),5,'8.10.3 duration presets are incomplete');";
     if(!src.includes(stale)&&!src.includes(current))throw new Error('AXIS 8.10.3 product matrix reminder assertion shape changed');
