@@ -19,6 +19,8 @@ function axis813SettingsStyle(){
  '#settingsSheet .v813SettingsGate.open>.settingLink>i{transform:rotate(90deg)}'+
  '#settingsSheet .v813SettingsGate>.v8711Fold{display:none;padding:0 0 7px!important}#settingsSheet .v813SettingsGate.open>.v8711Fold{display:block}'+
  '#v813LearningGate #v810ConfigPanel{position:static!important;inset:auto!important;z-index:auto!important;display:block!important;background:transparent!important;padding:0!important}'+
+ '#v813LearningGate .v810ConfigCard{width:100%!important;max-height:none!important;overflow:visible!important;border-radius:0!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;overscroll-behavior:auto!important}'+
+ '#v813LearningGate .v810ConfigGrab,#v813LearningGate .v810ConfigHead,#v813LearningGate .v810ConfigIntro{display:none!important}'+
  '#v813LearningGate .v810SpeakControls{padding:0 0 2px!important}#v813LearningGate .v811CoreLearning{padding:0!important}'+
  '#v813LearningGate .v811CoreGroup{padding:10px 0!important;border-bottom:1px solid rgba(255,255,255,.045)!important}'+
  '#v813LearningGate .v811CoreHead{margin-bottom:7px!important;gap:10px!important}#v813LearningGate .v811CoreHead span{font-size:10.5px!important;color:#9ca4b0!important}#v813LearningGate .v811CoreHead b{font-size:8.6px!important;color:#626b78!important}'+
@@ -56,12 +58,10 @@ function axis813EnsureLearningInline(){
   entry.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();axis810OpenConfig()},false)
  }
  for(const duplicate of [...D.querySelectorAll('#v810ConfigEntry')])if(duplicate!==entry)duplicate.remove();
- let panel=$('#v810ConfigPanel');
- if(panel&&!gate.contains(panel)){
-  const controls=$('#v810SpeakControls',panel);panel.remove();panel=D.createElement('div');panel.id='v810ConfigPanel';panel.className='v813InlineSettingsPanel';if(controls)panel.appendChild(controls);$('#v813LearningFold')?.appendChild(panel)
- }
- if(!panel){
-  const legacy=axis813BaseEnsureLearningConfig();const controls=$('#v810SpeakControls',legacy);legacy?.remove();panel=D.createElement('div');panel.id='v810ConfigPanel';panel.className='v813InlineSettingsPanel';if(controls)panel.appendChild(controls);$('#v813LearningFold')?.appendChild(panel)
+ let panel=$('#v810ConfigPanel');if(!panel)panel=axis813BaseEnsureLearningConfig();
+ if(panel){
+  panel.classList.remove('v810ConfigPanel','show');panel.classList.add('v813InlineSettingsPanel');panel.removeAttribute('aria-label');
+  $('#v813LearningFold')?.appendChild(panel)
  }
  return panel
 }
@@ -101,12 +101,13 @@ function axis813ConvergeSettings(){
 }
 axis813ConvergeSettings();
 D.addEventListener('click',e=>{if(e.target?.closest?.('#settingsBtn'))setTimeout(axis813ConvergeSettings,80)},true);
-try{window.__AXIS_813_SETTINGS__={version:'8.13-settings-convergence',owner:'canonical-settings-inline',learningInline:true,serviceInline:true,separateLearningSheet:false,separateServiceSheet:false,learningHost:'settings-primary-list',learningStore:'axis_v89_speak',serviceStore:AXIS811_SERVICE_KEY,trainingOwner:false,userInvokedServiceNetwork:true}}catch{}
+try{window.__AXIS_813_SETTINGS__={version:'8.13-settings-convergence',owner:'canonical-settings-inline',learningInline:true,serviceInline:true,separateLearningSheet:false,separateServiceSheet:false,learningHost:'settings-primary-list',learningPanelOwnerPreserved:true,learningStore:'axis_v89_speak',serviceStore:AXIS811_SERVICE_KEY,trainingOwner:false,userInvokedServiceNetwork:true}}catch{}
 `;
 
 src=src.slice(0,end)+block+'\n'+src.slice(end);
 if(/v813SettingsGate[^\n]*position\s*:\s*fixed/.test(block))fail('converged settings regained fixed positioning');
-if(!block.includes("axis813PrimarySettingsList"))fail('visible primary Settings host missing');
+if(!block.includes('axis813PrimarySettingsList'))fail('visible primary Settings host missing');
+if(!block.includes("panel.classList.remove('v810ConfigPanel','show')"))fail('Learning panel listener-preserving inline conversion missing');
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.13 settings convergence] PASS · Learning + Cloud/AI inline Settings folds · visible primary-list host · compact progressive disclosure · stores/owners preserved');
+console.log('[AXIS 8.13 settings convergence] PASS · Learning + Cloud/AI inline Settings folds · visible primary-list host · Learning delegated events preserved · compact progressive disclosure');
