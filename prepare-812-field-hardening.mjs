@@ -13,20 +13,6 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  * Stage 2+ Runtime work must absorb these semantics before this transform is retired.
  */
 
-/* v61 is the sole draft owner. Expose a read-only first-set snapshot so planners
-   never infer their baseline from rebuilding DOM or hidden legacy controls. */
-{
-  const FILE='v61.js';
-  let src=read(FILE);
-  src=once(
-    src,
-    "window.__AXIS_RECORDING__={snapshot:recordingSnapshot,adjust:adjustRecordingValue,set:patchActiveSetValue,select:selectRecordingSet};",
-    "function recordingFirstSet(){const s=draft[0]||null;return s?{w:s.weight==null?null:Number(s.weight),r:s.reps==null?null:Number(s.reps),count:draft.length}:null}\nwindow.__AXIS_RECORDING__={snapshot:recordingSnapshot,first:recordingFirstSet,adjust:adjustRecordingValue,set:patchActiveSetValue,select:selectRecordingSet};",
-    'recording first-set snapshot API'
-  );
-  syntax(src,FILE);write(FILE,src);
-}
-
 {
   const FILE='v874-set-bridge.js';
   let src=read(FILE);
