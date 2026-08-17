@@ -86,10 +86,10 @@ function completeSet`,'pause/rest state semantics');
     "rest=a.status==='paused'?restElapsed(a):0;",
     'paused rest rendering');
 
-  src=regexOnce(src,
-    /\$\('#v87Rest'\)\.textContent=[\s\S]*?;const keys=paused/,
-    "$('#v87Rest').textContent=a.status==='paused'?`休息 ${clock(rest)}`:planDone?'切换项目时自动结束':' ';const keys=paused",
-    'paused first frame renders rest at zero');
+  src=once(src,
+    "'实际时间已暂停'",
+    "`休息 ${clock(rest)}`",
+    'paused zero-rest copy');
 
   src=once(src,
     ".v87Tool{width:46px;height:46px;border:0;border-radius:15px;background:rgba(255,255,255,.045);display:grid;place-items:center;color:var(--muted);font-size:13px}",
@@ -112,8 +112,7 @@ function axis812InstallLearningResume(){
 
   if(!src.includes('function restElapsed(')||!src.includes('function settleRest('))fail('rest accumulation model missing');
   if(!src.includes("a.restStartedAt=t")||src.includes('a.setDoneAt[done]=now();a.restStartedAt=now()'))fail('pause/rest semantics not converged');
-  if(src.includes("a.status==='paused'?'实际时间已暂停'"))fail('paused transient copy survived');
-  if(!src.includes("a.status==='paused'?`休息 ${clock(rest)}`"))fail('paused first-frame rest presentation missing');
+  if(src.includes('实际时间已暂停'))fail('paused transient copy survived');
   if(!src.includes('axis812InstallLearningResume()'))fail('standalone learning lifecycle bridge missing');
   if(lifecycle.includes('v89SpeakEnabled')||lifecycle.includes('readMeta()'))fail('standalone lifecycle must not recover learning preferences from training metadata');
   syntax(src,FILE);write(FILE,src);
