@@ -60,6 +60,7 @@ const STEPS=[
   'prepare-812-field-hardening.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
+  'postbuild-812-field-hardening.mjs',
   'postbuild-features-hardened.mjs',
   'postbuild-8712-completion.mjs',
   'postbuild-88-canonical.mjs',
@@ -95,6 +96,7 @@ if(contract.architecture==='canonical-single-runtime'){
   if(manifest.gates?.canonicalSingleRuntime!==true)fail('canonical single-runtime gate missing');
   if(manifest.requests?.dynamicJavascript!==0)fail(`dynamic runtime requests remain · ${manifest.requests?.dynamicJavascript}`);
   if(manifest.featureKernel?.embedded!==true||manifest.completionKernel?.embedded!==true)fail('feature/completion kernels are not embedded');
+  if(manifest.gates?.activeAdjustResolvesCurrentEvent!==true)fail('current-event active-adjust gate missing');
   if(manifest.gates?.catalogCategorySingleOwner!==true)fail('catalog category single-owner gate missing');
   if(manifest.gates?.watermarkFourSwitchContract!==true)fail('watermark four-switch gate missing');
   if(manifest.gates?.precisePlaceResolver!==true)fail('precise place resolver gate missing');
