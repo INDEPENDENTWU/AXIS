@@ -86,7 +86,7 @@ function axis812InstallLearningResume(){
   if(!src.includes('function restElapsed(')||!src.includes('function settleRest('))fail('rest accumulation model missing');
   if(!src.includes("a.restStartedAt=t")||src.includes('a.setDoneAt[done]=now();a.restStartedAt=now()'))fail('pause/rest semantics not converged');
   if(!src.includes('axis812InstallLearningResume()'))fail('standalone learning lifecycle bridge missing');
-  if(src.includes('v89SpeakEnabled')&&src.includes('axis812ResumeLearning'))fail('standalone lifecycle must not recover learning preferences from training metadata');
+  if(lifecycle.includes('v89SpeakEnabled')||lifecycle.includes('readMeta()'))fail('standalone lifecycle must not recover learning preferences from training metadata');
   syntax(src,FILE);write(FILE,src);
 }
 
