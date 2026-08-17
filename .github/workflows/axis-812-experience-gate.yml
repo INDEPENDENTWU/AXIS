@@ -1,0 +1,35 @@
+name: AXIS 8.12 Language Studio Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lib/learning-studio-812.mjs'
+      - 'prepare-812-*.mjs'
+      - 'postbuild-812-contract.mjs'
+      - 'scripts/axis-812-experience-smoke.mjs'
+      - 'build-release.mjs'
+      - '.github/workflows/axis-812-experience-gate.yml'
+  workflow_dispatch:
+
+jobs:
+  language-studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Syntax
+        run: |
+          node --check lib/learning-studio-812.mjs
+          node --check prepare-812-release-compat.mjs
+          node --check prepare-812-learning-content.mjs
+          node --check prepare-812-learning-settings.mjs
+          node --check postbuild-812-contract.mjs
+          node --check scripts/axis-812-experience-smoke.mjs
+      - name: Build exact AXIS 8.12 artifact
+        run: node build-release.mjs
+      - name: Corpus, dialogue and pedagogy smoke
+        run: node scripts/axis-812-experience-smoke.mjs
