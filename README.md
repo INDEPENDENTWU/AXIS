@@ -1,85 +1,124 @@
 # AXIS
 
-AXIS is a camera-first fitness memory tool: capture the real workout, keep the record, remember the equipment, compare what changed, and surface one useful next signal without turning training into a project-management app.
+Local-first training software built around what actually happened.
 
-## Current product — 8.8.1
+**Current release: 8.12** · [Open AXIS](https://axis-five-puce.vercel.app) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md) · [Current release](docs/CURRENT_RELEASE.md) · [Documentation](docs/README.md)
 
-- Mobile-first workout/session flow with no required workout plan.
-- Single-photo and short live-scan capture, with one canonical default capture preference (`photo` / `3s` / `5s`).
-- Immediate timestamp seal plus configurable final photo/video watermark.
-- Four independent watermark information switches (name / training data / location / time) plus a centered AXIS brand wordmark whose opacity is controlled independently from the information rail.
-- Precise place refresh through the canonical OSM resolver, with coordinates kept private from normal UI and final watermark text.
-- Personal equipment memory and a broad canonical exercise library.
-- Fast strength recording with set-level weight/reps, direct numeric editing, previous-value reuse, and per-set completion state.
-- Group-plan editing with unitless centered step controls and expanded weight/repetition quick presets.
-- Cardio recording with duration/intensity controls.
-- Active workout execution with a pause-aware per-item countdown, the existing AXIS completion tone at zero, pause/resume, set completion, rest state, finish behavior, and one visible one-time adjustment transaction. Intentional long-press finish suppresses the countdown-completion tone.
-- Custom equipment management with one canonical editor, automatic exercise classification, and professional muscle/effect mapping.
-- Local-first workout/media storage with explicit storage management.
-- Current v84 training trends, continuity/memory signals, and current v8710 three-card training report.
-- Owner-managed AI backend; end users never enter an API key or select models.
-- Platform adapter for a future iOS native shell (Photos write, haptics, Passkey, background transfer).
+AXIS records a workout without requiring the workout to behave like a project plan. Training state, sets, equipment memory, media and history remain useful locally; network and AI capabilities are optional additions rather than prerequisites.
 
-## Runtime architecture
+The product grew through many releases, but Production is deliberately flattened into one canonical browser runtime. Historical `v8xx` modules remain source and compatibility inputs; they are not separate product layers downloaded at runtime.
 
-AXIS 8.8.1 production is a **canonical single-runtime release**.
+## What is in 8.12
 
-The browser receives:
+- Strength and cardio recording with set-level weight/repetition state, direct editing and previous-value reuse.
+- Active training state with pause/resume, countdowns, reminders and concise completion behavior.
+- Equipment and exercise memory, custom equipment, search and local visual recognition.
+- Photo/video capture, timestamp sealing, configurable watermarking and local media storage.
+- History, reports and State Field signals derived from recorded behavior rather than a synthetic fitness score.
+- Optional owner-managed AI services for recognition and insight. Provider secrets stay server-side and model failure never blocks recording.
+- Optional cloud/sync foundation based on local ownership, revisioned entities, idempotent requests and deterministic conflict handling.
+- Language Studio as an isolated rest/learning channel: 25,716 available units across English, Japanese, Korean and Chinese, with 4/8/12-turn dialogue and no training ownership.
+- Chromium and iPhone-like WebKit regression gates, plus exact-production-SHA verification.
 
-1. one external JavaScript runtime: `axis-core.js?v=<content hash>`;
-2. one external stylesheet: `axis-style.css?v=<content hash>`;
-3. zero dynamic historical runtime chunks;
-4. zero optional feature/completion runtime requests;
-5. no silent downgrade or fallback to an older product while the public UI says 8.8.1.
+## Product rules
 
-Historical modules remain in the repository as compiler inputs and implementation history. `build-release.mjs` runs the deterministic convergence pipeline and `postbuild-88-canonical.mjs` emits the one browser runtime. They are not independent production layers.
+**Reality is authoritative.** A real workout is valid even when it changes, ends early or differs from a suggestion.
 
-Critical product surfaces use a **single-owner rule**. Current important owners include:
+**Local first.** Core training must work without an account, network or model call.
 
-- `v61.js` — live strength draft and high-frequency weight/reps recording;
-- `v874-professional.js` — canonical custom-exercise professional editor/inference UI;
-- canonical v8712 planner output — one group-plan renderer, with 8.8.1 unitless centered parameters and expanded quick presets;
-- v876 capture preference — the sole visible/default `photo` / `3s` / `5s` capture preference;
-- v87 active-session owner — the sole item countdown and completion-tone owner; it derives remaining time from the existing activity intervals so pause/resume never creates a second timer;
-- `#v87AdjustBtn` + the v879 one-time transaction sheet — the single active-session adjustment path;
-- v85/v8711/v8710 watermark chain — four information switches, one precise location resolver, one centered AXIS brand presentation, and one independent brand-opacity preference;
-- `v84-runtime.js` — current Trends surface; pre-v84 coverage UI remains retired;
-- `v8710-report.js` — current three-card report deck and report-share owner; base/v877 report surfaces remain retired.
+**One surface, one owner.** A visible action or piece of authoritative state has one writer. Replacing an owner includes retiring the previous writer.
 
-Critical geometry is bundled in first-paint CSS. High-frequency recording changes update values in place rather than rebuilding the active set row.
+**Fail open.** Vision, AI, cloud and other optional services degrade to local/manual behavior instead of blocking the workout.
 
-The public release contract lives in [`release-contract.json`](release-contract.json). `build-release.mjs`, CI, and the production deployment gate validate against that contract rather than maintaining independent version constants.
+**Quiet interfaces.** The product should spend less attention as it learns more about repeated behavior.
 
-See:
+See [docs/PRODUCT.md](docs/PRODUCT.md) for the product contract.
 
-- [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) — current release ownership map and handoff entry point for future work.
-- [`docs/ENGINEERING_PLAYBOOK.md`](docs/ENGINEERING_PLAYBOOK.md) — product architecture, ownership, visual/performance rules, regression strategy, and convergence roadmap.
-- [`docs/RUNTIME_CONTRACT.md`](docs/RUNTIME_CONTRACT.md) — release-blocking runtime invariants.
-- [`docs/AI_BACKEND.md`](docs/AI_BACKEND.md) — owner-managed AI configuration.
-- [`docs/IOS_NATIVE_BRIDGE.md`](docs/IOS_NATIVE_BRIDGE.md) — web/native boundary.
+## Production architecture
 
-## Release verification
+```text
+historical + compatibility source
+             |
+             v
+   deterministic convergence
+             |
+             v
+      contract assertions
+             |
+             v
+ axis-core.js + axis-style.css
+             |
+             v
+     one production runtime
+```
 
-The release-blocking browser gates verify the built artifact rather than only source structure. The current 8.8.1 matrix covers repeated cold boot, first-paint stability, Settings, profile, custom equipment, capture preference, sound/reminders, watermark, storage, direct strength recording, group-plan parameters, per-item countdown/tone/long-press suppression, set count, active-session pause/resume/completion, visible one-time adjustment, history, current v84 Trends, and current v8710 report. A separate iPhone-sized WebKit gate verifies the canonical runtime and critical mobile interactions, including the 8.8.1 planner/countdown/brand regression.
+The release entry point is:
 
-## AI architecture
+```bash
+node build-release.mjs
+```
 
-AXIS uses a local-first routing strategy:
+Vercel and EdgeOne use that same command. The build emits `axis-build.json`, which CI and Production verification use to assert release identity, runtime topology, exact source SHA and feature contracts.
 
-1. Personal visual memory first.
-2. Low-cost visual model only when necessary.
-3. At most two compressed key frames are sent for one recognition request.
-4. Training insight uses compact statistics only, never workout photos/video.
-5. AI failure never blocks logging: manual confirmation and local deterministic signals remain available.
+The CI baseline is Node 20.18.0. Browser release gates exercise both Chromium and iPhone-like WebKit.
 
-## Storage
+## Repository map
 
-The current Web product stores workout metadata in browser LocalStorage and media in IndexedDB on the current device/browser. The hosting platform does not hold the user's workout media in this build. Cloud identity/sync can be added later without changing the product's capture model.
+```text
+api/                 same-origin server endpoints
+cloud-functions/     alternate serverless adapter surface
+compiler/            explicit build-time source fragments
+lib/                 reusable contracts and current libraries
+data/                 curated local data
+scripts/              diagnostics, smoke and release verification
+docs/                 product, architecture, delivery and release contracts
+.github/workflows/    CI and Production gates
 
-## Web / native boundary
+app.js, v*.js         current/historical source owners used by convergence
+prepare-*.mjs         exact build-time migrations and ownership convergence
+postbuild-*.mjs       canonical packaging and release assertions
+build-release.mjs     only release build entry point
+```
 
-Safari/PWA cannot silently write captured media into the iPhone Photos library. `platform-v7.js` defines the native bridge boundary so a future iOS shell can add direct Photos write, haptics, Passkey identity and background transfer while retaining the existing web UI logic and server-side AI routes.
+The broad root is intentional at the 8.12 compatibility baseline: moving versioned source without retiring its build/data role would be a behavior-changing refactor. See [Repository structure](docs/REPOSITORY_STRUCTURE.md) and the [Compatibility ledger](docs/COMPATIBILITY_LEDGER.md) before changing historical source layout.
 
-## Integrity note
+Do not infer product ownership from version-like filenames. Start with [Current release](docs/CURRENT_RELEASE.md), [Architecture](docs/ARCHITECTURE.md) and the [documentation index](docs/README.md).
 
-AXIS burns a live timestamp seal into captured frames and can burn the finalized workout record into saved media. A client-controlled device cannot provide absolute cryptographic immutability by itself; server-signed timestamps or remote append-only storage would be required for that stronger guarantee.
+## Development discipline
+
+A change is complete when the intended owner is clear, competing behavior is retired, the final artifact is deterministic, and the affected real user path is covered by a regression test.
+
+Quick repository check:
+
+```bash
+node scripts/axis-repository-contract.mjs
+```
+
+Release build:
+
+```bash
+node build-release.mjs
+```
+
+The normal release path is:
+
+1. branch from the last verified `main`;
+2. make one coherent product or engineering change;
+3. run the repository contract, deterministic build and relevant local checks;
+4. pass Chromium and WebKit gates on the same candidate;
+5. merge only the verified head;
+6. verify that Production and the fixed public alias serve the exact merged source SHA.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [Engineering playbook](docs/ENGINEERING_PLAYBOOK.md) and [CI and release gates](docs/CI_AND_RELEASE.md).
+
+## Next
+
+8.13 is planned as **Runtime**, not as another feature expansion. The work starts with deterministic, UI-independent training logic in shadow mode, then migrates ownership gradually. The first targets are continuation, live route changes, reality actions, time budget and lower interaction cost over repeated use.
+
+The migration is intentionally incremental: 8.12 remains the compatibility baseline while new Runtime ownership proves itself through tests and allows old compiler/source layers to be retired rather than extended indefinitely.
+
+See [docs/ROADMAP.md](docs/ROADMAP.md).
+
+## Project status
+
+AXIS is under active development. The repository is public, but no software license has been selected yet; public visibility should not be interpreted as a grant of reuse rights.

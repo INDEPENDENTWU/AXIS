@@ -1,0 +1,42 @@
+name: Product change
+description: Propose a focused change to AXIS behavior, architecture or friction
+title: "change: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Start with the real problem, not the feature name. AXIS prefers fewer surfaces and clearer ownership over feature accumulation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What real user or engineering problem exists today?
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: What does AXIS do now?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest product change that would solve the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: ownership
+    attributes:
+      label: Ownership / compatibility
+      description: Which current owner or data contract would change? What must not regress?
+  - type: textarea
+    id: proof
+    attributes:
+      label: How would we know it is better?
+      description: State a concrete user-path or engineering acceptance criterion.
+    validations:
+      required: true

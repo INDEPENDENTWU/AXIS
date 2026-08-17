@@ -1,0 +1,15 @@
+# Default ownership
+* @INDEPENDENTWU
+
+# Repository governance and release policy
+/.github/ @INDEPENDENTWU
+/docs/ @INDEPENDENTWU
+/build-release.mjs @INDEPENDENTWU
+/release-contract.json @INDEPENDENTWU
+/vercel.json @INDEPENDENTWU
+/edgeone.json @INDEPENDENTWU
+
+# Server and shared contracts
+/api/ @INDEPENDENTWU
+/cloud-functions/ @INDEPENDENTWU
+/lib/ @INDEPENDENTWU
