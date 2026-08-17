@@ -16,7 +16,10 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  const f='postbuild-882-contract.mjs';let s=read(f);s=once(s,"const sessionDurationExtension=['8.10.3','8.11'].includes(CURRENT_VERSION);","const sessionDurationExtension=['8.10.3','8.11','8.12'].includes(CURRENT_VERSION);",'8.8.2 session duration inheritance');write(f,s);
 }
 {
- const f='postbuild-891-contract.mjs';let s=read(f);s=once(s,"version.startsWith('8.10')||version==='8.11'","version.startsWith('8.10')||['8.11','8.12'].includes(version)",'8.9.1 version allowance');s=once(s,"version.startsWith('8.10')||version==='8.11'","version.startsWith('8.10')||['8.11','8.12'].includes(version)",'8.9.1 modern allowance');write(f,s);
+ const f='postbuild-891-contract.mjs';let s=read(f);
+ const needle="version.startsWith('8.10')||version==='8.11'",replacement="version.startsWith('8.10')||['8.11','8.12'].includes(version)",n=s.split(needle).length-1;
+ if(n!==2)fail(`8.9.1 inherited version allowances expected twice, found ${n}`);
+ s=s.replaceAll(needle,replacement);write(f,s);
 }
 {
  const f='postbuild-810-contract.mjs';let s=read(f);s=once(s,"['8.10','8.10.1','8.10.2','8.10.3','8.11']","['8.10','8.10.1','8.10.2','8.10.3','8.11','8.12']",'8.10 version allowance');write(f,s);
