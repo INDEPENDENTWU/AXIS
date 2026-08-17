@@ -87,6 +87,11 @@ function completeSet`,'pause/rest state semantics');
     'paused rest rendering');
 
   src=once(src,
+    "$('#v87Rest').textContent=rest?`休息 ${clock(rest)}`:a.status==='paused'?'实际时间已暂停':planDone?'切换项目时自动结束':' ';",
+    "$('#v87Rest').textContent=a.status==='paused'?`休息 ${clock(rest)}`:planDone?'切换项目时自动结束':' ';",
+    'paused first frame renders rest at zero');
+
+  src=once(src,
     ".v87Tool{width:46px;height:46px;border:0;border-radius:15px;background:rgba(255,255,255,.045);display:grid;place-items:center;color:var(--muted);font-size:13px}",
     ".v87Tool{width:46px;height:46px;border:0;border-radius:15px;background:rgba(255,255,255,.045);display:grid;place-items:center;color:var(--muted);font-size:13px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}",
     'pause tap highlight removal');
@@ -107,9 +112,10 @@ function axis812InstallLearningResume(){
 
   if(!src.includes('function restElapsed(')||!src.includes('function settleRest('))fail('rest accumulation model missing');
   if(!src.includes("a.restStartedAt=t")||src.includes('a.setDoneAt[done]=now();a.restStartedAt=now()'))fail('pause/rest semantics not converged');
+  if(src.includes("a.status==='paused'?'实际时间已暂停'"))fail('paused transient copy survived');
   if(!src.includes('axis812InstallLearningResume()'))fail('standalone learning lifecycle bridge missing');
   if(lifecycle.includes('v89SpeakEnabled')||lifecycle.includes('readMeta()'))fail('standalone lifecycle must not recover learning preferences from training metadata');
   syntax(src,FILE);write(FILE,src);
 }
 
-console.log('[AXIS 8.12 field hardening] PASS · recording-owner group-plan baseline · pause-owned cumulative rest · no set-complete rest · isolated standalone learning resume');
+console.log('[AXIS 8.12 field hardening] PASS · recording-owner group-plan baseline · pause-owned cumulative rest · first-frame rest · no set-complete rest · isolated standalone learning resume');
