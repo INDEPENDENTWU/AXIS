@@ -59,6 +59,7 @@ const STEPS=[
   'prepare-812-learning-settings.mjs',
   'prepare-812-field-hardening.mjs',
   'prepare-813-live-route.mjs',
+  'prepare-813-settings-convergence.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
