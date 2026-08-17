@@ -14,24 +14,12 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  */
 
 {
-  const FILE='v61.js';
-  let src=read(FILE);
-  src=regexOnce(
-    src,
-    /(function renderSets\(\)\{[\s\S]*?)(\}\s*function hideSets\(\))/, 
-    `$1;try{D.dispatchEvent(new CustomEvent('axis:set-draft-rendered',{detail:{first:{weight:draft[0]?.weight??null,reps:draft[0]?.reps??null},count:draft.length}}))}catch{}$2`,
-    'synchronous set-draft bridge'
-  );
-  if(!src.includes("axis:set-draft-rendered"))fail('set-draft bridge missing after renderSets');
-  syntax(src,FILE);write(FILE,src);
-}
-
-{
   const FILE='v874-set-bridge.js';
   let src=read(FILE);
   src=once(src,"let planN=1,planMode='same',planBase=null,lastPlanLabel='';","let planN=1,planMode='same',planBase=null,lastPlanLabel='',canonicalFirst=null;",'canonical first-set cache');
   src=once(src,"function openPlan(){const a=values()[0]||activeInfo()||{w:20,r:10};planBase={w:Number(a.w)||0,r:Number(a.r)||1};planN=rows().length||1;planMode='same';renderPlan();$('#v875PlanSheet').classList.add('show')}","function openPlan(){const live=values()[0]||activeInfo()||{w:20,r:10},a=canonicalFirst||live;planBase={w:Number(a.w)||0,r:Number(a.r)||1};planN=rows().length||1;planMode='same';renderPlan();$('#v875PlanSheet').classList.add('show')}",'plan uses canonical current first set');
-  src=once(src,"const name=$('#equipmentName');if(name)new MutationObserver(()=>{seedName='';seedDone=false;lastPlanLabel='';setTimeout(patch,35)}).observe(name,{childList:true,characterData:true,subtree:true});","const name=$('#equipmentName');if(name)new MutationObserver(()=>{seedName='';seedDone=false;lastPlanLabel='';canonicalFirst=null;setTimeout(patch,35)}).observe(name,{childList:true,characterData:true,subtree:true});D.addEventListener('axis:set-draft-rendered',e=>{const f=e?.detail?.first;if(f&&Number.isFinite(Number(f.weight))&&Number.isFinite(Number(f.reps)))canonicalFirst={w:Number(f.weight),r:Number(f.reps)};else canonicalFirst=null;patch()},true);",'immediate group-plan rebind after draft rebuild');
+  src=once(src,"const name=$('#equipmentName');if(name)new MutationObserver(()=>{seedName='';seedDone=false;lastPlanLabel='';setTimeout(patch,35)}).observe(name,{childList:true,characterData:true,subtree:true});","const name=$('#equipmentName');if(name)new MutationObserver(()=>{seedName='';seedDone=false;lastPlanLabel='';canonicalFirst=null;setTimeout(patch,35)}).observe(name,{childList:true,characterData:true,subtree:true});",'reset group-plan source when equipment changes');
+  src=once(src,"D.addEventListener('axis:recording-render',()=>patch());","const syncPlanSource=()=>{const f=values()[0];canonicalFirst=f&&Number.isFinite(Number(f.w))&&Number.isFinite(Number(f.r))?{w:Number(f.w),r:Number(f.r)}:null;patch()};D.addEventListener('axis:recording-render',syncPlanSource);D.addEventListener('axis:recording-change',syncPlanSource);",'canonical recording-event bridge');
   syntax(src,FILE);write(FILE,src);
 }
 
@@ -117,4 +105,4 @@ function axis812InstallLearningResume(){
   syntax(src,FILE);write(FILE,src);
 }
 
-console.log('[AXIS 8.12 field hardening] PASS · live group-plan source · current adjustment id · pause-owned cumulative rest · no set-complete rest · standalone learning resume');
+console.log('[AXIS 8.12 field hardening] PASS · recording-event group-plan source · current adjustment id · pause-owned cumulative rest · no set-complete rest · standalone learning resume');
