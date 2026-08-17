@@ -35,16 +35,19 @@ function axis813SettingsStyle(){
  '@media(max-width:380px){#settingsSheet .v813SettingsGate>.settingLink>b{max-width:42vw}#v813LearningGate .v811CoreOptions.purpose,#v813LearningGate .v811CoreOptions.method{grid-template-columns:repeat(3,minmax(0,1fr))!important}}';
  D.head.appendChild(s)
 }
+function axis813PrimarySettingsList(){return $('#settingsSheet .settingsList:not(.second)')||$('#settingsSheet .settingsList')}
 function axis813SetGate(gate,open){if(!gate)return false;gate.classList.toggle('open',!!open);gate.querySelector(':scope>.settingLink')?.setAttribute('aria-expanded',open?'true':'false');return !!open}
 function axis813ToggleGate(gate){return axis813SetGate(gate,!gate?.classList.contains('open'))}
 
 const axis813BaseEnsureLearningConfig=axis810EnsureConfig;
 function axis813EnsureLearningInline(){
  axis813SettingsStyle();
- const box=$('#v89SpeakSettings');if(!box)return null;
- let entry=$('#v810ConfigEntry',box);
- if(!entry){entry=D.createElement('button');entry.type='button';entry.id='v810ConfigEntry';entry.className='v810ConfigEntry';entry.innerHTML='<span><b>学习安排</b><small id="v810ConfigSummary"></small></span><i>›</i>';box.appendChild(entry)}
+ const host=axis813PrimarySettingsList();if(!host)return null;
  let gate=$('#v813LearningGate');
+ if(gate&&gate.parentNode!==host)host.appendChild(gate);
+ let entry=$('#v810ConfigEntry',host);
+ if(gate){const owned=gate.querySelector(':scope>#v810ConfigEntry');if(owned)entry=owned}
+ if(!entry){entry=D.createElement('button');entry.type='button';entry.id='v810ConfigEntry';entry.className='settingLink';entry.innerHTML='<span>学习安排</span><b id="v810ConfigSummary"></b><i>›</i>';host.appendChild(entry)}
  if(!gate){
   const clean=entry.cloneNode(true);entry.replaceWith(clean);entry=clean;
   gate=D.createElement('div');gate.id='v813LearningGate';gate.className='v8711SettingGate v813SettingsGate';
@@ -52,6 +55,7 @@ function axis813EnsureLearningInline(){
   const fold=D.createElement('div');fold.className='v8711Fold';fold.id='v813LearningFold';gate.appendChild(fold);
   entry.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();axis810OpenConfig()},false)
  }
+ for(const duplicate of [...D.querySelectorAll('#v810ConfigEntry')])if(duplicate!==entry)duplicate.remove();
  let panel=$('#v810ConfigPanel');
  if(panel&&!gate.contains(panel)){
   const controls=$('#v810SpeakControls',panel);panel.remove();panel=D.createElement('div');panel.id='v810ConfigPanel';panel.className='v813InlineSettingsPanel';if(controls)panel.appendChild(controls);$('#v813LearningFold')?.appendChild(panel)
@@ -68,12 +72,15 @@ axis810CloseConfig=function(){axis813SetGate($('#v813LearningGate'),false)};
 const axis813BaseEnsureServicePanel=axis811EnsureServicePanel;
 function axis813EnsureServiceInline(){
  axis813SettingsStyle();axis811EnsureServiceEntry();
- const entry=$('#v811ServiceEntry');if(!entry)return null;
+ const host=axis813PrimarySettingsList();if(!host)return null;
+ let entry=$('#v811ServiceEntry',host)||$('#v811ServiceEntry');if(!entry)return null;
  let gate=$('#v813ServiceGate');
+ if(gate&&gate.parentNode!==host)host.appendChild(gate);
  if(!gate){
   gate=D.createElement('div');gate.id='v813ServiceGate';gate.className='v8711SettingGate v813SettingsGate';entry.parentNode.insertBefore(gate,entry);gate.appendChild(entry);entry.setAttribute('aria-expanded','false');
   const fold=D.createElement('div');fold.className='v8711Fold';fold.id='v813ServiceFold';gate.appendChild(fold)
  }
+ for(const duplicate of [...D.querySelectorAll('#v811ServiceEntry')])if(duplicate!==entry)duplicate.remove();
  const old=$('#v811ServicePanel');if(old&&!gate.contains(old))old.remove();
  let panel=$('#v811ServicePanel',gate);if(panel)return panel;
  panel=D.createElement('div');panel.id='v811ServicePanel';panel.className='v813InlineServicePanel';panel.innerHTML='<div class="v813ServiceContent"><div class="v813ServiceBlock"><div class="v813ServiceHead"><span>云端同步</span><b id="v811CloudState">未连接</b></div><div class="v811ServiceSeg" id="v811CloudMode"><button data-v811-cloud="off">关闭</button><button data-v811-cloud="data">仅数据</button><button data-v811-cloud="media">数据 + 媒体</button></div><div class="v811ServiceNote" id="v811CloudNote">训练与学习始终先保存在本机。</div></div><div class="v813ServiceBlock"><div class="v813ServiceHead"><span>AXIS AI</span><b id="v811AIState">本地能力</b></div><div class="v811ServiceSeg" id="v811AIMode"><button data-v811-ai="off">关闭</button><button data-v811-ai="assist">辅助</button><button data-v811-ai="smart">智能</button></div></div><details class="v813ServiceDetails"><summary>能力状态</summary><div class="v811ServiceFacts" id="v811AIFacts"></div></details><details class="v813ServiceDetails"><summary>发送范围</summary><div id="v811PrivacyRows"></div></details></div>';
@@ -87,16 +94,19 @@ function axis813ConvergeSettings(){
  axis813SettingsStyle();axis813EnsureLearningInline();axis813EnsureServiceInline();
  try{axis810RenderSettings()}catch{}
  try{axis811RenderService()}catch{}
- const learning=$('#v813LearningGate'),service=$('#v813ServiceGate');
+ const host=axis813PrimarySettingsList(),learning=$('#v813LearningGate'),service=$('#v813ServiceGate');
+ if(host&&learning&&learning.parentNode!==host)host.appendChild(learning);
+ if(host&&service&&service.parentNode!==host)host.appendChild(service);
  if(learning&&service&&learning.parentNode===service.parentNode&&learning.nextElementSibling!==service){learning.after(service)}
 }
 axis813ConvergeSettings();
 D.addEventListener('click',e=>{if(e.target?.closest?.('#settingsBtn'))setTimeout(axis813ConvergeSettings,80)},true);
-try{window.__AXIS_813_SETTINGS__={version:'8.13-settings-convergence',owner:'canonical-settings-inline',learningInline:true,serviceInline:true,separateLearningSheet:false,separateServiceSheet:false,learningStore:'axis_v89_speak',serviceStore:AXIS811_SERVICE_KEY,trainingOwner:false,userInvokedServiceNetwork:true}}catch{}
+try{window.__AXIS_813_SETTINGS__={version:'8.13-settings-convergence',owner:'canonical-settings-inline',learningInline:true,serviceInline:true,separateLearningSheet:false,separateServiceSheet:false,learningHost:'settings-primary-list',learningStore:'axis_v89_speak',serviceStore:AXIS811_SERVICE_KEY,trainingOwner:false,userInvokedServiceNetwork:true}}catch{}
 `;
 
 src=src.slice(0,end)+block+'\n'+src.slice(end);
 if(/v813SettingsGate[^\n]*position\s*:\s*fixed/.test(block))fail('converged settings regained fixed positioning');
+if(!block.includes("axis813PrimarySettingsList"))fail('visible primary Settings host missing');
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.13 settings convergence] PASS · Learning + Cloud/AI inline Settings folds · compact progressive disclosure · stores/owners preserved');
+console.log('[AXIS 8.13 settings convergence] PASS · Learning + Cloud/AI inline Settings folds · visible primary-list host · compact progressive disclosure · stores/owners preserved');
