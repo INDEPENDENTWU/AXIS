@@ -56,10 +56,20 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  const f='scripts/axis-8103-smoke.mjs';let s=read(f);s=once(s,"['8.10.3','8.11'].includes(EXPECTED)","['8.10.3','8.11','8.12'].includes(EXPECTED)",'8.10.3 browser version allowance');write(f,s);
 }
 {
+ const f='prepare-812-learning-content.mjs';let s=read(f);
+ s=once(s,"const axis812BaseDialogueTurns=axis8103DialogueTurns;\naxis8103DialogueTurns=function(r){try{return axis812ConversationFor(r)}catch{return axis812BaseDialogueTurns(r)}};","try{window.__AXIS_812_DIALOGUE_TURNS__=axis812ConversationFor}catch{};",'8.12 dialogue bridge ownership');write(f,s);
+}
+{
+ const f='prepare-811-dialogue-depth.mjs';let s=read(f);
+ const old="function axis8103DialogueTurns(r){if(r?.target&&r?.response&&r?.followup&&r?.closing&&r?.turn5&&r?.turn6)return [{who:'你',text:r.target},{who:'对方',text:r.response},{who:'你',text:r.followup},{who:'对方',text:r.closing},{who:'你',text:r.turn5},{who:'对方',text:r.turn6}];";
+ const modern="function axis8103DialogueTurns(r){try{const d=window.__AXIS_812_DIALOGUE_TURNS__?.(r);if(Array.isArray(d)&&d.length)return d.map((text,i)=>({who:i%2?'对方':'你',text})).filter(x=>x.text)}catch{}if(r?.target&&r?.response&&r?.followup&&r?.closing&&r?.turn5&&r?.turn6)return [{who:'你',text:r.target},{who:'对方',text:r.response},{who:'你',text:r.followup},{who:'对方',text:r.closing},{who:'你',text:r.turn5},{who:'对方',text:r.turn6}];";
+ s=once(s,old,modern,'8.10.3 dialogue owner 8.12 delegation');write(f,s);
+}
+{
  const f='lib/learning-studio-812.mjs';let s=read(f);
  s=once(s,"next=AXIS812_LEVELS[Math.min(li+1,AXIS812_LEVELS.length-1)]","next=AXIS812_LEVELS[li===AXIS812_LEVELS.length-1?li-1:li+1]",'C1+ distinct alternative expression');
  const old="function conversation(lang,id,target,alt){const h=hash(id),ack=ACK[lang]||ACK.en,mid=MID[lang]||MID.en,tail=TAIL[lang]||TAIL.en;const a=ack[h%ack.length],q=mid[(h>>>3)%mid.length],u=tail.u[(h>>>7)%tail.u.length],o=tail.o[(h>>>13)%tail.o.length];const a2=ack[(h>>>17)%ack.length],q2=mid[(h>>>21)%mid.length];return [target,a,q,a2,alt||target,q2,u,o]}";
  const modern="function conversation(lang,id,target,alt){const h=hash(id),ack=ACK[lang]||ACK.en,mid=MID[lang]||MID.en,tail=TAIL[lang]||TAIL.en,ai=h%ack.length,qi=(h>>>3)%mid.length;const a=ack[ai],q=mid[qi],u=tail.u[(h>>>7)%tail.u.length],o=tail.o[(h>>>13)%tail.o.length],a2=ack[(ai+1+((h>>>17)%(ack.length-1)))%ack.length],q2=mid[(qi+1+((h>>>21)%(mid.length-1)))%mid.length];return [target,a,q,a2,alt||target,q2,u,o]}";
  s=once(s,old,modern,'dialogue acknowledgement/question diversity');write(f,s);
 }
-console.log('[AXIS 8.12 release compat] PASS · 8.12 identity · inherited contracts sealed · generated dialogue turns converge without C1+ or acknowledgement repetition');
+console.log('[AXIS 8.12 release compat] PASS · 8.12 identity · inherited contracts sealed · dialogue depth delegates through one existing voice owner');
