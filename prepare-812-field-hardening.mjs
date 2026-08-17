@@ -24,13 +24,6 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
 }
 
 {
-  const FILE='v879-runtime.js';
-  let src=read(FILE);
-  src=once(src,"b.onclick=()=>openEdit(id);","b.onclick=()=>{const current=activeId();if(current)openEdit(current)};",'active adjustment resolves live event id');
-  syntax(src,FILE);write(FILE,src);
-}
-
-{
   const FILE='v87-runtime.js';
   let src=read(FILE);
 
@@ -105,4 +98,4 @@ function axis812InstallLearningResume(){
   syntax(src,FILE);write(FILE,src);
 }
 
-console.log('[AXIS 8.12 field hardening] PASS · recording-event group-plan source · current adjustment id · pause-owned cumulative rest · no set-complete rest · standalone learning resume');
+console.log('[AXIS 8.12 field hardening] PASS · recording-event group-plan source · pause-owned cumulative rest · no set-complete rest · standalone learning resume');
