@@ -75,16 +75,19 @@ The Runtime Core gate checks:
 
 Stage 0/1 is intentionally outside the production build graph.
 
-`build-release.mjs` does not reference the new runtime or adapter. The new CI gate rebuilds the existing release and requires exact parity with the verified 8.12 baseline:
+`build-release.mjs` does not reference the new runtime or adapter. The new CI gate builds the PR candidate and then independently rebuilds the exact PR base SHA in a detached Git worktree. It requires the generated browser product to be byte-for-byte equivalent at the user-facing asset layer:
 
-- release `8.12`;
-- release hash `66d8097f7b56`;
-- `axis-core.js` hash `faf1d2f88421`;
-- `axis-style.css` hash `b59f3946c3e5`;
-- one initial JavaScript runtime;
-- zero dynamic historical runtime chunks.
+- raw `axis-core.js`;
+- raw `axis-style.css`;
+- generated `index.html`;
+- release/base version and release hash;
+- manifest core/CSS/canonical runtime hashes;
+- JavaScript/stylesheet request topology;
+- dynamic chunk topology.
 
-If a Stage 0/1 change alters those assets, CI fails.
+The candidate must also remain release `8.12`, architecture `canonical-single-runtime`, one initial JavaScript runtime and zero dynamic historical runtime chunks. Source-commit metadata is deliberately excluded because the candidate and base necessarily have different Git SHAs.
+
+For reference, the inherited canonical 8.12 runtime marker remains `faf1d2f88421`, CSS marker `b59f3946c3e5`, and release hash `66d8097f7b56`. If Stage 0/1 changes the actual production artifact relative to its base, CI fails.
 
 ## What does **not** change yet
 
