@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
 const FILE='scripts/axis-810-smoke.mjs';
 const fail=m=>{throw new Error(`[AXIS 8.10 test flow] ${m}`)};
 if(!fs.existsSync(FILE))fail(`missing ${FILE}`);
@@ -13,4 +14,8 @@ if(release==='8.12'){
  if(!src.includes(aligned))fail('8.10 explicit paused-rest fixture missing');
 }
 fs.writeFileSync(FILE,src);
-console.log(`[AXIS 8.10 test flow] PASS · ${release==='8.12'?'manual/long-rest learning requires explicit paused rest':'historical flow preserved'}`);
+if(release==='8.12'){
+ if(!fs.existsSync('scripts/prepare-8101-test-flow.mjs'))fail('AXIS 8.10.1 test-flow convergence is missing');
+ execFileSync(process.execPath,['scripts/prepare-8101-test-flow.mjs'],{stdio:'inherit'});
+}
+console.log(`[AXIS 8.10 test flow] PASS · ${release==='8.12'?'manual/long-rest learning requires explicit paused rest · 8.10.1 inherited UI aligned':'historical flow preserved'}`);
