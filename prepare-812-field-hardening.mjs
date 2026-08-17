@@ -70,17 +70,8 @@ function completeSet`,'pause/rest state semantics');
     'pause tap highlight removal');
 
   const lifecycle=`
-function axis812RepairLearningPrefs(){
- try{
-  const s=axis89SpeakStore(),p=s.prefs||(s.prefs={}),legacy=readMeta()?.prefs||{};let dirty=false;
-  if(typeof p.enabled!=='boolean'&&typeof legacy.v89SpeakEnabled==='boolean'){p.enabled=legacy.v89SpeakEnabled;dirty=true}
-  if(!p.native&&legacy.v89SpeakNative){p.native=legacy.v89SpeakNative;dirty=true}
-  if(!p.target&&legacy.v89SpeakTarget){p.target=legacy.v89SpeakTarget;dirty=true}
-  if(dirty)axis89SaveSpeak(s)
- }catch{}
-}
 function axis812ResumeLearning(){
- try{axis812RepairLearningPrefs();axis8101Install?.();injectRestSpeak?.();axis810RenderSettings?.();renderNow(true)}catch{}
+ try{axis8101Install?.();injectRestSpeak?.();axis810RenderSettings?.();renderNow(true)}catch{}
 }
 function axis812InstallLearningResume(){
  if(D.documentElement.dataset.axis812LearningResume==='1')return;D.documentElement.dataset.axis812LearningResume='1';
@@ -90,12 +81,13 @@ function axis812InstallLearningResume(){
 }
 `;
   src=once(src,"function boot(){",lifecycle+"\nfunction boot(){",'standalone learning lifecycle bridge');
-  src=once(src,"axis8101Install();try{injectRestSpeak()}","axis8101Install();axis812InstallLearningResume();axis812RepairLearningPrefs();try{injectRestSpeak()}",'learning resume boot install');
+  src=once(src,"axis8101Install();try{injectRestSpeak()}","axis8101Install();axis812InstallLearningResume();try{injectRestSpeak()}",'learning resume boot install');
 
   if(!src.includes('function restElapsed(')||!src.includes('function settleRest('))fail('rest accumulation model missing');
   if(!src.includes("a.restStartedAt=t")||src.includes('a.setDoneAt[done]=now();a.restStartedAt=now()'))fail('pause/rest semantics not converged');
   if(!src.includes('axis812InstallLearningResume()'))fail('standalone learning lifecycle bridge missing');
+  if(src.includes('v89SpeakEnabled')&&src.includes('axis812ResumeLearning'))fail('standalone lifecycle must not recover learning preferences from training metadata');
   syntax(src,FILE);write(FILE,src);
 }
 
-console.log('[AXIS 8.12 field hardening] PASS · recording-event group-plan source · pause-owned cumulative rest · no set-complete rest · standalone learning resume');
+console.log('[AXIS 8.12 field hardening] PASS · recording-event group-plan source · pause-owned cumulative rest · no set-complete rest · isolated standalone learning resume');
