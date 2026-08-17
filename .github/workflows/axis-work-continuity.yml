@@ -1,0 +1,43 @@
+name: AXIS Work Continuity Contract
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  continuity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate canonical handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/CURRENT_WORK.md
+          test -f docs/WORK_CONTINUITY.md
+          grep -q '^## Production baseline at start of this work' docs/CURRENT_WORK.md
+          grep -q '^## Active change' docs/CURRENT_WORK.md
+          grep -q '^## Validation for this work' docs/CURRENT_WORK.md
+          grep -q '^## Next planned stage' docs/CURRENT_WORK.md
+          grep -q 'Conversation history is supplemental only' docs/WORK_CONTINUITY.md
+      - name: Require handoff update for executable-code PRs
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --name-only "$BASE_SHA" "$HEAD_SHA" > /tmp/axis-changed.txt
+          if grep -Eq '^(app\.js$|v[0-9].*\.js$|runtime/|api/|cloud-functions/|lib/|scripts/|prepare-.*\.mjs$|postbuild-.*\.mjs$|build-.*\.mjs$|build-release\.mjs$|release-contract\.json$|vercel\.json$|edgeone\.json$)' /tmp/axis-changed.txt; then
+            if ! grep -qx 'docs/CURRENT_WORK.md' /tmp/axis-changed.txt; then
+              echo 'Executable AXIS changes require docs/CURRENT_WORK.md in the same PR.' >&2
+              cat /tmp/axis-changed.txt >&2
+              exit 1
+            fi
+          fi
+          echo '[AXIS work continuity] PASS'

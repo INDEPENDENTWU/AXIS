@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+
+const ENGINE=process.env.AXIS_ENGINE||'chromium';
+const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const VERSION=JSON.parse(fs.readFileSync('release-contract.json','utf8')).publicVersion;
+const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core');
+const launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
+const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},locale:'zh-CN'});
+const page=await context.newPage();
+const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(obj)});
+for(const [pattern,obj] of [['**/api/ai-status**',{available:false,vision:false,insight:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}]])await page.route(pattern,r=>json(r,obj));
+const errors=[];page.on('pageerror',e=>errors.push(String(e?.stack||e)));
+const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:6000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:9000})};
+
+assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:12000}))?.ok());
+await page.evaluate(()=>localStorage.clear());await page.reload({waitUntil:'domcontentloaded'});await ready();
+assert.equal((await page.locator('.versionLine').getAttribute('aria-label')||'').trim(),`版本 ${VERSION}`);
+
+console.log(`[AXIS 8.12 field hardening ${ENGINE}] group plan tracks live first-set draft and survives rebuild`);
+await page.locator('#quickRecordBtn').click();
+await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show')&&document.querySelector('#v8Recent [data-qid]'),undefined,{timeout:2000});
+await page.locator('#v8Recent [data-qid]:visible').first().click();
+await page.waitForFunction(()=>document.querySelector('#v8Sets .v8SetRow')&&document.querySelector('.v875PlanEntry'),undefined,{timeout:3000});
+await page.evaluate(()=>{const h=document.querySelector('#v8Sets');for(const [k,v] of [['w','27.5'],['r','12']]){const b=document.createElement('button');b.style.display='none';b.dataset[k]=v;h.appendChild(b);b.click()}});
+await page.waitForFunction(()=>{const a=[...document.querySelectorAll('#v8Sets .v8SetRow:first-child span>b')].map(x=>x.textContent.trim());return a[0]==='27.5'&&a[1]==='12'&&document.querySelector('.v875PlanEntry')});
+await page.locator('#v8Sets [data-cnt="1"]').click();
+assert.equal(await page.locator('.v875PlanEntry').count(),1,'group plan vanished after set-count rebuild');
+await page.locator('.v875PlanEntry').click();
+await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show')&&document.querySelector('#v8712PlanBody .v8712PlanBase'),undefined,{timeout:3000});
+assert.match((await page.locator('#v8712PlanBody .v8712PlanBase').innerText()).replace(/\s+/g,' '),/27\.5kg × 12次/,'canonical group plan reverted to stale 20kg/10 baseline');
+await page.locator('#v875PlanSheet [data-v875-close-plan]').click();
+await page.locator('#scanSheet [data-close="scanSheet"]').click();
+
+console.log(`[AXIS 8.12 field hardening ${ENGINE}] active adjustment resolves current activity type, not captured id`);
+await page.evaluate(()=>{const t=Date.now(),c={version:60,sessions:[],active:{id:'FIELD',start:t-120000,events:[{id:'CARDIO',equipmentId:'treadmill',name:'跑步机',kind:'cardio',time:t-110000,duration:10,intensity:5,muscles:['心肺'],frameRefs:[]},{id:'STRENGTH',equipmentId:'chest',name:'胸推',kind:'strength',time:t-60000,weight:40,reps:10,sets:3,muscles:['胸肌'],frameRefs:[]}]},selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{name:'',height:'',weight:'',bodyFat:'',years:'',freq:3,goal:'',memories:[],customEq:[]},prefs:{keepClip:true,scanSeconds:3,watermark:{name:true,data:true,time:true,brand:true,pos:'bl',photoMode:'wm',videoMode:'wm'}}};localStorage.setItem('axis_v60_state',JSON.stringify(c));localStorage.setItem('axis_v8_meta',JSON.stringify({prefs:{},events:{CARDIO:{activity:{status:'active',startedAt:t-110000,lastResumedAt:t-110000,estimateMs:600000,completedSets:0,intervals:[{start:t-110000,end:null}]},sets:[]},STRENGTH:{activity:{status:'paused',startedAt:t-60000,lastResumedAt:t-60000,pausedAt:t-50000,estimateMs:360000,completedSets:0,intervals:[{start:t-60000,end:t-50000}]},sets:[{weight:40,reps:10,state:'assumed'},{weight:40,reps:10,state:'assumed'},{weight:40,reps:10,state:'assumed'}]}}}))});
+await page.reload({waitUntil:'domcontentloaded'});await ready();await page.waitForFunction(()=>document.querySelector('#v87AdjustBtn'));
+await page.evaluate(()=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)),t=Date.now(),ca=m.events.CARDIO.activity,sa=m.events.STRENGTH.activity;ca.intervals.at(-1).end=t;ca.status='paused';ca.pausedAt=t;ca.restStartedAt=t;sa.status='active';sa.pausedAt=null;sa.lastResumedAt=t;sa.intervals.push({start:t,end:null});localStorage.setItem(k,JSON.stringify(m))});
+await page.waitForFunction(()=>document.querySelector('#v87Finish')?.dataset.id==='STRENGTH');
+await page.locator('#v87AdjustBtn').click();await page.waitForFunction(()=>document.querySelector('#v879Edit')?.classList.contains('show'));
+const editText=(await page.locator('#v879Edit').innerText()).replace(/\s+/g,' ');
+assert.match(editText,/组数/);assert.match(editText,/重量/);assert.match(editText,/次数/);assert.doesNotMatch(editText,/阻力/,'strength activity opened stale cardio adjustment fields');
+await page.locator('#v879X').click();await page.waitForFunction(()=>!document.querySelector('#v879Edit')?.classList.contains('show'));
+
+console.log(`[AXIS 8.12 field hardening ${ENGINE}] completing a set does not start rest; pause owns cumulative rest`);
+await page.waitForFunction(()=>document.querySelector('#v87Primary')&&!document.querySelector('#v87Primary').disabled);
+await page.locator('#v87Primary').click();await page.waitForTimeout(120);
+let state=await page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v8_meta')).events.STRENGTH.activity);
+assert.equal(state.completedSets,1);assert.equal(state.restStartedAt,null,'set completion still starts rest');assert.doesNotMatch((await page.locator('#v87Rest').innerText())||'',/^休息\s/);
+const continuity=await page.evaluate(()=>{const host=document.querySelector('#v87Now'),seen=[];new MutationObserver(()=>seen.push({show:host.classList.contains('show'),id:document.querySelector('#v87Finish')?.dataset.id||''})).observe(host,{attributes:true,attributeFilter:['class']});window.__AXIS_FIELD_CONTINUITY__=seen;return getComputedStyle(document.querySelector('#v87Toggle')).webkitTapHighlightColor});
+assert.ok(continuity==='transparent'||/rgba\(0, 0, 0, 0\)/.test(continuity),`pause tap highlight remains ${continuity}`);
+await page.locator('#v87Toggle').click();await page.waitForTimeout(1250);
+state=await page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v8_meta')).events.STRENGTH.activity);
+assert.equal(state.status,'paused');assert.ok(Number(state.restStartedAt)>0);assert.match((await page.locator('#v87Rest').innerText())||'',/休息/);
+assert.equal(await page.locator('#v87Now').evaluate(el=>el.classList.contains('show')),true,'active card disappeared during pause');
+assert.equal(await page.evaluate(()=>window.__AXIS_FIELD_CONTINUITY__.some(x=>!x.show)),false,'pause removed the active card for a frame');
+await page.locator('#v87Toggle').click();await page.waitForTimeout(120);
+state=await page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v8_meta')).events.STRENGTH.activity);
+assert.equal(state.status,'active');assert.equal(state.restStartedAt,null);assert.ok(Number(state.restAccumulatedMs)>=900,'first pause was not accumulated');const firstRest=Number(state.restAccumulatedMs);
+await page.locator('#v87Toggle').click();await page.waitForTimeout(650);await page.locator('#v87Toggle').click();await page.waitForTimeout(120);
+state=await page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v8_meta')).events.STRENGTH.activity);
+assert.ok(Number(state.restAccumulatedMs)>firstRest+400,'second pause did not accumulate onto first rest');
+
+console.log(`[AXIS 8.12 field hardening ${ENGINE}] Home Screen / standalone learning survives lifecycle resume`);
+await page.evaluate(()=>{const t=Date.now(),m=JSON.parse(localStorage.getItem('axis_v8_meta'));const a=m.events.STRENGTH.activity;if(a.status==='active'){a.intervals.at(-1).end=t;a.status='paused';a.pausedAt=t;a.restStartedAt=t-26000}localStorage.setItem('axis_v8_meta',JSON.stringify(m));localStorage.setItem('axis_v89_speak',JSON.stringify({seen:{},current:null,prefs:{enabled:true,native:'zh',target:'en',mode:'auto',track:'gym',cadence:'auto',level:'adaptive',dailyTarget:0,opportunity:'auto',standalone:'manual'},mastered:{},review:{},daily:{},sessions:{},history:[]}))});
+await page.addInitScript(()=>{try{Object.defineProperty(navigator,'standalone',{configurable:true,get:()=>true})}catch{}const real=window.matchMedia?.bind(window);window.matchMedia=q=>q==='(display-mode: standalone)'?{matches:true,media:q,onchange:null,addListener(){},removeListener(){},addEventListener(){},removeEventListener(){},dispatchEvent(){return false}}:real?real(q):{matches:false,media:q,addListener(){},removeListener(){}}});
+await page.reload({waitUntil:'domcontentloaded'});await ready();
+await page.waitForFunction(()=>document.querySelector('#v87Rest')?.textContent?.trim().length>0,undefined,{timeout:5000});
+await page.evaluate(()=>{window.dispatchEvent(new Event('pageshow'));window.dispatchEvent(new Event('focus'));document.dispatchEvent(new Event('visibilitychange'))});await page.waitForTimeout(250);
+assert.equal(await page.evaluate(()=>navigator.standalone),true);assert.equal(await page.evaluate(()=>matchMedia('(display-mode: standalone)').matches),true);
+assert.ok(await page.locator('#v87Rest.v89Speak,#v87Rest.v891SpeakReady,#v87Rest.v810SpeakPrompt,#v87Rest.v8101Opportunity').count()>=1,'standalone lifecycle lost learning surface');
+
+assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
+await context.close();await browser.close();
+console.log(`[AXIS 8.12 field hardening ${ENGINE}] PASS · group plan · current adjust type · pause-owned rest · visual continuity · standalone learning`);

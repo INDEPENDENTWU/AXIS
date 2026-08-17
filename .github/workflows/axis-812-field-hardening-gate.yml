@@ -1,0 +1,68 @@
+name: AXIS 8.12 Field Hardening Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact release
+        run: node build-release.mjs
+      - name: Align release assertions
+        run: node scripts/prepare-release-test-contract.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve release
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-field-http.log 2>&1 &
+          sleep 1
+      - name: Field hardening regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-812-field-hardening-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-field-http.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact release
+        run: node build-release.mjs
+      - name: Align release assertions
+        run: node scripts/prepare-release-test-contract.mjs
+      - name: Prepare WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve release
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-field-webkit-http.log 2>&1 &
+          sleep 1
+      - name: iPhone-like field hardening regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-812-field-hardening-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-field-webkit-http.log || true

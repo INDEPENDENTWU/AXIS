@@ -34,18 +34,18 @@ const searchText=(await page.locator('#v873SmartResults').innerText()).replace(/
 assert.match(searchText,/臀|深蹲|腿|glute/i);
 await page.evaluate(()=>document.querySelector('#eqSheet')?.classList.remove('show'));
 
-console.log(`[AXIS 8.9 ${ENGINE}] Rest Speak is off by default and geometry-neutral when enabled`);
+console.log(`[AXIS 8.9 ${ENGINE}] Rest Speak is off by default and geometry-neutral during explicit pause`);
 await page.evaluate(()=>{
  const t=Date.now(),mk=(id,equipmentId,name,offset)=>({id,equipmentId,name,kind:'strength',time:t-offset,weight:20,reps:10,sets:1,muscles:['胸肌'],frameRefs:[]});
  const events=[
   mk('E89R1','lat','高位下拉',420000),mk('E89R2','row','坐姿划船',330000),mk('E89R3','chest','胸推',240000),mk('E89R4','legext','腿屈伸',150000),mk('E89R5','shoulder','肩推',90000)
  ];
  const core={version:60,sessions:[],active:{id:'S89R',start:t-480000,events},selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{name:'',height:'',weight:'',bodyFat:'',years:'',freq:3,goal:'',memories:[],customEq:[]},prefs:{keepClip:true,scanSeconds:3,watermark:{name:true,data:true,time:true,brand:true,pos:'bl',photoMode:'wm',videoMode:'wm'}}};
- const act=(status,start,end=null,restStartedAt=null)=>({status,startedAt:start,lastResumedAt:start,pausedAt:status==='paused'?(end||t-60000):null,finishedAt:status==='finished'?(end||t-60000):null,estimateMs:180000,completedSets:status==='finished'?1:(restStartedAt?1:0),intervals:[{start,end:status==='active'?null:(end||t-60000)}],restStartedAt});
+ const act=(status,start,end=null,restStartedAt=null)=>({status,startedAt:start,lastResumedAt:start,pausedAt:status==='paused'?(end||t-60000):null,finishedAt:status==='finished'?(end||t-60000):null,estimateMs:180000,completedSets:status==='finished'?1:(restStartedAt?1:0),intervals:[{start,end:status==='active'?null:(end||t-60000)}],restStartedAt,restAccumulatedMs:0});
  const meta={prefs:{v89SpeakEnabled:true,v89SpeakNative:'zh',v89SpeakTarget:'en'},events:{
   E89R1:{activity:act('finished',t-420000,t-360000),sets:[{state:'done',doneAt:t-360000}]},
   E89R2:{activity:act('paused',t-330000,t-300000),sets:[{state:'assumed',doneAt:null}]},
-  E89R3:{activity:act('active',t-240000,null,t-16000),sets:[{state:'done',doneAt:t-16000},{state:'assumed',doneAt:null},{state:'assumed',doneAt:null}]},
+  E89R3:{activity:act('paused',t-240000,t-16000,t-16000),sets:[{state:'done',doneAt:t-16000},{state:'assumed',doneAt:null},{state:'assumed',doneAt:null}]},
   E89R4:{activity:act('paused',t-150000,t-120000),sets:[{state:'assumed',doneAt:null}]},
   E89R5:{activity:act('finished',t-90000,t-60000),sets:[{state:'done',doneAt:t-60000}]}
  }};
@@ -55,7 +55,7 @@ await page.reload({waitUntil:'domcontentloaded'});await ready();
 await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show')&&window.__AXIS_ACTIVE_CONTROL__?.owner==='v87-direct-884',undefined,{timeout:3500});
 assert.equal(await page.evaluate(()=>window.__AXIS_ACTIVE_CONTROL__?.owner),'v87-direct-884');
 assert.match(await page.locator('#v87Now #v87Rest').innerText(),/^休息/);
-assert.equal(await page.locator('#v87Rest.v89Speak').count(),0,'Rest Speak leaked from training metadata or appears while disabled');
+assert.equal(await page.locator('#v87Rest.v89Speak').count(),0,'Rest Speak leaked from training metadata or appears while isolated preference is disabled');
 const h0=await page.locator('#v87Now').evaluate(el=>el.getBoundingClientRect().height);
 await page.evaluate(()=>localStorage.setItem('axis_v89_speak',JSON.stringify({seen:{},current:null,prefs:{enabled:true,native:'zh',target:'en'}})));
 await page.reload({waitUntil:'domcontentloaded'});await ready();
@@ -70,8 +70,8 @@ assert.equal(await page.locator('.axis883TimelineSafe').count(),0,'8.9 reintrodu
 assert.equal(await page.evaluate(()=>window.__AXIS_ACTIVE_CONTROL__?.owner),'v87-direct-884','active-control owner changed');
 
 await page.locator('#v87Toggle').click();
-await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v8_meta')).events.E89R3.activity.status==='paused',undefined,{timeout:1400});
-assert.equal(await page.locator('#v87Rest.v89Speak').count(),0,'Rest Speak survived outside rest state');
+await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v8_meta')).events.E89R3.activity.status==='active',undefined,{timeout:1400});
+assert.equal(await page.locator('#v87Rest.v89Speak').count(),0,'Rest Speak survived after explicit rest ended');
 await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show')&&document.querySelector('#v89SpeakSettings'),undefined,{timeout:1500});
 assert.equal(await page.locator('#v89SpeakSettings').count(),1);
 assert.equal(await page.locator('#v89SpeakTarget button').count(),3,'language target controls incomplete');
