@@ -16,18 +16,13 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
 {
   const FILE='v61.js';
   let src=read(FILE);
-  src=once(
+  src=regexOnce(
     src,
-    'box.innerHTML=`<div class="v8SetHead"',
-    'box.innerHTML=`<div class="v8SetHead"',
-    'strength draft render owner'
-  );
-  src=once(
-    src,
-    ';syncHidden(draft)}\nfunction hideSets()',
-    ";syncHidden(draft);try{D.dispatchEvent(new CustomEvent('axis:set-draft-rendered',{detail:{first:{weight:draft[0]?.weight??null,reps:draft[0]?.reps??null},count:draft.length}}))}catch{}}\nfunction hideSets()",
+    /(function renderSets\(\)\{[\s\S]*?)(\}\nfunction hideSets\(\))/, 
+    `$1;try{D.dispatchEvent(new CustomEvent('axis:set-draft-rendered',{detail:{first:{weight:draft[0]?.weight??null,reps:draft[0]?.reps??null},count:draft.length}}))}catch{}$2`,
     'synchronous set-draft bridge'
   );
+  if(!src.includes("axis:set-draft-rendered"))fail('set-draft bridge missing after renderSets');
   syntax(src,FILE);write(FILE,src);
 }
 
@@ -93,8 +88,6 @@ function completeSet`,'pause/rest state semantics');
     ".v87Tool{width:46px;height:46px;border:0;border-radius:15px;background:rgba(255,255,255,.045);display:grid;place-items:center;color:var(--muted);font-size:13px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}",
     'pause tap highlight removal');
 
-  /* A Home Screen web app can be suspended/resumed without the same tab lifecycle as Safari.
-     Re-mount learning surfaces on event boundaries only; no polling and no training ownership. */
   const lifecycle=`
 function axis812RepairLearningPrefs(){
  try{
