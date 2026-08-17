@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
 
 const FILE='scripts/axis-891-smoke.mjs';
 const fail=m=>{throw new Error(`[AXIS 8.9.1 test flow] ${m}`)};
@@ -16,4 +17,8 @@ if(release==='8.12'){
   if(!src.includes("status:'paused',startedAt:start,lastResumedAt:start,pausedAt:rest"))fail('explicit paused-rest fixture missing');
 }
 fs.writeFileSync(FILE,src);
+if(release==='8.12'){
+  if(!fs.existsSync('scripts/prepare-810-test-flow.mjs'))fail('AXIS 8.10 explicit-rest test-flow convergence is missing');
+  execFileSync(process.execPath,['scripts/prepare-810-test-flow.mjs'],{stdio:'inherit'});
+}
 console.log(`[AXIS 8.9.1 test flow] PASS · ${release==='8.12'?'learning rail requires explicit paused rest':'historical flow preserved'}`);
