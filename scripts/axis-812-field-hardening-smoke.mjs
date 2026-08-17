@@ -41,7 +41,7 @@ await page.waitForFunction(()=>document.querySelector('#v87Finish')?.dataset.id=
 await page.locator('#v87AdjustBtn').click();await page.waitForFunction(()=>document.querySelector('#v879Edit')?.classList.contains('show'));
 const editText=(await page.locator('#v879Edit').innerText()).replace(/\s+/g,' ');
 assert.match(editText,/组数/);assert.match(editText,/重量/);assert.match(editText,/次数/);assert.doesNotMatch(editText,/阻力/,'strength activity opened stale cardio adjustment fields');
-await page.locator('#v879Edit [data-v879-close]').click();
+await page.locator('#v879X').click();await page.waitForFunction(()=>!document.querySelector('#v879Edit')?.classList.contains('show'));
 
 console.log(`[AXIS 8.12 field hardening ${ENGINE}] completing a set does not start rest; pause owns cumulative rest`);
 await page.waitForFunction(()=>document.querySelector('#v87Primary')&&!document.querySelector('#v87Primary').disabled);
