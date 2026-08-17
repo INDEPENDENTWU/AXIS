@@ -97,6 +97,7 @@ if(contract.architecture==='canonical-single-runtime'){
   if(manifest.requests?.dynamicJavascript!==0)fail(`dynamic runtime requests remain · ${manifest.requests?.dynamicJavascript}`);
   if(manifest.featureKernel?.embedded!==true||manifest.completionKernel?.embedded!==true)fail('feature/completion kernels are not embedded');
   if(manifest.gates?.activeAdjustResolvesCurrentEvent!==true)fail('current-event active-adjust gate missing');
+  if(manifest.gates?.groupPlanUsesRecordingOwner!==true)fail('recording-owner group-plan gate missing');
   if(manifest.gates?.catalogCategorySingleOwner!==true)fail('catalog category single-owner gate missing');
   if(manifest.gates?.watermarkFourSwitchContract!==true)fail('watermark four-switch gate missing');
   if(manifest.gates?.precisePlaceResolver!==true)fail('precise place resolver gate missing');
