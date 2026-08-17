@@ -57,6 +57,7 @@ const STEPS=[
   'prepare-811-legacy-compat.mjs',
   'prepare-812-learning-content.mjs',
   'prepare-812-learning-settings.mjs',
+  'prepare-812-field-hardening.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-features-hardened.mjs',
