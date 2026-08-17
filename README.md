@@ -2,11 +2,11 @@
 
 Local-first training software built around what actually happened.
 
-**Current release: 8.12** · [Open AXIS](https://axis-five-puce.vercel.app) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md) · [Current release](docs/CURRENT_RELEASE.md) · [Roadmap](docs/ROADMAP.md)
+**Current release: 8.12** · [Open AXIS](https://axis-five-puce.vercel.app) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md) · [Current release](docs/CURRENT_RELEASE.md) · [Documentation](docs/README.md)
 
 AXIS records a workout without requiring the workout to behave like a project plan. Training state, sets, equipment memory, media and history remain useful locally; network and AI capabilities are optional additions rather than prerequisites.
 
-The current product grew through many releases, but production is deliberately flattened into one canonical browser runtime. Historical `v8xx` modules remain source and compatibility inputs; they are not separate product layers downloaded at runtime.
+The product grew through many releases, but Production is deliberately flattened into one canonical browser runtime. Historical `v8xx` modules remain source and compatibility inputs; they are not separate product layers downloaded at runtime.
 
 ## What is in 8.12
 
@@ -21,8 +21,6 @@ The current product grew through many releases, but production is deliberately f
 - Chromium and iPhone-like WebKit regression gates, plus exact-production-SHA verification.
 
 ## Product rules
-
-AXIS is intentionally strict about a few things:
 
 **Reality is authoritative.** A real workout is valid even when it changes, ends early or differs from a suggestion.
 
@@ -60,50 +58,64 @@ The release entry point is:
 node build-release.mjs
 ```
 
-Provider configuration does not duplicate the build sequence. The build emits `axis-build.json`, which is used by CI and production verification to assert release identity, runtime topology and feature contracts.
+Vercel and EdgeOne use that same command. The build emits `axis-build.json`, which CI and Production verification use to assert release identity, runtime topology, exact source SHA and feature contracts.
 
-The CI baseline is Node 20. Browser release gates exercise both Chromium and WebKit.
+The CI baseline is Node 20.18.0. Browser release gates exercise both Chromium and iPhone-like WebKit.
 
 ## Repository map
 
 ```text
 api/                 same-origin server endpoints
 cloud-functions/     alternate serverless adapter surface
-compiler/            build-time source fragments
+compiler/            explicit build-time source fragments
 lib/                 reusable contracts and current libraries
 data/                 curated local data
-scripts/              smoke, browser and contract verification
-docs/                 product, architecture and release contracts
-.github/workflows/    CI and production gates
+scripts/              diagnostics, smoke and release verification
+docs/                 product, architecture, delivery and release contracts
+.github/workflows/    CI and Production gates
 
-app.js, v*.js         historical/current source owners used by convergence
+app.js, v*.js         current/historical source owners used by convergence
 prepare-*.mjs         exact build-time migrations and ownership convergence
 postbuild-*.mjs       canonical packaging and release assertions
 build-release.mjs     only release build entry point
 ```
 
-Do not infer product ownership from version-like filenames. Start with [docs/CURRENT_RELEASE.md](docs/CURRENT_RELEASE.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+The broad root is intentional at the 8.12 compatibility baseline: moving versioned source without retiring its build/data role would be a behavior-changing refactor. See [Repository structure](docs/REPOSITORY_STRUCTURE.md) and the [Compatibility ledger](docs/COMPATIBILITY_LEDGER.md) before changing historical source layout.
+
+Do not infer product ownership from version-like filenames. Start with [Current release](docs/CURRENT_RELEASE.md), [Architecture](docs/ARCHITECTURE.md) and the [documentation index](docs/README.md).
 
 ## Development discipline
 
 A change is complete when the intended owner is clear, competing behavior is retired, the final artifact is deterministic, and the affected real user path is covered by a regression test.
 
+Quick repository check:
+
+```bash
+node scripts/axis-repository-contract.mjs
+```
+
+Release build:
+
+```bash
+node build-release.mjs
+```
+
 The normal release path is:
 
 1. branch from the last verified `main`;
 2. make one coherent product or engineering change;
-3. run the deterministic build and relevant local checks;
+3. run the repository contract, deterministic build and relevant local checks;
 4. pass Chromium and WebKit gates on the same candidate;
 5. merge only the verified head;
-6. verify that Production serves the exact merged source SHA.
+6. verify that Production and the fixed public alias serve the exact merged source SHA.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/ENGINEERING_PLAYBOOK.md](docs/ENGINEERING_PLAYBOOK.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md), [Engineering playbook](docs/ENGINEERING_PLAYBOOK.md) and [CI and release gates](docs/CI_AND_RELEASE.md).
 
 ## Next
 
-8.13 is planned as **Runtime**, not as another feature expansion. The work starts with a deterministic, UI-independent training runtime in shadow mode, then migrates ownership gradually. The first targets are continuation, live route changes, reality actions, time budget and lower interaction cost over repeated use.
+8.13 is planned as **Runtime**, not as another feature expansion. The work starts with deterministic, UI-independent training logic in shadow mode, then migrates ownership gradually. The first targets are continuation, live route changes, reality actions, time budget and lower interaction cost over repeated use.
 
-The migration is intentionally incremental; 8.12 remains the compatibility baseline while new runtime ownership proves itself through tests.
+The migration is intentionally incremental: 8.12 remains the compatibility baseline while new Runtime ownership proves itself through tests and allows old compiler/source layers to be retired rather than extended indefinitely.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md).
 

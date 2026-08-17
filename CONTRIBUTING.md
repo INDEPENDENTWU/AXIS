@@ -9,6 +9,7 @@ Before changing code, read:
 3. `docs/ARCHITECTURE.md`
 4. `docs/RUNTIME_CONTRACT.md`
 5. `docs/ENGINEERING_PLAYBOOK.md`
+6. `docs/REPOSITORY_STRUCTURE.md` when touching historical/versioned source
 
 ## Working rule
 
@@ -23,16 +24,22 @@ If a change replaces an implementation, removing or neutralizing the previous wr
 3. Identify the current owner and any historical competing owners.
 4. Make the smallest coherent ownership change.
 5. Add or update a regression that exercises the real path.
-6. Run the deterministic build:
+6. Verify repository-level contracts:
+
+```bash
+node scripts/axis-repository-contract.mjs
+```
+
+7. Run the deterministic release build:
 
 ```bash
 node build-release.mjs
 ```
 
-7. Run the relevant smoke/browser tests for the changed surface.
-8. Open a pull request. Merge only after the required candidate gates are green.
+8. Run the relevant smoke/browser tests for the changed surface.
+9. Open a pull request. Merge only after the required candidate gates are green.
 
-CI uses Node 20 as its baseline. Browser release coverage includes Chromium and iPhone-like WebKit.
+CI uses Node 20.18.0 as its baseline. Browser release coverage includes Chromium and iPhone-like WebKit. See `docs/CI_AND_RELEASE.md` for the gate layers.
 
 ## Pull requests
 
@@ -55,6 +62,20 @@ Avoid adding a new top-level surface when an existing action can absorb the capa
 
 AI is not an authority boundary. Model output may assist fuzzy recognition or interpretation, but a model may not become the only path to save, continue or finish a workout.
 
+## Historical source and compatibility
+
+Version-like filenames are not deletion markers. `app.js`, `v*.js`, `prepare-*.mjs`, `postbuild-*.mjs` and older smoke files may still preserve current behavior or user-data compatibility.
+
+Before retiring executable history:
+
+- identify what consumes it;
+- identify the replacement owner;
+- preserve stored-user-data semantics;
+- keep equivalent regression coverage;
+- pass the complete affected Chromium/WebKit gates.
+
+Use `docs/COMPATIBILITY_LEDGER.md` as the retirement policy. Do not create new one-off deployment/recovery marker files in the repository root; use Git history and current release documentation.
+
 ## Bug reports
 
 A good bug report includes:
@@ -73,4 +94,4 @@ Do not post API keys, private media, precise private location data or other secr
 
 Documentation and build metadata are part of the release system. If a product release changes identity, architecture, ownership or deployment behavior, update the corresponding canonical documentation in the same pull request.
 
-Historical files should be deleted only after their compatibility purpose is known and executable gates prove the replacement. Moving files around is not, by itself, an architectural improvement.
+Repository tidiness must not be achieved by changing runtime behavior indirectly. File moves, build-command changes, package/runtime mode changes and workflow consolidation are engineering changes and require the same compatibility evidence as code.
