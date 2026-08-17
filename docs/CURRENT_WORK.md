@@ -5,175 +5,131 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12
-- Baseline `main`: `398ce5ddcf6ebf2480c501ef41b5036756b020b8`
+- Verified `main`: `7d2c703ec85abc8a01ee43de4d99ea9402695fbf`
 - Architecture: `canonical-single-runtime`
-- Verified release hash: `66d8097f7b56`
-- Verified canonical runtime marker: `faf1d2f88421`
+- Verified Production release hash: `ad14cad78a8d`
+- Verified canonical runtime marker: `74c57baa7159`
 - Verified CSS marker: `b59f3946c3e5`
-- AXIS 8.13 Runtime Stage 0/1 is merged but is not a production owner.
+- Fixed Production endpoint: `axis-five-puce.vercel.app`
+- Vercel Production deployment for this baseline is `READY` and reports the exact `main` source SHA above.
+- `AXIS Production Deployment Gate` passed against the fixed Production endpoint, including real Chromium inherited product, 8.11 Experience and 8.12 Language Studio gates.
+- PR #36 is merged. Its 8.12 field hardening is now Production behavior, not pending work.
 
 ## Active change
 
-PR #36 repairs field behavior discovered before Stage 2 Shadow Runtime begins.
+**AXIS 8.13 Stage 2 — Shadow Runtime** is active on `feat/813-shadow-runtime`.
 
-### 1. Group plan source and availability
+The purpose of Stage 2 is to feed real, authoritative 8.12 browser snapshots into the already-pure Reality Runtime and compare projections while the existing 8.12 product remains the sole authority.
 
-Current problem:
+Stage 2 is an observation/evidence stage, not a UI or ownership transfer.
 
-- `v61.js` rebuilds the entire `#v8Sets` surface after set-count/weight/reps changes.
-- `v874-set-bridge.js` injects the Group Plan entry afterward, leaving a transient owner gap.
-- Group Plan can therefore become temporarily unclickable and may reopen with a stale first-set baseline such as 20 kg / 10 reps even after the user changed the first set.
+### Runtime input truth
 
-Target contract:
+The Shadow Runtime may observe only already-existing authoritative facts:
 
-- the current `v61` strength draft is the only first-set baseline for Group Plan;
-- after every draft rebuild, Group Plan is rebound synchronously;
-- increasing/decreasing set count or editing first-set weight/reps must not make Group Plan unavailable;
-- opening Group Plan must show the current first-set values, never a stale hidden control value.
+- `axis_v60_state` / `app.js` workout and session state;
+- `axis_v8_meta` / `v61.js` activity and strength-set facts;
+- explicit current event identity supplied by the observation boundary;
+- explicit temporary constraints used by the test sequence.
 
-Implemented convergence:
+It may not infer completed work from planned values alone.
 
-- `window.__AXIS_RECORDING__.first()` is the read-only first-set snapshot exposed by the existing recording owner;
-- both the legacy Group Plan entry and the canonical `v8712` plan surface read that owner;
-- the build manifest requires `groupPlanUsesRecordingOwner=true` so future DOM-derived regression fails the release build.
+The 8.12 adapter must therefore understand the actual current 8.12 semantics:
 
-### 2. Active adjustment must follow the current event
+- `done` / `doneAt` means a performed strength set;
+- `assumed` is an unfinished/planned set, not completed work;
+- `activity.completedSets` is authoritative when set rows are incomplete or reconstructed;
+- an active/paused cardio item with a planned duration is not automatically completed;
+- archived sessions are historical facts;
+- pause/rest is represented by explicit activity state plus `restStartedAt` / `restAccumulatedMs` and must never be interpreted as a completed set.
 
-Current problem:
+### Shadow observation contract
 
-`v879-runtime.js` creates the active adjustment button once and its click closure captures the event id that was current at creation time. When the active event changes, the same button can open the previous event and therefore show the wrong field model (for example cardio time/intensity for a strength activity).
+A Stage 2 observation is deterministic and read-only. It may produce:
 
-Target contract:
+- normalized Runtime input;
+- the pure Runtime projection;
+- a stable input fingerprint;
+- factual active-session diagnostics;
+- a comparison between the previous projection and the next observed authoritative state;
+- reason/alignment codes for tests.
 
-- every adjustment invocation resolves `activeId()` at click time;
-- strength exposes strength fields;
-- cardio exposes cardio fields;
-- the visible current event and edited event must always be identical.
+A mismatch is diagnostic only. It is never allowed to rewrite history, reroute the user, trigger UI, or be treated as training failure.
 
-The postbuild contract now protects current-event resolution rather than the retired captured-id implementation.
+### Browser shadow harness
 
-### 3. Rest belongs to pause, not set completion
+Stage 2 does **not** inject the Runtime into the AXIS 8.12 Production bundle.
 
-Current problem:
+The browser harness runs outside the product:
 
-- completing a strength set previously assigned `restStartedAt`;
-- pausing previously cleared it.
+1. build the exact normal 8.12 candidate;
+2. open it in Chromium / iPhone-like WebKit;
+3. allow the existing 8.12 owners to perform normal state transitions;
+4. read authoritative snapshots at narrow event boundaries;
+5. pass those snapshots to the pure Shadow Runtime in the test process;
+6. compare deterministic projections and observed transitions.
 
-That incorrectly equated “completed a set” with “entered rest.”
-
-Current 8.12 compatibility contract:
-
-- completing a set records only set completion;
-- pause starts a rest interval;
-- resume settles that interval;
-- repeated pauses accumulate rest time on that activity;
-- finishing a paused activity settles the open rest interval;
-- existing active-time intervals remain the source of actual exercise time;
-- learning/rest surfaces may use explicit paused rest, not inferred set completion.
-
-Compatibility representation during 8.12:
-
-- `restStartedAt`: current open paused-rest start, otherwise `null`;
-- `restAccumulatedMs`: cumulative settled paused-rest duration.
-
-Stage 2+ Runtime must absorb this semantic before the temporary compatibility transform is retired.
-
-### 4. Pause visual continuity
-
-Current contract:
-
-- pausing must not remove/recreate the active card for a frame;
-- the current event id remains stable through the state transition;
-- native Safari tap highlight is removed from the pause control;
-- state changes are rendered in place;
-- the first paused frame is already the final rest presentation: `休息 00:00` at zero elapsed time, never the transient legacy copy `实际时间已暂停` followed by a second repaint.
-
-The last point was added after the full Chromium Runtime Gate exposed a one-frame intermediate state even though the dedicated steady-state Field Gate already passed. This is treated as a product continuity defect, not hidden with an extra test delay.
-
-### 5. Safari Home Screen learning continuity
-
-Observed field issue:
-
-Learning content appears in normal Safari but can disappear when AXIS is launched as an Add-to-Home-Screen standalone web app.
-
-Hardening in this PR:
-
-- learning surfaces remount on event-driven `pageshow`, visible `visibilitychange`, and window `focus` lifecycle boundaries;
-- no polling is introduced;
-- learning keeps no training ownership;
-- learning preferences remain exclusively in the isolated `axis_v89_speak` store; the lifecycle bridge does not read or migrate training metadata;
-- Chromium and iPhone-like WebKit tests explicitly emulate `navigator.standalone` / `display-mode: standalone` and verify a learning surface survives resume.
-
-This is a compatibility/lifecycle fix, not a claim that browser storage containers are universally identical across all iOS versions.
-
-### 6. Inherited test contracts follow current product semantics
-
-The release test convergence now explicitly aligns historical browser fixtures to the current 8.12 product contract instead of preserving retired assumptions:
-
-- 8.9 / 8.9.1 / 8.10 learning rest fixtures use explicit `status:'paused' + restStartedAt`;
-- 8.10.1 is chained through the same release test-flow and verifies the 8.12 top-level learning summary `智能 · 混合` while separately requiring the non-default cadence to remain visible as `已自定` fine-tune state;
-- inherited 8.8.2 verifies set completion stays active and explicit pause owns rest timing;
-- no inherited test is allowed to force the product back to “完成一组 = 自动休息.”
+This gives Stage 2 real browser state without creating a second browser owner. A Shadow Runtime exception therefore has zero possible effect on recording.
 
 ## Implementation boundary
 
-The product fixes above are consolidated in one final inherited-runtime transform:
+Allowed Stage 2 changes:
 
-`prepare-812-field-hardening.mjs`
+- `runtime/` pure adapter/runtime/shadow modules;
+- Runtime characterization fixtures;
+- Runtime/Shadow tests and browser harnesses;
+- dedicated CI for Stage 2;
+- Runtime documentation and this handoff.
 
-It runs after 8.12 learning transforms and before `build-hardened.mjs`.
+Forbidden in Stage 2:
 
-This file is intentionally temporary compatibility infrastructure. Do not duplicate these semantics in another prepare/postbuild patch. The 8.13 Runtime migration must eventually absorb them into proper owners.
+- product DOM/UI changes;
+- LocalStorage / IndexedDB writes by Runtime code;
+- network/API calls from Runtime code;
+- camera/media/AI ownership;
+- route or recommendation presentation;
+- pause/resume/finish ownership;
+- recording owner changes;
+- Production build injection of `runtime/axis-runtime.mjs`, the 8.12 adapter or the Shadow module;
+- public version change from 8.12.
 
-Test-only compatibility alignment is kept under `scripts/prepare-*-test-flow.mjs` and must not become product ownership.
+`build-release.mjs` must remain independent of Stage 2 Runtime modules. Because all Stage 2 executable paths are isolated under `runtime/`, `scripts/axis-813-*` and CI/docs, the 8.13 parity gate must require byte-for-byte equality with the exact PR base Production artifact.
 
 ## Validation for this work
 
-Dedicated gate:
+Stage 2 is not complete until the same candidate proves all of the following:
 
-`AXIS 8.12 Field Hardening Gate`
-
-It runs the exact release build and dedicated regression in both:
-
-- Chromium
-- iPhone-like WebKit
-
-Coverage includes:
-
-- first-set Group Plan baseline after weight/reps changes;
-- Group Plan availability after set-count rebuild;
-- current-event adjustment type;
-- no rest on set completion;
-- pause-owned rest start/resume accumulation;
-- multiple-pause cumulative rest;
-- pause card continuity / no native tap highlight / no transient paused copy;
-- Home Screen standalone learning lifecycle.
-
-Before the final PR is merged, the exact PR head must have all inherited AXIS Runtime, Home, Reminder, 8.10.3, 8.11 and 8.12 gates green. Earlier successful runs are not reused after a subsequent code or contract commit.
+- existing Stage 0/1 Runtime Core invariants remain green;
+- real 8.12 `assumed` set rows do not become phantom completion;
+- active/paused cardio planned duration does not become phantom completion;
+- pause/rest facts survive adaptation without changing completion facts;
+- identical snapshot -> identical fingerprint and projection;
+- reopen/refresh from the same authoritative snapshot -> identical observation;
+- a factual set completion is observed as progress, not an automatic rest transition;
+- pause and resume are observed without fabricating work;
+- route/current-event changes are compared against the prior projection as diagnostics only;
+- malformed/empty Shadow input fails open into deterministic diagnostics rather than a product-side effect;
+- randomized snapshot/constraint sequences preserve Runtime invariants;
+- browser Shadow capture passes in Chromium and iPhone-like WebKit;
+- Runtime/adapter/shadow sources contain no browser, storage or network ownership APIs;
+- exact 8.12 Production artifact parity against the PR base is byte-for-byte green;
+- Repository Contract and Work Continuity Contract are green.
 
 ## What remains deliberately unchanged
 
-- Public version remains 8.12 for this repair.
-- Stage 0/1 pure Runtime remains non-owning.
-- No 8.13 Continue UI yet.
-- No Live Route UI yet.
-- No Reality Action gestures yet.
-- No event journal or storage-owner migration yet.
-- Camera, watermark, media store, AI, Language Studio corpus, sync and current production topology are outside this change unless a regression test proves an unintended interaction.
+- AXIS 8.12 remains the public Production release.
+- Existing recording, active-session, Home, media, watermark, AI, sync and Language Studio owners remain unchanged.
+- No `Continue + Live Route` UI yet.
+- No Reality Action controls yet.
+- No time-budget UI ownership yet.
+- No durable event journal yet.
+- No storage migration yet.
+- The 8.12 field-hardening compatibility transform remains in place until a later explicit Runtime owner-transfer change can prove equivalent semantics and retire it safely.
 
 ## Next planned stage
 
-After this repair is merged and exact-main Production is verified:
+After Stage 2 Shadow Runtime has deterministic pure tests, randomized sequence evidence, Chromium/WebKit browser observation and exact Production parity green:
 
-**AXIS 8.13 Stage 2 — Shadow Runtime**
+**AXIS 8.13 Stage 3 — Continue + Live Route**
 
-The Shadow Runtime may read real 8.12 snapshots and compute projections/diagnostics, but must not:
-
-- render product UI;
-- write training or accessory storage;
-- alter routing/recommendations;
-- take DOM ownership;
-- perform network requests;
-- change recording behavior.
-
-Its first purpose is to compare projected continuation against real-world 8.12 sessions safely before any user-visible Runtime ownership transfer.
+Stage 3 may transfer only the narrow ownership of continuation/remaining-route presentation. Recording stays with existing owners until a separate explicit transfer retires the old writer in the same change.
