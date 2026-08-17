@@ -36,12 +36,14 @@ try{
  await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));
  assert.equal(await shownSheets(),1,'opening Settings created an unexpected second sheet');
  assert.equal(await page.locator('#v813LearningGate').count(),1);assert.equal(await page.locator('#v813ServiceGate').count(),1);
+ assert.equal(await page.locator('#v810ConfigEntry').count(),1,'Learning entry is not single-owner');assert.equal(await page.locator('#v811ServiceEntry').count(),1,'Cloud/AI entry is not single-owner');
+ assert.equal(await page.locator('#v810ConfigEntry').isVisible(),true,'Learning entry is not visible in primary Settings list');assert.equal(await page.locator('#v811ServiceEntry').isVisible(),true,'Cloud/AI entry is not visible in primary Settings list');
  assert.equal(await page.locator('#v810ConfigPanel.v810ConfigPanel').count(),0,'legacy fixed learning panel still owns UI');
  assert.equal(await page.locator('#v811ServicePanel.v811ServicePanel').count(),0,'legacy fixed service panel still owns UI');
- assert.equal(await page.locator('.v810ConfigHead,.v811ServiceHead').count(),0,'nested sheet headers remain visible');
+ assert.equal(await page.locator('.v810ConfigHead,.v811ServiceHead').evaluateAll(els=>els.filter(el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden').length),0,'nested sheet headers remain visible');
  const before=await trainingStores();
 
- console.log(`[AXIS settings ${ENGINE}] Learning Schedule expands in place and stays compact`);
+ console.log(`[AXIS settings ${ENGINE}] Learning Schedule expands in place, stays compact, and preserves delegated fine-tune actions`);
  await page.locator('#v810ConfigEntry').click();
  await page.waitForFunction(()=>document.querySelector('#v813LearningGate')?.classList.contains('open'));
  assert.equal(await shownSheets(),1,'Learning Schedule opened a second sheet');
@@ -52,8 +54,12 @@ try{
  assert.ok(await page.locator('[data-v812-core="method"]').count()>=6,'8.12 learning method controls disappeared');
  await page.locator('[data-v812-core="purpose"][data-v812-value="native"]').click();
  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v89_speak')||'{}').prefs?.purpose==='native');
- assert.deepEqual(await trainingStores(),before,'learning preference changed authoritative training storage');
  assert.match(await page.locator('#v810ConfigSummary').innerText(),/母语口语/);
+ const fine=$('#v811FineTune');
+ await page.locator('#v811FineTune > summary').click();
+ await page.locator('[data-v810-key="track"][data-v810-value="travel"]').click();
+ await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v89_speak')||'{}').prefs?.track==='travel');
+ assert.deepEqual(await trainingStores(),before,'learning preference changed authoritative training storage');
  await page.locator('#v810ConfigEntry').click();await page.waitForFunction(()=>!document.querySelector('#v813LearningGate')?.classList.contains('open'));
 
  console.log(`[AXIS settings ${ENGINE}] Cloud + AI expands in place; network remains user-invoked`);
@@ -76,10 +82,10 @@ try{
  console.log(`[AXIS settings ${ENGINE}] persistence + reopen keep one Settings surface`);
  await page.locator('[data-close="settingsSheet"]').click();await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));
  assert.equal(await shownSheets(),1);assert.equal(await page.locator('#v813LearningGate').count(),1);assert.equal(await page.locator('#v813ServiceGate').count(),1);
- const persisted=await page.evaluate(()=>({learning:JSON.parse(localStorage.getItem('axis_v89_speak')||'{}').prefs?.purpose,service:JSON.parse(localStorage.getItem('axis_v811_services')||'null')}));
- assert.equal(persisted.learning,'native');assert.equal(persisted.service?.cloudMode,'data');assert.equal(persisted.service?.aiMode,'assist');
+ const persisted=await page.evaluate(()=>({learning:JSON.parse(localStorage.getItem('axis_v89_speak')||'{}').prefs,service:JSON.parse(localStorage.getItem('axis_v811_services')||'null')}));
+ assert.equal(persisted.learning?.purpose,'native');assert.equal(persisted.learning?.track,'travel');assert.equal(persisted.service?.cloudMode,'data');assert.equal(persisted.service?.aiMode,'assist');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS settings ${ENGINE}] PASS · one Settings sheet · inline Learning + Cloud/AI · compact controls · preserved stores/ownership · explicit service network`);
+ console.log(`[AXIS settings ${ENGINE}] PASS · one Settings sheet · inline Learning + Cloud/AI · compact controls · delegated fine tune preserved · explicit service network`);
 }finally{
  await context.close().catch(()=>{});await browser.close().catch(()=>{});
 }
