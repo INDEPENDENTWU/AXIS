@@ -1,119 +1,128 @@
 # AXIS 8.13 Reality Runtime
 
-AXIS 8.13 is a staged architecture migration. **AXIS 8.12 remains the public Production release and the sole browser authority.**
+AXIS 8.13 is a staged architecture migration. **AXIS 8.12 remains the public release and existing recording facts remain authoritative.**
 
-The product contract is simple:
+The contract remains:
 
 > reality may interrupt training without forcing a restart, and the Runtime may never rewrite what actually happened.
 
 ## Stage 0/1 — Pure Runtime
 
-`runtime/axis-runtime.mjs` is the deterministic domain layer. It accepts already-parsed session/history/current-exercise facts plus explicit time and temporary constraints, then returns an advisory projection:
-
-- current;
-- next;
-- alternatives;
-- remaining route;
-- dropped work;
-- budget facts;
-- reason codes.
+`runtime/axis-runtime.mjs` is the deterministic domain layer. It accepts already-parsed session/history/current-exercise facts plus explicit time and temporary constraints, then returns advisory current / next / alternatives / remaining route / dropped work / budget / reason codes.
 
 It has no DOM, storage, network, media or AI ownership.
 
-`runtime/compat/axis-812-adapter.mjs` is the read-only bridge from current 8.12 facts. Stage 2 hardened it to real Production semantics:
+The hardened 8.12 adapter treats `assumed` strength work and active/paused cardio plan values as unfinished, keeps pause/rest separate from completion, and prefers missing live evidence over phantom completion.
 
-- `done`, `doneAt` or authoritative `activity.completedSets` may establish performed strength work;
-- `assumed` is unfinished/planned work;
-- active/paused cardio planned duration is not completion;
-- pause/rest facts remain separate from completion facts;
-- archived sessions remain historical facts;
-- uncertain live work stays unfinished rather than becoming phantom completion.
-
-Stage 0/1 keeps 600 seeded randomized Runtime cases plus deterministic/reopen/constraint invariants.
+Stage 0/1 retains 600 seeded randomized Runtime cases.
 
 ## Stage 2 — Shadow Runtime
 
-Stage 2 is implemented in PR #37 without transferring product ownership.
+`runtime/shadow/axis-shadow-runtime.mjs` observes authoritative 8.12 snapshots outside the product bundle and returns deterministic fingerprints, projections and projection-vs-reality diagnostics.
 
-`runtime/shadow/axis-shadow-runtime.mjs` composes the adapter and pure Runtime and returns only:
+Stage 2 does not own UI or recording. Chromium + iPhone-like WebKit Shadow harnesses exercise real set completion, pause/resume and active cardio transitions. Stage 2 adds 500 seeded randomized Shadow cases, for 1,100 seeded cases across the pure projection/observation layers.
 
-- normalized input;
-- factual active-session diagnostics;
-- deterministic projection;
-- stable fingerprint;
-- zero-side-effect diagnostics.
+PR #37 merged Stage 2 into `main` at `22d59ce3de448c33b7140c5432dee17c6e669fd0`; the fixed Production endpoint remained byte-identical at the browser product layer after that non-owning merge.
 
-`compareShadowObservations()` compares a previous advisory projection with the next authoritative state. Its alignment codes are evidence only; they never change route presentation, recording or history.
+## Stage 3 — Continue + Live Route
 
-If observation fails, the Shadow layer fails open with `projection: null` and zero writes. The Shadow Runtime is not loaded by the product, so a Shadow exception cannot affect recording.
+Stage 3 is the first user-visible ownership transfer, implemented in PR #38.
 
-### Real 8.12 characterization
+The transfer is intentionally narrow:
 
-`runtime/fixtures/axis-812-shadow-sequences.mjs` and `scripts/axis-813-shadow-runtime.mjs` cover:
+> Runtime owns continuation / remaining-route **presentation**. Existing 8.12 recording continues to own workout facts, sets, pause/resume/finish and history.
 
-1. active strength with real `assumed` rows -> zero performed sets;
-2. one factual set completion -> progress, not automatic rest;
-3. explicit pause -> rest facts without extra completion;
-4. resume -> cumulative rest without fabricated work;
-5. current-event change -> diagnostic comparison against the previous projection;
-6. active cardio with planned duration -> still unfinished;
-7. malformed observation -> deterministic fail-open result;
-8. 500 seeded randomized Shadow snapshot/constraint cases.
+### Single presentation owner
 
-Together Stage 0/1 + Stage 2 currently exercise 1,100 seeded randomized cases across projection and observation layers.
+Source:
 
-## Browser observation boundary
+`runtime/browser/axis-live-route-presenter.js`
 
-`scripts/axis-813-shadow-browser.mjs` runs outside the product bundle.
+Build path:
 
-The harness builds and serves the normal 8.12 product, lets existing owners execute real transitions, then only reads:
+`prepare-813-live-route.mjs` -> generated `v813-live-route.js` -> `postbuild-813-live-route.mjs` -> final canonical `axis-core.js`.
+
+The prepare step embeds the exact pure Runtime + 8.12 adapter source with one browser presenter. The postbuild step injects that module only after the existing 8.8–8.12 canonical build and contracts have completed, then re-signs core/index/manifest.
+
+This avoids a parallel dynamic runtime and avoids modifying historical recording owners.
+
+### Live Route UI contract
+
+The presenter mounts one compact `接下来` section inside active Today immediately before Timeline.
+
+It does not duplicate the current item:
+
+- factual current remains in the existing fixed `v87` active card;
+- future continuation begins with the first evidence-backed item after current;
+- up to two additional items are shown as simple rows;
+- an alternative is shown only when the Runtime produces one;
+- when there is no useful future evidence, the section hides instead of inventing work.
+
+There is no modal, no new persistent control, no second timeline and no route database.
+
+### Read-only browser boundary
+
+The presenter reads only authoritative state and current identity:
 
 - `axis_v60_state`;
 - `axis_v8_meta`;
-- current event id.
+- current event id from the existing active card.
 
-Those parsed snapshots are passed to the Node-side Shadow Runtime. The Runtime is not injected into the page.
+It refreshes from existing recording events, narrow active-card/timeline DOM mutations and pageshow/focus/visible lifecycle boundaries. No polling is introduced.
 
-The dedicated `AXIS 8.13 Shadow Runtime` workflow runs this in Chromium and iPhone-like WebKit. The initial Stage 2 head `da92b0046abfba629e86cc6ae3dfddb2cfd7c7ed` passed pure-shadow, Chromium Shadow and WebKit Shadow.
+The presenter cannot:
 
-## Production parity
+- write LocalStorage / SessionStorage / IndexedDB;
+- use network APIs for route generation;
+- complete, pause, resume or finish work;
+- change the current event;
+- mutate history;
+- own media, watermark, AI or learning state.
 
-Stage 2 remains outside `build-release.mjs`.
+Runtime/presenter failure hides the route and preserves the complete 8.12 product.
 
-The parity gate rebuilds the exact PR base and requires byte-for-byte equality of the generated 8.12 browser product for Runtime/test/docs/CI-only changes.
+### Canonical build contract
 
-Initial Stage 2 evidence against base `7d2c703ec85abc8a01ee43de4d99ea9402695fbf`:
+Stage 3 adds these required manifest gates:
 
-- release `8.12`;
-- release hash `ad14cad78a8d`;
-- canonical runtime marker `74c57baa7159`;
-- CSS marker `b59f3946c3e5`;
-- raw generated core parity fingerprint `1483c663fda3`;
-- `canonical-single-runtime`;
-- 1 initial JavaScript request;
-- 0 dynamic historical Runtime chunks.
+- `liveRoute813`;
+- `liveRouteSingleOwner813`;
+- `liveRouteReadOnly813`;
+- `liveRoutePureRuntime813`;
+- `liveRouteFallback813`;
+- `liveRouteNoRecordingOwner813`;
+- `liveRouteCanonicalSingleRuntime813`.
 
-Any Stage 2 change to the actual Production artifact fails CI.
+The topology remains `canonical-single-runtime`, one initial JavaScript request and zero dynamic historical Runtime chunks. Public release identity remains 8.12 during this migration stage.
 
-## Ownership still unchanged
+## Stage 3 browser evidence
 
-Stage 2 does **not** own:
+Initial implementation candidate `cc84b17fa98ae1c57e397b8a75e243c66fb72960` passed all 14 workflows triggered for PR #38, including the new `AXIS 8.13 Live Route` workflow in both Chromium and iPhone-like WebKit.
 
-- Home or recording UI;
-- set editing;
-- pause/resume/finish;
-- LocalStorage / IndexedDB;
-- camera/media/watermark;
-- AI/network;
-- Language Studio;
-- route/recommendation presentation.
+The dedicated route gate proves:
 
-There is no Runtime-rendered `Continue + Live Route` yet.
+- idle Home stays non-owning;
+- `assumed` sets stay unfinished;
+- current item is not duplicated in future route;
+- historical sequence evidence can choose a future continuation;
+- diagnostic refresh writes no training storage;
+- active-card/navigation geometry does not shift;
+- real set completion remains non-rest progress;
+- pause/resume does not fabricate route progress;
+- active-control owner remains `v87-direct-884`;
+- current-event change recomputes continuation;
+- active cardio planned duration remains unfinished;
+- no evidence -> no fabricated route;
+- lifecycle does not duplicate the route owner.
 
-## Stage 3 boundary
+The same candidate also passed Shadow, Runtime Core, full Runtime Chromium/WebKit, 8.10.3, 8.11/8.12, Home, Field, Reminder, Repository and Work Continuity gates.
 
-Only after the exact final Stage 2 PR head is green across Shadow, inherited product, Repository/Continuity and exact Production-parity gates may AXIS enter **Stage 3 — Continue + Live Route**.
+The initial Stage 3 canonical core marker after injection is `4d490912e0f3`.
 
-Stage 3 may transfer only continuation/remaining-route **presentation** ownership. Recording stays with existing owners until a separate explicit owner-transfer change retires the old writer in the same change.
+## Next boundary — Stage 4 Reality Actions
 
-For the detailed active engineering handoff and exit checklist, read `docs/CURRENT_WORK.md` first.
+Stage 4 may add explicit user actions such as “这个器械有人 / 我只剩 20 分钟 / 今天到这里”. Those actions may alter temporary Runtime constraints or continuation intent only.
+
+Historical workout facts remain immutable and authoritative. Durable event journal, storage migration and broader recording-owner transfer remain later stages and must not be smuggled into Stage 4.
+
+For the exact current engineering handoff and final-head validation state, read `docs/CURRENT_WORK.md` first.
