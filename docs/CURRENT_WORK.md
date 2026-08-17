@@ -2,7 +2,7 @@
 
 > Canonical engineering handoff. Product truth remains in `CURRENT_RELEASE.md`; this file records the latest verified engineering state and the next controlled boundary.
 
-## Production baseline
+## Production baseline at start of this work
 
 - Public product: AXIS 8.12.
 - Verified `main` at the start of this work: `fcd89e97f091fe103886cddab919844f1ef602ee`.
@@ -53,7 +53,7 @@ It must preserve all existing learning and service behavior while changing only 
 - Stage 3 Live Route: presentation only.
 - No new IndexedDB owner, timer owner, training-control owner, media owner, AI training owner or dynamic JavaScript chunk.
 
-## Acceptance
+## Validation for this work
 
 Dedicated `AXIS 8.13 Settings Convergence` Chromium + iPhone-like WebKit regression must prove on the exact PR head:
 
