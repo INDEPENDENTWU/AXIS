@@ -1,0 +1,70 @@
+name: AXIS 8.12 Browser Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lib/learning-studio-812.mjs'
+      - 'prepare-812-*.mjs'
+      - 'postbuild-812-contract.mjs'
+      - 'scripts/axis-812-*.mjs'
+      - 'build-release.mjs'
+      - '.github/workflows/axis-812-browser-gate.yml'
+  workflow_dispatch:
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Build AXIS 8.12
+        run: node build-release.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve artifact
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-812-chromium.log 2>&1 &
+          sleep 1
+      - name: AXIS 8.12 real browser experience
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-812-browser-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-812-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Build AXIS 8.12
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve artifact
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-812-webkit.log 2>&1 &
+          sleep 1
+      - name: AXIS 8.12 iPhone WebKit experience
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-812-browser-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-812-webkit.log || true
