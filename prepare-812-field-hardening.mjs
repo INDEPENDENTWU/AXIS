@@ -13,13 +13,49 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  * Stage 2+ Runtime work must absorb these semantics before this transform is retired.
  */
 
+/* v61 is the sole draft owner. Expose a read-only first-set snapshot so planners
+   never infer their baseline from rebuilding DOM or hidden legacy controls. */
+{
+  const FILE='v61.js';
+  let src=read(FILE);
+  src=once(
+    src,
+    "window.__AXIS_RECORDING__={snapshot:recordingSnapshot,adjust:adjustRecordingValue,set:patchActiveSetValue,select:selectRecordingSet};",
+    "function recordingFirstSet(){const s=draft[0]||null;return s?{w:s.weight==null?null:Number(s.weight),r:s.reps==null?null:Number(s.reps),count:draft.length}:null}\nwindow.__AXIS_RECORDING__={snapshot:recordingSnapshot,first:recordingFirstSet,adjust:adjustRecordingValue,set:patchActiveSetValue,select:selectRecordingSet};",
+    'recording first-set snapshot API'
+  );
+  syntax(src,FILE);write(FILE,src);
+}
+
 {
   const FILE='v874-set-bridge.js';
   let src=read(FILE);
-  src=once(src,"let planN=1,planMode='same',planBase=null,lastPlanLabel='';","let planN=1,planMode='same',planBase=null,lastPlanLabel='',canonicalFirst=null;",'canonical first-set cache');
-  src=once(src,"function openPlan(){const a=values()[0]||activeInfo()||{w:20,r:10};planBase={w:Number(a.w)||0,r:Number(a.r)||1};planN=rows().length||1;planMode='same';renderPlan();$('#v875PlanSheet').classList.add('show')}","function openPlan(){const live=values()[0]||activeInfo()||{w:20,r:10},a=canonicalFirst||live;planBase={w:Number(a.w)||0,r:Number(a.r)||1};planN=rows().length||1;planMode='same';renderPlan();$('#v875PlanSheet').classList.add('show')}",'plan uses canonical current first set');
-  src=once(src,"const name=$('#equipmentName');if(name)new MutationObserver(()=>{seedName='';seedDone=false;lastPlanLabel='';setTimeout(patch,35)}).observe(name,{childList:true,characterData:true,subtree:true});","const name=$('#equipmentName');if(name)new MutationObserver(()=>{seedName='';seedDone=false;lastPlanLabel='';canonicalFirst=null;setTimeout(patch,35)}).observe(name,{childList:true,characterData:true,subtree:true});",'reset group-plan source when equipment changes');
-  src=once(src,"D.addEventListener('axis:recording-render',()=>patch());","const syncPlanSource=()=>{const f=values()[0];canonicalFirst=f&&Number.isFinite(Number(f.w))&&Number.isFinite(Number(f.r))?{w:Number(f.w),r:Number(f.r)}:null;patch()};D.addEventListener('axis:recording-render',syncPlanSource);D.addEventListener('axis:recording-change',syncPlanSource);",'canonical recording-event bridge');
+  src=once(
+    src,
+    "function openPlan(){const a=values()[0]||activeInfo()||{w:20,r:10};planBase={w:Number(a.w)||0,r:Number(a.r)||1};planN=rows().length||1;planMode='same';renderPlan();$('#v875PlanSheet').classList.add('show')}",
+    "function openPlan(){const owned=window.__AXIS_RECORDING__?.first?.(),a=owned||values()[0]||activeInfo()||{w:20,r:10};planBase={w:Number(a.w)||0,r:Number(a.r)||1};planN=Math.max(1,Number(owned?.count)||rows().length||1);planMode='same';renderPlan();$('#v875PlanSheet').classList.add('show')}",
+    'plan uses recording-owner first set'
+  );
+  src=once(
+    src,
+    "D.addEventListener('axis:recording-render',()=>patch());",
+    "D.addEventListener('axis:recording-render',()=>patch());D.addEventListener('axis:recording-change',()=>patch());",
+    'immediate group-plan rebind after recording change'
+  );
+  syntax(src,FILE);write(FILE,src);
+}
+
+/* The canonical 8.7.12/8.12 plan sheet also reads the recording owner directly;
+   its DOM preview may be rebuilt after the legacy entry opens. */
+{
+  const FILE='v8712-runtime.js';
+  let src=read(FILE);
+  src=once(
+    src,
+    " const vals=rowValues(),base=vals[0]||{w:20,r:10},n=Math.max(1,vals.length||1);",
+    " const vals=rowValues(),owned=window.__AXIS_RECORDING__?.first?.(),base=owned||vals[0]||{w:20,r:10},n=Math.max(1,Number(owned?.count)||vals.length||1);",
+    'canonical plan baseline from recording owner'
+  );
   syntax(src,FILE);write(FILE,src);
 }
 
@@ -90,4 +126,4 @@ function axis812InstallLearningResume(){
   syntax(src,FILE);write(FILE,src);
 }
 
-console.log('[AXIS 8.12 field hardening] PASS · recording-event group-plan source · pause-owned cumulative rest · no set-complete rest · isolated standalone learning resume');
+console.log('[AXIS 8.12 field hardening] PASS · recording-owner group-plan baseline · pause-owned cumulative rest · no set-complete rest · isolated standalone learning resume');
