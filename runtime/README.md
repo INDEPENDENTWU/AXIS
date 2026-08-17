@@ -1,23 +1,31 @@
 # AXIS Domain Runtime
 
-`runtime/` is the platform-neutral workout decision and observation layer being introduced during the AXIS 8.13 migration cycle.
+`runtime/` contains the AXIS 8.13 decision, observation and narrowly-scoped presentation sources.
 
-It is deliberately **not** a second workout database, recording owner, DOM controller, network client or AI coach.
+It is deliberately **not** a second workout database, recording owner, network client or AI coach.
 
-## Current boundary — Stage 0/1 + Stage 2
+## Current boundary — Stage 0/1 + Stage 2 + Stage 3
 
-The current Runtime stack has three pure layers:
+### Pure layers
 
 1. `compat/axis-812-adapter.mjs` — conservative read-only translation of already-parsed 8.12 facts;
 2. `axis-runtime.mjs` — deterministic remaining-workout projection;
 3. `shadow/axis-shadow-runtime.mjs` — deterministic fingerprint/observation and projection-vs-reality diagnostics.
 
-None of these modules is referenced by `build-release.mjs` or loaded by the AXIS 8.12 browser product.
+These remain platform-neutral and contain no browser/storage/network ownership APIs.
 
-Current authoritative owners remain:
+### Stage 3 browser presenter
+
+`browser/axis-live-route-presenter.js` is intentionally **not** a pure domain module. It is the single read-only browser presentation owner for `Continue + Live Route`.
+
+At build time, `prepare-813-live-route.mjs` embeds the exact pure Runtime + 8.12 adapter source with this presenter. `postbuild-813-live-route.mjs` injects the generated module into the already-canonical single runtime after all inherited 8.8–8.12 contracts pass.
+
+The browser presenter may read authoritative `axis_v60_state`, `axis_v8_meta` and current event identity. It may render one route section. It may not persist route state, write training facts, call network APIs, or own completion/pause/resume/finish.
+
+Current authoritative recording owners remain:
 
 - workout/session facts: `app.js` + `axis_v60_state`;
-- strength/activity facts: `v61.js` + `axis_v8_meta`.
+- strength/activity facts: `v61.js` / existing active runtime + `axis_v8_meta`.
 
 ## Authoritative-fact rule
 
@@ -27,11 +35,10 @@ The adapter is intentionally conservative:
 
 - `done`, `doneAt`, or authoritative `activity.completedSets` can establish performed strength work;
 - `assumed` means unfinished/planned work;
-- a planned cardio duration is not completion while its activity is active/paused;
+- planned cardio duration is not completion while activity is active/paused;
 - pause/rest state is not completion;
-- archived sessions are historical facts.
-
-When evidence is incomplete, the adapter prefers unfinished/unknown over fabricated completion.
+- archived sessions are historical facts;
+- incomplete live evidence stays unfinished rather than becoming invented work.
 
 ## Projection interface
 
@@ -42,77 +49,58 @@ projection = projectWorkout({
   history,
   goal,
   currentExercise,
-  remainingMinutes, // or leaveAt
+  remainingMinutes,
   constraints: {
     occupied: [],
     excluded: [],
-    intensity: 'normal', // normal | less | minimum
+    intensity: 'normal',
     maxItems: null,
   },
 });
 ```
 
-The projection contains:
+The projection contains current, next, alternatives, remaining, dropped, normalized constraints, budget facts and reason codes.
 
-```js
-{
-  current,
-  next,
-  alternatives,
-  remaining,
-  dropped,
-  constraints,
-  budget,
-  reasonCodes,
-}
-```
-
-A projection is advisory until a later release explicitly transfers narrow presentation ownership. It may never fabricate completed work or rewrite history.
-
-## Shadow interface
+## Stage 2 Shadow interface
 
 ```js
 observation = observeAxis812Shadow({
   now,
-  core,            // parsed axis_v60_state
-  meta,            // parsed axis_v8_meta
-  currentEventId,  // observed current event identity
+  core,
+  meta,
+  currentEventId,
   remainingMinutes,
   constraints,
 });
 ```
 
-An observation contains:
+Shadow observation remains evidence-only and outside the browser product. Stage 2 CI exercises real 8.12 transitions in Chromium and iPhone-like WebKit without loading Runtime code into the page.
+
+## Stage 3 Live Route interface
+
+The product-side diagnostic is:
 
 ```js
-{
-  fingerprint,
-  input,
-  facts,
-  projection,
-  diagnostics,
-}
+window.__AXIS_813_ROUTE__
 ```
 
-`compareShadowObservations(previous, current)` can describe factual changes such as same-item progress or a current-event change and compare them with the previous projection. The result is diagnostics only; it cannot change product state.
+It exposes only presentation diagnostics and explicit read/re-render helpers:
 
-## Stage 2 browser boundary
+- owner `v813-live-route`;
+- `recordingOwner: false`;
+- `storageOwner: false`;
+- `networkOwner: false`;
+- `writes: 0`;
+- current route state;
+- `refresh()`;
+- read-only `snapshot()`.
 
-The browser Shadow harness lives under `scripts/`, not inside the application bundle. It lets the unchanged 8.12 product execute normal recording transitions, then reads authoritative state at narrow boundaries and runs the pure Shadow Runtime in the test process.
+The visible route intentionally excludes the factual current item because the existing active card already owns that information. Only evidence-backed future continuation is presented.
 
-This deliberately preserves a hard failure boundary:
-
-- Runtime exception -> diagnostic failure only;
-- no product DOM owner;
-- no storage writer;
-- no network request;
-- no route presentation;
-- no recording side effect.
-
-Dedicated Stage 2 CI verifies this in Chromium and iPhone-like WebKit and also requires byte-exact 8.12 Production parity against the PR base.
+If there is no active workout, no useful future evidence, or a Runtime/presenter error, the route hides and the existing 8.12 product continues unchanged.
 
 ## Design rule
 
-**Observe first. Transfer ownership later.**
+**Facts first. Projection second. Presentation third. Ownership transfer last.**
 
-Stage 2 exists to collect deterministic evidence that the Runtime understands real 8.12 facts. `Continue + Live Route` belongs to a later Stage 3 change after the exact Stage 2 candidate is fully green.
+Stage 3 transfers only continuation presentation. Stage 4 may later add explicit temporary Reality Actions; recording and historical facts remain authoritative until a separate owner-transfer stage proves it can safely retire the old writer.
