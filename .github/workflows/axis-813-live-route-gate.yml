@@ -43,7 +43,7 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
-        run: node scripts/axis-813-live-route-smoke.mjs
+        run: node scripts/axis-813-live-route-ci-diagnostic.mjs
       - name: Repository contract
         run: node scripts/axis-repository-contract.mjs
       - name: Print server log on failure
@@ -72,7 +72,7 @@ jobs:
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
-        run: node scripts/axis-813-live-route-smoke.mjs
+        run: node scripts/axis-813-live-route-ci-diagnostic.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-813-route-webkit.log || true
