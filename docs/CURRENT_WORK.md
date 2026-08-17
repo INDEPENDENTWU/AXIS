@@ -5,146 +5,137 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12
-- Verified `main` at Stage 2 base: `7d2c703ec85abc8a01ee43de4d99ea9402695fbf`
+- Verified Stage 2 `main`: `22d59ce3de448c33b7140c5432dee17c6e669fd0`
 - Architecture: `canonical-single-runtime`
 - Production release hash: `ad14cad78a8d`
 - Canonical runtime marker: `74c57baa7159`
 - CSS marker: `b59f3946c3e5`
 - Fixed Production endpoint: `axis-five-puce.vercel.app`
-- Vercel Production for the base is `READY` and reports that exact `main` SHA.
-- `AXIS Production Deployment Gate` passed on that baseline with real Chromium inherited product, 8.11 Experience and 8.12 Language Studio checks.
-- PR #36 field hardening is merged Production behavior: Group Plan uses the recording owner, active adjustment resolves the current event, set completion does not imply rest, pause owns cumulative rest, first paused frame is final rest presentation, and standalone learning remount is event-driven.
+- Vercel Production deployment for `22d59ce3…` is `READY` and reports that exact Git source SHA.
+- Fixed Production alias serves `canonical-8.12` with the same 8.12 release/runtime/CSS hashes as the Stage 2 base.
+- `AXIS Production Deployment Gate` passed against the fixed Production URL with real Chromium inherited product, AXIS 8.11 Experience and AXIS 8.12 Language Studio checks.
+- Main push has zero failed or in-progress workflows after Stage 2 merge; full Runtime Chromium/WebKit and the dedicated Shadow Runtime gates are green.
+- PR #37 is merged. Stage 2 Shadow Runtime is now the verified non-owning foundation in `main`.
 
 ## Active change
 
-**AXIS 8.13 Stage 2 — Shadow Runtime is implemented and validated in PR #37.**
+**AXIS 8.13 Stage 3 — Continue + Live Route** is active on `feat/813-continue-live-route`.
 
-Stage 2 remains non-owning. AXIS 8.12 is still the only product/browser authority.
+Stage 3 is the first intentionally user-visible Reality Runtime ownership transfer, but the transfer is deliberately narrow:
 
-The Shadow Runtime exists to answer one engineering question before any UI transfer:
+> the Runtime may own continuation / remaining-route presentation; existing 8.12 recording remains authoritative.
 
-> given real authoritative 8.12 facts, does the pure Runtime produce deterministic continuation projections without fabricating history or affecting recording?
+This stage is not allowed to become a second workout database, second recording owner, or automatic training controller.
 
-### Authoritative 8.12 adapter
+### Product objective
 
-`runtime/compat/axis-812-adapter.mjs` now follows actual Production semantics:
+When a real workout is already in progress, AXIS should be able to answer, clearly and immediately:
 
-- `done`, `doneAt`, or authoritative `activity.completedSets` may establish performed strength work;
-- `assumed` is unfinished/planned work and must not become phantom completion;
-- active/paused cardio planned duration is not completion;
-- archived sessions remain historical facts;
-- pause/rest (`status`, `restStartedAt`, `restAccumulatedMs`) is separate from completion;
-- explicit observed current event id takes priority; otherwise current activity state is used conservatively.
+- what has already happened;
+- what is still worth doing now;
+- what should come next;
+- what realistic alternatives exist if the next item is unavailable;
+- how the remaining route changes when the user has less time or explicitly skips/changes the current route later.
 
-When evidence is incomplete, live work stays unfinished rather than being invented as completed.
+Stage 3 does **not** judge the user for deviating from a plan. The route is a continuation from facts, not a compliance checklist.
 
-### Pure Shadow Runtime
+### Presentation ownership boundary
 
-`runtime/shadow/axis-shadow-runtime.mjs` is platform-neutral and deterministic. It produces only normalized Runtime input, factual active-session diagnostics, pure Runtime projection, stable input fingerprint, and projection-vs-next-observed-state alignment diagnostics.
+Allowed Stage 3 ownership:
 
-It has no DOM, LocalStorage, IndexedDB, network, media, AI or timer ownership. It writes nothing and is not authoritative.
+- a single `Continue + Live Route` presentation surface on Today / active workout;
+- deterministic rendering from the Stage 2 Runtime projection;
+- current / next / remaining / alternative route information;
+- explicit empty/fallback states when projection is unavailable or unnecessary;
+- visual updates triggered by existing authoritative recording/activity changes;
+- read-only time-budget / temporary-constraint input if it can be introduced without taking recording/storage ownership.
 
-Observation errors fail open into diagnostic results with `projection: null`; Runtime exceptions cannot affect recording because no Runtime module is loaded by the 8.12 product.
+Forbidden Stage 3 ownership:
 
-### Real browser Shadow harness
+- writing `axis_v60_state` or `axis_v8_meta`;
+- completing sets, pausing/resuming, finishing items or sessions;
+- changing the current event automatically;
+- writing a new durable route/history database;
+- rewriting history when a projection changes;
+- camera/media/watermark/AI ownership;
+- network-required route generation;
+- automatic Reality Actions;
+- durable event journal;
+- storage migration;
+- broad Home redesign unrelated to the route surface.
 
-`scripts/axis-813-shadow-browser.mjs` runs outside the product bundle.
+### Required failure behavior
 
-The unchanged 8.12 product performs real transitions; the harness only reads parsed `axis_v60_state`, `axis_v8_meta` and current event id at narrow boundaries, then runs the Shadow Runtime in the test process.
+The Runtime route surface must fail cleanly:
 
-Real browser coverage includes:
+- Runtime unavailable/error -> existing 8.12 workout UI remains fully usable;
+- insufficient evidence -> hide or show a concise neutral empty state, never invent work;
+- no active workout -> no active route ownership;
+- active session with no useful continuation -> do not fabricate a next item;
+- browser reload / Home Screen resume -> recompute from authoritative facts; no route persistence is required for correctness.
 
-- three `assumed` strength rows -> zero performed sets;
-- real `完成一组` -> one factual performed set and no automatic rest;
-- real pause -> rest facts with no fabricated set;
-- real resume -> accumulated rest with no fabricated work;
-- active cardio planned duration -> still unfinished.
+### Intended owner model
 
-This is exercised in Chromium and iPhone-like WebKit.
+Stage 3 should introduce **one** presentation owner, not another chain of historical patches.
+
+Preferred structure:
+
+1. existing 8.12 recording owners write facts;
+2. a narrow browser adapter reads those facts after authoritative events;
+3. pure Reality Runtime computes a projection;
+4. one route presenter renders the projection;
+5. presenter never writes training facts.
+
+The Stage 2 external Shadow harness remains evidence infrastructure. Stage 3 may add a browser-side read-only Runtime bridge only if its ownership and failure boundary are explicit and single-owner.
 
 ## Validation for this work
 
-The implementation/documentation candidate `9f5bdae5c1d9fc9da2a1744a3a47787407df409b` passed **all 9 workflows triggered for PR #37**:
+Stage 3 is not complete until the exact final candidate proves all of the following:
 
-- AXIS 8.13 Shadow Runtime;
-- AXIS 8.13 Runtime Core;
-- AXIS Runtime Gate;
-- AXIS 8.12 Field Hardening Gate;
-- AXIS 8.10.3 Gate;
-- AXIS Home Transition Gate;
-- AXIS 8.8 Reminder Layout Gate;
-- AXIS Repository Contract;
-- AXIS Work Continuity Contract.
+### Ownership and safety
 
-Dedicated Shadow evidence on that candidate:
+- exactly one `Continue + Live Route` presentation owner;
+- no new writer to `axis_v60_state`, `axis_v8_meta`, IndexedDB media, learning store, or any new route persistence store;
+- Runtime presentation code contains no training mutation path;
+- existing completion/pause/resume/finish controls remain owned by the 8.12 runtime;
+- malformed Runtime input or projection exception cannot block or corrupt recording;
+- public release identity remains 8.12 unless a later explicit promotion decision changes it.
 
-- pure Shadow invariants PASS;
-- Chromium authoritative Shadow observation PASS;
-- iPhone-like WebKit authoritative Shadow observation PASS;
-- Stage 0/1 retains 600 seeded randomized Runtime cases;
-- Stage 2 adds 500 seeded randomized Shadow cases;
-- combined seeded randomized evidence: 1,100 cases;
-- same snapshot -> identical fingerprint and observation;
-- malformed observation -> deterministic fail-open diagnostic;
-- no Runtime/adapter/shadow browser/storage/network ownership APIs;
-- PR changed-file self-audit found only `.github/`, `docs/`, `runtime/`, and `scripts/axis-813-*` scope; no 8.12 product owner or build orchestrator changed.
+### Product behavior
 
-### Exact Production parity
+- no active workout -> route surface absent/neutral and existing Home remains intact;
+- active strength before first set -> current item is factual, unperformed `assumed` sets are not shown as completed;
+- completing one set -> route updates without entering rest or replacing recording controls;
+- explicit pause/resume -> route remains stable and does not fabricate progress;
+- current-event change -> route updates to the new factual current item;
+- active cardio planned duration -> remains active/uncompleted;
+- occupied/excluded/time/intensity constraints affect only projected remaining route, never historical facts;
+- zero-time / early-finish projection can resolve to no remaining work without fabricating completion;
+- reload/reopen from same authoritative snapshot -> identical route presentation;
+- iPhone-like WebKit and Chromium render the same route semantics without geometry flicker.
 
-Stage 2 remains outside `build-release.mjs`.
+### Visual / interaction quality
 
-`AXIS 8.13` parity rebuilt exact base `7d2c703ec85abc8a01ee43de4d99ea9402695fbf` in a detached worktree and passed byte-for-byte Production parity:
+- active Today hierarchy remains disciplined; the route does not compete with the current recording card;
+- current / next / remaining information is scannable without verbose coaching copy;
+- no nested card soup, duplicated timeline, oversized text, or new persistent modal flow;
+- route updates do not cause active-card geometry jump or dock/navigation instability;
+- Safari Home Screen / standalone lifecycle remains safe.
 
-- release: `8.12`;
-- release hash: `ad14cad78a8d`;
-- canonical runtime marker: `74c57baa7159`;
-- CSS marker: `b59f3946c3e5`;
-- raw generated core parity fingerprint: `1483c663fda3`;
-- architecture: `canonical-single-runtime`;
-- one initial JavaScript request;
-- zero dynamic historical runtime chunks.
+### Regression and architecture
 
-Any Stage 2 Runtime/test/docs/CI-only change that alters the actual 8.12 Production artifact fails CI.
-
-### Ownership boundary after Stage 2
-
-Still unchanged:
-
-- Home UI owner;
-- recording owner;
-- strength/set editor owner;
-- pause/resume/finish owner;
-- LocalStorage / IndexedDB schema and writers;
-- camera/media/watermark owners;
-- AI/network owners;
-- Language Studio;
-- current route/recommendation presentation;
-- public release identity 8.12.
-
-No `Continue + Live Route` UI has been transferred to the Runtime yet.
-
-The 8.12 field-hardening compatibility transform also remains in place until a later explicit owner-transfer change can prove equivalent semantics and retire an old owner in the same controlled change.
-
-### Final PR #37 seal
-
-This status-only documentation change is the final intended Stage 2 edit. Because it becomes the PR head, **the exact final head must rerun and pass the same Shadow, Runtime, inherited product, Repository, Continuity and exact-parity gates before merge.** Earlier green runs are evidence but are not reused as the final merge decision.
-
-After that exact-head pass, PR #37 should be squash-merged. Stage 2 is then closed; do not add user-visible Runtime ownership to the same PR.
+- Stage 2 pure Runtime + Shadow gates stay green;
+- existing Runtime, Home, Field Hardening, Reminder, 8.10.3, 8.11/8.12 inherited gates stay green;
+- Repository Contract and Work Continuity Contract stay green;
+- Stage 3 has a dedicated Chromium + iPhone-like WebKit gate covering route presentation and failure fallback;
+- Production build topology remains `canonical-single-runtime`, one initial JS, zero dynamic historical runtime chunks.
 
 ## Next planned stage
 
-**AXIS 8.13 Stage 3 — Continue + Live Route**
+After Stage 3 is merged and Production-verified, the next stage must be chosen from verified field evidence. The default migration sequence remains:
 
-Stage 3 may transfer only the narrow ownership of continuation / remaining-route presentation.
+**AXIS 8.13 Stage 4 — Reality Actions**
 
-Required boundary:
+Stage 4 may introduce explicit user actions such as “这个器械有人 / 我只剩 20 分钟 / 今天到这里” that alter **temporary Runtime constraints or continuation intent**, while historical workout facts remain authoritative and immutable.
 
-- existing recording remains authoritative;
-- no new storage writer;
-- no Runtime mutation of history;
-- route UI must render from deterministic Runtime projection;
-- any fallback returns cleanly to existing 8.12 behavior;
-- owner transfer is explicit and reversible;
-- Reality Actions, durable event journal, storage migration and broader recording ownership remain later stages.
-
-Start Stage 3 from the verified Stage 2 `main`, not from chat history or an old feature branch.
+Do not begin Stage 4 inside the Stage 3 PR. Durable event journal, storage migration and broad recording-owner transfer remain later, separate stages.
