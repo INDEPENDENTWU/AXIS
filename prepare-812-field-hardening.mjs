@@ -18,7 +18,7 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
   let src=read(FILE);
   src=regexOnce(
     src,
-    /(function renderSets\(\)\{[\s\S]*?)(\}\nfunction hideSets\(\))/, 
+    /(function renderSets\(\)\{[\s\S]*?)(\}\s*function hideSets\(\))/, 
     `$1;try{D.dispatchEvent(new CustomEvent('axis:set-draft-rendered',{detail:{first:{weight:draft[0]?.weight??null,reps:draft[0]?.reps??null},count:draft.length}}))}catch{}$2`,
     'synchronous set-draft bridge'
   );
@@ -61,7 +61,7 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
     "closeOpen(x.a,t);x.a.status='paused';x.a.pausedAt=t;x.a.restStartedAt=t;x.a.restAccumulatedMs=Math.max(0,Number(x.a.restAccumulatedMs)||0)",
     'reconcile pause starts rest');
 
-  src=regexOnce(src,/function toggle\(id\)\{[\s\S]*?\n\}\nfunction completeSet/,`function toggle(id){
+  src=regexOnce(src,/function toggle\(id\)\{[\s\S]*?\}\s*function completeSet/,`function toggle(id){
  const c=readCore(),m=readMeta(),a=m.events?.[id]?.activity;if(!c.active||!a||a.status==='finished')return;const t=now();
  if(a.status==='active'){
   closeOpen(a,t);a.status='paused';a.pausedAt=t;a.restStartedAt=t;a.restAccumulatedMs=Math.max(0,Number(a.restAccumulatedMs)||0)
