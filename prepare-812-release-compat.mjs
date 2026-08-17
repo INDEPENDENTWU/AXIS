@@ -53,7 +53,10 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  const f='scripts/axis-8102-smoke.mjs';let s=read(f);s=once(s,"['8.10.2','8.10.3','8.11'].includes(EXPECTED)","['8.10.2','8.10.3','8.11','8.12'].includes(EXPECTED)",'8.10.2 browser version allowance');write(f,s);
 }
 {
- const f='scripts/axis-8103-smoke.mjs';let s=read(f);s=once(s,"['8.10.3','8.11'].includes(EXPECTED)","['8.10.3','8.11','8.12'].includes(EXPECTED)",'8.10.3 browser version allowance');write(f,s);
+ const f='scripts/axis-8103-smoke.mjs';let s=read(f);
+ s=once(s,"['8.10.3','8.11'].includes(EXPECTED)","['8.10.3','8.11','8.12'].includes(EXPECTED)",'8.10.3 browser version allowance');
+ s=once(s,"assert.equal(await page.locator('.v8103DialogueTurns .v8101Turn').count(),4,'dialogue is not four turns');","assert.equal(await page.locator('.v8103DialogueTurns .v8101Turn').count(),8,'8.12 default full dialogue is not eight turns');",'8.10.3 inherited dialogue UI expectation');
+ write(f,s);
 }
 {
  const f='prepare-812-learning-content.mjs';let s=read(f);
