@@ -27,8 +27,9 @@ await page.evaluate(()=>{const h=document.querySelector('#v8Sets');for(const [k,
 await page.waitForFunction(()=>{const a=[...document.querySelectorAll('#v8Sets .v8SetRow:first-child span>b')].map(x=>x.textContent.trim());return a[0]==='27.5'&&a[1]==='12'&&document.querySelector('.v875PlanEntry')});
 await page.locator('#v8Sets [data-cnt="1"]').click();
 assert.equal(await page.locator('.v875PlanEntry').count(),1,'group plan vanished after set-count rebuild');
-await page.locator('.v875PlanEntry').click();await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show'));
-assert.match((await page.locator('#v875PlanStart').innerText()).replace(/\s+/g,' '),/27\.5kg × 12次/,'group plan reverted to stale 20kg/10 baseline');
+await page.locator('.v875PlanEntry').click();
+await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show')&&document.querySelector('#v8712PlanBody .v8712PlanBase'),undefined,{timeout:3000});
+assert.match((await page.locator('#v8712PlanBody .v8712PlanBase').innerText()).replace(/\s+/g,' '),/27\.5kg × 12次/,'canonical group plan reverted to stale 20kg/10 baseline');
 await page.locator('#v875PlanSheet [data-v875-close-plan]').click();
 await page.locator('#scanSheet [data-close="scanSheet"]').click();
 
