@@ -2,7 +2,7 @@
 
 > Canonical engineering handoff. Read this before modifying AXIS. Product truth remains in `CURRENT_RELEASE.md`; this file records the latest verified engineering state and the next controlled boundary.
 
-## Verified Production baseline
+## Production baseline at start of this work
 
 - Public product: AXIS 8.12
 - Verified `main` at Stage 2 base: `7d2c703ec85abc8a01ee43de4d99ea9402695fbf`
@@ -15,7 +15,7 @@
 - `AXIS Production Deployment Gate` passed on that baseline with real Chromium inherited product, 8.11 Experience and 8.12 Language Studio checks.
 - PR #36 field hardening is merged Production behavior: Group Plan uses the recording owner, active adjustment resolves the current event, set completion does not imply rest, pause owns cumulative rest, first paused frame is final rest presentation, and standalone learning remount is event-driven.
 
-## Current milestone
+## Active change
 
 **AXIS 8.13 Stage 2 — Shadow Runtime is implemented and validated in PR #37.**
 
@@ -24,8 +24,6 @@ Stage 2 remains non-owning. AXIS 8.12 is still the only product/browser authorit
 The Shadow Runtime exists to answer one engineering question before any UI transfer:
 
 > given real authoritative 8.12 facts, does the pure Runtime produce deterministic continuation projections without fabricating history or affecting recording?
-
-## Stage 2 implementation
 
 ### Authoritative 8.12 adapter
 
@@ -42,13 +40,7 @@ When evidence is incomplete, live work stays unfinished rather than being invent
 
 ### Pure Shadow Runtime
 
-`runtime/shadow/axis-shadow-runtime.mjs` is platform-neutral and deterministic. It produces only:
-
-- normalized Runtime input;
-- factual active-session diagnostics;
-- pure Runtime projection;
-- stable input fingerprint;
-- projection-vs-next-observed-state alignment diagnostics.
+`runtime/shadow/axis-shadow-runtime.mjs` is platform-neutral and deterministic. It produces only normalized Runtime input, factual active-session diagnostics, pure Runtime projection, stable input fingerprint, and projection-vs-next-observed-state alignment diagnostics.
 
 It has no DOM, LocalStorage, IndexedDB, network, media, AI or timer ownership. It writes nothing and is not authoritative.
 
@@ -70,7 +62,7 @@ Real browser coverage includes:
 
 This is exercised in Chromium and iPhone-like WebKit.
 
-## Stage 2 validation evidence
+## Validation for this work
 
 The implementation/documentation candidate `9f5bdae5c1d9fc9da2a1744a3a47787407df409b` passed **all 9 workflows triggered for PR #37**:
 
@@ -114,7 +106,7 @@ Stage 2 remains outside `build-release.mjs`.
 
 Any Stage 2 Runtime/test/docs/CI-only change that alters the actual 8.12 Production artifact fails CI.
 
-## Ownership boundary after Stage 2
+### Ownership boundary after Stage 2
 
 Still unchanged:
 
@@ -133,13 +125,13 @@ No `Continue + Live Route` UI has been transferred to the Runtime yet.
 
 The 8.12 field-hardening compatibility transform also remains in place until a later explicit owner-transfer change can prove equivalent semantics and retire an old owner in the same controlled change.
 
-## Final PR #37 seal
+### Final PR #37 seal
 
-This status-only documentation commit is the final intended Stage 2 change. Because it becomes the PR head, **the exact final head must rerun and pass the same Shadow, Runtime, inherited product, Repository, Continuity and exact-parity gates before merge.** Earlier green runs are evidence but are not reused as the final merge decision.
+This status-only documentation change is the final intended Stage 2 edit. Because it becomes the PR head, **the exact final head must rerun and pass the same Shadow, Runtime, inherited product, Repository, Continuity and exact-parity gates before merge.** Earlier green runs are evidence but are not reused as the final merge decision.
 
 After that exact-head pass, PR #37 should be squash-merged. Stage 2 is then closed; do not add user-visible Runtime ownership to the same PR.
 
-## Next controlled stage
+## Next planned stage
 
 **AXIS 8.13 Stage 3 — Continue + Live Route**
 
