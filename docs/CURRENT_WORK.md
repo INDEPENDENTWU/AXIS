@@ -1,89 +1,79 @@
 # AXIS Current Work
 
-> Canonical engineering handoff. Read this before modifying AXIS. Product truth remains in `CURRENT_RELEASE.md`; this file records the latest verified engineering state and the next controlled boundary.
+> Canonical engineering handoff. Product truth remains in `CURRENT_RELEASE.md`; this file records the latest verified engineering state and the next controlled boundary.
 
-## Production baseline at start of this work
+## Production baseline
 
 - Public product: AXIS 8.12.
-- AXIS 8.13 Stage 3 — Continue + Live Route was squash-merged from PR #38.
-- Stage 3 merged `main`: `ad9bcdf7ac789c96ab074cfc658cdc1723ff4159`.
+- Verified `main` at the start of this work: `fcd89e97f091fe103886cddab919844f1ef602ee`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- Vercel Production is `READY` for exact source commit `ad9bcdf7…`.
-- Fixed Production `axis-build.json` reports public version `8.12`, one initial JavaScript request, zero dynamic JavaScript, and all seven Stage 3 Live Route ownership gates true.
-- Production core marker: `4d490912e0f3`; CSS marker: `af439553319b`.
-- `AXIS Public Production Alias Gate` passed for exact `ad9bcdf7…`.
-- `AXIS Production Deployment Gate` passed against the fixed Production URL with real Chromium inherited product, AXIS 8.11 Experience and AXIS 8.12 Language Studio regressions.
-- Stage 3 route remains read-only presentation: existing 8.12 recording/storage owners remain authoritative.
+- Vercel Production is `READY` for exact source commit `fcd89e97…`.
+- Fixed Production manifest: release hash `0c50e5bead25`, core `4d490912e0f3`, CSS `af439553319b`, one initial JavaScript request, zero dynamic JavaScript, zero chunks.
+- AXIS 8.13 Stage 3 Continue + Live Route is Production-verified and remains read-only presentation; AXIS 8.12 recording/storage owners remain authoritative.
+- Final Stage 3 seal has zero failed, queued or in-progress workflows on `fcd89e97…`.
 
 ## Active change
 
-**CI-only Stage 3 seal hotfix — deterministic Live Route diagnostic failure exit (PR #39).**
+**AXIS 8.13 Settings convergence — inline Learning Schedule + Cloud/AI.**
 
-The merged Stage 3 product is already Production-verified. During final main-branch CI sealing, a WebKit Live Route failure exposed a diagnostic-wrapper lifecycle defect:
+This is a narrow user-experience correction requested from real iPhone Safari use. It does not begin Stage 4 and does not change Runtime planning semantics.
 
-- `scripts/axis-813-live-route-ci-diagnostic.mjs` caught an assertion error correctly;
-- it emitted diagnostics but only assigned `process.exitCode = 1`;
-- the failed smoke could leave a Playwright browser handle alive;
-- Node therefore remained running until the workflow timeout instead of terminating immediately.
+### Problem
 
-PR #39 changes only that diagnostic failure path:
+Two Settings rows still used historical nested sheet ownership:
 
-- write the same error detail and GitHub annotation synchronously;
-- terminate immediately with exit code 1;
-- do not change `axis-813-live-route-smoke.mjs`;
-- do not change assertions, timeouts, expected values or browser acceptance criteria;
-- do not change Runtime, presenter, build topology, product UI, training/storage/media ownership or Production behavior.
+- `学习安排` opened `v810ConfigPanel` as a second fixed bottom sheet;
+- `云端与 AI` opened `v811ServicePanel` as another fixed bottom sheet.
 
-This hotfix exists only so future failed WebKit assertions fail deterministically instead of appearing indefinitely `in_progress`.
+That behavior is inconsistent with the converged Settings pattern already used by `记录偏好` and `提醒与声音`, creates unnecessary navigation/scroll layers on iPhone, and makes both configuration surfaces visually too large.
 
-## Validation for this work
+### Controlled correction
 
-### Stage 3 product seal already proved
+`prepare-813-settings-convergence.mjs` is a final source-convergence step after the existing Stage 3 prepare step and before `build-hardened.mjs`.
 
-Final PR #38 head `b1e32d88b45f9707896095b5fff169047aa5cbe4` passed all 14 triggered workflows before merge. Dedicated Chromium and iPhone-like WebKit Live Route regressions passed with unchanged assertions; WebKit was additionally rerun on the same SHA and passed again.
+It must preserve all existing learning and service behavior while changing only presentation ownership:
 
-The browser contract proves:
+- `学习安排` becomes one `v8711SettingGate`-style inline fold inside the canonical Settings sheet;
+- `云端与 AI` becomes one matching inline fold inside the same Settings sheet;
+- neither may create or show a second fixed settings sheet;
+- both row heights converge to the existing compact Settings scale;
+- learning core decisions remain available: purpose, method, intensity, level and dialogue depth;
+- learning fine tuning remains progressive disclosure and preserves novelty, track, cadence, daily target and opportunity;
+- Cloud/AI keeps cloud mode, AI mode, capability status and privacy/send-range controls;
+- capability and privacy detail are progressively disclosed instead of permanently occupying vertical space;
+- expanding Cloud/AI may perform the same existing explicit user-invoked status reads; no automatic background network owner is introduced.
 
-- idle Home remains non-owning;
-- `assumed` strength sets remain unfinished;
-- factual current item is not duplicated in future route;
-- evidence-backed historical continuation can surface the next item;
-- route refresh does not modify training storage or active-card/navigation geometry;
-- real set completion updates factual progress without fabricating rest;
-- pause/resume does not fabricate route progress or take active-control ownership;
-- current-event changes recompute continuation;
-- active cardio plan duration remains unfinished;
-- insufficient evidence hides the route rather than inventing work;
-- lifecycle events do not duplicate the route owner.
+### Ownership that must not change
 
-### Post-merge Production seal
+- Learning store: `axis_v89_speak`.
+- Cloud/AI preference store: `axis_v811_services`.
+- Factual training state: `app.js` / `axis_v60_state`.
+- Strength/activity metadata: `v61.js` / `axis_v8_meta`.
+- Stage 3 Live Route: presentation only.
+- No new IndexedDB owner, timer owner, training-control owner, media owner, AI training owner or dynamic JavaScript chunk.
 
-On merged main `ad9bcdf7…`:
+## Acceptance
 
-- Vercel Production is READY on the exact commit;
-- the fixed public alias serves the exact source commit and canonical Stage 3 manifest;
-- Public Production Alias Gate passed;
-- Production Deployment Gate passed its complete fixed-domain browser suite;
-- the initially red main Field Hardening WebKit job was rerun unchanged on the same SHA and its `iPhone-like field hardening regression` passed; the workflow conclusion is now success;
-- the exact main SHA currently has zero failed workflow runs after that rerun.
+Dedicated `AXIS 8.13 Settings Convergence` Chromium + iPhone-like WebKit regression must prove on the exact PR head:
 
-### CI hotfix acceptance
-
-PR #39 head begins at `5dfbbdf15e4cf32e499396104a1f8204bbc10177` and changes only the diagnostic wrapper plus this handoff document.
-
-Before merge it must pass the exact-head repository/continuity and applicable Stage 3/inherited gates. After merge, verify the new main has no unresolved failure or in-progress run attributable to the diagnostic lifecycle defect. Because this is CI/docs only, the public product topology and user-facing Stage 3 behavior must remain unchanged.
+- opening Settings produces exactly one visible Settings sheet;
+- Learning Schedule expands/collapses in place;
+- Cloud/AI expands/collapses in place;
+- legacy fixed nested learning/service panels are absent;
+- compact row and option geometry is maintained on a 390×844 viewport;
+- 8.12 learning purpose/method controls remain functional and persist to `axis_v89_speak`;
+- Cloud/AI status network does not run before explicit row expansion;
+- explicit expansion performs only the existing status reads;
+- cloud/AI preferences persist to `axis_v811_services`;
+- neither learning nor service configuration writes `axis_v60_state` or `axis_v8_meta`;
+- Settings close/reopen keeps a single owner and persisted values;
+- page errors remain empty;
+- public topology remains AXIS 8.12 / canonical single runtime / one initial JS / zero dynamic JS / zero chunks;
+- all inherited Runtime, Field Hardening, Language Studio, Stage 3, repository and continuity gates remain green.
 
 ## Next planned stage
 
-After PR #39 is merged and the Stage 3 seal is clean:
+Only after this Settings convergence is merged and Production-verified may work proceed to **AXIS 8.13 Stage 4 — Reality Actions**.
 
-**AXIS 8.13 Stage 4 — Reality Actions**
-
-Stage 4 may add explicit temporary Runtime constraints such as:
-
-- 这个器械有人;
-- 我只剩 20 分钟;
-- 今天到这里.
-
-Those actions may alter temporary continuation intent only. Historical workout facts remain authoritative and immutable. Durable event journal, storage migration and broader recording-owner transfer remain later, separate stages.
+Stage 4 may add temporary Runtime constraints such as `这个器械有人`, `我只剩 20 分钟`, and `今天到这里`. Historical workout facts remain authoritative and immutable.
