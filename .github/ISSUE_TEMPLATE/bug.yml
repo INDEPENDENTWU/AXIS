@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a reproducible AXIS product or engineering defect
+title: "bug: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please report one reproducible problem. Do not include API keys, private media, precise private location data, or security exploit details. Security issues belong in private vulnerability reporting.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the actual behavior and why it is wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction
+      description: Give the shortest exact path that reproduces the problem.
+      placeholder: |
+        1. Open …
+        2. Tap …
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Device / browser
+      placeholder: "iPhone 16 · iOS 20 · Safari"
+    validations:
+      required: true
+  - type: dropdown
+    id: persistence
+    attributes:
+      label: Does it survive reload or reopen?
+      options:
+        - Not tested
+        - No
+        - Yes
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Add screenshots, a short recording, console output, or source commit only when relevant. Remove private data first.
