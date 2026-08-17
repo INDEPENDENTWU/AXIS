@@ -55,4 +55,11 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
 {
  const f='scripts/axis-8103-smoke.mjs';let s=read(f);s=once(s,"['8.10.3','8.11'].includes(EXPECTED)","['8.10.3','8.11','8.12'].includes(EXPECTED)",'8.10.3 browser version allowance');write(f,s);
 }
-console.log('[AXIS 8.12 release compat] PASS · 8.12 identity · inherited 8.11/8.10.x behavior remains sealed');
+{
+ const f='lib/learning-studio-812.mjs';let s=read(f);
+ s=once(s,"next=AXIS812_LEVELS[Math.min(li+1,AXIS812_LEVELS.length-1)]","next=AXIS812_LEVELS[li===AXIS812_LEVELS.length-1?li-1:li+1]",'C1+ distinct alternative expression');
+ const old="function conversation(lang,id,target,alt){const h=hash(id),ack=ACK[lang]||ACK.en,mid=MID[lang]||MID.en,tail=TAIL[lang]||TAIL.en;const a=ack[h%ack.length],q=mid[(h>>>3)%mid.length],u=tail.u[(h>>>7)%tail.u.length],o=tail.o[(h>>>13)%tail.o.length];const a2=ack[(h>>>17)%ack.length],q2=mid[(h>>>21)%mid.length];return [target,a,q,a2,alt||target,q2,u,o]}";
+ const modern="function conversation(lang,id,target,alt){const h=hash(id),ack=ACK[lang]||ACK.en,mid=MID[lang]||MID.en,tail=TAIL[lang]||TAIL.en,ai=h%ack.length,qi=(h>>>3)%mid.length;const a=ack[ai],q=mid[qi],u=tail.u[(h>>>7)%tail.u.length],o=tail.o[(h>>>13)%tail.o.length],a2=ack[(ai+1+((h>>>17)%(ack.length-1)))%ack.length],q2=mid[(qi+1+((h>>>21)%(mid.length-1)))%mid.length];return [target,a,q,a2,alt||target,q2,u,o]}";
+ s=once(s,old,modern,'dialogue acknowledgement/question diversity');write(f,s);
+}
+console.log('[AXIS 8.12 release compat] PASS · 8.12 identity · inherited contracts sealed · generated dialogue turns converge without C1+ or acknowledgement repetition');
