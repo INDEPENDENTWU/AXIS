@@ -55,8 +55,8 @@ try{
  await page.locator('[data-v812-core="purpose"][data-v812-value="native"]').click();
  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v89_speak')||'{}').prefs?.purpose==='native');
  assert.match(await page.locator('#v810ConfigSummary').innerText(),/母语口语/);
- const fine=$('#v811FineTune');
- await page.locator('#v811FineTune > summary').click();
+ const fineTune=page.locator('#v811FineTune');
+ if(!(await fineTune.evaluate(el=>el.open)))await page.locator('#v811FineTune > summary').click();
  await page.locator('[data-v810-key="track"][data-v810-value="travel"]').click();
  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v89_speak')||'{}').prefs?.track==='travel');
  assert.deepEqual(await trainingStores(),before,'learning preference changed authoritative training storage');
