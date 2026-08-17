@@ -54,15 +54,15 @@ assert.match(baseSha, /^[a-f0-9]{40}$/i, 'AXIS_PARITY_BASE_SHA must identify the
 const candidate = fingerprint(root);
 assertProductionBoundary(candidate, 'candidate');
 
-// Exact artifact parity is meaningful only when the PR changes the isolated 8.13
-// foundation/governance surface. Product/build changes are allowed to change hashes,
-// but must keep the production identity/topology contract and be proven by their
-// dedicated browser/regression gates + Work Continuity handoff.
+// Runtime-only/governance work must keep the 8.12 browser artifact byte-exact.
+// A Stage 2 browser harness is still observation infrastructure, not product code.
 const safeExactParityPath = (file) =>
   file.startsWith('runtime/') ||
   file.startsWith('docs/') ||
   file.startsWith('.github/') ||
   file === 'scripts/axis-813-runtime-core.mjs' ||
+  file === 'scripts/axis-813-shadow-runtime.mjs' ||
+  file === 'scripts/axis-813-shadow-browser.mjs' ||
   file === 'scripts/axis-813-build-parity.mjs' ||
   file === 'scripts/axis-repository-contract.mjs';
 

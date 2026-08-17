@@ -1,0 +1,90 @@
+name: AXIS 8.13 Shadow Runtime
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  pure-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Stage 0/1 Runtime invariants
+        run: node scripts/axis-813-runtime-core.mjs
+      - name: Stage 2 Shadow invariants
+        run: node scripts/axis-813-shadow-runtime.mjs
+      - name: Build unchanged 8.12 Production artifact
+        run: node build-release.mjs
+      - name: Exact Production parity against PR base
+        env:
+          AXIS_PARITY_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/axis-813-build-parity.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+
+  chromium-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact 8.12 product
+        run: node build-release.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve unchanged product
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-813-shadow-chromium.log 2>&1 &
+          sleep 1
+      - name: Observe authoritative Chromium transitions
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-813-shadow-browser.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-813-shadow-chromium.log || true
+
+  webkit-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact 8.12 product
+        run: node build-release.mjs
+      - name: Prepare WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve unchanged product
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-813-shadow-webkit.log 2>&1 &
+          sleep 1
+      - name: Observe authoritative iPhone-like WebKit transitions
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-813-shadow-browser.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-813-shadow-webkit.log || true
