@@ -70,6 +70,7 @@ for(const f of ['scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-f
  const f='.github/workflows/axis-production-deployment-gate.yml';let s=read(f);
  s=s.replaceAll("process.env.AXIS_EXPECTED_VERSION==='8.12'","['8.12','8.12.1'].includes(process.env.AXIS_EXPECTED_VERSION)");
  s=s.replaceAll("['8.11','8.12'].includes(process.env.AXIS_EXPECTED_VERSION)","['8.11','8.12','8.12.1'].includes(process.env.AXIS_EXPECTED_VERSION)");
+ s=s.replaceAll("['8.10.3','8.11','8.12'].includes(process.env.AXIS_EXPECTED_VERSION)","['8.10.3','8.11','8.12','8.12.1'].includes(process.env.AXIS_EXPECTED_VERSION)");
  s=s.replaceAll("if: env.AXIS_EXPECTED_VERSION == '8.12'","if: contains(fromJSON('[\"8.12\",\"8.12.1\"]'), env.AXIS_EXPECTED_VERSION)");
  write(f,s);
 }
