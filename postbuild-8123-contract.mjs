@@ -10,3 +10,5 @@ info.gates=info.gates||{};Object.assign(info.gates,{settingsNativeAlignment8123:
 info.axis8123={release:true,scope:'learning-ui-simplification',settings:{nativeRowAlignment:true,methodSelector:false,helperCopy:false,visibleCore:['purpose','intensity','level','dialogueDepth']},practice:{surface:['listen-original','record-local','playback-local'],modeSelector:false,echo:false,shadow:false,ab:false,autoplay:false,upload:false,persistence:'memory-only'},ownership:{learningStore:'axis_v89_speak',trainingState:false,recordingState:false,serviceStoreUnchanged:true}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 console.log('[AXIS 8.12.3 contract] PASS · native Settings alignment · method/shadow/A-B retired · listen/record/replay only · training ownership unchanged');
+
+await import('./postbuild-8123-field-polish.mjs');
