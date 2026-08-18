@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {spawnSync} from 'node:child_process';
 
 const APP='app.js';
 const fail=m=>{throw new Error(`[AXIS 8.12.3 equipment gallery driver] ${m}`)};
@@ -9,14 +10,20 @@ if(!app.includes(boundary))fail('app overlay boundary missing');
 if(app.includes('transient gallery insertion anchor'))fail('transient anchor already present');
 app=app.replace(boundary,sentinel+boundary);
 fs.writeFileSync(APP,app);
+let importError=null;
 try{
   await import('./prepare-8123-equipment-gallery-and-picker-fix.mjs');
+}catch(e){
+  importError=e;
+  console.error('[AXIS 8.12.3 equipment gallery driver] transformed app syntax diagnostic follows');
+  spawnSync(process.execPath,['--check',APP],{stdio:'inherit'});
 }finally{
   let out=fs.readFileSync(APP,'utf8');
   if(!out.includes(sentinel))fail('transient anchor was lost during transform');
   out=out.replace(sentinel,'');
   if(out.includes('transient gallery insertion anchor'))fail('transient anchor survived cleanup');
-  try{new Function(out)}catch(e){fail(`clean app syntax ${e.message}`)}
+  if(!importError){try{new Function(out)}catch(e){fail(`clean app syntax ${e.message}`)}}
   fs.writeFileSync(APP,out);
 }
+if(importError)throw importError;
 console.log('[AXIS 8.12.3 equipment gallery driver] PASS · gallery inserted at stable app boundary · transient anchor removed');
