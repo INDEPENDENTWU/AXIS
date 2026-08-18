@@ -14,6 +14,7 @@ await page.route('**/api/cloud-status**',r=>json(r,{cloud:{configured:false,enab
 await page.route('**/api/ai-capabilities**',r=>json(r,{ai:{enabled:false,capabilities:{vision:false,insight:false,voice:false,dialogue:false}}}));
 for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}]])await page.route(pattern,r=>json(r,obj));
 const tap=async l=>ENGINE==='webkit'?l.tap():l.click();
+const tapScrolled=async l=>{await l.scrollIntoViewIfNeeded();await tap(l)};
 const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:9000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:12000});await page.waitForFunction(()=>window.__AXIS_8123_FIELD_POLISH__?.version==='8.12.3',undefined,{timeout:6000});await page.waitForFunction(()=>window.__AXIS_GROUP_PLAN_STABLE__?.owner==='recording-render',undefined,{timeout:6000})};
 const left=async sel=>page.locator(sel).evaluate(el=>el.getBoundingClientRect().left);
 const right=async sel=>page.locator(sel).evaluate(el=>el.getBoundingClientRect().right);
@@ -54,11 +55,11 @@ try{
   assert.equal(await page.locator('#manageEqList [data-my-eq-id]').count(),2,'native + custom personal rows expected');
   assert.equal(await page.locator('#manageEqList [data-my-eq-photo="F-E-CHEST-0"]').count(),1,'representative photo ref missing');
   assert.equal(await page.locator('#manageEqList [data-my-eq-remove]').count(),2,'swipe remove actions missing');
-  await tap(page.locator('#myEqSelect'));assert.equal(await page.locator('#manageEqList.selecting').count(),1);
-  const rows=page.locator('#manageEqList [data-my-eq-id]');await tap(rows.nth(0));await tap(rows.nth(1));
+  await tapScrolled(page.locator('#myEqSelect'));assert.equal(await page.locator('#manageEqList.selecting').count(),1);
+  const rows=page.locator('#manageEqList [data-my-eq-id]');await tapScrolled(rows.nth(0));await tapScrolled(rows.nth(1));
   assert.equal((await page.locator('#v8123EqBatch [data-my-eq-batch]').textContent()).trim(),'移除 2 项');
-  await tap(page.locator('#myEqSelect'));assert.equal(await page.locator('#manageEqList.selecting').count(),0);
-  await tap(page.locator('#myEqBtn'));await page.waitForFunction(()=>!document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'));
+  await tapScrolled(page.locator('#myEqSelect'));assert.equal(await page.locator('#manageEqList.selecting').count(),0);
+  await tapScrolled(page.locator('#myEqBtn'));await page.waitForFunction(()=>!document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'));
   await tap(page.locator('#settingsSheet [data-close="settingsSheet"]'));
 
   console.log(`[AXIS 8.12.3 field ${ENGINE}] Group Plan survives count/weight/reps repaints + reopen`);
