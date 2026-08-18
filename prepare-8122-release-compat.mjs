@@ -39,7 +39,11 @@ for(const [f,a,b,label] of [
  const f='scripts/axis-813-live-route-smoke.mjs';let s=read(f);s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.1');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.2');",'Stage 3 browser identity');write(f,s);
 }
 {
- const f='scripts/axis-813-settings-convergence-smoke.mjs';let s=read(f);s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.1');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.2');",'settings browser identity');write(f,s);
+ const f='scripts/axis-813-settings-convergence-smoke.mjs';let s=read(f);
+ s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.1');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.2');",'settings browser identity');
+ s=once(s,"await page.locator('[data-v810-key=\"track\"][data-v810-value=\"travel\"]').click();","await page.locator('[data-v8122-learning=\"track\"][data-v8122-value=\"travel\"]').click();",'settings fine-tune track owner');
+ s=once(s,"assert.equal(await page.locator('#v813ServiceGate .v813ServiceDetails').count(),2,'progressive capability/privacy disclosure missing');","assert.equal(await page.locator('#v813ServiceGate .axis8122Group').count(),4,'8.12.2 service groups missing');assert.equal(await page.locator('#v811AIFacts .axis8122Fact').count(),4,'8.12.2 capability surface missing');",'settings service surface');
+ write(f,s);
 }
 {
  const f='scripts/axis-8121-hotfix-smoke.mjs';let s=read(f);
