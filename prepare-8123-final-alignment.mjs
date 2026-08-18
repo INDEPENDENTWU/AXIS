@@ -29,3 +29,4 @@ fs.writeFileSync(FILE,src);
 console.log('[AXIS 8.12.3 final alignment] PASS · legacy gate class retired before mount · measured native row local inset 6px · fold content preserved · no training ownership');
 
 await import('./prepare-8123-field-polish.mjs');
+await import('./prepare-8123-field-polish-fix.mjs');
