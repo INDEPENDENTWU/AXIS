@@ -19,6 +19,9 @@ for(const needle of [
   "owner:'document-capture'",
   '__AXIS_GROUP_PLAN_STABLE__',
   "owner:'recording-render'",
+  '__AXIS_8123_GROUP_PLAN_RENDER_OWNER__',
+  "owner:'v61-renderSets'",
+  "className='v875PlanEntry v8121PlanButton v8123PlanEntry'",
   '__AXIS_GROUP_PLAN_SYNC__?.()',
   "dataset.v8123Plan='1'",
   'v8123FieldPolishStyle',
@@ -45,6 +48,7 @@ info.gates={
   personalEquipmentHistoryPreserved8123:true,
   groupPlanStableLauncher8123:true,
   groupPlanRenderOwnedSync8123:true,
+  groupPlanCanonicalRenderOwner8123:true,
   settingsRowAlignmentFieldPolish8123:true
 };
 info.fieldPolish8123={
@@ -52,11 +56,11 @@ info.fieldPolish8123={
   equipmentPhotos:'existing canonical media references',
   removeSemantics:'remove from personal library; training history remains',
   selectionSemantics:'one document-capture owner toggles stable row DOM only while selection mode is active',
-  groupPlanOwner:'recording render -> canonical set-bridge launcher -> atomic recording transaction',
+  groupPlanOwner:'v61 recording render synchronously restores one native launcher -> canonical set bridge opens existing planner -> atomic recording transaction applies plan',
   settingsTextLocalInsetPx:6,
   settingsChevronLocalInsetPx:9,
   settingsGateWidth:'100%',
   settingsMeasuredAtCssWidth:417
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2));
-console.log('[AXIS 8.12.3 field polish postbuild] PASS · personal equipment memory/delegated selection · stable Group Plan launcher · measured native Settings row alignment');
+console.log('[AXIS 8.12.3 field polish postbuild] PASS · personal equipment memory/delegated selection · canonical render-owned Group Plan launcher · measured native Settings row alignment');
