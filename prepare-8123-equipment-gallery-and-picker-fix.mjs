@@ -9,7 +9,7 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
 
 {
  const FILE='app.js';let src=read(FILE);
- if(!src.includes('__AXIS_8123_UI_HOTFIX__'))fail('final UI hotfix must run first');
+ if(src.includes("slice(0,1)||'·'"))fail('final equipment text hotfix must run first');
  if(src.includes('__AXIS_8123_EQUIPMENT_GALLERY__'))fail('equipment gallery already installed');
 
  const libraryBlock=String.raw`function equipmentPhotoStore(){const p=state.profile||(state.profile={}),x=p.equipmentPhotos;return p.equipmentPhotos=x&&typeof x==='object'&&!Array.isArray(x)?x:{}}
