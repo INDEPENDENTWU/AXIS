@@ -13,8 +13,13 @@ if(app.includes('transient gallery insertion anchor'))fail('transient anchor alr
 app=app.replace(boundary,sentinel+boundary);
 fs.writeFileSync(APP,app);
 const appCommit='syntax(src,FILE);write(FILE,src)';
+const countBoundary='function personalEqCount()`;';
 if((prepOriginal.split(appCommit).length-1)<1)fail('app transform commit signature missing');
-fs.writeFileSync(PREP,prepOriginal.replace(appCommit,'write(FILE,src);syntax(src,FILE)'));
+if((prepOriginal.split(countBoundary).length-1)!==1)fail('personal equipment count boundary signature missing');
+const prepForBuild=prepOriginal
+ .replace(countBoundary,'function personalEqCount`;')
+ .replace(appCommit,'write(FILE,src);syntax(src,FILE)');
+fs.writeFileSync(PREP,prepForBuild);
 let importError=null;
 try{
   await import('./prepare-8123-equipment-gallery-and-picker-fix.mjs');
@@ -32,4 +37,4 @@ try{
   fs.writeFileSync(APP,out);
 }
 if(importError)throw importError;
-console.log('[AXIS 8.12.3 equipment gallery driver] PASS · gallery inserted at stable app boundary · transient anchor removed');
+console.log('[AXIS 8.12.3 equipment gallery driver] PASS · gallery inserted at stable app boundary · count boundary normalized · transient anchor removed');
