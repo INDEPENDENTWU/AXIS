@@ -21,6 +21,8 @@ jobs:
           node-version: '20.18.0'
       - name: Build exact AXIS artifact
         run: node build-release.mjs
+      - name: Apply current browser stability contract
+        run: node prepare-8123-ci-stability.mjs
       - name: Prepare browser
         shell: bash
         run: |
