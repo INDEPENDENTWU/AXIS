@@ -17,8 +17,9 @@ for(const needle of [
   '__AXIS_GROUP_PLAN_SYNC__?.()',
   "dataset.v8123Plan='1'",
   'v8123FieldPolishStyle',
-  'padding-left:28px!important',
-  'padding-right:28px!important'
+  '__AXIS_8123_SETTINGS_ALIGNMENT_FIX__',
+  'padding-left:6px!important',
+  'padding-right:6px!important'
 ])if(!core.includes(needle))fail(`compiled contract missing ${needle}`);
 
 if(!core.includes('window.__AXIS_RECORDING__'))fail('recording owner missing');
@@ -43,7 +44,9 @@ info.fieldPolish8123={
   equipmentPhotos:'existing canonical media references',
   removeSemantics:'remove from personal library; training history remains',
   groupPlanOwner:'recording render -> canonical set-bridge launcher -> atomic recording transaction',
-  settingsRowInsetPx:28
+  settingsRowInsetPx:6,
+  settingsGateWidth:'100%',
+  settingsMeasuredAtCssWidth:417
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2));
-console.log('[AXIS 8.12.3 field polish postbuild] PASS · personal equipment memory · stable Group Plan launcher · native Settings row alignment');
+console.log('[AXIS 8.12.3 field polish postbuild] PASS · personal equipment memory · stable Group Plan launcher · measured native Settings row alignment');
