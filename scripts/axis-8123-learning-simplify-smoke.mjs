@@ -37,7 +37,7 @@ try{
 
  console.log(`[AXIS 8.12.3 ${ENGINE}] native Settings alignment + reduced copy`);
  await tap(page.locator('#settingsBtn'));await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));
- const native=page.locator('#settingsSheet .settingsList:not(.second) > .settingLink').first().locator(':scope>span');
+ const native=page.locator('#profileBtn>span');
  const nativeLeft=await textLeft(native);
  for(const sel of ['#v813LearningGate>.settingLink','#v813ServiceGate>.settingLink']){
   const row=page.locator(sel),left=await textLeft(row.locator(':scope>span'));assert.ok(Math.abs(left-nativeLeft)<=1.5,`${sel} left alignment drift ${left} vs ${nativeLeft}`);assert.equal(await row.evaluate(el=>getComputedStyle(el).borderBottomWidth),'0px');
