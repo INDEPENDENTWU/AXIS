@@ -54,15 +54,17 @@ try{window.__AXIS_8123_PERSONAL_EQUIPMENT_UI_HOTFIX__={version:'8.12.3',regularT
   '#settingsSheet #v813LearningGate>.settingLink,#settingsSheet #v813ServiceGate>.settingLink{box-sizing:border-box!important;width:100%!important;height:60px!important;min-height:60px!important;margin:0!important;grid-template-columns:1fr auto 15px!important;gap:0!important;align-items:center!important;border-bottom:1px solid var(--line2)!important;transform:none!important}'+
   '#settingsSheet #v813LearningGate>.settingLink>span,#settingsSheet #v813ServiceGate>.settingLink>span{font-size:13px!important;font-weight:400!important;line-height:normal!important;margin:0!important;color:var(--muted)!important}'+
   '#settingsSheet #v813LearningGate>.settingLink>b,#settingsSheet #v813ServiceGate>.settingLink>b{font-size:12px!important;font-weight:620!important;line-height:normal!important;margin:0!important;color:var(--text)!important}'+
-  '#settingsSheet #v813LearningGate>.settingLink>i,#settingsSheet #v813ServiceGate>.settingLink>i{font-size:20px!important;line-height:normal!important;margin:0!important;color:var(--dim)!important;text-align:left!important}';
+  '#settingsSheet #v813LearningGate>.settingLink>i,#settingsSheet #v813ServiceGate>.settingLink>i{font-size:20px!important;line-height:normal!important;margin:0!important;color:var(--dim)!important}';
  D.head.appendChild(s);
  const sync=()=>{
   const ref=$('#profileBtn'),label=ref?.querySelector(':scope>span'),arrow=ref?.querySelector(':scope>i');if(!ref||!label||!arrow)return false;
-  const rr=ref.getBoundingClientRect(),lr=label.getBoundingClientRect(),ar=arrow.getBoundingClientRect();
+  const lr=label.getBoundingClientRect(),ar=arrow.getBoundingClientRect();
   for(const row of [$('#v810ConfigEntry'),$('#v811ServiceEntry')]){
    if(!row)continue;const tr=row.getBoundingClientRect();
-   const lp=Math.max(0,lr.left-tr.left),rp=Math.max(0,tr.right-ar.right);
-   row.style.setProperty('padding-left',lp+'px','important');row.style.setProperty('padding-right',rp+'px','important')
+   const lp=Math.max(0,lr.left-tr.left),baseRp=Math.max(0,tr.right-ar.right);
+   row.style.setProperty('padding-left',lp+'px','important');row.style.setProperty('padding-right',baseRp+'px','important');
+   const ownArrow=row.querySelector(':scope>i'),ownRect=ownArrow?.getBoundingClientRect();
+   if(ownRect){const drift=ownRect.right-ar.right;if(Math.abs(drift)>.1)row.style.setProperty('padding-right',Math.max(0,baseRp+drift)+'px','important')}
   }
   return true
  };
@@ -72,10 +74,10 @@ try{window.__AXIS_8123_PERSONAL_EQUIPMENT_UI_HOTFIX__={version:'8.12.3',regularT
  window.addEventListener('pageshow',()=>setTimeout(settle,0),{passive:true});
  setTimeout(settle,0)
 })();
-try{window.__AXIS_8123_SETTINGS_NATIVE_COLUMNS__={version:'8.12.3',reference:'#profileBtn',dynamicReferenceGeometry:true,nativeTypography:true,nativeRowHeight:60,hardcodedColumnInset:false,trainingOwner:false}}catch{}
+try{window.__AXIS_8123_SETTINGS_NATIVE_COLUMNS__={version:'8.12.3',reference:'#profileBtn',dynamicReferenceGeometry:true,twoPassChevronCorrection:true,nativeTypography:true,nativeRowHeight:60,hardcodedColumnInset:false,trainingOwner:false}}catch{}
 `;
  src=src.slice(0,end)+block+'\n'+src.slice(end);
- for(const needle of ['__AXIS_8123_SETTINGS_NATIVE_COLUMNS__',"reference:'#profileBtn'",'dynamicReferenceGeometry:true','hardcodedColumnInset:false'])if(!src.includes(needle))fail(`settings marker missing ${needle}`);
+ for(const needle of ['__AXIS_8123_SETTINGS_NATIVE_COLUMNS__',"reference:'#profileBtn'",'dynamicReferenceGeometry:true','twoPassChevronCorrection:true','hardcodedColumnInset:false'])if(!src.includes(needle))fail(`settings marker missing ${needle}`);
  try{new Function(src)}catch(e){fail(`v87-runtime.js syntax ${e.message}`)}
  fs.writeFileSync(FILE,src)
 }
