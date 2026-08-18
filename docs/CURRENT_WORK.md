@@ -4,49 +4,56 @@
 
 ## Production baseline at start of this work
 
-- Public product: AXIS 8.12.2.
-- Product main at the start of this release: `c55ae086577612af6ba8a6a794e680b46d1b6309`.
+- Public product: AXIS 8.12.3.
+- Product main at the start of this maintenance work: `d447a0df4f16fb1dc308ff9783f3bd460b6eaf00`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- Production 8.12.2 identity at the start of this work: release hash `aae183f5ac1b`, core `391de3b640c7`, CSS `b72ec8bd2ae4`, one initial JavaScript request, zero dynamic JavaScript and zero chunks.
-- AXIS 8.12 Language Studio corpus, AXIS 8.12.1 Safari Group Plan native-button fix, AXIS 8.12.2 Settings ownership, and AXIS 8.13 Stage 3 read-only Live Route are inherited and must remain intact.
+- AXIS 8.12.3 Learning Settings simplification and `听原声 / 录音 / 听我的` practice surface are sealed and inherited.
+- AXIS 8.12 Language Studio corpus, AXIS 8.12.1 Safari Group Plan native-button fix, AXIS 8.12.2 Settings ownership, canonical local visual memory/media ownership, and AXIS 8.13 Stage 3 read-only Live Route are inherited and must remain intact.
+- Existing workout history in `axis_v60_state`, training metadata in `axis_v8_meta`, and canonical IndexedDB media remain authoritative. This maintenance work does not create a second training or media store.
 
 ## Active change
 
-**AXIS 8.12.3 — learning interaction simplification and Settings alignment only.**
+**AXIS 8.12.3 maintenance — personal equipment memory, Group Plan interaction stability, and final Settings row geometry.**
 
-The scope is intentionally narrow:
+The scope is deliberately additive and compatibility-first:
 
-- align the top-level `学习安排` and `云端与AI` rows to the exact native Settings horizontal rhythm and baseline;
-- remove nonessential helper copy from Learning and Cloud/AI Settings;
-- retire the user-facing `学法` decision entirely;
-- keep the primary Learning decisions as `目标 / 强度 / 难度 / 对话`, with the existing reduced fine-tune surface below them;
-- retire all current-product `跟读 / 影子 / A/B 对比 / 开始影子 + 录音` mode UI and event entry points;
-- replace learning practice modes with one stable three-action surface: `听原声 / 录音 / 听我的`;
-- preserve best-available local system voice routing, ephemeral local MediaRecorder capture, in-memory replay, no upload and no autoplay;
-- preserve `axis_v89_speak` as the only learning store; an old `method` preference may remain readable for compatibility but no longer controls current presentation;
-- preserve `axis_v811_services` as the Cloud/AI store and preserve user-invoked status network semantics.
+- make `我的器械` a personal-use library derived from actual recorded equipment / movements plus existing custom definitions, while keeping native catalog IDs and custom definition IDs authoritative;
+- reuse existing `profile.memories` as the visual-recognition memory and reuse existing event `frameRefs` through the canonical media store instead of duplicating or uploading photos;
+- show a representative local photo when available together with compact usage / recent-use information;
+- preserve all historical workout records when an item is removed from `我的器械`; removal only archives the personal-library relationship, removes custom selectable definitions when applicable, and clears that item's personal visual memory;
+- allow a native item to return naturally to `我的器械` after it is used again later;
+- support unobtrusive left-swipe single removal and explicit `选择` multi-select removal without permanent checkbox clutter;
+- converge Group Plan to one stable delegated launcher synchronized explicitly after the canonical v61 set editor renders, rather than relying on a stale DOM node surviving count / weight / reps repaints;
+- preserve the existing Group Plan calculation surface and preserve `window.__AXIS_RECORDING__.applyPlan(...)` as the atomic recording transaction owner;
+- correct top-level `学习安排` and `云端与AI` row geometry so their labels and right chevrons use the same horizontal inset as native Settings rows at the real iPhone-width layout shown in Production;
+- preserve the existing Settings typography, row height, spacing, colors and overall engineering visual language.
 
-Explicitly out of scope and unchanged: workout recording, scan/review, Group Plan commit/touch ownership, `axis_v60_state`, `axis_v8_meta`, IndexedDB media, camera, watermark, active-session timers, State Field, Reality Runtime and Live Route ownership.
+Explicitly unchanged: native catalog semantics, event `equipmentId` history relationships, trend aggregation, muscle relationships, camera capture, watermark ownership, Cloud/AI store, learning store, active-session timers, State Field, Reality Runtime, Live Route ownership, public version and deployment topology.
 
 ## Validation for this work
 
-The dedicated `AXIS 8.12.3 Learning Simplify Gate` is release-blocking in Chromium and iPhone-like WebKit. It must prove:
+The dedicated `AXIS 8.12.3 Field Polish Gate` runs in Chromium and iPhone-like WebKit and must prove:
 
-- public identity `8.12.3 / 8.12.3` with canonical single runtime, one initial JS and zero dynamic chunks;
-- top-level Learning/Cloud rows align with a native Settings row within a tight geometry tolerance and introduce no extra divider;
-- Learning core shows exactly `目标 / 强度 / 难度 / 对话` and exposes no `学法` control;
-- helper strings such as `大脑用什么方式练`, `每天出现多少`, `表达复杂度`, `一次练到多完整`, `一次决定可发送的数据类型` are absent from visible Settings;
-- an existing legacy `method: shadow` preference cannot bring back shadow/repeat UI;
-- a learning card exposes exactly `听原声 / 录音 / 听我的`, with no mode tabs, method lab, `影子`, `跟读`, or `A/B` copy;
-- listening uses the inherited local system voice route without autoplay;
-- recording requests the microphone only after explicit user action, remains in memory, can be replayed locally, and performs no upload;
-- Settings and learning interactions leave `axis_v60_state` and `axis_v8_meta` byte-identical;
-- inherited real scan/review Group Plan regression still passes in Chromium and iPhone-like WebKit;
-- existing 8.12 Language Studio content counts and AXIS 8.13 Stage 3 read-only ownership remain green.
+- public identity remains `8.12.3 / 8.12.3` with canonical single runtime and the inherited release contracts intact;
+- a native catalog item with historical use and a custom item both appear in `我的器械` without duplicating their underlying definitions;
+- an existing event photo reference is surfaced as the personal equipment representative image through the canonical media reference path;
+- `选择` mode can select multiple items and exposes one batch-removal action; single-row removal ownership also remains present for swipe interaction;
+- personal-library removal is modeled separately from historical workout deletion;
+- Group Plan exposes exactly one current launcher after set-count changes, weight changes, reps changes, close/reopen cycles and atomic plan application;
+- each Group Plan open resolves current rows and current first-set values instead of a captured stale DOM reference;
+- the existing inherited Group Plan regression remains green;
+- at a 417 CSS px iPhone-like viewport, both the left edge of `学习安排 / 云端与AI` labels and the right edge of their chevrons align to native Settings rows within a tight geometry tolerance;
+- browser execution produces no page errors and the repository continuity contract remains green.
 
-Historical release gates may continue to record that older 8.10.x releases once implemented echo/shadow workflows. AXIS 8.12.3 adds explicit retirement gates so those historical markers do not imply a current user-facing owner.
+The maintenance compiler also emits explicit manifest gates for personal-equipment library/photo/visual-memory ownership, swipe/batch removal, history preservation, render-owned Group Plan synchronization, and final Settings-row alignment.
 
 ## Next planned stage
 
-Only after AXIS 8.12.3 is Production-verified may controlled AXIS 8.13 work continue. The next planned product migration remains **AXIS 8.13 Stage 4 — Reality Actions**; historical workout facts and current recording ownership remain authoritative.
+First merge and Production-verify this 8.12.3 maintenance patch. Do not begin broader AXIS 8.13 product migration until the real mobile Production surface confirms:
+
+- Settings alignment is corrected;
+- `我的器械` behaves as a coherent personal library without breaking native/custom/history relationships;
+- Group Plan remains clickable through repeated real recording edits and reopen cycles.
+
+After that verification boundary, controlled AXIS 8.13 work may continue. Historical workout facts and current recording/media ownership remain authoritative.
