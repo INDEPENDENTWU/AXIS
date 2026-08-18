@@ -40,4 +40,3 @@ await import('./prepare-8123-equipment-delegated-selection.mjs');
 await import('./prepare-8123-equipment-selection-guard.mjs');
 await import('./prepare-8123-quick-catalog-bridge.mjs');
 await import('./prepare-8123-settings-alignment-fix.mjs');
-await import('./prepare-8123-ci-diagnostic.mjs');
