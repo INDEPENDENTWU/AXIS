@@ -39,8 +39,8 @@ try{
  console.log(`[AXIS 8.12.3 gallery/picker ${ENGINE}] Quick Record -> other expanded catalog repeat`);
  for(let i=0;i<2;i++){
   await tap(page.locator('#quickRecordBtn'));await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'));
-  await tap(page.locator('#v8Other'));await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#eqSheet [data-v877-lib]'),undefined,{timeout:3000});
-  const lib=page.locator('#eqSheet [data-v877-lib]').first();assert.ok(await lib.getAttribute('data-v877-lib'));await tap(lib);
+  await tap(page.locator('#v8Other'));await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&[...document.querySelectorAll('#v8710Cards [data-v877-lib]')].some(b=>b.offsetParent!==null),undefined,{timeout:3000});
+  const lib=page.locator('#v8710Cards [data-v877-lib]:visible').first();assert.ok(await lib.getAttribute('data-v877-lib'));await tap(lib);
   await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#scanSheet')?.classList.contains('v8-quick')&&!document.querySelector('#reviewStage')?.classList.contains('hidden')&&!document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:3500});
   assert.notEqual((await page.locator('#equipmentName').textContent()).trim(),'待确认',`quick iteration ${i+1} failed to select`);
   await tap(page.locator('#scanSheet [data-close="scanSheet"]'));await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'));
