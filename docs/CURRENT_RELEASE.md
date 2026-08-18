@@ -1,10 +1,10 @@
 # Current Release
 
-## AXIS 8.12
+## AXIS 8.12.1
 
-8.12 is the current product baseline.
+8.12.1 is the current product baseline.
 
-The release extends the inherited 8.11 product with Language Studio while preserving the local-first training, recording, State Field and cloud/AI ownership contracts.
+It is a field hotfix over AXIS 8.12. The Language Studio corpus, learning ownership, State Field, cloud/AI ownership, local-first recording model, and AXIS 8.13 Stage 3 read-only Live Route semantics are preserved. The release fixes two real iPhone Safari issues: Settings presentation drift and an unreliable Group Plan tap target on the normal scan/review recording path.
 
 This file is the handoff entry point for future product and engineering work. Do not reconstruct current behavior by reading version-like source filenames in numerical order.
 
@@ -19,22 +19,40 @@ AXIS ships a canonical single browser runtime:
 
 `node build-release.mjs` is the only release build entry point.
 
-The checked-in `release-contract.json` is currently a compatibility-compiler input. Release-compat stages advance that input through inherited release lines; the final generated `axis-build.json` is the artifact that must report the 8.12 identity and all inherited/current gates. This arrangement is supported for compatibility, but reducing this indirection is a future architecture goal.
+The checked-in `release-contract.json` remains a compatibility-compiler input. Release-compat stages advance that input through inherited release lines; the final generated `axis-build.json` must report the 8.12.1 identity and all inherited/current gates.
 
-## 8.12 release contract
+## 8.12.1 release contract
 
 The final artifact must report:
 
-- `version: 8.12`;
-- `baseVersion: 8.12`;
+- `version: 8.12.1`;
+- `baseVersion: 8.12.1`;
 - architecture `canonical-single-runtime`;
-- inherited 8.11 release contract present;
-- 25,716 total available Language Studio units;
+- one initial JavaScript request and zero dynamic JavaScript chunks;
+- inherited AXIS 8.12 Language Studio contract unchanged;
+- inherited AXIS 8.13 Stage 3 Live Route present and read-only;
+- Group Plan still committing only through the canonical `v61.js` recording owner;
+- no new training/storage/media/timer/network owner.
+
+8.12 Language Studio semantics remain:
+
+- 25,716 total available units;
 - 19,584 new 8.12 units, 4,896 per supported language;
 - available units: English 10,632; Japanese 5,028; Korean 5,028; Chinese 5,028;
 - dialogue depths of 4, 8 and 12 turns;
-- the seven-stage learning loop: meaning, noticing, retrieval, response, shadow, transform, review;
-- Language Studio requiring no network and owning neither autoplay nor training state.
+- seven-stage learning loop: meaning, noticing, retrieval, response, shadow, transform, review;
+- no required network, autoplay owner, or training-state ownership.
+
+### Field hotfix contract
+
+- `学习安排` and `云端与 AI` remain inline inside the single canonical Settings sheet.
+- Their outer gate does not introduce an extra section divider.
+- Settings typography follows the native AXIS Settings rhythm instead of micro text.
+- Primary option controls use touch-safe 40–44 px geometry with strict grid alignment.
+- Cloud/AI status network remains explicit user-invoked only.
+- Group Plan uses a real native `button` touch target of at least 44 px rather than retrofitting a text node as an interaction surface.
+- Applying Group Plan still delegates to `window.__AXIS_RECORDING__.applyPlan`; 8.12.1 is not a recording owner.
+- The real scan/review path is release-blocking in both Chromium and iPhone-like WebKit.
 
 ## Current ownership map
 
@@ -42,6 +60,7 @@ The final artifact must report:
 |---|---|
 | Base workout state | `app.js` / `axis_v60_state` |
 | Strength draft and set-level recording | `v61.js` + `axis_v8_meta` |
+| Group Plan commit | `window.__AXIS_RECORDING__` / `v61.js`; 8.12.1 only owns the touch presentation |
 | Local media | IndexedDB media store; browser/native platform adapter at the OS boundary |
 | Custom equipment persistence | base profile/custom equipment state; shared canonical editor path |
 | Active training execution | inherited active-session owner; no duplicate pause/finish/countdown path |
@@ -53,6 +72,7 @@ The final artifact must report:
 | AI configuration | server-side provider config; browser never owns provider secrets |
 | Cloud/sync | local state remains authoritative; sync contract is mirror/convergence infrastructure |
 | Language Studio | `axis_v89_speak` inherited learning state + 8.12 Language Studio content/logic; no training ownership |
+| AXIS 8.13 Stage 3 | read-only Continue + Live Route presentation; no recording/storage/network ownership |
 | Platform-only capabilities | `window.AXISPlatform` / optional `window.AXISNative` bridge |
 
 When a future change replaces one of these owners, the previous writer must be retired in the same change.
@@ -67,12 +87,13 @@ When a future change replaces one of these owners, the previous writer must be r
 - First interactive paint already represents the intended product state.
 - Training and Language Studio remain independent ownership domains.
 - Chromium and iPhone-like WebKit behavior are both release-blocking.
+- Real scan/review recording and Group Plan interaction are release-blocking, not only Quick Record.
 
 ## Release verification
 
-A release candidate is incomplete until the same source candidate has passed the relevant contract and real-browser gates. The repository currently includes release-line, runtime, surface, Chromium, WebKit, deployment and fixed-public-alias workflows.
+A release candidate is incomplete until the same source candidate has passed the relevant contract and real-browser gates. For 8.12.1 this includes the dedicated Chromium + iPhone-like WebKit hotfix gate reproducing the normal scan/review Group Plan path.
 
-Production correctness is separate from deployment completion. The fixed public deployment must serve the intended source SHA, canonical manifest and immutable assets before a release is considered complete.
+Production correctness is separate from deployment completion. The fixed public deployment must serve the intended source SHA, canonical manifest and immutable assets, and the dedicated 8.12.1 fixed-Production gate must pass before the release is considered complete.
 
 ## Current architecture debt
 
@@ -89,8 +110,6 @@ These are migration targets, not reasons for a rewrite.
 
 ## Next release direction
 
-8.13 is planned as **Runtime**.
-
-The first implementation is a deterministic, UI-independent projection engine running in shadow mode. Existing recording/media/history owners stay in place while continuation, live route, reality actions and time budget are proven and migrated gradually.
+After 8.12.1 is Production-sealed, controlled AXIS 8.13 work may continue from the already shipped Stage 3 boundary. Stage 4 Reality Actions must not transfer factual recording ownership.
 
 See [PRODUCT.md](PRODUCT.md), [ARCHITECTURE.md](ARCHITECTURE.md) and [ROADMAP.md](ROADMAP.md).

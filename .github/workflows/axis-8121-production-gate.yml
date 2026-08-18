@@ -1,0 +1,67 @@
+name: AXIS 8.12.1 Production Gate
+
+on:
+  deployment_status:
+
+concurrency:
+  group: axis-8121-production-${{ github.event.deployment.id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  production-hotfix:
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment == 'Production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      AXIS_URL: https://axis-five-puce.vercel.app
+      AXIS_EXPECTED_SHA: ${{ github.event.deployment.sha }}
+    steps:
+      - name: Checkout exact deployed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact deployed source
+        run: node build-release.mjs
+      - name: Verify fixed alias serves exact 8.12.1 artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            code=$(curl -LsS --connect-timeout 5 --max-time 15 -o /tmp/axis-8121-build.json -w '%{http_code}' "$AXIS_URL/axis-build.json" || true)
+            if [ "$code" = "200" ] && EXPECTED="$AXIS_EXPECTED_SHA" node <<'NODE'
+          const fs=require('fs');
+          try{
+            const x=JSON.parse(fs.readFileSync('/tmp/axis-8121-build.json','utf8'));
+            const ok=x.sourceCommit===process.env.EXPECTED&&x.version==='8.12.1'&&x.baseVersion==='8.12.1'&&x.architecture==='canonical-single-runtime'&&x.requests?.initialJavascript===1&&x.requests?.dynamicJavascript===0&&Array.isArray(x.assets?.chunks)&&x.assets.chunks.length===0&&x.gates?.groupPlanUsesRecordingOwner===true&&x.gates?.languageStudio812===true&&x.gates?.liveRouteReadOnly813===true;
+            process.exit(ok?0:1);
+          }catch{process.exit(1)}
+          NODE
+            then exit 0; fi
+            echo "Attempt $attempt · waiting for exact AXIS 8.12.1 Production"
+            sleep 3
+          done
+          exit 1
+      - name: Align inherited browser assertions
+        run: node scripts/prepare-release-test-contract.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Real AXIS 8.12 Language Studio on fixed Production
+        env:
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-812-browser-smoke.mjs
+      - name: Real AXIS 8.12.1 hotfix on fixed Production
+        env:
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8121-hotfix-smoke.mjs
