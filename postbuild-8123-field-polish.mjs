@@ -15,7 +15,7 @@ for(const needle of [
   '__AXIS_GROUP_PLAN_STABLE__',
   "owner:'recording-render'",
   '__AXIS_GROUP_PLAN_SYNC__?.()',
-  'data-v8123-plan',
+  "dataset.v8123Plan='1'",
   'v8123FieldPolishStyle',
   'padding-left:28px!important',
   'padding-right:28px!important'
@@ -42,7 +42,7 @@ info.fieldPolish8123={
   equipmentLibrary:'history + custom definitions + existing visual memory',
   equipmentPhotos:'existing canonical media references',
   removeSemantics:'remove from personal library; training history remains',
-  groupPlanOwner:'recording render -> delegated stable launcher -> atomic recording transaction',
+  groupPlanOwner:'recording render -> canonical set-bridge launcher -> atomic recording transaction',
   settingsRowInsetPx:28
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2));
