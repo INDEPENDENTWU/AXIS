@@ -41,6 +41,9 @@ for(const [f,a,b,label] of [
  ['scripts/axis-8122-settings-smoke.mjs',"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.2');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.3');",'8.12.2 inherited Settings identity']
 ]){let s=read(f);s=once(s,a,b,label);write(f,s)}
 {
+ const f='prepare-813-settings-convergence.mjs';let s=read(f);const old="gate.className='v8711SettingGate v813SettingsGate';",n=s.split(old).length-1;if(n!==2)fail(`legacy Settings gate class expected twice, found ${n}`);s=s.replaceAll(old,"gate.className='v813SettingsGate';");write(f,s);
+}
+{
  const f='scripts/axis-8121-hotfix-smoke.mjs';let s=read(f);s=once(s,"assert.ok(['8.12.1','8.12.2'].includes(VERSION));","assert.ok(['8.12.1','8.12.2','8.12.3'].includes(VERSION));",'field patch family');write(f,s);
 }
 {
@@ -53,4 +56,4 @@ for(const [f,a,b,label] of [
 }
 for(const f of ['scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs']){let s=read(f);s=s.replaceAll("['8.12','8.12.1','8.12.2'].includes(release)","['8.12','8.12.1','8.12.2','8.12.3'].includes(release)");write(f,s)}
 await import('./prepare-8123-current-test-contract.mjs');
-console.log('[AXIS 8.12.3 release compat] PASS · 8.12.3 public identity · inherited field/Language Studio/Runtime contracts preserved');
+console.log('[AXIS 8.12.3 release compat] PASS · 8.12.3 public identity · legacy Settings gate class retired · inherited field/Language Studio/Runtime contracts preserved');
