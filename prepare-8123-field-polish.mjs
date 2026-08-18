@@ -1,0 +1,78 @@
+import fs from 'node:fs';
+
+const fail=m=>{throw new Error(`[AXIS 8.12.3 field polish] ${m}`)};
+const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
+const write=(f,s)=>fs.writeFileSync(f,s);
+const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
+const onceRe=(src,re,to,label)=>{const m=src.match(re)||[];if(m.length!==1)fail(`${label} expected once, found ${m.length}`);return src.replace(re,to)};
+
+function personalEqArchive(){const p=state.profile||(state.profile={});const a=p.equipmentArchivedAt;return p.equipmentArchivedAt=a&&typeof a==='object'&&!Array.isArray(a)?a:{}}
+function personalEqLibrary(){
+ const custom=new Map((state.profile.customEq||[]).map(x=>[x.id,x])),archived=personalEqArchive(),map=new Map(),events=allEvents().slice().sort((a,b)=>(b.time||0)-(a.time||0));
+ for(const e of events){const id=e.equipmentId;if(!id)continue;let x=map.get(id);const def=eqById(id)||custom.get(id)||null;if(!x){x={id,name:def?.name||e.name||'未命名',custom:custom.has(id),uses:0,last:0,photoRef:null,type:def?.type||e.kind||'strength'};map.set(id,x)}x.uses++;x.last=Math.max(x.last,Number(e.time)||0);if(!x.photoRef&&e.frameRefs?.[0])x.photoRef=e.frameRefs[0]}
+ for(const e of custom.values())if(!map.has(e.id))map.set(e.id,{id:e.id,name:e.name,custom:true,uses:0,last:0,photoRef:null,type:e.type||'strength'});
+ return [...map.values()].filter(x=>!Number(archived[x.id])||x.last>Number(archived[x.id])).sort((a,b)=>(b.last-a.last)||Number(b.custom)-Number(a.custom)||String(a.name).localeCompare(String(b.name),'zh-CN'))
+}
+function personalEqCount(){return personalEqLibrary().length}
+function personalEqDate(t){if(!t)return'尚未记录';try{return new Intl.DateTimeFormat('zh-CN',{month:'numeric',day:'numeric'}).format(new Date(t))}catch{return dlabel(t)}}
+function ensureManageEqStyle(){
+ if($('#v8123MyEqStyle'))return;const s=D.createElement('style');s.id='v8123MyEqStyle';s.textContent=
+ '#myEqSheet .sheetHead{grid-template-columns:minmax(0,1fr) auto 44px!important;column-gap:5px!important}'+
+ '#myEqSelect{height:36px;padding:0 8px;color:var(--accent2);font-size:12px;font-weight:650}'+
+ '#manageEqList{border-top:1px solid var(--line2)}'+
+ '#manageEqList .v8123EqWrap{position:relative;overflow:hidden;border-bottom:1px solid var(--line2);background:#0d0f13}'+
+ '#manageEqList .v8123EqRemove{position:absolute;z-index:0;right:0;top:0;width:76px;height:100%;display:grid;place-items:center;background:rgba(227,130,123,.13);color:#e3a09a;font-size:12px;font-weight:680}'+
+ '#manageEqList .manageEq.v8123EqRow{position:relative;z-index:1;width:100%;min-height:74px;margin:0;padding:10px 0;display:grid;grid-template-columns:50px minmax(0,1fr) 18px;gap:12px;align-items:center;background:#0d0f13;text-align:left;transition:transform .18s cubic-bezier(.2,.8,.2,1);touch-action:pan-y}'+
+ '#manageEqList .v8123EqWrap.open .manageEq.v8123EqRow{transform:translateX(-76px)}'+
+ '#manageEqList .v8123EqThumb{width:46px;height:46px;border-radius:13px;background:var(--s2);display:grid;place-items:center;overflow:hidden;color:var(--dim);font-size:12px}'+
+ '#manageEqList .v8123EqThumb img{width:100%;height:100%;object-fit:cover}'+
+ '#manageEqList .v8123EqText{min-width:0}#manageEqList .v8123EqText b{display:block;font-size:13.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+ '#manageEqList .v8123EqText small{display:block;margin-top:5px;color:var(--dim);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+ '#manageEqList .v8123EqChevron{font-style:normal;text-align:right;color:var(--dim);font-size:18px}'+
+ '#manageEqList .v8123EqDot{display:none;position:absolute;left:0;top:50%;width:18px;height:18px;margin-top:-9px;border:1px solid #4a515e;border-radius:50%}'+
+ '#manageEqList.selecting .manageEq.v8123EqRow{padding-left:30px}#manageEqList.selecting .v8123EqDot{display:block}#manageEqList.selecting .v8123EqWrap.open .manageEq.v8123EqRow{transform:none}#manageEqList.selecting .v8123EqRemove{display:none}'+
+ '#manageEqList .v8123EqDot.on{border-color:var(--accent2);background:var(--accent2);box-shadow:inset 0 0 0 4px #0d0f13}'+
+ '#v8123EqBatch{display:none;position:sticky;bottom:calc(-1px - env(safe-area-inset-bottom));z-index:8;margin-top:12px;padding:10px 0 calc(8px + env(safe-area-inset-bottom));grid-template-columns:88px minmax(0,1fr);gap:8px;background:linear-gradient(180deg,rgba(13,15,19,.2),#0d0f13 20%)}'+
+ '#v8123EqBatch.show{display:grid}#v8123EqBatch button{height:48px;border-radius:14px;background:var(--s2);font-size:12.5px;font-weight:650}#v8123EqBatch .remove{background:rgba(227,130,123,.13);color:#e3a09a}#v8123EqBatch .remove:disabled{opacity:.34}'+
+ '@media(max-width:380px){#manageEqList .manageEq.v8123EqRow{grid-template-columns:46px minmax(0,1fr) 16px;gap:10px}#manageEqList .v8123EqThumb{width:43px;height:43px}}';D.head.appendChild(s)
+}
+function ensureManageEqChrome(){
+ ensureManageEqStyle();const sheet=$('#myEqSheet .sheet'),head=$('#myEqSheet .sheetHead'),close=$('#myEqSheet [data-close="myEqSheet"]');if(!sheet||!head||!close)return;
+ let pick=$('#myEqSelect');if(!pick){pick=D.createElement('button');pick.id='myEqSelect';pick.type='button';pick.textContent='选择';head.insertBefore(pick,close);pick.onclick=()=>{manageEqSelectMode=!manageEqSelectMode;manageEqSelected.clear();renderManageEq()}}
+ let bar=$('#v8123EqBatch');if(!bar){bar=D.createElement('div');bar.id='v8123EqBatch';bar.innerHTML='<button type="button" data-my-eq-all>全选</button><button type="button" class="remove" data-my-eq-batch disabled>移除 0 项</button>';$('#newCustomEq')?.insertAdjacentElement('beforebegin',bar);bar.querySelector('[data-my-eq-all]').onclick=()=>{const ids=personalEqLibrary().map(x=>x.id);const all=ids.length&&ids.every(id=>manageEqSelected.has(id));manageEqSelected=all?new Set():new Set(ids);renderManageEq()};bar.querySelector('[data-my-eq-batch]').onclick=()=>{if(manageEqSelected.size)removePersonalEq([...manageEqSelected])}}
+ pick.textContent=manageEqSelectMode?'完成':'选择';bar.classList.toggle('show',manageEqSelectMode)
+}
+function closeManageEqSwipes(except=null){Array.from(D.querySelectorAll('#manageEqList .v8123EqWrap.open')).forEach(x=>{if(x!==except)x.classList.remove('open')})}
+function removePersonalEq(ids){const set=new Set(ids.filter(Boolean));if(!set.size)return;const now=Date.now(),p=state.profile||(state.profile={}),archive=personalEqArchive();p.customEq=(p.customEq||[]).filter(x=>!set.has(x.id));p.memories=(p.memories||[]).filter(x=>!set.has(x.equipmentId));for(const id of set)archive[id]=now;manageEqSelected.clear();manageEqSelectMode=false;save();renderManageEq();render();toast(set.size>1?'已移除 '+set.size+' 项':'已移除')}
+async function hydrateManageEqPhotos(){const root=$('#manageEqList');if(!root)return;for(const el of Array.from(root.querySelectorAll('[data-my-eq-photo]'))){if(el.dataset.loaded)continue;el.dataset.loaded='1';const u=await mediaUrl(el.dataset.myEqPhoto);if(u)el.innerHTML='<img src="'+u+'" alt="器械照片">'}}
+function renderManageEq(){
+ ensureManageEqChrome();const items=personalEqLibrary(),host=$('#manageEqList');if(!host)return;host.classList.toggle('selecting',manageEqSelectMode);
+ host.innerHTML=items.length?items.map(x=>{const meta=x.uses?x.uses+'次 · 最近 '+personalEqDate(x.last):(x.custom?'自定义 · 尚未记录':'尚未记录'),photo=x.photoRef?'<span class="v8123EqThumb" data-my-eq-photo="'+esc(x.photoRef)+'"></span>':'<span class="v8123EqThumb">'+esc(String(x.name||'').slice(0,1)||'·')+'</span>',edit=x.custom?' data-edit-eq="'+esc(x.id)+'"':'';return'<div class="v8123EqWrap" data-my-eq-wrap="'+esc(x.id)+'"><button type="button" class="v8123EqRemove" data-my-eq-remove="'+esc(x.id)+'">移除</button><button type="button" class="manageEq v8123EqRow" data-my-eq-id="'+esc(x.id)+'" data-my-eq-custom="'+(x.custom?'1':'0')+'"'+edit+'><i class="v8123EqDot '+(manageEqSelected.has(x.id)?'on':'')+'"></i>'+photo+'<span class="v8123EqText"><b>'+esc(x.name)+'</b><small>'+esc(meta)+'</small></span><i class="v8123EqChevron">'+(x.custom&&!manageEqSelectMode?'›':'')+'</i></button></div>'}).join(''):'<div class="empty">暂无器械 / 运动</div>';
+ const pick=$('#myEqSelect');if(pick)pick.style.visibility=items.length?'visible':'hidden';const bar=$('#v8123EqBatch'),batch=bar?.querySelector('[data-my-eq-batch]');if(batch){batch.disabled=!manageEqSelected.size;batch.textContent='移除 '+manageEqSelected.size+' 项'}
+ Array.from(host.querySelectorAll('[data-my-eq-remove]')).forEach(b=>b.onclick=e=>{e.stopPropagation();removePersonalEq([b.dataset.myEqRemove])});
+ Array.from(host.querySelectorAll('[data-my-eq-id]')).forEach(row=>{const wrap=row.closest('.v8123EqWrap');row.onclick=()=>{if(wrap?.dataset.swiped==='1'){wrap.dataset.swiped='0';return}const id=row.dataset.myEqId;if(manageEqSelectMode){manageEqSelected.has(id)?manageEqSelected.delete(id):manageEqSelected.add(id);renderManageEq();return}if(wrap?.classList.contains('open')){wrap.classList.remove('open');return}if(row.dataset.myEqCustom==='1')openCustomEditor(id)};row.onpointerdown=e=>{if(manageEqSelectMode)return;manageEqGesture.set(row,{x:e.clientX,y:e.clientY})};row.onpointerup=e=>{if(manageEqSelectMode)return;const p=manageEqGesture.get(row);if(!p)return;manageEqGesture.delete(row);const dx=e.clientX-p.x,dy=e.clientY-p.y;if(Math.abs(dx)<38||Math.abs(dx)<Math.abs(dy)*1.25)return;wrap.dataset.swiped='1';setTimeout(()=>{if(wrap)wrap.dataset.swiped='0'},360);if(dx<0){closeManageEqSwipes(wrap);wrap.classList.add('open')}else wrap.classList.remove('open')}});hydrateManageEqPhotos();setText('#customCount',items.length)
+}
+function axis8123InstallFieldPolish(){if(D.querySelector('#v8123FieldPolishStyle'))return;const s=D.createElement('style');s.id='v8123FieldPolishStyle';s.textContent='#settingsSheet #v813LearningGate,#settingsSheet #v813ServiceGate{width:100%!important;margin:0!important;padding:0!important;transform:none!important}#settingsSheet #v813LearningGate>.settingLink,#settingsSheet #v813ServiceGate>.settingLink{width:100%!important;height:60px!important;min-height:60px!important;margin:0!important;padding-left:28px!important;padding-right:28px!important;transform:none!important}@media(max-width:380px){#settingsSheet #v813LearningGate>.settingLink,#settingsSheet #v813ServiceGate>.settingLink{padding-left:28px!important;padding-right:28px!important}}';D.head.appendChild(s)}
+
+{
+ const FILE='app.js';let src=read(FILE);src=once(src,"setText('#customCount',(state.profile.customEq||[]).length);","setText('#customCount',personalEqCount());",'personal equipment Settings count');
+ const manageRe=/function renderManageEq\(\)\{[\s\S]*?\}\nfunction overlayLines/;const block=['let manageEqSelectMode=false,manageEqSelected=new Set(),manageEqGesture=new WeakMap();',personalEqArchive.toString(),personalEqLibrary.toString(),personalEqCount.toString(),personalEqDate.toString(),ensureManageEqStyle.toString(),ensureManageEqChrome.toString(),closeManageEqSwipes.toString(),removePersonalEq.toString(),hydrateManageEqPhotos.toString(),renderManageEq.toString(),"try{window.__AXIS_8123_EQUIPMENT_MEMORY__={version:'8.12.3',library:'history+custom',visualMemory:'profile.memories',photoOwner:'axis-media-store',historyDeletion:false,swipeRemove:true,multiSelectRemove:true}}catch{}",'function overlayLines'].join('\n');src=onceRe(src,manageRe,block,'personal equipment library owner');try{new Function(src)}catch(e){fail(`app.js syntax ${e.message}`)};write(FILE,src)
+}
+{
+ const FILE='v61.js';let src=read(FILE);src=once(src,"emitRecording('axis:recording-render')}","emitRecording('axis:recording-render');queueMicrotask(()=>window.__AXIS_GROUP_PLAN_SYNC__?.())}",'recording render -> Group Plan sync bridge');src=once(src,'function hideSets(){','function hideSets(){window.__AXIS_GROUP_PLAN_SYNC__?.({hidden:true});','recording hide -> Group Plan sync bridge');try{new Function(src)}catch(e){fail(`v61.js syntax ${e.message}`)};write(FILE,src)
+}
+{
+ const FILE='v874-professional.js';let src=read(FILE);const re=/b\.setAttribute\('data-v874-plan','1'\);const html=`\$\{n\}组<small>规划<\/small>`;if\(b\.innerHTML!==html\)b\.innerHTML=html/;src=onceRe(src,re,"b.removeAttribute('data-v874-plan');const html=String(n)+'组';if(b.textContent!==html)b.textContent=html",'retire legacy count-label planner owner');try{new Function(src)}catch(e){fail(`v874-professional.js syntax ${e.message}`)};write(FILE,src)
+}
+{
+ const FILE='v874-set-bridge.js';let src=read(FILE);
+ const stable=`function ensurePlanEntry(){const h=host(),head=$('.v8SetHead',h);if(!h||!head)return;const all=Array.from(h.querySelectorAll('.v875PlanEntry'));let entry=all.shift()||null;all.forEach(x=>x.remove());if(!entry){entry=D.createElement('button');const reset=$('#resetPrevious8',h);(reset||head).insertAdjacentElement('afterend',entry)}entry.type='button';entry.className='v875PlanEntry v8121PlanButton v8123PlanEntry';entry.dataset.v875Plan='1';entry.dataset.v8123Plan='1';entry.setAttribute('aria-label','打开组计划');const owned=window.__AXIS_RECORDING__?.first?.(),n=Math.max(1,Number(owned?.count)||rows().length||1);entry.innerHTML='<span><b>组计划</b><small>'+String(lastPlanLabel||'批量设置重量与次数')+'</small></span><strong>'+n+'组</strong><i>›</i>'}
+try{window.__AXIS_GROUP_PLAN_SYNC__=opt=>{if(opt?.hidden)return;patch()};window.__AXIS_GROUP_PLAN_STABLE__={version:'8.12.3',owner:'recording-render',launcher:'v874-set-bridge',delegated:true,staleNode:false}}catch{}
+function patchHeader`;
+ src=onceRe(src,/function ensurePlanEntry\(\)\{[\s\S]*?\}\nfunction patchHeader/,stable,'stable canonical Group Plan entry');
+ try{new Function(src)}catch(e){fail(`v874-set-bridge.js syntax ${e.message}`)};write(FILE,src)
+}
+{
+ const FILE='v87-runtime.js';let src=read(FILE),end=src.lastIndexOf('})();');if(end<0)fail('v87 runtime IIFE end missing');if(src.includes('__AXIS_8123_FIELD_POLISH__'))fail('Settings field polish already installed');const block='\n/* AXIS 8.12.3 maintenance — final Settings row geometry only. */\n'+axis8123InstallFieldPolish.toString()+"\naxis8123InstallFieldPolish();\ntry{window.__AXIS_8123_FIELD_POLISH__={version:'8.12.3',settingsRowInset:28,groupPlan:'recording-render-synced-canonical-entry',equipmentLibrary:'history-backed',trainingOwner:false}}catch{}\n";src=src.slice(0,end)+block+'\n'+src.slice(end);try{new Function(src)}catch(e){fail(`v87-runtime.js syntax ${e.message}`)};write(FILE,src)
+}
+console.log('[AXIS 8.12.3 field polish] PASS · personal equipment library + photos + swipe/multi-remove · recording-render-synced canonical Group Plan entry · Settings rows 28px inset');

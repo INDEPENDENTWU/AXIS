@@ -1,0 +1,87 @@
+name: AXIS 8.12.3 Field Polish Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.12.3 candidate
+        run: node build-release.mjs
+      - name: Verify field polish contract
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
+          if(m.version!=='8.12.3'||m.baseVersion!=='8.12.3')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          for(const gate of ['personalEquipmentLibrary8123','personalEquipmentPhotos8123','personalEquipmentVisualMemory8123','personalEquipmentSwipeRemove8123','personalEquipmentBatchRemove8123','personalEquipmentHistoryPreserved8123','groupPlanStableLauncher8123','groupPlanRenderOwnedSync8123','settingsRowAlignmentFieldPolish8123'])if(m.gates?.[gate]!==true)throw new Error(`field gate missing ${gate}`);
+          for(const needle of ['__AXIS_8123_EQUIPMENT_MEMORY__','__AXIS_GROUP_PLAN_STABLE__','v8123FieldPolishStyle',"dataset.v8123Plan='1'"])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-8123-field-chromium.log 2>&1 &
+          sleep 1
+      - name: Field polish regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8123-field-polish-smoke.mjs
+      - name: Inherited Group Plan regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8121-hotfix-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-8123-field-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.12.3 candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-8123-field-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone field polish regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8123-field-polish-smoke.mjs
+      - name: iPhone inherited Group Plan regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8121-hotfix-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-8123-field-webkit.log || true

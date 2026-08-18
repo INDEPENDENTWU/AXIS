@@ -27,3 +27,16 @@ for(const needle of ['__AXIS_8123_FINAL_ALIGNMENT__','nativeRowLocalInset:6','le
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
 console.log('[AXIS 8.12.3 final alignment] PASS · legacy gate class retired before mount · measured native row local inset 6px · fold content preserved · no training ownership');
+
+await import('./prepare-8123-field-polish.mjs');
+await import('./prepare-8123-canonical-library-selection.mjs');
+await import('./prepare-8123-group-plan-render-owner.mjs');
+await import('./prepare-8123-recording-selection-reconcile.mjs');
+await import('./prepare-8123-group-plan-click-route.mjs');
+await import('./prepare-8123-group-plan-close.mjs');
+await import('./prepare-8123-equipment-inline-tools.mjs');
+await import('./prepare-8123-equipment-selection-stability.mjs');
+await import('./prepare-8123-equipment-delegated-selection.mjs');
+await import('./prepare-8123-equipment-selection-guard.mjs');
+await import('./prepare-8123-quick-catalog-bridge.mjs');
+await import('./prepare-8123-settings-alignment-fix.mjs');
