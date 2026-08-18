@@ -33,6 +33,7 @@ await import('./prepare-8123-canonical-library-selection.mjs');
 await import('./prepare-8123-group-plan-render-owner.mjs');
 await import('./prepare-8123-recording-selection-reconcile.mjs');
 await import('./prepare-8123-group-plan-click-route.mjs');
+await import('./prepare-8123-group-plan-close.mjs');
 await import('./prepare-8123-equipment-inline-tools.mjs');
 await import('./prepare-8123-equipment-selection-stability.mjs');
 await import('./prepare-8123-equipment-delegated-selection.mjs');
