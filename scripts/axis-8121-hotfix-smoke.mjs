@@ -61,7 +61,11 @@ try{
  assert.ok(cloudOption.h>=40);assert.ok(px(cloudOption.f)>=12.5);
  const cloudHead=await page.locator('#v811ServicePanel .v813ServiceHead span').first().evaluate(el=>getComputedStyle(el).fontSize);
  assert.equal(cloudHead,await page.locator('#settingsSheet .settingPlain>span').first().evaluate(el=>getComputedStyle(el).fontSize));
- const fact=await page.locator('#v811ServicePanel .v811ServiceFact').first().evaluate(el=>({h:el.getBoundingClientRect().height,f:getComputedStyle(el).fontSize}));
+ const capabilityDetails=page.locator('#v811ServicePanel .v813ServiceDetails').first();
+ if(!(await capabilityDetails.evaluate(el=>el.open)))await tap(capabilityDetails.locator('summary'));
+ const factLocator=page.locator('#v811ServicePanel .v811ServiceFact').first();
+ await factLocator.waitFor({state:'visible'});
+ const fact=await factLocator.evaluate(el=>({h:el.getBoundingClientRect().height,f:getComputedStyle(el).fontSize}));
  assert.ok(fact.h>=44);assert.ok(px(fact.f)>=12.5);
  assert.equal(await page.locator('.sheetWrap.show').count(),1);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth)<=1);
