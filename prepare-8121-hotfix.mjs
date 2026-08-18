@@ -45,9 +45,9 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  '#settingsSheet .v810ConfigIntro{margin:0 0 14px!important;font-size:13px!important;line-height:1.55!important;color:var(--muted)!important}'+
  '#settingsSheet .v810ConfigGroup,#settingsSheet .v811CoreGroup,#settingsSheet .v811ServiceGroup{margin:0!important;padding:14px 0!important;border:0!important}'+
  '#settingsSheet .v810ConfigGroup+.v810ConfigGroup,#settingsSheet .v811CoreGroup+.v811CoreGroup,#settingsSheet .v811ServiceGroup+.v811ServiceGroup{padding-top:16px!important}'+
- '#settingsSheet .v810ConfigGroup>span,#settingsSheet .v811CoreHead span,#settingsSheet .v811ServiceLabel{display:block!important;margin:0 0 10px!important;font-size:13px!important;line-height:1.35!important;color:var(--muted)!important;font-weight:520!important;letter-spacing:0!important}'+
- '#settingsSheet .v811CoreHead{min-height:0!important;margin:0 0 10px!important}'+
- '#settingsSheet .v811CoreHead b,#settingsSheet .v811ServiceState{font-size:12px!important;line-height:1.35!important;color:var(--dim)!important;font-weight:600!important}'+
+ '#settingsSheet .v810ConfigGroup>span,#settingsSheet .v811CoreHead span,#settingsSheet .v813ServiceHead span{display:block!important;margin:0 0 10px!important;font-size:13px!important;line-height:1.35!important;color:var(--muted)!important;font-weight:520!important;letter-spacing:0!important}'+
+ '#settingsSheet .v811CoreHead,#settingsSheet .v813ServiceHead{min-height:0!important;margin:0 0 10px!important}'+
+ '#settingsSheet .v811CoreHead b,#settingsSheet .v813ServiceHead b{font-size:12px!important;line-height:1.35!important;color:var(--dim)!important;font-weight:600!important}'+
  '#settingsSheet #v810SpeakControls [data-v810-options],#settingsSheet .v811CoreOptions,#settingsSheet .v811ServiceOptions,#settingsSheet .v811ServiceSeg{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}'+
  '#settingsSheet #v810SpeakControls [data-v810-options] button,#settingsSheet .v811CoreOptions button,#settingsSheet .v811ServiceOptions button,#settingsSheet .v811ServiceSeg button{min-width:0!important;min-height:42px!important;height:42px!important;padding:0 10px!important;border-radius:12px!important;font-size:13px!important;line-height:1.15!important;font-weight:560!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;touch-action:manipulation!important}'+
  '#settingsSheet #v810SpeakControls [data-v810-options] button.active,#settingsSheet .v811CoreOptions button.active,#settingsSheet .v811ServiceOptions button.active,#settingsSheet .v811ServiceSeg button.active{font-weight:660!important}'+
@@ -58,16 +58,17 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  '#settingsSheet .v810Recap span,#settingsSheet .v810Recap small{font-size:12px!important;line-height:1.45!important;color:var(--muted)!important}'+
  '#settingsSheet .v810Recap b{font-size:14px!important;line-height:1.4!important}'+
  '#settingsSheet [data-v810-standalone-start],#settingsSheet [data-v810-recap]{min-height:44px!important;font-size:13px!important}'+
- '#settingsSheet .v811ServiceInfo,#settingsSheet .v811ServiceDisclosure{margin:0!important;padding:12px 0!important;border:0!important}'+
- '#settingsSheet .v811ServiceInfo>div,#settingsSheet .v811ServiceDisclosure>div{min-height:46px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:16px!important;padding:0!important;border:0!important}'+
- '#settingsSheet .v811ServiceInfo span,#settingsSheet .v811ServiceDisclosure span,#settingsSheet .v811ServiceInfo b,#settingsSheet .v811ServiceDisclosure b{font-size:13px!important;line-height:1.4!important}'+
- '#settingsSheet .v811ServiceInfo span,#settingsSheet .v811ServiceDisclosure span{color:var(--muted)!important}'+
- '#settingsSheet .v811ServiceInfo b,#settingsSheet .v811ServiceDisclosure b{color:var(--text)!important;font-weight:600!important;text-align:right!important}'+
- '#settingsSheet [data-v811-service-disclosure]{min-height:46px!important;width:100%!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:space-between!important;font-size:13px!important;color:var(--muted)!important}'+
- '#settingsSheet .v811ServiceSendRow{min-height:48px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:16px!important;padding:0!important;border:0!important;font-size:13px!important}'+
- '#settingsSheet .v811ServiceSendRow span,#settingsSheet .v811ServiceSendRow b{font-size:13px!important;line-height:1.4!important}'+
- '#settingsSheet .v811ServiceSendRow span{color:var(--muted)!important}'+
- '#settingsSheet .v811ServiceSendRow b{font-weight:600!important;text-align:right!important}'+
+ '#settingsSheet .v813ServiceBlock{padding:14px 0!important;border:0!important}'+
+ '#settingsSheet .v813ServiceDetails{margin:0!important;border:0!important}'+
+ '#settingsSheet .v813ServiceDetails>summary{min-height:48px!important;padding:0!important;font-size:13px!important;line-height:1.35!important;color:var(--muted)!important}'+
+ '#settingsSheet .v811ServiceFacts{margin:0!important}'+
+ '#settingsSheet .v811ServiceFact{min-height:46px!important;padding:0!important;border:0!important;font-size:13px!important}'+
+ '#settingsSheet .v811ServiceFact span,#settingsSheet .v811ServiceFact b{font-size:13px!important;line-height:1.4!important}'+
+ '#settingsSheet .v811ServiceFact span{color:var(--muted)!important}'+
+ '#settingsSheet .v811ServiceFact b{color:var(--text)!important;font-weight:600!important;text-align:right!important}'+
+ '#settingsSheet .v811PrivacyRow{min-height:48px!important;padding:0!important;border:0!important}'+
+ '#settingsSheet .v811PrivacyRow span{font-size:13px!important;line-height:1.4!important;color:var(--muted)!important}'+
+ '#settingsSheet .v811PrivacyRow button{min-width:72px!important;height:40px!important;padding:0 12px!important;border-radius:12px!important;font-size:12.5px!important;font-weight:600!important;touch-action:manipulation!important}'+
  '#settingsSheet .v811ServiceNote{margin:8px 0 0!important;font-size:12px!important;line-height:1.55!important;color:var(--muted)!important}'+
  '.v875PlanEntry.v8121PlanButton{position:relative!important;z-index:8!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;min-height:56px!important}'+
  '.v875PlanEntry.v8121PlanButton:active{background:rgba(255,255,255,.035)!important}'+
