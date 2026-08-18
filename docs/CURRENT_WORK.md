@@ -4,76 +4,85 @@
 
 ## Production baseline at start of this work
 
-- Public product: AXIS 8.12.
-- Verified `main` at the start of this work: `fcd89e97f091fe103886cddab919844f1ef602ee`.
+- Public product at hotfix start: AXIS 8.12.
+- `main` at hotfix start: `4b247914300398531839169faed58693b07440c1`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- Vercel Production is `READY` for exact source commit `fcd89e97…`.
-- Fixed Production manifest: release hash `0c50e5bead25`, core `4d490912e0f3`, CSS `af439553319b`, one initial JavaScript request, zero dynamic JavaScript, zero chunks.
-- AXIS 8.13 Stage 3 Continue + Live Route is Production-verified and remains read-only presentation; AXIS 8.12 recording/storage owners remain authoritative.
-- Final Stage 3 seal has zero failed, queued or in-progress workflows on `fcd89e97…`.
+- Vercel Production at hotfix start: `dpl_4SoNVkrZ2qYjGCn4W3nVG7dJPNx8`, READY on exact `4b247914…`.
+- Fixed Production artifact at hotfix start: core `d923ac4eafe2`, CSS `af439553319b`, one initial JavaScript request, zero dynamic JavaScript, zero chunks.
+- AXIS 8.13 Stage 3 Continue + Live Route is already shipped inside the public 8.12 artifact and remains read-only presentation.
 
 ## Active change
 
-**AXIS 8.13 Settings convergence — inline Learning Schedule + Cloud/AI.**
+**AXIS 8.12.1 — iPhone Settings rhythm + Group Plan touch hotfix (PR #41).**
 
-This is a narrow user-experience correction requested from real iPhone Safari use. It does not begin Stage 4 and does not change Runtime planning semantics.
+This is a field hotfix driven by real iPhone Safari use. It is not AXIS 8.13 Stage 4 and does not change Runtime planning semantics.
 
-### Problem
+### Real field problems
 
-Two Settings rows still used historical nested sheet ownership:
-
-- `学习安排` opened `v810ConfigPanel` as a second fixed bottom sheet;
-- `云端与 AI` opened `v811ServicePanel` as another fixed bottom sheet.
-
-That behavior is inconsistent with the converged Settings pattern already used by `记录偏好` and `提醒与声音`, creates unnecessary navigation/scroll layers on iPhone, and makes both configuration surfaces visually too large.
+1. `学习安排` and `云端与 AI` are correctly inline after the previous convergence, but their inner UI still uses a separate micro-scale visual language: extra outer divider, 10–10.5 px text in several controls, and 32 px option geometry. On iPhone this looks materially smaller and less coherent than the rest of AXIS Settings.
+2. The normal scan/review strength-recording path exposes `组计划`, but its historical launcher is a `<b>` text node retrofitted with `data-v874-plan` and handled by a document capture listener. That interaction surface is not robust enough for real iPhone touch. Existing CI primarily covered Quick Record, so this field path could regress while CI stayed green.
 
 ### Controlled correction
 
-`prepare-813-settings-convergence.mjs` is a final source-convergence step after the existing Stage 3 prepare step and before `build-hardened.mjs`.
+`prepare-8121-hotfix.mjs` runs after Stage 3 Settings convergence and before the canonical hardened build.
 
-It must preserve all existing learning and service behavior while changing only presentation ownership:
+It must:
 
-- `学习安排` becomes one `v8711SettingGate`-style inline fold inside the canonical Settings sheet;
-- `云端与 AI` becomes one matching inline fold inside the same Settings sheet;
-- neither may create or show a second fixed settings sheet;
-- both row heights converge to the existing compact Settings scale;
-- learning core decisions remain available: purpose, method, intensity, level and dialogue depth;
-- learning fine tuning remains progressive disclosure and preserves novelty, track, cadence, daily target and opportunity;
-- Cloud/AI keeps cloud mode, AI mode, capability status and privacy/send-range controls;
-- capability and privacy detail are progressively disclosed instead of permanently occupying vertical space;
-- expanding Cloud/AI may perform the same existing explicit user-invoked status reads; no automatic background network owner is introduced.
+- keep Learning and Cloud/AI inside the single canonical Settings sheet;
+- remove their extra outer gate divider;
+- use native AXIS Settings typography and 40–44 px touch geometry;
+- keep strict grid spacing, alignment, progressive disclosure and mobile overflow safety;
+- preserve Learning delegated actions and `axis_v89_speak` ownership;
+- preserve Cloud/AI `axis_v811_services` ownership and explicit-only status network;
+- replace the fragile Group Plan text-node launcher with one real native `button` of at least 44 px;
+- retain the legacy value `<b>` inside that button for compatibility with existing rendering/reading code;
+- continue delegating Group Plan application to `window.__AXIS_RECORDING__.applyPlan` / `v61.js`;
+- introduce no new training, storage, media, timer, sound, network or Runtime owner.
 
-### Ownership that must not change
-
-- Learning store: `axis_v89_speak`.
-- Cloud/AI preference store: `axis_v811_services`.
-- Factual training state: `app.js` / `axis_v60_state`.
-- Strength/activity metadata: `v61.js` / `axis_v8_meta`.
-- Stage 3 Live Route: presentation only.
-- No new IndexedDB owner, timer owner, training-control owner, media owner, AI training owner or dynamic JavaScript chunk.
+`prepare-8121-release-compat.mjs` promotes only the public patch identity to 8.12.1. AXIS 8.12 Language Studio and AXIS 8.13 Stage 3 internal semantics remain inherited.
 
 ## Validation for this work
 
-Dedicated `AXIS 8.13 Settings Convergence` Chromium + iPhone-like WebKit regression must prove on the exact PR head:
+The dedicated `AXIS 8.12.1 Hotfix Gate` must pass on the exact PR head in Chromium and iPhone-like WebKit.
 
-- opening Settings produces exactly one visible Settings sheet;
-- Learning Schedule expands/collapses in place;
-- Cloud/AI expands/collapses in place;
-- legacy fixed nested learning/service panels are absent;
-- compact row and option geometry is maintained on a 390×844 viewport;
-- 8.12 learning purpose/method controls remain functional and persist to `axis_v89_speak`;
-- Cloud/AI status network does not run before explicit row expansion;
-- explicit expansion performs only the existing status reads;
-- cloud/AI preferences persist to `axis_v811_services`;
-- neither learning nor service configuration writes `axis_v60_state` or `axis_v8_meta`;
-- Settings close/reopen keeps a single owner and persisted values;
-- page errors remain empty;
-- public topology remains AXIS 8.12 / canonical single runtime / one initial JS / zero dynamic JS / zero chunks;
-- all inherited Runtime, Field Hardening, Language Studio, Stage 3, repository and continuity gates remain green.
+It reproduces the actual field path rather than substituting Quick Record:
+
+- open Settings and compare Learning typography to native AXIS Settings rows;
+- verify Learning/Cloud outer borders are absent;
+- verify 13–15 px hierarchy and 40–44 px option touch targets;
+- verify one Settings sheet and no horizontal overflow;
+- seed an active workout;
+- open `拍摄记录`;
+- supply a real image through the review input;
+- open equipment selection and choose a strength machine;
+- perform a real touch/click on the Group Plan native button;
+- change to four sets and a progression mode;
+- apply through the canonical planner;
+- save the record;
+- verify factual `axis_v60_state` and set metadata in `axis_v8_meta` contain the four-set result;
+- verify the hotfix diagnostic explicitly reports `recordingOwner:false`;
+- verify zero page errors.
+
+All inherited Runtime, Field Hardening, Language Studio, Settings convergence, Stage 3, repository and continuity gates remain release-blocking.
+
+A dedicated `AXIS 8.12.1 Production Gate` also verifies the fixed public alias after deployment: exact merged source SHA, 8.12.1 identity, canonical one-JS topology, inherited Language Studio, read-only Live Route, and the real hotfix browser flow.
+
+## Release boundary
+
+Do not call 8.12.1 complete until all of the following are true:
+
+- PR #41 final exact head is green in Chromium and WebKit;
+- PR review threads are resolved;
+- PR #41 is squash-merged;
+- Vercel Production is READY on the exact merged main SHA;
+- `axis-five-puce.vercel.app/axis-build.json` reports 8.12.1 / 8.12.1 and the exact merged SHA;
+- fixed Production serves one JS, zero dynamic JS and zero chunks;
+- the dedicated 8.12.1 Production Gate passes;
+- Production runtime error inspection is clean.
 
 ## Next planned stage
 
-Only after this Settings convergence is merged and Production-verified may work proceed to **AXIS 8.13 Stage 4 — Reality Actions**.
+Only after the 8.12.1 Production seal is clean may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**.
 
-Stage 4 may add temporary Runtime constraints such as `这个器械有人`, `我只剩 20 分钟`, and `今天到这里`. Historical workout facts remain authoritative and immutable.
+Stage 4 may alter temporary continuation intent such as `这个器械有人`, `我只剩 20 分钟`, or `今天到这里`. Historical workout facts remain authoritative and immutable.
