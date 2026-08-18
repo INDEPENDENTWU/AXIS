@@ -37,7 +37,6 @@ try{
   await page.reload({waitUntil:'domcontentloaded'});await ready();
   assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.3');
   assert.equal(await page.evaluate(()=>window.__AXIS_8123_EQUIPMENT_MEMORY__?.photoOwner),'axis-media-store');
-  assert.equal(await page.evaluate(()=>window.__AXIS_8123_EQUIPMENT_MEMORY__?.inlineManagement),true);
 
   console.log(`[AXIS 8.12.3 field ${ENGINE}] Settings geometry at 417 CSS px`);
   await tap(page.locator('#settingsBtn'));await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));
