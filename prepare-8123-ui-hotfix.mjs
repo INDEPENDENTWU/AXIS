@@ -9,6 +9,7 @@ const patchOnce=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)
   const placeholder=`photo=x.photoRef?'<span class="v8123EqThumb" data-my-eq-photo="'+esc(x.photoRef)+'"></span>':'<span class="v8123EqThumb">'+esc(String(x.name||'').slice(0,1)||'·')+'</span>'`;
   const realPhotoOnly=`photo=x.photoRef?'<span class="v8123EqThumb" data-my-eq-photo="'+esc(x.photoRef)+'"></span>':''`;
   src=patchOnce(src,placeholder,realPhotoOnly,'one-character equipment placeholder');
+  src=patchOnce(src,"if(u)el.innerHTML='<img src=\"'+u+'\" alt=\"器械照片\">'","if(u)el.innerHTML='<img src=\"'+u+'\" alt=\"器械照片\">';else el.remove()",'missing equipment photo fallback');
   if(src.includes("slice(0,1)||'·'"))fail('synthetic equipment avatar survived');
   fs.writeFileSync(file,src);
 }
@@ -41,7 +42,7 @@ const patchOnce=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)
   '@media(max-width:380px){#manageEqList .manageEq.v8123EqRow:has(.v8123EqThumb[data-my-eq-photo]){grid-template-columns:46px minmax(0,1fr) 16px!important;column-gap:10px!important}#settingsSheet #v813LearningGate>.settingLink,#settingsSheet #v813ServiceGate>.settingLink{padding:0!important}}';
  D.head.appendChild(s)
 })();
-try{window.__AXIS_8123_UI_HOTFIX__={version:'8.12.3',equipmentPlaceholder:false,equipmentTextFirst:true,realPhotoOnly:true,settingsNativeColumns:true,trainingOwner:false}}catch{}
+try{window.__AXIS_8123_UI_HOTFIX__={version:'8.12.3',equipmentPlaceholder:false,equipmentTextFirst:true,realPhotoOnly:true,missingPhotoFallsBackToText:true,settingsNativeColumns:true,trainingOwner:false}}catch{}
 `;
   src=src.slice(0,end)+block+'\n'+src.slice(end);
   for(const needle of ['__AXIS_8123_UI_HOTFIX__','equipmentPlaceholder:false','settingsNativeColumns:true','grid-template-columns:1fr auto 15px'])if(!src.includes(needle))fail(`missing ${needle}`);
