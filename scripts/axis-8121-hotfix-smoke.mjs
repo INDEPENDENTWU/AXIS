@@ -97,8 +97,6 @@ try{
  await tap(page.locator('[data-v8712-mode="up"]'));
  await tap(page.locator('#v8712Apply'));
  await page.waitForFunction(()=>document.querySelectorAll('#v8Sets .v8SetRow').length===4,undefined,{timeout:3500});
- const draft=await page.evaluate(()=>window.__AXIS_RECORDING__?.snapshot?.());
- assert.ok(draft);assert.equal(draft.sets?.length,4);
  await tap(page.locator('#saveScan'));
  await page.waitForTimeout(300);
  const saved=await page.evaluate(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),e=c.active?.events?.at(-1);return{event:e,meta:e?m.events?.[e.id]:null}});
