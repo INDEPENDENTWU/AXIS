@@ -35,14 +35,14 @@ try{
  assert.equal(await page.locator('#v813ServiceGate').evaluate(el=>getComputedStyle(el).borderTopWidth),'0px','Cloud/AI gate has an extra outer divider');
  await tap(page.locator('#v810ConfigEntry'));await page.waitForFunction(()=>document.querySelector('#v813LearningGate')?.classList.contains('open'));
  const nativeLabel=await page.locator('#settingsSheet .settingPlain>span').first().evaluate(el=>getComputedStyle(el).fontSize);
- const learningLabel=await page.locator('#v810ConfigPanel .v810ConfigGroup>span').first().evaluate(el=>getComputedStyle(el).fontSize);
+ const learningLabel=await page.locator('#v810ConfigPanel .v811CoreHead span').first().evaluate(el=>getComputedStyle(el).fontSize);
  assert.equal(learningLabel,nativeLabel,'Learning inner label does not match native Settings text size');
  const learningButton=await page.locator('#v811CoreLearning button').first().evaluate(el=>{const r=el.getBoundingClientRect(),c=getComputedStyle(el);return{h:r.height,font:c.fontSize}});
  assert.ok(learningButton.h>=40,`Learning touch target too small: ${learningButton.h}`);assert.ok(px(learningButton.font)>=12.5,`Learning option text too small: ${learningButton.font}`);
  await tap(page.locator('#v810ConfigEntry'));await tap(page.locator('#v811ServiceEntry'));await page.waitForFunction(()=>document.querySelector('#v813ServiceGate')?.classList.contains('open'));
  const serviceButton=await page.locator('[data-v811-cloud="off"]').evaluate(el=>{const r=el.getBoundingClientRect(),c=getComputedStyle(el);return{h:r.height,font:c.fontSize}});
  assert.ok(serviceButton.h>=40,`Cloud option touch target too small: ${serviceButton.h}`);assert.ok(px(serviceButton.font)>=12.5,`Cloud option text too small: ${serviceButton.font}`);
- const serviceLabel=await page.locator('#v811ServicePanel .v811ServiceLabel').first().evaluate(el=>getComputedStyle(el).fontSize);assert.equal(serviceLabel,nativeLabel,'Cloud/AI label typography differs from native Settings');
+ const serviceLabel=await page.locator('#v811ServicePanel .v813ServiceHead span').first().evaluate(el=>getComputedStyle(el).fontSize);assert.equal(serviceLabel,nativeLabel,'Cloud/AI label typography differs from native Settings');
  assert.equal(await page.locator('.sheetWrap.show').count(),1,'inline Settings created nested sheet');
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);assert.ok(overflow<=1,`Settings horizontal overflow ${overflow}`);
  await tap(page.locator('#settingsSheet [data-close="settingsSheet"]'));
