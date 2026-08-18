@@ -37,7 +37,7 @@ let importError=null;
 try{
   await import('./prepare-8123-equipment-gallery-and-picker-fix.mjs');
   const finalApp=fs.readFileSync(APP,'utf8');
-  if(finalApp.includes("$('[data-eq]',$('#eqSheet')).forEach"))fail('renderEqList collection selector collapsed to single-element helper');
+  if(/(^|[^$])\$\('\[data-eq\]'\s*,\s*\$\('#eqSheet'\)\)\.forEach/.test(finalApp))fail('renderEqList collection selector collapsed to single-element helper');
   if(!finalApp.includes("$$('[data-eq]',$('#eqSheet')).forEach"))fail('renderEqList collection selector missing');
   let finalV61=fs.readFileSync('v61.js','utf8');
   if(finalV61.includes("const direct=$('#eqSheet [data-eq]').find"))fail('Quick Record fallback collection selector collapsed');
