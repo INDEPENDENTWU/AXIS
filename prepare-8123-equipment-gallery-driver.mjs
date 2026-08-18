@@ -31,6 +31,14 @@ fs.writeFileSync('v61.js',v61);
 let importError=null;
 try{
   await import('./prepare-8123-equipment-gallery-and-picker-fix.mjs');
+  let finalV61=fs.readFileSync('v61.js','utf8');
+  const marker="try{window.__AXIS_8123_RECORDING_SELECTION_RECONCILE__={version:'8.12.3',owner:'v61-recording',catalogRoute:true,observerFallback:true,idempotentByEquipment:true}}catch{}";
+  if((finalV61.split(marker).length-1)!==1)fail('recording reconcile marker expected once');
+  const explicit="window.addEventListener('axis:equipment-selected',()=>setTimeout(axis8123ReconcileSelectedRecording,0));";
+  finalV61=finalV61.replace(marker,explicit+marker.replace('observerFallback:true','observerFallback:true,explicitPickerEvent:true'));
+  if(!finalV61.includes("explicitPickerEvent:true"))fail('explicit picker reconciliation marker missing');
+  try{new Function(finalV61)}catch(e){fail(`v61 explicit reconciliation syntax ${e.message}`)}
+  fs.writeFileSync('v61.js',finalV61);
 }catch(e){
   importError=e;
   console.error('[AXIS 8.12.3 equipment gallery driver] transformed app syntax diagnostic follows');
@@ -49,4 +57,4 @@ try{
   fs.writeFileSync(APP,out);
 }
 if(importError)throw importError;
-console.log('[AXIS 8.12.3 equipment gallery driver] PASS · gallery inserted at stable app boundary · Quick handlers normalized into canonical picker owner · transient anchor removed');
+console.log('[AXIS 8.12.3 equipment gallery driver] PASS · gallery inserted at stable app boundary · canonical picker emits explicit v61 reconcile · Quick handlers converge · transient anchor removed');
