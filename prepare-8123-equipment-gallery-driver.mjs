@@ -14,10 +14,15 @@ app=app.replace(boundary,sentinel+boundary);
 fs.writeFileSync(APP,app);
 const appCommit='syntax(src,FILE);write(FILE,src)';
 const countBoundary='function personalEqCount()`;';
+const plainTextReplace='return src.replace(from,to)};';
+const plainRegexReplace='return src.replace(re,to)};';
 if((prepOriginal.split(appCommit).length-1)<1)fail('app transform commit signature missing');
 if((prepOriginal.split(countBoundary).length-1)!==1)fail('personal equipment count boundary signature missing');
+if((prepOriginal.split(plainTextReplace).length-1)!==1||(prepOriginal.split(plainRegexReplace).length-1)!==1)fail('replacement helper signatures missing');
 const prepForBuild=prepOriginal
  .replace(countBoundary,'function personalEqCount`;')
+ .replace(plainTextReplace,'return src.replace(from,()=>to)};')
+ .replace(plainRegexReplace,'return src.replace(re,()=>to)};')
  .replace(appCommit,'write(FILE,src);syntax(src,FILE)');
 fs.writeFileSync(PREP,prepForBuild);
 
@@ -31,7 +36,15 @@ fs.writeFileSync('v61.js',v61);
 let importError=null;
 try{
   await import('./prepare-8123-equipment-gallery-and-picker-fix.mjs');
+  const finalApp=fs.readFileSync(APP,'utf8');
+  if(finalApp.includes("$('[data-eq]',$('#eqSheet')).forEach"))fail('renderEqList collection selector collapsed to single-element helper');
+  if(!finalApp.includes("$$('[data-eq]',$('#eqSheet')).forEach"))fail('renderEqList collection selector missing');
   let finalV61=fs.readFileSync('v61.js','utf8');
+  if(finalV61.includes("const direct=$('#eqSheet [data-eq]').find"))fail('Quick Record fallback collection selector collapsed');
+  if(!finalV61.includes("const direct=$$('#eqSheet [data-eq]').find"))fail('Quick Record canonical fallback selector missing');
+  const finalV877=fs.readFileSync('v877-runtime.js','utf8');
+  if(finalV877.includes("const existing=$('#eqSheet [data-eq]').find"))fail('expanded catalog fallback collection selector collapsed');
+  if(!finalV877.includes("const existing=$$('#eqSheet [data-eq]').find"))fail('expanded catalog canonical fallback selector missing');
   const marker="try{window.__AXIS_8123_RECORDING_SELECTION_RECONCILE__={version:'8.12.3',owner:'v61-recording',catalogRoute:true,observerFallback:true,idempotentByEquipment:true}}catch{}";
   if((finalV61.split(marker).length-1)!==1)fail('recording reconcile marker expected once');
   const explicit="window.addEventListener('axis:equipment-selected',()=>setTimeout(axis8123ReconcileSelectedRecording,0));";
@@ -57,4 +70,4 @@ try{
   fs.writeFileSync(APP,out);
 }
 if(importError)throw importError;
-console.log('[AXIS 8.12.3 equipment gallery driver] PASS · gallery inserted at stable app boundary · canonical picker emits explicit v61 reconcile · Quick handlers converge · transient anchor removed');
+console.log('[AXIS 8.12.3 equipment gallery driver] PASS · collection selectors preserved · gallery inserted at stable app boundary · canonical picker emits explicit v61 reconcile · Quick handlers converge · transient anchor removed');
