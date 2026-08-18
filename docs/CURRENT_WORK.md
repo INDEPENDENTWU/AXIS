@@ -4,85 +4,52 @@
 
 ## Production baseline at start of this work
 
-- Public product at hotfix start: AXIS 8.12.
-- `main` at hotfix start: `4b247914300398531839169faed58693b07440c1`.
+- Public product: AXIS 8.12.1.
+- Verified `main` at the start of this seal: `ce010ae5c23f26b5458050426e42724559bb4c82`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- Vercel Production at hotfix start: `dpl_4SoNVkrZ2qYjGCn4W3nVG7dJPNx8`, READY on exact `4b247914…`.
-- Fixed Production artifact at hotfix start: core `d923ac4eafe2`, CSS `af439553319b`, one initial JavaScript request, zero dynamic JavaScript, zero chunks.
-- AXIS 8.13 Stage 3 Continue + Live Route is already shipped inside the public 8.12 artifact and remains read-only presentation.
+- Vercel Production: `dpl_BzTuDgvfEwf7xDPtrVbCC1ysNgnG`, READY on exact source commit `ce010ae5…`.
+- Fixed Production manifest: version/base `8.12.1`, release hash `63e34eaf485c`, core `c4d6b67854b2`, CSS `76a9e76610fc`, one initial JavaScript request, zero dynamic JavaScript and zero chunks.
+- AXIS 8.12 Language Studio semantics and AXIS 8.13 Stage 3 Continue + Live Route remain inherited; Stage 3 remains read-only presentation.
+- PR #41 shipped the 8.12.1 Group Plan touch hardening and Settings refinement, but its dedicated Chromium field gate found one remaining visual mismatch before reaching the Group Plan scenario: the top-level Learning/Cloud Settings row typography rendered at 15 px while the native Settings sibling renders at 13 px.
 
 ## Active change
 
-**AXIS 8.12.1 — iPhone Settings rhythm + Group Plan touch hotfix (PR #41).**
+**AXIS 8.12.1 native Settings typography seal.**
 
-This is a field hotfix driven by real iPhone Safari use. It is not AXIS 8.13 Stage 4 and does not change Runtime planning semantics.
+This is a minimal follow-up to the already deployed 8.12.1 field hotfix. It changes no training, Runtime, storage, media, sound, cloud/AI or planner ownership.
 
-### Real field problems
+The only product correction is:
 
-1. `学习安排` and `云端与 AI` are correctly inline after the previous convergence, but their inner UI still uses a separate micro-scale visual language: extra outer divider, 10–10.5 px text in several controls, and 32 px option geometry. On iPhone this looks materially smaller and less coherent than the rest of AXIS Settings.
-2. The normal scan/review strength-recording path exposes `组计划`, but its historical launcher is a `<b>` text node retrofitted with `data-v874-plan` and handled by a document capture listener. That interaction surface is not robust enough for real iPhone touch. Existing CI primarily covered Quick Record, so this field path could regress while CI stayed green.
-
-### Controlled correction
-
-`prepare-8121-hotfix.mjs` runs after Stage 3 Settings convergence and before the canonical hardened build.
-
-It must:
-
-- keep Learning and Cloud/AI inside the single canonical Settings sheet;
-- remove their extra outer gate divider;
-- use native AXIS Settings typography and 40–44 px touch geometry;
-- keep strict grid spacing, alignment, progressive disclosure and mobile overflow safety;
-- preserve Learning delegated actions and `axis_v89_speak` ownership;
-- preserve Cloud/AI `axis_v811_services` ownership and explicit-only status network;
-- replace the fragile Group Plan text-node launcher with one real native `button` of at least 44 px;
-- retain the legacy value `<b>` inside that button for compatibility with existing rendering/reading code;
-- continue delegating Group Plan application to `window.__AXIS_RECORDING__.applyPlan` / `v61.js`;
-- introduce no new training, storage, media, timer, sound, network or Runtime owner.
-
-`prepare-8121-release-compat.mjs` promotes only the public patch identity to 8.12.1. AXIS 8.12 Language Studio and AXIS 8.13 Stage 3 internal semantics remain inherited.
+- `学习安排` and `云端与 AI` top-level inline Settings row label/value typography must match the native AXIS Settings sibling exactly at 13 px;
+- inner controls remain at the already hardened 13 px hierarchy with 42 px option touch targets;
+- the canonical Group Plan touch hardening from PR #41 remains unchanged: the existing `.v875PlanEntry[data-v875-plan]` remains the sole planner entry, with touch-safe activation and canonical `v874-set-bridge` / `window.__AXIS_RECORDING__.applyPlan` ownership;
+- no second planner entry, no new writer and no new runtime chunk may be introduced.
 
 ## Validation for this work
 
-The dedicated `AXIS 8.12.1 Hotfix Gate` must pass on the exact PR head in Chromium and iPhone-like WebKit.
+The existing dedicated `AXIS 8.12.1 Hotfix Gate` is release-blocking on the exact follow-up head and must pass in both Chromium and iPhone-like WebKit.
 
-It reproduces the actual field path rather than substituting Quick Record:
+It must prove the complete field path, not just the typography fix:
 
-- open Settings and compare Learning typography to native AXIS Settings rows;
-- verify Learning/Cloud outer borders are absent;
-- verify 13–15 px hierarchy and 40–44 px option touch targets;
-- verify one Settings sheet and no horizontal overflow;
+- Learning and Cloud/AI top-level Settings text exactly matches the native Settings fold typography;
+- Learning/Cloud outer gate borders remain removed and layout remains aligned without horizontal overflow;
+- inner option controls preserve engineered 40–44 px touch geometry and readable hierarchy;
+- one Settings sheet remains the only Settings surface;
 - seed an active workout;
-- open `拍摄记录`;
-- supply a real image through the review input;
-- open equipment selection and choose a strength machine;
-- perform a real touch/click on the Group Plan native button;
-- change to four sets and a progression mode;
-- apply through the canonical planner;
-- save the record;
-- verify factual `axis_v60_state` and set metadata in `axis_v8_meta` contain the four-set result;
-- verify the hotfix diagnostic explicitly reports `recordingOwner:false`;
-- verify zero page errors.
+- open the normal `拍摄记录` flow;
+- supply an image into review;
+- select a strength machine;
+- perform a real touch/click on the canonical `组计划` entry;
+- change the planner to four sets and a progression mode;
+- apply through the canonical planner and save the record;
+- verify `axis_v60_state` and `axis_v8_meta` contain the factual four-set result;
+- verify `recordingOwner:false` for the hotfix and zero page errors.
 
-All inherited Runtime, Field Hardening, Language Studio, Settings convergence, Stage 3, repository and continuity gates remain release-blocking.
-
-A dedicated `AXIS 8.12.1 Production Gate` also verifies the fixed public alias after deployment: exact merged source SHA, 8.12.1 identity, canonical one-JS topology, inherited Language Studio, read-only Live Route, and the real hotfix browser flow.
-
-## Release boundary
-
-Do not call 8.12.1 complete until all of the following are true:
-
-- PR #41 final exact head is green in Chromium and WebKit;
-- PR review threads are resolved;
-- PR #41 is squash-merged;
-- Vercel Production is READY on the exact merged main SHA;
-- `axis-five-puce.vercel.app/axis-build.json` reports 8.12.1 / 8.12.1 and the exact merged SHA;
-- fixed Production serves one JS, zero dynamic JS and zero chunks;
-- the dedicated 8.12.1 Production Gate passes;
-- Production runtime error inspection is clean.
+After merge, the fixed Production alias must still report AXIS 8.12.1, the exact merged main SHA, canonical single runtime, one JavaScript request and zero dynamic chunks. The dedicated Production hotfix/browser gate and Production runtime error inspection must be clean.
 
 ## Next planned stage
 
-Only after the 8.12.1 Production seal is clean may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**.
+Only after this 8.12.1 seal is Production-verified may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**.
 
 Stage 4 may alter temporary continuation intent such as `这个器械有人`, `我只剩 20 分钟`, or `今天到这里`. Historical workout facts remain authoritative and immutable.
