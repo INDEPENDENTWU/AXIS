@@ -25,10 +25,10 @@ const render='function renderSets(){';
 const renderCount=src.split(render).length-1;if(renderCount!==1)fail(`renderSets expected once, found ${renderCount}`);
 const helper=`function axis8123EnsurePlanEntry(){
  const h=$('#v8Sets');if(!h||h.classList.contains('hidden'))return;const head=$('.v8SetHead',h);if(!head)return;
- const all=$$('.v875PlanEntry',h);let entry=all.shift()||null;all.forEach(x=>x.remove());
+ const all=Array.from(h.querySelectorAll('.v875PlanEntry'));let entry=all.shift()||null;all.forEach(x=>x.remove());
  if(!entry){entry=D.createElement('button');(($('#resetPrevious8',h))||head).insertAdjacentElement('afterend',entry)}
  entry.type='button';entry.className='v875PlanEntry v8121PlanButton v8123PlanEntry';entry.dataset.v875Plan='1';entry.dataset.v8123Plan='1';entry.setAttribute('aria-label','打开组计划');
- const owned=window.__AXIS_RECORDING__?.snapshot?.(),n=Math.max(1,Number(owned?.count)||$$('.v8SetRow',h).length||1);
+ const owned=window.__AXIS_RECORDING__?.snapshot?.(),n=Math.max(1,Number(owned?.count)||h.querySelectorAll('.v8SetRow').length||1);
  const label=entry.querySelector('small')?.textContent||'批量设置重量与次数';entry.innerHTML='<span><b>组计划</b><small>'+label+'</small></span><strong>'+n+'组</strong><i>›</i>'
 }
 try{window.__AXIS_8123_GROUP_PLAN_RENDER_OWNER__={version:'8.12.3',owner:'v61-renderSets',creation:'canonical-innerHTML',buttonClass:'v8121PlanButton',dataset:'v875Plan+v8123Plan',staleNode:false}}catch{}
