@@ -11,7 +11,7 @@ const tapScrolled=async l=>{await l.scrollIntoViewIfNeeded();await tap(l)};
 const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAABAklEQVR4nO2asQ3CMBREHZRBKKiYgRlSMQIlYhhEmRGomIHBKNwgxU7Ad3CxfK90IudefvLlWOm2u32omY06AIoF1FhAjQXU9LkDw/H8zxyLPO635Hj1FbCAGguosYAaC6ixgJrsWgjkcjpMB6/jk34hvkAy+vshrgZTYCb69DSWBu0d+DB98fk5OAJlaSgOBAEkB+5QfRtFBfBbCM7QdgVYnQSZp+0KrAELqLGAGkiAtaJE5mm7AoFRBHCG5isQsFuIF5BTgbIclB5Ae4S+TcPqYMyP+phpcWm53l2JyIxGHftCkV9kTeI2qsYCaiygxgJqLKCm83+jYiygxgJqLKDmBVV6OVsV43ZUAAAAAElFTkSuQmCC','base64');
 const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(obj)});
 await page.route('**/api/cloud-status**',r=>json(r,{cloud:{configured:false,enabled:false}}));
-await page.route('**/api/ai-capabilities**',r=>json(r,{ai:{enabled:false,capabilities:{vision:false,insight:false,voice:false,dialogue:false}}));
+await page.route('**/api/ai-capabilities**',r=>json(r,{ai:{enabled:false,capabilities:{vision:false,insight:false,voice:false,dialogue:false}}}));
 for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}]])await page.route(pattern,r=>json(r,obj));
 await page.addInitScript(()=>{try{Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{getUserMedia:async()=>{throw new Error('AXIS_TEST_CAMERA_OFFLINE')}}})}catch{}});
 try{
