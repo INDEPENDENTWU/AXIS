@@ -94,4 +94,8 @@ if(version==='8.9'||version.startsWith('8.9.')||modern810){
   if(!fs.existsSync('scripts/prepare-89-test-flow.mjs'))throw new Error('AXIS 8.9 test-flow convergence is missing');
   execFileSync(process.execPath,['scripts/prepare-89-test-flow.mjs'],{stdio:'inherit'});
 }
+if(version==='8.12.3'){
+  if(!fs.existsSync('prepare-8123-ci-stability.mjs'))throw new Error('AXIS 8.12.3 CI stability contract is missing');
+  execFileSync(process.execPath,['prepare-8123-ci-stability.mjs'],{stdio:'inherit'});
+}
 console.log(`[AXIS test contract] browser assertions aligned to ${version} · no stale release assertions · release flow aligned`);
