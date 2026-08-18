@@ -15,6 +15,7 @@ const convergeRange=(src,start,end,to,sentinel,label)=>{
  if(a<0||b<0)fail(`${label} range missing · start ${a} · end ${b}`);
  return src.slice(0,a)+to+src.slice(b+end.length);
 };
+const label='${label}';
 
 {
  const f='scripts/axis-813-shadow-browser.mjs';let s=read(f);
