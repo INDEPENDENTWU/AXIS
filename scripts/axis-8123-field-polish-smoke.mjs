@@ -37,6 +37,7 @@ try{
   await page.reload({waitUntil:'domcontentloaded'});await ready();
   assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.3');
   assert.equal(await page.evaluate(()=>window.__AXIS_8123_EQUIPMENT_MEMORY__?.photoOwner),'axis-media-store');
+  assert.equal(await page.evaluate(()=>window.__AXIS_8123_EQUIPMENT_MEMORY__?.inlineManagement),true);
 
   console.log(`[AXIS 8.12.3 field ${ENGINE}] Settings geometry at 417 CSS px`);
   await tap(page.locator('#settingsBtn'));await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));
@@ -49,7 +50,8 @@ try{
 
   console.log(`[AXIS 8.12.3 field ${ENGINE}] personal equipment library`);
   assert.equal((await page.locator('#customCount').textContent()).trim(),'2');
-  await tap(page.locator('#myEqBtn'));await page.waitForFunction(()=>document.querySelector('#myEqSheet')?.classList.contains('show'));
+  await tap(page.locator('#myEqBtn'));await page.waitForFunction(()=>document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'));
+  await page.locator('#myEqSelect').waitFor({state:'visible'});
   assert.equal(await page.locator('#manageEqList [data-my-eq-id]').count(),2,'native + custom personal rows expected');
   assert.equal(await page.locator('#manageEqList [data-my-eq-photo="F-E-CHEST-0"]').count(),1,'representative photo ref missing');
   assert.equal(await page.locator('#manageEqList [data-my-eq-remove]').count(),2,'swipe remove actions missing');
@@ -57,7 +59,7 @@ try{
   const rows=page.locator('#manageEqList [data-my-eq-id]');await tap(rows.nth(0));await tap(rows.nth(1));
   assert.equal((await page.locator('#v8123EqBatch [data-my-eq-batch]').textContent()).trim(),'移除 2 项');
   await tap(page.locator('#myEqSelect'));assert.equal(await page.locator('#manageEqList.selecting').count(),0);
-  await tap(page.locator('#myEqSheet [data-close="myEqSheet"]'));
+  await tap(page.locator('#myEqBtn'));await page.waitForFunction(()=>!document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'));
   await tap(page.locator('#settingsSheet [data-close="settingsSheet"]'));
 
   console.log(`[AXIS 8.12.3 field ${ENGINE}] Group Plan survives count/weight/reps repaints + reopen`);
