@@ -30,4 +30,5 @@ console.log('[AXIS 8.12.3 final alignment] PASS · legacy gate class retired bef
 
 await import('./prepare-8123-field-polish.mjs');
 await import('./prepare-8123-equipment-inline-tools.mjs');
+await import('./prepare-8123-equipment-selection-guard.mjs');
 await import('./prepare-8123-settings-alignment-fix.mjs');
