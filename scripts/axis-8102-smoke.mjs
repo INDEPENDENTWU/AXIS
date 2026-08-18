@@ -34,7 +34,8 @@ await page.locator('#detailSheet [data-close="detailSheet"]').click();
 console.log(`[AXIS 8.10.2 ${ENGINE}] standalone learning is available outside a workout and survives idle Home repaint ticks`);
 const coreBeforeStandalone=await page.evaluate(()=>localStorage.getItem('axis_v60_state')),metaBeforeStandalone=await page.evaluate(()=>localStorage.getItem('axis_v8_meta'));
 await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show')&&document.querySelector('#v810ConfigEntry'));
-await page.locator('#v810ConfigEntry').click();await page.waitForFunction(()=>document.querySelector('#v810ConfigPanel')?.classList.contains('show'));
+await page.locator('#v810ConfigEntry').click();await page.waitForFunction(()=>document.querySelector('#v813LearningGate')?.classList.contains('open')&&document.querySelector('#v810ConfigPanel'));
+assert.equal(await page.locator('.sheetWrap.show').count(),1,'standalone Learning Settings opened a second sheet');
 assert.equal(await page.locator('#v810SpeakControls [data-v810-options="standalone"] button').count(),3,'standalone schedule control is incomplete');
 const standaloneStart=page.locator('[data-v810-standalone-start]');assert.equal(await standaloneStart.isVisible(),true,'standalone learning launcher is hidden while enabled');
 assert.equal(await page.evaluate(()=>window.__AXIS_8102_SPEAK_CALLS__),0,'standalone learning autoplayed before user action');
@@ -52,4 +53,4 @@ await page.locator('#v87Rest').click();await page.waitForFunction(()=>document.q
 await page.waitForTimeout(1650);assert.equal(await page.locator('#v891SpeakPanel').evaluate(el=>el.classList.contains('show')),true,'paused learning panel was closed by a subsequent render tick');assert.equal(await page.locator('#v891SpeakPanel').getAttribute('data-axis8102-source'),'opportunity');
 assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v8_meta')),metaBaseline,'paused learning changed training metadata');assert.equal(await page.evaluate(()=>window.__AXIS_ACTIVE_CONTROL__?.owner),'v87-direct-884');assert.equal(await page.evaluate(()=>window.__AXIS_8102_SPEAK_CALLS__),0,'opening paused learning started sound');
 
-assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);await browser.close();console.log(`[AXIS 8.10.2 ${ENGINE}] PASS · stable detail drill-down · persistent paused + standalone learning · no autoplay · training isolation`);
+assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);await browser.close();console.log(`[AXIS 8.10.2 ${ENGINE}] PASS · inline Settings · stable detail drill-down · persistent paused + standalone learning · no autoplay · training isolation`);
