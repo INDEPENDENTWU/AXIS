@@ -5,52 +5,58 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12.1.
-- Current Product main: `a7b29bf3d9e117dbb1c6f1d813bfbf62028f103d`.
+- Product main at the start of this release: `3d18300b26c0b38b5389e554c34bd41d39663bb9`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- Vercel Production: `dpl_61GsV6YmwpxL1A2uqdWfcfnKDZ6S`, READY on exact source commit `a7b29bf3…`.
-- Fixed Production manifest: version/base `8.12.1`, release hash `11dd55544804`, core `f86c16349f02`, CSS `76a9e76610fc`, one initial JavaScript request, zero dynamic JavaScript and zero chunks.
-- AXIS 8.12 Language Studio semantics and AXIS 8.13 Stage 3 Continue + Live Route remain inherited; Stage 3 remains read-only presentation.
-- The Safari Group Plan P0 is fixed in main by removing the custom `pointerup/preventDefault` layer and using the native button touch→click path owned by the existing v874 click handler.
+- Production 8.12.1 core at the start of this work: `f86c16349f02`; one initial JavaScript request, zero dynamic JavaScript and zero chunks.
+- AXIS 8.12 Language Studio, the 8.12.1 Safari Group Plan native-button fix, and AXIS 8.13 Stage 3 read-only Live Route are inherited and must remain intact.
 
 ## Active change
 
-**AXIS 8.12.1 final field regression guard seal.**
+**AXIS 8.12.2 — Settings simplification and visual convergence only.**
 
-Product behavior is already corrected and Production-deployed. This remaining change is test/governance only and aligns one Chromium-only Settings assertion with the actual progressive-disclosure UI.
+The product implementation is complete and frozen. No additional feature scope is allowed in this release. The only post-implementation work is release/test compatibility required to prove inherited behavior on the 8.12.2 patch identity.
 
-The dedicated final-head WebKit run has already proved the complete real user path after the native activation fix:
+The release changes only `学习安排` and `云端与AI` Settings presentation/configuration:
 
-- inline Learning / Cloud+AI Settings;
-- valid photo decode/review;
-- visible canonical `#v8710Cards` catalog;
-- select `胸推`;
-- real iPhone-like tap on the sole native `.v875PlanEntry[data-v875-plan]` / `.v8121PlanButton`;
-- planner opens;
-- four-set progression applies;
-- `记下` persists the factual four-set result.
-
-The same exact-head Chromium run stopped earlier in Settings because it measured the height of a `能力状态` fact row while that progressive-disclosure `<details>` block was still collapsed. That row is not an interactive touch target and has zero visible geometry while collapsed, so the guard is corrected to explicitly open the capability disclosure before measuring its visible 13 px / 46 px presentation. Product code is unchanged by this guard correction.
+- top-level `学习安排` / `云端与AI` remain inside the single canonical Settings sheet;
+- the service label is exactly `云端与AI`, without artificial whitespace, and both top-level rows add no extra divider line;
+- Learning fine-tune is reduced to six non-duplicated decisions: new/review ratio, content, cadence, daily target, opportunity learning and standalone learning;
+- duplicated fine-tune copies of the primary `强度` / `难度` decisions are removed;
+- 3-option controls use strict equal three-column grids; 4-option controls use equal 2×2 grids; text may not clip or ellipsize;
+- Cloud/AI is reduced to four product groups: cloud sync, AXIS AI, send scope and capability status;
+- send scope uses `最小 / 平衡 / 扩展`, mapped through the existing `axis_v811_services.privacy` fields;
+- capability status is four concise tiles rather than a debug-style text list;
+- Settings changes leave `axis_v60_state` and `axis_v8_meta` byte-identical;
+- no new learning/service/training/recording/storage/network owner is introduced.
 
 ## Validation for this work
 
-The `AXIS 8.12.1 Hotfix Gate` remains the canonical field guard and must pass in Chromium and iPhone-like WebKit with these rules:
+A product-equivalent 8.12.2 candidate has already passed the dedicated Settings redesign step in both Chromium and iPhone-like WebKit at 390×844. That evidence covered:
 
-- Learning / Cloud+AI top-level typography matches native Settings left-label / right-value hierarchy;
-- Cloud/AI inner headings, facts and privacy rows preserve the hardened readable hierarchy;
-- geometry assertions apply only to visible content; collapsed progressive-disclosure content is opened before visible-row geometry is measured;
-- no extra Settings divider or nested Settings sheet returns;
-- active workout → `拍摄记录` → real image decode/review succeeds;
-- the visible canonical catalog opens and `胸推` can be selected;
-- native Group Plan activation opens the planner by normal click/tap semantics;
-- four sets plus a progression mode apply to four visible draft rows;
-- `记下` persists a strength event with four sets in `axis_v60_state` and four set rows in `axis_v8_meta`;
-- the hotfix remains `recordingOwner:false` and emits no page error.
+- exact `云端与AI` label and zero top-level divider lines;
+- exactly six Learning fine-tune groups;
+- strict 3-column / 2×2 equal geometry with no text clipping;
+- exactly four Cloud/AI groups and four capability tiles;
+- service status network remaining user-invoked only;
+- learning/service preference persistence through existing stores;
+- no horizontal Settings overflow or nested Settings sheet;
+- byte-identical `axis_v60_state` and `axis_v8_meta` before/after Settings operations;
+- no page errors.
 
-After this guard-only change is merged, the Product artifact must remain behaviorally unchanged: AXIS 8.12.1, canonical single runtime, one initial JavaScript request, zero dynamic JavaScript and no new training/storage/planner owner. Production runtime error inspection must remain clean.
+The final exact PR head must additionally complete all inherited gates after their patch-family assertions are aligned to 8.12.2. In particular:
+
+- 8.12 Language Studio keeps 25,716 units, 4/8/12-turn dialogue and the seven-step teaching loop;
+- 8.12.1 real scan/review Group Plan remains a native Safari/WebKit button path and persists four-set plans through the authoritative recording stores;
+- explicit pause remains the sole rest-state trigger across inherited 8.8/8.9 browser tests;
+- Shadow Runtime remains read-only and may observe any current 8.12 patch identity without taking product ownership;
+- Stage 3 Continue + Live Route remains read-only, single-owner and zero recording/storage/network ownership;
+- canonical topology stays one JavaScript request, zero dynamic JavaScript and zero chunks.
+
+No final-head product code changes are permitted solely to satisfy obsolete selectors or obsolete public-version literals; those guards must be migrated to the current owner/patch-family contract instead.
+
+After merge, Vercel Production and the fixed public alias must serve the exact merged main SHA as AXIS 8.12.2. Both Production browser gates must run the 8.12.2 Settings regression, and runtime error/fatal inspection must be clean before the release is considered sealed.
 
 ## Next planned stage
 
-Only after this AXIS 8.12.1 field guard is fully green may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**.
-
-Stage 4 may alter temporary continuation intent such as `这个器械有人`, `我只剩 20 分钟`, or `今天到这里`. Historical workout facts remain authoritative and immutable.
+Only after AXIS 8.12.2 is Production-verified may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**. Historical workout facts remain authoritative and immutable.

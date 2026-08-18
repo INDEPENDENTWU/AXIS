@@ -7,6 +7,7 @@ import { execFileSync } from 'node:child_process';
 
 const hash = (source) => crypto.createHash('sha256').update(source).digest('hex').slice(0, 12);
 const read = (root, file) => fs.readFileSync(path.join(root, file), 'utf8');
+const PATCH_FAMILY=['8.12','8.12.1','8.12.2'];
 
 function fingerprint(root) {
   for (const file of ['axis-core.js', 'axis-style.css', 'index.html', 'axis-build.json']) {
@@ -34,8 +35,8 @@ function fingerprint(root) {
 }
 
 function assertProductionBoundary(x, label) {
-  assert.equal(x.version, '8.12', `${label}: public release identity drifted`);
-  assert.equal(x.baseVersion, '8.12', `${label}: stable production base drifted`);
+  assert.ok(PATCH_FAMILY.includes(x.version), `${label}: public release identity drifted · ${x.version}`);
+  assert.equal(x.baseVersion, x.version, `${label}: stable production base does not match public patch`);
   assert.equal(x.architecture, 'canonical-single-runtime', `${label}: canonical architecture drifted`);
   assert.equal(x.requests.initialJavascript, 1, `${label}: initial JavaScript request topology drifted`);
   assert.equal(x.requests.dynamicJavascript, 0, `${label}: dynamic JavaScript returned`);
@@ -50,12 +51,9 @@ const root = process.cwd();
 const baseSha = String(process.env.AXIS_PARITY_BASE_SHA || '').trim();
 assert.match(baseSha, /^[a-f0-9]{40}$/i, 'AXIS_PARITY_BASE_SHA must identify the exact comparison base');
 
-// Candidate has already been built by the workflow immediately before this gate.
 const candidate = fingerprint(root);
 assertProductionBoundary(candidate, 'candidate');
 
-// Runtime-only/governance work must keep the 8.12 browser artifact byte-exact.
-// A Stage 2 browser harness is still observation infrastructure, not product code.
 const safeExactParityPath = (file) =>
   file.startsWith('runtime/') ||
   file.startsWith('docs/') ||
@@ -83,12 +81,12 @@ try {
     assert.deepEqual(candidate, baseline, 'Runtime-only/governance change altered the exact production artifact compared with the base');
     console.log(`AXIS 8.13 exact base parity PASS · ${baseSha.slice(0, 12)} · release ${candidate.version} · raw core ${candidate.rawCore} · canonical ${candidate.canonicalRuntime} · css ${candidate.rawCss}`);
   } else {
-    assert.equal(candidate.version, baseline.version, 'controlled product change unexpectedly changed public version');
-    assert.equal(candidate.baseVersion, baseline.baseVersion, 'controlled product change unexpectedly changed stable base');
+    const baseIndex=PATCH_FAMILY.indexOf(baseline.version),candidateIndex=PATCH_FAMILY.indexOf(candidate.version);
+    assert.ok(candidateIndex>=baseIndex, `controlled product patch regressed public identity · ${baseline.version} -> ${candidate.version}`);
     assert.equal(candidate.architecture, baseline.architecture, 'controlled product change unexpectedly changed architecture');
     assert.deepEqual(candidate.requests, baseline.requests, 'controlled product change unexpectedly changed request topology');
     assert.deepEqual(candidate.chunks ?? [], baseline.chunks ?? [], 'controlled product change unexpectedly changed chunk topology');
-    console.log(`AXIS 8.13 controlled product boundary PASS · ${productionChanged.length} production-affecting path(s) · hashes may change · identity/topology preserved`);
+    console.log(`AXIS 8.13 controlled product boundary PASS · ${productionChanged.length} production-affecting path(s) · ${baseline.version} -> ${candidate.version} · hashes may change · topology preserved`);
   }
 } finally {
   try { execFileSync('git', ['worktree', 'remove', '--force', baseWorktree], { cwd: root, stdio: 'ignore' }); } catch {}

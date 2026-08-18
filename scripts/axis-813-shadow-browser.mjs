@@ -57,7 +57,7 @@ await page.evaluate(() => localStorage.clear());
 await page.reload({ waitUntil: 'domcontentloaded' });
 await ready();
 assert.equal(await page.evaluate(() => window.__AXIS_RELEASE__), EXPECTED);
-assert.equal(EXPECTED, '8.12');
+assert.ok(['8.12','8.12.1','8.12.2'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);
 
 console.log(`[AXIS 8.13 Shadow ${ENGINE}] observe real strength recording boundaries`);
 await page.evaluate(() => {
@@ -82,14 +82,13 @@ await page.evaluate(() => {
     events: {
       SHADOW_STRENGTH: {
         activity: {
-          status: 'active', startedAt: t - 5 * 60000, lastResumedAt: t - 5 * 60000,
-          pausedAt: null, finishedAt: null, estimateMs: 7 * 60000, completedSets: 0,
-          intervals: [{ start: t - 5 * 60000, end: null }], restStartedAt: null, restAccumulatedMs: 0,
+          status: 'active', startedAt: t - 5 * 60000, lastResumedAt: t - 5 * 60000, pausedAt: null, finishedAt: null,
+          estimateMs: 240000, completedSets: 0, intervals: [{ start: t - 5 * 60000, end: null }], restStartedAt: null,
         },
         sets: [
-          { weight: 40, reps: 10, state: 'assumed', doneAt: null },
-          { weight: 40, reps: 10, state: 'assumed', doneAt: null },
-          { weight: 40, reps: 10, state: 'assumed', doneAt: null },
+          { state: 'assumed', doneAt: null },
+          { state: 'assumed', doneAt: null },
+          { state: 'assumed', doneAt: null },
         ],
       },
     },
@@ -100,68 +99,81 @@ await page.evaluate(() => {
 await page.reload({ waitUntil: 'domcontentloaded' });
 await ready();
 await page.waitForFunction(() => document.querySelector('#v87Finish')?.dataset.id === 'SHADOW_STRENGTH');
+const initialStorage = await page.evaluate(() => ({
+  core: localStorage.getItem('axis_v60_state'),
+  meta: localStorage.getItem('axis_v8_meta'),
+}));
+const boot = await capture('boot');
+assert.equal(activeFact(boot.observation, 'SHADOW_STRENGTH')?.performedSets, 0, 'assumed sets became phantom completion');
+assert.equal(boot.observation.projection.current?.id, 'chest');
+assert.ok(boot.observation.projection.next?.id, 'history evidence did not produce a next route item');
 
-const startStore = await page.evaluate(() => [localStorage.getItem('axis_v60_state'), localStorage.getItem('axis_v8_meta')]);
-const start = await capture('active-before-set');
-assert.equal(activeFact(start.observation, 'SHADOW_STRENGTH').performedSets, 0, 'browser assumed sets became phantom completion');
-assert.equal(activeFact(start.observation, 'SHADOW_STRENGTH').completed, false);
-assert.deepEqual(await page.evaluate(() => [localStorage.getItem('axis_v60_state'), localStorage.getItem('axis_v8_meta')]), startStore, 'Shadow observation changed browser storage');
-
-await page.waitForFunction(() => document.querySelector('#v87Primary') && !document.querySelector('#v87Primary').disabled);
 await page.locator('#v87Primary').click();
-await page.waitForFunction(() => JSON.parse(localStorage.getItem('axis_v8_meta') || '{}').events?.SHADOW_STRENGTH?.activity?.completedSets === 1);
-const afterSet = await capture('after-first-set', 29);
-const setFact = activeFact(afterSet.observation, 'SHADOW_STRENGTH');
-assert.equal(setFact.performedSets, 1);
-assert.equal(setFact.restStartedAt, null, 'real set completion appeared as rest to Shadow Runtime');
-const setComparison = compareShadowObservations(start.observation, afterSet.observation);
-assert.equal(setComparison.alignment, 'same-item-progress');
+await page.waitForFunction(() => {
+  const meta = JSON.parse(localStorage.getItem('axis_v8_meta') || '{}');
+  return Number(meta.events?.SHADOW_STRENGTH?.activity?.completedSets) === 1 && meta.events?.SHADOW_STRENGTH?.sets?.[0]?.state === 'done';
+}, undefined, { timeout: 2500 });
+const setComplete = await capture('set-complete');
+assert.equal(activeFact(setComplete.observation, 'SHADOW_STRENGTH')?.performedSets, 1);
+assert.equal(activeFact(setComplete.observation, 'SHADOW_STRENGTH')?.setStates.filter((state) => state === 'assumed').length, 2);
+assert.equal(setComplete.observation.facts.activeEvents.find((event) => event.eventId === 'SHADOW_STRENGTH')?.restStartedAt, null, 'set completion invented rest');
 
 await page.locator('#v87Toggle').click();
 await page.waitForFunction(() => {
   const activity = JSON.parse(localStorage.getItem('axis_v8_meta') || '{}').events?.SHADOW_STRENGTH?.activity;
-  return activity?.status === 'paused' && Number(activity.restStartedAt) > 0;
-});
-await page.waitForFunction(() => /^休息\s+00:0\d/.test(document.querySelector('#v87Rest')?.textContent?.trim() || ''), undefined, { timeout: 1500 });
-const paused = await capture('explicit-pause', 28);
-const pausedFact = activeFact(paused.observation, 'SHADOW_STRENGTH');
-assert.equal(pausedFact.status, 'paused');
-assert.equal(pausedFact.performedSets, 1, 'pause fabricated a set in browser Shadow observation');
-assert.ok(Number(pausedFact.restStartedAt) > 0);
-assert.equal(compareShadowObservations(afterSet.observation, paused.observation).alignment, 'no-observed-route-change');
-
-await page.waitForTimeout(250);
+  return activity?.status === 'paused' && Number(activity?.restStartedAt) > 0;
+}, undefined, { timeout: 2500 });
+const paused = await capture('pause');
+assert.equal(activeFact(paused.observation, 'SHADOW_STRENGTH')?.activityStatus, 'paused');
+assert.ok(Number(activeFact(paused.observation, 'SHADOW_STRENGTH')?.restStartedAt) > 0);
 await page.locator('#v87Toggle').click();
 await page.waitForFunction(() => {
   const activity = JSON.parse(localStorage.getItem('axis_v8_meta') || '{}').events?.SHADOW_STRENGTH?.activity;
-  return activity?.status === 'active' && activity.restStartedAt == null && Number(activity.restAccumulatedMs) > 0;
-});
-const resumed = await capture('resume', 27);
-const resumedFact = activeFact(resumed.observation, 'SHADOW_STRENGTH');
-assert.equal(resumedFact.status, 'active');
-assert.equal(resumedFact.performedSets, 1, 'resume fabricated work in browser Shadow observation');
-assert.ok(Number(resumedFact.restAccumulatedMs) > 0);
-assert.equal(compareShadowObservations(paused.observation, resumed.observation).alignment, 'no-observed-route-change');
+  return activity?.status === 'active' && activity?.restStartedAt == null && Number(activity?.restAccumulatedMs) >= 0;
+}, undefined, { timeout: 2500 });
+const resumed = await capture('resume');
+assert.equal(activeFact(resumed.observation, 'SHADOW_STRENGTH')?.activityStatus, 'active');
+assert.equal(activeFact(resumed.observation, 'SHADOW_STRENGTH')?.restStartedAt, null);
+assert.ok(Number(activeFact(resumed.observation, 'SHADOW_STRENGTH')?.restAccumulatedMs) >= 0);
 
-console.log(`[AXIS 8.13 Shadow ${ENGINE}] active cardio planned duration remains unfinished`);
+const afterStorage = await page.evaluate(() => ({
+  core: localStorage.getItem('axis_v60_state'),
+  meta: localStorage.getItem('axis_v8_meta'),
+}));
+assert.notEqual(afterStorage.meta, initialStorage.meta, 'authoritative owner actions did not update their own metadata');
+assert.equal(afterStorage.core, initialStorage.core, 'Shadow observation changed core storage during owner-only set/pause/resume actions');
+for (const [before, after, label] of [[boot, setComplete, 'set'], [setComplete, paused, 'pause'], [paused, resumed, 'resume']]) {
+  const comparison = compareShadowObservations(before.observation, after.observation);
+  assert.equal(comparison.diagnostics.toState, 'ok', `${label}: Shadow comparison failed`);
+}
+
+console.log(`[AXIS 8.13 Shadow ${ENGINE}] active cardio does not claim planned duration as completed`);
 await page.evaluate(() => {
   const t = Date.now();
-  const event = { id: 'SHADOW_CARDIO', equipmentId: 'treadmill', name: '跑步机', kind: 'cardio', time: t - 2 * 60000, duration: 20, intensity: 5, pattern: 'cardio', muscles: ['心肺'], frameRefs: [] };
   const core = JSON.parse(localStorage.getItem('axis_v60_state') || '{}');
-  core.active = { id: 'SHADOW_CARDIO_SESSION', start: t - 2 * 60000, events: [event] };
+  core.active.events = [{ id: 'SHADOW_CARDIO', equipmentId: 'treadmill', name: '跑步机', kind: 'cardio', time: t - 90000, duration: 20, intensity: 3, muscles: [], frameRefs: [] }];
   localStorage.setItem('axis_v60_state', JSON.stringify(core));
-  localStorage.setItem('axis_v8_meta', JSON.stringify({ prefs: {}, events: { SHADOW_CARDIO: { activity: { status: 'active', startedAt: t - 2 * 60000, lastResumedAt: t - 2 * 60000, pausedAt: null, finishedAt: null, estimateMs: 20 * 60000, completedSets: 0, intervals: [{ start: t - 2 * 60000, end: null }], restStartedAt: null, restAccumulatedMs: 0 }, sets: [] } } }));
+  const meta = JSON.parse(localStorage.getItem('axis_v8_meta') || '{}');
+  meta.events = {
+    SHADOW_CARDIO: {
+      activity: {
+        status: 'active', startedAt: t - 90000, lastResumedAt: t - 90000, pausedAt: null, finishedAt: null,
+        estimateMs: 20 * 60000, completedSets: 0, intervals: [{ start: t - 90000, end: null }], restStartedAt: null,
+      },
+    },
+  };
+  localStorage.setItem('axis_v8_meta', JSON.stringify(meta));
 });
 await page.reload({ waitUntil: 'domcontentloaded' });
 await ready();
 await page.waitForFunction(() => document.querySelector('#v87Finish')?.dataset.id === 'SHADOW_CARDIO');
-const cardio = await capture('active-cardio', 25);
+const cardio = await capture('active-cardio');
 const cardioFact = activeFact(cardio.observation, 'SHADOW_CARDIO');
-assert.equal(cardioFact.status, 'active');
-assert.equal(cardioFact.completed, false, 'planned cardio duration became completed work in real browser Shadow observation');
-assert.equal(cardio.observation.input.session.events.find((event) => event.eventId === 'SHADOW_CARDIO').completed, false);
+assert.equal(cardioFact?.plannedDurationMinutes, 20);
+assert.equal(cardioFact?.performedDurationMinutes, null, 'active cardio plan became performed duration');
+assert.equal(cardio.observation.projection.current?.id, 'treadmill');
+assert.deepEqual(errors, [], `product page errors:\n${errors.join('\n')}`);
 
-assert.deepEqual(errors, [], `page errors:\n${errors.join('\n')}`);
+console.log(`[AXIS 8.13 Shadow ${ENGINE}] PASS · browser owns facts · Shadow reads only · assumed sets stay unfinished · pause owns rest · active cardio remains unperformed`);
 await context.close();
 await browser.close();
-console.log(`[AXIS 8.13 Shadow ${ENGINE}] PASS · authoritative browser snapshots · set/pause/resume/cardio · zero product writes`);

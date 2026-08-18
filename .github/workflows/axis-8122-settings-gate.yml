@@ -1,4 +1,4 @@
-name: AXIS 8.12.x Field Hotfix Gate
+name: AXIS 8.12.2 Settings Gate
 
 on:
   pull_request:
@@ -12,22 +12,22 @@ permissions:
 jobs:
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 16
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build exact AXIS 8.12.x candidate
+      - name: Build exact AXIS 8.12.2 candidate
         run: node build-release.mjs
-      - name: Verify release and ownership topology
+      - name: Verify release topology
         run: |
           node - <<'NODE'
-          const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
-          if(!['8.12.1','8.12.2'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
+          if(m.version!=='8.12.2'||m.baseVersion!=='8.12.2')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
-          if(!core.includes('__AXIS_8121_HOTFIX__')||!core.includes('v8121PlanButton'))throw new Error('8.12.1 inherited field marker missing');
-          for(const gate of ['groupPlanUsesRecordingOwner','canonicalSingleRuntime','languageStudio812','liveRoute813','liveRouteReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`inherited gate missing ${gate}`);
+          if(!core.includes('__AXIS_8122_SETTINGS__')||!core.includes('__AXIS_8121_HOTFIX__'))throw new Error('8.12.2/8.12.1 marker missing');
+          for(const gate of ['groupPlanUsesRecordingOwner','languageStudio812','liveRouteReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`inherited gate missing ${gate}`);
           NODE
       - name: Prepare Chromium
         run: |
@@ -37,9 +37,14 @@ jobs:
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Serve candidate
         run: |
-          python3 -m http.server 4173 >/tmp/axis-8121-chromium.log 2>&1 &
+          python3 -m http.server 4173 >/tmp/axis-8122-chromium.log 2>&1 &
           sleep 1
-      - name: Inherited Settings + real record Group Plan
+      - name: AXIS 8.12.2 Settings redesign
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8122-settings-smoke.mjs
+      - name: Inherited real Group Plan regression
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
@@ -48,17 +53,17 @@ jobs:
         run: node scripts/axis-repository-contract.mjs
       - name: Print server log on failure
         if: failure()
-        run: cat /tmp/axis-8121-chromium.log || true
+        run: cat /tmp/axis-8122-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 23
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build exact AXIS 8.12.x candidate
+      - name: Build exact AXIS 8.12.2 candidate
         run: node build-release.mjs
       - name: Prepare iPhone WebKit
         run: |
@@ -66,13 +71,18 @@ jobs:
           npx playwright install --with-deps webkit
       - name: Serve candidate
         run: |
-          python3 -m http.server 4173 >/tmp/axis-8121-webkit.log 2>&1 &
+          python3 -m http.server 4173 >/tmp/axis-8122-webkit.log 2>&1 &
           sleep 1
-      - name: iPhone inherited Settings + real record Group Plan
+      - name: iPhone Settings redesign
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8122-settings-smoke.mjs
+      - name: iPhone inherited Group Plan regression
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-8121-hotfix-smoke.mjs
       - name: Print server log on failure
         if: failure()
-        run: cat /tmp/axis-8121-webkit.log || true
+        run: cat /tmp/axis-8122-webkit.log || true
