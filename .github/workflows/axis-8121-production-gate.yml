@@ -1,10 +1,10 @@
-name: AXIS 8.12.1 Production Gate
+name: AXIS 8.12.x Production Gate
 
 on:
   deployment_status:
 
 concurrency:
-  group: axis-8121-production-${{ github.event.deployment.id }}
+  group: axis-812x-production-${{ github.event.deployment.id }}
   cancel-in-progress: true
 
 permissions:
@@ -16,7 +16,7 @@ jobs:
       github.event.deployment_status.state == 'success' &&
       github.event.deployment.environment == 'Production'
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 24
     env:
       AXIS_URL: https://axis-five-puce.vercel.app
       AXIS_EXPECTED_SHA: ${{ github.event.deployment.sha }}
@@ -30,22 +30,29 @@ jobs:
           node-version-file: .nvmrc
       - name: Build exact deployed source
         run: node build-release.mjs
-      - name: Verify fixed alias serves exact 8.12.1 artifact
+      - name: Resolve deployed patch identity
+        run: |
+          node <<'NODE' >> "$GITHUB_ENV"
+          const x=require('./axis-build.json');
+          if(!['8.12.1','8.12.2'].includes(x.version)||x.baseVersion!==x.version)throw new Error(`unsupported 8.12 patch ${x.version}/${x.baseVersion}`);
+          console.log(`AXIS_EXPECTED_VERSION=${x.version}`);
+          NODE
+      - name: Verify fixed alias serves exact AXIS 8.12.x artifact
         shell: bash
         run: |
           set -euo pipefail
           for attempt in $(seq 1 24); do
-            code=$(curl -LsS --connect-timeout 5 --max-time 15 -o /tmp/axis-8121-build.json -w '%{http_code}' "$AXIS_URL/axis-build.json" || true)
-            if [ "$code" = "200" ] && EXPECTED="$AXIS_EXPECTED_SHA" node <<'NODE'
+            code=$(curl -LsS --connect-timeout 5 --max-time 15 -o /tmp/axis-812x-build.json -w '%{http_code}' "$AXIS_URL/axis-build.json" || true)
+            if [ "$code" = "200" ] && EXPECTED="$AXIS_EXPECTED_SHA" VERSION="$AXIS_EXPECTED_VERSION" node <<'NODE'
           const fs=require('fs');
           try{
-            const x=JSON.parse(fs.readFileSync('/tmp/axis-8121-build.json','utf8'));
-            const ok=x.sourceCommit===process.env.EXPECTED&&x.version==='8.12.1'&&x.baseVersion==='8.12.1'&&x.architecture==='canonical-single-runtime'&&x.requests?.initialJavascript===1&&x.requests?.dynamicJavascript===0&&Array.isArray(x.assets?.chunks)&&x.assets.chunks.length===0&&x.gates?.groupPlanUsesRecordingOwner===true&&x.gates?.languageStudio812===true&&x.gates?.liveRouteReadOnly813===true;
+            const x=JSON.parse(fs.readFileSync('/tmp/axis-812x-build.json','utf8'));
+            const ok=x.sourceCommit===process.env.EXPECTED&&x.version===process.env.VERSION&&x.baseVersion===process.env.VERSION&&x.architecture==='canonical-single-runtime'&&x.requests?.initialJavascript===1&&x.requests?.dynamicJavascript===0&&Array.isArray(x.assets?.chunks)&&x.assets.chunks.length===0&&x.gates?.groupPlanUsesRecordingOwner===true&&x.gates?.languageStudio812===true&&x.gates?.liveRouteReadOnly813===true;
             process.exit(ok?0:1);
           }catch{process.exit(1)}
           NODE
             then exit 0; fi
-            echo "Attempt $attempt · waiting for exact AXIS 8.12.1 Production"
+            echo "Attempt $attempt · waiting for exact AXIS $AXIS_EXPECTED_VERSION Production"
             sleep 3
           done
           exit 1
@@ -61,7 +68,12 @@ jobs:
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-812-browser-smoke.mjs
-      - name: Real AXIS 8.12.1 hotfix on fixed Production
+      - name: Real inherited field hotfix on fixed Production
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8121-hotfix-smoke.mjs
+      - name: Real AXIS 8.12.2 Settings on fixed Production
+        if: env.AXIS_EXPECTED_VERSION == '8.12.2'
+        env:
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8122-settings-smoke.mjs
