@@ -5,6 +5,7 @@ const FILE='scripts/axis-882-smoke.mjs';
 const fail=m=>{throw new Error(`[AXIS 8.9 test flow] ${m}`)};
 if(!fs.existsSync(FILE))fail(`missing ${FILE}`);
 const release=JSON.parse(fs.readFileSync('release-contract.json','utf8')).publicVersion;
+const modern812=['8.12','8.12.1','8.12.2'].includes(release);
 let src=fs.readFileSync(FILE,'utf8');
 const replaceOnce=(from,to,label)=>{const n=src.split(from).length-1;if(n===1){src=src.replace(from,to);return}if(n===0&&src.includes(to))return;fail(`${label} expected once, found ${n}`)};
 const staleVision=`await upload();await page.waitForFunction(()=>document.querySelector('#aiStatus')?.textContent?.includes('本地认出'),undefined,{timeout:1800});
@@ -15,7 +16,7 @@ replaceOnce(staleVision,alignedVision,'Local Vision v2 semantic assertion');
 const staleFinish="assert.equal(await page.evaluate(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.status), 'finished');assert.deepEqual(await page.evaluate(()=>window.__AXIS_882_CUES__),[],'manual long-press finish emitted an automatic sound');";
 const alignedFinish="await page.waitForFunction(id=>{const m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),meta=m.events?.[id]?.activity?.status,active=(c.active?.events||[]).some(x=>x.id===id),archived=(c.sessions||[]).some(s=>(s.events||[]).some(x=>x.id===id));return meta==='finished'||(!active&&archived)},activeId,{timeout:1800});const finishDiag=await page.evaluate(id=>{const m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return{id,metaStatus:m.events?.[id]?.activity?.status||null,activeHas:(c.active?.events||[]).some(x=>x.id===id),sessionHas:(c.sessions||[]).some(s=>(s.events||[]).some(x=>x.id===id)),activeId:c.active?.id||null,home:window.__AXIS_HOME_STATE__||null}},activeId);console.log('[AXIS 8.9 manual finish diagnostic]',JSON.stringify(finishDiag));assert.ok(finishDiag.metaStatus==='finished'||(!finishDiag.activeHas&&finishDiag.sessionHas),`manual finish did not persist finished metadata or canonical session archive: ${JSON.stringify(finishDiag)}`);assert.deepEqual(await page.evaluate(()=>window.__AXIS_882_CUES__),[],'manual long-press finish emitted an automatic sound');";
 replaceOnce(staleFinish,alignedFinish,'manual-finish canonical persistence assertion');
-if(release==='8.12'){
+if(modern812){
  const staleRest=`await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='rest',undefined,{timeout:1800});
 
 console.log(\`[AXIS 8.8.2 \${ENGINE}] home rest intelligence: rest -> warn -> danger -> paused\`);
@@ -41,10 +42,10 @@ if(src.includes("includes('本地认出')"))fail('retired Local Vision status as
 if(!src.includes("status==='请确认'"))fail('8.9 frontier-confirmation assertion missing');
 if(!src.includes("x.equipmentId==='lat'&&x.sig?.full&&x.sig?.center&&x.sig?.zones"))fail('Local Vision persisted-signature assertion missing');
 if(!src.includes("manual finish did not persist finished metadata or canonical session archive"))fail('8.9 canonical manual-finish persistence assertion missing');
-if(release==='8.12'&&src.includes("mode==='rest'"))fail('8.12 test contract still treats set completion as automatic rest');
-if(release==='8.12'&&!src.includes('pause did not expose rest timer'))fail('8.12 explicit pause/rest assertion missing');
-if(release==='8.12'){
+if(modern812&&src.includes("mode==='rest'"))fail('8.12 patch-family test contract still treats set completion as automatic rest');
+if(modern812&&!src.includes('pause did not expose rest timer'))fail('8.12 patch-family explicit pause/rest assertion missing');
+if(modern812){
  if(!fs.existsSync('scripts/prepare-891-test-flow.mjs'))fail('AXIS 8.9.1 explicit-rest test-flow convergence is missing');
  execFileSync(process.execPath,['scripts/prepare-891-test-flow.mjs'],{stdio:'inherit'});
 }
-console.log(`[AXIS 8.9 test flow] PASS · inherited memory verifies v2 prior/confirmation · manual finish accepts persisted/archive · ${release==='8.12'?'pause owns rest':'legacy rest flow preserved'}`);
+console.log(`[AXIS 8.9 test flow] PASS · inherited memory verifies v2 prior/confirmation · manual finish accepts persisted/archive · ${modern812?'pause owns rest':'legacy rest flow preserved'}`);
