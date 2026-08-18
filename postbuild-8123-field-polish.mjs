@@ -13,6 +13,8 @@ for(const needle of [
   "photoOwner:'axis-media-store'",
   'multiSelectRemove:true',
   'inlineManagement=true',
+  '__AXIS_8123_EQUIPMENT_SELECTION_STABLE__',
+  'selectionRerender:false',
   '__AXIS_GROUP_PLAN_STABLE__',
   "owner:'recording-render'",
   '__AXIS_GROUP_PLAN_SYNC__?.()',
@@ -36,6 +38,7 @@ info.gates={
   personalEquipmentSwipeRemove8123:true,
   personalEquipmentBatchRemove8123:true,
   personalEquipmentInlineManagement8123:true,
+  personalEquipmentSelectionStable8123:true,
   personalEquipmentHistoryPreserved8123:true,
   groupPlanStableLauncher8123:true,
   groupPlanRenderOwnedSync8123:true,
@@ -45,6 +48,7 @@ info.fieldPolish8123={
   equipmentLibrary:'history + custom definitions + existing visual memory',
   equipmentPhotos:'existing canonical media references',
   removeSemantics:'remove from personal library; training history remains',
+  selectionSemantics:'toggle selection in place without replacing row DOM',
   groupPlanOwner:'recording render -> canonical set-bridge launcher -> atomic recording transaction',
   settingsTextLocalInsetPx:6,
   settingsChevronLocalInsetPx:9,
@@ -52,4 +56,4 @@ info.fieldPolish8123={
   settingsMeasuredAtCssWidth:417
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2));
-console.log('[AXIS 8.12.3 field polish postbuild] PASS · personal equipment memory · stable Group Plan launcher · measured native Settings row alignment');
+console.log('[AXIS 8.12.3 field polish postbuild] PASS · personal equipment memory/selection · stable Group Plan launcher · measured native Settings row alignment');
