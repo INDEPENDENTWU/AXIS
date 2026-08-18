@@ -36,8 +36,8 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  '#settingsSheet .v813SettingsGate{margin-top:0!important;border-top:0!important}'+
  '#settingsSheet .v813SettingsGate>.settingLink{height:60px!important;min-height:60px!important;padding:0!important;grid-template-columns:minmax(0,1fr) auto 15px!important;gap:10px!important;border-top:0!important;border-bottom:1px solid var(--line2)!important}'+
  '#settingsSheet .v813SettingsGate.open>.settingLink{border-bottom:0!important}'+
- '#settingsSheet .v813SettingsGate>.settingLink>span{font-size:var(--axis-ui,15px)!important;font-weight:520!important;line-height:1.3!important}'+
- '#settingsSheet .v813SettingsGate>.settingLink>b{font-size:var(--axis-ui,15px)!important;font-weight:620!important;line-height:1.3!important;max-width:50vw!important}'+
+ '#settingsSheet .v813SettingsGate>.settingLink>span{font-size:13px!important;font-weight:520!important;line-height:1.3!important}'+
+ '#settingsSheet .v813SettingsGate>.settingLink>b{font-size:13px!important;font-weight:620!important;line-height:1.3!important;max-width:50vw!important}'+
  '#settingsSheet .v813SettingsGate>.settingLink>i{font-size:20px!important}'+
  '#settingsSheet .v813SettingsGate>.v8711Fold{padding:0 0 14px!important;border:0!important}'+
  '#settingsSheet #v810ConfigPanel,#settingsSheet #v811ServicePanel{position:static!important;display:block!important;width:100%!important;max-height:none!important;margin:0!important;padding:4px 0 10px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important}'+
