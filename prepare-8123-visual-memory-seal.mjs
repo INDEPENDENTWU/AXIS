@@ -4,8 +4,9 @@ const FILE='app.js';
 const fail=m=>{throw new Error(`[AXIS 8.12.3 visual memory seal] ${m}`)};
 let src=fs.readFileSync(FILE,'utf8');
 if(!src.includes('__AXIS_8123_EQUIPMENT_GALLERY__'))fail('equipment gallery must run first');
-if(!src.includes('window.__AXIS_LOCAL_VISION__={snapshot:localVisionSnapshot'))fail('Local Vision v2 owner missing');
+if(!src.includes('window.__AXIS_LOCAL_VISION__={version:2'))fail('current Local Vision v2 owner missing');
 if(!src.includes('function visualSigFromCanvas'))fail('Local Vision multi-signal compiler missing');
+if(!src.includes('function localVisualDistance'))fail('Local Vision v2 distance owner missing');
 if(src.includes('__AXIS_8123_VISUAL_MEMORY_SEAL__'))fail('visual memory seal already installed');
 
 const replaceLine=(start,to,label)=>{
@@ -14,7 +15,7 @@ const replaceLine=(start,to,label)=>{
  src=src.slice(0,a)+to+src.slice(b)
 };
 
-replaceLine('function learnMemory(id){',`function learnMemory(id){if(!id){localVisionLast={stage:'learn',reason:'missing-equipment-id',frameCount:state.frames.length};return}const arr=state.profile.memories||(state.profile.memories=[]),before=arr.length,t=Date.now();state.frames.slice(0,4).forEach(f=>(f.fp||f.sig)&&arr.push({equipmentId:id,fp:f.fp||null,sig:f.sig||null,t,source:'record'}));const by={};for(const m of arr){if(!m?.equipmentId||(!m.fp&&!m.sig))continue;(by[m.equipmentId]||(by[m.equipmentId]=[])).push(m)}state.profile.memories=Object.values(by).flatMap(xs=>{const sorted=[...xs].sort((a,b)=>(b.t||0)-(a.t||0)),dedicated=sorted.filter(x=>x.sourceRef).slice(0,10),recent=sorted.filter(x=>!x.sourceRef).slice(0,Math.max(0,16-dedicated.length));return dedicated.concat(recent)});save();localVisionLast={stage:'learn',equipmentId:id,before,after:state.profile.memories.length,learned:Math.max(0,state.profile.memories.length-before),frameCount:state.frames.length,framesWithSignature:state.frames.filter(f=>!!(f.fp||f.sig)).length}}`,'confirmed-record memory owner');
+replaceLine('function learnMemory(id){',`function learnMemory(id){if(!id){localVisionLast={stage:'learn',version:2,reason:'missing-equipment-id',frameCount:state.frames.length};return}const arr=state.profile.memories||(state.profile.memories=[]),before=arr.length,same=()=>arr.filter(x=>x.equipmentId===id);let learned=0,skipped=0;for(const f of state.frames.slice(0,5)){if(!(f.fp||f.sig))continue;const dup=same().some(m=>localVisualDistance(m,f)<1.35);if(dup){skipped++;continue}arr.push({equipmentId:id,fp:f.fp||null,sig:f.sig||null,t:Date.now(),source:'record'});learned++}const by={};for(const m of arr){if(!m?.equipmentId||(!m.fp&&!m.sig))continue;(by[m.equipmentId]||(by[m.equipmentId]=[])).push(m)}state.profile.memories=Object.values(by).flatMap(xs=>{const sorted=[...xs].sort((a,b)=>(b.t||0)-(a.t||0)),dedicated=sorted.filter(x=>x.sourceRef).slice(0,10),recent=sorted.filter(x=>!x.sourceRef).slice(0,Math.max(0,24-dedicated.length));return dedicated.concat(recent)});save();localVisionLast={stage:'learn',version:2,equipmentId:id,before,after:state.profile.memories.length,learned,skipped,frameCount:state.frames.length}}`,'confirmed-record memory owner');
 
 replaceLine('async function equipmentPhotoFromFile(file){',`async function equipmentPhotoFromFile(file){const u=URL.createObjectURL(file),img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=u});const max=1440,scale=Math.min(1,max/Math.max(1,img.naturalWidth,img.naturalHeight)),cv=D.createElement('canvas');cv.width=Math.max(2,Math.round(img.naturalWidth*scale));cv.height=Math.max(2,Math.round(img.naturalHeight*scale));const c=cv.getContext('2d',{alpha:false});c.fillStyle='#08090b';c.fillRect(0,0,cv.width,cv.height);c.drawImage(img,0,0,cv.width,cv.height);URL.revokeObjectURL(u);const fp=fpFromCanvas(cv),sig=visualSigFromCanvas(cv),blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.86));if(!blob)throw new Error('photo encode');return{blob,fp,sig}}`,'dedicated equipment photo signature');
 
@@ -28,9 +29,9 @@ if((src.split(persist).length-1)!==1)fail('equipment photo memory persistence co
 src=src.replace(persist,persistNext);
 
 const end=src.lastIndexOf('})();');if(end<0)fail('app IIFE end missing');
-const marker="try{window.__AXIS_8123_VISUAL_MEMORY_SEAL__={version:'8.12.3',localVisionV2:true,recordSignatures:true,equipmentPhotoSignatures:true,dedicatedPhotoPriority:true,trainingOwner:false}}catch{}\n";
+const marker="try{window.__AXIS_8123_VISUAL_MEMORY_SEAL__={version:'8.12.3',localVisionV2:true,recordSignatures:true,equipmentPhotoSignatures:true,dedicatedPhotoPriority:true,maxPerEquipment:24,trainingOwner:false}}catch{}\n";
 src=src.slice(0,end)+marker+src.slice(end);
-for(const needle of ["sig:f.sig||null","sig:sig||null","framesWithSignature","__AXIS_8123_VISUAL_MEMORY_SEAL__"])if(!src.includes(needle))fail(`missing ${needle}`);
+for(const needle of ["version:2,equipmentId:id","localVisualDistance(m,f)<1.35","sig:f.sig||null","sig:sig||null","maxPerEquipment:24","__AXIS_8123_VISUAL_MEMORY_SEAL__"])if(!src.includes(needle))fail(`missing ${needle}`);
 try{new Function(src)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.12.3 visual memory seal] PASS · Local Vision v2 multi-signal signatures preserved for recording + dedicated equipment photos');
+console.log('[AXIS 8.12.3 visual memory seal] PASS · current Local Vision v2 dedupe/diagnostics preserved · recording + dedicated equipment photos retain multi-signal signatures');
