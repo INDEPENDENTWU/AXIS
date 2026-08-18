@@ -5,7 +5,7 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12.1.
-- Current Product main: `3d18300b26c0b38b5389e554c34bd41d39663bb9`.
+- Product main at the start of this release: `3d18300b26c0b38b5389e554c34bd41d39663bb9`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
 - Production 8.12.1 core at the start of this work: `f86c16349f02`; one initial JavaScript request, zero dynamic JavaScript and zero chunks.
@@ -15,33 +15,47 @@
 
 **AXIS 8.12.2 — Settings simplification and visual convergence only.**
 
-This release is intentionally narrow. It changes only `学习安排` and `云端与AI` Settings presentation/configuration. Training recording, scan/review, Group Plan, LocalStorage/IndexedDB ownership, camera/media, watermark and Reality Runtime behavior are out of scope.
+The product implementation is complete and frozen. No additional feature scope is allowed in this release. The only post-implementation work is release/test compatibility required to prove inherited behavior on the 8.12.2 patch identity.
 
-The 8.12.2 product contract is:
+The release changes only `学习安排` and `云端与AI` Settings presentation/configuration:
 
 - top-level `学习安排` / `云端与AI` remain inside the single canonical Settings sheet;
-- `云端与AI` uses no artificial space around `与`, and both top-level rows have no extra divider line;
+- the service label is exactly `云端与AI`, without artificial whitespace, and both top-level rows add no extra divider line;
 - Learning fine-tune is reduced to six non-duplicated decisions: new/review ratio, content, cadence, daily target, opportunity learning and standalone learning;
-- duplicated fine-tune copies of main `强度` / `难度` controls are removed;
-- 3-option controls use strict three-column equal grids; 4-option controls use 2×2 equal grids; option text may not clip or ellipsize;
+- duplicated fine-tune copies of the primary `强度` / `难度` decisions are removed;
+- 3-option controls use strict equal three-column grids; 4-option controls use equal 2×2 grids; text may not clip or ellipsize;
 - Cloud/AI is reduced to four product groups: cloud sync, AXIS AI, send scope and capability status;
-- send scope uses three presets (`最小 / 平衡 / 扩展`) that write back to the existing `axis_v811_services.privacy` fields; no new service owner is created;
-- capability status is presented as four concise status tiles rather than a debug-like list;
-- all Settings changes leave `axis_v60_state` and `axis_v8_meta` byte-identical.
+- send scope uses `最小 / 平衡 / 扩展`, mapped through the existing `axis_v811_services.privacy` fields;
+- capability status is four concise tiles rather than a debug-style text list;
+- Settings changes leave `axis_v60_state` and `axis_v8_meta` byte-identical;
+- no new learning/service/training/recording/storage/network owner is introduced.
 
 ## Validation for this work
 
-The dedicated `AXIS 8.12.2 Settings Gate` must pass in Chromium and iPhone-like WebKit and prove:
+A product-equivalent 8.12.2 candidate has already passed the dedicated Settings redesign step in both Chromium and iPhone-like WebKit at 390×844. That evidence covered:
 
-- public identity `8.12.2 / 8.12.2` with canonical single runtime, one initial JS and zero dynamic chunks;
 - exact `云端与AI` label and zero top-level divider lines;
-- six Learning fine-tune groups only, with no legacy duplicated fine-tune block visible;
-- 3-column / 2-column geometry is equal, touch-safe and has zero text clipping at 390×844;
-- Cloud/AI has exactly four groups and four capability tiles;
-- service status network remains user-invoked only;
-- cloud mode, AI mode and send-scope presets persist through the existing service store;
-- Settings interactions do not alter training stores;
-- inherited real scan/review Group Plan regression still passes in Chromium and iPhone-like WebKit.
+- exactly six Learning fine-tune groups;
+- strict 3-column / 2×2 equal geometry with no text clipping;
+- exactly four Cloud/AI groups and four capability tiles;
+- service status network remaining user-invoked only;
+- learning/service preference persistence through existing stores;
+- no horizontal Settings overflow or nested Settings sheet;
+- byte-identical `axis_v60_state` and `axis_v8_meta` before/after Settings operations;
+- no page errors.
+
+The final exact PR head must additionally complete all inherited gates after their patch-family assertions are aligned to 8.12.2. In particular:
+
+- 8.12 Language Studio keeps 25,716 units, 4/8/12-turn dialogue and the seven-step teaching loop;
+- 8.12.1 real scan/review Group Plan remains a native Safari/WebKit button path and persists four-set plans through the authoritative recording stores;
+- explicit pause remains the sole rest-state trigger across inherited 8.8/8.9 browser tests;
+- Shadow Runtime remains read-only and may observe any current 8.12 patch identity without taking product ownership;
+- Stage 3 Continue + Live Route remains read-only, single-owner and zero recording/storage/network ownership;
+- canonical topology stays one JavaScript request, zero dynamic JavaScript and zero chunks.
+
+No final-head product code changes are permitted solely to satisfy obsolete selectors or obsolete public-version literals; those guards must be migrated to the current owner/patch-family contract instead.
+
+After merge, Vercel Production and the fixed public alias must serve the exact merged main SHA as AXIS 8.12.2. Both Production browser gates must run the 8.12.2 Settings regression, and runtime error/fatal inspection must be clean before the release is considered sealed.
 
 ## Next planned stage
 
