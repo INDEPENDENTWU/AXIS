@@ -26,7 +26,7 @@ jobs:
           const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
           if(m.version!=='8.12.3'||m.baseVersion!=='8.12.3')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           for(const gate of ['personalEquipmentLibrary8123','personalEquipmentPhotos8123','personalEquipmentVisualMemory8123','personalEquipmentSwipeRemove8123','personalEquipmentBatchRemove8123','personalEquipmentHistoryPreserved8123','groupPlanStableLauncher8123','groupPlanRenderOwnedSync8123','settingsRowAlignmentFieldPolish8123'])if(m.gates?.[gate]!==true)throw new Error(`field gate missing ${gate}`);
-          for(const needle of ['__AXIS_8123_EQUIPMENT_MEMORY__','__AXIS_GROUP_PLAN_STABLE__','v8123FieldPolishStyle','data-v8123-plan'])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
+          for(const needle of ['__AXIS_8123_EQUIPMENT_MEMORY__','__AXIS_GROUP_PLAN_STABLE__','v8123FieldPolishStyle',"dataset.v8123Plan='1'"])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
           NODE
       - name: Prepare Chromium
         run: |
