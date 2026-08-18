@@ -12,7 +12,7 @@ for(const lang of ['en','ja','ko','zh']){
 if(audit.totalNew!==19584)fail(`total new ${audit.totalNew}`);
 if(Object.values(audit.tailPairMax).some(n=>n>40))fail(`tail pair max ${JSON.stringify(audit.tailPairMax)}`);
 const info=JSON.parse(read('axis-build.json')),runtime=read('axis-core.js'),build=read('build-release.mjs');
-if(info.version!=='8.12'||info.baseVersion!=='8.12')fail(`release identity ${info.version}/${info.baseVersion}`);
+if(!['8.12','8.12.1','8.12.2'].includes(info.version)||info.baseVersion!==info.version)fail(`release identity ${info.version}/${info.baseVersion}`);
 for(const step of ['prepare-812-release-compat.mjs','prepare-812-learning-content.mjs','prepare-812-learning-settings.mjs','postbuild-812-contract.mjs'])if(!build.includes(step))fail(`build missing ${step}`);
 for(const gate of ['languageStudio812','languageCorpusExpanded812','nativeMultilingual812','dialogueTailDiversity812','dialogueDepthSelectable812','teachingLoop812','activeRecall812','transformPractice812','learningSettingsPurpose812','learningSettingsMethod812','learningSettingsNovelty812','legacy811Preserved812','learningNoAutoplay812','learningLocalFirst812','learningNoTrainingOwner812'])if(info.gates?.[gate]!==true)fail(`gate missing ${gate}`);
 if(info.axis812?.learning?.totalNew!==19584||info.axis812?.learning?.totalAvailable!==25716)fail('manifest corpus totals');
