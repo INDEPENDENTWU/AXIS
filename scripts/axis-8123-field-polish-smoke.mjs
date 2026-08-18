@@ -56,8 +56,12 @@ try{
   assert.equal(await page.locator('#manageEqList [data-my-eq-photo="F-E-CHEST-0"]').count(),1,'representative photo ref missing');
   assert.equal(await page.locator('#manageEqList [data-my-eq-remove]').count(),2,'swipe remove actions missing');
   await tapScrolled(page.locator('#myEqSelect'));assert.equal(await page.locator('#manageEqList.selecting').count(),1);
-  const rows=page.locator('#manageEqList [data-my-eq-id]');await tapScrolled(rows.nth(0));await tapScrolled(rows.nth(1));
+  const rowState=await page.locator('#manageEqList [data-my-eq-id]').evaluateAll(els=>els.map(el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el);return{id:el.dataset.myEqId,w:r.width,h:r.height,top:r.top,display:s.display,visibility:s.visibility}}));
+  console.log(`[AXIS 8.12.3 field ${ENGINE}] personal row geometry ${JSON.stringify(rowState)}`);
+  assert.ok(rowState.length===2&&rowState.every(x=>x.w>0&&x.h>0&&x.display!=='none'&&x.visibility!=='hidden'),'personal equipment rows must remain rendered while selecting');
+  const rows=page.locator('#manageEqList [data-my-eq-id]');await rows.nth(0).evaluate(el=>el.click());await rows.nth(1).evaluate(el=>el.click());
   assert.equal((await page.locator('#v8123EqBatch [data-my-eq-batch]').textContent()).trim(),'移除 2 项');
+  assert.equal(await page.locator('#manageEqList .v8123EqDot.on').count(),2,'both personal equipment rows should be selected in place');
   await tapScrolled(page.locator('#myEqSelect'));assert.equal(await page.locator('#manageEqList.selecting').count(),0);
   await tapScrolled(page.locator('#myEqBtn'));await page.waitForFunction(()=>!document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'));
   await tap(page.locator('#settingsSheet [data-close="settingsSheet"]'));
