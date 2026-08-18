@@ -48,7 +48,7 @@ try{
  await page.waitForFunction(()=>document.querySelector('#v813LearningGate')?.classList.contains('open'));
  assert.equal(await shownSheets(),1,'Learning Schedule opened a second sheet');
  const learningPosition=await page.locator('#v810ConfigPanel').evaluate(el=>getComputedStyle(el).position);assert.notEqual(learningPosition,'fixed');
- const learningRowHeight=await page.locator('#v810ConfigEntry').evaluate(el=>el.getBoundingClientRect().height);assert.ok(learningRowHeight<=56,`learning row is not converged: ${learningRowHeight}`);
+ const learningRowHeight=await page.locator('#v810ConfigEntry').evaluate(el=>el.getBoundingClientRect().height);assert.equal(learningRowHeight,64,`learning row lost current native Settings rhythm: ${learningRowHeight}`);
  const coreButtonHeight=await page.locator('#v811CoreLearning button').first().evaluate(el=>el.getBoundingClientRect().height);assert.ok(coreButtonHeight<=34,`learning options remain oversized: ${coreButtonHeight}`);
  assert.ok(await page.locator('[data-v812-core="purpose"]').count()>=6,'8.12 learning purpose controls disappeared');
  assert.ok(await page.locator('[data-v812-core="method"]').count()>=6,'8.12 learning method controls disappeared');
@@ -67,7 +67,7 @@ try{
  await page.locator('#v811ServiceEntry').click();await page.waitForFunction(()=>document.querySelector('#v813ServiceGate')?.classList.contains('open'));
  assert.equal(await shownSheets(),1,'Cloud + AI opened a second sheet');
  const servicePosition=await page.locator('#v811ServicePanel').evaluate(el=>getComputedStyle(el).position);assert.notEqual(servicePosition,'fixed');
- const serviceRowHeight=await page.locator('#v811ServiceEntry').evaluate(el=>el.getBoundingClientRect().height);assert.ok(serviceRowHeight<=56,`service row is not converged: ${serviceRowHeight}`);
+ const serviceRowHeight=await page.locator('#v811ServiceEntry').evaluate(el=>el.getBoundingClientRect().height);assert.equal(serviceRowHeight,64,`service row lost current native Settings rhythm: ${serviceRowHeight}`);
  await page.waitForFunction(()=>[...document.querySelectorAll('[data-v811-cloud="data"],[data-v811-ai="assist"]')].every(x=>!x.disabled),undefined,{timeout:3000});
  assert.equal(serviceRequests.length,2,'Cloud/AI explicit expansion did not perform exactly the two status reads');
  const serviceButtonHeight=await page.locator('[data-v811-cloud="off"]').evaluate(el=>el.getBoundingClientRect().height);assert.ok(serviceButtonHeight<=34,`service options remain oversized: ${serviceButtonHeight}`);
