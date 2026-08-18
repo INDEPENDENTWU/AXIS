@@ -20,6 +20,14 @@ const prepForBuild=prepOriginal
  .replace(countBoundary,'function personalEqCount`;')
  .replace(appCommit,'write(FILE,src);syntax(src,FILE)');
 fs.writeFileSync(PREP,prepForBuild);
+
+let v61=fs.readFileSync('v61.js','utf8');
+const hardenedQuick="const other=$('#v8Other');if(other)other.onclick=()=>{quickOther=true;$('#quickRecordSheet')?.classList.remove('show');$('#equipmentRow')?.click()};const add=$('#v8New');if(add)add.onclick=()=>{$('#quickRecordSheet')?.classList.remove('show');$('#addCustomEq')?.click()}";
+const normalizedQuick="$('#v8Other').onclick=()=>{quickOther=true;$('#quickRecordSheet').classList.remove('show');$('#equipmentRow')?.click()};$('#v8New').onclick=()=>{$('#quickRecordSheet').classList.remove('show');$('#addCustomEq')?.click()}";
+if((v61.split(hardenedQuick).length-1)!==1)fail('hardened Quick handler boundary missing');
+v61=v61.replace(hardenedQuick,normalizedQuick);
+fs.writeFileSync('v61.js',v61);
+
 let importError=null;
 try{
   await import('./prepare-8123-equipment-gallery-and-picker-fix.mjs');
@@ -28,8 +36,8 @@ try{
   console.error('[AXIS 8.12.3 equipment gallery driver] transformed app syntax diagnostic follows');
   spawnSync(process.execPath,['--check',APP],{stdio:'inherit'});
   try{
-    const v61=fs.readFileSync('v61.js','utf8');
-    for(const token of ['function injectQuick()','function chooseQuick(id)','v8Other']){const i=v61.indexOf(token);if(i>=0){const a=Math.max(0,v61.lastIndexOf('\n',i)+1),b=v61.indexOf('\n',i);console.error('[AXIS 8.12.3 equipment gallery driver] v61 signature:',v61.slice(a,b<0?v61.length:b))}}
+    const cur=fs.readFileSync('v61.js','utf8');
+    for(const token of ['function injectQuick()','function chooseQuick(id)','v8Other']){const i=cur.indexOf(token);if(i>=0){const a=Math.max(0,cur.lastIndexOf('\n',i)+1),b=cur.indexOf('\n',i);console.error('[AXIS 8.12.3 equipment gallery driver] v61 signature:',cur.slice(a,b<0?cur.length:b))}}
   }catch{}
 }finally{
   fs.writeFileSync(PREP,prepOriginal);
@@ -41,4 +49,4 @@ try{
   fs.writeFileSync(APP,out);
 }
 if(importError)throw importError;
-console.log('[AXIS 8.12.3 equipment gallery driver] PASS · gallery inserted at stable app boundary · count boundary normalized · transient anchor removed');
+console.log('[AXIS 8.12.3 equipment gallery driver] PASS · gallery inserted at stable app boundary · Quick handlers normalized into canonical picker owner · transient anchor removed');
