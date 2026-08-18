@@ -5,51 +5,52 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12.1.
-- Current verified Product main for this guard work: `ba47e32d7e3342704654dc23f873fe421a56fdfa`.
+- Current Product main before this final seal: `ba47e32d7e3342704654dc23f873fe421a56fdfa`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
 - Vercel Production: `dpl_AK74hVUcNG1hkw5adzLaM6NSGiNm`, READY on exact source commit `ba47e32d…`.
 - Fixed Production manifest: version/base `8.12.1`, release hash `b6bc9d1b2a2e`, core `d4a06c85bcd4`, CSS `76a9e76610fc`, one initial JavaScript request, zero dynamic JavaScript and zero chunks.
 - AXIS 8.12 Language Studio semantics and AXIS 8.13 Stage 3 Continue + Live Route remain inherited; Stage 3 remains read-only presentation.
-- PR #41 established the 8.12.1 Group Plan touch hardening. PR #42 sealed native Settings typography and Cloud/AI geometry without changing recording ownership.
+- PR #41 established the 8.12.1 native Group Plan entry and PR #42 sealed native Settings typography / Cloud+AI geometry.
 
 ## Active change
 
-**AXIS 8.12.1 canonical field regression seal.**
+**AXIS 8.12.1 Safari Group Plan activation + canonical field regression seal.**
 
-This change is test/governance only. It does not alter the Production product artifact, UI, Runtime, storage, media, sound, cloud/AI or planner behavior.
+The final iPhone-like WebKit regression isolated the real remaining P0: after the Group Plan entry had already become a native `<button>`, the hotfix still installed an extra `pointerup` handler that called `preventDefault()`, manually opened the planner and de-duplicated the later click. Chromium's click path worked, but WebKit `tap()` proved that the custom pointer layer could interfere with Safari's native touch→click activation.
 
-The dedicated `scripts/axis-8121-hotfix-smoke.mjs` is being converged away from retired internal DOM toward the current canonical user path:
+The controlled correction is intentionally smaller:
 
-- Settings validation uses the current inline Learning and Cloud/AI owners;
-- image review uses a browser-stable normal RGB image fixture and still exercises `photoInput → frameFromFile → reviewFrames`;
-- equipment selection uses the visible canonical `#v8710Cards` catalog rather than retired hidden `#eqList`;
-- Group Plan uses the sole canonical `.v875PlanEntry[data-v875-plan]` / `.v8121PlanButton` entry;
-- plan application is verified by four visible draft rows and, after `记下`, the authoritative `axis_v60_state` event plus `axis_v8_meta` four-set metadata;
-- no test-only state injection is permitted after the image-review entry point and no hidden legacy catalog may stand in for the user-visible flow.
+- `.v875PlanEntry[data-v875-plan]` remains the sole Group Plan entry and is a native `button[type=button]`;
+- `v874-set-bridge` remains the sole planner UI/click owner;
+- Safari/WebKit now uses the browser's normal native button touch→click semantics;
+- the custom `pointerup`, `preventDefault`, manual `openPlan()` and click de-duplication state are removed;
+- `touch-action: manipulation` and tap-highlight suppression remain presentation-only;
+- `window.__AXIS_RECORDING__.applyPlan` / v61 remain the only recording commit path;
+- no new storage, Runtime, media, timer, planner or recording owner is introduced.
+
+The dedicated field guard is also converged on current canonical owners only: inline Settings, real photo decode/review, visible `#v8710Cards` catalog, canonical Group Plan button, four-set apply and authoritative saved storage.
 
 ## Validation for this work
 
-The `AXIS 8.12.1 Hotfix Gate` remains release-blocking and must pass the exact final test head in Chromium and iPhone-like WebKit.
+The `AXIS 8.12.1 Hotfix Gate` is release-blocking on the exact final head in Chromium and iPhone-like WebKit and must prove:
 
-It must prove:
-
-- Learning top-level label matches the native Settings left-label typography;
-- Learning and Cloud/AI top-level summaries match the native Settings right-value typography;
-- Learning/Cloud outer dividers remain removed;
-- Learning and Cloud/AI inner controls preserve readable 12–13 px hierarchy and 40–48 px touch geometry;
-- one Settings sheet remains the only Settings surface;
-- active workout → `拍摄记录` → valid image review succeeds;
-- the visible canonical equipment catalog opens and `胸推` can be selected;
-- the canonical Group Plan entry is a single touch-safe button and opens the planner;
-- selecting four sets plus a progression mode and applying produces four visible set rows;
+- Learning / Cloud+AI top-level typography exactly matches native Settings left-label / right-value hierarchy;
+- Cloud/AI inner headings, facts and privacy rows remain readable at the hardened 12–13 px hierarchy with 40–48 px touch geometry;
+- no extra Settings divider or nested Settings sheet returns;
+- active workout → `拍摄记录` → real image decode/review succeeds;
+- the visible canonical catalog opens and `胸推` can be selected;
+- native Group Plan activation opens the planner by normal click/tap semantics;
+- four sets plus a progression mode apply to four visible draft rows;
 - `记下` persists a strength event with four sets in `axis_v60_state` and four set rows in `axis_v8_meta`;
-- the 8.12.1 hotfix remains `recordingOwner:false` and no page error is emitted.
+- the hotfix remains `recordingOwner:false` and emits no page error.
 
-After this guard is merged, the fixed Production alias must continue serving AXIS 8.12.1 with the same product behavior. Any future Product change affecting this path must keep this canonical Chromium/WebKit regression green.
+Chromium on the immediately preceding candidate already completed this full canonical path successfully. The final candidate must additionally prove the same native activation path in iPhone-like WebKit after removal of the custom pointer layer, and all inherited repository/runtime/product gates must remain green.
+
+After merge, Vercel Production and the fixed public alias must serve the exact merged SHA as AXIS 8.12.1 with canonical single runtime, one initial JavaScript request and zero dynamic chunks. The fixed-Production hotfix/browser gates and runtime error inspection must be clean before this release is considered sealed.
 
 ## Next planned stage
 
-Only after this 8.12.1 field seal is fully green may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**.
+Only after this AXIS 8.12.1 field seal is Production-verified may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**.
 
 Stage 4 may alter temporary continuation intent such as `这个器械有人`, `我只剩 20 分钟`, or `今天到这里`. Historical workout facts remain authoritative and immutable.
