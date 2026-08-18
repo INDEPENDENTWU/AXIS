@@ -19,13 +19,15 @@ The personal equipment layer is additive and must not become a second catalog or
 - dedicated user-added equipment photos are stored as blobs in the existing `axis_v42_media` / `media` IndexedDB owner;
 - `profile.equipmentPhotos` stores only small photo references, timestamps, source metadata and visual fingerprints;
 - explicitly confirmed equipment photos also feed the existing `profile.memories` visual-recognition path;
+- each equipment / movement can keep up to 10 dedicated photos from camera or photo library;
 - a dedicated equipment photo is preferred as the personal-library cover; an existing historical training photo is fallback only; no photo means the original text-first row;
+- any dedicated photo can be promoted to cover and dedicated photos can be removed independently;
 - deleting a dedicated equipment photo deletes that dedicated media ref and its confirmed visual-memory entry only; it never deletes a historical training frame;
 - personal-library removal preserves workout history.
 
-Equipment selection now has one explicit return context. Photo recording and Quick Record must use the same canonical picker route so first selection, picker back/reopen, a new recording re-entry, and Quick Record → `其他器械 / 运动` → expanded catalog all return to the correct recording editor instead of falling through to Home.
+Equipment selection now has one explicit return context. Photo recording and Quick Record use the same canonical picker route so first selection, picker back/reopen, a new recording re-entry, and Quick Record → `其他器械 / 运动` → expanded catalog all return to the correct recording editor instead of falling through to Home. The canonical picker emits an explicit equipment-selected event to the existing v61 recording reconcile owner; the historical DOM observer remains fallback only.
 
-The current Settings maintenance removes the requested bottom separators from `学习安排`, `云端与AI`, `提醒与声音`, and `训练报告`. `训练报告` remains the same report action / report generator, but its Settings entry is presented as one compact, distinct whole-row control.
+The current Settings maintenance removes the requested bottom separators from `学习安排`, `云端与AI`, `提醒与声音`, and `训练报告`, including protection against later compatibility styles restoring those borders. `训练报告` remains the same report action / report generator, but its Settings entry is presented as one compact, distinct whole-row control.
 
 ## Production topology
 
@@ -54,7 +56,7 @@ The final artifact must report:
 
 ### Settings contract
 
-`学习安排` and `云端与AI` remain inside the single canonical Settings sheet and must use the same native row alignment, text baseline, summary alignment, chevron placement and touch geometry as neighboring Settings rows. Their requested bottom separators are absent in the current maintenance surface.
+`学习安排` and `云端与AI` remain inside the single canonical Settings sheet and must use the same native row alignment, text baseline, summary alignment, chevron placement and touch geometry as neighboring Settings rows. Their requested bottom separators are absent in the current maintenance surface. The same divider-free rule applies to the visible `提醒与声音` and `训练报告` entries.
 
 Learning exposes four primary decisions only:
 
@@ -118,12 +120,15 @@ The historical seven-stage teaching metadata remains content compatibility data.
 - Repeated equipment selection must remain in the recording flow rather than fall through to Home.
 - Quick Record `其他器械 / 运动` must return to the Quick editor after canonical or expanded-catalog selection.
 - Dedicated equipment photos may not create a second media store or mutate/delete historical training frames.
+- Dedicated equipment-photo fingerprints may improve personal recognition through the existing visual-memory owner only.
 - Settings or learning practice may not mutate training ownership outside their intended user actions.
 - Learning listening/recording is always explicit user action; no autoplay and no audio upload.
 
 ## Release verification
 
-A release candidate is incomplete until the same source candidate passes the dedicated Chromium + iPhone-like WebKit 8.12.3 gate and inherited product gates. In addition to the inherited Learning, Settings and Group Plan checks, the maintenance gate must exercise repeated photo-record picker back/re-entry, repeated Quick Record `其他器械 / 运动` selection, multi-photo local persistence, confirmed visual-memory refs, cover reorder, dedicated-photo deletion, requested divider removal, and Training Report click-through.
+A release candidate is incomplete until the same source candidate passes the dedicated Chromium + iPhone-like WebKit 8.12.3 gate and inherited product gates. In addition to the inherited Learning, Settings and Group Plan checks, the maintenance gate exercises repeated photo-record picker back/re-entry, repeated Quick Record `其他器械 / 运动` selection, multi-photo local persistence, confirmed visual-memory refs, cover reorder, dedicated-photo deletion, all four requested visible divider removals, and Training Report click-through.
+
+The pre-cleanup candidate passed those maintenance scenarios in both Chromium and iPhone-like WebKit. The final cleaned exact head must repeat the same gate before merge; diagnostic-only files are not part of the final maintenance boundary.
 
 Production correctness is separate from deployment completion. The fixed public deployment must serve the intended merged source SHA, canonical manifest and immutable assets, with clean Production runtime errors before 8.12.3 is considered sealed.
 
