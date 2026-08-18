@@ -2,14 +2,19 @@ import fs from 'node:fs';
 import {spawnSync} from 'node:child_process';
 
 const APP='app.js';
+const PREP='prepare-8123-equipment-gallery-and-picker-fix.mjs';
 const fail=m=>{throw new Error(`[AXIS 8.12.3 equipment gallery driver] ${m}`)};
 let app=fs.readFileSync(APP,'utf8');
+const prepOriginal=fs.readFileSync(PREP,'utf8');
 const boundary='function overlayLines(';
 const sentinel='function axis8123InstallFieldPolish(){/* AXIS 8.12.3 transient gallery insertion anchor */}\n';
 if(!app.includes(boundary))fail('app overlay boundary missing');
 if(app.includes('transient gallery insertion anchor'))fail('transient anchor already present');
 app=app.replace(boundary,sentinel+boundary);
 fs.writeFileSync(APP,app);
+const appCommit='syntax(src,FILE);write(FILE,src)';
+if((prepOriginal.split(appCommit).length-1)<1)fail('app transform commit signature missing');
+fs.writeFileSync(PREP,prepOriginal.replace(appCommit,'write(FILE,src);syntax(src,FILE)'));
 let importError=null;
 try{
   await import('./prepare-8123-equipment-gallery-and-picker-fix.mjs');
@@ -18,6 +23,7 @@ try{
   console.error('[AXIS 8.12.3 equipment gallery driver] transformed app syntax diagnostic follows');
   spawnSync(process.execPath,['--check',APP],{stdio:'inherit'});
 }finally{
+  fs.writeFileSync(PREP,prepOriginal);
   let out=fs.readFileSync(APP,'utf8');
   if(!out.includes(sentinel))fail('transient anchor was lost during transform');
   out=out.replace(sentinel,'');
