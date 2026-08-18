@@ -5,18 +5,15 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 
-// P0: harden the existing canonical Group Plan entry instead of introducing a
-// second planner owner. v874-set-bridge continues to own plan UI and commits.
+// P0: make the existing canonical Group Plan entry a native button. The
+// browser owns touch -> click activation; v874-set-bridge remains the sole
+// planner UI/click owner and the v61 recording bridge remains the sole writer.
 {
   const f='v874-set-bridge.js';
   let s=read(f);
-  s=once(s,"let planN=1,planMode='same',planBase=null,lastPlanLabel='';","let planN=1,planMode='same',planBase=null,lastPlanLabel='',planTouchAt=0;",'group-plan touch state');
   const oldEnsure="function ensurePlanEntry(){const h=host(),head=$('.v8SetHead',h);if(!h||!head)return;let entry=$('.v875PlanEntry',h);if(!entry){entry=D.createElement('button');entry.className='v875PlanEntry';entry.dataset.v875Plan='1';const reset=$('#resetPrevious8',h);(reset||head).insertAdjacentElement('afterend',entry)}const n=rows().length||1;entry.innerHTML=`<span><b>组计划</b><small>${lastPlanLabel||'批量设置重量与次数'}</small></span><strong>${n}组</strong><i>›</i>`}";
   const modernEnsure="function ensurePlanEntry(){const h=host(),head=$('.v8SetHead',h);if(!h||!head)return;let entry=$('.v875PlanEntry',h);if(!entry){entry=D.createElement('button');entry.type='button';entry.className='v875PlanEntry v8121PlanButton';entry.dataset.v875Plan='1';entry.setAttribute('aria-label','打开组计划');const reset=$('#resetPrevious8',h);(reset||head).insertAdjacentElement('afterend',entry)}else{entry.type='button';entry.classList.add('v8121PlanButton');entry.dataset.v875Plan='1';entry.setAttribute('aria-label','打开组计划')}const n=rows().length||1;entry.innerHTML=`<span><b>组计划</b><small>${lastPlanLabel||'批量设置重量与次数'}</small></span><strong>${n}组</strong><i>›</i>`}";
   s=once(s,oldEnsure,modernEnsure,'canonical native group-plan button');
-  const oldClick="D.addEventListener('click',e=>{const plan=e.target.closest('[data-v875-plan]');if(plan){openPlan();return}";
-  const modernClick="D.addEventListener('pointerup',e=>{const plan=e.target.closest?.('[data-v875-plan]');if(!plan||e.pointerType!=='touch')return;e.preventDefault();planTouchAt=Date.now();openPlan()},true);D.addEventListener('click',e=>{const plan=e.target.closest('[data-v875-plan]');if(plan){if(Date.now()-planTouchAt<650)return;openPlan();return}";
-  s=once(s,oldClick,modernClick,'touch-safe canonical group-plan activation');
   write(f,s);
 }
 
@@ -75,10 +72,10 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  '@media(max-width:380px){#settingsSheet #v810SpeakControls [data-v810-options],#settingsSheet .v811CoreOptions,#settingsSheet .v811ServiceOptions,#settingsSheet .v811ServiceSeg{gap:7px!important}#settingsSheet #v810SpeakControls [data-v810-options] button,#settingsSheet .v811CoreOptions button,#settingsSheet .v811ServiceOptions button,#settingsSheet .v811ServiceSeg button{padding:0 7px!important;font-size:12.5px!important}}';
  (document.head||document.documentElement).appendChild(st);
 })();
-window.__AXIS_8121_HOTFIX__={version:'8.12.1',settings:'native-rhythm',groupPlan:'canonical-native-button-touch',recordingOwner:false};
+window.__AXIS_8121_HOTFIX__={version:'8.12.1',settings:'native-rhythm',groupPlan:'canonical-native-button',recordingOwner:false};
 `;
   s=s.slice(0,end)+block+s.slice(end);
   write(f,s);
 }
 
-console.log('[AXIS 8.12.1 hotfix] PASS · native Settings rhythm · no outer gate divider · touch-safe canonical Group Plan button · recording ownership preserved');
+console.log('[AXIS 8.12.1 hotfix] PASS · native Settings rhythm · no outer gate divider · canonical native Group Plan button · recording ownership preserved');
