@@ -42,7 +42,14 @@ for(const [f,a,b,label] of [
  const f='scripts/axis-813-settings-convergence-smoke.mjs';let s=read(f);s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.1');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.2');",'settings browser identity');write(f,s);
 }
 {
- const f='scripts/axis-8121-hotfix-smoke.mjs';let s=read(f);s=once(s,"assert.equal(VERSION,'8.12.1');","assert.ok(['8.12.1','8.12.2'].includes(VERSION));",'8.12.1 inherited hotfix identity');write(f,s);
+ const f='scripts/axis-8121-hotfix-smoke.mjs';let s=read(f);
+ s=once(s,"assert.equal(VERSION,'8.12.1');","assert.ok(['8.12.1','8.12.2'].includes(VERSION));",'8.12.1 inherited hotfix identity');
+ s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.1');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),VERSION);",'field browser release identity');
+ s=once(s,"assert.equal((await page.locator('.versionLine').getAttribute('aria-label')||'').trim(),'版本 8.12.1');","assert.equal((await page.locator('.versionLine').getAttribute('aria-label')||'').trim(),`版本 ${VERSION}`);",'field visible release identity');
+ s=once(s,"const cloudHead=await page.locator('#v811ServicePanel .v813ServiceHead span').first().evaluate(el=>getComputedStyle(el).fontSize);","const cloudHead=await page.locator('#v811ServicePanel .axis8122Head span').first().evaluate(el=>getComputedStyle(el).fontSize);",'field service heading owner');
+ const oldFacts=" const capabilityDetails=page.locator('#v811ServicePanel .v813ServiceDetails').first();\n if(!(await capabilityDetails.evaluate(el=>el.open)))await tap(capabilityDetails.locator('summary'));\n const factLocator=page.locator('#v811ServicePanel .v811ServiceFact').first();\n await factLocator.waitFor({state:'visible'});\n const fact=await factLocator.evaluate(el=>({h:el.getBoundingClientRect().height,f:getComputedStyle(el).fontSize}));\n assert.ok(fact.h>=44);assert.ok(px(fact.f)>=12.5);";
+ const newFacts=" const factLocator=page.locator('#v811ServicePanel .axis8122Fact').first();\n await factLocator.waitFor({state:'visible'});\n const fact=await factLocator.evaluate(el=>({h:el.getBoundingClientRect().height,f:getComputedStyle(el).fontSize}));\n assert.ok(fact.h>=60);assert.ok(px(fact.f)>=11.5);";
+ s=once(s,oldFacts,newFacts,'field capability tile guard');write(f,s);
 }
 {
  const f='scripts/prepare-release-test-contract.mjs';let s=read(f);
