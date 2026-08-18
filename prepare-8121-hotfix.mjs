@@ -5,17 +5,18 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 
-// P0: make Group Plan a real native button while preserving the legacy <b> value node
-// and the existing canonical recording/applyPlan ownership chain.
+// P0: harden the existing canonical Group Plan entry instead of introducing a
+// second planner owner. v874-set-bridge continues to own plan UI and commits.
 {
-  const f='v874-professional.js';
+  const f='v874-set-bridge.js';
   let s=read(f);
-  const old="function patchSetPlan(){const box=$('#v8SetEditor');if(!box)return;const count=$('.v8SetCount',box);if(!count)return;const n=$$('.v8SetRow',box).length||1,b=$('b',count);if(b){b.setAttribute('data-v874-plan','1');const html=`${n}组<small>规划</small>`;if(b.innerHTML!==html)b.innerHTML=html}if(!seedDone)seedSingleSet()}";
-  const modern="function patchSetPlan(){const box=$('#v8SetEditor');if(!box)return;const count=$('.v8SetCount',box);if(!count)return;const n=$$('.v8SetRow',box).length||1;let trigger=$('.v8121PlanButton',count),value=$('b',count);if(!trigger){trigger=D.createElement('button');trigger.type='button';trigger.className='v875PlanEntry v8121PlanButton';trigger.dataset.v874Plan='1';trigger.setAttribute('aria-label','打开组计划');if(value){value.removeAttribute('data-v874-plan');value.replaceWith(trigger);trigger.appendChild(value)}else{value=D.createElement('b');trigger.appendChild(value);count.appendChild(trigger)}}else value=$('b',trigger)||value;if(value){const html=`${n}组<small>组计划</small>`;if(value.innerHTML!==html)value.innerHTML=html}trigger.dataset.v874Plan='1';trigger.disabled=false;if(!seedDone)seedSingleSet()}";
-  s=once(s,old,modern,'native group-plan button');
-  const oldCss='.v8SetCount b[data-v874-plan]{min-width:66px;display:flex;align-items:baseline;justify-content:center;gap:5px;cursor:pointer}.v8SetCount b[data-v874-plan] small{font-size:8.5px;color:var(--accent2);font-weight:620}';
-  const newCss='.v8SetCount .v8121PlanButton{min-width:88px;min-height:44px;padding:0 10px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:transparent;color:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.v8SetCount .v8121PlanButton:active{background:var(--s2)}.v8SetCount .v8121PlanButton b{min-width:0;display:flex;align-items:baseline;justify-content:center;gap:6px;pointer-events:none}.v8SetCount .v8121PlanButton b small{font-size:10px;color:var(--accent2);font-weight:620;white-space:nowrap}';
-  s=once(s,oldCss,newCss,'group-plan touch geometry');
+  s=once(s,"let planN=1,planMode='same',planBase=null,lastPlanLabel='';","let planN=1,planMode='same',planBase=null,lastPlanLabel='',planTouchAt=0;",'group-plan touch state');
+  const oldEnsure="function ensurePlanEntry(){const h=host(),head=$('.v8SetHead',h);if(!h||!head)return;let entry=$('.v875PlanEntry',h);if(!entry){entry=D.createElement('button');entry.className='v875PlanEntry';entry.dataset.v875Plan='1';const reset=$('#resetPrevious8',h);(reset||head).insertAdjacentElement('afterend',entry)}const n=rows().length||1;entry.innerHTML=`<span><b>组计划</b><small>${lastPlanLabel||'批量设置重量与次数'}</small></span><strong>${n}组</strong><i>›</i>`}";
+  const modernEnsure="function ensurePlanEntry(){const h=host(),head=$('.v8SetHead',h);if(!h||!head)return;let entry=$('.v875PlanEntry',h);if(!entry){entry=D.createElement('button');entry.type='button';entry.className='v875PlanEntry v8121PlanButton';entry.dataset.v875Plan='1';entry.setAttribute('aria-label','打开组计划');const reset=$('#resetPrevious8',h);(reset||head).insertAdjacentElement('afterend',entry)}else{entry.type='button';entry.classList.add('v8121PlanButton');entry.dataset.v875Plan='1';entry.setAttribute('aria-label','打开组计划')}const n=rows().length||1;entry.innerHTML=`<span><b>组计划</b><small>${lastPlanLabel||'批量设置重量与次数'}</small></span><strong>${n}组</strong><i>›</i>`}";
+  s=once(s,oldEnsure,modernEnsure,'canonical native group-plan button');
+  const oldClick="D.addEventListener('click',e=>{const plan=e.target.closest('[data-v875-plan]');if(plan){openPlan();return}";
+  const modernClick="D.addEventListener('pointerup',e=>{const plan=e.target.closest?.('[data-v875-plan]');if(!plan||e.pointerType!=='touch')return;e.preventDefault();planTouchAt=Date.now();openPlan()},true);D.addEventListener('click',e=>{const plan=e.target.closest('[data-v875-plan]');if(plan){if(Date.now()-planTouchAt<650)return;openPlan();return}";
+  s=once(s,oldClick,modernClick,'touch-safe canonical group-plan activation');
   write(f,s);
 }
 
@@ -68,13 +69,15 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  '#settingsSheet .v811ServiceSendRow span{color:var(--muted)!important}'+
  '#settingsSheet .v811ServiceSendRow b{font-weight:600!important;text-align:right!important}'+
  '#settingsSheet .v811ServiceNote{margin:8px 0 0!important;font-size:12px!important;line-height:1.55!important;color:var(--muted)!important}'+
+ '.v875PlanEntry.v8121PlanButton{position:relative!important;z-index:8!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;min-height:56px!important}'+
+ '.v875PlanEntry.v8121PlanButton:active{background:rgba(255,255,255,.035)!important}'+
  '@media(max-width:380px){#settingsSheet #v810SpeakControls [data-v810-options],#settingsSheet .v811CoreOptions,#settingsSheet .v811ServiceOptions,#settingsSheet .v811ServiceSeg{gap:7px!important}#settingsSheet #v810SpeakControls [data-v810-options] button,#settingsSheet .v811CoreOptions button,#settingsSheet .v811ServiceOptions button,#settingsSheet .v811ServiceSeg button{padding:0 7px!important;font-size:12.5px!important}}';
  (document.head||document.documentElement).appendChild(st);
 })();
-window.__AXIS_8121_HOTFIX__={version:'8.12.1',settings:'native-rhythm',groupPlan:'native-button',recordingOwner:false};
+window.__AXIS_8121_HOTFIX__={version:'8.12.1',settings:'native-rhythm',groupPlan:'canonical-native-button-touch',recordingOwner:false};
 `;
   s=s.slice(0,end)+block+s.slice(end);
   write(f,s);
 }
 
-console.log('[AXIS 8.12.1 hotfix] PASS · native Settings rhythm · no outer gate divider · native Group Plan button · canonical recording ownership preserved');
+console.log('[AXIS 8.12.1 hotfix] PASS · native Settings rhythm · no outer gate divider · touch-safe canonical Group Plan button · recording ownership preserved');
