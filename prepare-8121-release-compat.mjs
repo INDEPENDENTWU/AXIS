@@ -37,6 +37,16 @@ for(const [f,a,b,label] of [
  s=once(s,"if(info.version!=='8.12'||info.baseVersion!=='8.12')fail(`manifest identity ${info.version}/${info.baseVersion}`);","if(info.version!==contract.publicVersion||info.baseVersion!==contract.publicVersion)fail(`manifest identity ${info.version}/${info.baseVersion}`);",'8.12 contract manifest allowance');write(f,s);
 }
 {
+ const f='postbuild-813-live-route.mjs';let s=read(f);
+ s=once(s,"if(info.version!=='8.12'||info.baseVersion!=='8.12')fail(`release identity ${info.version}/${info.baseVersion}`);","if(!['8.12','8.12.1'].includes(info.version)||info.baseVersion!==info.version)fail(`release identity ${info.version}/${info.baseVersion}`);",'Stage 3 public hotfix allowance');
+ write(f,s);
+}
+{
+ const f='scripts/axis-813-live-route-smoke.mjs';let s=read(f);
+ s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.1');",'Stage 3 browser release identity');
+ write(f,s);
+}
+{
  const f='scripts/prepare-release-test-contract.mjs';let s=read(f);
  s=once(s,"const modern810=version.startsWith('8.10')||['8.11','8.12'].includes(version);","const modern810=version.startsWith('8.10')||['8.11','8.12','8.12.1'].includes(version);",'test modern release family');
  s=s.replaceAll("if(version==='8.12')src=", "if(['8.12','8.12.1'].includes(version))src=");
@@ -63,4 +73,4 @@ for(const f of ['scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-f
  s=s.replaceAll("if: env.AXIS_EXPECTED_VERSION == '8.12'","if: contains(fromJSON('[\"8.12\",\"8.12.1\"]'), env.AXIS_EXPECTED_VERSION)");
  write(f,s);
 }
-console.log('[AXIS 8.12.1 release compat] PASS · 8.12.1 public identity · inherited 8.12 Language Studio semantics preserved');
+console.log('[AXIS 8.12.1 release compat] PASS · 8.12.1 public identity · inherited 8.12 Language Studio + Stage 3 semantics preserved');
