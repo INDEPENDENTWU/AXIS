@@ -8,6 +8,7 @@ const STEPS=[
   'prepare-812-release-compat.mjs',
   'prepare-8121-release-compat.mjs',
   'prepare-8122-release-compat.mjs',
+  'prepare-8123-release-compat.mjs',
   'prepare-882-version.mjs',
   'prepare-legacy-runtime.mjs',
   'prepare-product-convergence.mjs',
@@ -65,6 +66,8 @@ const STEPS=[
   'prepare-813-settings-owner-seal.mjs',
   'prepare-8121-hotfix.mjs',
   'prepare-8122-settings-refine.mjs',
+  'prepare-8123-learning-simplify.mjs',
+  'prepare-8123-final-alignment.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
@@ -83,6 +86,7 @@ const STEPS=[
   'postbuild-811-contract.mjs',
   'postbuild-812-contract.mjs',
   'postbuild-813-live-route.mjs',
+  'postbuild-8123-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 
@@ -123,6 +127,7 @@ if(contract.architecture==='canonical-single-runtime'){
   for(const gate of ['learningAtlas811','learningAtlasUnique811','learningDialogueFourTurn811','learningDialogueSixTurn811','learningConnectedSpeech811','learningSpelling811','learningSettingsConverged811','learningLegacyDiagnosticsPreserved811','learningJapanese132811','learningKorean132811','learningChinese132811','learningMultilingualSixTurn811','learningMultilingualNoLegacyExactOverlap811','trendsStateField811','trendsGoalAware811','trendsEvidenceOnly811','trendsLocalFirst811','trendsOneShotMotion811','serviceSettingsConverged811','serviceSettingsUserInvokedNetwork811','serviceSettingsNoTrainingOwner811'])if(manifest.gates?.[gate]!==true)fail(`8.11 gate missing · ${gate}`);
   for(const gate of ['languageStudio812','languageCorpusExpanded812','nativeMultilingual812','dialogueTailDiversity812','dialogueDepthSelectable812','teachingLoop812','activeRecall812','transformPractice812','learningSettingsPurpose812','learningSettingsMethod812','learningSettingsNovelty812','legacy811Preserved812','learningNoAutoplay812','learningLocalFirst812','learningNoTrainingOwner812'])if(manifest.gates?.[gate]!==true)fail(`8.12 gate missing · ${gate}`);
   for(const gate of ['liveRoute813','liveRouteSingleOwner813','liveRouteReadOnly813','liveRoutePureRuntime813','liveRouteFallback813','liveRouteNoRecordingOwner813','liveRouteCanonicalSingleRuntime813'])if(manifest.gates?.[gate]!==true)fail(`8.13 Stage 3 gate missing · ${gate}`);
+  for(const gate of ['settingsNativeAlignment8123','settingsHelperCopyRetired8123','learningSettingsMethodRetired8123','learningShadowUiRetired8123','learningSimpleAudio8123','learningLocalRecording8123','learningNoUpload8123','learningNoTrainingOwner8123'])if(manifest.gates?.[gate]!==true)fail(`8.12.3 gate missing · ${gate}`);
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);

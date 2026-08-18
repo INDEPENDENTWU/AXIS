@@ -1,12 +1,12 @@
 # Current Release
 
-## AXIS 8.12.2
+## AXIS 8.12.3
 
-8.12.2 is the current product baseline candidate.
+8.12.3 is the current release candidate.
 
-It is a narrowly scoped Settings refinement over AXIS 8.12.1. Training recording, scan/review, Group Plan ownership and commit behavior, LocalStorage/IndexedDB training state, camera/media, watermark, AXIS 8.12 Language Studio, State Field, and AXIS 8.13 Stage 3 read-only Live Route remain inherited and unchanged.
+It is a narrowly scoped learning-interaction refinement over AXIS 8.12.2. Training recording, scan/review, Group Plan ownership and commit behavior, LocalStorage/IndexedDB training state, camera/media, watermark, AXIS 8.12 Language Studio content, State Field, Cloud/AI storage ownership, and AXIS 8.13 Stage 3 read-only Live Route remain inherited and unchanged.
 
-The release redesigns only `学习安排` fine-tune and `云端与AI` inside the existing canonical Settings sheet. The goal is lower friction, strict mobile geometry, and one consistent AXIS Settings visual language without creating a new product/state owner.
+The release removes user-facing learning-mode complexity that no longer serves the product: `学法`, `跟读`, `影子`, shadow auto-record, and A/B comparison are retired from the current product surface. Learning practice becomes one consistent local-first interaction: listen to the original, record yourself, and replay your recording.
 
 This file is the handoff entry point for future product and engineering work. Do not reconstruct current behavior by reading version-like source filenames in numerical order.
 
@@ -19,129 +19,105 @@ AXIS ships a canonical single browser runtime:
 - zero dynamic historical runtime chunks;
 - no runtime fallback to a previous public product version.
 
-`node build-release.mjs` is the only release build entry point.
+`node build-release.mjs` is the only release build entry point. The checked-in `release-contract.json` remains a compatibility-compiler input; final generated release truth is `axis-build.json`.
 
-The checked-in `release-contract.json` remains a compatibility-compiler input. Release-compat stages advance that input through inherited release lines; the final generated `axis-build.json` must report the 8.12.2 identity and all inherited/current gates.
-
-## 8.12.2 release contract
+## 8.12.3 release contract
 
 The final artifact must report:
 
-- `version: 8.12.2`;
-- `baseVersion: 8.12.2`;
+- `version: 8.12.3`;
+- `baseVersion: 8.12.3`;
 - architecture `canonical-single-runtime`;
 - one initial JavaScript request and zero dynamic JavaScript chunks;
-- inherited AXIS 8.12 Language Studio contract unchanged;
-- inherited AXIS 8.12.1 native Safari Group Plan activation unchanged;
+- inherited AXIS 8.12 Language Studio corpus and content contract intact;
+- inherited AXIS 8.12.1 native Safari Group Plan activation intact;
+- inherited AXIS 8.12.2 inline Settings ownership intact;
 - inherited AXIS 8.13 Stage 3 Live Route present and read-only;
-- Group Plan still committing only through the canonical `v61.js` recording owner;
 - no new training/storage/media/timer/network owner.
 
-### Learning Settings contract
+### Settings contract
 
-`学习安排` stays inline in the single canonical Settings sheet.
+`学习安排` and `云端与AI` remain inside the single canonical Settings sheet and must use the same native row alignment, text baseline, summary alignment, chevron placement and touch geometry as neighboring Settings rows.
 
-The primary learning decisions remain the existing 8.12 purpose/method/intensity/difficulty/dialogue-depth model. Fine-tune is reduced to six non-duplicated decisions only:
+Learning exposes four primary decisions only:
 
-- new/review ratio;
-- content;
-- cadence;
-- daily target;
-- opportunity learning;
-- standalone learning.
+- 目标;
+- 强度;
+- 难度;
+- 对话深度.
 
-Fine-tune no longer repeats primary intensity/difficulty controls. Three-option controls use equal three-column grids; four-option controls use equal 2×2 grids. At the release-blocking 390×844 viewport, labels must not clip, ellipsize, overlap, or create horizontal page overflow.
+The former `学法` selector is retired. Existing stored method values are compatibility data only and do not control the current UI. Fine-tune remains progressive and reduced; explanatory micro-copy that does not change a decision is removed.
 
-Existing learning data remains owned by `axis_v89_speak`; 8.12.2 introduces no second learning store.
+Cloud/AI keeps the existing four-group 8.12.2 structure and the existing `axis_v811_services` store. Nonessential explanatory subcopy is removed; service status network access remains explicitly user-invoked.
 
-### Cloud/AI Settings contract
+### Learning practice contract
 
-The canonical top-level label is exactly `云端与AI` with no artificial whitespace. `学习安排` and `云端与AI` add no extra divider line around their outer Settings rows.
+Current learning cards expose exactly one simple local practice surface:
 
-Cloud/AI is reduced to four user-facing groups:
+- `听原声` — best-available local system voice;
+- `录音` — explicit-user-action microphone capture;
+- `听我的` — local replay of the current in-memory recording.
 
-- cloud sync;
-- AXIS AI;
-- send scope;
-- capability status.
+Current product UI must not expose `跟读`, `影子`, `开始影子 + 录音`, or `A/B 对比`. There is no practice-mode selector. Recording is ephemeral, is not uploaded, is not persisted as training state, and is discarded with the learning-card lifetime. No learning audio autoplays.
 
-Send scope is exposed as `最小 / 平衡 / 扩展` and maps back to the existing `axis_v811_services.privacy` fields; it is not a new storage model. Capability status is shown as four concise status tiles instead of a debug-like list. Service status network access remains explicitly user-invoked; opening normal Settings must not start status requests.
+Historical 8.10.x source and manifest inheritance may record that those releases once contained echo/shadow workflows; 8.12.3 adds explicit retirement gates and no longer provides a current user-facing owner for them.
 
-### Inherited field contract
-
-- Group Plan remains a native browser button and preserves normal Safari/WebKit touch→click activation.
-- Applying Group Plan still delegates to `window.__AXIS_RECORDING__.applyPlan`; `v61.js` remains the authoritative recording writer.
-- The real scan/review → visible canonical catalog → Group Plan → save path remains release-blocking in Chromium and iPhone-like WebKit.
-- Pause owns rest timing; completing a set alone does not imply rest.
-
-## Language Studio inheritance
-
-8.12 Language Studio semantics remain:
-
-- 25,716 total available units;
-- 19,584 new 8.12 units, 4,896 per supported language;
-- available units: English 10,632; Japanese 5,028; Korean 5,028; Chinese 5,028;
-- dialogue depths of 4, 8 and 12 turns;
-- seven-stage learning loop: meaning, noticing, retrieval, response, shadow, transform, review;
-- no required network, autoplay owner, or training-state ownership.
-
-## Current ownership map
+### Ownership contract
 
 | Domain | Current authority / contract |
 |---|---|
 | Base workout state | `app.js` / `axis_v60_state` |
 | Strength draft and set-level recording | `v61.js` + `axis_v8_meta` |
-| Group Plan commit | `window.__AXIS_RECORDING__` / `v61.js`; presentation layers do not become writers |
-| Local media | IndexedDB media store; browser/native platform adapter at the OS boundary |
-| Custom equipment persistence | base profile/custom equipment state; shared canonical editor path |
-| Active training execution | inherited active-session owner; no duplicate pause/finish/countdown path |
-| Catalog/search | converged canonical catalog/search presentation |
-| Watermark | converged watermark settings, resolver and final media owner |
-| Reports | converged current report owner |
-| State Field / trends | inherited 8.11 State Field contract; local evidence, no synthetic fitness score |
-| Local Vision | local visual memory/recognition first; network verification optional |
-| AI configuration | server-side provider config; browser never owns provider secrets |
-| Cloud/sync | `axis_v811_services`; local state remains authoritative |
-| Language Studio | `axis_v89_speak` inherited learning state + 8.12 Language Studio content/logic; no training ownership |
-| AXIS 8.13 Stage 3 | read-only Continue + Live Route presentation; no recording/storage/network ownership |
-| Platform-only capabilities | `window.AXISPlatform` / optional `window.AXISNative` bridge |
+| Group Plan commit | `window.__AXIS_RECORDING__` / `v61.js` |
+| Learning state | `axis_v89_speak` |
+| Learning temporary microphone/audio | page-memory practice layer; no upload/persistence owner |
+| Cloud/AI preferences | `axis_v811_services`; local-first, explicit status network |
+| Local media | existing IndexedDB media owner; unchanged by learning practice |
+| AXIS 8.13 Stage 3 | read-only Continue + Live Route presentation |
 
-When a future change replaces one of these owners, the previous writer must be retired in the same change.
+A future change that transfers an owner must retire the previous writer in the same change.
+
+## Language Studio inheritance
+
+8.12 Language Studio content remains available:
+
+- 25,716 total available units;
+- 19,584 new 8.12 units, 4,896 per supported language;
+- available units: English 10,632; Japanese 5,028; Korean 5,028; Chinese 5,028;
+- dialogue depths of 4, 8 and 12 turns;
+- no required network, autoplay owner, or training-state ownership.
+
+The historical seven-stage teaching metadata remains content compatibility data. 8.12.3 does not surface the retired shadowing step as a user-selectable practice mode.
 
 ## Current product behavior to preserve
 
 - A workout can be recorded and finished offline.
 - AI failure never blocks manual/local recording.
 - Existing LocalStorage and IndexedDB history remains readable.
-- High-frequency recording does not rebuild more UI than necessary.
-- No duplicate semantic action appears, even transiently.
-- First interactive paint already represents the intended product state.
 - Training and Language Studio remain independent ownership domains.
-- Chromium and iPhone-like WebKit behavior are both release-blocking.
-- Real scan/review recording and Group Plan interaction are release-blocking, not only Quick Record.
-- Settings changes may not mutate `axis_v60_state` or `axis_v8_meta`.
+- Real scan/review recording and Group Plan interaction remain release-blocking in Chromium and iPhone-like WebKit.
+- Settings or learning practice may not mutate `axis_v60_state` or `axis_v8_meta`.
+- Learning listening/recording is always explicit user action; no autoplay and no audio upload.
 
 ## Release verification
 
-A release candidate is incomplete until the same source candidate has passed the relevant contract and real-browser gates. For 8.12.2 this includes the dedicated Chromium + iPhone-like WebKit Settings gate and the inherited real Group Plan field path.
+A release candidate is incomplete until the same source candidate passes the dedicated Chromium + iPhone-like WebKit 8.12.3 gate and inherited product gates. The dedicated gate verifies native Settings alignment, retired helper copy/method UI, simple listen-record-replay behavior, local-only microphone ownership and training-store non-interference.
 
-Production correctness is separate from deployment completion. The fixed public deployment must serve the intended source SHA, canonical manifest and immutable assets. Both the general Production browser gate and the 8.12.x fixed-Production gate must accept 8.12.2 and run the new Settings regression before the release is considered sealed.
+Production correctness is separate from deployment completion. The fixed public deployment must serve the intended merged source SHA, canonical manifest and immutable assets, with clean Production runtime errors before 8.12.3 is considered sealed.
 
 ## Current architecture debt
 
-Known debt that should be reduced rather than extended:
+Known debt to reduce rather than extend:
 
 - a long chain of exact-signature `prepare-*` compatibility transforms;
+- historical modules remaining as executable compiler inputs after current owners have retired their UI;
 - release truth that is harder to understand in source than in the generated artifact;
-- historical modules remaining as executable compiler inputs;
-- duplicated serverless deployment surfaces;
-- domain decisions still coupled too closely to browser state/DOM in several areas;
 - developer tool versions spread across workflows instead of one conventional dependency manifest.
 
 These are migration targets, not reasons for a rewrite.
 
 ## Next release direction
 
-After 8.12.2 is Production-sealed, controlled AXIS 8.13 work may continue from the already shipped Stage 3 boundary. Stage 4 Reality Actions must not transfer factual recording ownership.
+After 8.12.3 is Production-sealed, controlled AXIS 8.13 work may continue from the already shipped Stage 3 boundary. Stage 4 Reality Actions must not transfer factual recording ownership.
 
 See [PRODUCT.md](PRODUCT.md), [ARCHITECTURE.md](ARCHITECTURE.md) and [ROADMAP.md](ROADMAP.md).

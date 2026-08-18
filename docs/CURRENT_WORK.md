@@ -4,59 +4,49 @@
 
 ## Production baseline at start of this work
 
-- Public product: AXIS 8.12.1.
-- Product main at the start of this release: `3d18300b26c0b38b5389e554c34bd41d39663bb9`.
+- Public product: AXIS 8.12.2.
+- Product main at the start of this release: `c55ae086577612af6ba8a6a794e680b46d1b6309`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- Production 8.12.1 core at the start of this work: `f86c16349f02`; one initial JavaScript request, zero dynamic JavaScript and zero chunks.
-- AXIS 8.12 Language Studio, the 8.12.1 Safari Group Plan native-button fix, and AXIS 8.13 Stage 3 read-only Live Route are inherited and must remain intact.
+- Production 8.12.2 identity at the start of this work: release hash `aae183f5ac1b`, core `391de3b640c7`, CSS `b72ec8bd2ae4`, one initial JavaScript request, zero dynamic JavaScript and zero chunks.
+- AXIS 8.12 Language Studio corpus, AXIS 8.12.1 Safari Group Plan native-button fix, AXIS 8.12.2 Settings ownership, and AXIS 8.13 Stage 3 read-only Live Route are inherited and must remain intact.
 
 ## Active change
 
-**AXIS 8.12.2 — Settings simplification and visual convergence only.**
+**AXIS 8.12.3 — learning interaction simplification and Settings alignment only.**
 
-The product implementation is complete and frozen. No additional feature scope is allowed in this release. The only post-implementation work is release/test compatibility required to prove inherited behavior on the 8.12.2 patch identity.
+The scope is intentionally narrow:
 
-The release changes only `学习安排` and `云端与AI` Settings presentation/configuration:
+- align the top-level `学习安排` and `云端与AI` rows to the exact native Settings horizontal rhythm and baseline;
+- remove nonessential helper copy from Learning and Cloud/AI Settings;
+- retire the user-facing `学法` decision entirely;
+- keep the primary Learning decisions as `目标 / 强度 / 难度 / 对话`, with the existing reduced fine-tune surface below them;
+- retire all current-product `跟读 / 影子 / A/B 对比 / 开始影子 + 录音` mode UI and event entry points;
+- replace learning practice modes with one stable three-action surface: `听原声 / 录音 / 听我的`;
+- preserve best-available local system voice routing, ephemeral local MediaRecorder capture, in-memory replay, no upload and no autoplay;
+- preserve `axis_v89_speak` as the only learning store; an old `method` preference may remain readable for compatibility but no longer controls current presentation;
+- preserve `axis_v811_services` as the Cloud/AI store and preserve user-invoked status network semantics.
 
-- top-level `学习安排` / `云端与AI` remain inside the single canonical Settings sheet;
-- the service label is exactly `云端与AI`, without artificial whitespace, and both top-level rows add no extra divider line;
-- Learning fine-tune is reduced to six non-duplicated decisions: new/review ratio, content, cadence, daily target, opportunity learning and standalone learning;
-- duplicated fine-tune copies of the primary `强度` / `难度` decisions are removed;
-- 3-option controls use strict equal three-column grids; 4-option controls use equal 2×2 grids; text may not clip or ellipsize;
-- Cloud/AI is reduced to four product groups: cloud sync, AXIS AI, send scope and capability status;
-- send scope uses `最小 / 平衡 / 扩展`, mapped through the existing `axis_v811_services.privacy` fields;
-- capability status is four concise tiles rather than a debug-style text list;
-- Settings changes leave `axis_v60_state` and `axis_v8_meta` byte-identical;
-- no new learning/service/training/recording/storage/network owner is introduced.
+Explicitly out of scope and unchanged: workout recording, scan/review, Group Plan commit/touch ownership, `axis_v60_state`, `axis_v8_meta`, IndexedDB media, camera, watermark, active-session timers, State Field, Reality Runtime and Live Route ownership.
 
 ## Validation for this work
 
-A product-equivalent 8.12.2 candidate has already passed the dedicated Settings redesign step in both Chromium and iPhone-like WebKit at 390×844. That evidence covered:
+The dedicated `AXIS 8.12.3 Learning Simplify Gate` is release-blocking in Chromium and iPhone-like WebKit. It must prove:
 
-- exact `云端与AI` label and zero top-level divider lines;
-- exactly six Learning fine-tune groups;
-- strict 3-column / 2×2 equal geometry with no text clipping;
-- exactly four Cloud/AI groups and four capability tiles;
-- service status network remaining user-invoked only;
-- learning/service preference persistence through existing stores;
-- no horizontal Settings overflow or nested Settings sheet;
-- byte-identical `axis_v60_state` and `axis_v8_meta` before/after Settings operations;
-- no page errors.
+- public identity `8.12.3 / 8.12.3` with canonical single runtime, one initial JS and zero dynamic chunks;
+- top-level Learning/Cloud rows align with a native Settings row within a tight geometry tolerance and introduce no extra divider;
+- Learning core shows exactly `目标 / 强度 / 难度 / 对话` and exposes no `学法` control;
+- helper strings such as `大脑用什么方式练`, `每天出现多少`, `表达复杂度`, `一次练到多完整`, `一次决定可发送的数据类型` are absent from visible Settings;
+- an existing legacy `method: shadow` preference cannot bring back shadow/repeat UI;
+- a learning card exposes exactly `听原声 / 录音 / 听我的`, with no mode tabs, method lab, `影子`, `跟读`, or `A/B` copy;
+- listening uses the inherited local system voice route without autoplay;
+- recording requests the microphone only after explicit user action, remains in memory, can be replayed locally, and performs no upload;
+- Settings and learning interactions leave `axis_v60_state` and `axis_v8_meta` byte-identical;
+- inherited real scan/review Group Plan regression still passes in Chromium and iPhone-like WebKit;
+- existing 8.12 Language Studio content counts and AXIS 8.13 Stage 3 read-only ownership remain green.
 
-The final exact PR head must additionally complete all inherited gates after their patch-family assertions are aligned to 8.12.2. In particular:
-
-- 8.12 Language Studio keeps 25,716 units, 4/8/12-turn dialogue and the seven-step teaching loop;
-- 8.12.1 real scan/review Group Plan remains a native Safari/WebKit button path and persists four-set plans through the authoritative recording stores;
-- explicit pause remains the sole rest-state trigger across inherited 8.8/8.9 browser tests;
-- Shadow Runtime remains read-only and may observe any current 8.12 patch identity without taking product ownership;
-- Stage 3 Continue + Live Route remains read-only, single-owner and zero recording/storage/network ownership;
-- canonical topology stays one JavaScript request, zero dynamic JavaScript and zero chunks.
-
-No final-head product code changes are permitted solely to satisfy obsolete selectors or obsolete public-version literals; those guards must be migrated to the current owner/patch-family contract instead.
-
-After merge, Vercel Production and the fixed public alias must serve the exact merged main SHA as AXIS 8.12.2. Both Production browser gates must run the 8.12.2 Settings regression, and runtime error/fatal inspection must be clean before the release is considered sealed.
+Historical release gates may continue to record that older 8.10.x releases once implemented echo/shadow workflows. AXIS 8.12.3 adds explicit retirement gates so those historical markers do not imply a current user-facing owner.
 
 ## Next planned stage
 
-Only after AXIS 8.12.2 is Production-verified may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**. Historical workout facts remain authoritative and immutable.
+Only after AXIS 8.12.3 is Production-verified may controlled AXIS 8.13 work continue. The next planned product migration remains **AXIS 8.13 Stage 4 — Reality Actions**; historical workout facts and current recording ownership remain authoritative.

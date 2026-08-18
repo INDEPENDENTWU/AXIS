@@ -12,13 +12,14 @@ for(const lang of ['en','ja','ko','zh']){
 if(audit.totalNew!==19584)fail(`total new ${audit.totalNew}`);
 if(Object.values(audit.tailPairMax).some(n=>n>40))fail(`tail pair max ${JSON.stringify(audit.tailPairMax)}`);
 const info=JSON.parse(read('axis-build.json')),runtime=read('axis-core.js'),build=read('build-release.mjs');
-if(!['8.12','8.12.1','8.12.2'].includes(info.version)||info.baseVersion!==info.version)fail(`release identity ${info.version}/${info.baseVersion}`);
+if(!['8.12','8.12.1','8.12.2','8.12.3'].includes(info.version)||info.baseVersion!==info.version)fail(`release identity ${info.version}/${info.baseVersion}`);
 for(const step of ['prepare-812-release-compat.mjs','prepare-812-learning-content.mjs','prepare-812-learning-settings.mjs','postbuild-812-contract.mjs'])if(!build.includes(step))fail(`build missing ${step}`);
 for(const gate of ['languageStudio812','languageCorpusExpanded812','nativeMultilingual812','dialogueTailDiversity812','dialogueDepthSelectable812','teachingLoop812','activeRecall812','transformPractice812','learningSettingsPurpose812','learningSettingsMethod812','learningSettingsNovelty812','legacy811Preserved812','learningNoAutoplay812','learningLocalFirst812','learningNoTrainingOwner812'])if(info.gates?.[gate]!==true)fail(`gate missing ${gate}`);
 if(info.axis812?.learning?.totalNew!==19584||info.axis812?.learning?.totalAvailable!==25716)fail('manifest corpus totals');
 for(const [lang,n] of Object.entries({en:10632,ja:5028,ko:5028,zh:5028}))if(info.axis812?.learning?.availableByLanguage?.[lang]!==n)fail(`manifest ${lang} total`);
 if(info.axis812?.learning?.dialogueTurns?.short!==4||info.axis812?.learning?.dialogueTurns?.full!==8||info.axis812?.learning?.dialogueTurns?.immersive!==12)fail('dialogue depth contract');
-if(info.axis812?.learning?.teachingLoop?.join('|')!=='meaning|noticing|retrieval|response|shadow|transform|review')fail('teaching loop contract');
+if(info.axis812?.learning?.teachingLoop?.join('|')!=='meaning|noticing|retrieval|response|shadow|transform|review')fail('teaching loop content compatibility');
 if(info.axis811?.release!==true||info.axis811?.learning?.totalUnits!==6132||info.axis811?.learning?.dialogueTurns!==6)fail('8.11 inheritance changed');
-for(const needle of ["window.__AXIS_812_LEARNING__={version:'8.12'","window.__AXIS_812_LEARNING_SETTINGS__={version:'8.12'",'function axis812ConversationFor(r)','function axis812MethodLab(panel,r)','function axis812ConvergeLearningSettings()'])if(!runtime.includes(needle))fail(`runtime missing ${needle}`);
-console.log(`[AXIS 8.12 experience] PASS · ${audit.totalNew} new · 25716 available · tail ${JSON.stringify(audit.tailPairMax)} · 4/8/12 dialogue · seven-step active learning`);
+for(const needle of ["window.__AXIS_812_LEARNING__={version:'8.12'","window.__AXIS_812_LEARNING_SETTINGS__={version:'8.12'",'function axis812ConversationFor(r)','function axis812MethodLab(panel,r)','function axis812ConvergeLearningSettings()'])if(!runtime.includes(needle))fail(`historical runtime compatibility missing ${needle}`);
+if(info.version==='8.12.3'&&(info.gates?.learningSettingsMethodRetired8123!==true||info.gates?.learningShadowUiRetired8123!==true))fail('8.12.3 current-product retirement gates missing');
+console.log(`[AXIS 8.12 experience] PASS · ${audit.totalNew} new · 25716 available · tail ${JSON.stringify(audit.tailPairMax)} · 4/8/12 dialogue · historical teaching metadata preserved`);
