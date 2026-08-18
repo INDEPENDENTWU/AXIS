@@ -9,6 +9,12 @@ const converge=(src,from,to,label)=>{
  if(oldCount===0&&newCount===1)return src;
  fail(`${label} unexpected shape · old ${oldCount} · current ${newCount}`)
 };
+const convergeRange=(src,start,end,to,sentinel,label)=>{
+ if(src.includes(sentinel))return src;
+ const a=src.indexOf(start),b=a<0?-1:src.indexOf(end,a+start.length);
+ if(a<0||b<0)fail(`${label} range missing · start ${a} · end ${b}`);
+ return src.slice(0,a)+to+src.slice(b+end.length);
+};
 
 {
  const f='scripts/axis-813-shadow-browser.mjs';let s=read(f);
@@ -18,16 +24,8 @@ const converge=(src,from,to,label)=>{
 }
 {
  const f='scripts/axis-882-smoke.mjs';let s=read(f);
- const old=`await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='rest',undefined,{timeout:1800});
-
-console.log(\`[AXIS 8.8.2 \${ENGINE}] home rest intelligence: rest -> warn -> danger -> paused\`);
-const activeId=await page.locator('#v87Finish').getAttribute('data-id');assert.ok(activeId);
-await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity;if(!a)throw new Error('activity missing');m.prefs=m.prefs||{};m.prefs.reminderTiming='90';a.restStartedAt=Date.now()-95000;localStorage.setItem(k,JSON.stringify(m))},activeId);
-await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='warn',undefined,{timeout:1800});assert.match((await page.locator('#axisNowTitle').innerText()).trim(),/休息偏久/);
-await page.evaluate(id=>{const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity;a.restStartedAt=Date.now()-225000;localStorage.setItem(k,JSON.stringify(m))},activeId);
-await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='danger',undefined,{timeout:1800});assert.match((await page.locator('#axisNowTitle').innerText()).trim(),/休息过久/);
-await page.locator('#v87Toggle').click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='paused',undefined,{timeout:1800});
-assert.equal((await page.locator('#v87Toggle').innerText()).trim(),'▶','single paused item did not expose canonical resume control');await page.locator('#v87Toggle').click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});`;
+ const start="await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='rest',undefined,{timeout:1800});";
+ const end="assert.equal((await page.locator('#v87Toggle').innerText()).trim(),'▶','single paused item did not expose canonical resume control');await page.locator('#v87Toggle').click();await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});";
  const current=`const activeId=await page.locator('#v87Finish').getAttribute('data-id');assert.ok(activeId);
 assert.equal(await page.evaluate(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.restStartedAt??null,activeId),null,'完成一组 invented rest');
 await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:4000});
@@ -38,7 +36,7 @@ await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8
 assert.equal((await page.locator('#v87Toggle').innerText()).trim(),'▶','single paused item did not expose canonical resume control');
 await page.locator('#v87Toggle').click();
 await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity;return window.__AXIS_HOME_STATE__?.mode==='active'&&a?.status==='active'&&a?.restStartedAt==null},activeId,{timeout:4000});`;
- s=converge(s,old,current,'8.8.2 pause-owned rest flow');
+ s=convergeRange(s,start,end,current,'home rest intelligence: explicit pause -> paused -> resume','8.8.2 pause-owned rest flow');
  const legacy=s.split('{timeout:1800}').length-1,expanded=s.split('{timeout:4000}').length-1;
  if(legacy>0)s=s.replaceAll('{timeout:1800}','{timeout:4000}');else if(expanded<5)fail(`8.8.2 Home wait shape · old ${legacy} · current ${expanded}`);
  write(f,s);
@@ -61,7 +59,10 @@ await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8
 {
  const f='scripts/axis-8101-smoke.mjs';let s=read(f);
  s=converge(s,"activity:{status:'active',startedAt:t-7200000,lastResumedAt:t-7200000,pausedAt:null,finishedAt:null,estimateMs:600000,completedSets:1,intervals:[{start:t-7200000,end:null}],restStartedAt:rest}","activity:{status:'paused',startedAt:t-7200000,lastResumedAt:t-7200000,pausedAt:rest,finishedAt:null,estimateMs:600000,completedSets:1,intervals:[{start:t-7200000,end:rest}],restStartedAt:rest}",'8.10.1 learning pause-owned fixture');
- s=converge(s,"assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),3);assert.ok(await page.locator('#v8101Practice .v8101Turn').count()>=2,'dialogue does not contain both sides');const turns=(await page.locator('#v8101Practice .v8101Turn b').allTextContents()).filter(Boolean);assert.ok(turns.length>=2&&turns.every(x=>x.trim().length>1),'dialogue turns are incomplete');await page.locator('#v8101Practice [data-v8101-action=\"dialogue\"]').click();await page.waitForFunction(()=>window.__AXIS_8101_SPEAK_CALLS__>=1);const afterDialogue=await page.evaluate(()=>window.__AXIS_8101_SPEAK_CALLS__);await page.locator('#v8101Practice [data-v8101-mode=\"echo\"]').click();await page.locator('#v8101Practice [data-v8101-action=\"echo\"]').click();await page.waitForFunction(n=>window.__AXIS_8101_SPEAK_CALLS__>n,afterDialogue);const afterEcho=await page.evaluate(()=>window.__AXIS_8101_SPEAK_CALLS__);await page.locator('#v8101Practice [data-v8101-mode=\"shadow\"]').click();assert.ok((await page.locator('#v8101ShadowLine').innerText()).trim().length>2);await page.locator('#v8101Practice [data-v8101-action=\"shadow\"]').click();await page.waitForFunction(n=>window.__AXIS_8101_SPEAK_CALLS__>n,afterEcho);assert.match(await page.locator('#v8101Practice .v8101Privacy').innerText(),/不上传|不保存/);await page.locator('#v891SpeakPanel [data-v891-action=\"close\"]').click();","assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),0,'retired learning modes returned');assert.deepEqual((await page.locator('.axis8123PracticeActions button').allTextContents()).map(x=>x.trim()),['听原声','录音','听我的']);await page.locator('[data-v8123-action=\"listen\"]').click();await page.waitForFunction(()=>window.__AXIS_8101_SPEAK_CALLS__===1);await page.locator('#v891SpeakPanel [data-v891-action=\"close\"]').click();",'8.10.1 current practice surface');
+ const start="assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),3);";
+ const end="await page.locator('#v891SpeakPanel [data-v891-action=\"close\"]').click();";
+ const current="assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),0,'retired learning modes returned');assert.deepEqual((await page.locator('.axis8123PracticeActions button').allTextContents()).map(x=>x.trim()),['听原声','录音','听我的']);await page.locator('[data-v8123-action=\"listen\"]').click();await page.waitForFunction(()=>window.__AXIS_8101_SPEAK_CALLS__===1);await page.locator('#v891SpeakPanel [data-v891-action=\"close\"]').click();";
+ s=convergeRange(s,start,end,current,'retired learning modes returned','8.10.1 current practice surface');
  s=converge(s,"m.events.E8101.activity.status='paused';m.events.E8101.activity.pausedAt=t-30000;m.events.E8101.activity.restStartedAt=null;","m.events.E8101.activity.status='paused';m.events.E8101.activity.pausedAt=t-30000;m.events.E8101.activity.restStartedAt=t-30000;",'8.10.1 paused opportunity rest owner');
  write(f,s);
 }
@@ -75,7 +76,11 @@ await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8
  const f='scripts/axis-8103-smoke.mjs';let s=read(f);
  s=converge(s,"[data-v810-standalone-start]","[data-v8122-standalone-start]",'8.10.3 current standalone launcher');
  s=converge(s,"console.log(`[AXIS 8.10.3 ${ENGINE}] four-language voice routing + dialogue/echo/shadow distinction`);","console.log(`[AXIS 8.10.3 ${ENGINE}] four-language voice routing + current explicit practice surface`);",'8.10.3 current practice label');
- s=converge(s,"await page.locator('#v8101Practice [data-v8101-mode=\"dialogue\"]').click();assert.equal(await page.locator('.v8103DialogueTurns .v8101Turn').count(),4,'dialogue is not four turns');await page.locator('#v8101Practice [data-v8101-mode=\"echo\"]').click();assert.ok(((await page.locator('#v8101Practice').innerText())||'').includes('先听完'),'echo workflow is not listen-then-repeat');await page.locator('#v8101Practice [data-v8101-mode=\"shadow\"]').click();const shadowCopy=(await page.locator('#v8101Practice').innerText())||'';assert.ok(shadowCopy.includes('慢半拍')&&shadowCopy.includes('A/B'),'shadow workflow is not simultaneous comparison practice');assert.equal(await page.locator('[data-v8101-action=\"reference\"]').count(),1);assert.equal(await page.locator('[data-v8101-action=\"ab\"]').count(),1);\nconst voice=await page.evaluate(()=>window.__AXIS_8103_VOICE__);assert.deepEqual(voice.locales,{en:'en-US',ja:'ja-JP',ko:'ko-KR',zh:'zh-CN'});assert.equal(voice.dialogueTurns,4);assert.equal(voice.echo,'listen-then-repeat');assert.equal(voice.shadow,'simultaneous-auto-record-ab');assert.deepEqual(Object.values(voice.selected),['Samantha Enhanced','Kyoko Enhanced','Yuna Enhanced','Ting-Ting Enhanced']);assert.equal(await page.evaluate(()=>window.__AXIS_8103_SPEAK_CALLS__),0,'learning autoplayed');assert.equal(await page.evaluate(()=>window.__AXIS_8103_FRESHNESS__?.polling),false,'release freshness became a poller');","assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),0,'retired learning modes returned');assert.deepEqual((await page.locator('.axis8123PracticeActions button').allTextContents()).map(x=>x.trim()),['听原声','录音','听我的']);\nconst voice=await page.evaluate(()=>window.__AXIS_8103_VOICE__);assert.deepEqual(voice.locales,{en:'en-US',ja:'ja-JP',ko:'ko-KR',zh:'zh-CN'});assert.deepEqual(Object.values(voice.selected),['Samantha Enhanced','Kyoko Enhanced','Yuna Enhanced','Ting-Ting Enhanced']);assert.equal(await page.evaluate(()=>window.__AXIS_8103_SPEAK_CALLS__),0,'learning autoplayed');await page.locator('[data-v8123-action=\"listen\"]').click();await page.waitForFunction(()=>window.__AXIS_8103_SPEAK_CALLS__===1);assert.equal(await page.evaluate(()=>window.__AXIS_8103_FRESHNESS__?.polling),false,'release freshness became a poller');",'8.10.3 current practice and voice route');
+ const start="await page.locator('#v8101Practice [data-v8101-mode=\"dialogue\"]').click();";
+ const end="assert.equal(await page.evaluate(()=>window.__AXIS_8103_FRESHNESS__?.polling),false,'release freshness became a poller');";
+ const current=`assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),0,'retired learning modes returned');assert.deepEqual((await page.locator('.axis8123PracticeActions button').allTextContents()).map(x=>x.trim()),['听原声','录音','听我的']);
+const voice=await page.evaluate(()=>window.__AXIS_8103_VOICE__);assert.deepEqual(voice.locales,{en:'en-US',ja:'ja-JP',ko:'ko-KR',zh:'zh-CN'});assert.deepEqual(Object.values(voice.selected),['Samantha Enhanced','Kyoko Enhanced','Yuna Enhanced','Ting-Ting Enhanced']);assert.equal(await page.evaluate(()=>window.__AXIS_8103_SPEAK_CALLS__),0,'learning autoplayed');await page.locator('[data-v8123-action="listen"]').click();await page.waitForFunction(()=>window.__AXIS_8103_SPEAK_CALLS__===1);assert.equal(await page.evaluate(()=>window.__AXIS_8103_FRESHNESS__?.polling),false,'release freshness became a poller');`;
+ s=convergeRange(s,start,end,current,'retired learning modes returned','8.10.3 current practice and voice route');
  s=converge(s,"PASS · inline Settings · home states · duration reminder · fixed adjust anchor · four-language voice routing · distinct shadow A/B","PASS · inline Settings · home states · duration reminder · fixed adjust anchor · four-language voice routing · current practice surface",'8.10.3 current PASS label');
  write(f,s);
 }
