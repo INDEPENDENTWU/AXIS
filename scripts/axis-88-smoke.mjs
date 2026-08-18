@@ -48,7 +48,13 @@ const saved=await page.evaluate(()=>{try{return JSON.parse(localStorage.getItem(
 
 console.log('[AXIS 8.8] Settings list reuses the same editor');
 await openSettings();await openEquipmentGate();
-const row=page.locator('#manageEqList [data-edit-eq]').filter({hasText:'测试胸推'}).first();assert.ok(await row.count(),'saved custom item missing from Settings');await row.click();
+if(await page.evaluate(()=>window.__AXIS_8123_EQUIPMENT_GALLERY__?.multiPhoto===true)){
+ const row=page.locator('#manageEqList [data-my-eq-id]').filter({hasText:'测试胸推'}).first();assert.ok(await row.count(),'saved custom item missing from Settings personal equipment list');await row.click();
+ await page.waitForFunction(()=>document.querySelector('#v8123EqDetailSheet')?.classList.contains('show'),undefined,{timeout:1200});
+ const edit=page.locator('#v8123EqInfoEdit');assert.equal(await edit.count(),1,'custom equipment detail edit action missing');await edit.click();
+}else{
+ const row=page.locator('#manageEqList [data-edit-eq]').filter({hasText:'测试胸推'}).first();assert.ok(await row.count(),'saved custom item missing from Settings');await row.click();
+}
 await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});assert.equal(await page.locator('#customName').inputValue(),'测试胸推');assert.equal(await page.evaluate(()=>window.__AXIS_CUSTOM_EDITOR__?.owner),'v874');
 await page.locator('#customEqSheet [data-close="customEqSheet"]').click();await page.waitForTimeout(80);
 
