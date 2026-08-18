@@ -31,17 +31,17 @@ const detailFrames=await page.evaluate(()=>new Promise(resolve=>{const out=[];le
 assert.ok(detailFrames.every(x=>!x.min),'detail drill-down still exposes an intermediate inherited min-height');assert.ok(detailFrames.every(x=>x.title==='杠铃深蹲'),'detail title changed across composed frames');
 await page.locator('#detailSheet [data-close="detailSheet"]').click();
 
-console.log(`[AXIS 8.10.2 ${ENGINE}] standalone learning is available outside a workout and survives idle Home repaint ticks`);
+console.log(`[AXIS 8.10.2 ${ENGINE}] standalone learning stays explicit and survives idle Home repaint ticks`);
 const coreBeforeStandalone=await page.evaluate(()=>localStorage.getItem('axis_v60_state')),metaBeforeStandalone=await page.evaluate(()=>localStorage.getItem('axis_v8_meta'));
 await page.locator('#settingsBtn').click();await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show')&&document.querySelector('#v810ConfigEntry'));
 await page.locator('#v810ConfigEntry').click();await page.waitForFunction(()=>document.querySelector('#v813LearningGate')?.classList.contains('open')&&document.querySelector('#v810ConfigPanel'));
 assert.equal(await page.locator('.sheetWrap.show').count(),1,'standalone Learning Settings opened a second sheet');
-assert.equal(await page.locator('#v810SpeakControls [data-v810-options="standalone"] button').count(),3,'standalone schedule control is incomplete');
-const standaloneStart=page.locator('[data-v810-standalone-start]');assert.equal(await standaloneStart.isVisible(),true,'standalone learning launcher is hidden while enabled');
+assert.equal(await page.locator('#v810SpeakControls [data-v810-options="standalone"] button').count(),0,'retired standalone schedule choices returned');
+const standaloneStart=page.locator('[data-v8122-standalone-start]');assert.equal(await standaloneStart.isVisible(),true,'standalone learning launcher is hidden');
 assert.equal(await page.evaluate(()=>window.__AXIS_8102_SPEAK_CALLS__),0,'standalone learning autoplayed before user action');
 await standaloneStart.click();await page.waitForFunction(()=>document.querySelector('#v891SpeakPanel')?.classList.contains('show')&&document.querySelector('#v891SpeakPanel')?.dataset.axis8102Source==='standalone',undefined,{timeout:1800});
 assert.equal(await page.evaluate(()=>window.__AXIS_8102_SPEAK_CALLS__),0,'standalone learning autoplayed on open');assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v60_state')),coreBeforeStandalone,'standalone learning changed core training state');assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v8_meta')),metaBeforeStandalone,'standalone learning changed training metadata');
-assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),3,'standalone learning lost dialogue/echo/shadow modes');
+assert.equal(await page.locator('#v8101Practice [data-v8101-mode]').count(),0,'retired standalone learning modes returned');assert.deepEqual((await page.locator('.axis8123PracticeActions button').allTextContents()).map(x=>x.trim()),['听原声','录音','听我的']);
 await page.waitForTimeout(1650);assert.equal(await page.locator('#v891SpeakPanel').evaluate(el=>el.classList.contains('show')),true,'standalone learning panel was closed by idle Home repaint');assert.equal(await page.locator('#v891SpeakPanel').getAttribute('data-axis8102-source'),'standalone');
 await page.locator('#v891SpeakPanel [data-v891-action="close"]').click();await page.waitForFunction(()=>!document.querySelector('#v891SpeakPanel')?.classList.contains('show'));
 
@@ -50,4 +50,4 @@ await page.evaluate(()=>{const t=Date.now(),event={id:'EP1',equipmentId:'rower',
 await page.reload({waitUntil:'domcontentloaded'});await ready();await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:3500});
 const metaBaseline=await page.evaluate(()=>localStorage.getItem('axis_v8_meta'));assert.equal(await page.evaluate(()=>window.__AXIS_8102_SPEAK_CALLS__),0,'paused state autoplayed');assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v8_meta')),metaBaseline,'paused state changed training metadata');assert.equal(await page.evaluate(()=>window.__AXIS_ACTIVE_CONTROL__?.owner),'v87-direct-884');
 
-assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);await browser.close();console.log(`[AXIS 8.10.2 ${ENGINE}] PASS · inline Settings · stable detail drill-down · persistent standalone learning · quiet paused state · training isolation`);
+assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);await browser.close();console.log(`[AXIS 8.10.2 ${ENGINE}] PASS · inline Settings · stable detail drill-down · explicit standalone learning · quiet paused state · training isolation`);
