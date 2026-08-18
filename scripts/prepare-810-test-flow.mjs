@@ -12,10 +12,20 @@ if(release==='8.12'){
  if(n===1)src=src.replace(stale,aligned);else if(n===0&&!src.includes(aligned))fail(`explicit pause fixture expected once, found ${n}`);else if(n>1)fail(`explicit pause fixture duplicated ${n} times`);
  if(src.includes(stale))fail('8.10 active+rest fixture survived');
  if(!src.includes(aligned))fail('8.10 explicit paused-rest fixture missing');
+
+ const legacyOpen="document.querySelector('#v810ConfigPanel')?.classList.contains('show')&&document.querySelector('#v810SpeakControls')";
+ const inlineOpen="document.querySelector('#v813LearningGate')?.classList.contains('open')&&document.querySelector('#v810ConfigPanel')&&document.querySelector('#v810SpeakControls')";
+ const openCount=src.split(legacyOpen).length-1;
+ if(openCount===1)src=src.replace(legacyOpen,inlineOpen);else if(openCount===0&&!src.includes(inlineOpen))fail(`legacy Learning panel visibility assertion expected once, found ${openCount}`);else if(openCount>1)fail(`legacy Learning panel visibility assertion duplicated ${openCount} times`);
+ const legacyClose="await page.locator('#v810ConfigPanel [data-v810-config-close]').click();";
+ const inlineClose="await page.locator('#v810ConfigEntry').click();await page.waitForFunction(()=>!document.querySelector('#v813LearningGate')?.classList.contains('open'));";
+ const closeCount=src.split(legacyClose).length-1;
+ if(closeCount===1)src=src.replace(legacyClose,inlineClose);else if(closeCount===0&&!src.includes(inlineClose))fail(`legacy Learning panel close assertion expected once, found ${closeCount}`);else if(closeCount>1)fail(`legacy Learning panel close assertion duplicated ${closeCount} times`);
+ if(src.includes("#v810ConfigPanel')?.classList.contains('show')"))fail('8.10 inherited test still requires a dedicated Learning sheet');
 }
 fs.writeFileSync(FILE,src);
 if(release==='8.12'){
  if(!fs.existsSync('scripts/prepare-8101-test-flow.mjs'))fail('AXIS 8.10.1 test-flow convergence is missing');
  execFileSync(process.execPath,['scripts/prepare-8101-test-flow.mjs'],{stdio:'inherit'});
 }
-console.log(`[AXIS 8.10 test flow] PASS · ${release==='8.12'?'manual/long-rest learning requires explicit paused rest · 8.10.1 inherited UI aligned':'historical flow preserved'}`);
+console.log(`[AXIS 8.10 test flow] PASS · ${release==='8.12'?'explicit paused rest · inline Learning Settings owner · 8.10.1 inherited UI aligned':'historical flow preserved'}`);
