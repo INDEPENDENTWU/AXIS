@@ -5,7 +5,7 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12.3.
-- Product main at the start of this maintenance work: `d447a0df4f16fb1dc308ff9783f3bd460b6eaf00`.
+- Product main at the start of this maintenance work: `64890d6d869cab83aecd73d9b345617a26ca2785`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
 - AXIS 8.12.3 Learning Settings simplification and `听原声 / 录音 / 听我的` practice surface are sealed and inherited.
@@ -14,46 +14,54 @@
 
 ## Active change
 
-**AXIS 8.12.3 maintenance — personal equipment memory, Group Plan interaction stability, and final Settings row geometry.**
+**AXIS 8.12.3 maintenance follow-up — personal equipment presentation and exact native Settings-row geometry only.**
 
-The scope is deliberately additive and compatibility-first:
+The scope is deliberately narrow and compatibility-first:
 
-- make `我的器械` a personal-use library derived from actual recorded equipment / movements plus existing custom definitions, while keeping native catalog IDs and custom definition IDs authoritative;
-- reuse existing `profile.memories` as the visual-recognition memory and reuse existing event `frameRefs` through the canonical media store instead of duplicating or uploading photos;
-- show a representative local photo when available together with compact usage / recent-use information;
-- preserve all historical workout records when an item is removed from `我的器械`; removal only archives the personal-library relationship, removes custom selectable definitions when applicable, and clears that item's personal visual memory;
-- allow a native item to return naturally to `我的器械` after it is used again later;
-- support unobtrusive left-swipe single removal and explicit `选择` multi-select removal without permanent checkbox clutter;
-- converge Group Plan to one stable delegated launcher synchronized explicitly after the canonical v61 set editor renders, rather than relying on a stale DOM node surviving count / weight / reps repaints;
-- preserve the existing Group Plan calculation surface and preserve `window.__AXIS_RECORDING__.applyPlan(...)` as the atomic recording transaction owner;
-- correct top-level `学习安排` and `云端与AI` row geometry so their labels and right chevrons use the same horizontal inset as native Settings rows at the real iPhone-width layout shown in Production;
-- preserve the existing Settings typography, row height, spacing, colors and overall engineering visual language.
+- keep `我的器械` as the history-backed personal-use library already shipped in 8.12.3, with native catalog IDs and custom definition IDs remaining authoritative;
+- keep existing `profile.memories` for visual-recognition memory and existing event `frameRefs` for media references; there is no new photo store and no automatic upload;
+- show a photo thumbnail only when a real historical media reference exists and can be resolved through the canonical local media store;
+- remove the single-character pseudo-thumbnail fallback entirely; an item without a real photo uses the normal text-first AXIS list row, matching the pre-polish readable presentation;
+- if a historical media reference no longer resolves locally, degrade immediately to the same normal text row instead of leaving an empty image box;
+- preserve the existing compact usage / recent-use metadata, left-swipe single removal and explicit `选择` multi-select removal;
+- preserve all historical workout records when an item is removed from `我的器械`;
+- leave the already verified Group Plan launcher, repeat-open, calculation and `window.__AXIS_RECORDING__.applyPlan(...)` ownership unchanged;
+- make `学习安排` and `云端与AI` use the same 60px row height and typography as the native Settings rows, then measure their label/chevron columns from the real `个人档案` row rather than from a hard-coded inset;
+- apply a second measured chevron correction after layout so browser glyph geometry cannot leave the two special rows a few pixels outside the native arrow column;
+- preserve the existing Settings colors, spacing, interaction and progressive-disclosure behavior.
 
-Explicitly unchanged: native catalog semantics, event `equipmentId` history relationships, trend aggregation, muscle relationships, camera capture, watermark ownership, Cloud/AI store, learning store, active-session timers, State Field, Reality Runtime, Live Route ownership, public version and deployment topology.
+Explicitly unchanged: native catalog semantics, event `equipmentId` history relationships, trend aggregation, muscle relationships, camera capture, watermark ownership, Cloud/AI store, learning store, active-session timers, Group Plan behavior, State Field, Reality Runtime, Live Route ownership, public version and deployment topology.
 
 ## Validation for this work
 
 The dedicated `AXIS 8.12.3 Field Polish Gate` runs in Chromium and iPhone-like WebKit and must prove:
 
-- public identity remains `8.12.3 / 8.12.3` with canonical single runtime and the inherited release contracts intact;
+- public identity remains `8.12.3 / 8.12.3` with canonical single runtime and inherited release contracts intact;
 - a native catalog item with historical use and a custom item both appear in `我的器械` without duplicating their underlying definitions;
-- an existing event photo reference is surfaced as the personal equipment representative image through the canonical media reference path;
-- `选择` mode can select multiple items and exposes one batch-removal action; single-row removal ownership also remains present for swipe interaction;
-- personal-library removal is modeled separately from historical workout deletion;
-- Group Plan exposes exactly one current launcher after set-count changes, weight changes, reps changes, close/reopen cycles and atomic plan application;
-- each Group Plan open resolves current rows and current first-set values instead of a captured stale DOM reference;
-- the existing inherited Group Plan regression remains green;
-- at a 417 CSS px iPhone-like viewport, both the left edge of `学习安排 / 云端与AI` labels and the right edge of their chevrons align to native Settings rows within a tight geometry tolerance;
-- browser execution produces no page errors and the repository continuity contract remains green.
+- a valid existing event photo reference remains surfaced through the canonical media reference path;
+- no-photo items remain readable as normal text-first rows and never synthesize the first character of the equipment name as an image placeholder;
+- a missing local media object degrades to the same text-first row without changing the historical record;
+- `选择` mode can select multiple items and exposes one batch-removal action; single-row removal ownership remains present for swipe interaction;
+- Group Plan inherited regressions remain green and this follow-up introduces no Group Plan owner;
+- at a 417 CSS px iPhone-like viewport, `学习安排 / 云端与AI` labels and chevrons resolve to the same native columns as `个人档案` within the existing tight geometry tolerance;
+- browser execution produces no new page errors and the repository continuity contract remains green.
 
-The maintenance compiler also emits explicit manifest gates for personal-equipment library/photo/visual-memory ownership, swipe/batch removal, history preservation, render-owned Group Plan synchronization, and final Settings-row alignment.
+## Storage / ownership truth
+
+- Workout/session facts remain in localStorage key `axis_v60_state`.
+- Training metadata remains in `axis_v8_meta`.
+- Actual captured photo/video blobs remain in the existing IndexedDB database `axis_v42_media`, object store `media`.
+- Workout events store only media references such as `frameRefs` / `clipRef` plus byte metadata; `我的器械` reuses those references rather than copying media.
+- `profile.memories` is visual-recognition fingerprint memory, not the image blob store.
+- Media remains local-first and is not automatically uploaded or copied into the system photo library.
 
 ## Next planned stage
 
-First merge and Production-verify this 8.12.3 maintenance patch. Do not begin broader AXIS 8.13 product migration until the real mobile Production surface confirms:
+First merge and Production-verify this narrow 8.12.3 follow-up. Do not begin broader AXIS 8.13 product migration until the real mobile Production surface confirms:
 
-- Settings alignment is corrected;
-- `我的器械` behaves as a coherent personal library without breaking native/custom/history relationships;
-- Group Plan remains clickable through repeated real recording edits and reopen cycles.
+- no-photo personal equipment rows are fully readable and retain the normal AXIS list presentation;
+- real-photo rows show the intended thumbnail without disturbing the equipment name;
+- `学习安排 / 云端与AI` visually share the native Settings columns;
+- previously verified Group Plan behavior remains intact.
 
 After that verification boundary, controlled AXIS 8.13 work may continue. Historical workout facts and current recording/media ownership remain authoritative.
