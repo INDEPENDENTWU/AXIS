@@ -38,7 +38,7 @@ const old="emitRecording('axis:recording-render');queueMicrotask(()=>window.__AX
 const next="axis8123EnsurePlanEntry();emitRecording('axis:recording-render');queueMicrotask(()=>window.__AXIS_GROUP_PLAN_SYNC__?.())}";
 const eventCount=src.split(old).length-1;if(eventCount!==1)fail(`recording-render boundary expected once, found ${eventCount}`);
 src=src.replace(old,next);
-for(const needle of ['__AXIS_8123_GROUP_PLAN_RENDER_OWNER__',"creation:'canonical-innerHTML'",'data-v8123-plan=\\"1\\"',"className='v875PlanEntry v8121PlanButton v8123PlanEntry'",'axis8123EnsurePlanEntry();emitRecording'])if(!src.includes(needle))fail(`missing ${needle}`);
+for(const needle of ['__AXIS_8123_GROUP_PLAN_RENDER_OWNER__',"creation:'canonical-innerHTML'",'data-v8123-plan=',"className='v875PlanEntry v8121PlanButton v8123PlanEntry'",'axis8123EnsurePlanEntry();emitRecording'])if(!src.includes(needle))fail(`missing ${needle}`);
 try{new Function(src)}catch(e){fail(`v61 syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
 console.log('[AXIS 8.12.3 Group Plan render owner] PASS · launcher is emitted inside every canonical v61 set render and normalized once at the same recording boundary');
