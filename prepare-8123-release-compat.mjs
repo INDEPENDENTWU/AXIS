@@ -52,4 +52,5 @@ for(const [f,a,b,label] of [
  write(f,s);
 }
 for(const f of ['scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs']){let s=read(f);s=s.replaceAll("['8.12','8.12.1','8.12.2'].includes(release)","['8.12','8.12.1','8.12.2','8.12.3'].includes(release)");write(f,s)}
+await import('./prepare-8123-current-test-contract.mjs');
 console.log('[AXIS 8.12.3 release compat] PASS · 8.12.3 public identity · inherited field/Language Studio/Runtime contracts preserved');
