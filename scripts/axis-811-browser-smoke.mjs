@@ -30,10 +30,15 @@ try{
  await page.click('#v810ConfigEntry');
  await page.waitForSelector('#v813LearningGate.open');
  assert(await page.locator('#v810ConfigPanel').isVisible(),'inline Learning settings are not visible');
- assert(await page.locator('#v811CoreLearning .v811CoreGroup').count()===3,'learning settings not converged to three core groups');
- assert(await page.locator('#v811FineTune').evaluate(el=>el.open===false),'fine-tune should be collapsed by default');
  const coreLabels=await page.locator('#v811CoreLearning .v811CoreHead span').allTextContents();
- assert(coreLabels.join('|')==='目标|强度|难度','core learning labels changed');
+ if((await page.evaluate(()=>window.__AXIS_RELEASE__))==='8.12.3'){
+  assert(coreLabels.join('|')==='目标|强度|难度|对话','8.12.3 core learning labels changed');
+  assert(await page.locator('#v811CoreLearning .v811CoreGroup').count()===4,'8.12.3 learning settings should expose four core groups');
+  assert(await page.locator('[data-v812-core="method"]').count()===0,'retired method selector returned');
+ }else{
+  assert(await page.locator('#v811CoreLearning .v811CoreGroup').count()>=3,'learning settings lost inherited core groups');
+ }
+ assert(await page.locator('#v811FineTune').evaluate(el=>el.open===false),'fine-tune should be collapsed by default');
  assert(await page.locator('.sheetWrap.show').count()===1,'Learning opened a second Settings sheet');
  await page.click('#v810ConfigEntry');
  await page.waitForFunction(()=>!document.querySelector('#v813LearningGate')?.classList.contains('open'));
@@ -59,5 +64,5 @@ try{
  assert(trend.oldVisible==='none','legacy generic trends leaked into UI');
  assert(trend.overflow<=1,'mobile horizontal overflow');
  assert(errors.length===0,'page errors: '+errors.join(' | '));
- console.log(`[AXIS 8.11 browser] PASS · ${engine} · inline Settings · user-invoked cloud/AI · six-turn multilingual diagnostics · goal-aware State Field`);
+ console.log(`[AXIS 8.11 browser] PASS · ${engine} · current inline Settings · user-invoked cloud/AI · six-turn multilingual diagnostics · goal-aware State Field`);
 }finally{await browser.close()}
