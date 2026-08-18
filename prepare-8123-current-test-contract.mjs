@@ -9,4 +9,9 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  s=once(s,"assert(coreLabels.includes('目标')&&coreLabels.includes('难度'),'inherited goal/difficulty controls missing');","assert(coreLabels.join('|')==='目标|强度|难度|对话','8.12.3 current learning labels changed');assert(await page.locator('[data-v812-core=\"method\"]').count()===0,'retired method selector returned');",'8.11 inherited current labels');
  write(f,s);
 }
-console.log('[AXIS 8.12.3 current test contract] PASS · inherited browser checks now protect the four-decision current surface');
+{
+ const f='scripts/axis-813-settings-convergence-smoke.mjs';let s=read(f);
+ s=once(s,"assert.ok(await page.locator('[data-v812-core=\"method\"]').count()>=6,'8.12 learning method controls disappeared');","assert.equal(await page.locator('[data-v812-core=\"method\"]').count(),0,'retired 8.12 method controls returned in 8.12.3');",'Settings convergence retired method contract');
+ write(f,s);
+}
+console.log('[AXIS 8.12.3 current test contract] PASS · inherited browser checks protect the four-decision surface · retired method cannot return');
