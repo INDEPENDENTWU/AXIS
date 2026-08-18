@@ -1,4 +1,4 @@
-name: AXIS 8.12.1 Hotfix Gate
+name: AXIS 8.12.x Field Hotfix Gate
 
 on:
   pull_request:
@@ -18,15 +18,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build exact AXIS 8.12.1 candidate
+      - name: Build exact AXIS 8.12.x candidate
         run: node build-release.mjs
       - name: Verify release and ownership topology
         run: |
           node - <<'NODE'
           const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
-          if(m.version!=='8.12.1'||m.baseVersion!=='8.12.1')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(!['8.12.1','8.12.2'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
-          if(!core.includes('__AXIS_8121_HOTFIX__')||!core.includes('v8121PlanButton'))throw new Error('8.12.1 hotfix marker missing');
+          if(!core.includes('__AXIS_8121_HOTFIX__')||!core.includes('v8121PlanButton'))throw new Error('8.12.1 inherited field marker missing');
           for(const gate of ['groupPlanUsesRecordingOwner','canonicalSingleRuntime','languageStudio812','liveRoute813','liveRouteReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`inherited gate missing ${gate}`);
           NODE
       - name: Prepare Chromium
@@ -39,7 +39,7 @@ jobs:
         run: |
           python3 -m http.server 4173 >/tmp/axis-8121-chromium.log 2>&1 &
           sleep 1
-      - name: AXIS 8.12.1 Settings + real record Group Plan
+      - name: Inherited Settings + real record Group Plan
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build exact AXIS 8.12.1 candidate
+      - name: Build exact AXIS 8.12.x candidate
         run: node build-release.mjs
       - name: Prepare iPhone WebKit
         run: |
@@ -68,7 +68,7 @@ jobs:
         run: |
           python3 -m http.server 4173 >/tmp/axis-8121-webkit.log 2>&1 &
           sleep 1
-      - name: iPhone touch Settings + real record Group Plan
+      - name: iPhone inherited Settings + real record Group Plan
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
