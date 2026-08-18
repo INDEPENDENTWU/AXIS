@@ -30,10 +30,10 @@ try{
  await page.click('#v810ConfigEntry');
  await page.waitForSelector('#v813LearningGate.open');
  assert(await page.locator('#v810ConfigPanel').isVisible(),'inline Learning settings are not visible');
- assert((await page.locator('#v811CoreLearning .v811CoreGroup').count())>=3,'inherited core Learning settings disappeared');
+ assert(await page.locator('#v811CoreLearning .v811CoreGroup').count()===3,'learning settings not converged to three core groups');
  assert(await page.locator('#v811FineTune').evaluate(el=>el.open===false),'fine-tune should be collapsed by default');
  const coreLabels=await page.locator('#v811CoreLearning .v811CoreHead span').allTextContents();
- assert(coreLabels.includes('目标')&&coreLabels.includes('强度')&&coreLabels.includes('难度'),'inherited core learning labels changed');
+ assert(coreLabels.join('|')==='目标|强度|难度','core learning labels changed');
  assert(await page.locator('.sheetWrap.show').count()===1,'Learning opened a second Settings sheet');
  await page.click('#v810ConfigEntry');
  await page.waitForFunction(()=>!document.querySelector('#v813LearningGate')?.classList.contains('open'));
