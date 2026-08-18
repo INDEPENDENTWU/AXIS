@@ -68,7 +68,6 @@ const STEPS=[
   'prepare-8122-settings-refine.mjs',
   'prepare-8123-learning-simplify.mjs',
   'prepare-8123-final-alignment.mjs',
-  'prepare-8123-ci-stability.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
