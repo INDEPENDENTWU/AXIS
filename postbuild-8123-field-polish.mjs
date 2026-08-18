@@ -12,6 +12,7 @@ for(const needle of [
   "library:'history+custom'",
   "photoOwner:'axis-media-store'",
   'multiSelectRemove:true',
+  'inlineManagement=true',
   '__AXIS_GROUP_PLAN_STABLE__',
   "owner:'recording-render'",
   '__AXIS_GROUP_PLAN_SYNC__?.()',
@@ -19,7 +20,7 @@ for(const needle of [
   'v8123FieldPolishStyle',
   '__AXIS_8123_SETTINGS_ALIGNMENT_FIX__',
   'padding-left:6px!important',
-  'padding-right:6px!important'
+  'padding-right:9px!important'
 ])if(!core.includes(needle))fail(`compiled contract missing ${needle}`);
 
 if(!core.includes('window.__AXIS_RECORDING__'))fail('recording owner missing');
@@ -34,6 +35,7 @@ info.gates={
   personalEquipmentVisualMemory8123:true,
   personalEquipmentSwipeRemove8123:true,
   personalEquipmentBatchRemove8123:true,
+  personalEquipmentInlineManagement8123:true,
   personalEquipmentHistoryPreserved8123:true,
   groupPlanStableLauncher8123:true,
   groupPlanRenderOwnedSync8123:true,
@@ -44,7 +46,8 @@ info.fieldPolish8123={
   equipmentPhotos:'existing canonical media references',
   removeSemantics:'remove from personal library; training history remains',
   groupPlanOwner:'recording render -> canonical set-bridge launcher -> atomic recording transaction',
-  settingsRowInsetPx:6,
+  settingsTextLocalInsetPx:6,
+  settingsChevronLocalInsetPx:9,
   settingsGateWidth:'100%',
   settingsMeasuredAtCssWidth:417
 };
