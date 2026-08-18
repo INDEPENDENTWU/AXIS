@@ -29,8 +29,13 @@ try{
 
  console.log(`[AXIS 8.12.1 ${ENGINE}] Settings typography and geometry converge to native AXIS rhythm`);
  await tap(page.locator('#settingsBtn'));await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));
- const nativeGate=page.locator('#v8711RecordGate > .settingLink > span'),learningEntry=page.locator('#v810ConfigEntry > span');
- assert.equal(await learningEntry.evaluate(el=>getComputedStyle(el).fontSize),await nativeGate.evaluate(el=>getComputedStyle(el).fontSize),'Learning row typography differs from native Settings fold');
+ const nativeGateLabel=page.locator('#v8711RecordGate > .settingLink > span'),nativeGateValue=page.locator('#v8711RecordGate > .settingLink > b');
+ const learningLabelTop=page.locator('#v810ConfigEntry > span'),learningValueTop=page.locator('#v810ConfigEntry > b'),serviceValueTop=page.locator('#v811ServiceEntry > b');
+ assert.equal(await nativeGateValue.count(),1,'native Settings value reference missing');
+ assert.equal(await learningLabelTop.evaluate(el=>getComputedStyle(el).fontSize),await nativeGateLabel.evaluate(el=>getComputedStyle(el).fontSize),'Learning row typography differs from native Settings fold');
+ const nativeValueSize=await nativeGateValue.evaluate(el=>getComputedStyle(el).fontSize);
+ assert.equal(await learningValueTop.evaluate(el=>getComputedStyle(el).fontSize),nativeValueSize,'Learning summary typography differs from native Settings value');
+ assert.equal(await serviceValueTop.evaluate(el=>getComputedStyle(el).fontSize),nativeValueSize,'Cloud/AI summary typography differs from native Settings value');
  assert.equal(await page.locator('#v813LearningGate').evaluate(el=>getComputedStyle(el).borderTopWidth),'0px','Learning gate has an extra outer divider');
  assert.equal(await page.locator('#v813ServiceGate').evaluate(el=>getComputedStyle(el).borderTopWidth),'0px','Cloud/AI gate has an extra outer divider');
  await tap(page.locator('#v810ConfigEntry'));await page.waitForFunction(()=>document.querySelector('#v813LearningGate')?.classList.contains('open'));
@@ -43,6 +48,7 @@ try{
  const serviceButton=await page.locator('[data-v811-cloud="off"]').evaluate(el=>{const r=el.getBoundingClientRect(),c=getComputedStyle(el);return{h:r.height,font:c.fontSize}});
  assert.ok(serviceButton.h>=40,`Cloud option touch target too small: ${serviceButton.h}`);assert.ok(px(serviceButton.font)>=12.5,`Cloud option text too small: ${serviceButton.font}`);
  const serviceLabel=await page.locator('#v811ServicePanel .v813ServiceHead span').first().evaluate(el=>getComputedStyle(el).fontSize);assert.equal(serviceLabel,nativeLabel,'Cloud/AI label typography differs from native Settings');
+ const serviceFact=await page.locator('#v811ServicePanel .v811ServiceFact').first().evaluate(el=>{const r=el.getBoundingClientRect(),c=getComputedStyle(el);return{h:r.height,font:c.fontSize}});assert.ok(serviceFact.h>=44,`Cloud/AI fact row too small: ${serviceFact.h}`);assert.ok(px(serviceFact.font)>=12.5,`Cloud/AI fact text too small: ${serviceFact.font}`);
  assert.equal(await page.locator('.sheetWrap.show').count(),1,'inline Settings created nested sheet');
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);assert.ok(overflow<=1,`Settings horizontal overflow ${overflow}`);
  await tap(page.locator('#settingsSheet [data-close="settingsSheet"]'));
