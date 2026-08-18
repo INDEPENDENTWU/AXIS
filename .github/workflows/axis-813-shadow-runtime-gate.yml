@@ -43,6 +43,8 @@ jobs:
           node-version-file: .nvmrc
       - name: Build exact 8.12 product
         run: node build-release.mjs
+      - name: Apply current Shadow browser contract
+        run: node prepare-8123-ci-stability.mjs
       - name: Prepare Chromium
         run: |
           npm install --no-save playwright-core@1.55.0
@@ -72,6 +74,8 @@ jobs:
           node-version-file: .nvmrc
       - name: Build exact 8.12 product
         run: node build-release.mjs
+      - name: Apply current Shadow browser contract
+        run: node prepare-8123-ci-stability.mjs
       - name: Prepare WebKit
         run: |
           npm install --no-save playwright@1.55.0
