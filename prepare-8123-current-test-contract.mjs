@@ -12,6 +12,8 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
 {
  const f='scripts/axis-813-settings-convergence-smoke.mjs';let s=read(f);
  s=once(s,"assert.ok(await page.locator('[data-v812-core=\"method\"]').count()>=6,'8.12 learning method controls disappeared');","assert.equal(await page.locator('[data-v812-core=\"method\"]').count(),0,'retired 8.12 method controls returned in 8.12.3');",'Settings convergence retired method contract');
+ s=once(s,"assert.ok(learningRowHeight>=58&&learningRowHeight<=62,`learning row lost native Settings rhythm: ${learningRowHeight}`);","assert.equal(learningRowHeight,64,`learning row lost current native Settings rhythm: ${learningRowHeight}`);",'Settings Learning row current geometry');
+ s=once(s,"assert.ok(serviceRowHeight>=58&&serviceRowHeight<=62,`service row lost native Settings rhythm: ${serviceRowHeight}`);","assert.equal(serviceRowHeight,64,`service row lost current native Settings rhythm: ${serviceRowHeight}`);",'Settings Cloud/AI row current geometry');
  write(f,s);
 }
-console.log('[AXIS 8.12.3 current test contract] PASS · inherited browser checks protect the four-decision surface · retired method cannot return');
+console.log('[AXIS 8.12.3 current test contract] PASS · inherited browser checks protect the four-decision surface · retired method cannot return · current 64px Settings rhythm sealed');
