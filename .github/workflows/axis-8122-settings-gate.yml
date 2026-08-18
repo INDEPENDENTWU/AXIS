@@ -18,15 +18,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build exact AXIS 8.12.2 candidate
+      - name: Build AXIS 8.12.x Settings candidate
         run: node build-release.mjs
       - name: Verify release topology
         run: |
           node - <<'NODE'
           const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
-          if(m.version!=='8.12.2'||m.baseVersion!=='8.12.2')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(!['8.12.2','8.12.3'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
-          if(!core.includes('__AXIS_8122_SETTINGS__')||!core.includes('__AXIS_8121_HOTFIX__'))throw new Error('8.12.2/8.12.1 marker missing');
+          if(!core.includes('__AXIS_8122_SETTINGS__')||!core.includes('__AXIS_8121_HOTFIX__'))throw new Error('inherited Settings/field marker missing');
           for(const gate of ['groupPlanUsesRecordingOwner','languageStudio812','liveRouteReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`inherited gate missing ${gate}`);
           NODE
       - name: Prepare Chromium
@@ -39,7 +39,7 @@ jobs:
         run: |
           python3 -m http.server 4173 >/tmp/axis-8122-chromium.log 2>&1 &
           sleep 1
-      - name: AXIS 8.12.2 Settings redesign
+      - name: Inherited Settings redesign
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
@@ -63,7 +63,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build exact AXIS 8.12.2 candidate
+      - name: Build AXIS 8.12.x Settings candidate
         run: node build-release.mjs
       - name: Prepare iPhone WebKit
         run: |
@@ -73,7 +73,7 @@ jobs:
         run: |
           python3 -m http.server 4173 >/tmp/axis-8122-webkit.log 2>&1 &
           sleep 1
-      - name: iPhone Settings redesign
+      - name: iPhone inherited Settings redesign
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
