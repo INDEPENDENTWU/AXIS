@@ -69,25 +69,25 @@ try{
   assert.equal(await planEntry.count(),1,'stable Group Plan entry must be singular');
   for(let i=0;i<2;i++)await tap(page.locator('#v8Sets [data-cnt="1"]'));
   await page.waitForTimeout(80);assert.equal(await planEntry.count(),1,'count repaint duplicated/lost Group Plan entry');
-  const weightPlus=page.locator('#v8Sets [data-v875-step="weight"][data-dir="1"]');if(await weightPlus.count())await tap(weightPlus.first());
-  const repsPlus=page.locator('#v8Sets [data-v875-step="reps"][data-dir="1"]');if(await repsPlus.count())await tap(repsPlus.first());
+  const weightPlus=page.locator('#axisSetControls [data-axis-step="weight"][data-dir="1"]');if(await weightPlus.count())await tap(weightPlus.first());
+  const repsPlus=page.locator('#axisSetControls [data-axis-step="reps"][data-dir="1"]');if(await repsPlus.count())await tap(repsPlus.first());
   await page.waitForTimeout(80);assert.equal(await planEntry.count(),1,'adjust repaint duplicated/lost Group Plan entry');
 
   for(let i=0;i<3;i++){
-    await tap(planEntry);await page.waitForFunction(()=>document.querySelector('#v874PlanSheet')?.classList.contains('show')&&!!document.querySelector('#v8712PlanBody'),undefined,{timeout:3000});
-    assert.equal(await page.locator('#v874PlanSheet #v8712PlanBody').count(),1,`planner body missing on open ${i+1}`);
-    await tap(page.locator('#v874PlanSheet .closeBtn'));await page.waitForFunction(()=>!document.querySelector('#v874PlanSheet')?.classList.contains('show'));
+    await tap(planEntry);await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show')&&!!document.querySelector('#v8712PlanBody'),undefined,{timeout:3000});
+    assert.equal(await page.locator('#v875PlanSheet #v8712PlanBody').count(),1,`planner body missing on open ${i+1}`);
+    await tap(page.locator('#v875PlanSheet .closeBtn'));await page.waitForFunction(()=>!document.querySelector('#v875PlanSheet')?.classList.contains('show'));
     if(i===0){await tap(page.locator('#v8Sets [data-cnt="1"]'));await page.waitForTimeout(60)}
     if(i===1&&await weightPlus.count()){await tap(weightPlus.first());await page.waitForTimeout(60)}
     assert.equal(await planEntry.count(),1,`planner entry lost after close/repaint ${i+1}`);
   }
 
-  await tap(planEntry);await page.waitForFunction(()=>document.querySelector('#v874PlanSheet')?.classList.contains('show'));
-  await tap(page.locator('#v874PlanSheet [data-v8712-mode="up"]'));await tap(page.locator('#v8712Apply'));
-  await page.waitForFunction(()=>!document.querySelector('#v874PlanSheet')?.classList.contains('show'),undefined,{timeout:3000});
+  await tap(planEntry);await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show'));
+  await tap(page.locator('#v875PlanSheet [data-v8712-mode="up"]'));await tap(page.locator('#v8712Apply'));
+  await page.waitForFunction(()=>!document.querySelector('#v875PlanSheet')?.classList.contains('show'),undefined,{timeout:3000});
   await page.waitForTimeout(100);assert.equal(await planEntry.count(),1,'planner entry lost after atomic apply');
-  await tap(planEntry);await page.waitForFunction(()=>document.querySelector('#v874PlanSheet')?.classList.contains('show')&&!!document.querySelector('#v8712PlanBody'));
-  await tap(page.locator('#v874PlanSheet .closeBtn'));
+  await tap(planEntry);await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show')&&!!document.querySelector('#v8712PlanBody'));
+  await tap(page.locator('#v875PlanSheet .closeBtn'));
 
   assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
   console.log(`[AXIS 8.12.3 field ${ENGINE}] PASS · personal equipment memory · singular repaint-safe Group Plan · Settings row geometry aligned`);
