@@ -20,6 +20,25 @@ const convergeRange=(src,start,end,to,sentinel,label)=>{
  const f='scripts/axis-813-shadow-browser.mjs';let s=read(f);
  s=converge(s,"assert.ok(['8.12','8.12.1','8.12.2'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);","assert.ok(['8.12','8.12.1','8.12.2','8.12.3'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);",'Shadow public patch family');
  s=converge(s,"assert.equal(activeFact(setComplete.observation, 'SHADOW_STRENGTH')?.setStates.filter((state) => state === 'assumed').length, 2);","assert.equal(activeFact(setComplete.observation, 'SHADOW_STRENGTH')?.setStates.filter((state) => state === 'done').length, 1, 'set completion fact count drifted');",'Shadow current set-state authority');
+ s=converge(s,"assert.equal(activeFact(paused.observation, 'SHADOW_STRENGTH')?.activityStatus, 'paused');","assert.equal(activeFact(paused.observation, 'SHADOW_STRENGTH')?.status, 'paused');",'Shadow paused fact field');
+ s=converge(s,"assert.equal(activeFact(resumed.observation, 'SHADOW_STRENGTH')?.activityStatus, 'active');","assert.equal(activeFact(resumed.observation, 'SHADOW_STRENGTH')?.status, 'active');",'Shadow resumed fact field');
+ s=converge(s,`for (const [before, after, label] of [[boot, setComplete, 'set'], [setComplete, paused, 'pause'], [paused, resumed, 'resume']]) {
+  const comparison = compareShadowObservations(before.observation, after.observation);
+  assert.equal(comparison.diagnostics.toState, 'ok', \`${label}: Shadow comparison failed\`);
+}`,`for (const [before, after, label] of [[boot, setComplete, 'set'], [setComplete, paused, 'pause'], [paused, resumed, 'resume']]) {
+  const comparison = compareShadowObservations(before.observation, after.observation);
+  assert.equal(comparison.schema, 1, \`${label}: Shadow comparison schema drifted\`);
+  assert.notEqual(comparison.alignment, 'not-comparable', \`${label}: Shadow comparison became non-comparable\`);
+  assert.ok(Array.isArray(comparison.reasonCodes), \`${label}: Shadow comparison reason codes missing\`);
+}`,'Shadow comparison result schema');
+ s=converge(s,`const cardioFact = activeFact(cardio.observation, 'SHADOW_CARDIO');
+assert.equal(cardioFact?.plannedDurationMinutes, 20);
+assert.equal(cardioFact?.performedDurationMinutes, null, 'active cardio plan became performed duration');`,`const cardioFact = activeFact(cardio.observation, 'SHADOW_CARDIO');
+const cardioInput = cardio.observation.input.session?.events?.find((event) => event.eventId === 'SHADOW_CARDIO');
+assert.equal(cardioFact?.status, 'active');
+assert.equal(cardioFact?.completed, false, 'active cardio plan became completed performance');
+assert.equal(cardioInput?.duration, 20);
+assert.equal(cardioInput?.estimatedMinutes, 20);`,'Shadow active cardio fact schema');
  write(f,s);
 }
 {
