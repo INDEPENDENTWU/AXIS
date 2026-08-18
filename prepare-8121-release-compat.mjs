@@ -48,6 +48,15 @@ for(const f of ['scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-f
  let s=read(f);s=s.replaceAll("release==='8.12'","['8.12','8.12.1'].includes(release)");write(f,s);
 }
 {
+ const f='scripts/axis-813-settings-convergence-smoke.mjs';let s=read(f);
+ s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),EXPECTED);assert.equal(EXPECTED,'8.12.1');",'settings release identity');
+ s=once(s,"assert.ok(learningRowHeight<=56,`learning row is not converged: ${learningRowHeight}`);","assert.ok(learningRowHeight>=58&&learningRowHeight<=62,`learning row lost native Settings rhythm: ${learningRowHeight}`);",'learning row geometry');
+ s=once(s,"assert.ok(coreButtonHeight<=34,`learning options remain oversized: ${coreButtonHeight}`);","assert.ok(coreButtonHeight>=40&&coreButtonHeight<=44,`learning options lost touch geometry: ${coreButtonHeight}`);",'learning option geometry');
+ s=once(s,"assert.ok(serviceRowHeight<=56,`service row is not converged: ${serviceRowHeight}`);","assert.ok(serviceRowHeight>=58&&serviceRowHeight<=62,`service row lost native Settings rhythm: ${serviceRowHeight}`);",'service row geometry');
+ s=once(s,"assert.ok(serviceButtonHeight<=34,`service options remain oversized: ${serviceButtonHeight}`);","assert.ok(serviceButtonHeight>=40&&serviceButtonHeight<=44,`service options lost touch geometry: ${serviceButtonHeight}`);",'service option geometry');
+ write(f,s);
+}
+{
  const f='.github/workflows/axis-production-deployment-gate.yml';let s=read(f);
  s=s.replaceAll("process.env.AXIS_EXPECTED_VERSION==='8.12'","['8.12','8.12.1'].includes(process.env.AXIS_EXPECTED_VERSION)");
  s=s.replaceAll("['8.11','8.12'].includes(process.env.AXIS_EXPECTED_VERSION)","['8.11','8.12','8.12.1'].includes(process.env.AXIS_EXPECTED_VERSION)");
