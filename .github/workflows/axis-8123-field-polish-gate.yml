@@ -38,6 +38,11 @@ jobs:
         run: |
           python3 -m http.server 4173 >/tmp/axis-8123-field-chromium.log 2>&1 &
           sleep 1
+      - name: Catalog mount diagnostic
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8123-catalog-mount-diag.mjs
       - name: Field polish regression
         env:
           AXIS_URL: http://127.0.0.1:4173
