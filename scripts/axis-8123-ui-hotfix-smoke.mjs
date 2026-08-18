@@ -27,6 +27,7 @@ try{
 
   await tap(page.locator('#settingsBtn'));
   await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));
+  await page.waitForTimeout(240);
 
   const geom=async row=>page.locator(row).evaluate(el=>{const q=s=>el.querySelector(s)?.getBoundingClientRect(),r=el.getBoundingClientRect();return{row:{left:r.left,right:r.right,height:r.height},label:q(':scope>span'),value:q(':scope>b'),arrow:q(':scope>i')}});
   const native=await geom('#profileBtn');
@@ -34,14 +35,14 @@ try{
     const g=await geom(row);
     assert.ok(near(g.row.left,native.row.left)&&near(g.row.right,native.row.right),`${label} row width/edge drift`);
     assert.ok(near(g.label.left,native.label.left),`${label} label is not on native vertical column: ${g.label.left} vs ${native.label.left}`);
-    assert.ok(near(g.arrow.left,native.arrow.left)&&near(g.arrow.right,native.arrow.right),`${label} chevron is not on native vertical column`);
-    assert.ok(near(g.row.height,native.row.height),`${label} row height differs from native Settings row`);
+    assert.ok(near(g.arrow.left,native.arrow.left)&&near(g.arrow.right,native.arrow.right),`${label} chevron is not on native vertical column: ${g.arrow.left}/${g.arrow.right} vs ${native.arrow.left}/${native.arrow.right}`);
+    assert.ok(near(g.row.height,native.row.height),`${label} row height differs from native Settings row: ${g.row.height} vs ${native.row.height}`);
   }
 
   await tap(page.locator('#myEqBtn'));
   await page.waitForFunction(()=>document.querySelector('#axisConfigGate-equipment')?.classList.contains('open'));
   await page.waitForFunction(()=>document.querySelectorAll('#manageEqList [data-my-eq-id]').length===2);
-  await page.waitForTimeout(120);
+  await page.waitForTimeout(180);
 
   const custom=page.locator('#manageEqList [data-my-eq-id="custom-blue"]');
   assert.equal(await custom.count(),1,'custom equipment row missing');
@@ -53,8 +54,10 @@ try{
   assert.ok(cg.name.width>80&&cg.style.visibility!=='hidden'&&cg.style.display!=='none','equipment name is clipped/hidden');
 
   const nativeRow=page.locator('#manageEqList [data-my-eq-id="lat-pulldown"]');
-  await page.waitForFunction(()=>!document.querySelector('#manageEqList [data-my-eq-id="lat-pulldown"] .v8123EqThumb'),undefined,{timeout:2500});
+  await page.waitForFunction(()=>{const t=document.querySelector('#manageEqList [data-my-eq-id="lat-pulldown"] .v8123EqThumb');return !!t&&t.dataset.photoMissing==='1'&&getComputedStyle(t).display==='none'},undefined,{timeout:2500});
   assert.equal((await nativeRow.locator('.v8123EqText>b').innerText()).trim(),'高位下拉','native equipment name changed');
+  const ng=await nativeRow.evaluate(el=>{const r=el.getBoundingClientRect(),t=el.querySelector('.v8123EqText').getBoundingClientRect();return{row:r,text:t}});
+  assert.ok(ng.text.left<=ng.row.left+1.5&&ng.text.width>250,'missing-media row did not degrade to text-first geometry');
 
   assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
   console.log(`[AXIS 8.12.3 UI hotfix ${ENGINE}] PASS · native Settings columns · text-first equipment rows · no synthetic avatar`);
