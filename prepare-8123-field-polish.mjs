@@ -93,45 +93,31 @@ function axis8123InstallFieldPolish(){
   '@media(max-width:380px){#settingsSheet #v813LearningGate>.settingLink,#settingsSheet #v813ServiceGate>.settingLink{padding-left:28px!important;padding-right:28px!important}}';D.head.appendChild(s)
 }
 
-/*
- * 8.12.3 maintenance scope:
- * - existing visual memory + history become one personal equipment / movement library
- * - photo-backed rows, swipe remove and explicit multi-select removal preserve history
- * - one recording-render-owned Group Plan launcher survives every set editor repaint
- * - final Settings label and chevron geometry matches native rows
- */
-
 {
  const FILE='app.js';let src=read(FILE);
  src=once(src,"setText('#customCount',(state.profile.customEq||[]).length);","setText('#customCount',personalEqCount());",'personal equipment Settings count');
  const manageRe=/function renderManageEq\(\)\{[\s\S]*?\}\nfunction overlayLines/;
- const block=[
-  'let manageEqSelectMode=false,manageEqSelected=new Set(),manageEqGesture=new WeakMap();',
-  personalEqArchive.toString(),personalEqLibrary.toString(),personalEqCount.toString(),personalEqDate.toString(),ensureManageEqStyle.toString(),ensureManageEqChrome.toString(),closeManageEqSwipes.toString(),removePersonalEq.toString(),hydrateManageEqPhotos.toString(),renderManageEq.toString(),
-  "try{window.__AXIS_8123_EQUIPMENT_MEMORY__={version:'8.12.3',library:'history+custom',visualMemory:'profile.memories',photoOwner:'axis-media-store',historyDeletion:false,swipeRemove:true,multiSelectRemove:true}}catch{}",
-  'function overlayLines'
- ].join('\n');
- src=onceRe(src,manageRe,block,'personal equipment library owner');
- try{new Function(src)}catch(e){fail(`app.js syntax ${e.message}`)};write(FILE,src)
+ const block=['let manageEqSelectMode=false,manageEqSelected=new Set(),manageEqGesture=new WeakMap();',personalEqArchive.toString(),personalEqLibrary.toString(),personalEqCount.toString(),personalEqDate.toString(),ensureManageEqStyle.toString(),ensureManageEqChrome.toString(),closeManageEqSwipes.toString(),removePersonalEq.toString(),hydrateManageEqPhotos.toString(),renderManageEq.toString(),"try{window.__AXIS_8123_EQUIPMENT_MEMORY__={version:'8.12.3',library:'history+custom',visualMemory:'profile.memories',photoOwner:'axis-media-store',historyDeletion:false,swipeRemove:true,multiSelectRemove:true}}catch{}",'function overlayLines'].join('\n');
+ src=onceRe(src,manageRe,block,'personal equipment library owner');try{new Function(src)}catch(e){fail(`app.js syntax ${e.message}`)};write(FILE,src)
 }
 
 {
  const FILE='v61.js';let src=read(FILE);
- src=once(src,"syncHidden(draft)}\nfunction hideSets(){","syncHidden(draft);queueMicrotask(()=>window.__AXIS_GROUP_PLAN_SYNC__?.())}\nfunction hideSets(){window.__AXIS_GROUP_PLAN_SYNC__?.({hidden:true});",'recording render -> Group Plan sync bridge');
+ const re=/(function renderSets\(\)\{[\s\S]*?)(\}\nfunction hideSets\(\)\{)/g,matches=[...src.matchAll(re)];if(matches.length!==1)fail(`recording render boundary expected once, found ${matches.length}`);
+ src=src.replace(re,(all,body,tail)=>body+";queueMicrotask(()=>window.__AXIS_GROUP_PLAN_SYNC__?.())"+tail);
+ src=once(src,'function hideSets(){','function hideSets(){window.__AXIS_GROUP_PLAN_SYNC__?.({hidden:true});','recording hide -> Group Plan sync bridge');
  try{new Function(src)}catch(e){fail(`v61.js syntax ${e.message}`)};write(FILE,src)
 }
 
 {
  const FILE='v874-professional.js';let src=read(FILE);
  const re=/b\.setAttribute\('data-v874-plan','1'\);const html=`\$\{n\}组<small>规划<\/small>`;if\(b\.innerHTML!==html\)b\.innerHTML=html/;
- src=onceRe(src,re,"b.removeAttribute('data-v874-plan');const html=String(n)+'组';if(b.textContent!==html)b.textContent=html",'retire legacy count-label planner owner');
- try{new Function(src)}catch(e){fail(`v874-professional.js syntax ${e.message}`)};write(FILE,src)
+ src=onceRe(src,re,"b.removeAttribute('data-v874-plan');const html=String(n)+'组';if(b.textContent!==html)b.textContent=html",'retire legacy count-label planner owner');try{new Function(src)}catch(e){fail(`v874-professional.js syntax ${e.message}`)};write(FILE,src)
 }
 
 {
  const FILE='v874-set-bridge.js';let src=read(FILE);
- src=onceRe(src,/function ensurePlanEntry\(\)\{[\s\S]*?\}\nfunction patchHeader/,"function ensurePlanEntry(){}\nfunction patchHeader",'retire legacy detached planner entry owner');
- try{new Function(src)}catch(e){fail(`v874-set-bridge.js syntax ${e.message}`)};write(FILE,src)
+ src=onceRe(src,/function ensurePlanEntry\(\)\{[\s\S]*?\}\nfunction patchHeader/,"function ensurePlanEntry(){}\nfunction patchHeader",'retire legacy detached planner entry owner');try{new Function(src)}catch(e){fail(`v874-set-bridge.js syntax ${e.message}`)};write(FILE,src)
 }
 
 {
