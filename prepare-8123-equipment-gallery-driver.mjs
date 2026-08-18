@@ -27,6 +27,10 @@ try{
   importError=e;
   console.error('[AXIS 8.12.3 equipment gallery driver] transformed app syntax diagnostic follows');
   spawnSync(process.execPath,['--check',APP],{stdio:'inherit'});
+  try{
+    const v61=fs.readFileSync('v61.js','utf8');
+    for(const token of ["$('#v8Other').onclick","$('#v8New').onclick","function chooseQuick(id)"]){const i=v61.indexOf(token);if(i>=0){const a=Math.max(0,v61.lastIndexOf('\n',i)+1),b=v61.indexOf('\n',i);console.error('[AXIS 8.12.3 equipment gallery driver] v61 signature:',v61.slice(a,b<0?v61.length:b))}}
+  }catch{}
 }finally{
   fs.writeFileSync(PREP,prepOriginal);
   let out=fs.readFileSync(APP,'utf8');
