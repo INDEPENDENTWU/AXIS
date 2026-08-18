@@ -60,8 +60,9 @@ try{
  const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAQAAABFaP0WAAAADElEQVR42mP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC','base64');
  await page.locator('#photoInput').setInputFiles({name:'axis-test.png',mimeType:'image/png',buffer:png});
  await page.waitForFunction(()=>!document.querySelector('#reviewStage')?.classList.contains('hidden'),undefined,{timeout:3500});
- await tap(page.locator('#equipmentRow'));await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#eqList [data-eq="chest"]'));
- await tap(page.locator('#eqList [data-eq="chest"]'));await page.waitForFunction(()=>!document.querySelector('#strengthFields')?.classList.contains('hidden')&&document.querySelector('.v8121PlanButton'),undefined,{timeout:3500});
+ await tap(page.locator('#equipmentRow'));await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:2000});
+ const chestChoice=page.locator('#eqList .eqItem').filter({hasText:'胸推'}).first();assert.equal(await chestChoice.count(),1,'visible chest-press equipment choice missing');
+ await tap(chestChoice);await page.waitForFunction(()=>!document.querySelector('#strengthFields')?.classList.contains('hidden')&&document.querySelector('.v8121PlanButton'),undefined,{timeout:3500});
  const planTarget=await page.locator('.v8121PlanButton').evaluate(el=>{const r=el.getBoundingClientRect(),c=getComputedStyle(el);return{tag:el.tagName,type:el.getAttribute('type'),h:r.height,w:r.width,pointer:c.pointerEvents,touch:c.touchAction,count:document.querySelectorAll('.v8121PlanButton').length}});
  assert.deepEqual({tag:planTarget.tag,type:planTarget.type,count:planTarget.count},{tag:'BUTTON',type:'button',count:1});assert.ok(planTarget.h>=44,`Group Plan touch height ${planTarget.h}`);assert.ok(planTarget.w>=70,`Group Plan touch width ${planTarget.w}`);assert.notEqual(planTarget.pointer,'none');
  await tap(page.locator('.v8121PlanButton'));await page.waitForFunction(()=>document.querySelector('#v875PlanSheet')?.classList.contains('show')&&document.querySelector('#v8712Apply'),undefined,{timeout:2500});
