@@ -4,11 +4,28 @@
 
 8.12.3 is the current release candidate.
 
-It is a narrowly scoped learning-interaction refinement over AXIS 8.12.2. Training recording, scan/review, Group Plan ownership and commit behavior, LocalStorage/IndexedDB training state, camera/media, watermark, AXIS 8.12 Language Studio content, State Field, Cloud/AI storage ownership, and AXIS 8.13 Stage 3 read-only Live Route remain inherited and unchanged.
+The sealed learning-interaction refinement over AXIS 8.12.2 remains intact. The current maintenance boundary adds a local-first personal equipment / movement photo gallery, fixes repeated equipment-picker return behavior in photo recording and Quick Record, and refines the requested Settings separators / Training Report entry. Group Plan ownership and commit behavior, workout history semantics, camera/watermark recording behavior, AXIS 8.12 Language Studio content, State Field, Cloud/AI storage ownership, and AXIS 8.13 Stage 3 read-only Live Route remain inherited and unchanged.
 
-The release removes user-facing learning-mode complexity that no longer serves the product: `学法`, `跟读`, `影子`, shadow auto-record, and A/B comparison are retired from the current product surface. Learning practice becomes one consistent local-first interaction: listen to the original, record yourself, and replay your recording.
+The learning release removes user-facing learning-mode complexity that no longer serves the product: `学法`, `跟读`, `影子`, shadow auto-record, and A/B comparison are retired from the current product surface. Learning practice remains one consistent local-first interaction: listen to the original, record yourself, and replay your recording.
 
 This file is the handoff entry point for future product and engineering work. Do not reconstruct current behavior by reading version-like source filenames in numerical order.
+
+## Current 8.12.3 maintenance boundary
+
+The personal equipment layer is additive and must not become a second catalog or media owner:
+
+- native equipment / movement IDs and custom definition IDs remain authoritative;
+- workout events keep their existing `equipmentId` and training `frameRefs` relationships;
+- dedicated user-added equipment photos are stored as blobs in the existing `axis_v42_media` / `media` IndexedDB owner;
+- `profile.equipmentPhotos` stores only small photo references, timestamps, source metadata and visual fingerprints;
+- explicitly confirmed equipment photos also feed the existing `profile.memories` visual-recognition path;
+- a dedicated equipment photo is preferred as the personal-library cover; an existing historical training photo is fallback only; no photo means the original text-first row;
+- deleting a dedicated equipment photo deletes that dedicated media ref and its confirmed visual-memory entry only; it never deletes a historical training frame;
+- personal-library removal preserves workout history.
+
+Equipment selection now has one explicit return context. Photo recording and Quick Record must use the same canonical picker route so first selection, picker back/reopen, a new recording re-entry, and Quick Record → `其他器械 / 运动` → expanded catalog all return to the correct recording editor instead of falling through to Home.
+
+The current Settings maintenance removes the requested bottom separators from `学习安排`, `云端与AI`, `提醒与声音`, and `训练报告`. `训练报告` remains the same report action / report generator, but its Settings entry is presented as one compact, distinct whole-row control.
 
 ## Production topology
 
@@ -33,11 +50,11 @@ The final artifact must report:
 - inherited AXIS 8.12.1 native Safari Group Plan activation intact;
 - inherited AXIS 8.12.2 inline Settings ownership intact;
 - inherited AXIS 8.13 Stage 3 Live Route present and read-only;
-- no new training/storage/media/timer/network owner.
+- no second training or media database owner.
 
 ### Settings contract
 
-`学习安排` and `云端与AI` remain inside the single canonical Settings sheet and must use the same native row alignment, text baseline, summary alignment, chevron placement and touch geometry as neighboring Settings rows.
+`学习安排` and `云端与AI` remain inside the single canonical Settings sheet and must use the same native row alignment, text baseline, summary alignment, chevron placement and touch geometry as neighboring Settings rows. Their requested bottom separators are absent in the current maintenance surface.
 
 Learning exposes four primary decisions only:
 
@@ -69,10 +86,12 @@ Historical 8.10.x source and manifest inheritance may record that those releases
 | Base workout state | `app.js` / `axis_v60_state` |
 | Strength draft and set-level recording | `v61.js` + `axis_v8_meta` |
 | Group Plan commit | `window.__AXIS_RECORDING__` / `v61.js` |
+| Personal equipment photo refs | `profile.equipmentPhotos`; references only, no blobs |
+| Personal visual recognition | existing `profile.memories`, including confirmed equipment-photo fingerprints |
 | Learning state | `axis_v89_speak` |
 | Learning temporary microphone/audio | page-memory practice layer; no upload/persistence owner |
 | Cloud/AI preferences | `axis_v811_services`; local-first, explicit status network |
-| Local media | existing IndexedDB media owner; unchanged by learning practice |
+| Local media | existing `axis_v42_media` IndexedDB / `media` store; training and dedicated equipment photos share the same owner |
 | AXIS 8.13 Stage 3 | read-only Continue + Live Route presentation |
 
 A future change that transfers an owner must retire the previous writer in the same change.
@@ -96,12 +115,15 @@ The historical seven-stage teaching metadata remains content compatibility data.
 - Existing LocalStorage and IndexedDB history remains readable.
 - Training and Language Studio remain independent ownership domains.
 - Real scan/review recording and Group Plan interaction remain release-blocking in Chromium and iPhone-like WebKit.
-- Settings or learning practice may not mutate `axis_v60_state` or `axis_v8_meta`.
+- Repeated equipment selection must remain in the recording flow rather than fall through to Home.
+- Quick Record `其他器械 / 运动` must return to the Quick editor after canonical or expanded-catalog selection.
+- Dedicated equipment photos may not create a second media store or mutate/delete historical training frames.
+- Settings or learning practice may not mutate training ownership outside their intended user actions.
 - Learning listening/recording is always explicit user action; no autoplay and no audio upload.
 
 ## Release verification
 
-A release candidate is incomplete until the same source candidate passes the dedicated Chromium + iPhone-like WebKit 8.12.3 gate and inherited product gates. The dedicated gate verifies native Settings alignment, retired helper copy/method UI, simple listen-record-replay behavior, local-only microphone ownership and training-store non-interference.
+A release candidate is incomplete until the same source candidate passes the dedicated Chromium + iPhone-like WebKit 8.12.3 gate and inherited product gates. In addition to the inherited Learning, Settings and Group Plan checks, the maintenance gate must exercise repeated photo-record picker back/re-entry, repeated Quick Record `其他器械 / 运动` selection, multi-photo local persistence, confirmed visual-memory refs, cover reorder, dedicated-photo deletion, requested divider removal, and Training Report click-through.
 
 Production correctness is separate from deployment completion. The fixed public deployment must serve the intended merged source SHA, canonical manifest and immutable assets, with clean Production runtime errors before 8.12.3 is considered sealed.
 
@@ -118,6 +140,6 @@ These are migration targets, not reasons for a rewrite.
 
 ## Next release direction
 
-After 8.12.3 is Production-sealed, controlled AXIS 8.13 work may continue from the already shipped Stage 3 boundary. Stage 4 Reality Actions must not transfer factual recording ownership.
+After this 8.12.3 maintenance boundary is Production-verified, controlled AXIS 8.13 work may continue from the already shipped Stage 3 boundary. Stage 4 Reality Actions must not transfer factual recording ownership.
 
 See [PRODUCT.md](PRODUCT.md), [ARCHITECTURE.md](ARCHITECTURE.md) and [ROADMAP.md](ROADMAP.md).
