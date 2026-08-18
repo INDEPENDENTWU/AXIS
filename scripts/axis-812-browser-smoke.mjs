@@ -14,7 +14,8 @@ try{
  assert(d.l.teachingLoop.join('|')==='meaning|noticing|retrieval|response|shadow|transform|review','teaching loop diagnostics');
  assert(d.l.networkRequired===false&&d.l.trainingOwner===false&&d.l.autoplay===false,'learning ownership');
  assert(d.legacy?.atlasEnglish===5280&&d.legacy?.totalEnglish===5736,'8.11 diagnostics changed');
- await page.click('#settingsBtn');await page.waitForSelector('#settingsSheet.show');await page.click('#v810ConfigEntry');await page.waitForSelector('#v810ConfigPanel.show');
+ await page.click('#settingsBtn');await page.waitForSelector('#settingsSheet.show');assert(await page.locator('.sheetWrap.show').count()===1,'Settings opened an unexpected nested sheet');await page.click('#v810ConfigEntry');await page.waitForSelector('#v813LearningGate.open');
+ assert(await page.locator('#v810ConfigPanel').isVisible(),'inline Learning settings are not visible');assert(await page.locator('.sheetWrap.show').count()===1,'Learning Schedule opened a second sheet');
  const groups=await page.locator('#v811CoreLearning .v811CoreGroup').count(),labels=await page.locator('#v811CoreLearning .v811CoreHead span').allTextContents();
  assert(groups===5,'expected five core learning groups, got '+groups);assert(labels.join('|')==='目标|学法|强度|难度|对话','core labels '+labels.join('|'));
  assert(await page.locator('[data-v812-core="purpose"]').count()===6,'purpose options');assert(await page.locator('[data-v812-core="method"]').count()===6,'method options');assert(await page.locator('[data-v812-core="dialogueDepth"]').count()===3,'dialogue options');
@@ -24,5 +25,5 @@ try{
  assert(await page.locator('#v812Novelty [data-v812-novelty]').count()===3,'novelty controls missing');await page.click('[data-v812-novelty="new"]');await page.waitForTimeout(80);assert(await page.locator('[data-v812-novelty="new"]').evaluate(el=>el.classList.contains('active')),'new-content ratio did not persist');
  const summary=await page.locator('#v810ConfigSummary').textContent();assert(/智能|母语口语|旅行生活|工作社交|健身|IELTS/.test(summary||''),'settings summary missing purpose');
  const state=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth-window.innerWidth,errors:window.__AXIS_ENHANCE_DIAG__?.errors||[]}));assert(state.overflow<=1,'mobile overflow '+state.overflow);assert(errors.length===0,'page errors '+errors.join(' | '));
- console.log(`[AXIS 8.12 browser] PASS · ${engine} · five-decision settings · 25,716-unit diagnostics · 4/8/12 dialogue · no page errors`);
+ console.log(`[AXIS 8.12 browser] PASS · ${engine} · inline five-decision settings · 25,716-unit diagnostics · 4/8/12 dialogue · no page errors`);
 }finally{await browser.close()}

@@ -26,21 +26,26 @@ try{
  await page.waitForSelector('#settingsSheet.show');
  assert(await page.locator('#v810ConfigEntry').count()===1,'learning schedule row missing');
  assert(await page.locator('#v811ServiceEntry').count()===1,'cloud/AI row missing');
+ assert(await page.locator('.sheetWrap.show').count()===1,'Settings opened an unexpected nested sheet');
  await page.click('#v810ConfigEntry');
- await page.waitForSelector('#v810ConfigPanel.show');
+ await page.waitForSelector('#v813LearningGate.open');
+ assert(await page.locator('#v810ConfigPanel').isVisible(),'inline Learning settings are not visible');
  assert(await page.locator('#v811CoreLearning .v811CoreGroup').count()===3,'learning settings not converged to three core groups');
  assert(await page.locator('#v811FineTune').evaluate(el=>el.open===false),'fine-tune should be collapsed by default');
  const coreLabels=await page.locator('#v811CoreLearning .v811CoreHead span').allTextContents();
  assert(coreLabels.join('|')==='目标|强度|难度','core learning labels changed');
- await page.click('[data-v810-config-close]');
- if(!await page.locator('#settingsSheet').evaluate(el=>el.classList.contains('show'))){await page.click('#settingsBtn');await page.waitForSelector('#settingsSheet.show')}
+ assert(await page.locator('.sheetWrap.show').count()===1,'Learning opened a second Settings sheet');
+ await page.click('#v810ConfigEntry');
+ await page.waitForFunction(()=>!document.querySelector('#v813LearningGate')?.classList.contains('open'));
  await page.click('#v811ServiceEntry');
- await page.waitForSelector('#v811ServicePanel.show');
+ await page.waitForSelector('#v813ServiceGate.open');
  await page.waitForTimeout(220);
- assert(serviceRequests.length===2,'service status should fetch exactly when panel opens');
+ assert(serviceRequests.length===2,'service status should fetch exactly when inline Cloud/AI opens');
+ assert(await page.locator('.sheetWrap.show').count()===1,'Cloud/AI opened a second Settings sheet');
  const serviceText=await page.locator('#v811ServicePanel').innerText();
  assert(/云端同步/.test(serviceText)&&/AXIS AI/.test(serviceText)&&/本地/.test(serviceText),'service panel content incomplete');
- await page.click('[data-v811-service="close"]');
+ await page.click('#v811ServiceEntry');
+ await page.waitForFunction(()=>!document.querySelector('#v813ServiceGate')?.classList.contains('open'));
  if(await page.locator('#settingsSheet').evaluate(el=>el.classList.contains('show')))await page.click('#settingsSheet [data-close="settingsSheet"]');
 
  const now=Date.now(),day=86400000;
@@ -54,5 +59,5 @@ try{
  assert(trend.oldVisible==='none','legacy generic trends leaked into UI');
  assert(trend.overflow<=1,'mobile horizontal overflow');
  assert(errors.length===0,'page errors: '+errors.join(' | '));
- console.log(`[AXIS 8.11 browser] PASS · ${engine} · converged settings · user-invoked cloud/AI · six-turn multilingual diagnostics · goal-aware State Field`);
+ console.log(`[AXIS 8.11 browser] PASS · ${engine} · inline Settings · user-invoked cloud/AI · six-turn multilingual diagnostics · goal-aware State Field`);
 }finally{await browser.close()}
