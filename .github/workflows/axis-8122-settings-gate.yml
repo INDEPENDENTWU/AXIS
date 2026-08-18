@@ -1,0 +1,88 @@
+name: AXIS 8.12.2 Settings Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.12.2 candidate
+        run: node build-release.mjs
+      - name: Verify release topology
+        run: |
+          node - <<'NODE'
+          const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
+          if(m.version!=='8.12.2'||m.baseVersion!=='8.12.2')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
+          if(!core.includes('__AXIS_8122_SETTINGS__')||!core.includes('__AXIS_8121_HOTFIX__'))throw new Error('8.12.2/8.12.1 marker missing');
+          for(const gate of ['groupPlanUsesRecordingOwner','languageStudio812','liveRouteReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`inherited gate missing ${gate}`);
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-8122-chromium.log 2>&1 &
+          sleep 1
+      - name: AXIS 8.12.2 Settings redesign
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8122-settings-smoke.mjs
+      - name: Inherited real Group Plan regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8121-hotfix-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-8122-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.12.2 candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-8122-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone Settings redesign
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8122-settings-smoke.mjs
+      - name: iPhone inherited Group Plan regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8121-hotfix-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-8122-webkit.log || true
