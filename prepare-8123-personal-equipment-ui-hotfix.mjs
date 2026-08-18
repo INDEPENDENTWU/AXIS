@@ -14,7 +14,7 @@ const replaceOne=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1
  src=replaceOne(src,'class=\"manageEq v8123EqRow\" data-my-eq-id=','class=\"manageEq v8123EqRow\'+photoClass+\'\" data-my-eq-id=','personal row photo class');
 
  const hydrate="async function hydrateManageEqPhotos(){const root=$('#manageEqList');if(!root)return;for(const el of Array.from(root.querySelectorAll('[data-my-eq-photo]'))){if(el.dataset.loaded)continue;el.dataset.loaded='1';const u=await mediaUrl(el.dataset.myEqPhoto);if(u)el.innerHTML='<img src=\"'+u+'\" alt=\"器械照片\">'}}";
- const hydrateSafe="async function hydrateManageEqPhotos(){const root=$('#manageEqList');if(!root)return;for(const el of Array.from(root.querySelectorAll('[data-my-eq-photo]'))){if(el.dataset.loaded)continue;el.dataset.loaded='1';const u=await mediaUrl(el.dataset.myEqPhoto);if(u){el.innerHTML='<img src=\"'+u+'\" alt=\"器械照片\">';continue}const row=el.closest('.v8123EqRow');el.remove();row?.classList.remove('hasPhoto')}}";
+ const hydrateSafe="async function hydrateManageEqPhotos(){const root=$('#manageEqList');if(!root)return;for(const el of Array.from(root.querySelectorAll('[data-my-eq-photo]'))){if(el.dataset.loaded)continue;el.dataset.loaded='1';const u=await mediaUrl(el.dataset.myEqPhoto);if(u){el.innerHTML='<img src=\"'+u+'\" alt=\"器械照片\">';continue}const row=el.closest('.v8123EqRow');el.style.setProperty('display','none','important');row?.classList.remove('hasPhoto')}}";
  src=replaceOne(src,hydrate,hydrateSafe,'missing-photo fallback');
 
  const end=src.lastIndexOf('})();');if(end<0)fail('app runtime IIFE end missing');
