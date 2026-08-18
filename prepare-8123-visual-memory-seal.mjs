@@ -7,7 +7,6 @@ if(!src.includes('__AXIS_8123_EQUIPMENT_GALLERY__'))fail('equipment gallery must
 if(!src.includes('window.__AXIS_LOCAL_VISION__={version:2'))fail('current Local Vision v2 owner missing');
 if(!src.includes('function visualSigFromCanvas'))fail('Local Vision multi-signal compiler missing');
 if(!src.includes('function localVisualDistance'))fail('Local Vision v2 distance owner missing');
-if(src.includes('__AXIS_8123_VISUAL_MEMORY_SEAL__'))fail('visual memory seal already installed');
 
 const replaceLine=(start,to,label)=>{
  const a=src.indexOf(start);if(a<0)fail(`${label} start missing`);
@@ -28,10 +27,7 @@ const persistNext="list.push({ref,fp,sig:sig||null,t,source});if(fp||sig)memorie
 if((src.split(persist).length-1)!==1)fail('equipment photo memory persistence contract changed');
 src=src.replace(persist,persistNext);
 
-const end=src.lastIndexOf('})();');if(end<0)fail('app IIFE end missing');
-const marker="try{window.__AXIS_8123_VISUAL_MEMORY_SEAL__={version:'8.12.3',localVisionV2:true,recordSignatures:true,equipmentPhotoSignatures:true,dedicatedPhotoPriority:true,maxPerEquipment:24,trainingOwner:false}}catch{}\n";
-src=src.slice(0,end)+marker+src.slice(end);
-for(const needle of ["version:2,equipmentId:id","localVisualDistance(m,f)<1.35","sig:f.sig||null","sig:sig||null","maxPerEquipment:24","__AXIS_8123_VISUAL_MEMORY_SEAL__"])if(!src.includes(needle))fail(`missing ${needle}`);
+for(const needle of ["version:2,equipmentId:id","localVisualDistance(m,f)<1.35","sig:f.sig||null","sig:sig||null","sourceRef:ref","slice(0,Math.max(0,24-dedicated.length))"])if(!src.includes(needle))fail(`missing ${needle}`);
 try{new Function(src)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.12.3 visual memory seal] PASS · current Local Vision v2 dedupe/diagnostics preserved · recording + dedicated equipment photos retain multi-signal signatures');
+console.log('[AXIS 8.12.3 visual memory seal] PASS · current Local Vision v2 dedupe/diagnostics preserved · recording + dedicated equipment photos retain multi-signal signatures · no new runtime owner');
