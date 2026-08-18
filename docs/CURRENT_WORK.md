@@ -5,51 +5,51 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12.1.
-- Verified `main` at the start of this seal: `ce010ae5c23f26b5458050426e42724559bb4c82`.
+- Current verified Product main for this guard work: `ba47e32d7e3342704654dc23f873fe421a56fdfa`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- Vercel Production: `dpl_BzTuDgvfEwf7xDPtrVbCC1ysNgnG`, READY on exact source commit `ce010ae5…`.
-- Fixed Production manifest: version/base `8.12.1`, release hash `63e34eaf485c`, core `c4d6b67854b2`, CSS `76a9e76610fc`, one initial JavaScript request, zero dynamic JavaScript and zero chunks.
+- Vercel Production: `dpl_AK74hVUcNG1hkw5adzLaM6NSGiNm`, READY on exact source commit `ba47e32d…`.
+- Fixed Production manifest: version/base `8.12.1`, release hash `b6bc9d1b2a2e`, core `d4a06c85bcd4`, CSS `76a9e76610fc`, one initial JavaScript request, zero dynamic JavaScript and zero chunks.
 - AXIS 8.12 Language Studio semantics and AXIS 8.13 Stage 3 Continue + Live Route remain inherited; Stage 3 remains read-only presentation.
-- PR #41 shipped the 8.12.1 Group Plan touch hardening and Settings refinement, but its dedicated Chromium field gate found one remaining visual mismatch before reaching the Group Plan scenario: the top-level Learning/Cloud Settings row typography rendered at 15 px while the native Settings sibling renders at 13 px.
+- PR #41 established the 8.12.1 Group Plan touch hardening. PR #42 sealed native Settings typography and Cloud/AI geometry without changing recording ownership.
 
 ## Active change
 
-**AXIS 8.12.1 native Settings typography seal.**
+**AXIS 8.12.1 canonical field regression seal.**
 
-This is a minimal follow-up to the already deployed 8.12.1 field hotfix. It changes no training, Runtime, storage, media, sound, cloud/AI or planner ownership.
+This change is test/governance only. It does not alter the Production product artifact, UI, Runtime, storage, media, sound, cloud/AI or planner behavior.
 
-The only product correction is:
+The dedicated `scripts/axis-8121-hotfix-smoke.mjs` is being converged away from retired internal DOM toward the current canonical user path:
 
-- `学习安排` and `云端与 AI` top-level inline Settings row label/value typography must match the native AXIS Settings sibling exactly at 13 px;
-- inner controls remain at the already hardened 13 px hierarchy with 42 px option touch targets;
-- the canonical Group Plan touch hardening from PR #41 remains unchanged: the existing `.v875PlanEntry[data-v875-plan]` remains the sole planner entry, with touch-safe activation and canonical `v874-set-bridge` / `window.__AXIS_RECORDING__.applyPlan` ownership;
-- no second planner entry, no new writer and no new runtime chunk may be introduced.
+- Settings validation uses the current inline Learning and Cloud/AI owners;
+- image review uses a browser-stable normal RGB image fixture and still exercises `photoInput → frameFromFile → reviewFrames`;
+- equipment selection uses the visible canonical `#v8710Cards` catalog rather than retired hidden `#eqList`;
+- Group Plan uses the sole canonical `.v875PlanEntry[data-v875-plan]` / `.v8121PlanButton` entry;
+- plan application is verified by four visible draft rows and, after `记下`, the authoritative `axis_v60_state` event plus `axis_v8_meta` four-set metadata;
+- no test-only state injection is permitted after the image-review entry point and no hidden legacy catalog may stand in for the user-visible flow.
 
 ## Validation for this work
 
-The existing dedicated `AXIS 8.12.1 Hotfix Gate` is release-blocking on the exact follow-up head and must pass in both Chromium and iPhone-like WebKit.
+The `AXIS 8.12.1 Hotfix Gate` remains release-blocking and must pass the exact final test head in Chromium and iPhone-like WebKit.
 
-It must prove the complete field path, not just the typography fix:
+It must prove:
 
-- Learning and Cloud/AI top-level Settings text exactly matches the native Settings fold typography;
-- Learning/Cloud outer gate borders remain removed and layout remains aligned without horizontal overflow;
-- inner option controls preserve engineered 40–44 px touch geometry and readable hierarchy;
+- Learning top-level label matches the native Settings left-label typography;
+- Learning and Cloud/AI top-level summaries match the native Settings right-value typography;
+- Learning/Cloud outer dividers remain removed;
+- Learning and Cloud/AI inner controls preserve readable 12–13 px hierarchy and 40–48 px touch geometry;
 - one Settings sheet remains the only Settings surface;
-- seed an active workout;
-- open the normal `拍摄记录` flow;
-- supply an image into review;
-- select a strength machine;
-- perform a real touch/click on the canonical `组计划` entry;
-- change the planner to four sets and a progression mode;
-- apply through the canonical planner and save the record;
-- verify `axis_v60_state` and `axis_v8_meta` contain the factual four-set result;
-- verify `recordingOwner:false` for the hotfix and zero page errors.
+- active workout → `拍摄记录` → valid image review succeeds;
+- the visible canonical equipment catalog opens and `胸推` can be selected;
+- the canonical Group Plan entry is a single touch-safe button and opens the planner;
+- selecting four sets plus a progression mode and applying produces four visible set rows;
+- `记下` persists a strength event with four sets in `axis_v60_state` and four set rows in `axis_v8_meta`;
+- the 8.12.1 hotfix remains `recordingOwner:false` and no page error is emitted.
 
-After merge, the fixed Production alias must still report AXIS 8.12.1, the exact merged main SHA, canonical single runtime, one JavaScript request and zero dynamic chunks. The dedicated Production hotfix/browser gate and Production runtime error inspection must be clean.
+After this guard is merged, the fixed Production alias must continue serving AXIS 8.12.1 with the same product behavior. Any future Product change affecting this path must keep this canonical Chromium/WebKit regression green.
 
 ## Next planned stage
 
-Only after this 8.12.1 seal is Production-verified may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**.
+Only after this 8.12.1 field seal is fully green may controlled work continue to **AXIS 8.13 Stage 4 — Reality Actions**.
 
 Stage 4 may alter temporary continuation intent such as `这个器械有人`, `我只剩 20 分钟`, or `今天到这里`. Historical workout facts remain authoritative and immutable.
