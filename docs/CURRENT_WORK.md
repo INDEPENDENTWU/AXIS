@@ -5,51 +5,48 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12.3.
-- `main` baseline for this release work: `8f6c8bf86a7b515768adec991893768bc92e690c`.
+- `main` baseline: `4b4bae03b305b3ff6d5778ddde99d92532daba96`.
 - Architecture: `canonical-single-runtime`.
 - Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- Existing workout history in `axis_v60_state`, training metadata in `axis_v8_meta`, native/custom equipment IDs and the canonical `axis_v42_media` IndexedDB store remain authoritative.
-- Group Plan, active-session ownership, camera/watermark ownership, Learning and Cloud/AI ownership are inherited and are not replaced by this work.
+- Existing workout/training stores, equipment/gallery media, Group Plan, recording, Settings, Learning, Cloud/AI and report ownership are inherited unchanged.
 
 ## Active change
 
-**AXIS 8.12.3 equipment photo memory + picker lifecycle + Settings surface maintenance.**
+**AXIS 8.12.3 cold-start Home semantic first-paint hotfix.**
 
-This release is intentionally additive and narrow:
+This work fixes one presentation defect only: after a cache-busted deployment, the static source Home could briefly paint the obsolete `尚未开始 / 开始训练` idle state before the canonical runtime read local state and rendered the real Home.
 
-- personal equipment / movement items can keep multiple real local photos while the existing IndexedDB media owner remains the only blob store;
-- dedicated equipment photos keep refs/fingerprints and Local Vision v2 multi-signal signatures, so adding the gallery does not downgrade existing personal visual recognition;
-- photo-record equipment selection uses one explicit picker context so first pick, back/reopen, full recording re-entry and repeated selection return to the recording review instead of Home;
-- Quick Record `其他器械 / 运动` uses the same canonical picker contract and returns to the Quick editor after selection;
-- native catalog IDs, custom IDs and event `equipmentId` remain unchanged, and historical workout `frameRefs` are not rewritten;
-- `学习安排`, `云端与AI`, `提醒与声音` and `训练报告` top-level dividers are removed without changing their underlying owners;
-- `训练报告` becomes a distinct compact whole-row action while still invoking the existing report generator;
-- personal equipment detail remains the route for photo management and custom-item `编辑信息`.
+The fix uses the existing canonical bootstrap boundary `data-axis-core-ready="1"`:
 
-Explicitly unchanged: public version, workout/training stores, Group Plan calculation and transaction owner, camera lifecycle, watermark data, Learning store, Cloud/AI store, Runtime/Live Route ownership and deployment topology.
+- before core-ready, `#idleHome` and `#activeHome` keep their layout geometry but are `visibility:hidden` and non-interactive;
+- `app.js` remains the sole Home state owner and is not changed;
+- after its synchronous local-state render completes, the existing bootstrap sets `data-axis-core-ready="1"` and the semantic Home is revealed normally;
+- no loading screen, splash, animation, timer, storage key, Home state, render owner or business logic is added.
+
+Explicitly unchanged: public version, Home calculations, training state/data, equipment/gallery, picker lifecycle, Group Plan, camera/watermark, Settings, Training Report, Learning, Cloud/AI, Runtime/Live Route and deployment topology.
 
 ## Validation for this work
 
-The release must pass both inherited and new contracts before merge:
+Before merge:
 
-- dedicated Chromium + iPhone WebKit regression for repeated recording picker open/back/reopen/re-entry and repeated Quick `其他器械 / 运动` selection;
-- multi-photo add, canonical IndexedDB persistence, cover change, deletion, personal visual-memory persistence and no uncaught page errors;
-- Local Vision v2 inherited regression proving confirmed record memories still retain `full / center / zones` multi-signal signatures, with dedicated equipment photos using the same signature path;
-- Settings separator checks for the four requested entries and click-through to the existing Training Report;
-- 8.13 Settings convergence against the current AXIS 8.12.3 64px top-level Learning / Cloud-AI row contract;
-- inherited Group Plan, catalog, watermark, recording, Home, Runtime, Learning and repository gates remain green.
+- deliberately hold the cache-busted canonical runtime request during first navigation;
+- preload a persisted active session so the static idle copy is objectively incorrect;
+- sample the held cold-start frame and require both legacy Home semantic surfaces, including `开始训练` / `尚未开始`, to remain invisible;
+- release the runtime, require the existing `data-axis-core-ready="1"` boundary, and verify the active state resolves correctly with no persistent first-paint mask;
+- run the same cold-start semantic regression in Chromium and iPhone WebKit;
+- retain all inherited Runtime, Home transition, field, Settings, Group Plan and repository gates.
 
 No failed or cancelled required gate is treated as deployable evidence.
 
 ## Next planned stage
 
-When the exact PR head is green, squash-merge PR #50 into `main`. Then verify that Vercel deploys the exact merge SHA to the existing AXIS project and fixed Production endpoint.
+When the exact PR #51 head is green, squash-merge it into `main`. Then verify Vercel deploys that exact merge SHA to the existing AXIS Production project.
 
 Production verification must confirm:
 
-- deployment state is READY for the merge SHA;
-- `https://axis-five-puce.vercel.app` returns HTTP 200 and presents AXIS 8.12.3;
-- runtime/feature kernels initialize without new errors;
-- the repeated equipment picker path, multi-photo equipment memory, divider-free Settings rows and Training Report entry are present on the deployed artifact.
+- deployment state is READY for the exact merge SHA;
+- `https://axis-five-puce.vercel.app` returns HTTP 200 and remains AXIS 8.12.3 / `canonical-single-runtime`;
+- the built stylesheet contains the pre-core Home semantic gate;
+- runtime errors remain clear.
 
-Broader equipment-memory/product expansion resumes only after this maintenance release is verified in Production.
+No other product optimization is part of this hotfix.
