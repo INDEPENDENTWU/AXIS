@@ -27,12 +27,15 @@ assert.equal(manifest.domain,'axis.domain.v1');
 assert.equal(manifest.data,'axis.data.v1');
 assert.equal(manifest.exchange,'axis.exchange.v1');
 assert.equal(manifest.event,'axis.event.v1');
+assert.equal(manifest.normalizedStateFixture,'axis.normalized-state-fixture.v1');
 for(const [k,v] of Object.entries(manifest.invariants||{}))assert.equal(v,true,`manifest invariant ${k} is not sealed true`);
 
 const eventSchema=readJson(path.join(ROOT,'shared/contracts/axis-event-v1.schema.json'));
 const exchangeSchema=readJson(path.join(ROOT,'shared/contracts/axis-exchange-v1.schema.json'));
+const normalizedStateSchema=readJson(path.join(ROOT,'shared/contracts/axis-normalized-state-fixture-v1.schema.json'));
 assert.equal(eventSchema.$id,'axis.event.v1');
 assert.equal(exchangeSchema.$id,'axis.exchange.v1');
+assert.equal(normalizedStateSchema.$id,'axis.normalized-state-fixture.v1');
 
 const closeOpen=(a,t)=>{
   const x=a.intervals.at(-1);
@@ -135,6 +138,27 @@ const snapshot=(state,at)=>{
 const subsetEqual=(actual,expected,label)=>{
   for(const [k,v] of Object.entries(expected))assert.deepEqual(actual[k],v,`${label}: ${k}`);
 };
+const validateNormalizedState=(raw,label)=>{
+  assert.ok(raw&&typeof raw==='object'&&!Array.isArray(raw),`${label}: normalized state object`);
+  assert.ok(Number.isInteger(raw.sessionStart)&&raw.sessionStart>=0,`${label}: sessionStart integer`);
+  assert.ok(Number.isInteger(raw.sessionEnd)&&raw.sessionEnd>=raw.sessionStart,`${label}: sessionEnd integer/order`);
+  assert.ok(Array.isArray(raw.activities),`${label}: activities array`);
+  const ids=new Set(),statuses=new Set(['idle','active','paused','finished']),kinds=new Set(['strength','cardio']);
+  for(const [activityIndex,a] of raw.activities.entries()){
+    assert.ok(a&&typeof a==='object'&&!Array.isArray(a),`${label}: activity ${activityIndex} object`);
+    assert.ok(typeof a.id==='string'&&a.id.length>0,`${label}: activity ${activityIndex} id`);
+    assert.equal(ids.has(a.id),false,`${label}: duplicate activity ${a.id}`);ids.add(a.id);
+    assert.ok(statuses.has(a.status),`${label}/${a.id}: status`);
+    if(a.kind!==undefined)assert.ok(kinds.has(a.kind),`${label}/${a.id}: kind`);
+    for(const key of ['plannedSets','completedSets'])if(a[key]!==undefined)assert.ok(Number.isInteger(a[key])&&a[key]>=0,`${label}/${a.id}: ${key}`);
+    assert.ok(Array.isArray(a.intervals),`${label}/${a.id}: intervals array`);
+    for(const [intervalIndex,x] of a.intervals.entries()){
+      assert.ok(x&&typeof x==='object'&&!Array.isArray(x),`${label}/${a.id}/intervals[${intervalIndex}]: object`);
+      assert.ok(Number.isInteger(x.start)&&x.start>=0,`${label}/${a.id}/intervals[${intervalIndex}]: start integer`);
+      assert.ok(Number.isInteger(x.end)&&x.end>=x.start,`${label}/${a.id}/intervals[${intervalIndex}]: end integer/order`);
+    }
+  }
+};
 
 const fixtureDir=path.join(ROOT,'shared/fixtures');
 const files=fs.readdirSync(fixtureDir).filter(f=>f.endsWith('.json')).sort();
@@ -153,11 +177,12 @@ for(const file of files){
     const at=Number(f.expected.projectGapAt??state.sessionEnd??f.events.at(-1)?.occurredAt??0);
     subsetEqual(snapshot(state,at),f.expected,file);
   }else if(f.normalizedState){
-    const state={sessionStart:f.normalizedState.sessionStart??null,sessionEnd:f.normalizedState.sessionEnd??null,activities:new Map(),eventIds:new Set()};
-    for(const raw of f.normalizedState.activities||[])state.activities.set(raw.id,{id:raw.id,kind:raw.kind||'strength',plannedSets:raw.plannedSets||0,completedSets:raw.completedSets||0,status:raw.status||'finished',intervals:(raw.intervals||[]).map(x=>({...x}))});
+    validateNormalizedState(f.normalizedState,file);
+    const state={sessionStart:f.normalizedState.sessionStart,sessionEnd:f.normalizedState.sessionEnd,activities:new Map(),eventIds:new Set()};
+    for(const raw of f.normalizedState.activities)state.activities.set(raw.id,{id:raw.id,kind:raw.kind||'strength',plannedSets:raw.plannedSets||0,completedSets:raw.completedSets||0,status:raw.status,intervals:raw.intervals.map(x=>({...x}))});
     const at=Number(f.expected.projectGapAt??state.sessionEnd??0);
     subsetEqual(snapshot(state,at),f.expected,file);
   }else fail(`${file} has neither events nor normalizedState`);
 }
 
-console.log(`[AXIS cross-platform foundation] PASS · ${files.length} golden fixtures · ${manifest.domain} · ${manifest.data} · Web/iOS release separation sealed`);
+console.log(`[AXIS cross-platform foundation] PASS · ${files.length} golden fixtures · typed normalized-state inputs · ${manifest.domain} · ${manifest.data} · Web/iOS release separation sealed`);
