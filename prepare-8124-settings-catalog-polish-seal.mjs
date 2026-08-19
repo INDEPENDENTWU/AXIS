@@ -12,7 +12,7 @@ src=once(src,
 
 src=once(src,
  "#v813LearningGate .v811CoreOptions button{height:var(--axis-settings-control-h)!important;border-radius:var(--axis-settings-radius)!important;padding:0 10px!important;font-size:var(--axis-settings-ui)!important;font-weight:630!important;line-height:1!important}",
- "#v813LearningGate .v811CoreOptions button{height:var(--axis-settings-option-h)!important;border-radius:var(--axis-settings-radius)!important;padding:0 10px!important;font-size:var(--axis-settings-ui)!important;font-weight:630!important;line-height:1!important}",
+ "#v813LearningGate .v811CoreOptions button{height:var(--axis-settings-option-h)!important;min-height:var(--axis-settings-option-h)!important;border-radius:var(--axis-settings-radius)!important;padding:0 10px!important;font-size:var(--axis-settings-ui)!important;font-weight:630!important;line-height:1!important}",
  'Learning option native height');
 
 src=once(src,
@@ -47,6 +47,7 @@ try{window.__AXIS_8124_SETTINGS_DETAIL_SEAL__={version:'8.12.4',owner:'current-s
 `;
 src=src.slice(0,end)+seal+'\n'+src.slice(end);
 
+if(!src.includes('min-height:var(--axis-settings-option-h)!important'))fail('Learning min-height override missing');
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.12.4 settings/catalog polish seal] PASS · current 8.12.2 detail classes aligned · 48px segmented frame · 42px option geometry · zero nested fold inset');
+console.log('[AXIS 8.12.4 settings/catalog polish seal] PASS · current 8.12.2 detail classes aligned · 42px Learning/Cloud options · zero nested fold inset');
