@@ -32,10 +32,12 @@ The release adds no Live Route recording/storage/network owner and no new traini
 
 - Active PR: **#54 — AXIS 8.12.4 — truthful workout timing and direct training flow**.
 - Active branch: `axis-8124-training-flow-reliability` targeting `main`.
-- Before this handoff correction, the exact PR head was `f8c75dbe7463255c6c923f826b4c804cbd5e90c8` and was mergeable.
-- The observed `AXIS Repository Contract` failure was not a workout/product regression. The legacy repository contract still required EdgeOne `buildCommand: node build-release.mjs`, while 8.12.4 intentionally changed EdgeOne into a verified-prebuilt publisher using `node scripts/edgeone-prebuilt-verify.mjs` after the canonical artifact has already been built and parity-checked against Vercel.
-- The same stale repository-contract assertion also caused the visible `AXIS 8.13 Runtime Core` failure after its runtime invariants and build-parity steps had already passed.
-- The repository contract is therefore updated narrowly to require the new verified-prebuilt EdgeOne command, repository-root output, presence of the prebuilt verifier, and the existing pinned Node version. Product gates are not loosened to hide unrelated regressions.
+- Original 8.12.4 implementation head was `f8c75dbe7463255c6c923f826b4c804cbd5e90c8`; subsequent commits only repair release/CI contracts, EdgeOne validation, the real long-press regression driver and this handoff record unless explicitly documented otherwise.
+- `AXIS Repository Contract` was repaired to recognize the intentional EdgeOne verified-prebuilt publisher (`node scripts/edgeone-prebuilt-verify.mjs`) rather than the obsolete direct build command. The same stale assertion had also caused `AXIS 8.13 Runtime Core` to appear red after its runtime invariants had passed.
+- EdgeOne cloud-function syntax validation now checks those `.js` files as ESM input, matching their actual `export` syntax. The PR-level EdgeOne package contract then passed.
+- Remaining inherited CI failures were classified before modification: 8.13 Live Route and Shadow had stale 8.12.x version whitelists; Runtime/8.10.3 were not applying the already-established 8.12.3+ pause-owned/current-Learning compatibility transform to public 8.12.4; the dedicated 8.12.4 finish test used a synthetic `dispatchEvent` pointer that can fail pointer capture even though the real UI owner is a 1-second hold.
+- Test-contract family detection now covers the 8.10/8.11/8.12 patch families, applies the current 8.12.3+ compatibility stage to 8.12.4, and preserves the same behavioral assertions. Shadow and Live Route whitelists include only the newly valid 8.12.4 patch; no ownership/topology assertions were removed.
+- The dedicated 8.12.4 finish regression now drives an actual Playwright pointer/mouse hold at the rendered button center for 1.18 seconds instead of fabricating a PointerEvent. Storage/session assertions remain unchanged.
 - Do not treat a red legacy omnibus gate as proof of product failure until its failing step/log is identified. Conversely, do not waive a deterministic product regression: dedicated 8.12.4 real-flow failures must be fixed before merge.
 
 ## Validation for this work
@@ -53,9 +55,9 @@ Before merge:
 - run the dedicated 8.12.4 flow gate in Chromium and iPhone WebKit;
 - retain inherited Group Plan, equipment gallery/picker, Settings, Learning, Runtime, repository and deployment-policy gates.
 
-The broad legacy Runtime omnibus gate may still expose an inherited unrelated geometry/first-paint flake; product changes must not be made solely to satisfy a non-reproducible legacy assertion when the dedicated real-flow and inherited relevant gates are clean.
+A legacy or inherited gate may require release-family alignment when it rejects only the new public patch identity or an already-retired semantic contract. Such alignment must keep the underlying behavioral/ownership assertion intact; product code must not be changed merely to satisfy a stale test fixture.
 
-## Merge and production boundary
+## Next planned stage
 
 Merge only when the exact current PR #54 head has clean dedicated Chromium + iPhone WebKit 8.12.4 flow validation and the relevant inherited deterministic contracts are clean. Any remaining red check must have its failing step and cause classified before merge; no blind merge on an unexplained deterministic failure.
 
