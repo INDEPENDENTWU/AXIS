@@ -13,7 +13,7 @@ permissions:
 jobs:
   deploy-edgeone:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 28
     env:
       EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
       EDGEONE_PROJECT_NAME: axisfitness-mirror
@@ -89,11 +89,41 @@ jobs:
           set -e
           exit "$code"
 
-      - name: Verify live EdgeOne mirror
+      - name: Verify live EdgeOne HTTP, manifest and API contract
         id: live
         env:
           VERCEL_GOLDEN_URL: https://axis-five-puce.vercel.app
         run: node scripts/edgeone-live-verify.mjs
+
+      - name: Prepare Chromium live smoke
+        id: chromium_prepare
+        shell: bash
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+          node -e "const x=require('/tmp/edgeone-live-result.json');if(!x.baseUrl)process.exit(2);console.log('EDGEONE_LIVE_URL='+x.baseUrl)" >> "$GITHUB_ENV"
+
+      - name: Chromium real EdgeOne product smoke
+        id: chromium
+        env:
+          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8123-field-polish-smoke.mjs
+
+      - name: Prepare iPhone WebKit live smoke
+        id: webkit_prepare
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+
+      - name: iPhone WebKit real EdgeOne product smoke
+        id: webkit
+        env:
+          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8123-field-polish-smoke.mjs
 
       - name: Preserve deployment output
         if: always()
@@ -117,6 +147,8 @@ jobs:
           AXIS_CLI_OUTCOME: ${{ steps.cli.outcome }}
           AXIS_DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
           AXIS_LIVE_OUTCOME: ${{ steps.live.outcome }}
+          AXIS_CHROMIUM_OUTCOME: ${{ steps.chromium.outcome }}
+          AXIS_WEBKIT_OUTCOME: ${{ steps.webkit.outcome }}
         shell: bash
         run: |
           set -u
@@ -129,7 +161,9 @@ jobs:
             parity:process.env.AXIS_PARITY_OUTCOME||'unknown',
             cli:process.env.AXIS_CLI_OUTCOME||'unknown',
             deploy:process.env.AXIS_DEPLOY_OUTCOME||'unknown',
-            live:process.env.AXIS_LIVE_OUTCOME||'unknown'
+            live:process.env.AXIS_LIVE_OUTCOME||'unknown',
+            chromium:process.env.AXIS_CHROMIUM_OUTCOME||'unknown',
+            webkit:process.env.AXIS_WEBKIT_OUTCOME||'unknown'
           };
           let deployDiagnostic='';
           if(fs.existsSync('/tmp/axis-edgeone-deploy.log')){
