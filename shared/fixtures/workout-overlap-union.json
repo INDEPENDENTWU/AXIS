@@ -1,0 +1,22 @@
+{
+  "schema": "axis.fixture.v1",
+  "contract": "axis.domain.v1",
+  "name": "legacy overlapping interval evidence is unioned without double count",
+  "normalizedState": {
+    "sessionStart": 0,
+    "sessionEnd": 12000,
+    "activities": [
+      {"id":"A","status":"finished","intervals":[{"start":1000,"end":6000}]},
+      {"id":"B","status":"finished","intervals":[{"start":4000,"end":9000}]}
+    ]
+  },
+  "expected": {
+    "activityDurations": {"A":5000,"B":5000},
+    "sessionActiveDuration": 8000,
+    "latestRealActivityEnd": 9000,
+    "projectGapAt": 10000,
+    "projectGap": 1000,
+    "sessionStart": 0,
+    "sessionEnd": 12000
+  }
+}
