@@ -49,3 +49,4 @@ await import('./prepare-8124-training-flow.mjs');
 await import('./prepare-8124-session-owner.mjs');
 await import('./prepare-8124-live-route-compiled.mjs');
 await import('./prepare-8124-settings-catalog-polish.mjs');
+await import('./prepare-8124-settings-catalog-polish-seal.mjs');
