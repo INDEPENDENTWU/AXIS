@@ -1,0 +1,97 @@
+name: AXIS 8.12.4 Training Flow Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build AXIS 8.12.4 candidate
+        run: node build-release.mjs
+      - name: Verify 8.12.4 contract
+        run: |
+          node - <<'NODE'
+          const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
+          if(m.version!=='8.12.4'||m.baseVersion!=='8.12.4')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          for(const gate of ['trainingIntervalUnion8124','projectGapLatestActivity8124','sessionStartEndBounds8124','sessionActivitySeal8124','quickRecordDirectRecent8124','liveRouteActionDelegate8124','liveRouteDeviationSafe8124','settingsVerticalNative8124'])if(m.gates?.[gate]!==true)throw new Error(`8.12.4 gate missing ${gate}`);
+          for(const needle of ['__AXIS_8124_QUICK_FLOW__','__AXIS_8124_SETTINGS_GEOMETRY__',"actionDelegate:'quick-record'",'function homeLatestActivity(','function homeSessionBounds(','function sealSessionActivities('])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-8124-chromium.log 2>&1 &
+          sleep 1
+      - name: Training flow reliability regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8124-flow-smoke.mjs
+      - name: Inherited live route regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-813-live-route-smoke.mjs
+      - name: Inherited Settings convergence regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-813-settings-convergence-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-8124-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build AXIS 8.12.4 candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-8124-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone training flow reliability regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8124-flow-smoke.mjs
+      - name: iPhone inherited live route regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-813-live-route-smoke.mjs
+      - name: iPhone inherited Settings convergence regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-813-settings-convergence-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-8124-webkit.log || true
