@@ -37,7 +37,10 @@ const vercel=json('vercel.json');
 if(vercel.buildCommand!=='node build-release.mjs')fail(`Vercel buildCommand is ${vercel.buildCommand}`);
 if(vercel.git?.deploymentEnabled?.['**']!==false||vercel.git?.deploymentEnabled?.main!==true)fail('Vercel deployment policy must be main-only');
 const edge=json('edgeone.json');
-if(edge.buildCommand!=='node build-release.mjs')fail(`EdgeOne buildCommand is ${edge.buildCommand}`);
+const edgePrebuiltCommand='node scripts/edgeone-prebuilt-verify.mjs';
+if(edge.buildCommand!==edgePrebuiltCommand)fail(`EdgeOne buildCommand is ${edge.buildCommand}; expected verified-prebuilt publisher ${edgePrebuiltCommand}`);
+if(edge.outputDirectory!=='.')fail(`EdgeOne outputDirectory is ${edge.outputDirectory}; expected repository-root verified artifact`);
+if(!fs.existsSync('scripts/edgeone-prebuilt-verify.mjs'))fail('EdgeOne prebuilt verification script is missing');
 if(edge.nodeVersion!=='20.18.0')fail(`EdgeOne Node version is ${edge.nodeVersion}`);
 if(read('.nvmrc').trim()!=='20.18.0')fail('.nvmrc must match CI/EdgeOne Node 20.18.0');
 
@@ -62,4 +65,4 @@ try{
 
 const prepareCount=steps.filter(step=>step.startsWith('prepare-')).length;
 const postbuildCount=steps.filter(step=>step.startsWith('postbuild-')).length;
-console.log(`[AXIS repository contract] PASS · documented baseline 8.12 · ${steps.length} deterministic build steps (${prepareCount} prepare / ${postbuildCount} postbuild) · hosting commands aligned`);
+console.log(`[AXIS repository contract] PASS · documented baseline 8.12 · ${steps.length} deterministic build steps (${prepareCount} prepare / ${postbuildCount} postbuild) · Vercel build + EdgeOne verified-prebuilt publishing aligned`);
