@@ -33,7 +33,7 @@ jobs:
             exit 2
           fi
           if [ -z "${EDGEONE_PROJECT_NAME:-}" ]; then
-            echo "EDGEONE_PROJECT_NAME=axis" >> "$GITHUB_ENV"
+            echo "EDGEONE_PROJECT_NAME=axisfitness" >> "$GITHUB_ENV"
           fi
 
       - name: Build exact AXIS candidate
@@ -125,7 +125,7 @@ jobs:
           const body={
             status:process.env.AXIS_JOB_STATUS||'unknown',
             credentialConfigured:!!process.env.EDGEONE_API_TOKEN,
-            project:process.env.EDGEONE_PROJECT_NAME||'axis',
+            project:process.env.EDGEONE_PROJECT_NAME||'axisfitness',
             deploymentUrl:'',
             steps,
             sourceBranch:'edgeone/8.12.3-production-mirror',
