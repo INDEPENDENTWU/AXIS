@@ -6,7 +6,7 @@ on:
       - edgeone/8.12.3-production-mirror
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   deploy-edgeone:
@@ -88,3 +88,37 @@ jobs:
           path: /tmp/axis-edgeone-deploy.log
           if-no-files-found: ignore
           retention-days: 3
+
+      - name: Record isolated EdgeOne deployment status
+        if: always()
+        env:
+          AXIS_JOB_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          set -u
+          PROJECT="${EDGEONE_PROJECT_NAME:-axis}"
+          URL=""
+          if [ -f /tmp/axis-edgeone-deploy.log ]; then
+            URL="$(grep -Eo 'https://[^[:space:]]+' /tmp/axis-edgeone-deploy.log | tail -1 | sed 's/[),;]$//' || true)"
+          fi
+          node - <<'NODE'
+          const fs=require('fs');
+          const body={
+            status:process.env.AXIS_JOB_STATUS||'unknown',
+            project:process.env.EDGEONE_PROJECT_NAME||'axis',
+            deploymentUrl:process.env.AXIS_EDGEONE_URL||'',
+            sourceBranch:'edgeone/8.12.3-production-mirror',
+            sourceSha:process.env.GITHUB_SHA||'',
+            goldenVercel:'https://axis-five-puce.vercel.app',
+            updatedAt:new Date().toISOString()
+          };
+          fs.writeFileSync('edgeone-deploy-status.json',JSON.stringify(body,null,2)+'\n');
+          NODE
+          if [ -n "$URL" ]; then
+            node -e "const fs=require('fs'),p='edgeone-deploy-status.json',x=JSON.parse(fs.readFileSync(p));x.deploymentUrl=process.argv[1];fs.writeFileSync(p,JSON.stringify(x,null,2)+'\\n')" "$URL"
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add edgeone-deploy-status.json
+          git commit -m "edgeone: record isolated mirror deployment status" || exit 0
+          git push origin HEAD:edgeone/8.12.3-production-mirror
