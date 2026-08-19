@@ -107,10 +107,8 @@ jobs:
 
       - name: Chromium real EdgeOne product smoke
         id: chromium
-        env:
-          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
-          AXIS_ENGINE: chromium
-        run: node scripts/axis-8123-field-polish-smoke.mjs
+        shell: bash
+        run: AXIS_URL="$EDGEONE_LIVE_URL" AXIS_ENGINE=chromium node scripts/axis-8123-field-polish-smoke.mjs
 
       - name: Prepare iPhone WebKit live smoke
         id: webkit_prepare
@@ -120,10 +118,8 @@ jobs:
 
       - name: iPhone WebKit real EdgeOne product smoke
         id: webkit
-        env:
-          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
-          AXIS_ENGINE: webkit
-        run: node scripts/axis-8123-field-polish-smoke.mjs
+        shell: bash
+        run: AXIS_URL="$EDGEONE_LIVE_URL" AXIS_ENGINE=webkit node scripts/axis-8123-field-polish-smoke.mjs
 
       - name: Preserve deployment output
         if: always()
