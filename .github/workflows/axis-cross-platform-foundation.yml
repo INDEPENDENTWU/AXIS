@@ -17,6 +17,7 @@ on:
       - 'docs/decisions/**'
       - 'shared/contracts/**'
       - 'shared/fixtures/**'
+      - 'scripts/axis-schema-fixture-seal.mjs'
       - 'scripts/axis-cross-platform-foundation-contract.mjs'
       - 'scripts/axis-native-foundation-seal.mjs'
       - '.github/workflows/axis-cross-platform-foundation.yml'
@@ -36,6 +37,7 @@ on:
       - 'docs/decisions/**'
       - 'shared/contracts/**'
       - 'shared/fixtures/**'
+      - 'scripts/axis-schema-fixture-seal.mjs'
       - 'scripts/axis-cross-platform-foundation-contract.mjs'
       - 'scripts/axis-native-foundation-seal.mjs'
       - '.github/workflows/axis-cross-platform-foundation.yml'
@@ -57,6 +59,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate fixture events against published schemas
+        run: node scripts/axis-schema-fixture-seal.mjs
       - name: Validate contracts and golden fixtures
         run: node scripts/axis-cross-platform-foundation-contract.mjs
       - name: Seal native foundation policies and product matrix
