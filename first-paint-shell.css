@@ -78,6 +78,18 @@ html body .nav>button.active{
 }
 html body .nav>button.active::before,html body .nav>button.active::after{display:none!important}
 
+/*
+  The source HTML contains an obsolete semantic idle state ("尚未开始 / 开始训练").
+  Keep its geometry reserved, but never let that unverified business state paint.
+  app.js completes its synchronous local-state render before the canonical bootstrap
+  sets data-axis-core-ready="1", so this reveals only the state the runtime actually owns.
+*/
+html:not([data-axis-core-ready="1"]) #idleHome,
+html:not([data-axis-core-ready="1"]) #activeHome{
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
 /* Public release label has one visual owner. Runtime text remains internal state only. */
 html body #settingsSheet .versionLine,
 html body .versionLine{
