@@ -5,6 +5,7 @@
   "exchange": "axis.exchange.v1",
   "event": "axis.event.v1",
   "media": "axis.media.v1",
+  "normalizedStateFixture": "axis.normalized-state-fixture.v1",
   "invariants": {
     "localFirstWorkout": true,
     "singleSemanticOwner": true,
