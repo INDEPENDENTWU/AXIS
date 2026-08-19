@@ -6,6 +6,7 @@ const read=f=>JSON.parse(fs.readFileSync(f,'utf8'));
 const ROOT=process.cwd();
 const eventSchema=read(path.join(ROOT,'shared/contracts/axis-event-v1.schema.json'));
 const exchangeSchema=read(path.join(ROOT,'shared/contracts/axis-exchange-v1.schema.json'));
+const normalizedStateSchema=read(path.join(ROOT,'shared/contracts/axis-normalized-state-fixture-v1.schema.json'));
 
 const typeOk=(value,type)=>{
   if(type==='object')return value!==null&&typeof value==='object'&&!Array.isArray(value);
@@ -61,30 +62,44 @@ function validate(value,schema,label,root=schema){
 
 assert.equal(eventSchema.$id,'axis.event.v1');
 assert.equal(exchangeSchema.$id,'axis.exchange.v1');
+assert.equal(normalizedStateSchema.$id,'axis.normalized-state-fixture.v1');
 assert.equal(exchangeSchema.properties?.events?.items?.$ref,'./axis-event-v1.schema.json','exchange events must reference published event schema');
 for(const key of ['equipment','sessions','media'])assert.equal(exchangeSchema.properties?.[key]?.items?.$ref,'#/$defs/durableRecord',`${key} must require durable identity`);
 
 const activityScoped=new Set(['activityStarted','activityPaused','activityResumed','activityFinished','setCompleted']);
 const fixtureDir=path.join(ROOT,'shared/fixtures');
-let eventCount=0,equipmentSelectionCount=0;
+let eventCount=0,equipmentSelectionCount=0,normalizedStateCount=0;
 for(const file of fs.readdirSync(fixtureDir).filter(f=>f.endsWith('.json')).sort()){
   const fixture=read(path.join(fixtureDir,file));
-  if(!Array.isArray(fixture.events))continue;
-  const ids=new Set();
-  for(const event of fixture.events){
-    validate(event,eventSchema,`${file}/${event.id||'event'}`,eventSchema);
-    assert.equal(ids.has(event.id),false,`${file}: duplicate event id ${event.id}`);
-    ids.add(event.id);
-    if(activityScoped.has(event.type))assert.equal(typeof event.activityId==='string'&&event.activityId.length>0,true,`${file}/${event.id}: activityId required`);
-    if(event.type==='equipmentSelected'){
-      assert.equal(typeof event.payload?.equipmentId==='string'&&event.payload.equipmentId.length>0,true,`${file}/${event.id}: equipmentId required`);
-      equipmentSelectionCount++;
+  if(Array.isArray(fixture.events)){
+    const ids=new Set();
+    for(const event of fixture.events){
+      validate(event,eventSchema,`${file}/${event.id||'event'}`,eventSchema);
+      assert.equal(ids.has(event.id),false,`${file}: duplicate event id ${event.id}`);
+      ids.add(event.id);
+      if(activityScoped.has(event.type))assert.equal(typeof event.activityId==='string'&&event.activityId.length>0,true,`${file}/${event.id}: activityId required`);
+      if(event.type==='equipmentSelected'){
+        assert.equal(typeof event.payload?.equipmentId==='string'&&event.payload.equipmentId.length>0,true,`${file}/${event.id}: equipmentId required`);
+        equipmentSelectionCount++;
+      }
+      eventCount++;
     }
-    eventCount++;
+  }
+  if(fixture.normalizedState){
+    validate(fixture.normalizedState,normalizedStateSchema,`${file}/normalizedState`,normalizedStateSchema);
+    const ids=new Set();
+    for(const activity of fixture.normalizedState.activities){
+      assert.equal(ids.has(activity.id),false,`${file}: duplicate normalized activity ${activity.id}`);
+      ids.add(activity.id);
+      for(const [index,interval] of activity.intervals.entries())assert.ok(interval.end>=interval.start,`${file}/${activity.id}/intervals[${index}]: end before start`);
+    }
+    assert.ok(fixture.normalizedState.sessionEnd>=fixture.normalizedState.sessionStart,`${file}: sessionEnd before sessionStart`);
+    normalizedStateCount++;
   }
 }
 assert.ok(eventCount>0,'no fixture events validated');
 assert.ok(equipmentSelectionCount>0,'equipmentSelected identity is not exercised by a golden fixture');
+assert.ok(normalizedStateCount>0,'normalized-state fixture path is not exercised');
 
 // Negative event probes: reducer-consumed/portable values must have one meaning.
 for(const [label,bad] of [
@@ -98,6 +113,18 @@ for(const [label,bad] of [
   let rejected=false;
   try{validate(bad,eventSchema,label,eventSchema)}catch{rejected=true}
   assert.equal(rejected,true,`${label} unexpectedly passed event schema`);
+}
+
+const normalizedFixture=read(path.join(fixtureDir,'workout-overlap-union.json')).normalizedState;
+for(const [label,mutate] of [
+  ['string interval endpoint',x=>{x.activities[0].intervals[0].start='1000'}],
+  ['empty activity id',x=>{x.activities[0].id=''}],
+  ['invalid activity status',x=>{x.activities[0].status='done'}],
+  ['string planned sets',x=>{x.activities[0].plannedSets='3'}]
+]){
+  const bad=structuredClone(normalizedFixture);mutate(bad);
+  let rejected=false;try{validate(bad,normalizedStateSchema,label,normalizedStateSchema)}catch{rejected=true}
+  assert.equal(rejected,true,`${label} unexpectedly passed normalized-state schema`);
 }
 
 const validExchange={
@@ -118,4 +145,4 @@ for(const key of ['equipment','sessions','media']){
   assert.equal(rejected,true,`${key} without stable id unexpectedly passed exchange schema`);
 }
 
-console.log(`[AXIS schema fixture seal] PASS · ${eventCount} fixture events · equipment selection identity exercised · reducer payload types sealed · durable exchange identities required · published schemas cross-bound`);
+console.log(`[AXIS schema fixture seal] PASS · ${eventCount} fixture events · ${normalizedStateCount} normalized-state fixture · equipment selection identity exercised · portable types sealed · durable exchange identities required`);
