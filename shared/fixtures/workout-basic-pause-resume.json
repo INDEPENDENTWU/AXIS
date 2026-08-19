@@ -4,6 +4,7 @@
   "name": "basic pause and resume preserves active-only duration",
   "events": [
     {"schema":"axis.event.v1","id":"e1","type":"workoutStarted","sessionId":"s1","occurredAt":0},
+    {"schema":"axis.event.v1","id":"e-select","type":"equipmentSelected","sessionId":"s1","occurredAt":500,"payload":{"equipmentId":"a"}},
     {"schema":"axis.event.v1","id":"e2","type":"activityStarted","sessionId":"s1","activityId":"a","occurredAt":1000,"payload":{"kind":"cardio"}},
     {"schema":"axis.event.v1","id":"e3","type":"activityPaused","sessionId":"s1","activityId":"a","occurredAt":5000},
     {"schema":"axis.event.v1","id":"e4","type":"activityResumed","sessionId":"s1","activityId":"a","occurredAt":9000},
