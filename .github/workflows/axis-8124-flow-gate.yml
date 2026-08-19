@@ -26,7 +26,7 @@ jobs:
           const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
           if(m.version!=='8.12.4'||m.baseVersion!=='8.12.4')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           for(const gate of ['trainingIntervalUnion8124','projectGapLatestActivity8124','sessionStartEndBounds8124','sessionActivitySeal8124','quickRecordDirectRecent8124','liveRouteActionDelegate8124','liveRouteDeviationSafe8124','settingsVerticalNative8124'])if(m.gates?.[gate]!==true)throw new Error(`8.12.4 gate missing ${gate}`);
-          for(const needle of ['__AXIS_8124_QUICK_FLOW__','__AXIS_8124_SETTINGS_GEOMETRY__',"actionDelegate:'quick-record'",'function homeLatestActivity(','function homeSessionBounds(','function sealSessionActivities('])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
+          for(const needle of ['__AXIS_8124_QUICK_FLOW__','__AXIS_8124_SETTINGS_GEOMETRY__','__AXIS_8124_WORKOUT_OWNER__',"actionDelegate:'quick-record'",'function homeLatestActivity(','function homeSessionBounds(','function sealSessionActivities('])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
           NODE
       - name: Prepare Chromium
         run: |
