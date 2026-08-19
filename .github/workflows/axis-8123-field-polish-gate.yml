@@ -26,7 +26,7 @@ jobs:
           const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
           if(m.version!=='8.12.3'||m.baseVersion!=='8.12.3')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           for(const gate of ['personalEquipmentLibrary8123','personalEquipmentPhotos8123','personalEquipmentVisualMemory8123','personalEquipmentSwipeRemove8123','personalEquipmentBatchRemove8123','personalEquipmentHistoryPreserved8123','groupPlanStableLauncher8123','groupPlanRenderOwnedSync8123','settingsRowAlignmentFieldPolish8123'])if(m.gates?.[gate]!==true)throw new Error(`field gate missing ${gate}`);
-          for(const needle of ['__AXIS_8123_EQUIPMENT_MEMORY__','__AXIS_GROUP_PLAN_STABLE__','v8123FieldPolishStyle',"dataset.v8123Plan='1'",'__AXIS_8123_UI_HOTFIX__'])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
+          for(const needle of ['__AXIS_8123_EQUIPMENT_MEMORY__','__AXIS_GROUP_PLAN_STABLE__','v8123FieldPolishStyle',"dataset.v8123Plan='1'",'__AXIS_8123_UI_HOTFIX__','__AXIS_8123_EQUIPMENT_GALLERY__','__AXIS_8123_PICKER_ROUTER__','__AXIS_8123_QUICK_PICKER_FIX__','__AXIS_8123_SETTINGS_SURFACE__','__AXIS_8123_DIVIDER_SEAL__'])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
           NODE
       - name: Prepare Chromium
         run: |
@@ -48,6 +48,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-8123-ui-hotfix-smoke.mjs
+      - name: Equipment gallery, picker lifecycle and Settings surface regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8123-equipment-gallery-picker-smoke.mjs
       - name: Inherited Group Plan regression
         env:
           AXIS_URL: http://127.0.0.1:4173
@@ -87,6 +92,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-8123-ui-hotfix-smoke.mjs
+      - name: iPhone equipment gallery, picker lifecycle and Settings surface regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8123-equipment-gallery-picker-smoke.mjs
       - name: iPhone inherited Group Plan regression
         env:
           AXIS_URL: http://127.0.0.1:4173

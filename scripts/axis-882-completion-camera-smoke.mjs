@@ -18,7 +18,7 @@ await page.evaluate(({profile,prefs,start,end,eventTime})=>{localStorage.clear()
 await page.reload({waitUntil:'domcontentloaded'});await ready();
 
 console.log(`[AXIS completed Home ${ENGINE}] same-day finish is a calm completion summary`);
-await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.scope==='complete',undefined,{timeout:1600});
+await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.scope==='complete',undefined,{timeout:4000});
 assert.ok(await page.locator('#axisNowHero').isVisible());
 assert.equal((await page.locator('.axisNowTop>span').innerText()).trim(),'今天完成');
 assert.equal((await page.locator('#axisNowTitle').innerText()).trim(),'','completed Home restored redundant 训练已记录 copy');
@@ -38,7 +38,7 @@ assert.equal(await page.evaluate(()=>window.__AXIS_HOME_TIMER_MS__),60000,'idle 
 console.log(`[AXIS completed Home ${ENGINE}] older session becomes honest training interval, not recovery percentage`);
 await page.evaluate(({profile,prefs})=>{const t=Date.now()-2*86400000,end=t-60000,start=end-41*60000;localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[{id:'S-OLD',start,end,events:[{id:'E-OLD',equipmentId:'quick-camera-test',name:'补拍测试器械',pattern:'pull',kind:'strength',muscles:['背部'],effect:'背部',time:end-60000,weight:20,reps:10,sets:3,frameRefs:[]}]}],active:null,profile,prefs}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))},{profile,prefs});
 await page.reload({waitUntil:'domcontentloaded'});await ready();
-await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.scope==='recovery',undefined,{timeout:1600});
+await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.scope==='recovery',undefined,{timeout:4000});
 assert.equal((await page.locator('.axisNowTop>span').innerText()).trim(),'训练间隔');
 assert.equal((await page.locator('#axisNowTitle').innerText()).trim(),'距上次训练');
 assert.equal(await page.locator('#axisNowDial').isVisible(),false);

@@ -24,7 +24,7 @@ const snapshot=label=>page.evaluate(l=>{
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());await page.evaluate(()=>localStorage.clear());await page.reload({waitUntil:'domcontentloaded'});await waitReady();
 await openGate('#profileBtn','#axisConfigGate-profile');await page.locator('#profileName').fill('Ray');await page.locator('#profileWeight').fill('92');await page.locator('#saveProfile').click();await page.waitForTimeout(80);
 await openGate('#myEqBtn','#axisConfigGate-equipment');await page.locator('#newCustomEq').click();await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});await page.locator('#customName').fill('矩阵胸推');await page.waitForTimeout(100);await page.locator('#saveCustomEq').click();await page.waitForFunction(()=>!document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});
-await openGate('#myEqBtn','#axisConfigGate-equipment');const row=page.locator('#manageEqList [data-edit-eq]').filter({hasText:'矩阵胸推'}).first();await row.click();await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});await page.locator('#customEqSheet [data-close="customEqSheet"]').click();await page.waitForTimeout(80);await openSettings();
+await openGate('#myEqBtn','#axisConfigGate-equipment');const row=page.locator('#manageEqList [data-my-eq-id]').filter({hasText:'矩阵胸推'}).first();assert.ok(await row.count(),'saved custom item missing from current personal equipment list');await row.click();await page.waitForFunction(()=>document.querySelector('#v8123EqDetailSheet')?.classList.contains('show'),undefined,{timeout:1600});assert.equal((await page.locator('#v8123EqDetailTitle').innerText()).trim(),'矩阵胸推');await page.locator('#v8123EqInfoEdit').click();await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});await page.locator('#customEqSheet [data-close="customEqSheet"]').click();await page.waitForTimeout(80);await openSettings();
 
 console.log('[AXIS record-pref before]',JSON.stringify(await snapshot('before-open'),null,2));
 await openGate('#v8711RecordGate > .settingLink','#v8711RecordGate');await page.waitForTimeout(80);
@@ -36,5 +36,5 @@ const r=await target.boundingBox();assert.ok(r&&r.width>0&&r.height>0,'canonical
 assert.ok(after.hit&&after.hit.tag==='BUTTON',`record preference target center is covered: ${JSON.stringify(after.hit)}`);
 await target.click({timeout:2000});await page.waitForTimeout(60);assert.ok(await target.evaluate(x=>x.classList.contains('active')),'5-second preference did not activate');
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log('[AXIS record-pref diagnostic] PASS · canonical gate opens and control is actionable');
+console.log('[AXIS record-pref diagnostic] PASS · current equipment detail route · canonical gate opens and control is actionable');
 await context.close();await browser.close();
