@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - edgeone/8.12.3-production-mirror
+    paths-ignore:
+      - edgeone-deploy-status.json
 
 permissions:
   contents: write
