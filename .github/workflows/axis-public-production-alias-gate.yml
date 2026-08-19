@@ -64,17 +64,22 @@ jobs:
             'homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog','mediaStoreWebKitSafe','sourceCommitStamped',
             'learningAtlas811','learningAtlasUnique811','learningDialogueSixTurn811','learningConnectedSpeech811','learningSpelling811','learningSettingsConverged811','learningLegacyDiagnosticsPreserved811','learningJapanese132811','learningKorean132811','learningChinese132811','learningMultilingualSixTurn811','learningMultilingualNoLegacyExactOverlap811','trendsStateField811','trendsGoalAware811','trendsEvidenceOnly811','trendsLocalFirst811','trendsOneShotMotion811','serviceSettingsConverged811','serviceSettingsUserInvokedNetwork811','serviceSettingsNoTrainingOwner811'
           ];
-          if(process.env.VERSION==='8.12')requiredGates.push(
-            'languageStudio812','languageCorpusExpanded812','nativeMultilingual812','dialogueTailDiversity812','dialogueDepthSelectable812','teachingLoop812','activeRecall812','transformPractice812','learningSettingsPurpose812','learningSettingsMethod812','learningSettingsNovelty812','legacy811Preserved812','learningNoAutoplay812','learningLocalFirst812','learningNoTrainingOwner812'
+          const v=process.env.VERSION;
+          const is812=['8.12','8.12.1','8.12.2','8.12.3','8.12.4'].includes(v);
+          const has811=v==='8.11'||is812;
+          if(is812)requiredGates.push(
+            'languageStudio812','languageCorpusExpanded812','nativeMultilingual812','dialogueTailDiversity812','dialogueDepthSelectable812','teachingLoop812','activeRecall812','transformPractice812','learningSettingsPurpose812','learningSettingsMethod812','learningSettingsNovelty812','legacy811Preserved812','learningNoAutoplay812','learningLocalFirst812','learningNoTrainingOwner812','liveRouteReadOnly813'
           );
-          const axis811Ok=!['8.11','8.12'].includes(process.env.VERSION)||(
+          if(['8.12.3','8.12.4'].includes(v))requiredGates.push('settingsNativeAlignment8123','settingsHelperCopyRetired8123','learningSettingsMethodRetired8123','learningShadowUiRetired8123','learningSimpleAudio8123','learningLocalRecording8123','learningNoUpload8123','learningNoTrainingOwner8123');
+          if(v==='8.12.4')requiredGates.push('trainingIntervalUnion8124','projectGapLatestActivity8124','sessionStartEndBounds8124','sessionActivitySeal8124','quickRecordDirectRecent8124','liveRouteActionDelegate8124','liveRouteDeviationSafe8124','settingsVerticalNative8124');
+          const axis811Ok=!has811||(
             x.axis811?.release===true &&
             x.axis811?.learning?.totalEnglish===5736 && x.axis811?.learning?.totalUnits===6132 && x.axis811?.learning?.dialogueTurns===6 &&
             x.axis811?.learning?.availableByLanguage?.ja===132 && x.axis811?.learning?.availableByLanguage?.ko===132 && x.axis811?.learning?.availableByLanguage?.zh===132 &&
             x.axis811?.trends?.model==='state-field-trajectory' && x.axis811?.trends?.fitnessScore===false &&
             x.axis811?.services?.localFirst===true && x.axis811?.services?.automaticNetwork===false
           );
-          const axis812Ok=process.env.VERSION!=='8.12'||(
+          const axis812Ok=!is812||(
             x.axis812?.release===true &&
             x.axis812?.learning?.totalNew===19584 && x.axis812?.learning?.totalAvailable===25716 &&
             x.axis812?.learning?.availableByLanguage?.en===10632 && x.axis812?.learning?.availableByLanguage?.ja===5028 && x.axis812?.learning?.availableByLanguage?.ko===5028 && x.axis812?.learning?.availableByLanguage?.zh===5028 &&
@@ -82,18 +87,22 @@ jobs:
             x.axis812?.learning?.teachingLoop?.join('|')==='meaning|noticing|retrieval|response|shadow|transform|review' &&
             x.axis812?.learning?.networkRequired===false && x.axis812?.learning?.autoplay===false && x.axis812?.learning?.trainingOwner===false
           );
-          const ok=x.sourceCommit===process.env.EXPECTED && x.version===process.env.VERSION && x.baseVersion===process.env.BASE && x.architecture===process.env.ARCH &&
+          const axis8124Ok=v!=='8.12.4'||(
+            x.axis8124?.liveRoute?.readOnly===true && x.axis8124?.liveRoute?.deviationPenalty===false &&
+            x.axis8124?.quickRecord?.recentDirect===true && x.axis8124?.settings?.learningAndCloudNativeVerticalGeometry===true
+          );
+          const ok=x.sourceCommit===process.env.EXPECTED && x.version===v && x.baseVersion===process.env.BASE && x.architecture===process.env.ARCH &&
             x.architecture==='canonical-single-runtime' && x.requests?.initialJavascript===1 && x.requests?.dynamicJavascript===0 && Array.isArray(x.assets?.chunks) && x.assets.chunks.length===0 &&
             x.canonical?.retiredCatalogWriters===1 && x.canonical?.locateOwner==='v8710 canonical precise resolver' && x.canonical?.preferenceOwner==='v85 setWm event bridge' && x.canonical?.rawCoordinatePresentation===false &&
-            x.canonical?.version===process.env.VERSION && x.canonical?.watermarkBrand?.text==='AXIS' && x.canonical?.watermarkBrand?.opacityOwner==='v876WmOpacity' &&
+            x.canonical?.version===v && x.canonical?.watermarkBrand?.text==='AXIS' && x.canonical?.watermarkBrand?.opacityOwner==='v876WmOpacity' &&
             x.canonical?.activeCountdown?.toneOwner==='v8710-sound-ui.js' && x.canonical?.activeCountdown?.longPressSuppressesTone===true && x.canonical?.activeCountdown?.automaticTrigger==='countdown-zero-only' &&
             x.canonical?.mediaStore?.owner==='app.js' && x.canonical?.mediaStore?.writeFormat==='arraybuffer-v1' && x.canonical?.mediaStore?.webkitSafe===true &&
-            requiredGates.every(k=>x.gates?.[k]===true) && axis811Ok && axis812Ok;
+            requiredGates.every(k=>x.gates?.[k]===true) && axis811Ok && axis812Ok && axis8124Ok;
           if(!ok){
-            console.error(JSON.stringify({expected:{sourceCommit:process.env.EXPECTED,version:process.env.VERSION,baseVersion:process.env.BASE,architecture:process.env.ARCH},actual:{sourceCommit:x.sourceCommit,version:x.version,baseVersion:x.baseVersion,architecture:x.architecture},requests:x.requests,axis811:x.axis811,axis812:x.axis812,gates:Object.fromEntries(requiredGates.map(k=>[k,x.gates?.[k]]))},null,2));
+            console.error(JSON.stringify({expected:{sourceCommit:process.env.EXPECTED,version:v,baseVersion:process.env.BASE,architecture:process.env.ARCH},actual:{sourceCommit:x.sourceCommit,version:x.version,baseVersion:x.baseVersion,architecture:x.architecture},requests:x.requests,axis811:x.axis811,axis812:x.axis812,axis8124:x.axis8124,gates:Object.fromEntries(requiredGates.map(k=>[k,x.gates?.[k]]))},null,2));
             process.exit(1);
           }
-          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · exact alias · inherited + Language Studio contracts verified`);
+          console.log(`[AXIS fixed Production] ${x.version} · ${x.sourceCommit} · exact alias · inherited + current release contracts verified`);
           NODE
               then
                 exit 0

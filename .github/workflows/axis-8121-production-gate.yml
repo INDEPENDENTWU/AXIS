@@ -34,7 +34,7 @@ jobs:
         run: |
           node <<'NODE' >> "$GITHUB_ENV"
           const x=require('./axis-build.json');
-          if(!['8.12.1','8.12.2','8.12.3'].includes(x.version)||x.baseVersion!==x.version)throw new Error(`unsupported 8.12 patch ${x.version}/${x.baseVersion}`);
+          if(!['8.12.1','8.12.2','8.12.3','8.12.4'].includes(x.version)||x.baseVersion!==x.version)throw new Error(`unsupported 8.12 patch ${x.version}/${x.baseVersion}`);
           console.log(`AXIS_EXPECTED_VERSION=${x.version}`);
           NODE
       - name: Verify fixed alias serves exact AXIS 8.12.x artifact
@@ -73,12 +73,17 @@ jobs:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8121-hotfix-smoke.mjs
       - name: Real AXIS 8.12.2 Settings on fixed Production
-        if: contains(fromJSON('["8.12.2","8.12.3"]'), env.AXIS_EXPECTED_VERSION)
+        if: contains(fromJSON('["8.12.2","8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8122-settings-smoke.mjs
       - name: Real AXIS 8.12.3 learning simplification on fixed Production
-        if: env.AXIS_EXPECTED_VERSION == '8.12.3'
+        if: contains(fromJSON('["8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8123-learning-simplify-smoke.mjs
+      - name: Real AXIS 8.12.4 truthful training flow on fixed Production
+        if: env.AXIS_EXPECTED_VERSION == '8.12.4'
+        env:
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8124-flow-smoke.mjs

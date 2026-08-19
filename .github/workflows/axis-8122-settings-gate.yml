@@ -24,7 +24,7 @@ jobs:
         run: |
           node - <<'NODE'
           const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
-          if(!['8.12.2','8.12.3'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(!['8.12.2','8.12.3','8.12.4'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
           if(!core.includes('__AXIS_8122_SETTINGS__')||!core.includes('__AXIS_8121_HOTFIX__'))throw new Error('inherited Settings/field marker missing');
           for(const gate of ['groupPlanUsesRecordingOwner','languageStudio812','liveRouteReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`inherited gate missing ${gate}`);

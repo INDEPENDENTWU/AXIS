@@ -81,25 +81,25 @@ jobs:
             'homeStateSingleOwner','homeStateAdaptiveRest','localVisualMemory','quickCustomEquipment','quickMediaAttachment','activeCardGeometryStable','countdownOnlyAutomaticSound','expandedExerciseLibrary','waistAnatomyRegion','durableReleaseLog','mediaStoreWebKitSafe',
             'learningAtlas811','learningAtlasUnique811','learningDialogueSixTurn811','learningConnectedSpeech811','learningSpelling811','learningSettingsConverged811','learningLegacyDiagnosticsPreserved811','learningJapanese132811','learningKorean132811','learningChinese132811','learningMultilingualSixTurn811','learningMultilingualNoLegacyExactOverlap811','trendsStateField811','trendsGoalAware811','trendsEvidenceOnly811','trendsLocalFirst811','trendsOneShotMotion811','serviceSettingsConverged811','serviceSettingsUserInvokedNetwork811','serviceSettingsNoTrainingOwner811'
           ];
-          if(['8.12','8.12.1','8.12.2','8.12.3'].includes(process.env.AXIS_EXPECTED_VERSION))required.push('languageStudio812','languageCorpusExpanded812','nativeMultilingual812','dialogueTailDiversity812','dialogueDepthSelectable812','teachingLoop812','activeRecall812','transformPractice812','learningSettingsPurpose812','learningSettingsMethod812','learningSettingsNovelty812','legacy811Preserved812','learningNoAutoplay812','learningLocalFirst812','learningNoTrainingOwner812');
+          if(['8.12','8.12.1','8.12.2','8.12.3','8.12.4'].includes(process.env.AXIS_EXPECTED_VERSION))required.push('languageStudio812','languageCorpusExpanded812','nativeMultilingual812','dialogueTailDiversity812','dialogueDepthSelectable812','teachingLoop812','activeRecall812','transformPractice812','learningSettingsPurpose812','learningSettingsMethod812','learningSettingsNovelty812','legacy811Preserved812','learningNoAutoplay812','learningLocalFirst812','learningNoTrainingOwner812');
           for(const k of required)if(x.gates?.[k]!==true)fail(`missing Production gate ${k}`);
           if(x.featureKernel?.embedded!==true||x.completionKernel?.embedded!==true)fail('feature/completion are not embedded');
           if(x.canonical?.version!==process.env.AXIS_EXPECTED_VERSION)fail(`canonical version contract mismatch ${x.canonical?.version}`);
           if(x.canonical?.activeCountdown?.toneOwner!=='v8710-sound-ui.js'||x.canonical?.activeCountdown?.longPressSuppressesTone!==true)fail('countdown owner contract mismatch');
-          const durationSound=['8.10.3','8.11','8.12','8.12.1','8.12.2','8.12.3'].includes(process.env.AXIS_EXPECTED_VERSION),expectedTrigger=durationSound?'active-item-countdown-zero + explicit-workout-duration-threshold':'active-item-countdown-zero-only';
+          const durationSound=['8.10.3','8.11','8.12','8.12.1','8.12.2','8.12.3','8.12.4'].includes(process.env.AXIS_EXPECTED_VERSION),expectedTrigger=durationSound?'active-item-countdown-zero + explicit-workout-duration-threshold':'active-item-countdown-zero-only';
           if(x.canonical?.sound?.automaticTrigger!==expectedTrigger||x.canonical?.sound?.setCue!==false||x.canonical?.sound?.manualFinishCue!==false||x.canonical?.sound?.restCue!==false||x.canonical?.sound?.sessionCue!==durationSound)fail(`automatic sound contract mismatch ${JSON.stringify(x.canonical?.sound)}`);
           if(x.canonical?.homeState?.owner!=='app.js'||x.canonical?.localVisualMemory?.networkRequired!==false)fail('home/local-memory contract mismatch');
           if(x.canonical?.quickRecord?.customItems!==true||x.canonical?.quickRecord?.mediaModes?.join(',')!=='photo,3,5')fail('Quick Record 8.8.2 contract mismatch');
           if(x.canonical?.activeCard?.outerGeometryStable!==true)fail('active card geometry contract mismatch');
           if(x.canonical?.watermarkBrand?.text!=='AXIS'||x.canonical?.watermarkBrand?.opacityOwner!=='v876WmOpacity')fail('brand owner contract mismatch');
-          if(['8.11','8.12','8.12.1','8.12.2','8.12.3'].includes(process.env.AXIS_EXPECTED_VERSION)){
+          if(['8.11','8.12','8.12.1','8.12.2','8.12.3','8.12.4'].includes(process.env.AXIS_EXPECTED_VERSION)){
             if(x.axis811?.release!==true)fail('AXIS 8.11 inherited release descriptor missing');
             if(x.axis811?.learning?.totalEnglish!==5736||x.axis811?.learning?.totalUnits!==6132||x.axis811?.learning?.dialogueTurns!==6)fail('AXIS 8.11 inherited learning contract mismatch');
             for(const [lang,n] of Object.entries({en:5736,ja:132,ko:132,zh:132}))if(x.axis811?.learning?.availableByLanguage?.[lang]!==n)fail(`AXIS 8.11 ${lang} count mismatch`);
             if(x.axis811?.trends?.model!=='state-field-trajectory'||x.axis811?.trends?.fitnessScore!==false||x.axis811?.trends?.networkRequired!==false)fail('AXIS 8.11 State Field contract mismatch');
             if(x.axis811?.services?.localFirst!==true||x.axis811?.services?.automaticNetwork!==false||x.axis811?.services?.clientSecrets!==false)fail('AXIS 8.11 cloud/AI contract mismatch');
           }
-          if(['8.12','8.12.1','8.12.2','8.12.3'].includes(process.env.AXIS_EXPECTED_VERSION)){
+          if(['8.12','8.12.1','8.12.2','8.12.3','8.12.4'].includes(process.env.AXIS_EXPECTED_VERSION)){
             if(x.axis812?.release!==true)fail('AXIS 8.12 release descriptor missing');
             if(x.axis812?.learning?.totalNew!==19584||x.axis812?.learning?.totalAvailable!==25716)fail('AXIS 8.12 corpus totals mismatch');
             for(const [lang,n] of Object.entries({en:10632,ja:5028,ko:5028,zh:5028}))if(x.axis812?.learning?.availableByLanguage?.[lang]!==n)fail(`AXIS 8.12 ${lang} count mismatch`);
@@ -107,8 +107,12 @@ jobs:
             if(x.axis812?.learning?.teachingLoop?.join('|')!=='meaning|noticing|retrieval|response|shadow|transform|review')fail('AXIS 8.12 pedagogy mismatch');
             if(x.axis812?.learning?.networkRequired!==false||x.axis812?.learning?.autoplay!==false||x.axis812?.learning?.trainingOwner!==false)fail('AXIS 8.12 ownership mismatch');
           }
-          if(process.env.AXIS_EXPECTED_VERSION==='8.12.3'){
-            for(const k of ['settingsNativeAlignment8123','settingsHelperCopyRetired8123','learningSettingsMethodRetired8123','learningShadowUiRetired8123','learningSimpleAudio8123','learningLocalRecording8123','learningNoUpload8123','learningNoTrainingOwner8123'])if(x.gates?.[k]!==true)fail(`missing AXIS 8.12.3 gate ${k}`);
+          if(['8.12.3','8.12.4'].includes(process.env.AXIS_EXPECTED_VERSION)){
+            for(const k of ['settingsNativeAlignment8123','settingsHelperCopyRetired8123','learningSettingsMethodRetired8123','learningShadowUiRetired8123','learningSimpleAudio8123','learningLocalRecording8123','learningNoUpload8123','learningNoTrainingOwner8123'])if(x.gates?.[k]!==true)fail(`missing AXIS 8.12.3 inherited gate ${k}`);
+          }
+          if(process.env.AXIS_EXPECTED_VERSION==='8.12.4'){
+            for(const k of ['trainingIntervalUnion8124','projectGapLatestActivity8124','sessionStartEndBounds8124','sessionActivitySeal8124','quickRecordDirectRecent8124','liveRouteActionDelegate8124','liveRouteDeviationSafe8124','settingsVerticalNative8124'])if(x.gates?.[k]!==true)fail(`missing AXIS 8.12.4 gate ${k}`);
+            if(x.axis8124?.liveRoute?.readOnly!==true||x.axis8124?.liveRoute?.deviationPenalty!==false||x.axis8124?.quickRecord?.recentDirect!==true||x.axis8124?.settings?.learningAndCloudNativeVerticalGeometry!==true)fail('AXIS 8.12.4 semantic descriptor mismatch');
           }
           if(!/^[a-f0-9]{12}$/.test(x.assets?.core||'')||!/^[a-f0-9]{12}$/.test(x.assets?.css||''))fail('invalid immutable asset hash');
           const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(m=>m[1]);
@@ -147,17 +151,22 @@ jobs:
           AXIS_ENGINE: chromium
         run: node scripts/axis-811-browser-smoke.mjs
       - name: Real Chromium AXIS 8.12 Language Studio against fixed Production URL
-        if: contains(fromJSON('["8.12","8.12.1","8.12.2","8.12.3"]'), env.AXIS_EXPECTED_VERSION)
+        if: contains(fromJSON('["8.12","8.12.1","8.12.2","8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-812-browser-smoke.mjs
       - name: Real Chromium AXIS 8.12.2 Settings against fixed Production URL
-        if: contains(fromJSON('["8.12.2","8.12.3"]'), env.AXIS_EXPECTED_VERSION)
+        if: contains(fromJSON('["8.12.2","8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8122-settings-smoke.mjs
       - name: Real Chromium AXIS 8.12.3 learning simplification against fixed Production URL
-        if: env.AXIS_EXPECTED_VERSION == '8.12.3'
+        if: contains(fromJSON('["8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8123-learning-simplify-smoke.mjs
+      - name: Real Chromium AXIS 8.12.4 training flow against fixed Production URL
+        if: env.AXIS_EXPECTED_VERSION == '8.12.4'
+        env:
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8124-flow-smoke.mjs

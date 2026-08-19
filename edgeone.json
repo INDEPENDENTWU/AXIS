@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node build-release.mjs",
+  "buildCommand": "node scripts/edgeone-prebuilt-verify.mjs",
   "outputDirectory": ".",
   "nodeVersion": "20.18.0",
   "headers": [

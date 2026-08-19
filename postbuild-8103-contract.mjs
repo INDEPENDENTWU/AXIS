@@ -8,7 +8,7 @@ if(info.version!=='8.10.3'||info.baseVersion!=='8.10.3')fail(`release identity m
 for(const [needle,label] of [
  ["scope:'idle',mode:'ready',eyebrow:'现在',title:'准备开始',value:'—',meta:'今天还没有训练记录',progress:0,dial:''",'idle home still paints a false dial'],
  ["title:''",'completed home redundant title was not retired'],
- ["parts.unshift('开始 '+tlabel(last.start))",'completed home start time missing'],
+ ["parts.unshift('开始 '+tlabel(start))",'completed home recovered start time missing'],
  ["const axis8103DialEl=$('#axisNowDial');if(axis8103DialEl)axis8103DialEl.hidden=!x.dial",'home dial visibility owner missing'],
  ["id=\"v8710SessionPreset\"",'total workout duration presets missing'],
  ["sessionPreference:'v876SessionTarget'",'duration reminder single preference owner missing'],

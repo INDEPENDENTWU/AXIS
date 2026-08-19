@@ -12,3 +12,4 @@ fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 console.log('[AXIS 8.12.3 contract] PASS · native Settings alignment · method/shadow/A-B retired · listen/record/replay only · training ownership unchanged');
 
 await import('./postbuild-8123-field-polish.mjs');
+await import('./postbuild-8124-contract.mjs');

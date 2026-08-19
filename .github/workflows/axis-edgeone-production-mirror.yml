@@ -1,0 +1,142 @@
+name: AXIS EdgeOne Production Mirror
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: axis-edgeone-production-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Build exact canonical release
+        run: node build-release.mjs
+      - name: Verify EdgeOne prebuilt package
+        run: node scripts/edgeone-prebuilt-verify.mjs
+      - name: Verify EdgeOne cloud-function parity modules
+        run: |
+          node --input-type=module --check < cloud-functions/_shared/cloud-ai-config.js
+          node --input-type=module --check < cloud-functions/api/ai-capabilities.js
+          node --input-type=module --check < cloud-functions/api/cloud-status.js
+      - name: Verify EdgeOne deployment configuration
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),x=JSON.parse(fs.readFileSync('edgeone.json','utf8'));
+          if(x.buildCommand!=='node scripts/edgeone-prebuilt-verify.mjs')throw new Error(`EdgeOne must publish verified prebuilt artifact, got ${x.buildCommand}`);
+          if(x.outputDirectory!=='.')throw new Error(`unexpected EdgeOne output ${x.outputDirectory}`);
+          NODE
+
+  deploy-production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: package-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+      EDGEONE_PROJECT_NAME: axisfitness-mirror
+      VERCEL_GOLDEN_URL: https://axis-five-puce.vercel.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Require EdgeOne credential
+        run: |
+          test -n "${EDGEONE_API_TOKEN:-}" || { echo '::error::Repository secret EDGEONE_API_TOKEN is required.'; exit 2; }
+      - name: Build exact main artifact
+        run: node build-release.mjs
+      - name: Verify exact EdgeOne package
+        run: node scripts/edgeone-prebuilt-verify.mjs
+      - name: Wait for Vercel golden Production to serve the same main commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            code=$(curl -LsS --connect-timeout 5 --max-time 15 -o /tmp/vercel-axis-build.json -w '%{http_code}' "$VERCEL_GOLDEN_URL/axis-build.json" || true)
+            if [ "$code" = "200" ] && EXPECTED="$GITHUB_SHA" node <<'NODE'
+          const fs=require('fs');
+          try{const x=JSON.parse(fs.readFileSync('/tmp/vercel-axis-build.json','utf8'));process.exit(x.sourceCommit===process.env.EXPECTED&&x.version==='8.12.4'&&x.baseVersion==='8.12.4'?0:1)}catch{process.exit(1)}
+          NODE
+            then exit 0; fi
+            echo "Attempt $attempt · Vercel golden not yet exact $GITHUB_SHA / 8.12.4"
+            sleep 4
+          done
+          echo '::error::Vercel golden Production did not converge to the exact main commit before EdgeOne deploy.'
+          exit 1
+      - name: Require Vercel/local canonical artifact parity
+        run: |
+          node - <<'NODE'
+          const local=require('./axis-build.json'),remote=require('/tmp/vercel-axis-build.json');
+          for(const [k,a,b] of [
+            ['sourceCommit',local.sourceCommit,remote.sourceCommit],['version',local.version,remote.version],['baseVersion',local.baseVersion,remote.baseVersion],['architecture',local.architecture,remote.architecture],['core',local.assets?.core,remote.assets?.core],['css',local.assets?.css,remote.assets?.css],['runtimeHash',local.canonical?.runtimeHash,remote.canonical?.runtimeHash],['initialJavascript',local.requests?.initialJavascript,remote.requests?.initialJavascript],['dynamicJavascript',local.requests?.dynamicJavascript,remote.requests?.dynamicJavascript]
+          ])if(a!==b)throw new Error(`Vercel parity mismatch ${k}: ${a} != ${b}`);
+          console.log('[AXIS EdgeOne parity] exact canonical artifact matches Vercel Production');
+          NODE
+      - name: Install EdgeOne CLI
+        run: npm install -g edgeone
+      - name: Deploy exact prebuilt artifact to EdgeOne Production
+        shell: bash
+        run: |
+          set -o pipefail
+          edgeone pages deploy . -n "$EDGEONE_PROJECT_NAME" -e production -t "$EDGEONE_API_TOKEN" 2>&1 | tee /tmp/axis-edgeone-deploy.log
+      - name: Verify EdgeOne authenticated deployment and Vercel API parity
+        run: node scripts/edgeone-live-verify.mjs
+      - name: Resolve EdgeOne runner-visible project URL
+        run: |
+          node - <<'NODE' >> "$GITHUB_ENV"
+          const x=require('/tmp/edgeone-live-result.json');
+          if(!x.baseUrl)throw new Error('EdgeOne base URL missing');
+          console.log(`EDGEONE_LIVE_URL=${x.baseUrl}`);
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Chromium real EdgeOne 8.12.4 flow
+        env:
+          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8124-flow-smoke.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: iPhone WebKit real EdgeOne 8.12.4 flow
+        env:
+          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8124-flow-smoke.mjs
+      - name: Preserve non-secret deployment diagnostics
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/axis-edgeone-deploy.log ]; then
+            TOKEN="${EDGEONE_API_TOKEN:-}" node - <<'NODE'
+          const fs=require('fs'),f='/tmp/axis-edgeone-deploy.log';let s=fs.readFileSync(f,'utf8'),t=process.env.TOKEN||'';if(t)s=s.split(t).join('[REDACTED]');s=s.replace(/eo_token=[^\s\u001b]+/g,'eo_token=[REDACTED]').replace(/(token|secret|api[_-]?key)\s*[:=]\s*[^\s]+/ig,'$1=[REDACTED]');fs.writeFileSync('/tmp/axis-edgeone-deploy-redacted.log',s);
+          NODE
+          fi
+      - name: Upload EdgeOne verification record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axis-edgeone-production-verification
+          path: |
+            /tmp/axis-edgeone-deploy-redacted.log
+            /tmp/edgeone-live-result.json
+          if-no-files-found: ignore
+          retention-days: 3
