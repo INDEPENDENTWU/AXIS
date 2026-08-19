@@ -2,48 +2,39 @@
 
 > Canonical engineering handoff. `CURRENT_RELEASE.md` remains the product/release contract; this file records the active engineering boundary and the next exact action.
 
-## Stable production baseline
+## Production baseline at start of this work
 
 - Public Web release: **AXIS 8.12.4**.
-- Stable production `main`: `cf428199618a0e27e0fce5823bb251c761fd3d20`.
+- Base production `main`: `cf428199618a0e27e0fce5823bb251c761fd3d20`.
 - Vercel Production: `https://axis-five-puce.vercel.app`.
 - Architecture: `canonical-single-runtime`.
 - PR #54 established truthful workout timing/direct training flow and canonical total-workout completion ownership.
 - PR #55 added Settings-detail geometry convergence, recording Recent/My picker projections, single IME-aware equipment search ownership and professional exercise taxonomy enrichment without changing workout ownership.
 - Existing Web production behavior must remain unaffected by Native Foundation work.
 
-## Active branch
+## Active change
 
 - Branch: `axis-native-foundation-0`.
-- Scope: cross-platform architecture/contracts only; no Web runtime/product code changes.
+- PR: **#57 — AXIS Native Foundation 0 — contracts, fixtures, release rails**.
+- Scope: cross-platform architecture/contracts/governance only; no Web runtime/product source changes.
 - Objective: establish permanent domain/data/platform contracts, golden fixtures and engineering/release rails before Swift product implementation begins.
 
-## Foundation decisions
-
-### Separate shells / releases
+### Foundation decisions
 
 - `INDEPENDENTWU/AXIS` remains the independent Web product/deployment repository.
 - Target native repository: `INDEPENDENTWU/AXIS-iOS`.
 - iOS will be true Swift/SwiftUI native, not a WKWebView wrapper.
 - Web and iOS share versioned behavior/data contracts and golden fixtures, not UI code or production build chains.
-
-### Contract identities
-
-- Domain: `axis.domain.v1`
-- Data: `axis.data.v1`
-- Exchange: `axis.exchange.v1`
-- Event: `axis.event.v1`
-- Media: `axis.media.v1`
-
-### Ownership
-
+- Domain: `axis.domain.v1`.
+- Data: `axis.data.v1`.
+- Exchange: `axis.exchange.v1`.
+- Event: `axis.event.v1`.
+- Media: `axis.media.v1`.
 - Domain meaning/state transitions remain single-owner.
-- Platform shells are projections/adapters.
-- Local persistence mechanics are platform-specific adapters.
 - Server/sync/AI/HealthKit are optional mirrors/adapters, never live-workout truth.
 - A workout remains startable/recordable/finishable offline without account, AI or cloud.
 
-## Files added in Native Foundation 0
+### Foundation files
 
 Human-readable contracts/policies:
 
@@ -61,30 +52,20 @@ Human-readable contracts/policies:
 - `docs/decisions/ADR-0003-event-journal-after-domain-stability.md`
 - `docs/decisions/ADR-0004-native-local-first-no-account.md`
 
-Machine-readable shared foundation:
+Machine-readable/shared/gates:
 
-- `shared/contracts/axis-contract-manifest.json`
-- `shared/contracts/axis-event-v1.schema.json`
-- `shared/contracts/axis-exchange-v1.schema.json`
-- `shared/contracts/axis-platform-capabilities-v1.json`
-- `shared/contracts/axis-product-matrix-v1.json`
-- `shared/contracts/README.md`
-- `shared/fixtures/README.md`
-- `shared/fixtures/workout-basic-pause-resume.json`
-- `shared/fixtures/workout-a-b-a.json`
-- `shared/fixtures/workout-switch-incomplete-strength.json`
-- `shared/fixtures/workout-overlap-union.json`
-
-Gate:
-
+- `shared/contracts/*`
+- `shared/fixtures/*`
 - `scripts/axis-cross-platform-foundation-contract.mjs`
+- `scripts/axis-native-foundation-seal.mjs`
 - `.github/workflows/axis-cross-platform-foundation.yml`
+- `.github/pull_request_template.md`
 
-## Non-regression boundaries
+### Non-regression boundaries
 
-Native Foundation work must not change:
+Do not change for this foundation:
 
-- current Web runtime/build artifacts;
+- current Web runtime/build behavior;
 - activity interval timing semantics;
 - session interval-union timing;
 - latest-real-activity project gap;
@@ -95,27 +76,34 @@ Native Foundation work must not change:
 - personal-equipment/history/media compatibility;
 - manual/local recording when network/AI fails.
 
-## Validation / merge boundary
+## Validation for this work
 
-Before merging this foundation PR:
+Before merge:
 
-1. cross-platform contract/fixture gate passes on exact PR head;
+1. exact-head `AXIS Cross-Platform Foundation Gate` passes;
 2. repository/continuity contracts show no unexplained regression;
 3. changed-file review confirms no Web runtime/product source was modified;
-4. PR explicitly states that merging may create a new production source SHA through normal Vercel Git deployment even though runtime behavior is unchanged;
-5. after merge, verify the fixed Vercel production URL still serves AXIS 8.12.4 and the exact new source SHA with no runtime errors.
+4. PR states that normal Vercel Git integration may create a new source SHA even though runtime behavior is unchanged.
 
-## External blocker / next exact action
+After merge:
 
-The current GitHub connector can create branches/files/PRs inside existing repositories but cannot create a new repository.
+1. verify exact merged `main` SHA;
+2. verify fixed Vercel production URL still serves AXIS 8.12.4;
+3. verify production manifest/source SHA and runtime identity;
+4. verify no runtime errors;
+5. preserve release evidence in PR #57 rather than creating an unnecessary follow-up production-only docs commit.
 
-Therefore the only account-level manual step before Swift source work is:
+## Next planned stage
+
+The connected GitHub tool can create branches/files/PRs inside existing repositories but cannot create a new repository.
+
+Manual account-level action tracked in **issue #56**:
 
 **Create GitHub repository `INDEPENDENTWU/AXIS-iOS` with default branch `main`.**
 
-After that, the next engineering action is to initialize the native repository with a minimal SwiftUI app + pure `AXISDomain` module and make Swift pass the same `axis.domain.v1` golden fixtures before building product UI.
+Repository protection/governance follow-up is tracked in **issue #58**.
 
-## Continuity rule
+After `AXIS-iOS` exists, initialize it with a minimal SwiftUI app + pure `AXISDomain` module and make Swift pass the same `axis.domain.v1` golden fixtures before building product UI.
 
 For every new conversation/agent, inspect in this order:
 
