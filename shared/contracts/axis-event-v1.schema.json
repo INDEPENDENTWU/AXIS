@@ -27,7 +27,8 @@
       "type": "object",
       "properties": {
         "kind": {"type": "string", "enum": ["strength", "cardio"]},
-        "plannedSets": {"type": "integer", "minimum": 0}
+        "plannedSets": {"type": "integer", "minimum": 0},
+        "equipmentId": {"type": "string", "minLength": 1}
       },
       "additionalProperties": true
     },
@@ -51,6 +52,18 @@
         "required": ["type"]
       },
       "then": {"required": ["activityId"]}
+    },
+    {
+      "if": {
+        "properties": {"type": {"const": "equipmentSelected"}},
+        "required": ["type"]
+      },
+      "then": {
+        "required": ["payload"],
+        "properties": {
+          "payload": {"required": ["equipmentId"]}
+        }
+      }
     }
   ],
   "additionalProperties": true
