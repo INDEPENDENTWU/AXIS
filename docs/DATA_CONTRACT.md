@@ -51,6 +51,9 @@ Requirements:
 - each event has stable `id`;
 - each event declares `schema: axis.event.v1`;
 - each event has `type`, `sessionId`, and occurrence time;
+- activity-scoped events carry stable `activityId`;
+- `equipmentSelected` carries a non-empty stable `payload.equipmentId`;
+- reducer-consumed payload fields use the published portable types rather than platform-specific coercion;
 - replay is deterministic for the same ordered event set;
 - duplicate event IDs must not apply twice;
 - events are facts, not UI gestures;
@@ -103,6 +106,7 @@ Top-level shape:
 Rules:
 
 - imports validate schema before mutation;
+- durable equipment/session/media records carry stable non-empty IDs so repeated import can deduplicate them;
 - unknown additive fields are preserved/ignored safely where possible;
 - incompatible major schema versions fail explicitly instead of partial silent import;
 - importing the same package twice must not duplicate stable IDs/events;
