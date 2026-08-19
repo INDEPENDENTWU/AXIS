@@ -11,8 +11,9 @@
     "cli": "success",
     "deploy": "failure"
   },
+  "deployDiagnostic": "\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mUsing provided API token for deployment...\n\u001b[90m[cli]\u001b[0m\u001b[31m[✘] \u001b[0mDeployment failed: [getOrCreateProject] Project axisfitness exists but has Provider 'Github'. This project type does not support direct folder or zip file deployment. Only projects with Provider 'Upload' are supported.",
   "sourceBranch": "edgeone/8.12.3-production-mirror",
-  "sourceSha": "667f09d300b4f1e809f006fbb66b2692143bf835",
+  "sourceSha": "00e8389f5a12108ddb6ec84e4bbc01c3d13079e2",
   "goldenVercel": "https://axis-five-puce.vercel.app",
-  "updatedAt": "2026-08-19T03:02:14.361Z"
+  "updatedAt": "2026-08-19T03:04:21.898Z"
 }
