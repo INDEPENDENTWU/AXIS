@@ -60,6 +60,11 @@ jobs:
       - name: First-paint shell stability
         env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-first-paint-smoke.mjs
+      - name: Cold-start Home semantic first paint
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-first-paint-semantic-smoke.mjs
       - name: Inline settings ownership diagnostic
         env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-settings-diag.mjs
@@ -131,6 +136,11 @@ jobs:
       - name: iPhone WebKit product smoke
         env: { AXIS_URL: http://127.0.0.1:4173 }
         run: node scripts/axis-webkit-smoke.mjs
+      - name: iPhone WebKit cold-start Home semantic first paint
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-first-paint-semantic-smoke.mjs
       - name: iPhone WebKit equipment category regression
         env:
           AXIS_URL: http://127.0.0.1:4173
