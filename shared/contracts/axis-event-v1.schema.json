@@ -23,7 +23,14 @@
     "sessionId": {"type": "string", "minLength": 1},
     "activityId": {"type": "string", "minLength": 1},
     "occurredAt": {"type": "integer", "minimum": 0},
-    "payload": {"type": "object"},
+    "payload": {
+      "type": "object",
+      "properties": {
+        "kind": {"type": "string", "enum": ["strength", "cardio"]},
+        "plannedSets": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
     "revision": {"type": "integer", "minimum": 0},
     "deviceId": {"type": "string"}
   },
