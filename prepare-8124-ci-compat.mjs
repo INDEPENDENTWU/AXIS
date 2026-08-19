@@ -16,5 +16,10 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
   s=once(s,"assert.ok(['8.12','8.12.1','8.12.2','8.12.3'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);","assert.ok(['8.12','8.12.1','8.12.2','8.12.3','8.12.4'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);",'Shadow public patch family');
   write(f,s);
 }
+{
+  const f='scripts/axis-8123-equipment-gallery-picker-smoke.mjs';let s=read(f);
+  s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.3');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.4');",'8.12.3 equipment gallery/picker inherited identity');
+  write(f,s);
+}
 
-console.log('[AXIS 8.12.4 CI compat] PASS · current pause-owned/learning test contract + Shadow patch family extended without relaxing behavior');
+console.log('[AXIS 8.12.4 CI compat] PASS · current pause-owned/learning test contract + Shadow patch family + inherited gallery/picker identity extended without relaxing behavior');
