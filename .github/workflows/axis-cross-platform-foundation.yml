@@ -12,10 +12,13 @@ on:
       - 'docs/RELEASE_PROCESS.md'
       - 'docs/MIGRATION_POLICY.md'
       - 'docs/INCIDENT_POLICY.md'
+      - 'docs/NATIVE_FOUNDATION_CHECKLIST.md'
+      - 'docs/CURRENT_WORK.md'
       - 'docs/decisions/**'
       - 'shared/contracts/**'
       - 'shared/fixtures/**'
       - 'scripts/axis-cross-platform-foundation-contract.mjs'
+      - 'scripts/axis-native-foundation-seal.mjs'
       - '.github/workflows/axis-cross-platform-foundation.yml'
   push:
     branches: [main]
@@ -28,10 +31,13 @@ on:
       - 'docs/RELEASE_PROCESS.md'
       - 'docs/MIGRATION_POLICY.md'
       - 'docs/INCIDENT_POLICY.md'
+      - 'docs/NATIVE_FOUNDATION_CHECKLIST.md'
+      - 'docs/CURRENT_WORK.md'
       - 'docs/decisions/**'
       - 'shared/contracts/**'
       - 'shared/fixtures/**'
       - 'scripts/axis-cross-platform-foundation-contract.mjs'
+      - 'scripts/axis-native-foundation-seal.mjs'
       - '.github/workflows/axis-cross-platform-foundation.yml'
 
 permissions:
@@ -53,3 +59,5 @@ jobs:
           node-version: '22'
       - name: Validate contracts and golden fixtures
         run: node scripts/axis-cross-platform-foundation-contract.mjs
+      - name: Seal native foundation policies and product matrix
+        run: node scripts/axis-native-foundation-seal.mjs
