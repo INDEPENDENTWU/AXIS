@@ -4,7 +4,8 @@ import {execFileSync} from 'node:child_process';
 const contract=JSON.parse(fs.readFileSync('release-contract.json','utf8'));
 const version=String(contract.publicVersion||'').trim();
 if(!/^\d+(?:\.\d+)+$/.test(version))throw new Error(`invalid publicVersion: ${version}`);
-const modern810=version.startsWith('8.10')||['8.11','8.12'].includes(version);
+const modern810=/^8\.(?:10|11|12)(?:\.|$)/.test(version);
+const modern8103=version==='8.10.3'||version.startsWith('8.10.3.')||/^8\.(?:11|12)(?:\.|$)/.test(version);
 
 const files=[
   'scripts/axis-smoke.mjs','scripts/axis-completion-smoke.mjs','scripts/axis-88-smoke.mjs','scripts/axis-first-paint-smoke.mjs','scripts/axis-webkit-smoke.mjs','scripts/axis-881-smoke.mjs','scripts/axis-882-smoke.mjs','scripts/axis-89-smoke.mjs','scripts/axis-891-smoke.mjs','scripts/axis-810-smoke.mjs','scripts/axis-8101-smoke.mjs','scripts/axis-product-matrix.mjs'
@@ -25,7 +26,8 @@ for(const file of files){
     src=src.replace("assert.match(restLines.target,/^(?:休息 )?\\d{2}:\\d{2} · (Could|Is |I'm|Go |No |That |Can |Where |Sounds)/i);","assert.match(restLines.target,/^(?:休息 )?\\d{2}:\\d{2} · .{2,}$/u,'Rest Speak target is not a complete timer + phrase line');");
   }
   if(modern810&&file==='scripts/axis-810-smoke.mjs'){
-    src=src.replace("assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.'),`unexpected inherited release ${EXPECTED}`);","assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.')||['8.11','8.12'].includes(EXPECTED),`unexpected inherited release ${EXPECTED}`);");
+    src=src.replace("assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.')||['8.11','8.12'].includes(EXPECTED),`unexpected inherited release ${EXPECTED}`);","assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.')||EXPECTED==='8.11'||EXPECTED.startsWith('8.11.')||EXPECTED==='8.12'||EXPECTED.startsWith('8.12.'),`unexpected inherited release ${EXPECTED}`);");
+    src=src.replace("assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.'),`unexpected inherited release ${EXPECTED}`);","assert.ok(EXPECTED==='8.10'||EXPECTED.startsWith('8.10.')||EXPECTED==='8.11'||EXPECTED.startsWith('8.11.')||EXPECTED==='8.12'||EXPECTED.startsWith('8.12.'),`unexpected inherited release ${EXPECTED}`);");
     if(version==='8.12')src=src.replace("assert.equal((await page.locator('#v810ConfigSummary').innerText()).trim(),'自定','top-level Learning Schedule summary must stay native and compact');","assert.equal((await page.locator('#v810ConfigSummary').innerText()).trim(),'智能 · 混合','8.12 top-level Learning Schedule should summarize purpose + practice method while fine-tune remains visible inside the panel');");
   }
   if(file==='scripts/axis-891-smoke.mjs'){
@@ -42,7 +44,7 @@ for(const file of files){
   }
   if(version==='8.10.1'&&file==='scripts/axis-810-smoke.mjs')src=src.replace("assert.match(await page.locator('#v810ConfigSummary').innerText(),/日常.*长休.*每日 12/);","assert.equal((await page.locator('#v810ConfigSummary').innerText()).trim(),'自定','8.10.1 top-level learning summary should stay compact after custom scheduling');");
   if(version==='8.10.1'&&file==='scripts/axis-8101-smoke.mjs')src=src.replace("assert.equal(entry.b,'智能');","assert.equal(entry.b,'自定','explicit every-rest cadence should render the compact custom status');");
-  if(['8.10.3','8.11','8.12'].includes(version)&&file==='scripts/axis-product-matrix.mjs'){
+  if(modern8103&&file==='scripts/axis-product-matrix.mjs'){
     const stale="assert.equal(await page.locator('#v8710Rest:visible,#v8710Session:visible,#v876TargetSheet:visible').count(),0,'retired rest/session automatic reminder controls returned');";
     const current="assert.equal(await page.locator('#v8710Rest:visible,#v876TargetSheet:visible').count(),0,'retired rest automatic reminder controls returned');assert.equal(await page.locator('#v8710Session:visible').count(),1,'8.10.3 total-workout duration reminder is missing');assert.equal(await page.locator('#v8710SessionPreset button:visible').count(),5,'8.10.3 duration presets are incomplete');";
     if(!src.includes(stale)&&!src.includes(current))throw new Error('AXIS 8.10.3 product matrix reminder assertion shape changed');
@@ -94,8 +96,8 @@ if(version==='8.9'||version.startsWith('8.9.')||modern810){
   if(!fs.existsSync('scripts/prepare-89-test-flow.mjs'))throw new Error('AXIS 8.9 test-flow convergence is missing');
   execFileSync(process.execPath,['scripts/prepare-89-test-flow.mjs'],{stdio:'inherit'});
 }
-if(version==='8.12.3'){
-  if(!fs.existsSync('prepare-8123-ci-stability.mjs'))throw new Error('AXIS 8.12.3 CI stability contract is missing');
+if(version==='8.12.3'||version==='8.12.4'){
+  if(!fs.existsSync('prepare-8123-ci-stability.mjs'))throw new Error('AXIS 8.12.3+ CI stability contract is missing');
   execFileSync(process.execPath,['prepare-8123-ci-stability.mjs'],{stdio:'inherit'});
 }
 console.log(`[AXIS test contract] browser assertions aligned to ${version} · no stale release assertions · release flow aligned`);
