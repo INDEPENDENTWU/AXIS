@@ -36,3 +36,5 @@ assert.equal(await page.locator('#customName').inputValue(),'矩阵胸推');`;
  write(f,s);
 }
 console.log('[AXIS 8.12.3 current test contract] PASS · inherited browser checks protect the four-decision surface · retired method cannot return · current 64px Settings rhythm + equipment detail route sealed');
+
+await import('./prepare-8124-release-compat.mjs');
