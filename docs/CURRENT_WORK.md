@@ -5,54 +5,54 @@
 ## Production baseline at start of this work
 
 - Public product: AXIS 8.12.3.
-- `main` baseline: `c1c4aa9098a264b662e25ff1a78697bd2226a59b`.
+- `main` baseline: `cb4e8acfbe5b763011d4be39fb6d19e6102c1bca`.
 - Architecture: `canonical-single-runtime`.
-- Fixed Production endpoint: `axis-five-puce.vercel.app`.
-- The previous cold-start Home semantic first-paint fix is already merged and deployed.
-- Existing workout/training stores, equipment data, equipment photo persistence, visual memory, picker lifecycle, Group Plan, recording, Settings, Learning, Cloud/AI and report ownership are inherited unchanged.
+- Fixed Vercel Production endpoint: `axis-five-puce.vercel.app`.
+- Existing equipment/photo persistence, visual memory, Group Plan, Learning, Cloud/AI, report and canonical recording ownership are inherited.
+- The existing EdgeOne Makers project URL is not treated as a durable anonymous public endpoint until its access policy/custom-domain route is independently verified.
 
 ## Active change
 
-**AXIS 8.12.3 equipment gallery UI geometry hotfix.**
+**AXIS 8.12.4 training-flow reliability release.**
 
-This work fixes exactly two presentation defects reported from iPhone Settings > 我的器械:
+This release consolidates the current real-world workout issues into one controlled patch without redesigning unrelated surfaces:
 
-1. A personal equipment row with a real uploaded photo could collapse its equipment name and secondary text into the far-right chevron area. The root cause is CSS specificity: the older Settings rule `#settingsSheet #manageEqList .manageEq` forced a two-column grid and overrode the gallery row's intended three-column layout.
-2. The `＋ / 添加` content in the equipment detail add-photo card was visibly biased upward because the card used implicit Grid rows plus a negative margin / padding offset on the caption.
+1. Project interval timing no longer trusts event insertion order. The latest real activity interval/finish boundary is the source for `项目间歇`, so A → B → A switching cannot count active A time as idle gap.
+2. Session effective time and blank gap prefer the union of real `activity.intervals`; historical heuristics remain fallback only for records without interval evidence.
+3. Total-workout completion seals open activity lifecycle state and preserves/reconstructs the real session start/end boundary before the session is archived, preventing identical displayed start/end times.
+4. Switching away from a strength item finishes it only when every planned set is complete; otherwise it remains paused. Cardio remains paused on switch unless explicitly finished.
+5. Quick Record Recent is a true direct route: a selected recent equipment/exercise resolves by canonical/custom/library/history identity and opens its existing Quick editor without detouring through the full equipment catalog.
+6. Live Route / `接下来` remains read-only and deviation-safe. Ignoring a recommendation has no penalty; future projections use actual recorded behavior. Suggestions become actionable delegates into Quick Record but do not write training/storage state merely because the row was tapped.
+7. Settings `学习安排` and `云端与AI` return to the exact native Settings row vertical geometry. The validation compares row height, text center Y and chevron center Y to `#profileBtn`, not just horizontal insets.
+8. Public release identity advances to 8.12.4 while preserving one initial JavaScript request, zero dynamic runtime chunks and the existing canonical ownership boundaries.
 
-The fix is presentation-only:
-
-- photo-backed rows are sealed as `thumbnail | minmax(0,1fr) text | chevron` with explicit grid placement for all three visible children;
-- the text column remains the flexible owner of remaining width, preserving normal ellipsis only when genuinely necessary;
-- the add-photo card becomes a true centered flex column with a fixed visual gap and no negative offset;
-- the same row geometry is explicitly preserved at the <=380px mobile breakpoint;
-- no equipment names, IDs, photos, media references, IndexedDB data, visual-memory data or training records are rewritten.
-
-Explicitly unchanged: public version, equipment/photo persistence, cover/delete behavior, picker lifecycle, custom-equipment editing logic, training state/data, Home, Group Plan, camera/watermark, Settings information architecture, Training Report, Learning, Cloud/AI, Runtime/Live Route and deployment topology.
+The release adds no Live Route recording/storage/network owner and no new training-data store.
 
 ## Validation for this work
 
 Before merge:
 
-- build the exact AXIS 8.12.3 candidate and require the UI-geometry marker to be present in the canonical runtime;
-- at 417 CSS px and 375 CSS px, require a photo-backed `我的器械` row to resolve to three columns;
-- require the equipment text column to retain the majority of usable row width rather than collapse into the chevron column;
-- require thumbnail, text and chevron to remain non-overlapping and vertically centered;
-- require the add-photo card to use centered column layout with `＋` and `添加` horizontally centered and their combined content group vertically centered inside the card;
-- run the dedicated geometry regression in Chromium and iPhone WebKit;
-- retain the existing equipment gallery/picker regression, inherited Group Plan regression and all repository/release gates.
+- require deterministic `build-release.mjs` to produce exact 8.12.4 / `canonical-single-runtime` identity;
+- exercise A → B → A with the latest real activity belonging to an earlier-inserted event and verify Home interval starts at that real boundary;
+- verify session time uses the union of activity intervals;
+- click a Recent item such as `侧平举` and require the Quick editor to open directly with no visible equipment-catalog hop;
+- click a `接下来` suggestion and require the Quick editor to open while core/meta storage remains unchanged until the user explicitly saves;
+- require Live Route to remain `recordingOwner:false`, `storageOwner:false`, `networkOwner:false` and deviation penalty false;
+- long-press total workout completion and require archived `end > start`, with distinct displayed `开始` and `完成` facts;
+- compare Learning and Cloud/AI row height, visible text center Y and chevron center Y to a native Settings row within 0.5 CSS px;
+- run the dedicated 8.12.4 flow gate in Chromium and iPhone WebKit;
+- retain inherited Group Plan, equipment gallery/picker, Settings, Learning, Runtime, repository and deployment-policy gates.
 
-A short unrelated legacy WebKit timeout is not addressed with product changes; if it occurs, rerun the unchanged job and require a clean result before merge.
+The broad legacy Runtime omnibus gate may still expose an inherited unrelated geometry/first-paint flake; product changes must not be made solely to satisfy a non-reproducible legacy assertion when the dedicated real-flow and inherited relevant gates are clean.
 
 ## Next planned stage
 
-When the exact PR #52 head is green, squash-merge it into `main`. Then verify Vercel deploys that exact merge SHA to the existing AXIS Production project.
+When the exact PR #54 head passes the dedicated Chromium + iPhone WebKit flow gate and relevant inherited contracts, squash-merge it into `main` as AXIS 8.12.4.
 
-Production verification must confirm:
+Then:
 
-- deployment state is READY for the exact merge SHA;
-- `https://axis-five-puce.vercel.app` returns HTTP 200 and remains AXIS 8.12.3 / `canonical-single-runtime`;
-- the canonical runtime contains `__AXIS_8123_EQUIPMENT_GALLERY_UI_GEOMETRY__`;
-- the two presentation fixes do not introduce runtime errors.
-
-No other product optimization is part of this hotfix.
+- verify Vercel deploys the exact merged SHA to the existing Production project;
+- require `https://axis-five-puce.vercel.app` to anonymously serve HTTP 200, `canonical-8.12.4`, exact merged `sourceCommit`, and all eight 8.12.4 gates;
+- run the Production browser gate against the fixed Vercel URL, including the new real 8.12.4 flow smoke;
+- verify the EdgeOne build/deployment mirror follows the merged release configuration;
+- separately verify a durable anonymous EdgeOne entry. Do not represent the expiring/restricted Makers project URL as the permanent public URL; if anonymous project-domain access remains restricted, the remaining platform-side release requirement is a correctly bound public custom domain/access policy rather than another AXIS product-code change.
