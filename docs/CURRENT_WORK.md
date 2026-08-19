@@ -56,6 +56,7 @@ Machine-readable/shared/gates:
 
 - `shared/contracts/*`
 - `shared/fixtures/*`
+- `scripts/axis-schema-fixture-seal.mjs`
 - `scripts/axis-cross-platform-foundation-contract.mjs`
 - `scripts/axis-native-foundation-seal.mjs`
 - `.github/workflows/axis-cross-platform-foundation.yml`
@@ -80,7 +81,7 @@ Do not change for this foundation:
 
 Before merge:
 
-1. exact-head `AXIS Cross-Platform Foundation Gate` passes;
+1. exact-head `AXIS Cross-Platform Foundation Gate` passes, including published-schema validation before fixture reduction;
 2. repository/continuity contracts show no unexplained regression;
 3. changed-file review confirms no Web runtime/product source was modified;
 4. PR states that normal Vercel Git integration may create a new source SHA even though runtime behavior is unchanged.
