@@ -1,86 +1,155 @@
 # AXIS Current Work
 
-> Canonical engineering handoff. Product truth remains in `CURRENT_RELEASE.md`; this file records the latest verified engineering state and the next controlled boundary.
+> Canonical engineering handoff. `CURRENT_RELEASE.md` remains the product/release contract; this file records the active engineering boundary and what must not be accidentally re-owned.
 
-## Production baseline at start of this work
+## Stable production baseline
 
-- Public product: AXIS 8.12.3.
-- `main` baseline: `cb4e8acfbe5b763011d4be39fb6d19e6102c1bca`.
+- Public release: **AXIS 8.12.4**.
+- Stable `main`: `3243ac6113fa1e40b9dc388bd38ce06a99e515d2`.
+- Vercel Production: `https://axis-five-puce.vercel.app`.
 - Architecture: `canonical-single-runtime`.
-- Fixed Vercel Production endpoint: `axis-five-puce.vercel.app`.
-- Existing equipment/photo persistence, visual memory, Group Plan, Learning, Cloud/AI, report and canonical recording ownership are inherited.
-- The existing EdgeOne Makers project URL is not treated as a durable anonymous public endpoint until its access policy/custom-domain route is independently verified.
+- PR #54 is already squash-merged. Its dedicated exact-candidate Chromium + iPhone WebKit flow gate passed before merge.
+- The 8.12.4 workout timing/session-completion contracts are stable baseline and are not part of the current polish.
 
-## Active change
+## Active branch / PR
 
-**AXIS 8.12.4 training-flow reliability release.**
+- Branch: `axis-8124-settings-catalog-polish`.
+- PR: **#55 — AXIS 8.12.4 — settings and catalog polish**.
+- Base: exact live 8.12.4 `main` SHA above.
+- Scope: narrow post-release field polish only; no public version bump and no new training-data store.
 
-This release consolidates the current real-world workout issues into one controlled patch without redesigning unrelated surfaces:
+## Active polish
 
-1. Project interval timing no longer trusts event insertion order. The latest real activity interval/finish boundary is the source for `项目间歇`, so A → B → A switching cannot count active A time as idle gap.
-2. Session effective time and blank gap prefer the union of real `activity.intervals`; historical heuristics remain fallback only for records without interval evidence.
-3. Total-workout completion seals open activity lifecycle state and preserves/reconstructs the real session start/end boundary before the session is archived, preventing identical displayed start/end times.
-4. Switching away from a strength item finishes it only when every planned set is complete; otherwise it remains paused. Cardio remains paused on switch unless explicitly finished.
-5. Quick Record Recent is a true direct route: a selected recent equipment/exercise resolves by canonical/custom/library/history identity and opens its existing Quick editor without detouring through the full equipment catalog.
-6. Live Route / `接下来` remains read-only and deviation-safe. Ignoring a recommendation has no penalty; future projections use actual recorded behavior. Suggestions become actionable delegates into Quick Record but do not write training/storage state merely because the row was tapped.
-7. Settings `学习安排` and `云端与AI` return to the exact native Settings row vertical geometry. The validation compares row height, text center Y and chevron center Y to `#profileBtn`, not just horizontal insets.
-8. Public release identity advances to 8.12.4 while preserving one initial JavaScript request, zero dynamic runtime chunks and the existing canonical ownership boundaries.
+### 1. Settings detail geometry
 
-The release adds no Live Route recording/storage/network owner and no new training-data store.
+The visible `学习安排` / `云端与AI` rows already match native Settings row geometry. The remaining visual defect was inside their expanded folds: an inherited second 18px horizontal inset plus older compact control geometry made those sections visibly narrower/denser than mature Settings surfaces such as `记录水印` and `提醒与声音`.
 
-## Current PR / CI handoff state
+The 8.12.4 detail owner now enforces:
 
-- Active PR: **#54 — AXIS 8.12.4 — truthful workout timing and direct training flow**.
-- Active branch: `axis-8124-training-flow-reliability` targeting `main`.
-- Original 8.12.4 implementation head was `f8c75dbe7463255c6c923f826b4c804cbd5e90c8`; subsequent changes must be explicitly documented here when they alter product ownership rather than release/test compatibility only.
-- `AXIS Repository Contract` was repaired to recognize the intentional EdgeOne verified-prebuilt publisher (`node scripts/edgeone-prebuilt-verify.mjs`) rather than the obsolete direct build command. The same stale assertion had also caused `AXIS 8.13 Runtime Core` to appear red after its runtime invariants had passed.
-- EdgeOne cloud-function syntax validation now checks those `.js` files as ESM input, matching their actual `export` syntax. The PR-level EdgeOne package contract then passed.
-- Remaining inherited CI failures were classified before modification: 8.13 Live Route and Shadow had stale 8.12.x version whitelists; Runtime/8.10.3 were not applying the already-established 8.12.3+ pause-owned/current-Learning compatibility transform to public 8.12.4; the dedicated 8.12.4 finish test used a synthetic `dispatchEvent` pointer that can fail pointer capture even though the real UI owner is a long hold.
-- Test-contract family detection now covers the 8.10/8.11/8.12 patch families, applies the current 8.12.3+ compatibility stage to 8.12.4, and preserves the same behavioral assertions. Shadow and Live Route whitelists include only the newly valid 8.12.4 patch; no ownership/topology assertions were removed.
-- The dedicated 8.12.4 finish regression now drives an actual Playwright pointer/mouse hold at the rendered button center rather than fabricating a PointerEvent. Storage/session assertions remain unchanged.
-- The real finish diagnostic exposed a product-level owner conflict rather than a test-only failure: v84 captured the `#finishHold` long-press and archived directly through its own LocalStorage copy, while `app.js` kept an in-memory active session. Persistence therefore showed a completed workout while Home could remain in `transition` until reload.
-- 8.12.4 now converges that boundary explicitly. v84 remains the long-press gesture owner, but session completion delegates through `window.__AXIS_COMPLETE_WORKOUT__` to the canonical `app.js completeFinish()` owner. `app.js` is the single completion state/storage/UI owner; the old v84 direct-storage path remains only as a fail-open compatibility fallback if the bridge is absent. `window.__AXIS_8124_WORKOUT_OWNER__` exposes this contract for compiled verification.
-- Do not treat a red legacy omnibus gate as proof of product failure until its failing step/log is identified. Conversely, do not waive a deterministic product regression: dedicated 8.12.4 real-flow failures must be fixed before merge.
+- zero second horizontal inset inside both folds;
+- 15px primary Settings UI typography;
+- 48px segmented frame / **42px actual option height**, matching the rendered Sound reference rather than an approximate token;
+- 16px block vertical rhythm;
+- native content edges, radii and gaps;
+- current `.axis8122*` Cloud/AI detail classes as well as Learning detail classes;
+- unchanged Learning persistence, Cloud/AI progressive disclosure and explicit user-invoked network policy.
 
-## Validation for this work
+Markers: `window.__AXIS_8124_SETTINGS_DETAIL_GEOMETRY__`, `window.__AXIS_8124_SETTINGS_DETAIL_SEAL__`.
 
-Before merge:
+### 2. Recording picker: Recent + My
 
-- require deterministic `build-release.mjs` to produce exact 8.12.4 / `canonical-single-runtime` identity;
-- exercise A → B → A with the latest real activity belonging to an earlier-inserted event and verify Home interval starts at that real boundary;
-- verify session time uses the union of activity intervals;
-- click a Recent item such as `侧平举` and require the Quick editor to open directly with no visible equipment-catalog hop;
-- click a `接下来` suggestion and require the Quick editor to open while core/meta storage remains unchanged until the user explicitly saves;
-- require Live Route to remain `recordingOwner:false`, `storageOwner:false`, `networkOwner:false` and deviation penalty false;
-- long-press total workout completion and require the v84 gesture to delegate to the app completion owner, archived `end > start`, active Home to disappear immediately without reload, and distinct displayed `开始` / `完成` facts;
-- require the compiled runtime to expose `__AXIS_8124_WORKOUT_OWNER__` in addition to the existing 8.12.4 flow markers;
-- compare Learning and Cloud/AI row height, visible text center Y and chevron center Y to a native Settings row within 0.5 CSS px;
-- run the dedicated 8.12.4 flow gate in Chromium and iPhone WebKit;
-- retain inherited Group Plan, equipment gallery/picker, Settings, Learning, Runtime, repository and deployment-policy gates.
+Camera/recording `待确认` must not use a poorer equipment-selection model than Quick Record.
 
-A legacy or inherited gate may require release-family alignment when it rejects only the new public patch identity or an already-retired semantic contract. Such alignment must keep the underlying behavioral/ownership assertion intact; product code must not be changed merely to satisfy a stale test fixture.
+The canonical App picker exposes a **read-only projection**:
 
-## Next planned stage
+- `recent()` — deduplicated real training history ordered by latest use;
+- `personal()` — existing `personalEqLibrary()` projection, including custom/history-backed equipment.
 
-Merge only when the exact current PR #54 head has clean dedicated Chromium + iPhone WebKit 8.12.4 flow validation and the relevant inherited deterministic contracts are clean. Any remaining red check must have its failing step and cause classified before merge; no blind merge on an unexplained deterministic failure.
+The equipment sheet renders compact `最近` and `我的` rails in recording/catalog contexts. They are shortcuts only; selection still delegates to the existing canonical App picker.
 
-After squash-merge into `main`:
+Ownership remains:
 
-- verify Vercel deploys the exact merged SHA to the existing Production project;
-- require `https://axis-five-puce.vercel.app` to anonymously serve HTTP 200, `canonical-8.12.4`, exact merged `sourceCommit`, and all eight 8.12.4 gates;
-- run the Production browser gate against the fixed Vercel URL, including the new real 8.12.4 flow smoke;
-- verify the EdgeOne production mirror publishes the same already-verified artifact rather than rebuilding a divergent runtime;
-- verify EdgeOne manifest/runtime/API parity against the exact merged release;
-- separately verify a durable anonymous EdgeOne entry. Do not represent the expiring/restricted Makers project URL as the permanent public URL; if anonymous project-domain access remains restricted, the remaining platform-side release requirement is a correctly bound public custom domain/access policy rather than another AXIS product-code change.
+- App `selectEq` / `__AXIS_PICK_EQUIPMENT__`: canonical selection/state owner;
+- picker projection: read-only, no training-storage writer;
+- Quick Record: existing editor/recording owner;
+- history-only equipment identity fallback remains preserved after the richer canonical resolver.
+
+Markers: `window.__AXIS_EQUIPMENT_PICKER_DATA__`, `window.__AXIS_8124_PICKER_PROJECTION__`.
+
+### 3. Equipment search
+
+The previous equipment search had two per-keystroke owners: the legacy `renderEqList()` full rebuild and v873 smart search. This was unnecessary DOM churn on iOS and also left query lifecycle inconsistent.
+
+The polish converges search to one UI owner:
+
+- one IME/composition-aware `input` owner;
+- requestAnimationFrame coalescing;
+- no legacy equipment-list rebuild per keystroke;
+- normalized search tokens cached per library object;
+- deterministic ranking: exact → prefix → contains → conservative Latin typo tolerance;
+- no loose Chinese edit-distance matching;
+- indexes name, aliases, type, equipment class, movement pattern, body region and detailed anatomy;
+- explicit Chinese semantic terms for `力量 / 有氧`, body regions such as `胸部 / 下肢`, and equipment terms such as `器械 / 龙门架 / 哑铃 / 杠铃 / 弹力带`;
+- query clears on selection, close and reopen.
+
+Search/UI projection does not write training storage.
+
+Markers: `window.__AXIS_8124_CATALOG_POLISH__`, `window.__AXIS_8124_SEARCH_SEMANTICS__`.
+
+### 4. Professional native exercise taxonomy
+
+The existing native exercise identity and historical records stay intact while current UI/search receives a detailed anatomy/semantics layer:
+
+- `primaryTargets`;
+- `secondaryTargets`;
+- `stabilizers`;
+- `detailMuscles`;
+- `bodyRegions`;
+- `movementPattern`;
+- `equipmentClass`;
+- `targetKind`;
+- `variableTargets`;
+- `targetConfidence`.
+
+Coverage is explicit across the original native library, the 8.9 expanded catalog (for example plate-loaded presses, high/low row machines, V-squat, glute drive, calf machines, landmine press, StairClimber, SkiErg and carries), and the later v8711 native extensions (for example Smith movements, assisted dip, sled push, farmer carry, battle rope and TRX/band rows).
+
+Generic implements such as dumbbells/barbells/cable stations remain **contextual/variable** rather than falsely claiming a fixed muscle target. Late free movements are not mislabeled as generic equipment.
+
+Existing coarse `muscles` remains available for historical compatibility; old workout records are not migrated or rewritten. The recording muscle panel prefers detailed movement-specific targets when available.
+
+Markers: `window.__AXIS_EXERCISE_TAXONOMY__`, `window.__AXIS_8124_LATE_TAXONOMY__`.
+
+## Files added/changed in this branch
+
+- `prepare-8124-settings-catalog-polish.mjs` — main Settings/picker/search/taxonomy convergence transform.
+- `prepare-8124-settings-catalog-history-compat.mjs` — preserves the 8.12.4 history-only equipment identity fallback after resolver enrichment.
+- `prepare-8124-settings-catalog-polish-seal.mjs` — final measured Settings geometry owner, including 42px option geometry and current `.axis8122*` classes.
+- `prepare-8124-taxonomy-coverage-seal.mjs` — explicit expanded/late native taxonomy coverage.
+- `prepare-8124-search-semantic-seal.mjs` — accurate Chinese type/body/equipment search semantics without broad fuzzy matching.
+- `prepare-8123-final-alignment.mjs` — imports all narrow polish transforms after the existing 8.12.4 owners.
+- `scripts/axis-8124-catalog-polish-smoke.mjs` — validates Settings edges, recording Recent/My, single search owner/lifecycle and core anatomy behavior.
+- `scripts/axis-8124-taxonomy-coverage-smoke.mjs` — validates expanded/late native anatomy and Chinese semantic search.
+- `.github/workflows/axis-8124-flow-gate.yml` — runs the exact polish regressions in Chromium and iPhone WebKit and cancels future superseded runs for this dedicated gate.
+
+## Non-regression boundaries
+
+Do not change these merely to satisfy this polish:
+
+- activity `intervals[]` timing semantics;
+- project-gap union/latest-real-activity semantics;
+- strength switch pause/finish rule;
+- total-workout completion ownership (`v84` gesture → App `completeFinish()` state/storage/UI);
+- Live Route read-only/deviation-safe ownership;
+- Quick Record direct Recent contract;
+- media/history storage ownership;
+- Cloud/AI explicit user-invoked network behavior.
+
+## Validation before merge
+
+The exact branch head must pass:
+
+- deterministic 8.12.4 build and compiled-marker contract;
+- existing 8.12.4 total-workout diagnostic;
+- existing 8.12.4 training-flow smoke;
+- inherited Live Route smoke;
+- inherited Settings convergence smoke;
+- new Settings/catalog polish smoke in Chromium + iPhone WebKit;
+- expanded native taxonomy + Chinese semantic-search smoke in Chromium + iPhone WebKit;
+- repository contract;
+- relevant inherited deterministic gates without unexplained current-head red failures.
+
+Do not relax a deterministic assertion to get green. Classify the failing behavior/fixture first.
+
+## Next boundary
+
+After the exact candidate is green, squash-merge PR #55, then verify Vercel Production serves the exact merged SHA and `axis-build.json` still reports 8.12.4 / `canonical-single-runtime`. Only after that should the next feature/version scope begin.
 
 ## Continuity rule
 
-For the next conversation or contributor, start from these sources in this order:
+For the next conversation/contributor, inspect in this order:
 
-1. `docs/CURRENT_RELEASE.md` — current product/release truth and ownership contracts.
-2. `docs/CURRENT_WORK.md` — active PR, verified state, known blockers and next boundary.
-3. PR #54 — exact unmerged code and current CI evidence.
-4. `axis-build.json` from an exact build/deployment — generated release truth; do not infer current ownership from historical version-named source files alone.
-5. Failing GitHub Actions step/log — classify the actual failure before changing product code or relaxing a gate.
-
-When the release boundary changes, update `CURRENT_RELEASE.md` and `CURRENT_WORK.md` in the same controlled change so repository context remains sufficient even when a chat thread is unavailable.
+1. `docs/CURRENT_RELEASE.md`;
+2. `docs/CURRENT_WORK.md`;
+3. PR #55 and its exact head/merge-result SHA;
+4. generated `axis-build.json` from that exact candidate/deployment;
+5. the exact failing GitHub Actions step/log before making any regression fix.

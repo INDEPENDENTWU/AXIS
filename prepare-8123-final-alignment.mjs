@@ -48,3 +48,8 @@ await import('./prepare-8123-settings-divider-seal.mjs');
 await import('./prepare-8124-training-flow.mjs');
 await import('./prepare-8124-session-owner.mjs');
 await import('./prepare-8124-live-route-compiled.mjs');
+await import('./prepare-8124-settings-catalog-polish.mjs');
+await import('./prepare-8124-taxonomy-coverage-seal.mjs');
+await import('./prepare-8124-search-semantic-seal.mjs');
+await import('./prepare-8124-settings-catalog-history-compat.mjs');
+await import('./prepare-8124-settings-catalog-polish-seal.mjs');
