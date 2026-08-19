@@ -79,7 +79,7 @@ axis8124Target(['suitcase-carry'],['腹外斜肌','腹内斜肌','腰方肌'],['
  'calf-raise':[['腓肠肌','比目鱼肌'],[],[],'踝跖屈']
 };
 function axis8124LateRegion(x){return /胸/.test(x)?'胸':/背|阔|大圆|斜方|菱形|竖脊/.test(x)?'背':/肩|三角|冈上/.test(x)?'肩':/肱|前臂/.test(x)?'手臂':/腹|核心|多裂|腰方/.test(x)?'核心':/臀|股|腘|内收|腓肠|比目鱼/.test(x)?'臀腿':/心肺|耐力/.test(x)?'心肺':'全身'}
-function axis8124EnrichLateCatalog(){for(const x of LIB){const t=AXIS8124_LATE_TARGETS[x.id];if(!t||x.primaryTargets?.length)continue;const [primary,secondary,stabilizers,pattern]=t,details=[...new Set([...primary,...secondary])];x.primaryTargets=[...primary];x.secondaryTargets=[...secondary];x.stabilizers=[...stabilizers];x.detailMuscles=details;x.bodyRegions=[...new Set(details.map(axis8124LateRegion))];x.movementPattern=pattern;x.equipmentClass=x.type==='cardio'?'有氧设备 / 运动':/smith/i.test(x.id)?'史密斯机':/cable|band/.test(x.id)?'绳索 / 阻力':'器械 / 动作';x.targetKind='movement';x.variableTargets=false;x.targetConfidence='canonical-late'}}
+function axis8124EnrichLateCatalog(){for(const x of LIB){const t=AXIS8124_LATE_TARGETS[x.id];if(!t||x.primaryTargets?.length)continue;const [primary,secondary,stabilizers,pattern]=t,details=[...new Set([...primary,...secondary])];x.primaryTargets=[...primary];x.secondaryTargets=[...secondary];x.stabilizers=[...stabilizers];x.detailMuscles=details;x.bodyRegions=[...new Set(details.map(axis8124LateRegion))];x.movementPattern=pattern;x.equipmentClass=x.type==='cardio'?'有氧设备 / 运动':/smith/i.test(x.id)?'史密斯机':/cable/.test(x.id)?'绳索':/band/.test(x.id)?'弹力带':/machine|extension|curl|abductor|adductor/.test(x.id)?'固定器械':'动作';x.targetKind='movement';x.variableTargets=false;x.targetConfidence='canonical-late'}}
 `;
  src=once(src,fnAnchor,fn+fnAnchor,'late native taxonomy function');
  src=once(src,'xs.forEach(addExercise);','xs.forEach(addExercise);axis8124EnrichLateCatalog();','late native taxonomy application');
@@ -87,7 +87,8 @@ function axis8124EnrichLateCatalog(){for(const x of LIB){const t=AXIS8124_LATE_T
  const marker="\ntry{window.__AXIS_8124_LATE_TAXONOMY__={version:'8.12.4',owner:'v8711-native-extension',coverage:'explicit-native-extension',storageWriter:false}}catch{}\n";
  src=src.slice(0,end)+marker+src.slice(end);
  for(const id of ['smith-squat','assisted-dip','sled-push','farmer-carry','battle-rope','trx-row'])if(!src.includes(`'${id}':[`))fail(`late target missing ${id}`);
+ if(src.includes("'器械 / 动作'"))fail('late free movement mislabeled as generic equipment');
  syntax(src,FILE);write(FILE,src);
 }
 
-console.log('[AXIS 8.12.4 taxonomy coverage seal] PASS · 8.9 expanded native catalog + late v8711 extensions receive explicit professional targets');
+console.log('[AXIS 8.12.4 taxonomy coverage seal] PASS · expanded native catalog + late native extensions have explicit targets and precise equipment semantics');
