@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 20
     env:
       EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
-      EDGEONE_PROJECT_NAME: ${{ secrets.EDGEONE_PROJECT_NAME }}
+      EDGEONE_PROJECT_NAME: axisfitness-mirror
       VERCEL_GOLDEN_URL: https://axis-five-puce.vercel.app
     steps:
       - uses: actions/checkout@v4
@@ -31,9 +31,6 @@ jobs:
           if [ -z "${EDGEONE_API_TOKEN:-}" ]; then
             echo "::error::Repository secret EDGEONE_API_TOKEN is required for the isolated EdgeOne mirror deployment."
             exit 2
-          fi
-          if [ -z "${EDGEONE_PROJECT_NAME:-}" ]; then
-            echo "EDGEONE_PROJECT_NAME=axisfitness" >> "$GITHUB_ENV"
           fi
 
       - name: Build exact AXIS candidate
@@ -83,7 +80,7 @@ jobs:
         shell: bash
         run: |
           set -u
-          echo "Deploying AXIS 8.12.3 to EdgeOne project: $EDGEONE_PROJECT_NAME"
+          echo "Deploying AXIS 8.12.3 to isolated EdgeOne Upload project: $EDGEONE_PROJECT_NAME"
           set +e
           edgeone pages deploy -n "$EDGEONE_PROJECT_NAME" -e production -t "$EDGEONE_API_TOKEN" 2>&1 | tee /tmp/axis-edgeone-deploy.log
           code=${PIPESTATUS[0]}
@@ -131,13 +128,13 @@ jobs:
             let raw=fs.readFileSync('/tmp/axis-edgeone-deploy.log','utf8');
             const token=process.env.EDGEONE_API_TOKEN||'';
             if(token)raw=raw.split(token).join('[REDACTED]');
-            raw=raw.replace(/(?:token|secret|api[_-]?key)\s*[:=]\s*[^\s]+/ig,'$1=[REDACTED]');
+            raw=raw.replace(/(token|secret|api[_-]?key)\s*[:=]\s*[^\s]+/ig,'$1=[REDACTED]');
             deployDiagnostic=raw.split(/\r?\n/).filter(Boolean).slice(-16).join('\n').slice(0,4000);
           }
           const body={
             status:process.env.AXIS_JOB_STATUS||'unknown',
             credentialConfigured:!!process.env.EDGEONE_API_TOKEN,
-            project:process.env.EDGEONE_PROJECT_NAME||'axisfitness',
+            project:process.env.EDGEONE_PROJECT_NAME||'axisfitness-mirror',
             deploymentUrl:'',
             steps,
             deployDiagnostic,
