@@ -1,0 +1,30 @@
+{
+  "schema": "axis.fixture.v1",
+  "contract": "axis.domain.v1",
+  "name": "switching away from incomplete strength pauses instead of finishes",
+  "events": [
+    {"schema":"axis.event.v1","id":"e1","type":"workoutStarted","sessionId":"s1","occurredAt":0},
+    {"schema":"axis.event.v1","id":"e2","type":"activityStarted","sessionId":"s1","activityId":"A","occurredAt":1000,"payload":{"kind":"strength","plannedSets":3}},
+    {"schema":"axis.event.v1","id":"e3","type":"setCompleted","sessionId":"s1","activityId":"A","occurredAt":3000},
+    {"schema":"axis.event.v1","id":"e4","type":"activityStarted","sessionId":"s1","activityId":"B","occurredAt":5000,"payload":{"kind":"cardio"}},
+    {"schema":"axis.event.v1","id":"e5","type":"activityPaused","sessionId":"s1","activityId":"B","occurredAt":8000},
+    {"schema":"axis.event.v1","id":"e6","type":"activityResumed","sessionId":"s1","activityId":"A","occurredAt":9000},
+    {"schema":"axis.event.v1","id":"e7","type":"setCompleted","sessionId":"s1","activityId":"A","occurredAt":11000},
+    {"schema":"axis.event.v1","id":"e8","type":"setCompleted","sessionId":"s1","activityId":"A","occurredAt":13000},
+    {"schema":"axis.event.v1","id":"e9","type":"activityFinished","sessionId":"s1","activityId":"A","occurredAt":14000},
+    {"schema":"axis.event.v1","id":"e10","type":"workoutFinished","sessionId":"s1","occurredAt":15000}
+  ],
+  "checkpoints": [
+    {"afterEvent":"e4","expected":{"activityStatus":{"A":"paused","B":"active"},"completedSets":{"A":1}}}
+  ],
+  "expected": {
+    "activityDurations": {"A":9000,"B":3000},
+    "sessionActiveDuration": 12000,
+    "projectGapAt": 15000,
+    "projectGap": 1000,
+    "sessionStart": 0,
+    "sessionEnd": 15000,
+    "activityStatus": {"A":"finished","B":"paused"},
+    "completedSets": {"A":3}
+  }
+}
