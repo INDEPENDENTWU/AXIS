@@ -23,7 +23,9 @@ function validate(value,schema,label){
   if(schema.type)assert.equal(typeOk(value,schema.type),true,`${label}: type ${schema.type}`);
   if(typeof value==='string'&&schema.minLength!=null)assert.ok(value.length>=schema.minLength,`${label}: minLength`);
   if(typeof value==='number'&&schema.minimum!=null)assert.ok(value>=schema.minimum,`${label}: minimum`);
-  if(schema.type==='object'&&value!==null&&typeof value==='object'&&!Array.isArray(value)){
+
+  const isObject=value!==null&&typeof value==='object'&&!Array.isArray(value);
+  if(isObject){
     for(const key of schema.required||[])assert.equal(Object.hasOwn(value,key),true,`${label}: missing ${key}`);
     for(const [key,child] of Object.entries(schema.properties||{}))if(Object.hasOwn(value,key))validate(value[key],child,`${label}.${key}`);
   }
@@ -33,10 +35,10 @@ function validate(value,schema,label){
   for(const rule of schema.allOf||[]){
     const condition=rule.if;
     let match=true;
-    if(condition?.required)match=condition.required.every(key=>Object.hasOwn(value,key));
+    if(condition?.required)match=condition.required.every(key=>isObject&&Object.hasOwn(value,key));
     if(match&&condition?.properties){
       for(const [key,cond] of Object.entries(condition.properties)){
-        if(!Object.hasOwn(value,key)){match=false;break}
+        if(!isObject||!Object.hasOwn(value,key)){match=false;break}
         if(cond.enum&&!cond.enum.includes(value[key])){match=false;break}
         if(cond.const!==undefined&&value[key]!==cond.const){match=false;break}
       }
