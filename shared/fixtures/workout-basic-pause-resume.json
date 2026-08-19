@@ -1,0 +1,22 @@
+{
+  "schema": "axis.fixture.v1",
+  "contract": "axis.domain.v1",
+  "name": "basic pause and resume preserves active-only duration",
+  "events": [
+    {"schema":"axis.event.v1","id":"e1","type":"workoutStarted","sessionId":"s1","occurredAt":0},
+    {"schema":"axis.event.v1","id":"e2","type":"activityStarted","sessionId":"s1","activityId":"a","occurredAt":1000,"payload":{"kind":"cardio"}},
+    {"schema":"axis.event.v1","id":"e3","type":"activityPaused","sessionId":"s1","activityId":"a","occurredAt":5000},
+    {"schema":"axis.event.v1","id":"e4","type":"activityResumed","sessionId":"s1","activityId":"a","occurredAt":9000},
+    {"schema":"axis.event.v1","id":"e5","type":"activityFinished","sessionId":"s1","activityId":"a","occurredAt":14000},
+    {"schema":"axis.event.v1","id":"e6","type":"workoutFinished","sessionId":"s1","occurredAt":15000}
+  ],
+  "expected": {
+    "activityDurations": {"a": 9000},
+    "sessionActiveDuration": 9000,
+    "projectGapAt": 15000,
+    "projectGap": 1000,
+    "sessionStart": 0,
+    "sessionEnd": 15000,
+    "activityStatus": {"a":"finished"}
+  }
+}
