@@ -3,6 +3,20 @@
   "$id": "axis.exchange.v1",
   "title": "AXIS Portable Exchange v1",
   "type": "object",
+  "$defs": {
+    "durableRecord": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "revision": {"type": "integer", "minimum": 0},
+        "updatedAt": {"type": "string"},
+        "deviceId": {"type": "string"},
+        "tombstone": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
   "required": ["schema", "exportedAt", "source", "profile", "equipment", "sessions", "events", "settings", "media"],
   "properties": {
     "schema": {"const": "axis.exchange.v1"},
@@ -20,11 +34,11 @@
       "additionalProperties": true
     },
     "profile": {"type": "object"},
-    "equipment": {"type": "array", "items": {"type": "object"}},
-    "sessions": {"type": "array", "items": {"type": "object"}},
+    "equipment": {"type": "array", "items": {"$ref": "#/$defs/durableRecord"}},
+    "sessions": {"type": "array", "items": {"$ref": "#/$defs/durableRecord"}},
     "events": {"type": "array", "items": {"$ref": "./axis-event-v1.schema.json"}},
     "settings": {"type": "object"},
-    "media": {"type": "array", "items": {"type": "object"}}
+    "media": {"type": "array", "items": {"$ref": "#/$defs/durableRecord"}}
   },
   "additionalProperties": true
 }
