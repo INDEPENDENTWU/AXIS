@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const fail=m=>{throw new Error(`[AXIS 8.12.x CI stability] ${m}`)};
+const fail=m=>{throw new Error(`[AXIS 8.12.3 CI stability] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
 const converge=(src,from,to,label)=>{
@@ -19,7 +19,7 @@ const label='${label}';
 
 {
  const f='scripts/axis-813-shadow-browser.mjs';let s=read(f);
- s=converge(s,"assert.ok(['8.12','8.12.1','8.12.2'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);","assert.ok(['8.12','8.12.1','8.12.2','8.12.3','8.12.4'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);",'Shadow public patch family');
+ s=converge(s,"assert.ok(['8.12','8.12.1','8.12.2'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);","assert.ok(['8.12','8.12.1','8.12.2','8.12.3'].includes(EXPECTED), `unexpected public patch ${EXPECTED}`);",'Shadow public patch family');
  s=converge(s,"assert.equal(activeFact(setComplete.observation, 'SHADOW_STRENGTH')?.setStates.filter((state) => state === 'assumed').length, 2);","assert.equal(activeFact(setComplete.observation, 'SHADOW_STRENGTH')?.setStates.filter((state) => state === 'done').length, 1, 'set completion fact count drifted');",'Shadow current set-state authority');
  s=converge(s,"assert.equal(activeFact(paused.observation, 'SHADOW_STRENGTH')?.activityStatus, 'paused');","assert.equal(activeFact(paused.observation, 'SHADOW_STRENGTH')?.status, 'paused');",'Shadow paused fact field');
  s=converge(s,"assert.equal(activeFact(resumed.observation, 'SHADOW_STRENGTH')?.activityStatus, 'active');","assert.equal(activeFact(resumed.observation, 'SHADOW_STRENGTH')?.status, 'active');",'Shadow resumed fact field');
@@ -109,4 +109,4 @@ const voice=await page.evaluate(()=>window.__AXIS_8103_VOICE__);assert.deepEqual
  s=converge(s,"PASS · inline Settings · home states · duration reminder · fixed adjust anchor · four-language voice routing · distinct shadow A/B","PASS · inline Settings · home states · duration reminder · fixed adjust anchor · four-language voice routing · current practice surface",'8.10.3 current PASS label');
  write(f,s);
 }
-console.log('[AXIS 8.12.x CI stability] PASS · inherited browser/shadow checks aligned to pause-owned rest, current recording facts, and the retired learning-mode boundary');
+console.log('[AXIS 8.12.3 CI stability] PASS · inherited browser/shadow checks aligned to pause-owned rest, current recording facts, and the retired learning-mode boundary');
