@@ -87,12 +87,20 @@ jobs:
           set -e
           exit "$code"
 
+      - name: Verify live EdgeOne mirror
+        id: live
+        env:
+          VERCEL_GOLDEN_URL: https://axis-five-puce.vercel.app
+        run: node scripts/edgeone-live-verify.mjs
+
       - name: Preserve deployment output
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: axis-edgeone-deploy-output
-          path: /tmp/axis-edgeone-deploy.log
+          path: |
+            /tmp/axis-edgeone-deploy.log
+            /tmp/edgeone-live-result.json
           if-no-files-found: ignore
           retention-days: 3
 
@@ -106,13 +114,10 @@ jobs:
           AXIS_PARITY_OUTCOME: ${{ steps.parity.outcome }}
           AXIS_CLI_OUTCOME: ${{ steps.cli.outcome }}
           AXIS_DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          AXIS_LIVE_OUTCOME: ${{ steps.live.outcome }}
         shell: bash
         run: |
           set -u
-          URL=""
-          if [ -f /tmp/axis-edgeone-deploy.log ]; then
-            URL="$(grep -Eo 'https://[^[:space:]]+' /tmp/axis-edgeone-deploy.log | tail -1 | sed 's/[),;]$//' || true)"
-          fi
           node - <<'NODE'
           const fs=require('fs');
           const steps={
@@ -121,7 +126,8 @@ jobs:
             release:process.env.AXIS_RELEASE_OUTCOME||'unknown',
             parity:process.env.AXIS_PARITY_OUTCOME||'unknown',
             cli:process.env.AXIS_CLI_OUTCOME||'unknown',
-            deploy:process.env.AXIS_DEPLOY_OUTCOME||'unknown'
+            deploy:process.env.AXIS_DEPLOY_OUTCOME||'unknown',
+            live:process.env.AXIS_LIVE_OUTCOME||'unknown'
           };
           let deployDiagnostic='';
           if(fs.existsSync('/tmp/axis-edgeone-deploy.log')){
@@ -131,12 +137,17 @@ jobs:
             raw=raw.replace(/(token|secret|api[_-]?key)\s*[:=]\s*[^\s]+/ig,'$1=[REDACTED]');
             deployDiagnostic=raw.split(/\r?\n/).filter(Boolean).slice(-16).join('\n').slice(0,4000);
           }
+          let live=null;
+          if(fs.existsSync('/tmp/edgeone-live-result.json')){
+            try{live=JSON.parse(fs.readFileSync('/tmp/edgeone-live-result.json','utf8'))}catch{}
+          }
           const body={
             status:process.env.AXIS_JOB_STATUS||'unknown',
             credentialConfigured:!!process.env.EDGEONE_API_TOKEN,
             project:process.env.EDGEONE_PROJECT_NAME||'axisfitness-mirror',
-            deploymentUrl:'',
+            deploymentUrl:live?.baseUrl||'',
             steps,
+            live,
             deployDiagnostic,
             sourceBranch:'edgeone/8.12.3-production-mirror',
             sourceSha:process.env.GITHUB_SHA||'',
@@ -145,9 +156,6 @@ jobs:
           };
           fs.writeFileSync('edgeone-deploy-status.json',JSON.stringify(body,null,2)+'\n');
           NODE
-          if [ -n "$URL" ]; then
-            node -e "const fs=require('fs'),p='edgeone-deploy-status.json',x=JSON.parse(fs.readFileSync(p));x.deploymentUrl=process.argv[1];fs.writeFileSync(p,JSON.stringify(x,null,2)+'\\n')" "$URL"
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add edgeone-deploy-status.json
