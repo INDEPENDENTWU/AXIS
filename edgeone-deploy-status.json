@@ -2,7 +2,7 @@
   "status": "failure",
   "credentialConfigured": true,
   "project": "axisfitness-mirror",
-  "deploymentUrl": "",
+  "deploymentUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
   "steps": {
     "credential": "success",
     "build": "success",
@@ -12,10 +12,44 @@
     "deploy": "success",
     "live": "failure"
   },
-  "live": null,
-  "deployDiagnostic": "[cli] Deployment in progress... (status: Process, elapsed: ~20s)\n[cli] Deployment in progress... (status: Process, elapsed: ~30s)\n[cli] Deployment in progress... (status: Process, elapsed: ~40s)\n[cli] Deployment in progress... (status: Process, elapsed: ~50s)\n[cli] Deployment in progress... (status: Process, elapsed: ~60s)\n[cli] Deployment in progress... (status: Process, elapsed: ~70s)\n[cli] Deployment in progress... (status: Process, elapsed: ~80s)\n[cli] Deployment in progress... (status: Process, elapsed: ~90s)\n[cli] Deployment in progress... (status: Process, elapsed: ~100s)\n[cli] Deployment in progress... (status: Process, elapsed: ~110s)\n[cli] Deployment in progress... (status: Process, elapsed: ~120s)\n[cli] Deployment in progress... (status: Process, elapsed: ~130s)\n[cli] Deployment in progress... (status: Process, elapsed: ~140s)\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mDeploy Success\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mDeploy URL: https://axisfitness-mirror-9x91gveo.edgeone.cool?eo_token=[REDACTED]\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mConsole URL: https://console.cloud.tencent.com/edgeone/pages/project/makers-bxiu1vmyd0ba/deployment/dp94w3s4mn6r",
+  "live": {
+    "baseUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
+    "publicStatus": 200,
+    "authenticatedStatus": 200,
+    "manifestParity": true,
+    "runtimeMarker": true,
+    "api": {
+      "/api/ai-status": {
+        "edgeStatus": 200,
+        "goldenStatus": 200,
+        "edgeJson": true,
+        "goldenJson": true
+      },
+      "/api/ai-capabilities": {
+        "edgeStatus": 200,
+        "goldenStatus": 200,
+        "edgeJson": true,
+        "goldenJson": true
+      },
+      "/api/cloud-status": {
+        "edgeStatus": 200,
+        "goldenStatus": 200,
+        "edgeJson": true,
+        "goldenJson": true
+      },
+      "/api/owner-config": {
+        "edgeStatus": 503,
+        "goldenStatus": 503,
+        "edgeJson": true,
+        "goldenJson": true
+      }
+    },
+    "error": "[AXIS EdgeOne live] /api/owner-config unavailable on EdgeOne: 503",
+    "verifiedAt": "2026-08-19T03:21:20.660Z"
+  },
+  "deployDiagnostic": "\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mProject axisfitness-mirror already exists. Using existing project.\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mUsing Project ID: makers-bxiu1vmyd0ba\n\u001b[90m[cli]\u001b[0m\u001b[36m Uploading folder to EdgeOne COS...\u001b[0m\n[cli][Uploader] Uploading file: 100%\n[cli][Uploader] Uploading file: 100%\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mFile uploaded successfully\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mCreating deployment in Production environment...\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mCreated deployment with Deployment ID: dp1qdlxaajkh\n\u001b[90m[cli]\u001b[0m\u001b[36m Waiting for deployment to complete...\u001b[0m\n[cli][DeployStatus] Deploying...\n[cli] Deployment in progress... (status: Process, elapsed: ~10s)\n[cli] Deployment in progress... (status: Process, elapsed: ~20s)\n[cli] Deployment in progress... (status: Process, elapsed: ~30s)\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mDeploy Success\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mDeploy URL: https://axisfitness-mirror-9x91gveo.edgeone.cool?eo_token=[REDACTED]\n\u001b[90m[cli]\u001b[0m\u001b[32m[✔] \u001b[0mConsole URL: https://console.cloud.tencent.com/edgeone/pages/project/makers-bxiu1vmyd0ba/deployment/dp1qdlxaajkh",
   "sourceBranch": "edgeone/8.12.3-production-mirror",
-  "sourceSha": "16b3bbf21cf6739469b54a0157f3eaa5ca2a2829",
+  "sourceSha": "b217e1195d35053b8bebd5ec060375e82059ec4f",
   "goldenVercel": "https://axis-five-puce.vercel.app",
-  "updatedAt": "2026-08-19T03:18:06.518Z"
+  "updatedAt": "2026-08-19T03:21:33.922Z"
 }
