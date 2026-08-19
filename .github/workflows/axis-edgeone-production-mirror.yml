@@ -28,9 +28,9 @@ jobs:
         run: node scripts/edgeone-prebuilt-verify.mjs
       - name: Verify EdgeOne cloud-function parity modules
         run: |
-          node --check cloud-functions/_shared/cloud-ai-config.js
-          node --check cloud-functions/api/ai-capabilities.js
-          node --check cloud-functions/api/cloud-status.js
+          node --input-type=module --check < cloud-functions/_shared/cloud-ai-config.js
+          node --input-type=module --check < cloud-functions/api/ai-capabilities.js
+          node --input-type=module --check < cloud-functions/api/cloud-status.js
       - name: Verify EdgeOne deployment configuration
         run: |
           node - <<'NODE'
