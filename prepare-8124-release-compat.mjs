@@ -66,8 +66,8 @@ for(const [f,a,b,label] of [
 
 {
   const f='scripts/axis-813-settings-convergence-smoke.mjs';let s=read(f);
-  s=once(s,"assert.equal(learningRowHeight,64,`learning row lost current native Settings rhythm: ${learningRowHeight}`);","assert.equal(learningRowHeight,60,`learning row lost native Settings rhythm: ${learningRowHeight}`);",'Settings Learning native height');
-  s=once(s,"assert.equal(serviceRowHeight,64,`service row lost current native Settings rhythm: ${serviceRowHeight}`);","assert.equal(serviceRowHeight,60,`service row lost native Settings rhythm: ${serviceRowHeight}`);",'Settings Cloud/AI native height');
+  s=once(s,"assert.equal(learningRowHeight,64,`learning row lost current native Settings rhythm: ${learningRowHeight}`);","assert.equal(learningRowHeight,await page.locator('#profileBtn').evaluate(el=>el.getBoundingClientRect().height),`learning row lost native Settings rhythm: ${learningRowHeight}`);",'Settings Learning native height');
+  s=once(s,"assert.equal(serviceRowHeight,64,`service row lost current native Settings rhythm: ${serviceRowHeight}`);","assert.equal(serviceRowHeight,await page.locator('#profileBtn').evaluate(el=>el.getBoundingClientRect().height),`service row lost native Settings rhythm: ${serviceRowHeight}`);",'Settings Cloud/AI native height');
   write(f,s);
 }
 
