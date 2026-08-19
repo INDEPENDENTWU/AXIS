@@ -1,0 +1,90 @@
+name: AXIS EdgeOne Production Mirror
+
+on:
+  push:
+    branches:
+      - edgeone/8.12.3-production-mirror
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-edgeone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+      EDGEONE_PROJECT_NAME: ${{ secrets.EDGEONE_PROJECT_NAME }}
+      VERCEL_GOLDEN_URL: https://axis-five-puce.vercel.app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+
+      - name: Require EdgeOne credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${EDGEONE_API_TOKEN:-}" ]; then
+            echo "::error::Repository secret EDGEONE_API_TOKEN is required for the isolated EdgeOne mirror deployment."
+            exit 2
+          fi
+          if [ -z "${EDGEONE_PROJECT_NAME:-}" ]; then
+            echo "EDGEONE_PROJECT_NAME=axis" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build exact AXIS candidate
+        run: node build-release.mjs
+
+      - name: Verify canonical AXIS release
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const m=require('./axis-build.json');
+          if(m.version!=='8.12.3')throw new Error(`version drift: ${m.version}`);
+          if(m.architecture!=='canonical-single-runtime')throw new Error(`architecture drift: ${m.architecture}`);
+          if(m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0)throw new Error('runtime request topology drift');
+          NODE
+
+      - name: Verify Vercel visual/runtime parity before EdgeOne deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error "$VERCEL_GOLDEN_URL/axis-build.json" -o /tmp/vercel-axis-build.json
+          node - <<'NODE'
+          const local=require('./axis-build.json');
+          const remote=require('/tmp/vercel-axis-build.json');
+          const checks=[
+            ['version',local.version,remote.version],
+            ['architecture',local.architecture,remote.architecture],
+            ['core',local.assets?.core,remote.assets?.core],
+            ['css',local.assets?.css,remote.assets?.css],
+            ['runtimeHash',local.canonical?.runtimeHash,remote.canonical?.runtimeHash],
+            ['initialJavascript',local.requests?.initialJavascript,remote.requests?.initialJavascript],
+            ['dynamicJavascript',local.requests?.dynamicJavascript,remote.requests?.dynamicJavascript]
+          ];
+          for(const [k,a,b] of checks)if(a!==b)throw new Error(`Vercel parity mismatch ${k}: ${a} != ${b}`);
+          console.log('[AXIS EdgeOne parity] canonical product artifact matches Vercel Production');
+          NODE
+
+      - name: Install EdgeOne CLI
+        run: npm install -g edgeone
+
+      - name: Deploy isolated EdgeOne production mirror
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Deploying AXIS 8.12.3 to EdgeOne project: $EDGEONE_PROJECT_NAME"
+          edgeone pages deploy -n "$EDGEONE_PROJECT_NAME" -e production -t "$EDGEONE_API_TOKEN" | tee /tmp/axis-edgeone-deploy.log
+
+      - name: Preserve deployment output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axis-edgeone-deploy-output
+          path: /tmp/axis-edgeone-deploy.log
+          if-no-files-found: ignore
+          retention-days: 3
