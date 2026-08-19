@@ -22,7 +22,7 @@
     "profile": {"type": "object"},
     "equipment": {"type": "array", "items": {"type": "object"}},
     "sessions": {"type": "array", "items": {"type": "object"}},
-    "events": {"type": "array", "items": {"type": "object"}},
+    "events": {"type": "array", "items": {"$ref": "./axis-event-v1.schema.json"}},
     "settings": {"type": "object"},
     "media": {"type": "array", "items": {"type": "object"}}
   },
