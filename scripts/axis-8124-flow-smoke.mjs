@@ -17,6 +17,7 @@ const tap=async l=>ENGINE==='webkit'?l.tap():l.click();
 const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:9000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:12000});await page.waitForFunction(()=>window.__AXIS_8124_QUICK_FLOW__?.version==='8.12.4'&&window.__AXIS_8124_SETTINGS_GEOMETRY__?.version==='8.12.4',undefined,{timeout:7000})};
 const seed=async(fn)=>{await page.evaluate(fn);await page.reload({waitUntil:'domcontentloaded'});await ready()};
 const center=async sel=>page.locator(sel).evaluate(el=>{const r=el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height}});
+const localY=(child,row)=>child.y-(row.y-row.h/2);
 
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:12000}))?.ok());
@@ -45,8 +46,8 @@ try{
 
  console.log(`[AXIS 8.12.4 ${ENGINE}] Settings Learning / Cloud rows match native vertical geometry`);
  await tap(page.locator('#settingsBtn'));await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));await page.waitForTimeout(220);
- const nativeRow=await center('#profileBtn'),nativeText=await center('#profileBtn>span'),nativeArrow=await center('#profileBtn>i');
- for(const [name,row] of [['learning','#v810ConfigEntry'],['service','#v811ServiceEntry']]){const rr=await center(row),tx=await center(`${row}>span`),ar=await center(`${row}>i`);assert.ok(Math.abs(rr.h-nativeRow.h)<=.5,`${name} row height ${rr.h} vs ${nativeRow.h}`);assert.ok(Math.abs(tx.y-nativeText.y)<=.5,`${name} text center Y ${tx.y} vs ${nativeText.y}`);assert.ok(Math.abs(ar.y-nativeArrow.y)<=.5,`${name} arrow center Y ${ar.y} vs ${nativeArrow.y}`)}
+ const nativeRow=await center('#profileBtn'),nativeText=await center('#profileBtn>span'),nativeArrow=await center('#profileBtn>i'),nativeTextY=localY(nativeText,nativeRow),nativeArrowY=localY(nativeArrow,nativeRow);
+ for(const [name,row] of [['learning','#v810ConfigEntry'],['service','#v811ServiceEntry']]){const rr=await center(row),tx=await center(`${row}>span`),ar=await center(`${row}>i`),txY=localY(tx,rr),arY=localY(ar,rr);assert.ok(Math.abs(rr.h-nativeRow.h)<=.5,`${name} row height ${rr.h} vs ${nativeRow.h}`);assert.ok(Math.abs(txY-nativeTextY)<=.5,`${name} text local center Y ${txY} vs ${nativeTextY}`);assert.ok(Math.abs(arY-nativeArrowY)<=.5,`${name} arrow local center Y ${arY} vs ${nativeArrowY}`)}
  await page.locator('#settingsSheet [data-close="settingsSheet"]').click().catch(()=>{});
 
  console.log(`[AXIS 8.12.4 ${ENGINE}] total-workout finish preserves distinct real start/end`);
