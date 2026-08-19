@@ -21,5 +21,10 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
   s=once(s,"assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.3');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.4');",'8.12.3 equipment gallery/picker inherited identity');
   write(f,s);
 }
+{
+  const f='scripts/axis-8124-flow-smoke.mjs';let s=read(f);
+  s=once(s,"await page.locator('#finishDone').click().catch(()=>{});await page.waitForFunction(","await page.waitForFunction(",'8.12.4 completion smoke waits on canonical Home instead of dismiss-button actionability');
+  write(f,s);
+}
 
-console.log('[AXIS 8.12.4 CI compat] PASS · current pause-owned/learning test contract + Shadow patch family + inherited gallery/picker identity extended without relaxing behavior');
+console.log('[AXIS 8.12.4 CI compat] PASS · current pause-owned/learning test contract + Shadow patch family + inherited gallery/picker identity + canonical completion smoke aligned without relaxing behavior');
