@@ -11,6 +11,7 @@ This contract defines durable, versioned data boundaries shared by current Web A
 - Exchange format: `axis.exchange.v1`
 - Event envelope: `axis.event.v1`
 - Media manifest: `axis.media.v1`
+- Normalized golden-state fixture input: `axis.normalized-state-fixture.v1`
 
 Every persisted/exported cross-platform envelope must declare its schema/version. Unversioned cross-platform payloads are forbidden.
 
@@ -59,11 +60,13 @@ Requirements:
 - events are facts, not UI gestures;
 - compatibility snapshots may coexist until replay equivalence is proven.
 
-## Snapshots
+## Snapshots and normalized fixtures
 
 Snapshots are performance/compatibility materializations of journal/domain state.
 
 A snapshot may be rebuilt from authoritative facts where supported. A snapshot is not a second semantic owner.
+
+Golden fixtures that begin from normalized state use `axis.normalized-state-fixture.v1`. IDs, statuses, set counts, session bounds and interval endpoints are strictly typed and validated before semantic reduction; test harnesses may not rely on JavaScript/string coercion that a native Swift decoder would reject.
 
 ## Media
 
