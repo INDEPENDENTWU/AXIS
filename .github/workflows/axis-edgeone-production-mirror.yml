@@ -82,9 +82,13 @@ jobs:
         id: deploy
         shell: bash
         run: |
-          set -euo pipefail
+          set -u
           echo "Deploying AXIS 8.12.3 to EdgeOne project: $EDGEONE_PROJECT_NAME"
-          edgeone pages deploy -n "$EDGEONE_PROJECT_NAME" -e production -t "$EDGEONE_API_TOKEN" | tee /tmp/axis-edgeone-deploy.log
+          set +e
+          edgeone pages deploy -n "$EDGEONE_PROJECT_NAME" -e production -t "$EDGEONE_API_TOKEN" 2>&1 | tee /tmp/axis-edgeone-deploy.log
+          code=${PIPESTATUS[0]}
+          set -e
+          exit "$code"
 
       - name: Preserve deployment output
         if: always()
@@ -122,12 +126,21 @@ jobs:
             cli:process.env.AXIS_CLI_OUTCOME||'unknown',
             deploy:process.env.AXIS_DEPLOY_OUTCOME||'unknown'
           };
+          let deployDiagnostic='';
+          if(fs.existsSync('/tmp/axis-edgeone-deploy.log')){
+            let raw=fs.readFileSync('/tmp/axis-edgeone-deploy.log','utf8');
+            const token=process.env.EDGEONE_API_TOKEN||'';
+            if(token)raw=raw.split(token).join('[REDACTED]');
+            raw=raw.replace(/(?:token|secret|api[_-]?key)\s*[:=]\s*[^\s]+/ig,'$1=[REDACTED]');
+            deployDiagnostic=raw.split(/\r?\n/).filter(Boolean).slice(-16).join('\n').slice(0,4000);
+          }
           const body={
             status:process.env.AXIS_JOB_STATUS||'unknown',
             credentialConfigured:!!process.env.EDGEONE_API_TOKEN,
             project:process.env.EDGEONE_PROJECT_NAME||'axisfitness',
             deploymentUrl:'',
             steps,
+            deployDiagnostic,
             sourceBranch:'edgeone/8.12.3-production-mirror',
             sourceSha:process.env.GITHUB_SHA||'',
             goldenVercel:'https://axis-five-puce.vercel.app',
