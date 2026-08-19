@@ -42,5 +42,6 @@ await import('./prepare-8123-quick-catalog-bridge.mjs');
 await import('./prepare-8123-settings-alignment-fix.mjs');
 await import('./prepare-8123-ui-hotfix.mjs');
 await import('./prepare-8123-equipment-gallery-driver.mjs');
+await import('./prepare-8123-equipment-gallery-ui-geometry.mjs');
 await import('./prepare-8123-visual-memory-seal.mjs');
 await import('./prepare-8123-settings-divider-seal.mjs');
