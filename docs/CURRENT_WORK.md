@@ -32,12 +32,14 @@ The release adds no Live Route recording/storage/network owner and no new traini
 
 - Active PR: **#54 — AXIS 8.12.4 — truthful workout timing and direct training flow**.
 - Active branch: `axis-8124-training-flow-reliability` targeting `main`.
-- Original 8.12.4 implementation head was `f8c75dbe7463255c6c923f826b4c804cbd5e90c8`; subsequent commits only repair release/CI contracts, EdgeOne validation, the real long-press regression driver and this handoff record unless explicitly documented otherwise.
+- Original 8.12.4 implementation head was `f8c75dbe7463255c6c923f826b4c804cbd5e90c8`; subsequent changes must be explicitly documented here when they alter product ownership rather than release/test compatibility only.
 - `AXIS Repository Contract` was repaired to recognize the intentional EdgeOne verified-prebuilt publisher (`node scripts/edgeone-prebuilt-verify.mjs`) rather than the obsolete direct build command. The same stale assertion had also caused `AXIS 8.13 Runtime Core` to appear red after its runtime invariants had passed.
 - EdgeOne cloud-function syntax validation now checks those `.js` files as ESM input, matching their actual `export` syntax. The PR-level EdgeOne package contract then passed.
-- Remaining inherited CI failures were classified before modification: 8.13 Live Route and Shadow had stale 8.12.x version whitelists; Runtime/8.10.3 were not applying the already-established 8.12.3+ pause-owned/current-Learning compatibility transform to public 8.12.4; the dedicated 8.12.4 finish test used a synthetic `dispatchEvent` pointer that can fail pointer capture even though the real UI owner is a 1-second hold.
+- Remaining inherited CI failures were classified before modification: 8.13 Live Route and Shadow had stale 8.12.x version whitelists; Runtime/8.10.3 were not applying the already-established 8.12.3+ pause-owned/current-Learning compatibility transform to public 8.12.4; the dedicated 8.12.4 finish test used a synthetic `dispatchEvent` pointer that can fail pointer capture even though the real UI owner is a long hold.
 - Test-contract family detection now covers the 8.10/8.11/8.12 patch families, applies the current 8.12.3+ compatibility stage to 8.12.4, and preserves the same behavioral assertions. Shadow and Live Route whitelists include only the newly valid 8.12.4 patch; no ownership/topology assertions were removed.
-- The dedicated 8.12.4 finish regression now drives an actual Playwright pointer/mouse hold at the rendered button center for 1.18 seconds instead of fabricating a PointerEvent. Storage/session assertions remain unchanged.
+- The dedicated 8.12.4 finish regression now drives an actual Playwright pointer/mouse hold at the rendered button center rather than fabricating a PointerEvent. Storage/session assertions remain unchanged.
+- The real finish diagnostic exposed a product-level owner conflict rather than a test-only failure: v84 captured the `#finishHold` long-press and archived directly through its own LocalStorage copy, while `app.js` kept an in-memory active session. Persistence therefore showed a completed workout while Home could remain in `transition` until reload.
+- 8.12.4 now converges that boundary explicitly. v84 remains the long-press gesture owner, but session completion delegates through `window.__AXIS_COMPLETE_WORKOUT__` to the canonical `app.js completeFinish()` owner. `app.js` is the single completion state/storage/UI owner; the old v84 direct-storage path remains only as a fail-open compatibility fallback if the bridge is absent. `window.__AXIS_8124_WORKOUT_OWNER__` exposes this contract for compiled verification.
 - Do not treat a red legacy omnibus gate as proof of product failure until its failing step/log is identified. Conversely, do not waive a deterministic product regression: dedicated 8.12.4 real-flow failures must be fixed before merge.
 
 ## Validation for this work
@@ -50,7 +52,8 @@ Before merge:
 - click a Recent item such as `侧平举` and require the Quick editor to open directly with no visible equipment-catalog hop;
 - click a `接下来` suggestion and require the Quick editor to open while core/meta storage remains unchanged until the user explicitly saves;
 - require Live Route to remain `recordingOwner:false`, `storageOwner:false`, `networkOwner:false` and deviation penalty false;
-- long-press total workout completion and require archived `end > start`, with distinct displayed `开始` and `完成` facts;
+- long-press total workout completion and require the v84 gesture to delegate to the app completion owner, archived `end > start`, active Home to disappear immediately without reload, and distinct displayed `开始` / `完成` facts;
+- require the compiled runtime to expose `__AXIS_8124_WORKOUT_OWNER__` in addition to the existing 8.12.4 flow markers;
 - compare Learning and Cloud/AI row height, visible text center Y and chevron center Y to a native Settings row within 0.5 CSS px;
 - run the dedicated 8.12.4 flow gate in Chromium and iPhone WebKit;
 - retain inherited Group Plan, equipment gallery/picker, Settings, Learning, Runtime, repository and deployment-policy gates.
