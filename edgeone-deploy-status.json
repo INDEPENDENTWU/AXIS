@@ -1,18 +1,18 @@
 {
   "status": "failure",
-  "credentialConfigured": false,
-  "project": "axis",
+  "credentialConfigured": true,
+  "project": "axisfitness",
   "deploymentUrl": "",
   "steps": {
-    "credential": "failure",
-    "build": "skipped",
-    "release": "skipped",
-    "parity": "skipped",
-    "cli": "skipped",
-    "deploy": "skipped"
+    "credential": "success",
+    "build": "success",
+    "release": "success",
+    "parity": "success",
+    "cli": "success",
+    "deploy": "failure"
   },
   "sourceBranch": "edgeone/8.12.3-production-mirror",
-  "sourceSha": "e58c38c9e1fabab7d1032f18d3e51dc704bd183b",
+  "sourceSha": "667f09d300b4f1e809f006fbb66b2692143bf835",
   "goldenVercel": "https://axis-five-puce.vercel.app",
-  "updatedAt": "2026-08-19T01:50:25.611Z"
+  "updatedAt": "2026-08-19T03:02:14.361Z"
 }
