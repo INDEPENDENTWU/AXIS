@@ -65,6 +65,13 @@ for(const [f,a,b,label] of [
 ]){let s=read(f);s=once(s,a,b,label);write(f,s)}
 
 {
+  const f='scripts/axis-813-settings-convergence-smoke.mjs';let s=read(f);
+  s=once(s,"assert.equal(learningRowHeight,64,`learning row lost current native Settings rhythm: ${learningRowHeight}`);","assert.equal(learningRowHeight,60,`learning row lost native Settings rhythm: ${learningRowHeight}`);",'Settings Learning native height');
+  s=once(s,"assert.equal(serviceRowHeight,64,`service row lost current native Settings rhythm: ${serviceRowHeight}`);","assert.equal(serviceRowHeight,60,`service row lost native Settings rhythm: ${serviceRowHeight}`);",'Settings Cloud/AI native height');
+  write(f,s);
+}
+
+{
   const f='scripts/axis-8121-hotfix-smoke.mjs';let s=read(f);
   s=once(s,"assert.ok(['8.12.1','8.12.2','8.12.3'].includes(VERSION));","assert.ok(['8.12.1','8.12.2','8.12.3','8.12.4'].includes(VERSION));",'field patch family');write(f,s);
 }
@@ -78,4 +85,4 @@ for(const [f,a,b,label] of [
 }
 for(const f of ['scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs']){let s=read(f);s=s.replaceAll("['8.12','8.12.1','8.12.2','8.12.3'].includes(release)","['8.12','8.12.1','8.12.2','8.12.3','8.12.4'].includes(release)");write(f,s)}
 
-console.log('[AXIS 8.12.4 release compat] PASS · 8.12.4 public identity · all inherited 8.12.3 / 8.13 Stage 3 contracts preserved');
+console.log('[AXIS 8.12.4 release compat] PASS · 8.12.4 public identity · inherited 8.12.3 / 8.13 contracts + native Settings geometry preserved');
