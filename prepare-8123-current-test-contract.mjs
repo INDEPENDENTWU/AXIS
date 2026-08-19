@@ -16,4 +16,23 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  s=once(s,"assert.ok(serviceRowHeight>=58&&serviceRowHeight<=62,`service row lost native Settings rhythm: ${serviceRowHeight}`);","assert.equal(serviceRowHeight,64,`service row lost current native Settings rhythm: ${serviceRowHeight}`);",'Settings Cloud/AI row current geometry');
  write(f,s);
 }
-console.log('[AXIS 8.12.3 current test contract] PASS · inherited browser checks protect the four-decision surface · retired method cannot return · current 64px Settings rhythm sealed');
+{
+ const f='scripts/axis-product-matrix.mjs';let s=read(f);
+ const old=`const customRow=page.locator('#manageEqList [data-edit-eq]').filter({hasText:'矩阵胸推'}).first();
+assert.ok(await customRow.count(),'custom row missing from My Equipment');
+await customRow.click();
+await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});
+assert.equal(await page.locator('#customName').inputValue(),'矩阵胸推');`;
+ const current=`const customRow=page.locator('#manageEqList [data-my-eq-id]').filter({hasText:'矩阵胸推'}).first();
+assert.ok(await customRow.count(),'custom row missing from My Equipment');
+await customRow.click();
+await page.waitForFunction(()=>document.querySelector('#v8123EqDetailSheet')?.classList.contains('show'),undefined,{timeout:1600});
+assert.equal((await page.locator('#v8123EqDetailTitle').innerText()).trim(),'矩阵胸推','current equipment detail route lost selected custom item');
+assert.ok(await page.locator('#v8123EqInfoEdit').isVisible(),'custom equipment detail lost edit action');
+await page.locator('#v8123EqInfoEdit').click();
+await page.waitForFunction(()=>document.querySelector('#customEqSheet')?.classList.contains('show'),undefined,{timeout:1200});
+assert.equal(await page.locator('#customName').inputValue(),'矩阵胸推');`;
+ s=once(s,old,current,'product matrix current equipment detail/edit route');
+ write(f,s);
+}
+console.log('[AXIS 8.12.3 current test contract] PASS · inherited browser checks protect the four-decision surface · retired method cannot return · current 64px Settings rhythm + equipment detail route sealed');
