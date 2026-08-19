@@ -90,7 +90,7 @@ Top-level shape:
 {
   "schema": "axis.exchange.v1",
   "exportedAt": "ISO-8601",
-  "source": {"platform":"web|ios", "appVersion":"...", "domain":"axis.domain.v1"},
+  "source": {"platform":"web|ios", "appVersion":"...", "domain":"axis.domain.v1", "data":"axis.data.v1"},
   "profile": {},
   "equipment": [],
   "sessions": [],
