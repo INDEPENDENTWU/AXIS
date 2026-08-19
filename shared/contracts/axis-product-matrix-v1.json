@@ -1,0 +1,20 @@
+{
+  "schema": "axis.product-matrix.v1",
+  "domain": "axis.domain.v1",
+  "required": {
+    "offlineWorkout": true,
+    "sessionRecovery": true,
+    "historyCompatibility": true,
+    "intervalTiming": true,
+    "sessionUnionTiming": true,
+    "latestActivityProjectGap": true,
+    "directRecent": true,
+    "manualRecordingFallback": true,
+    "aiOptional": true,
+    "networkOptional": true,
+    "liveRouteReadOnly": true,
+    "singleWorkoutOwner": true,
+    "versionedPortableData": true,
+    "exactRevisionRelease": true
+  }
+}
