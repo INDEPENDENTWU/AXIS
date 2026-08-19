@@ -1,0 +1,55 @@
+name: AXIS Cross-Platform Foundation Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/DOMAIN_CONTRACT.md'
+      - 'docs/DATA_CONTRACT.md'
+      - 'docs/PLATFORM_CONTRACT.md'
+      - 'docs/IOS_ARCHITECTURE.md'
+      - 'docs/AI_DEVELOPMENT_PROTOCOL.md'
+      - 'docs/RELEASE_PROCESS.md'
+      - 'docs/MIGRATION_POLICY.md'
+      - 'docs/INCIDENT_POLICY.md'
+      - 'docs/decisions/**'
+      - 'shared/contracts/**'
+      - 'shared/fixtures/**'
+      - 'scripts/axis-cross-platform-foundation-contract.mjs'
+      - '.github/workflows/axis-cross-platform-foundation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/DOMAIN_CONTRACT.md'
+      - 'docs/DATA_CONTRACT.md'
+      - 'docs/PLATFORM_CONTRACT.md'
+      - 'docs/IOS_ARCHITECTURE.md'
+      - 'docs/AI_DEVELOPMENT_PROTOCOL.md'
+      - 'docs/RELEASE_PROCESS.md'
+      - 'docs/MIGRATION_POLICY.md'
+      - 'docs/INCIDENT_POLICY.md'
+      - 'docs/decisions/**'
+      - 'shared/contracts/**'
+      - 'shared/fixtures/**'
+      - 'scripts/axis-cross-platform-foundation-contract.mjs'
+      - '.github/workflows/axis-cross-platform-foundation.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: axis-cross-platform-foundation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    name: contract-fixture-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate contracts and golden fixtures
+        run: node scripts/axis-cross-platform-foundation-contract.mjs
