@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.event.v1",
+  "title": "AXIS Domain Event v1",
+  "type": "object",
+  "required": ["schema", "id", "type", "sessionId", "occurredAt"],
+  "properties": {
+    "schema": {"const": "axis.event.v1"},
+    "id": {"type": "string", "minLength": 1},
+    "type": {
+      "type": "string",
+      "enum": [
+        "workoutStarted",
+        "activityStarted",
+        "activityPaused",
+        "activityResumed",
+        "activityFinished",
+        "setCompleted",
+        "equipmentSelected",
+        "workoutFinished"
+      ]
+    },
+    "sessionId": {"type": "string", "minLength": 1},
+    "activityId": {"type": "string", "minLength": 1},
+    "occurredAt": {"type": "integer", "minimum": 0},
+    "payload": {"type": "object"},
+    "revision": {"type": "integer", "minimum": 0},
+    "deviceId": {"type": "string"}
+  },
+  "additionalProperties": true
+}
