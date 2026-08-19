@@ -27,5 +27,24 @@
     "revision": {"type": "integer", "minimum": 0},
     "deviceId": {"type": "string"}
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "activityStarted",
+              "activityPaused",
+              "activityResumed",
+              "activityFinished",
+              "setCompleted"
+            ]
+          }
+        },
+        "required": ["type"]
+      },
+      "then": {"required": ["activityId"]}
+    }
+  ],
   "additionalProperties": true
 }
