@@ -66,7 +66,7 @@ for(const key of ['equipment','sessions','media'])assert.equal(exchangeSchema.pr
 
 const activityScoped=new Set(['activityStarted','activityPaused','activityResumed','activityFinished','setCompleted']);
 const fixtureDir=path.join(ROOT,'shared/fixtures');
-let eventCount=0;
+let eventCount=0,equipmentSelectionCount=0;
 for(const file of fs.readdirSync(fixtureDir).filter(f=>f.endsWith('.json')).sort()){
   const fixture=read(path.join(fixtureDir,file));
   if(!Array.isArray(fixture.events))continue;
@@ -76,17 +76,24 @@ for(const file of fs.readdirSync(fixtureDir).filter(f=>f.endsWith('.json')).sort
     assert.equal(ids.has(event.id),false,`${file}: duplicate event id ${event.id}`);
     ids.add(event.id);
     if(activityScoped.has(event.type))assert.equal(typeof event.activityId==='string'&&event.activityId.length>0,true,`${file}/${event.id}: activityId required`);
+    if(event.type==='equipmentSelected'){
+      assert.equal(typeof event.payload?.equipmentId==='string'&&event.payload.equipmentId.length>0,true,`${file}/${event.id}: equipmentId required`);
+      equipmentSelectionCount++;
+    }
     eventCount++;
   }
 }
 assert.ok(eventCount>0,'no fixture events validated');
+assert.ok(equipmentSelectionCount>0,'equipmentSelected identity is not exercised by a golden fixture');
 
-// Negative event probes: reducer-consumed values must have one portable type/meaning.
+// Negative event probes: reducer-consumed/portable values must have one meaning.
 for(const [label,bad] of [
   ['string timestamp',{schema:'axis.event.v1',id:'bad-1',type:'workoutStarted',sessionId:'s',occurredAt:'1000'}],
   ['missing activity identity',{schema:'axis.event.v1',id:'bad-2',type:'setCompleted',sessionId:'s',occurredAt:1000}],
   ['string planned sets',{schema:'axis.event.v1',id:'bad-3',type:'activityStarted',sessionId:'s',activityId:'a',occurredAt:1000,payload:{kind:'strength',plannedSets:'3'}}],
-  ['invalid activity kind',{schema:'axis.event.v1',id:'bad-4',type:'activityStarted',sessionId:'s',activityId:'a',occurredAt:1000,payload:{kind:'weights',plannedSets:3}}]
+  ['invalid activity kind',{schema:'axis.event.v1',id:'bad-4',type:'activityStarted',sessionId:'s',activityId:'a',occurredAt:1000,payload:{kind:'weights',plannedSets:3}}],
+  ['missing equipment selection payload',{schema:'axis.event.v1',id:'bad-5',type:'equipmentSelected',sessionId:'s',occurredAt:1000}],
+  ['empty equipment selection identity',{schema:'axis.event.v1',id:'bad-6',type:'equipmentSelected',sessionId:'s',occurredAt:1000,payload:{equipmentId:''}}]
 ]){
   let rejected=false;
   try{validate(bad,eventSchema,label,eventSchema)}catch{rejected=true}
@@ -111,4 +118,4 @@ for(const key of ['equipment','sessions','media']){
   assert.equal(rejected,true,`${key} without stable id unexpectedly passed exchange schema`);
 }
 
-console.log(`[AXIS schema fixture seal] PASS · ${eventCount} fixture events · reducer payload types sealed · durable exchange identities required · published schemas cross-bound`);
+console.log(`[AXIS schema fixture seal] PASS · ${eventCount} fixture events · equipment selection identity exercised · reducer payload types sealed · durable exchange identities required · published schemas cross-bound`);
