@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.exchange.v1",
+  "title": "AXIS Portable Exchange v1",
+  "type": "object",
+  "$defs": {
+    "durableRecord": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "revision": {"type": "integer", "minimum": 0},
+        "updatedAt": {"type": "string"},
+        "deviceId": {"type": "string"},
+        "tombstone": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["schema", "exportedAt", "source", "profile", "equipment", "sessions", "events", "settings", "media"],
+  "properties": {
+    "schema": {"const": "axis.exchange.v1"},
+    "exportedAt": {"type": "string", "format": "date-time"},
+    "source": {
+      "type": "object",
+      "required": ["platform", "appVersion", "domain", "data"],
+      "properties": {
+        "platform": {"type": "string", "enum": ["web", "ios"]},
+        "appVersion": {"type": "string", "minLength": 1},
+        "domain": {"const": "axis.domain.v1"},
+        "data": {"const": "axis.data.v1"},
+        "gitSha": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "profile": {"type": "object"},
+    "equipment": {"type": "array", "items": {"$ref": "#/$defs/durableRecord"}},
+    "sessions": {"type": "array", "items": {"$ref": "#/$defs/durableRecord"}},
+    "events": {"type": "array", "items": {"$ref": "./axis-event-v1.schema.json"}},
+    "settings": {"type": "object"},
+    "media": {"type": "array", "items": {"$ref": "#/$defs/durableRecord"}}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "axis.contract-manifest.v1",
+  "domain": "axis.domain.v1",
+  "data": "axis.data.v1",
+  "exchange": "axis.exchange.v1",
+  "event": "axis.event.v1",
+  "media": "axis.media.v1",
+  "normalizedStateFixture": "axis.normalized-state-fixture.v1",
+  "invariants": {
+    "localFirstWorkout": true,
+    "singleSemanticOwner": true,
+    "intervalBasedTiming": true,
+    "sessionIntervalUnion": true,
+    "projectGapUsesLatestRealActivity": true,
+    "quickRecentDirect": true,
+    "liveRouteReadOnly": true,
+    "historyIdentityPreserved": true,
+    "networkOptional": true,
+    "aiOptional": true,
+    "healthKitMirrorOnly": true,
+    "versionedPortableData": true,
+    "idempotentMigrationRequired": true,
+    "exactRevisionRelease": true
+  },
+  "platforms": {
+    "web": {
+      "productionOwner": "INDEPENDENTWU/AXIS",
+      "releaseIndependent": true
+    },
+    "ios": {
+      "targetRepository": "INDEPENDENTWU/AXIS-iOS",
+      "nativeUI": true,
+      "releaseIndependent": true
+    }
+  }
+}

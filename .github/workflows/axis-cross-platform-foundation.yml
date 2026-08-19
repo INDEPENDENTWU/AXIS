@@ -1,0 +1,67 @@
+name: AXIS Cross-Platform Foundation Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/DOMAIN_CONTRACT.md'
+      - 'docs/DATA_CONTRACT.md'
+      - 'docs/PLATFORM_CONTRACT.md'
+      - 'docs/IOS_ARCHITECTURE.md'
+      - 'docs/AI_DEVELOPMENT_PROTOCOL.md'
+      - 'docs/RELEASE_PROCESS.md'
+      - 'docs/MIGRATION_POLICY.md'
+      - 'docs/INCIDENT_POLICY.md'
+      - 'docs/NATIVE_FOUNDATION_CHECKLIST.md'
+      - 'docs/CURRENT_WORK.md'
+      - 'docs/decisions/**'
+      - 'shared/contracts/**'
+      - 'shared/fixtures/**'
+      - 'scripts/axis-schema-fixture-seal.mjs'
+      - 'scripts/axis-cross-platform-foundation-contract.mjs'
+      - 'scripts/axis-native-foundation-seal.mjs'
+      - '.github/workflows/axis-cross-platform-foundation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/DOMAIN_CONTRACT.md'
+      - 'docs/DATA_CONTRACT.md'
+      - 'docs/PLATFORM_CONTRACT.md'
+      - 'docs/IOS_ARCHITECTURE.md'
+      - 'docs/AI_DEVELOPMENT_PROTOCOL.md'
+      - 'docs/RELEASE_PROCESS.md'
+      - 'docs/MIGRATION_POLICY.md'
+      - 'docs/INCIDENT_POLICY.md'
+      - 'docs/NATIVE_FOUNDATION_CHECKLIST.md'
+      - 'docs/CURRENT_WORK.md'
+      - 'docs/decisions/**'
+      - 'shared/contracts/**'
+      - 'shared/fixtures/**'
+      - 'scripts/axis-schema-fixture-seal.mjs'
+      - 'scripts/axis-cross-platform-foundation-contract.mjs'
+      - 'scripts/axis-native-foundation-seal.mjs'
+      - '.github/workflows/axis-cross-platform-foundation.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: axis-cross-platform-foundation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    name: contract-fixture-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate fixture events against published schemas
+        run: node scripts/axis-schema-fixture-seal.mjs
+      - name: Validate contracts and golden fixtures
+        run: node scripts/axis-cross-platform-foundation-contract.mjs
+      - name: Seal native foundation policies and product matrix
+        run: node scripts/axis-native-foundation-seal.mjs

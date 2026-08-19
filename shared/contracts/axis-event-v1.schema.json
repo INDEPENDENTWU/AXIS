@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.event.v1",
+  "title": "AXIS Domain Event v1",
+  "type": "object",
+  "required": ["schema", "id", "type", "sessionId", "occurredAt"],
+  "properties": {
+    "schema": {"const": "axis.event.v1"},
+    "id": {"type": "string", "minLength": 1},
+    "type": {
+      "type": "string",
+      "enum": [
+        "workoutStarted",
+        "activityStarted",
+        "activityPaused",
+        "activityResumed",
+        "activityFinished",
+        "setCompleted",
+        "equipmentSelected",
+        "workoutFinished"
+      ]
+    },
+    "sessionId": {"type": "string", "minLength": 1},
+    "activityId": {"type": "string", "minLength": 1},
+    "occurredAt": {"type": "integer", "minimum": 0},
+    "payload": {
+      "type": "object",
+      "properties": {
+        "kind": {"type": "string", "enum": ["strength", "cardio"]},
+        "plannedSets": {"type": "integer", "minimum": 0},
+        "equipmentId": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "revision": {"type": "integer", "minimum": 0},
+    "deviceId": {"type": "string"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "activityStarted",
+              "activityPaused",
+              "activityResumed",
+              "activityFinished",
+              "setCompleted"
+            ]
+          }
+        },
+        "required": ["type"]
+      },
+      "then": {"required": ["activityId"]}
+    },
+    {
+      "if": {
+        "properties": {"type": {"const": "equipmentSelected"}},
+        "required": ["type"]
+      },
+      "then": {
+        "required": ["payload"],
+        "properties": {
+          "payload": {"required": ["equipmentId"]}
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}
