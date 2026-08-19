@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: axis-8124-training-flow-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   chromium:
     runs-on: ubuntu-latest
