@@ -59,7 +59,7 @@ Machine-readable/shared/gates:
 - `scripts/axis-cross-platform-foundation-contract.mjs`
 - `scripts/axis-native-foundation-seal.mjs`
 - `.github/workflows/axis-cross-platform-foundation.yml`
-- `.github/pull_request_template.md`
+- `.github/PULL_REQUEST_TEMPLATE.md`
 
 ### Non-regression boundaries
 
