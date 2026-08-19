@@ -8,14 +8,30 @@ const eventSchema=read(path.join(ROOT,'shared/contracts/axis-event-v1.schema.jso
 const exchangeSchema=read(path.join(ROOT,'shared/contracts/axis-exchange-v1.schema.json'));
 const normalizedStateSchema=read(path.join(ROOT,'shared/contracts/axis-normalized-state-fixture-v1.schema.json'));
 
+const SUPPORTED_SCHEMA_KEYS=new Set(['$schema','$id','title','$defs','$ref','type','required','properties','const','enum','minLength','minimum','format','items','allOf','if','then','additionalProperties']);
+function assertSupportedSchema(schema,label){
+  if(!schema||typeof schema!=='object'||Array.isArray(schema))return;
+  for(const key of Object.keys(schema))assert.equal(SUPPORTED_SCHEMA_KEYS.has(key),true,`${label}: unsupported schema keyword ${key}`);
+  for(const [key,child] of Object.entries(schema.properties||{}))assertSupportedSchema(child,`${label}.properties.${key}`);
+  for(const [key,child] of Object.entries(schema.$defs||{}))assertSupportedSchema(child,`${label}.$defs.${key}`);
+  if(schema.items&&typeof schema.items==='object')assertSupportedSchema(schema.items,`${label}.items`);
+  for(const [index,rule] of (schema.allOf||[]).entries())assertSupportedSchema(rule,`${label}.allOf[${index}]`);
+  if(schema.if)assertSupportedSchema(schema.if,`${label}.if`);
+  if(schema.then)assertSupportedSchema(schema.then,`${label}.then`);
+  if(schema.additionalProperties&&typeof schema.additionalProperties==='object')assertSupportedSchema(schema.additionalProperties,`${label}.additionalProperties`);
+}
+for(const [schema,label] of [[eventSchema,'eventSchema'],[exchangeSchema,'exchangeSchema'],[normalizedStateSchema,'normalizedStateSchema']])assertSupportedSchema(schema,label);
+
 const typeOk=(value,type)=>{
+  if(Array.isArray(type))return type.some(x=>typeOk(value,x));
+  if(type==='null')return value===null;
   if(type==='object')return value!==null&&typeof value==='object'&&!Array.isArray(value);
   if(type==='array')return Array.isArray(value);
   if(type==='string')return typeof value==='string';
   if(type==='integer')return Number.isInteger(value);
   if(type==='number')return typeof value==='number'&&Number.isFinite(value);
   if(type==='boolean')return typeof value==='boolean';
-  return true;
+  throw new Error(`unsupported schema type ${type}`);
 };
 
 const resolveRef=(ref,root)=>{
@@ -32,7 +48,7 @@ function validate(value,schema,label,root=schema){
   if(schema.$ref){const target=resolveRef(schema.$ref,root);return validate(value,target.schema,label,target.root)}
   if(schema.const!==undefined)assert.deepEqual(value,schema.const,`${label}: const`);
   if(schema.enum)assert.equal(schema.enum.includes(value),true,`${label}: enum`);
-  if(schema.type)assert.equal(typeOk(value,schema.type),true,`${label}: type ${schema.type}`);
+  if(schema.type)assert.equal(typeOk(value,schema.type),true,`${label}: type ${Array.isArray(schema.type)?schema.type.join('|'):schema.type}`);
   if(typeof value==='string'&&schema.minLength!=null)assert.ok(value.length>=schema.minLength,`${label}: minLength`);
   if(typeof value==='number'&&schema.minimum!=null)assert.ok(value>=schema.minimum,`${label}: minimum`);
   if(schema.format==='date-time')assert.equal(typeof value==='string'&&!Number.isNaN(Date.parse(value)),true,`${label}: date-time`);
@@ -41,22 +57,18 @@ function validate(value,schema,label,root=schema){
   if(isObject){
     for(const key of schema.required||[])assert.equal(Object.hasOwn(value,key),true,`${label}: missing ${key}`);
     for(const [key,child] of Object.entries(schema.properties||{}))if(Object.hasOwn(value,key))validate(value[key],child,`${label}.${key}`,root);
+    const known=new Set(Object.keys(schema.properties||{}));
+    const extras=Object.keys(value).filter(key=>!known.has(key));
+    if(schema.additionalProperties===false)assert.deepEqual(extras,[],`${label}: additional properties ${extras.join(',')}`);
+    else if(schema.additionalProperties&&typeof schema.additionalProperties==='object')for(const key of extras)validate(value[key],schema.additionalProperties,`${label}.${key}`,root);
   }
-  if(schema.type==='array'&&Array.isArray(value)&&schema.items){
+  if((schema.type==='array'||Array.isArray(schema.type)&&schema.type.includes('array'))&&Array.isArray(value)&&schema.items){
     value.forEach((item,index)=>validate(item,schema.items,`${label}[${index}]`,root));
   }
-  for(const rule of schema.allOf||[]){
-    const condition=rule.if;
+  for(const [index,rule] of (schema.allOf||[]).entries()){
     let match=true;
-    if(condition?.required)match=condition.required.every(key=>isObject&&Object.hasOwn(value,key));
-    if(match&&condition?.properties){
-      for(const [key,cond] of Object.entries(condition.properties)){
-        if(!isObject||!Object.hasOwn(value,key)){match=false;break}
-        if(cond.enum&&!cond.enum.includes(value[key])){match=false;break}
-        if(cond.const!==undefined&&value[key]!==cond.const){match=false;break}
-      }
-    }
-    if(match&&rule.then)validate(value,rule.then,`${label}.then`,root);
+    if(rule.if){try{validate(value,rule.if,`${label}.allOf[${index}].if`,root)}catch{match=false}}
+    if(match&&rule.then)validate(value,rule.then,`${label}.allOf[${index}].then`,root);
   }
 }
 
@@ -120,7 +132,8 @@ for(const [label,mutate] of [
   ['string interval endpoint',x=>{x.activities[0].intervals[0].start='1000'}],
   ['empty activity id',x=>{x.activities[0].id=''}],
   ['invalid activity status',x=>{x.activities[0].status='done'}],
-  ['string planned sets',x=>{x.activities[0].plannedSets='3'}]
+  ['string planned sets',x=>{x.activities[0].plannedSets='3'}],
+  ['unknown normalized property',x=>{x.unversionedPlatformField=true}]
 ]){
   const bad=structuredClone(normalizedFixture);mutate(bad);
   let rejected=false;try{validate(bad,normalizedStateSchema,label,normalizedStateSchema)}catch{rejected=true}
@@ -145,4 +158,4 @@ for(const key of ['equipment','sessions','media']){
   assert.equal(rejected,true,`${key} without stable id unexpectedly passed exchange schema`);
 }
 
-console.log(`[AXIS schema fixture seal] PASS · ${eventCount} fixture events · ${normalizedStateCount} normalized-state fixture · equipment selection identity exercised · portable types sealed · durable exchange identities required`);
+console.log(`[AXIS schema fixture seal] PASS · ${eventCount} fixture events · ${normalizedStateCount} normalized-state fixture · schema keyword subset fail-closed · portable types sealed · durable exchange identities required`);
