@@ -24,6 +24,7 @@ jobs:
           node-version: 20.18.0
 
       - name: Require EdgeOne credential
+        id: credential
         shell: bash
         run: |
           set -euo pipefail
@@ -36,9 +37,11 @@ jobs:
           fi
 
       - name: Build exact AXIS candidate
+        id: build
         run: node build-release.mjs
 
       - name: Verify canonical AXIS release
+        id: release
         shell: bash
         run: |
           set -euo pipefail
@@ -50,6 +53,7 @@ jobs:
           NODE
 
       - name: Verify Vercel visual/runtime parity before EdgeOne deploy
+        id: parity
         shell: bash
         run: |
           set -euo pipefail
@@ -71,9 +75,11 @@ jobs:
           NODE
 
       - name: Install EdgeOne CLI
+        id: cli
         run: npm install -g edgeone
 
       - name: Deploy isolated EdgeOne production mirror
+        id: deploy
         shell: bash
         run: |
           set -euo pipefail
@@ -93,20 +99,35 @@ jobs:
         if: always()
         env:
           AXIS_JOB_STATUS: ${{ job.status }}
+          AXIS_CREDENTIAL_OUTCOME: ${{ steps.credential.outcome }}
+          AXIS_BUILD_OUTCOME: ${{ steps.build.outcome }}
+          AXIS_RELEASE_OUTCOME: ${{ steps.release.outcome }}
+          AXIS_PARITY_OUTCOME: ${{ steps.parity.outcome }}
+          AXIS_CLI_OUTCOME: ${{ steps.cli.outcome }}
+          AXIS_DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
         shell: bash
         run: |
           set -u
-          PROJECT="${EDGEONE_PROJECT_NAME:-axis}"
           URL=""
           if [ -f /tmp/axis-edgeone-deploy.log ]; then
             URL="$(grep -Eo 'https://[^[:space:]]+' /tmp/axis-edgeone-deploy.log | tail -1 | sed 's/[),;]$//' || true)"
           fi
           node - <<'NODE'
           const fs=require('fs');
+          const steps={
+            credential:process.env.AXIS_CREDENTIAL_OUTCOME||'unknown',
+            build:process.env.AXIS_BUILD_OUTCOME||'unknown',
+            release:process.env.AXIS_RELEASE_OUTCOME||'unknown',
+            parity:process.env.AXIS_PARITY_OUTCOME||'unknown',
+            cli:process.env.AXIS_CLI_OUTCOME||'unknown',
+            deploy:process.env.AXIS_DEPLOY_OUTCOME||'unknown'
+          };
           const body={
             status:process.env.AXIS_JOB_STATUS||'unknown',
+            credentialConfigured:!!process.env.EDGEONE_API_TOKEN,
             project:process.env.EDGEONE_PROJECT_NAME||'axis',
-            deploymentUrl:process.env.AXIS_EDGEONE_URL||'',
+            deploymentUrl:'',
+            steps,
             sourceBranch:'edgeone/8.12.3-production-mirror',
             sourceSha:process.env.GITHUB_SHA||'',
             goldenVercel:'https://axis-five-puce.vercel.app',
