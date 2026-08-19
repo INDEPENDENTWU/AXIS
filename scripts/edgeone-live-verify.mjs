@@ -17,8 +17,8 @@ const result={
 let fatal=null;
 const fail=msg=>{throw new Error(`[AXIS EdgeOne live] ${msg}`)};
 
-async function request(url,{json=false}={}){
-  const r=await fetch(url,{redirect:'follow',headers:{'Cache-Control':'no-cache'}});
+async function request(url,{json=false,method='GET'}={}){
+  const r=await fetch(url,{method,redirect:'follow',headers:{'Cache-Control':'no-cache'}});
   const text=await r.text();
   let data=null;
   if(json){try{data=JSON.parse(text)}catch{}}
@@ -48,6 +48,7 @@ try{
   }catch{
     result.publicStatus=0;
   }
+  if(result.publicStatus!==200)fail(`public root status ${result.publicStatus}`);
 
   const root=await request(edgeUrl('/'));
   result.authenticatedStatus=root.status;
@@ -69,15 +70,30 @@ try{
   ])if(a!==b)fail(`manifest parity ${name}: ${a} != ${b}`);
   result.manifestParity=true;
 
-  const apiPaths=['/api/ai-status','/api/ai-capabilities','/api/cloud-status','/api/owner-config'];
+  const apiPaths=[
+    '/api/ai-status',
+    '/api/ai-capabilities',
+    '/api/cloud-status',
+    '/api/owner-config',
+    '/api/analyze',
+    '/api/insight',
+    '/api/label'
+  ];
   for(const path of apiPaths){
     const [edge,golden]=await Promise.all([
       request(edgeUrl(path),{json:true}),
       request(new URL(path,goldenBase),{json:true})
     ]);
-    result.api[path]={edgeStatus:edge.status,goldenStatus:golden.status,edgeJson:!!edge.data,goldenJson:!!golden.data};
-    if(edge.status===404||edge.status>=500)fail(`${path} unavailable on EdgeOne: ${edge.status}`);
-    if(!edge.data)fail(`${path} did not return JSON on EdgeOne`);
+    result.api[path]={
+      edgeStatus:edge.status,
+      goldenStatus:golden.status,
+      edgeJson:!!edge.data,
+      goldenJson:!!golden.data,
+      statusParity:edge.status===golden.status,
+      jsonParity:(!!edge.data)===(!!golden.data)
+    };
+    if(edge.status!==golden.status)fail(`${path} status parity ${edge.status} != ${golden.status}`);
+    if((!!edge.data)!==(!!golden.data))fail(`${path} JSON contract parity mismatch`);
   }
 }catch(err){
   fatal=err;
@@ -86,4 +102,4 @@ try{
 
 fs.writeFileSync('/tmp/edgeone-live-result.json',JSON.stringify(result,null,2)+'\n');
 if(fatal)throw fatal;
-console.log(`[AXIS EdgeOne live] verified ${result.baseUrl} · public ${result.publicStatus} · auth 200 · manifest parity · ${Object.keys(result.api).length} API routes`);
+console.log(`[AXIS EdgeOne live] verified ${result.baseUrl} · public 200 · canonical manifest parity · ${Object.keys(result.api).length} API contracts match Vercel`);
