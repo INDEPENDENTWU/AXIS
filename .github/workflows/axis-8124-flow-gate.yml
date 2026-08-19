@@ -38,6 +38,11 @@ jobs:
         run: |
           python3 -m http.server 4173 >/tmp/axis-8124-chromium.log 2>&1 &
           sleep 1
+      - name: Isolate total-workout completion owner
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8124-finish-diagnostic.mjs
       - name: Training flow reliability regression
         env:
           AXIS_URL: http://127.0.0.1:4173
