@@ -12,9 +12,11 @@ await page.addInitScript(()=>{try{Object.defineProperty(navigator,'mediaDevices'
 const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(obj)});
 for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>json(r,obj));
 const tap=async l=>ENGINE==='webkit'?l.tap():l.click();
-const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:9000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:12000});await page.waitForFunction(()=>window.__AXIS_8124_CATALOG_POLISH__?.singleSearchOwner===true&&window.__AXIS_8124_PICKER_PROJECTION__?.storageWriter===false&&window.__AXIS_EXERCISE_TAXONOMY__?.detailMuscles===true,undefined,{timeout:7000})};
+const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:9000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:12000});await page.waitForFunction(()=>window.__AXIS_8124_CATALOG_POLISH__?.singleSearchOwner===true&&window.__AXIS_8124_PICKER_PROJECTION__?.storageWriter===false&&window.__AXIS_EXERCISE_TAXONOMY__?.detailMuscles===true&&window.__AXIS_8124_SETTINGS_DETAIL_SEAL__?.optionHeightPx===42,undefined,{timeout:7000})};
 const openPicker=async()=>{await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('recording'));await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'));await page.waitForTimeout(80)};
 const search=async q=>{const input=page.locator('#eqSearch');await input.fill(q);await page.waitForFunction(v=>document.querySelector('#eqSearch')?.value===v&&document.querySelector('#v873SmartResults')?.classList.contains('show'),q,{timeout:2000});await page.waitForTimeout(50);return(await page.locator('#v873SmartResults').innerText()).replace(/\s+/g,' ')};
+const box=sel=>page.locator(sel).first().evaluate(el=>{const r=el.getBoundingClientRect();return{left:r.left,right:r.right,width:r.width,height:r.height,font:parseFloat(getComputedStyle(el).fontSize||0)}});
+const near=(a,b,t=1)=>Math.abs(a-b)<=t;
 
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:12000}))?.ok());
@@ -22,6 +24,18 @@ try{
  await page.evaluate(t=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[{id:'S1',start:t-3600000,end:t-1800000,events:[{id:'E1',equipmentId:'lat',name:'高位下拉',kind:'strength',pattern:'pull',muscles:['背部','肱二头肌'],time:t-2200000,weight:45,reps:10,sets:3}]}],active:{id:'A1',start:t-120000,events:[]},profile:{customEq:[{id:'custom-test',name:'绳索直臂下拉变式',type:'strength',pattern:'pull',muscles:['背部'],effect:'背阔肌'}],memories:[]},prefs:{}}));localStorage.setItem('axis_v8_meta',JSON.stringify({prefs:{},events:{}}))},now);
  await page.reload({waitUntil:'domcontentloaded'});await ready();
  assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.4');
+
+ console.log(`[AXIS 8.12.4 polish ${ENGINE}] expanded Learning + Cloud/AI share native Settings edges and control rhythm`);
+ await tap(page.locator('#settingsBtn'));await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));await page.waitForFunction(()=>document.querySelector('#v8710On'),undefined,{timeout:3000});
+ const soundButton=await box('#v8710On button'),soundLabel=await box('#v8710Audio .v8710Top span');
+ await tap(page.locator('#v810ConfigEntry'));await page.waitForFunction(()=>document.querySelector('#v813LearningGate')?.classList.contains('open'));
+ const learning=await page.evaluate(()=>{const gate=document.querySelector('#v813LearningGate'),fold=gate?.querySelector(':scope>.v8711Fold'),group=gate?.querySelector('.v811CoreGroup'),button=gate?.querySelector('.v811CoreOptions button'),label=gate?.querySelector('.v811CoreHead span');const b=x=>{const r=x.getBoundingClientRect();return{left:r.left,right:r.right,height:r.height,font:parseFloat(getComputedStyle(x).fontSize||0)}};return{gate:b(gate),foldPadding:[parseFloat(getComputedStyle(fold).paddingLeft||0),parseFloat(getComputedStyle(fold).paddingRight||0)],group:b(group),button:b(button),label:b(label)}});
+ assert.deepEqual(learning.foldPadding,[0,0],'Learning fold retained nested horizontal inset');assert.ok(near(learning.group.left,learning.gate.left)&&near(learning.group.right,learning.gate.right),`Learning content edge drift: ${JSON.stringify(learning)}`);assert.ok(near(learning.button.height,soundButton.height),`Learning option height ${learning.button.height} vs Sound ${soundButton.height}`);assert.ok(near(learning.label.font,soundLabel.font,.2),`Learning label font ${learning.label.font} vs Sound ${soundLabel.font}`);
+ await tap(page.locator('#v810ConfigEntry'));await page.waitForFunction(()=>!document.querySelector('#v813LearningGate')?.classList.contains('open'));
+ await tap(page.locator('#v811ServiceEntry'));await page.waitForFunction(()=>document.querySelector('#v813ServiceGate')?.classList.contains('open')&&document.querySelector('#v813ServiceGate .axis8122Group'));
+ const service=await page.evaluate(()=>{const gate=document.querySelector('#v813ServiceGate'),fold=gate?.querySelector(':scope>.v8711Fold'),group=gate?.querySelector('.axis8122Group'),button=gate?.querySelector('.axis8122Grid button'),label=gate?.querySelector('.axis8122Head span');const b=x=>{const r=x.getBoundingClientRect();return{left:r.left,right:r.right,height:r.height,font:parseFloat(getComputedStyle(x).fontSize||0)}};return{gate:b(gate),foldPadding:[parseFloat(getComputedStyle(fold).paddingLeft||0),parseFloat(getComputedStyle(fold).paddingRight||0)],group:b(group),button:b(button),label:b(label)}});
+ assert.deepEqual(service.foldPadding,[0,0],'Cloud/AI fold retained nested horizontal inset');assert.ok(near(service.group.left,service.gate.left)&&near(service.group.right,service.gate.right),`Cloud/AI content edge drift: ${JSON.stringify(service)}`);assert.ok(near(service.button.height,soundButton.height),`Cloud/AI option height ${service.button.height} vs Sound ${soundButton.height}`);assert.ok(near(service.label.font,soundLabel.font,.2),`Cloud/AI label font ${service.label.font} vs Sound ${soundLabel.font}`);
+ await page.locator('#settingsSheet [data-close="settingsSheet"]').click();await page.waitForFunction(()=>!document.querySelector('#settingsSheet')?.classList.contains('show'));
 
  console.log(`[AXIS 8.12.4 catalog ${ENGINE}] recording picker exposes Recent + My as read-only projections`);
  const storesBefore=await page.evaluate(()=>[localStorage.getItem('axis_v60_state'),localStorage.getItem('axis_v8_meta')]);
@@ -60,5 +74,5 @@ try{
  assert.equal(taxonomy.contract?.compatibilityMusclesPreserved,true);
 
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.12.4 catalog ${ENGINE}] PASS · Recent/My recording picker · no per-key legacy rebuild · accurate indexed search · detailed native anatomy`);
+ console.log(`[AXIS 8.12.4 polish ${ENGINE}] PASS · native Settings detail edges · Recent/My recording picker · no per-key legacy rebuild · accurate indexed search · detailed native anatomy`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
