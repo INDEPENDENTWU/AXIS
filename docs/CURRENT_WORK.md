@@ -1,155 +1,129 @@
 # AXIS Current Work
 
-> Canonical engineering handoff. `CURRENT_RELEASE.md` remains the product/release contract; this file records the active engineering boundary and what must not be accidentally re-owned.
+> Canonical engineering handoff. `CURRENT_RELEASE.md` remains the product/release contract; this file records the active engineering boundary and the next exact action.
 
 ## Stable production baseline
 
-- Public release: **AXIS 8.12.4**.
-- Stable `main`: `3243ac6113fa1e40b9dc388bd38ce06a99e515d2`.
+- Public Web release: **AXIS 8.12.4**.
+- Stable production `main`: `cf428199618a0e27e0fce5823bb251c761fd3d20`.
 - Vercel Production: `https://axis-five-puce.vercel.app`.
 - Architecture: `canonical-single-runtime`.
-- PR #54 is already squash-merged. Its dedicated exact-candidate Chromium + iPhone WebKit flow gate passed before merge.
-- The 8.12.4 workout timing/session-completion contracts are stable baseline and are not part of the current polish.
+- PR #54 established truthful workout timing/direct training flow and canonical total-workout completion ownership.
+- PR #55 added Settings-detail geometry convergence, recording Recent/My picker projections, single IME-aware equipment search ownership and professional exercise taxonomy enrichment without changing workout ownership.
+- Existing Web production behavior must remain unaffected by Native Foundation work.
 
-## Active branch / PR
+## Active branch
 
-- Branch: `axis-8124-settings-catalog-polish`.
-- PR: **#55 — AXIS 8.12.4 — settings and catalog polish**.
-- Base: exact live 8.12.4 `main` SHA above.
-- Scope: narrow post-release field polish only; no public version bump and no new training-data store.
+- Branch: `axis-native-foundation-0`.
+- Scope: cross-platform architecture/contracts only; no Web runtime/product code changes.
+- Objective: establish permanent domain/data/platform contracts, golden fixtures and engineering/release rails before Swift product implementation begins.
 
-## Active polish
+## Foundation decisions
 
-### 1. Settings detail geometry
+### Separate shells / releases
 
-The visible `学习安排` / `云端与AI` rows already match native Settings row geometry. The remaining visual defect was inside their expanded folds: an inherited second 18px horizontal inset plus older compact control geometry made those sections visibly narrower/denser than mature Settings surfaces such as `记录水印` and `提醒与声音`.
+- `INDEPENDENTWU/AXIS` remains the independent Web product/deployment repository.
+- Target native repository: `INDEPENDENTWU/AXIS-iOS`.
+- iOS will be true Swift/SwiftUI native, not a WKWebView wrapper.
+- Web and iOS share versioned behavior/data contracts and golden fixtures, not UI code or production build chains.
 
-The 8.12.4 detail owner now enforces:
+### Contract identities
 
-- zero second horizontal inset inside both folds;
-- 15px primary Settings UI typography;
-- 48px segmented frame / **42px actual option height**, matching the rendered Sound reference rather than an approximate token;
-- 16px block vertical rhythm;
-- native content edges, radii and gaps;
-- current `.axis8122*` Cloud/AI detail classes as well as Learning detail classes;
-- unchanged Learning persistence, Cloud/AI progressive disclosure and explicit user-invoked network policy.
+- Domain: `axis.domain.v1`
+- Data: `axis.data.v1`
+- Exchange: `axis.exchange.v1`
+- Event: `axis.event.v1`
+- Media: `axis.media.v1`
 
-Markers: `window.__AXIS_8124_SETTINGS_DETAIL_GEOMETRY__`, `window.__AXIS_8124_SETTINGS_DETAIL_SEAL__`.
+### Ownership
 
-### 2. Recording picker: Recent + My
+- Domain meaning/state transitions remain single-owner.
+- Platform shells are projections/adapters.
+- Local persistence mechanics are platform-specific adapters.
+- Server/sync/AI/HealthKit are optional mirrors/adapters, never live-workout truth.
+- A workout remains startable/recordable/finishable offline without account, AI or cloud.
 
-Camera/recording `待确认` must not use a poorer equipment-selection model than Quick Record.
+## Files added in Native Foundation 0
 
-The canonical App picker exposes a **read-only projection**:
+Human-readable contracts/policies:
 
-- `recent()` — deduplicated real training history ordered by latest use;
-- `personal()` — existing `personalEqLibrary()` projection, including custom/history-backed equipment.
+- `docs/DOMAIN_CONTRACT.md`
+- `docs/DATA_CONTRACT.md`
+- `docs/PLATFORM_CONTRACT.md`
+- `docs/IOS_ARCHITECTURE.md`
+- `docs/AI_DEVELOPMENT_PROTOCOL.md`
+- `docs/RELEASE_PROCESS.md`
+- `docs/MIGRATION_POLICY.md`
+- `docs/INCIDENT_POLICY.md`
+- `docs/NATIVE_FOUNDATION_CHECKLIST.md`
+- `docs/decisions/ADR-0001-web-ios-separate-shells.md`
+- `docs/decisions/ADR-0002-contract-fixture-gate.md`
+- `docs/decisions/ADR-0003-event-journal-after-domain-stability.md`
+- `docs/decisions/ADR-0004-native-local-first-no-account.md`
 
-The equipment sheet renders compact `最近` and `我的` rails in recording/catalog contexts. They are shortcuts only; selection still delegates to the existing canonical App picker.
+Machine-readable shared foundation:
 
-Ownership remains:
+- `shared/contracts/axis-contract-manifest.json`
+- `shared/contracts/axis-event-v1.schema.json`
+- `shared/contracts/axis-exchange-v1.schema.json`
+- `shared/contracts/axis-platform-capabilities-v1.json`
+- `shared/contracts/axis-product-matrix-v1.json`
+- `shared/contracts/README.md`
+- `shared/fixtures/README.md`
+- `shared/fixtures/workout-basic-pause-resume.json`
+- `shared/fixtures/workout-a-b-a.json`
+- `shared/fixtures/workout-switch-incomplete-strength.json`
+- `shared/fixtures/workout-overlap-union.json`
 
-- App `selectEq` / `__AXIS_PICK_EQUIPMENT__`: canonical selection/state owner;
-- picker projection: read-only, no training-storage writer;
-- Quick Record: existing editor/recording owner;
-- history-only equipment identity fallback remains preserved after the richer canonical resolver.
+Gate:
 
-Markers: `window.__AXIS_EQUIPMENT_PICKER_DATA__`, `window.__AXIS_8124_PICKER_PROJECTION__`.
-
-### 3. Equipment search
-
-The previous equipment search had two per-keystroke owners: the legacy `renderEqList()` full rebuild and v873 smart search. This was unnecessary DOM churn on iOS and also left query lifecycle inconsistent.
-
-The polish converges search to one UI owner:
-
-- one IME/composition-aware `input` owner;
-- requestAnimationFrame coalescing;
-- no legacy equipment-list rebuild per keystroke;
-- normalized search tokens cached per library object;
-- deterministic ranking: exact → prefix → contains → conservative Latin typo tolerance;
-- no loose Chinese edit-distance matching;
-- indexes name, aliases, type, equipment class, movement pattern, body region and detailed anatomy;
-- explicit Chinese semantic terms for `力量 / 有氧`, body regions such as `胸部 / 下肢`, and equipment terms such as `器械 / 龙门架 / 哑铃 / 杠铃 / 弹力带`;
-- query clears on selection, close and reopen.
-
-Search/UI projection does not write training storage.
-
-Markers: `window.__AXIS_8124_CATALOG_POLISH__`, `window.__AXIS_8124_SEARCH_SEMANTICS__`.
-
-### 4. Professional native exercise taxonomy
-
-The existing native exercise identity and historical records stay intact while current UI/search receives a detailed anatomy/semantics layer:
-
-- `primaryTargets`;
-- `secondaryTargets`;
-- `stabilizers`;
-- `detailMuscles`;
-- `bodyRegions`;
-- `movementPattern`;
-- `equipmentClass`;
-- `targetKind`;
-- `variableTargets`;
-- `targetConfidence`.
-
-Coverage is explicit across the original native library, the 8.9 expanded catalog (for example plate-loaded presses, high/low row machines, V-squat, glute drive, calf machines, landmine press, StairClimber, SkiErg and carries), and the later v8711 native extensions (for example Smith movements, assisted dip, sled push, farmer carry, battle rope and TRX/band rows).
-
-Generic implements such as dumbbells/barbells/cable stations remain **contextual/variable** rather than falsely claiming a fixed muscle target. Late free movements are not mislabeled as generic equipment.
-
-Existing coarse `muscles` remains available for historical compatibility; old workout records are not migrated or rewritten. The recording muscle panel prefers detailed movement-specific targets when available.
-
-Markers: `window.__AXIS_EXERCISE_TAXONOMY__`, `window.__AXIS_8124_LATE_TAXONOMY__`.
-
-## Files added/changed in this branch
-
-- `prepare-8124-settings-catalog-polish.mjs` — main Settings/picker/search/taxonomy convergence transform.
-- `prepare-8124-settings-catalog-history-compat.mjs` — preserves the 8.12.4 history-only equipment identity fallback after resolver enrichment.
-- `prepare-8124-settings-catalog-polish-seal.mjs` — final measured Settings geometry owner, including 42px option geometry and current `.axis8122*` classes.
-- `prepare-8124-taxonomy-coverage-seal.mjs` — explicit expanded/late native taxonomy coverage.
-- `prepare-8124-search-semantic-seal.mjs` — accurate Chinese type/body/equipment search semantics without broad fuzzy matching.
-- `prepare-8123-final-alignment.mjs` — imports all narrow polish transforms after the existing 8.12.4 owners.
-- `scripts/axis-8124-catalog-polish-smoke.mjs` — validates Settings edges, recording Recent/My, single search owner/lifecycle and core anatomy behavior.
-- `scripts/axis-8124-taxonomy-coverage-smoke.mjs` — validates expanded/late native anatomy and Chinese semantic search.
-- `.github/workflows/axis-8124-flow-gate.yml` — runs the exact polish regressions in Chromium and iPhone WebKit and cancels future superseded runs for this dedicated gate.
+- `scripts/axis-cross-platform-foundation-contract.mjs`
+- `.github/workflows/axis-cross-platform-foundation.yml`
 
 ## Non-regression boundaries
 
-Do not change these merely to satisfy this polish:
+Native Foundation work must not change:
 
-- activity `intervals[]` timing semantics;
-- project-gap union/latest-real-activity semantics;
-- strength switch pause/finish rule;
-- total-workout completion ownership (`v84` gesture → App `completeFinish()` state/storage/UI);
+- current Web runtime/build artifacts;
+- activity interval timing semantics;
+- session interval-union timing;
+- latest-real-activity project gap;
+- incomplete-strength switch pause semantics;
+- canonical total-workout completion ownership;
+- direct Recent behavior;
 - Live Route read-only/deviation-safe ownership;
-- Quick Record direct Recent contract;
-- media/history storage ownership;
-- Cloud/AI explicit user-invoked network behavior.
+- personal-equipment/history/media compatibility;
+- manual/local recording when network/AI fails.
 
-## Validation before merge
+## Validation / merge boundary
 
-The exact branch head must pass:
+Before merging this foundation PR:
 
-- deterministic 8.12.4 build and compiled-marker contract;
-- existing 8.12.4 total-workout diagnostic;
-- existing 8.12.4 training-flow smoke;
-- inherited Live Route smoke;
-- inherited Settings convergence smoke;
-- new Settings/catalog polish smoke in Chromium + iPhone WebKit;
-- expanded native taxonomy + Chinese semantic-search smoke in Chromium + iPhone WebKit;
-- repository contract;
-- relevant inherited deterministic gates without unexplained current-head red failures.
+1. cross-platform contract/fixture gate passes on exact PR head;
+2. repository/continuity contracts show no unexplained regression;
+3. changed-file review confirms no Web runtime/product source was modified;
+4. PR explicitly states that merging may create a new production source SHA through normal Vercel Git deployment even though runtime behavior is unchanged;
+5. after merge, verify the fixed Vercel production URL still serves AXIS 8.12.4 and the exact new source SHA with no runtime errors.
 
-Do not relax a deterministic assertion to get green. Classify the failing behavior/fixture first.
+## External blocker / next exact action
 
-## Next boundary
+The current GitHub connector can create branches/files/PRs inside existing repositories but cannot create a new repository.
 
-After the exact candidate is green, squash-merge PR #55, then verify Vercel Production serves the exact merged SHA and `axis-build.json` still reports 8.12.4 / `canonical-single-runtime`. Only after that should the next feature/version scope begin.
+Therefore the only account-level manual step before Swift source work is:
+
+**Create GitHub repository `INDEPENDENTWU/AXIS-iOS` with default branch `main`.**
+
+After that, the next engineering action is to initialize the native repository with a minimal SwiftUI app + pure `AXISDomain` module and make Swift pass the same `axis.domain.v1` golden fixtures before building product UI.
 
 ## Continuity rule
 
-For the next conversation/contributor, inspect in this order:
+For every new conversation/agent, inspect in this order:
 
 1. `docs/CURRENT_RELEASE.md`;
-2. `docs/CURRENT_WORK.md`;
-3. PR #55 and its exact head/merge-result SHA;
-4. generated `axis-build.json` from that exact candidate/deployment;
-5. the exact failing GitHub Actions step/log before making any regression fix.
+2. this `docs/CURRENT_WORK.md`;
+3. `docs/ARCHITECTURE.md`;
+4. `docs/DOMAIN_CONTRACT.md` + `DATA_CONTRACT.md` + `PLATFORM_CONTRACT.md`;
+5. active PR/branch and exact SHA;
+6. exact failing test/log before making a fix.
+
+Chat history is not authoritative project memory.
