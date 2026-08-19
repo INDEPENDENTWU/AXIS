@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.exchange.v1",
+  "title": "AXIS Portable Exchange v1",
+  "type": "object",
+  "required": ["schema", "exportedAt", "source", "profile", "equipment", "sessions", "events", "settings", "media"],
+  "properties": {
+    "schema": {"const": "axis.exchange.v1"},
+    "exportedAt": {"type": "string", "format": "date-time"},
+    "source": {
+      "type": "object",
+      "required": ["platform", "appVersion", "domain", "data"],
+      "properties": {
+        "platform": {"type": "string", "enum": ["web", "ios"]},
+        "appVersion": {"type": "string", "minLength": 1},
+        "domain": {"const": "axis.domain.v1"},
+        "data": {"const": "axis.data.v1"},
+        "gitSha": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "profile": {"type": "object"},
+    "equipment": {"type": "array", "items": {"type": "object"}},
+    "sessions": {"type": "array", "items": {"type": "object"}},
+    "events": {"type": "array", "items": {"type": "object"}},
+    "settings": {"type": "object"},
+    "media": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": true
+}
