@@ -14,7 +14,7 @@ for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/ow
 const tap=async l=>ENGINE==='webkit'?l.tap():l.click();
 const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:9000});await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:12000});await page.waitForFunction(()=>window.__AXIS_8124_CATALOG_POLISH__?.singleSearchOwner===true&&window.__AXIS_8124_PICKER_PROJECTION__?.storageWriter===false&&window.__AXIS_EXERCISE_TAXONOMY__?.detailMuscles===true&&window.__AXIS_8124_SETTINGS_DETAIL_SEAL__?.optionHeightPx===42,undefined,{timeout:7000})};
 const openPicker=async()=>{await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('recording'));await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'));await page.waitForTimeout(80)};
-const search=async q=>{const input=page.locator('#eqSearch');await input.fill(q);await page.waitForFunction(v=>document.querySelector('#eqSearch')?.value===v&&document.querySelector('#v873SmartResults')?.classList.contains('show'),q,{timeout:2000});await page.waitForTimeout(50);return(await page.locator('#v873SmartResults').innerText()).replace(/\s+/g,' ')};
+const search=async(q,expected='')=>{const input=page.locator('#eqSearch');await input.fill(q);await page.waitForFunction(v=>document.querySelector('#eqSearch')?.value===v&&document.querySelector('#v873SmartResults')?.classList.contains('show'),q,{timeout:2000});if(expected)await page.waitForFunction(({q,expected})=>document.querySelector('#eqSearch')?.value===q&&(document.querySelector('#v873SmartResults')?.textContent||'').includes(expected),{q,expected},{timeout:2500});else await page.waitForTimeout(80);return(await page.locator('#v873SmartResults').innerText()).replace(/\s+/g,' ')};
 const near=(a,b,t=1)=>Math.abs(a-b)<=t;
 
 try{
@@ -62,8 +62,8 @@ try{
  await openPicker();
  await page.evaluate(()=>{window.__AXIS_TEST_EQ_MUTATIONS__=0;const n=document.querySelector('#eqList');window.__AXIS_TEST_EQ_OBSERVER__=new MutationObserver(xs=>window.__AXIS_TEST_EQ_MUTATIONS__+=xs.length);if(n)window.__AXIS_TEST_EQ_OBSERVER__.observe(n,{childList:true,subtree:true,characterData:true})});
  let text=await search('三角肌后束');assert.match(text,/反向飞鸟|面拉/,`rear-delt anatomy search missed: ${text}`);
- text=await search('RDL');assert.match(text,/罗马尼亚硬拉/,`RDL alias search missed: ${text}`);
- text=await search('内收肌群');assert.match(text,/髋内收/,`adductor anatomy search missed: ${text}`);
+ text=await search('RDL','罗马尼亚硬拉');assert.match(text,/罗马尼亚硬拉/,`RDL alias search missed: ${text}`);
+ text=await search('内收肌群','髋内收');assert.match(text,/髋内收/,`adductor anatomy search missed: ${text}`);
  const mutations=await page.evaluate(()=>window.__AXIS_TEST_EQ_MUTATIONS__);assert.equal(mutations,0,`legacy equipment list re-rendered during typing: ${mutations}`);
  assert.equal(await page.evaluate(()=>document.querySelector('#eqSearch')?.dataset.axis8124SearchOwner),'1','single search owner marker missing');
 
