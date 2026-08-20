@@ -31,10 +31,12 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_813_TRENDS_FIELD__?.version==='8.13',undefined,{timeout:12000});
  assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.13');
+ const seeded=await page.evaluate(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}').sessions?.length||0}catch{return-1}});assert.equal(seeded,5,'app boot changed seeded session history');
  await tap(page.locator('[data-view="insightsView"]'));
- await page.waitForFunction(()=>document.querySelector('#insightsView')?.classList.contains('active')&&document.querySelectorAll('.v813Node').length===4,undefined,{timeout:2500});
+ await page.waitForFunction(()=>document.querySelector('#insightsView')?.classList.contains('active'),undefined,{timeout:5000});
+ await page.waitForTimeout(180);
+ const recentCount=await page.locator('.v813Node').count();assert.equal(recentCount,4,`recent range should contain four recent sessions; rendered ${recentCount}`);
  assert.equal(await page.locator('#v813Field').isVisible(),true);
- assert.equal(await page.locator('.v813Node').count(),4,'recent range should contain four recent sessions');
  assert.equal(await page.locator('.v813Node.selected').count(),1,'one selected bearing required');
  assert.ok(await page.locator('#v813Fingerprint i').count()>0,'session fingerprint missing');
  assert.ok((await page.locator('#v813Insight').innerText()).trim().length>28,'natural explanation missing');
@@ -44,11 +46,11 @@ try{
  const box=await page.locator('#v813Viewport').boundingBox();assert.ok(box);
  await page.mouse.move(box.x+box.width/2,box.y+100);await page.mouse.down();await page.mouse.move(box.x+box.width/2+135,box.y+102,{steps:6});await page.mouse.up();await page.waitForTimeout(140);
  const afterScrub=Number(await page.locator('.v813Node.selected').getAttribute('data-v813-node'));assert.ok(afterScrub<firstSelected,`horizontal scrub did not move to earlier session ${firstSelected}->${afterScrub}`);
- await tap(page.locator('.v813Node.selected'));await page.waitForTimeout(80);assert.equal(await page.locator('#v813Expand').isVisible(),true,'selected node tap should expand in place');assert.ok(await page.locator('#v813Activities .v813Activity').count()>0,'expanded session rows missing');assert.equal(await page.locator('.sheetWrap.show').count(),0,'trend interaction must not open modal/sheet');
+ await tap(page.locator('.v813Node.selected'));await page.waitForTimeout(100);assert.equal(await page.locator('#v813Expand').isVisible(),true,'selected node tap should expand in place');assert.ok(await page.locator('#v813Activities .v813Activity').count()>0,'expanded session rows missing');assert.equal(await page.locator('.sheetWrap.show').count(),0,'trend interaction must not open modal/sheet');
  const beforeEdge=Number(await page.locator('.v813Node.selected').getAttribute('data-v813-node'));
  await page.evaluate(()=>{const v=document.querySelector('#v813Viewport'),r=v.getBoundingClientRect(),y=r.top+90;v.dispatchEvent(new PointerEvent('pointerdown',{pointerId:77,bubbles:true,clientX:r.left+10,clientY:y,button:0}));v.dispatchEvent(new PointerEvent('pointermove',{pointerId:77,bubbles:true,clientX:r.left+150,clientY:y+1,button:0}));v.dispatchEvent(new PointerEvent('pointerup',{pointerId:77,bubbles:true,clientX:r.left+150,clientY:y+1,button:0}))});
  await page.waitForTimeout(80);assert.equal(Number(await page.locator('.v813Node.selected').getAttribute('data-v813-node')),beforeEdge,'24px Safari edge-safe rail intercepted system gesture');
- await tap(page.locator('[data-v813-range="all"]'));await page.waitForFunction(()=>document.querySelectorAll('.v813Node').length===5);assert.equal(await page.locator('.v813Node').count(),5,'all range should reveal older session');assert.equal(await page.locator('#v813Memory').isVisible(),true,'memory lanes missing');assert.equal(await page.locator('#v813MemoryRows .v813Lane').count(),4,'memory lanes should stay compact');
+ await tap(page.locator('[data-v813-range="all"]'));await page.waitForFunction(()=>document.querySelectorAll('.v813Node').length===5,undefined,{timeout:2000});assert.equal(await page.locator('#v813Memory').isVisible(),true,'memory lanes missing');assert.equal(await page.locator('#v813MemoryRows .v813Lane').count(),4,'memory lanes should stay compact');
  await page.emulateMedia({reducedMotion:'reduce'});const reduced=await page.evaluate(()=>getComputedStyle(document.querySelector('#v813TrackCanvas')).transitionDuration);assert.equal(reduced,'0s','reduced motion contract not applied');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
  console.log(`[AXIS 8.13 trends ${ENGINE}] PASS · SVG time field · bearing nodes · interval fingerprint · horizontal scrub + 24px edge safe · in-place expand · no overflow/modal · reduced motion`);
