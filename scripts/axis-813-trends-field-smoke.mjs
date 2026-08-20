@@ -39,7 +39,8 @@ try{
  assert.ok(visibleState.active&&visibleState.field&&!visibleState.field.hidden&&visibleState.field.display!=='none'&&visibleState.field.visibility!=='hidden'&&visibleState.field.w>0&&visibleState.field.h>0&&visibleState.view?.display!=='none'&&visibleState.viewport?.w>0&&visibleState.viewport?.h>0,`Trends field geometry not visible: ${JSON.stringify(visibleState)}`);
  assert.equal(await page.locator('.v813Node.selected').count(),1,'one selected bearing required');
  assert.ok(await page.locator('#v813Fingerprint i').count()>0,'session fingerprint missing');
- assert.ok((await page.locator('#v813Insight').innerText()).trim().length>28,'natural explanation missing');
+ const insight=(await page.locator('#v813Insight').innerText()).trim();
+ assert.ok(insight.length>=16&&!insight.includes('留下几次训练后'),`natural explanation invalid (${insight.length}): ${insight}`);
  const surface=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,inner:innerWidth,touch:getComputedStyle(document.querySelector('#v813Viewport')).touchAction,owner:document.querySelector('#insightsView')?.dataset.axisTrendsOwner,legacy:['当前状态','这次让什么发生了','下一针','状态场'].some(t=>document.querySelector('#insightsView')?.innerText.includes(t))}));
  assert.ok(surface.scroll<=surface.inner+1,`horizontal overflow ${surface.scroll}/${surface.inner}`);assert.equal(surface.touch,'pan-y');assert.equal(surface.owner,'v813-trends-field');assert.equal(surface.legacy,false,'legacy trend copy visible');
  const firstSelected=Number(await page.locator('.v813Node.selected').getAttribute('data-v813-node'));
@@ -54,5 +55,5 @@ try{
  await tap(page.locator('[data-v813-range="all"]'));await page.waitForFunction(()=>document.querySelectorAll('.v813Node').length===5,undefined,{timeout:2000});assert.equal(await page.locator('#v813Memory').isVisible(),true,'memory lanes missing');assert.equal(await page.locator('#v813MemoryRows .v813Lane').count(),4,'memory lanes should stay compact');
  await page.emulateMedia({reducedMotion:'reduce'});const reduced=await page.evaluate(()=>getComputedStyle(document.querySelector('#v813TrackCanvas')).transitionDuration);assert.equal(reduced,'0s','reduced motion contract not applied');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.13 trends ${ENGINE}] PASS · post-boot fixture · SVG time field · bearing nodes · interval fingerprint · horizontal scrub + 24px edge safe · in-place expand · no overflow/modal · reduced motion`);
+ console.log(`[AXIS 8.13 trends ${ENGINE}] PASS · post-boot fixture · SVG time field · bearing nodes · interval fingerprint · semantic explanation · horizontal scrub + 24px edge safe · in-place expand · no overflow/modal · reduced motion`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
