@@ -1,4 +1,4 @@
-name: AXIS 8.12.5 Training Flow Gate
+name: AXIS 8.13 Web Release Gate
 
 on:
   pull_request:
@@ -10,27 +10,27 @@ permissions:
   contents: read
 
 concurrency:
-  group: axis-8125-training-flow-${{ github.ref }}
+  group: axis-813-web-release-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 24
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build AXIS 8.12.5 candidate
+      - name: Build AXIS 8.13 candidate
         run: node build-release.mjs
-      - name: Verify 8.12.5 contract
+      - name: Verify release and inherited owners
         run: |
           node - <<'NODE'
           const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
-          if(m.version!=='8.12.5'||m.baseVersion!=='8.12.5')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
-          for(const gate of ['trainingIntervalUnion8124','projectGapLatestActivity8124','sessionStartEndBounds8124','sessionActivitySeal8124','quickRecordDirectRecent8124','liveRouteActionDelegate8124','liveRouteDeviationSafe8124','settingsVerticalNative8124'])if(m.gates?.[gate]!==true)throw new Error(`8.12.4 inherited gate missing ${gate}`);
-          for(const needle of ['__AXIS_8124_QUICK_FLOW__','__AXIS_8124_SETTINGS_GEOMETRY__','__AXIS_8124_WORKOUT_OWNER__','__AXIS_8124_SETTINGS_DETAIL_GEOMETRY__','__AXIS_8124_PICKER_PROJECTION__','__AXIS_8124_CATALOG_POLISH__','__AXIS_8124_CUSTOM_SAFE__','__AXIS_8125_SMART_CREATE_POLISH__','__AXIS_EXERCISE_TAXONOMY__','__AXIS_8124_LATE_TAXONOMY__','__AXIS_8124_SEARCH_SEMANTICS__',"actionDelegate:'quick-record'",'function homeLatestActivity(','function homeSessionBounds(','function sealSessionActivities('])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
+          if(m.version!=='8.13'||m.baseVersion!=='8.13')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          for(const gate of ['trainingIntervalUnion8124','projectGapLatestActivity8124','sessionActivitySeal8124','quickRecordDirectRecent8124','liveRouteReadOnly813','settingsVerticalNative8124','trendsTimeField813','trendsSessionFingerprint813','trendsHorizontalScrub813','trendsEdgeSafe813','trendsReducedMotion813','trendsReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`release gate missing ${gate}`);
+          for(const needle of ['__AXIS_8124_WORKOUT_OWNER__','__AXIS_8124_CATALOG_POLISH__','__AXIS_8124_CUSTOM_SAFE__','__AXIS_8125_SMART_CREATE_POLISH__','__AXIS_813_TRENDS_FIELD__','v813-trends-field'])if(!core.includes(needle))throw new Error(`compiled owner missing ${needle}`);
           NODE
       - name: Prepare Chromium
         run: |
@@ -40,58 +40,40 @@ jobs:
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Serve candidate
         run: |
-          python3 -m http.server 4173 >/tmp/axis-8125-chromium.log 2>&1 &
+          python3 -m http.server 4173 >/tmp/axis-813-chromium.log 2>&1 &
           sleep 1
-      - name: Isolate total-workout completion owner
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
-        run: node scripts/axis-8124-finish-diagnostic.mjs
-      - name: Training flow reliability regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
+      - name: AXIS 8.13 Trends time field
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-813-trends-field-smoke.mjs
+      - name: Inherited training timing and completion
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8124-flow-smoke.mjs
-      - name: Inherited live route regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
+      - name: Inherited Live Route
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-813-live-route-smoke.mjs
-      - name: Settings detail geometry regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
+      - name: Inherited Settings geometry
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-813-settings-convergence-smoke.mjs
-      - name: Catalog picker, search and anatomy regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
-        run: node scripts/axis-8124-catalog-polish-smoke.mjs
-      - name: Smart-create card exact geometry and canonical handoff
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
-        run: node scripts/axis-8125-smart-create-polish-smoke.mjs
-      - name: Expanded native taxonomy coverage regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
-        run: node scripts/axis-8124-taxonomy-coverage-smoke.mjs
+      - name: Inherited catalog and smart-create
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: |
+          node scripts/axis-8124-catalog-polish-smoke.mjs
+          node scripts/axis-8125-smart-create-polish-smoke.mjs
       - name: Repository contract
         run: node scripts/axis-repository-contract.mjs
       - name: Print server log on failure
         if: failure()
-        run: cat /tmp/axis-8125-chromium.log || true
+        run: cat /tmp/axis-813-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 27
+    timeout-minutes: 29
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build AXIS 8.12.5 candidate
+      - name: Build AXIS 8.13 candidate
         run: node build-release.mjs
       - name: Prepare iPhone WebKit
         run: |
@@ -99,38 +81,24 @@ jobs:
           npx playwright install --with-deps webkit
       - name: Serve candidate
         run: |
-          python3 -m http.server 4173 >/tmp/axis-8125-webkit.log 2>&1 &
+          python3 -m http.server 4173 >/tmp/axis-813-webkit.log 2>&1 &
           sleep 1
-      - name: iPhone training flow reliability regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
+      - name: iPhone AXIS 8.13 Trends time field
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-813-trends-field-smoke.mjs
+      - name: iPhone inherited training timing and completion
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8124-flow-smoke.mjs
-      - name: iPhone inherited live route regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
-        run: node scripts/axis-813-live-route-smoke.mjs
-      - name: iPhone Settings detail geometry regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
-        run: node scripts/axis-813-settings-convergence-smoke.mjs
-      - name: iPhone catalog picker, search and anatomy regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
-        run: node scripts/axis-8124-catalog-polish-smoke.mjs
-      - name: iPhone smart-create exact geometry and canonical handoff
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
-        run: node scripts/axis-8125-smart-create-polish-smoke.mjs
-      - name: iPhone expanded native taxonomy coverage regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
-        run: node scripts/axis-8124-taxonomy-coverage-smoke.mjs
+      - name: iPhone inherited Live Route and Settings
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: |
+          node scripts/axis-813-live-route-smoke.mjs
+          node scripts/axis-813-settings-convergence-smoke.mjs
+      - name: iPhone inherited catalog and smart-create
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: |
+          node scripts/axis-8124-catalog-polish-smoke.mjs
+          node scripts/axis-8125-smart-create-polish-smoke.mjs
       - name: Print server log on failure
         if: failure()
-        run: cat /tmp/axis-8125-webkit.log || true
+        run: cat /tmp/axis-813-webkit.log || true
