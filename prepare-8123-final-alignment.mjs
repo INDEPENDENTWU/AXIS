@@ -55,4 +55,5 @@ await import('./prepare-8124-settings-catalog-history-compat.mjs');
 await import('./prepare-8124-settings-catalog-polish-seal.mjs');
 await import('./prepare-8124-custom-equipment-safe.mjs');
 await import('./prepare-8124-custom-profile-persistence.mjs');
+await import('./prepare-8124-custom-optional-muscle.mjs');
 await import('./prepare-8124-custom-search-threshold.mjs');
