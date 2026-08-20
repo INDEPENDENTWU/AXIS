@@ -67,11 +67,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-8124-catalog-polish-smoke.mjs
-      - name: Custom equipment search, create and recording-profile regression
+      - name: Smart-create card exact geometry and canonical handoff
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
-        run: node scripts/axis-8124-custom-equipment-smoke.mjs
+        run: node scripts/axis-8125-smart-create-polish-smoke.mjs
       - name: Expanded native taxonomy coverage regression
         env:
           AXIS_URL: http://127.0.0.1:4173
@@ -121,11 +121,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-8124-catalog-polish-smoke.mjs
-      - name: iPhone custom equipment search, create and recording-profile regression
+      - name: iPhone smart-create exact geometry and canonical handoff
         env:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
-        run: node scripts/axis-8124-custom-equipment-smoke.mjs
+        run: node scripts/axis-8125-smart-create-polish-smoke.mjs
       - name: iPhone expanded native taxonomy coverage regression
         env:
           AXIS_URL: http://127.0.0.1:4173
