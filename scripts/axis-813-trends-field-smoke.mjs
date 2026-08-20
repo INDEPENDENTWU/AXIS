@@ -35,7 +35,8 @@ try{
  await page.waitForFunction(()=>document.querySelector('#insightsView')?.classList.contains('active'),undefined,{timeout:5000});
  await page.waitForTimeout(180);
  const recentCount=await page.locator('.v813Node').count();assert.equal(recentCount,4,`recent range should contain four recent sessions; rendered ${recentCount}`);
- assert.equal(await page.locator('#v813Field').isVisible(),true);
+ const visibleState=await page.evaluate(()=>{const view=document.querySelector('#insightsView'),field=document.querySelector('#v813Field'),vp=document.querySelector('#v813Viewport');const snap=el=>{if(!el)return null;const r=el.getBoundingClientRect(),s=getComputedStyle(el);return{hidden:el.hidden,display:s.display,visibility:s.visibility,opacity:s.opacity,w:r.width,h:r.height,top:r.top,left:r.left}};return{active:view?.classList.contains('active')||false,view:snap(view),field:snap(field),viewport:snap(vp)}});
+ assert.ok(visibleState.active&&visibleState.field&&!visibleState.field.hidden&&visibleState.field.display!=='none'&&visibleState.field.visibility!=='hidden'&&visibleState.field.w>0&&visibleState.field.h>0&&visibleState.view?.display!=='none'&&visibleState.viewport?.w>0&&visibleState.viewport?.h>0,`Trends field geometry not visible: ${JSON.stringify(visibleState)}`);
  assert.equal(await page.locator('.v813Node.selected').count(),1,'one selected bearing required');
  assert.ok(await page.locator('#v813Fingerprint i').count()>0,'session fingerprint missing');
  assert.ok((await page.locator('#v813Insight').innerText()).trim().length>28,'natural explanation missing');
