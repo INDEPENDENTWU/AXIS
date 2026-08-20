@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const INDEX='index.html',BUILD='build-hardened.mjs',V84='v84-runtime.js';
+const INDEX='index.html',BUILD='build-hardened.mjs',V84='v84-runtime.js',TRENDS='v813-trends-field.js';
 const fail=m=>{throw new Error(`[AXIS 8.13 trends convergence] ${m}`)};
 let html=fs.readFileSync(INDEX,'utf8');
 const re=/<section class="view" id="insightsView">[\s\S]*?<\/section>/;
@@ -54,9 +54,20 @@ v84=v84.replace(legacyOwner,retiredOwner);
 if(!v84.includes("view.dataset.axisTrendsOwner==='v813-trends-field'"))fail('v84 Trends owner retirement missing');
 fs.writeFileSync(V84,v84);
 
+// Pointer-up must not rebuild a tapped bearing before the delegated click fires.
+// A non-drag gesture belongs to the click owner; only a real scrub owns snap/render.
+let trends=fs.readFileSync(TRENDS,'utf8');
+const preClickRepaint="if(!s.drag){renderTrack();return}";
+const clickOwnedTap="if(!s.drag)return";
+const repaintCount=trends.split(preClickRepaint).length-1;
+if(repaintCount!==1)fail(`tap/scrub handoff anchor expected once, found ${repaintCount}`);
+trends=trends.replace(preClickRepaint,clickOwnedTap);
+if(trends.includes(preClickRepaint)||!trends.includes(clickOwnedTap))fail('tap/scrub ownership convergence missing');
+fs.writeFileSync(TRENDS,trends);
+
 let build=fs.readFileSync(BUILD,'utf8');
 const anchor="['v8710-report.js','__AXIS_8710_REPORT_READY__'],['v8710-watermark.js','__AXIS_8710_WATERMARK_READY__'],['v8711-runtime.js','__AXIS_8711_READY__']";
 const replacement=anchor+",['v813-trends-field.js','__AXIS_813_TRENDS_READY__']";
 const count=build.split(anchor).length-1;if(count!==1)fail(`first-class product module anchor expected once, found ${count}`);
 build=build.replace(anchor,replacement);fs.writeFileSync(BUILD,build);
-console.log('[AXIS 8.13 trends convergence] PASS · one visible time-field owner · v84 legacy Trends owner retired · first-class product module · legacy trend IDs compatibility-only · no sheet/modal navigation');
+console.log('[AXIS 8.13 trends convergence] PASS · one visible time-field owner · v84 legacy Trends owner retired · tap/click owner preserved · scrub-only snap/render · first-class product module · no sheet/modal navigation');
