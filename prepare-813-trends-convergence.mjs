@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const INDEX='index.html';
+const INDEX='index.html',BUILD='build-hardened.mjs';
 const fail=m=>{throw new Error(`[AXIS 8.13 trends convergence] ${m}`)};
 let html=fs.readFileSync(INDEX,'utf8');
 const re=/<section class="view" id="insightsView">[\s\S]*?<\/section>/;
@@ -42,4 +42,10 @@ if((html.match(/data-axis-trends-owner="v813-trends-field"/g)||[]).length!==1)fa
 for(const id of ['v813Viewport','v813TrackCanvas','v813TrackSvg','v813Nodes','v813Insight','v813Fingerprint','v813Expand','v813Memory'])if((html.match(new RegExp(`id="${id}"`,'g'))||[]).length!==1)fail(`DOM #${id} missing or duplicated`);
 for(const label of ['当前状态','这次让什么发生了','下一针','状态场'])if(view.includes(label))fail(`legacy user-facing label survived: ${label}`);
 fs.writeFileSync(INDEX,html);
-console.log('[AXIS 8.13 trends convergence] PASS · one visible time-field owner · legacy trend IDs compatibility-only · no sheet/modal navigation');
+
+let build=fs.readFileSync(BUILD,'utf8');
+const anchor="['v8710-report.js','__AXIS_8710_REPORT_READY__'],['v8710-watermark.js','__AXIS_8710_WATERMARK_READY__'],['v8711-runtime.js','__AXIS_8711_READY__']";
+const replacement=anchor+",['v813-trends-field.js','__AXIS_813_TRENDS_READY__']";
+const count=build.split(anchor).length-1;if(count!==1)fail(`first-class product module anchor expected once, found ${count}`);
+build=build.replace(anchor,replacement);fs.writeFileSync(BUILD,build);
+console.log('[AXIS 8.13 trends convergence] PASS · one visible time-field owner · first-class product module · legacy trend IDs compatibility-only · no sheet/modal navigation');
