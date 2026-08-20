@@ -12,10 +12,15 @@ const next='.v873SmartCreate{width:100%;min-height:72px;margin:12px 0 4px;paddin
 const n=s.split(old).length-1;
 if(n!==1)fail(`smart-create style expected once, found ${n}`);
 s=s.replace(old,next);
+const inlineOld="createButton.style.setProperty('display','grid','important');createButton.style.setProperty('visibility','visible','important');createButton.style.setProperty('opacity','1','important');createButton.style.setProperty('width','100%');createButton.style.setProperty('min-height','58px')";
+const inlineNext="createButton.style.setProperty('display','flex','important');createButton.style.setProperty('visibility','visible','important');createButton.style.setProperty('opacity','1','important');createButton.style.setProperty('width','100%');createButton.style.setProperty('min-height','72px')";
+const inlineN=s.split(inlineOld).length-1;
+if(inlineN!==1)fail(`smart-create inline geometry expected once, found ${inlineN}`);
+s=s.replace(inlineOld,inlineNext);
 const end=s.lastIndexOf('})();');
 if(end<0)fail('v873 IIFE end missing');
 const marker="\ntry{window.__AXIS_8125_SMART_CREATE_POLISH__={version:'8.12.5',scope:'smart-create-card-only',leftInsetPx:16,rightInsetPx:46,chevronRightPx:16,minHeightPx:72,trainingOwner:false,storageWriter:false}}catch{}\n";
 s=s.slice(0,end)+marker+s.slice(end);
 try{new Function(s)}catch(e){fail(`syntax ${e.message}`)}
 fs.writeFileSync(f,s);
-console.log('[AXIS 8.12.5 smart-create polish] PASS · 16px text rail · centered chevron · mature title/subtitle rhythm · no behavior ownership change');
+console.log('[AXIS 8.12.5 smart-create polish] PASS · 16px text rail · authoritative 72px card · centered chevron · mature title/subtitle rhythm · no behavior ownership change');
