@@ -68,10 +68,10 @@ jobs:
             code=$(curl -LsS --connect-timeout 5 --max-time 15 -o /tmp/vercel-axis-build.json -w '%{http_code}' "$VERCEL_GOLDEN_URL/axis-build.json" || true)
             if [ "$code" = "200" ] && EXPECTED="$GITHUB_SHA" node <<'NODE'
           const fs=require('fs');
-          try{const x=JSON.parse(fs.readFileSync('/tmp/vercel-axis-build.json','utf8'));process.exit(x.sourceCommit===process.env.EXPECTED&&x.version==='8.12.4'&&x.baseVersion==='8.12.4'?0:1)}catch{process.exit(1)}
+          try{const x=JSON.parse(fs.readFileSync('/tmp/vercel-axis-build.json','utf8'));process.exit(x.sourceCommit===process.env.EXPECTED&&x.version==='8.12.5'&&x.baseVersion==='8.12.5'?0:1)}catch{process.exit(1)}
           NODE
             then exit 0; fi
-            echo "Attempt $attempt · Vercel golden not yet exact $GITHUB_SHA / 8.12.4"
+            echo "Attempt $attempt · Vercel golden not yet exact $GITHUB_SHA / 8.12.5"
             sleep 4
           done
           echo '::error::Vercel golden Production did not converge to the exact main commit before EdgeOne deploy.'
@@ -107,7 +107,7 @@ jobs:
           CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
-      - name: Chromium real EdgeOne 8.12.4 flow
+      - name: Chromium real EdgeOne 8.12.5 flow
         env:
           AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
           AXIS_ENGINE: chromium
@@ -116,7 +116,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps webkit
-      - name: iPhone WebKit real EdgeOne 8.12.4 flow
+      - name: iPhone WebKit real EdgeOne 8.12.5 flow
         env:
           AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
           AXIS_ENGINE: webkit
