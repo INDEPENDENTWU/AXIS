@@ -39,12 +39,13 @@ try{
  assert.equal(await page.locator('#axisCustomMetrics [data-axis-metric]').count(),5,'recording profile controls missing');
  await tap(page.locator('#axisCustomMetrics [data-axis-metric="duration"]'));
  await tap(page.locator('#axisCustomMetrics [data-axis-metric="level"]'));
- const muscle=page.locator('#customMuscles [data-muscle]').first();assert.ok(await muscle.count(),'custom muscle choices unavailable');await tap(muscle);
+ assert.ok(await page.locator('#customMuscles [data-muscle]').count(),'optional custom muscle choices unavailable');
  await tap(page.locator('#saveCustomEq'));
  await page.waitForFunction(n=>!document.querySelector('#customEqSheet')?.classList.contains('show')&&document.querySelector('#equipmentName')?.textContent?.trim()===n,name,{timeout:2500});
  await page.waitForTimeout(80);
- const created=await page.evaluate(n=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),x=(c.profile?.customEq||[]).find(e=>e.name===n);return x&&{id:x.id,type:x.type,metrics:x.recording?.metrics}},name);
+ const created=await page.evaluate(n=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),x=(c.profile?.customEq||[]).find(e=>e.name===n);return x&&{id:x.id,type:x.type,metrics:x.recording?.metrics,muscles:x.muscles||[]}},name);
  assert.ok(created?.id,'new custom identity was not saved');assert.equal(created.type,'cardio','time/level profile did not converge custom type to cardio');assert.deepEqual(new Set(created.metrics),new Set(['duration','level']),'time/level recording profile was not persisted');
+ assert.ok(Array.isArray(created.muscles),'optional muscle metadata did not remain structurally valid');
  assert.equal(await page.locator('#strengthFields').evaluate(el=>el.classList.contains('hidden')),true,'strength fields leaked into time/level profile');
  assert.equal(await page.locator('#duration').evaluate(el=>el.closest('.numberControl')?.classList.contains('hidden')),false,'duration field hidden for time/level profile');
  assert.equal((await page.locator('#intensityChoices').evaluate(el=>el.closest('.choiceControl')?.querySelector(':scope>span')?.textContent?.trim())),'档位','level profile did not relabel intensity control as 档位');
@@ -65,5 +66,5 @@ try{
  assert.equal(await page.locator('#strengthFields').evaluate(el=>el.classList.contains('hidden')),true,'Quick selection leaked strength fields');
 
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS custom ${ENGINE}] PASS · My search · no-match create · persisted profile · Camera/Quick parity`);
+ console.log(`[AXIS custom ${ENGINE}] PASS · My search · no-match create · optional muscle · persisted profile · Camera/Quick parity`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
