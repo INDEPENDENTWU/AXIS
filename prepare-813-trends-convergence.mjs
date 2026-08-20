@@ -58,7 +58,7 @@ fs.writeFileSync(V84,v84);
 // A non-drag gesture belongs to the click owner; only a real scrub owns snap/render.
 let trends=fs.readFileSync(TRENDS,'utf8');
 const preClickRepaint="if(!s.drag){renderTrack();return}";
-const clickOwnedTap="if(!s.drag)return";
+const clickOwnedTap="if(!s.drag)return;";
 const repaintCount=trends.split(preClickRepaint).length-1;
 if(repaintCount!==1)fail(`tap/scrub handoff anchor expected once, found ${repaintCount}`);
 trends=trends.replace(preClickRepaint,clickOwnedTap);
