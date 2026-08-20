@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {spawnSync} from 'node:child_process';
 
 const FILE='prepare-8124-custom-equipment-profile-v2.mjs';
 const fail=m=>{throw new Error(`[AXIS 8.12.4 custom equipment v4 driver] ${m}`)};
@@ -12,8 +13,11 @@ let patched=original
 fs.writeFileSync(FILE,patched);
 let error=null;
 try{
-  await import('./prepare-8124-custom-equipment-profile-v2.mjs?axis8124v4=2');
-}catch(e){error=e}
-finally{fs.writeFileSync(FILE,original)}
+  await import('./prepare-8124-custom-equipment-profile-v2.mjs?axis8124v4=3');
+}catch(e){
+  error=e;
+  console.error('[AXIS 8.12.4 custom equipment v4 driver] transformed app.js syntax diagnostic follows');
+  spawnSync(process.execPath,['--check','app.js'],{stdio:'inherit'});
+}finally{fs.writeFileSync(FILE,original)}
 if(error)throw error;
 console.log('[AXIS 8.12.4 custom equipment v4 driver] PASS · converged personal-library/detail renderers are compatibility-safe · requested picker/search/create/recording behavior remains owned by v2');
