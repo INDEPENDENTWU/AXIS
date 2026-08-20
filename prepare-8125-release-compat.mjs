@@ -25,7 +25,7 @@ const inherited=[
 ];
 for(const f of inherited){let s=read(f);const n=(s.match(/'8\.12\.4'/g)||[]).length;if(!n)fail(`${f} missing inherited 8.12.4 identity`);s=s.replaceAll("'8.12.4'","'8.12.5'");write(f,s)}
 
-for(const f of ['scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-polish-smoke.mjs','scripts/axis-8124-custom-equipment-smoke.mjs','scripts/axis-8124-taxonomy-coverage-smoke.mjs']){
+for(const f of ['scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-polish-smoke.mjs','scripts/axis-8124-custom-equipment-smoke.mjs']){
   let s=read(f),a="assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.4');",b="assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.5');";
   const n=s.split(a).length-1;if(n!==1)fail(`${f} release assertion expected once, found ${n}`);s=s.replace(a,b);write(f,s);
 }
