@@ -43,6 +43,17 @@ Do not change:
 
 `app.js` remains the canonical custom-equipment definition/selection owner. `v873` remains search projection plus additive custom-profile interaction only. Quick Record keeps its current classic weight+reps editor and delegates non-classic profiles to the canonical recording form.
 
+### Native Foundation continuity
+
+The already-established Native Foundation remains authoritative and is not superseded by this Web patch:
+
+- foundation branch/history: `axis-native-foundation-0`;
+- target native repository: `INDEPENDENTWU/AXIS-iOS`;
+- shared domain contract: `axis.domain.v1`;
+- shared data contract: `axis.data.v1`;
+- Web and iOS remain separate shells/release rails sharing versioned behavior/data contracts and golden fixtures;
+- native remains true Swift/SwiftUI, local-first and offline-workout capable; no Web patch may weaken those invariants.
+
 ## Validation for this work
 
 Before merge:
@@ -53,7 +64,7 @@ Before merge:
 4. unmatched query exposes a visible/clickable direct-create row and carries the query into the canonical custom editor;
 5. time+level, time+intensity and weight+reps profiles show/save only their intended metrics;
 6. created custom identity/profile survives close/reopen and Quick re-entry;
-7. repository and work-continuity contracts pass;
+7. repository, work-continuity and cross-platform foundation contracts pass;
 8. inherited timing, completion, Live Route, Settings, gallery and picker regressions remain green for the current release contract.
 
 After merge:
