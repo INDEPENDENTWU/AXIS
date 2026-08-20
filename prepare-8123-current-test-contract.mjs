@@ -39,3 +39,4 @@ console.log('[AXIS 8.12.3 current test contract] PASS · inherited browser check
 
 await import('./prepare-8124-release-compat.mjs');
 await import('./prepare-8124-ci-compat.mjs');
+await import('./prepare-8125-release-compat.mjs');
