@@ -31,3 +31,5 @@ for(const f of ['scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-po
 }
 
 console.log('[AXIS 8.12.5 release compat] PASS · patch identity advanced · inherited 8.12.4 semantic markers preserved');
+
+await import('./prepare-813-trends-release.mjs');
