@@ -58,7 +58,7 @@ jobs:
         env:
           GH_STATUS_TOKEN: ${{ github.token }}
         run: |
-          node - <<'NODE'
+          node --input-type=module - <<'NODE'
           const target=`${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
           const body={state:'pending',context:'EdgeOne Production',description:'Deploying AXIS 8.13 to EdgeOne',target_url:target};
           const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});
@@ -141,8 +141,8 @@ jobs:
         env:
           GH_STATUS_TOKEN: ${{ github.token }}
         run: |
-          node - <<'NODE'
-          const x=require('/tmp/edgeone-live-result.json');
+          node --input-type=module - <<'NODE'
+          const x=JSON.parse((await import('node:fs')).readFileSync('/tmp/edgeone-live-result.json','utf8'));
           if(!x.baseUrl)throw new Error('EdgeOne base URL missing for status');
           const body={state:'success',context:'EdgeOne Production',description:'AXIS 8.13 verified on EdgeOne Production',target_url:x.baseUrl};
           const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});
