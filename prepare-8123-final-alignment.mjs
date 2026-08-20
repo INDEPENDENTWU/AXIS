@@ -54,3 +54,4 @@ await import('./prepare-8124-search-semantic-seal.mjs');
 await import('./prepare-8124-settings-catalog-history-compat.mjs');
 await import('./prepare-8124-settings-catalog-polish-seal.mjs');
 await import('./prepare-8124-custom-equipment-safe.mjs');
+await import('./prepare-8124-custom-search-threshold.mjs');
