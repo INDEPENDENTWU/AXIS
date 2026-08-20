@@ -53,4 +53,4 @@ await import('./prepare-8124-taxonomy-coverage-seal.mjs');
 await import('./prepare-8124-search-semantic-seal.mjs');
 await import('./prepare-8124-settings-catalog-history-compat.mjs');
 await import('./prepare-8124-settings-catalog-polish-seal.mjs');
-await import('./prepare-8124-custom-equipment-profile-v4-driver.mjs');
+await import('./prepare-8124-custom-equipment-safe.mjs');
