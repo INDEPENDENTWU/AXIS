@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const INDEX='index.html',BUILD='build-hardened.mjs';
+const INDEX='index.html',BUILD='build-hardened.mjs',V84='v84-runtime.js';
 const fail=m=>{throw new Error(`[AXIS 8.13 trends convergence] ${m}`)};
 let html=fs.readFileSync(INDEX,'utf8');
 const re=/<section class="view" id="insightsView">[\s\S]*?<\/section>/;
@@ -43,9 +43,20 @@ for(const id of ['v813Viewport','v813TrackCanvas','v813TrackSvg','v813Nodes','v8
 for(const label of ['当前状态','这次让什么发生了','下一针','状态场'])if(view.includes(label))fail(`legacy user-facing label survived: ${label}`);
 fs.writeFileSync(INDEX,html);
 
+// 8.13 is the canonical visible Trends owner. The historical v84 Trends owner
+// must not wrap the new surface into its hidden legacy container at runtime.
+let v84=fs.readFileSync(V84,'utf8');
+const legacyOwner="function installTrends(){const view=$('#insightsView');if(!view||view.dataset.v84)return;";
+const retiredOwner="function installTrends(){const view=$('#insightsView');if(!view||view.dataset.axisTrendsOwner==='v813-trends-field'||view.dataset.v84)return;";
+const legacyCount=v84.split(legacyOwner).length-1;
+if(legacyCount!==1)fail(`v84 Trends owner anchor expected once, found ${legacyCount}`);
+v84=v84.replace(legacyOwner,retiredOwner);
+if(!v84.includes("view.dataset.axisTrendsOwner==='v813-trends-field'"))fail('v84 Trends owner retirement missing');
+fs.writeFileSync(V84,v84);
+
 let build=fs.readFileSync(BUILD,'utf8');
 const anchor="['v8710-report.js','__AXIS_8710_REPORT_READY__'],['v8710-watermark.js','__AXIS_8710_WATERMARK_READY__'],['v8711-runtime.js','__AXIS_8711_READY__']";
 const replacement=anchor+",['v813-trends-field.js','__AXIS_813_TRENDS_READY__']";
 const count=build.split(anchor).length-1;if(count!==1)fail(`first-class product module anchor expected once, found ${count}`);
 build=build.replace(anchor,replacement);fs.writeFileSync(BUILD,build);
-console.log('[AXIS 8.13 trends convergence] PASS · one visible time-field owner · first-class product module · legacy trend IDs compatibility-only · no sheet/modal navigation');
+console.log('[AXIS 8.13 trends convergence] PASS · one visible time-field owner · v84 legacy Trends owner retired · first-class product module · legacy trend IDs compatibility-only · no sheet/modal navigation');
