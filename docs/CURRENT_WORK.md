@@ -24,13 +24,13 @@ The product loop remains:
 
 Photos and short videos are evidence of time, not posts. Data-only Evolution remains valid. Time creates the eventual personal output; the user should not have to maintain another database or perform a creator workflow.
 
-## Active change — AXIS 8.15.1 Cold-start + Watermark Regression Seal
+## Active change — AXIS 8.15.1 Regression Seal
 
 - Branch: `web-8151-coldstart-watermark-seal`.
 - PR: **#67 — AXIS 8.15.1 — Cold-start + Watermark Regression Seal**.
 - Base: production `main` at `698a7008abed42c0c66216e2f197fab85e979509`.
 - Candidate public/base version: **8.15.1**.
-- Product scope is intentionally narrow: fix two user-observed regressions before 8.16 begins.
+- Product scope is intentionally narrow: fix three user-observed regressions before 8.16 begins.
 
 ### Regression 1 — historical Home frame during release cold start
 
@@ -65,6 +65,21 @@ The 8.8.4 compatibility layer attempted to suppress the old compositor by writin
 - the temporary persisted raw-mode suppression hack is retired;
 - video watermark ownership is intentionally unchanged in this hotfix.
 
+### Regression 3 — Media Evidence date switch flashes another layer
+
+Inside Trends → Evolution Object → 时间证据, selecting another real Encounter previously called `renderEvidence()` by removing the whole `#v815Evidence` section, revoking its current object URLs, mounting a new empty stage, and then asynchronously reading the next local asset. The loading style also reduced the stage opacity to `0.72`.
+
+That created two visible discontinuities on mobile Safari/WebKit: the underlying Trends composition could briefly show through while the section was absent, and the evidence surface visibly pulsed darker on every local switch.
+
+8.15.1 changes Media Evidence to a stable in-place swap:
+
+- switching Encounter/date, photo/video asset, or first/latest comparison keeps the same `#v815Evidence` section mounted;
+- the currently visible evidence remains in the stage while the next local IndexedDB asset resolves;
+- photo/video is warmed before DOM commit so replacement does not intentionally introduce an empty frame;
+- the stage keeps opacity `1` during local loading;
+- old object URLs are retired only after the replacement evidence has committed;
+- the behavior stays read-only, local-first, no-autoplay, no sheet/modal and no new persistence/network owner.
+
 ## Validation for this work
 
 For **AXIS 8.15.1**, the exact PR head must prove:
@@ -75,9 +90,10 @@ For **AXIS 8.15.1**, the exact PR head must prove:
 4. final compiled runtime contains no historical centered `A X I S` or `AXIS` raster and no center divider draw;
 5. final compiled runtime retains the current factual `AXIS / RECORD` card;
 6. `app.js` photo finalization no longer rasterizes a watermark before the current compositor;
-7. existing four watermark switches, precise location behavior, WebKit-safe media store, and 8.15 Media Evidence remain green;
-8. inherited Runtime, training, Group Plan, Live Route, Settings, catalog, Evolution, repository and continuity contracts remain green;
-9. after merge, exact-SHA Vercel and EdgeOne Production plus real EdgeOne Chromium / iPhone WebKit must pass before the hotfix is sealed.
+7. a dedicated Chromium + iPhone WebKit Media Evidence swap smoke artificially delays the next local media read and proves the same evidence section/stage remains mounted, the previous visual remains visible, opacity stays `1`, geometry does not jump, and no sheet/page layer is exposed;
+8. existing four watermark switches, precise location behavior, WebKit-safe media store, and the full 8.15 Media Evidence contract remain green;
+9. inherited Runtime, training, Group Plan, Live Route, Settings, catalog, Evolution, repository and continuity contracts remain green;
+10. after merge, exact-SHA Vercel and EdgeOne Production plus real EdgeOne Chromium / iPhone WebKit must run the same cold-start, watermark and stable-evidence regressions before the hotfix is sealed.
 
 ## Next planned stage — AXIS 8.16 Evolution Replay
 
