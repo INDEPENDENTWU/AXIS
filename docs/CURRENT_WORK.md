@@ -11,6 +11,7 @@
 - Live `axis-build.json` reports `8.13.1 / 8.13.1`, `canonical-single-runtime`, and `sourceCommit = 1f5d1e4a732618f40a614798298d3049a14bb924`.
 - EdgeOne Production status for the same main commit is successful.
 - 8.12.5 smart-create and 8.12.4 timing/completion, Quick Record, Live Route, Settings/catalog and custom-equipment ownership remain inherited release contracts.
+- Cross-platform contracts remain sealed; historical native foundation branch `axis-native-foundation-0` is reference-only and does not change the Web 8.13.1 release boundary.
 - Web and `INDEPENDENTWU/AXIS-iOS` remain independent release shells.
 
 ## Why 8.13.1 still has one closure task
