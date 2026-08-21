@@ -24,7 +24,7 @@ jobs:
         run: |
           node - <<'NODE'
           const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
-          if(!['8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(!['8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14','8.15'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
           if(!core.includes('__AXIS_8123_LEARNING__'))throw new Error('8.12.3 learning marker missing');
           for(const gate of ['settingsNativeAlignment8123','settingsHelperCopyRetired8123','learningSettingsMethodRetired8123','learningShadowUiRetired8123','learningSimpleAudio8123','learningLocalRecording8123','learningNoUpload8123','learningNoTrainingOwner8123','groupPlanUsesRecordingOwner','liveRouteReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`gate missing ${gate}`);

@@ -42,3 +42,4 @@ for(const f of ['scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-po
 }
 
 console.log('[AXIS 8.14 Evolution Objects release] PASS · public/base 8.14 · 8.13.1 Evolution foundation remains inherited · current test identity advanced without rewriting module identity');
+await import('./prepare-815-media-evidence-release.mjs');

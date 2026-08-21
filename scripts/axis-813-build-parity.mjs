@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 
 const hash = (source) => crypto.createHash('sha256').update(source).digest('hex').slice(0, 12);
 const read = (root, file) => fs.readFileSync(path.join(root, file), 'utf8');
-const PATCH_FAMILY=['8.12','8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14'];
+const PATCH_FAMILY=['8.12','8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14','8.15'];
 
 function fingerprint(root) {
   for (const file of ['axis-core.js', 'axis-style.css', 'index.html', 'axis-build.json']) {
