@@ -24,7 +24,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
-          const compatible=['8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14'];
+          const compatible=['8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14','8.15'];
           if(!compatible.includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
           if(!core.includes('__AXIS_8121_HOTFIX__')||!core.includes('v8121PlanButton'))throw new Error('8.12.1 inherited field marker missing');
