@@ -62,7 +62,7 @@ try{
  const resolved=await page.evaluate(()=>window.__AXIS_EVOLUTION_OBJECTS__.resolve('row'));
  assert.equal(resolved.encounterCount,3);assert.equal(resolved.timeSpanDays,14);assert.equal(resolved.mediaEvidence,1);
  assert.equal(resolved.firstEncounter.summary,'30kg · 30次');assert.equal(resolved.latestEncounter.summary,'35kg · 36次');
- assert.deepEqual(resolved.factualDelta,['重量 30kg → 35kg','总次数 30 → 36次'.replace('次','')]);
+ assert.deepEqual(resolved.factualDelta,['重量 30kg → 35kg','总次数 30 → 36']);
 
  const one=page.locator('.v813Activity[data-v814-key="treadmill"]');
  await tap(one);await page.waitForFunction(()=>{const x=document.querySelector('#v814Object');return x&&!x.hidden&&x.textContent.includes('跑步机')},undefined,{timeout:1200});
