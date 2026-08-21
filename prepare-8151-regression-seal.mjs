@@ -28,31 +28,33 @@ const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:
   fs.writeFileSync(APP,app);
 }
 
-/* Retire the historical large center AXIS brand and center divider. The factual
-   corner card remains the sole visible saved-photo watermark composition. */
+/* Retire the historical large center AXIS brand and center divider from the final
+   8.8.4-shaped owner. The factual corner card remains the only visible composition. */
 {
   let wm=read(WM);
-  const old="c.save();c.globalAlpha=Math.max(.10,p.opacity/100);c.fillStyle='#737cff';c.textAlign='center';c.textBaseline='middle';c.font=`800 ${Math.max(74,Math.round(W*.12))}px -apple-system,BlinkMacSystemFont,Arial`;c.fillText('A X I S',W/2,H*.48);c.globalAlpha=1;c.fillStyle='rgba(115,124,255,.72)';c.fillRect(W*.12,H*.555,W*.76,Math.max(2,Math.round(W*.0025)));const name=";
-  wm=once(wm,old,"c.save();c.globalAlpha=1;const name=",'center AXIS brand retirement');
-
   wm=regexOnce(
     wm,
-    /function suppressLegacy\(\)\{if\(!armed\)return;const a=armed;armed=null;const m=meta\(\);[\s\S]*?setTimeout\(\(\)=>finishStamp\(a\),0\)\}/,
-    "function suppressLegacy(){if(!armed)return;const a=armed;armed=null;setTimeout(()=>finishStamp(a),0)}",
-    'legacy watermark metadata suppression retirement'
+    /c\.save\(\);c\.globalAlpha=Math\.max\(\.10,p\.opacity\/100\);c\.fillStyle='#737cff';c\.textAlign='center';c\.textBaseline='middle';c\.font=`800 \$\{Math\.max\(74,Math\.round\(W\*\.12\)\)\}px -apple-system,BlinkMacSystemFont,Arial`;c\.fillText\('AXIS',W\/2,H\*\.48\);c\.globalAlpha=1;c\.fillStyle='rgba\(115,124,255,\.72\)';c\.fillRect\(W\*\.12,H\*\.555,W\*\.76,Math\.max\(2,Math\.round\(W\*\.0025\)\)\);const name=/,
+    "c.save();c.globalAlpha=1;const name=",
+    'final center AXIS brand retirement'
   );
+
+  /* 8.8.4 tried to suppress app.js by writing `photoMode=raw` to LocalStorage, but
+     app.js uses its already-loaded in-memory state during save. With the legacy app
+     photo finalizer now physically retired, this temporary preference mutation is
+     unnecessary and must not remain as a competing save-state owner. */
   wm=regexOnce(
     wm,
-    /\}catch\(e\)\{console\.warn\('\[AXIS\] final watermark skipped',e\)\}finally\{const m=meta\(\);[\s\S]*?write\(META,m\);render\(\)\}\}/,
-    "}catch(e){console.warn('[AXIS] final watermark skipped',e)}finally{render()}}",
-    'watermark temporary preference rollback retirement'
+    /function suppressLegacy\(\)\{[\s\S]*?\}\nfunction bind\(\)\{/,
+    "function suppressLegacy(){if(!armed)return;const a=armed;armed=null;setTimeout(()=>finishStamp(a),0)}\nfunction bind(){",
+    '8.8.4 temporary raw-mode suppression retirement'
   );
 
   const end=wm.lastIndexOf('})();');
   if(end<0)fail('watermark runtime IIFE end missing');
   const marker="\ntry{window.__AXIS_8151_REGRESSION_SEAL__={version:'8.15.1',homeColdStart:'semantic-sealed',photoWatermarkOwner:'v8710-watermark',legacyPhotoCompositor:false,centerBrand:false,currentCard:true}}catch{}\n";
   wm=wm.slice(0,end)+marker+wm.slice(end);
-  if(wm.includes("fillText('A X I S'"))fail('center AXIS brand survived');
+  if(wm.includes("fillText('A X I S'" )||wm.includes("fillText('AXIS',W/2,H*.48)"))fail('center AXIS brand survived');
   if(!wm.includes("fillText('AXIS / RECORD'"))fail('current factual watermark card disappeared');
   try{new Function(wm)}catch(e){fail(`watermark syntax ${e.message}`)}
   fs.writeFileSync(WM,wm);
