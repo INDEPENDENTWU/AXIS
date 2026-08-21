@@ -26,7 +26,7 @@ jobs:
           const m=require('./axis-build.json');
           const gates=['liveRoute813','liveRouteSingleOwner813','liveRouteReadOnly813','liveRoutePureRuntime813','liveRouteFallback813','liveRouteNoRecordingOwner813','liveRouteCanonicalSingleRuntime813'];
           for(const g of gates)if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
-          const compatible=['8.12','8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1'];
+          const compatible=['8.12','8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14'];
           if(!compatible.includes(m.version)||m.baseVersion!==m.version||m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0)throw new Error('Stage 3 topology drift');
           if(m.axis813?.stage3?.recordingOwner!==false||m.axis813?.stage3?.storageOwner!==false)throw new Error('Stage 3 ownership drift');
           NODE
