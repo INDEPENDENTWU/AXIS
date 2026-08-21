@@ -40,9 +40,16 @@ async function seedEvidence(){await page.evaluate(async()=>{
 
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:12000}))?.ok());
- await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready'&&window.__AXIS_816_CAPTURE_FIELD__?.version==='8.16'&&window.__AXIS_816_COMPARATIVE_EVIDENCE__?.version==='8.16'&&window.__AXIS_CAPTURE__?.maxPhotos===12&&window.__AXIS_CAPTURE__?.maxVideoMs===60000,undefined,{timeout:12000});
- assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.16');
- assert.equal(await page.evaluate(()=>window.__AXIS_ARCH__),'canonical-single-runtime');
+ await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:12000});
+ const boot=await page.evaluate(()=>({release:window.__AXIS_RELEASE__,arch:window.__AXIS_ARCH__,captureField:window.__AXIS_816_CAPTURE_FIELD__||null,comparative:window.__AXIS_816_COMPARATIVE_EVIDENCE__||null,capture:window.__AXIS_CAPTURE__?{maxPhotos:window.__AXIS_CAPTURE__.maxPhotos,maxVideoMs:window.__AXIS_CAPTURE__.maxVideoMs,hasDraft:typeof window.__AXIS_CAPTURE__.draft==='function'}:null}));
+ console.log('[AXIS 8.16 boot]',JSON.stringify(boot));
+ assert.equal(boot.release,'8.16');
+ assert.equal(boot.arch,'canonical-single-runtime');
+ assert.equal(boot.captureField?.version,'8.16','8.16 Capture Field marker missing after canonical boot');
+ assert.equal(boot.comparative?.version,'8.16','8.16 Comparative Evidence marker missing after canonical boot');
+ assert.equal(boot.capture?.maxPhotos,12,'extended canonical Capture bridge missing photo bound');
+ assert.equal(boot.capture?.maxVideoMs,60000,'extended canonical Capture bridge missing video bound');
+ assert.equal(boot.capture?.hasDraft,true,'extended canonical Capture bridge missing draft API');
  const capMarker=await page.evaluate(()=>window.__AXIS_816_CAPTURE_FIELD__);
  assert.equal(capMarker.owner,'app.js');assert.equal(capMarker.persistenceOwner,'app.js');assert.equal(capMarker.mediaStore,'axis_v42_media');assert.equal(capMarker.maxPhotos,12);assert.equal(capMarker.maxVideoSeconds,60);assert.equal(capMarker.audio,false);assert.equal(capMarker.newStorage,false);
 
