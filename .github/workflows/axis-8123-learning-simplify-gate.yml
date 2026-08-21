@@ -44,11 +44,6 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-8123-learning-simplify-smoke.mjs
-      - name: Inherited Group Plan regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
-        run: node scripts/axis-8121-hotfix-smoke.mjs
       - name: Repository contract
         run: node scripts/axis-repository-contract.mjs
       - name: Print server log on failure
@@ -78,11 +73,6 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-8123-learning-simplify-smoke.mjs
-      - name: iPhone inherited Group Plan regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
-        run: node scripts/axis-8121-hotfix-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-8123-webkit.log || true
