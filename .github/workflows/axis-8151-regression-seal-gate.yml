@@ -1,0 +1,87 @@
+name: AXIS 8.15.1 Regression Seal
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.15.1 candidate
+        run: node build-release.mjs
+      - name: Verify regression-seal manifest
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8'),css=fs.readFileSync('axis-style.css','utf8');
+          if(m.version!=='8.15.1'||m.baseVersion!=='8.15.1'||m.architecture!=='canonical-single-runtime')throw new Error(`release mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
+          for(const g of ['mediaEvidenceLayer815','coldStartHomeSemanticSeal8151','coldStartCanonicalHomeCommit8151','watermarkSinglePhotoCompositor8151','watermarkLegacyPhotoPainterRetired8151','watermarkCenterBrandRetired8151','watermarkCurrentCardOnly8151'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
+          if(!css.includes('data-axis-home-ready')||!core.includes('axisHomeReady'))throw new Error('cold-start semantic seal missing');
+          if(core.includes("fillText('A X I S'"))throw new Error('center AXIS raster survived');
+          if(!core.includes("fillText('AXIS / RECORD'"))throw new Error('current watermark card missing');
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-8151-chromium.log 2>&1 &
+          sleep 1
+      - name: Cold-start and watermark ownership regression
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8151-regression-seal-smoke.mjs
+      - name: Inherited Media Evidence
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-815-media-evidence-smoke.mjs
+      - name: Existing watermark controls
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-watermark-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-8151-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.15.1 candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-8151-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone cold-start and watermark ownership regression
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8151-regression-seal-smoke.mjs
+      - name: iPhone inherited Media Evidence
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-815-media-evidence-smoke.mjs
+      - name: iPhone existing watermark controls
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-watermark-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-8151-webkit.log || true
