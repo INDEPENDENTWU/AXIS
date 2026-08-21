@@ -33,6 +33,13 @@ try{
  releaseCore();
  await page.waitForLoadState('domcontentloaded',{timeout:12000});
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&document.documentElement.dataset.axisHomeReady==='1',undefined,{timeout:6500});
+ /* The canonical bundle intentionally contains the inherited hardened-kernel boot
+    guard before its canonical finalizer. Chromium normally reaches window load
+    before the assertion below; WebKit can expose that valid intermediate diagnostic
+    value for a few milliseconds. Finish the real navigation lifecycle and require
+    the final canonical owner rather than accepting or asserting an intermediate. */
+ await page.waitForLoadState('load',{timeout:12000});
+ await page.waitForFunction(()=>window.__AXIS_STABLE_COMPLETE__===true&&window.__AXIS_ARCH__==='canonical-single-runtime',undefined,{timeout:6500});
  const x=await page.evaluate(()=>({release:window.__AXIS_RELEASE__,arch:window.__AXIS_ARCH__,seal:window.__AXIS_8151_REGRESSION_SEAL__,homeReady:document.documentElement.dataset.axisHomeReady,visibility:getComputedStyle(document.querySelector('#axisNowHero')).visibility,title:document.querySelector('#axisNowTitle')?.textContent?.trim()||'',meta:document.querySelector('#axisNowMeta')?.textContent?.trim()||''}));
  assert.equal(x.release,'8.15.1');assert.equal(x.arch,'canonical-single-runtime');assert.equal(x.homeReady,'1');assert.equal(x.visibility,'visible');
  assert.notEqual(x.title,'准备开始','persisted history resolved back to static historical Hero semantics');
