@@ -5,6 +5,8 @@ const fail=m=>{throw new Error(`[AXIS 8.14 Evolution Objects convergence] ${m}`)
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 
+await import('./prepare-814-evolution-release.mjs');
+
 let html=read(INDEX);
 if(!html.includes('data-axis-trends-owner="v8131-evolution-field"'))fail('8.13.1 Trends owner must converge first');
 html=once(html,'data-axis-trends-owner="v8131-evolution-field"','data-axis-trends-owner="v8131-evolution-field" data-axis-evolution-object-owner="v814-evolution-objects"','Evolution sub-owner');
