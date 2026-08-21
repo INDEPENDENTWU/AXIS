@@ -1,38 +1,43 @@
 # AXIS
 
-Local-first training software built around what actually happened.
+Local-first software for capturing what actually happened and turning repeated real-world activity into durable personal evolution.
 
-**Current release: 8.12** · [Open AXIS](https://axis-five-puce.vercel.app) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md) · [Current release](docs/CURRENT_RELEASE.md) · [Documentation](docs/README.md)
+**Current release: 8.13.1** · [Open AXIS](https://axis-five-puce.vercel.app) · [Product](docs/PRODUCT.md) · [Current release](docs/CURRENT_RELEASE.md) · [Evolution vision](docs/AXIS_EVOLUTION_VISION.md) · [Architecture](docs/ARCHITECTURE.md)
 
-AXIS records a workout without requiring the workout to behave like a project plan. Training state, sets, equipment memory, media and history remain useful locally; network and AI capabilities are optional additions rather than prerequisites.
+AXIS currently starts from training because training provides strong repeated, measurable real-world evidence. Recording remains authoritative and useful offline. The product direction is broader than a fitness dashboard: Capture → Encounter → Evolution → Replay, with photos/video/location/wearable evidence added only when it reduces friction or makes the accumulated result more valuable.
 
-The product grew through many releases, but Production is deliberately flattened into one canonical browser runtime. Historical `v8xx` modules remain source and compatibility inputs; they are not separate product layers downloaded at runtime.
+Production is deliberately flattened into one canonical browser runtime. Historical `v8xx` modules remain source and compatibility inputs; they are not separate product layers downloaded at runtime.
 
-## What is in 8.12
+## What is in 8.13.1
 
-- Strength and cardio recording with set-level weight/repetition state, direct editing and previous-value reuse.
-- Active training state with pause/resume, countdowns, reminders and concise completion behavior.
-- Equipment and exercise memory, custom equipment, search and local visual recognition.
-- Photo/video capture, timestamp sealing, configurable watermarking and local media storage.
-- History, reports and State Field signals derived from recorded behavior rather than a synthetic fitness score.
-- Optional owner-managed AI services for recognition and insight. Provider secrets stay server-side and model failure never blocks recording.
-- Optional cloud/sync foundation based on local ownership, revisioned entities, idempotent requests and deterministic conflict handling.
-- Language Studio as an isolated rest/learning channel: 25,716 available units across English, Japanese, Korean and Chinese, with 4/8/12-turn dialogue and no training ownership.
-- Chromium and iPhone-like WebKit regression gates, plus exact-production-SHA verification.
+- Strength and cardio recording with direct Quick Record, set-level state and truthful session completion.
+- Interval-based activity/session timing and local-first history.
+- Equipment/exercise memory, custom equipment, search and local visual recognition.
+- Photo/video capture, timestamp sealing, watermarking and local media storage.
+- Read-only Live Route suggestions that never become workout truth until the user records something.
+- A live Trends time field that re-reads sealed sessions, keeps same-day sessions distinct, supports horizontal scrub/tap expansion and uses canonical activity metadata for fingerprints.
+- A read-only Evolution foundation that derives first/latest encounter, encounter count, time span and media-evidence availability without introducing a second history database.
+- Direct factual product copy: no tutorial text such as “左右滑动查看” or “留下几次训练后…”.
+- Language Studio remains isolated from training ownership.
+- Chromium and iPhone-like WebKit release gates plus exact-production-SHA verification.
 
 ## Product rules
 
 **Reality is authoritative.** A real workout is valid even when it changes, ends early or differs from a suggestion.
 
-**Local first.** Core training must work without an account, network or model call.
+**Local first.** Core recording must work without an account, network or model call.
 
-**One surface, one owner.** A visible action or piece of authoritative state has one writer. Replacing an owner includes retiring the previous writer.
+**One surface, one owner.** A visible action or authoritative state has one writer.
 
-**Fail open.** Vision, AI, cloud and other optional services degrade to local/manual behavior instead of blocking the workout.
+**Fail open.** Vision, AI, cloud and other optional services degrade to local/manual behavior instead of blocking recording.
 
-**Quiet interfaces.** The product should spend less attention as it learns more about repeated behavior.
+**Quiet interfaces.** Repeated use should require less attention, not more.
 
-See [docs/PRODUCT.md](docs/PRODUCT.md) for the product contract.
+**Evidence, not creator work.** Photos, video and future Live Photo/Watch evidence are raw material for a personal result; AXIS should not require performance, editing or social-content production.
+
+**Direct language.** Show the fact instead of explaining the interface or speaking like an AI assistant.
+
+See [docs/PRODUCT.md](docs/PRODUCT.md), [docs/AXIS_EVOLUTION_VISION.md](docs/AXIS_EVOLUTION_VISION.md) and [docs/8.13.1_EVOLUTION_FOUNDATION.md](docs/8.13.1_EVOLUTION_FOUNDATION.md).
 
 ## Production architecture
 
@@ -52,13 +57,13 @@ historical + compatibility source
      one production runtime
 ```
 
-The release entry point is:
+The only release entry point is:
 
 ```bash
 node build-release.mjs
 ```
 
-Vercel and EdgeOne use that same command. The build emits `axis-build.json`, which CI and Production verification use to assert release identity, runtime topology, exact source SHA and feature contracts.
+Vercel and EdgeOne build/verify the same canonical artifact. `axis-build.json` records release identity, runtime topology, source SHA, immutable hashes and feature gates.
 
 The CI baseline is Node 20.18.0. Browser release gates exercise both Chromium and iPhone-like WebKit.
 
@@ -75,49 +80,35 @@ docs/                 product, architecture, delivery and release contracts
 .github/workflows/    CI and Production gates
 
 app.js, v*.js         current/historical source owners used by convergence
-prepare-*.mjs         exact build-time migrations and ownership convergence
+prepare-*.mjs         deterministic build-time migrations/convergence
 postbuild-*.mjs       canonical packaging and release assertions
 build-release.mjs     only release build entry point
 ```
 
-The broad root is intentional at the 8.12 compatibility baseline: moving versioned source without retiring its build/data role would be a behavior-changing refactor. See [Repository structure](docs/REPOSITORY_STRUCTURE.md) and the [Compatibility ledger](docs/COMPATIBILITY_LEDGER.md) before changing historical source layout.
-
-Do not infer product ownership from version-like filenames. Start with [Current release](docs/CURRENT_RELEASE.md), [Architecture](docs/ARCHITECTURE.md) and the [documentation index](docs/README.md).
+Do not infer current product ownership from version-like filenames. Start with [Current release](docs/CURRENT_RELEASE.md), [Architecture](docs/ARCHITECTURE.md) and the [documentation index](docs/README.md).
 
 ## Development discipline
 
-A change is complete when the intended owner is clear, competing behavior is retired, the final artifact is deterministic, and the affected real user path is covered by a regression test.
-
-Quick repository check:
+A change is complete when the owner is clear, competing behavior is retired, the artifact is deterministic, and the real user path has a regression test.
 
 ```bash
 node scripts/axis-repository-contract.mjs
-```
-
-Release build:
-
-```bash
 node build-release.mjs
 ```
 
-The normal release path is:
+Normal release flow:
 
 1. branch from the last verified `main`;
-2. make one coherent product or engineering change;
-3. run the repository contract, deterministic build and relevant local checks;
-4. pass Chromium and WebKit gates on the same candidate;
+2. make one coherent product/engineering change;
+3. pass deterministic build and relevant contracts;
+4. pass Chromium and iPhone WebKit gates on the same candidate;
 5. merge only the verified head;
-6. verify that Production and the fixed public alias serve the exact merged source SHA.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md), [Engineering playbook](docs/ENGINEERING_PLAYBOOK.md) and [CI and release gates](docs/CI_AND_RELEASE.md).
+6. verify Vercel serves the exact merged SHA;
+7. mirror and verify the same artifact on EdgeOne.
 
 ## Next
 
-8.13 is planned as **Runtime**, not as another feature expansion. The work starts with deterministic, UI-independent training logic in shadow mode, then migrates ownership gradually. The first targets are continuation, live route changes, reality actions, time budget and lower interaction cost over repeated use.
-
-The migration is intentionally incremental: 8.12 remains the compatibility baseline while new Runtime ownership proves itself through tests and allows old compiler/source layers to be retired rather than extended indefinitely.
-
-See [docs/ROADMAP.md](docs/ROADMAP.md).
+8.13.1 deliberately stops at the read-only Evolution foundation. The next product work can make repeated equipment/exercise/activity histories become a distinctive personal Evolution object, then add optional photo/video evidence and Replay without turning AXIS into a dashboard, social feed or creator tool.
 
 ## Project status
 
