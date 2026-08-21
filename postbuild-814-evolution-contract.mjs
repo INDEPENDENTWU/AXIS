@@ -1,0 +1,23 @@
+import fs from 'node:fs';
+
+const fail=m=>{throw new Error(`[AXIS 8.14 Evolution Objects contract] ${m}`)};
+const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
+const contract=JSON.parse(read('release-contract.json')),info=JSON.parse(read('axis-build.json')),runtime=read('axis-core.js'),html=read('index.html'),source=read('v814-evolution-objects.js'),field=read('v8131-evolution-field.js');
+if(contract.publicVersion!=='8.14'||contract.stableBaseVersion!=='8.14')fail(`release identity ${contract.publicVersion}/${contract.stableBaseVersion}`);
+if(info.version!=='8.14'||info.baseVersion!=='8.14')fail(`manifest identity ${info.version}/${info.baseVersion}`);
+if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
+for(const gate of ['evolutionFoundation8131','trendsMetaActivity8131','trendsNavigationRefresh8131','trendsTruthfulDuration8131','trendsReadOnly813'])if(info.gates?.[gate]!==true)fail(`inherited Evolution foundation gate missing ${gate}`);
+for(const needle of ['__AXIS_814_EVOLUTION_OBJECTS__','__AXIS_EVOLUTION_OBJECTS__','v814-evolution-objects','firstEncounter','latestEncounter','encounterCount','timeSpanDays','mediaEvidence','factualDelta','in-place-object'])if(!runtime.includes(needle))fail(`compiled Evolution Object marker missing ${needle}`);
+if(!field.includes('data-v814-key="${esc(eventKey(e))}"')||!field.includes('<button type="button" class="v813Activity"'))fail('semantic item identity hook missing from inherited field');
+if((html.match(/id="v814Object"/g)||[]).length!==1)fail('Evolution Object root missing or duplicated');
+if((html.match(/data-axis-trends-owner="v8131-evolution-field"/g)||[]).length!==1)fail('8.13.1 Trends top-level owner drifted');
+if((html.match(/data-axis-evolution-object-owner="v814-evolution-objects"/g)||[]).length!==2)fail('Evolution Object sub-owner drifted');
+for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','fetch(','XMLHttpRequest','new MutationObserver','new ResizeObserver','setInterval('])if(source.includes(forbidden))fail(`read-only Evolution Object source contains forbidden owner ${forbidden}`);
+for(const forbidden of ['进步','提升','改善','更好','评分','分数'])if(source.includes(forbidden))fail(`interpretive/score copy survived ${forbidden}`);
+for(const needle of ["CORE='axis_v60_state'","META='axis_v8_meta'",'factualDelta','影像证据','第一次 · 也是最近一次','同日 ${x.encounterCount}次','跨${x.timeSpanDays}天'])if(!source.includes(needle))fail(`factual Evolution Object source missing ${needle}`);
+if(!source.includes("D.addEventListener('click'")||!source.includes("closest?.('.v813Activity[data-v814-key]')"))fail('delegated in-place interaction owner missing');
+if(!source.includes("window.addEventListener('axis:state-changed'")||!source.includes("e.key===CORE||e.key===META")||!source.includes("window.addEventListener('pageshow'"))fail('Evolution Object refresh contract incomplete');
+info.gates=info.gates||{};Object.assign(info.gates,{evolutionObjects814:true,evolutionObjectFirstLatest814:true,evolutionObjectEncounterCount814:true,evolutionObjectFactualDelta814:true,evolutionObjectMediaEvidence814:true,evolutionObjectReadOnly814:true,evolutionObjectNoNetwork814:true,evolutionObjectInPlace814:true});
+info.axis814={release:true,scope:'evolution-objects',trends:{topLevelOwner:'v8131-evolution-field',objectOwner:'v814-evolution-objects',presentation:'in-place',modal:false},projection:{source:'existing sealed sessions',firstLatest:true,encounterCount:true,timeSpanDays:true,mediaEvidence:true,factualDelta:true,interpretiveScoring:false},ownership:{trainingState:false,persistence:false,network:false,ai:false,replay:false},interaction:{activityRows:'semantic buttons',sameDayDistinct:true,readOnly:true}};
+fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
+console.log('[AXIS 8.14 Evolution Objects contract] PASS · factual first/latest object · encounter/time/media evidence · in-place semantic interaction · no storage/network/AI ownership');
