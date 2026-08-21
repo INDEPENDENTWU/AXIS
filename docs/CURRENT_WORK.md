@@ -2,7 +2,7 @@
 
 > Canonical engineering handoff. `CURRENT_RELEASE.md` is the release contract; this file records the active engineering boundary and next exact action.
 
-## Production baseline at start of 8.16
+## Production baseline at start of this work
 
 - Public Web baseline: **AXIS 8.15.1 — Regression Seal**.
 - `main` at the start of PR #68: `220fbb1c614ba60a3c8a2958b5fb03016643b75f`.
@@ -73,7 +73,7 @@ Arbitrary replacement requires explicit left/right slot selection. Plain Encount
 
 ## Current implementation state
 
-The deterministic 86-step build now reaches and passes the 8.16 contract:
+The deterministic 86-step release build reaches the 8.16 contract:
 
 - `8.16 / 8.16`;
 - `canonical-single-runtime`;
@@ -82,11 +82,13 @@ The deterministic 86-step build now reaches and passes the 8.16 contract:
 - arbitrary Comparative Evidence / presets / stable swap / factual-only gates;
 - Replay deferred.
 
-A browser diagnostic found one narrow integration issue: the extended canonical `window.__AXIS_CAPTURE__` API was live in Chromium with `maxPhotos=12`, `maxVideoMs=60000` and draft APIs, and Comparative Evidence was live, while the standalone `window.__AXIS_816_CAPTURE_FIELD__` diagnostic object was not exposed after canonical boot. The product APIs were present; only the late marker was lost at canonical convergence.
+The final Capture-entry investigation identified the actual browser failure precisely. The visible entry route and exported `window.__AXIS_CAPTURE__.openCanonicalCamera()` were present, but the 8.16 convergence compiler had inserted the `capture816RenderDraft()` source using JavaScript replacement-string semantics. In a replacement string, `$$` is interpreted as one literal `$`, so the array selector helper `$$('#v816CaptureMode ...')` was compiled into the single-element helper `$('#v816CaptureMode ...')`. First Capture render therefore threw `TypeError: $(...).forEach is not a function`, making the user-facing entry look inert even though the route itself was correct.
 
-The fix is to seal `__AXIS_816_CAPTURE_FIELD__` at the same surviving canonical `window.__AXIS_CAPTURE__` assignment boundary instead of relying on a late IIFE marker. `prepare-816-capture-marker-seal.mjs` owns that narrow convergence check.
+`prepare-816-capture-marker-seal.mjs` now owns a narrow fail-closed compiler seal for that artifact: it requires exactly the known broken signature or the already-correct signature, converges it to the array selector, then validates the resulting `app.js` syntax. Camera, recorder, media persistence and schema ownership remain unchanged. The dedicated smoke also retains direct/native/physical entry diagnostics until the release candidate is fully sealed.
 
-## Exact validation required before merge
+The repository contract is aligned to **8.16 current release** while preserving **8.12 as the inherited runtime compatibility foundation**. README, `CURRENT_RELEASE.md` and this handoff now describe the same release path.
+
+## Validation for this work
 
 The final PR head must prove:
 
@@ -115,16 +117,6 @@ Do not call 8.16 production-sealed until the exact merged `main` SHA passes all 
 7. real EdgeOne iPhone WebKit runs the same 8.16 release flow;
 8. GitHub combined status reports `EdgeOne Production: success` for the exact same main SHA.
 
-## Next product stage
+## Next planned stage
 
 Only after 8.16 is production-sealed should the next stage explore a restrained private Replay. Replay must remain downstream of real Encounter-bound evidence and refuse fabricated continuity when evidence is insufficient.
-
-For every new conversation/agent, inspect in this order:
-
-1. `docs/CURRENT_RELEASE.md`;
-2. this `docs/CURRENT_WORK.md`;
-3. `docs/AXIS_EVOLUTION_VISION.md` and `docs/8.13.1_EVOLUTION_FOUNDATION.md`;
-4. active PR/branch and exact SHA;
-5. exact failing test/log before making a fix.
-
-Chat history is not authoritative project memory. Conversation history is supplemental only; GitHub state and these handoff documents are authoritative project memory.
