@@ -58,3 +58,4 @@ for(const f of ['scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-po
 }
 
 console.log('[AXIS 8.13.1 evolution release] PASS · public/base 8.13.1 · inherited training/catalog/custom-equipment semantics preserved');
+await import('./prepare-814-evolution-release.mjs');
