@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 
 const hash = (source) => crypto.createHash('sha256').update(source).digest('hex').slice(0, 12);
 const read = (root, file) => fs.readFileSync(path.join(root, file), 'utf8');
-const PATCH_FAMILY=['8.12','8.12.1','8.12.2','8.12.3','8.12.4'];
+const PATCH_FAMILY=['8.12','8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1'];
 
 function fingerprint(root) {
   for (const file of ['axis-core.js', 'axis-style.css', 'index.html', 'axis-build.json']) {
@@ -79,14 +79,14 @@ try {
 
   if (!productionChanged.length) {
     assert.deepEqual(candidate, baseline, 'Runtime-only/governance change altered the exact production artifact compared with the base');
-    console.log(`AXIS 8.13 exact base parity PASS · ${baseSha.slice(0, 12)} · release ${candidate.version} · raw core ${candidate.rawCore} · canonical ${candidate.canonicalRuntime} · css ${candidate.rawCss}`);
+    console.log(`AXIS exact base parity PASS · ${baseSha.slice(0, 12)} · release ${candidate.version} · raw core ${candidate.rawCore} · canonical ${candidate.canonicalRuntime} · css ${candidate.rawCss}`);
   } else {
     const baseIndex=PATCH_FAMILY.indexOf(baseline.version),candidateIndex=PATCH_FAMILY.indexOf(candidate.version);
     assert.ok(candidateIndex>=baseIndex, `controlled product patch regressed public identity · ${baseline.version} -> ${candidate.version}`);
     assert.equal(candidate.architecture, baseline.architecture, 'controlled product change unexpectedly changed architecture');
     assert.deepEqual(candidate.requests, baseline.requests, 'controlled product change unexpectedly changed request topology');
     assert.deepEqual(candidate.chunks ?? [], baseline.chunks ?? [], 'controlled product change unexpectedly changed chunk topology');
-    console.log(`AXIS 8.13 controlled product boundary PASS · ${productionChanged.length} production-affecting path(s) · ${baseline.version} -> ${candidate.version} · hashes may change · topology preserved`);
+    console.log(`AXIS controlled product boundary PASS · ${productionChanged.length} production-affecting path(s) · ${baseline.version} -> ${candidate.version} · hashes may change · topology preserved`);
   }
 } finally {
   try { execFileSync('git', ['worktree', 'remove', '--force', baseWorktree], { cwd: root, stdio: 'ignore' }); } catch {}
