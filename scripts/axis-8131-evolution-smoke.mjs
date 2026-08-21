@@ -86,7 +86,12 @@ try{
  await tap(page.locator('[data-view="insightsView"]'));
  await page.waitForFunction(()=>document.querySelectorAll('.v813Node').length===8,undefined,{timeout:3000});
  assert.equal(Number(await page.locator('.v813Node.selected').getAttribute('data-v813-node')),7,'navigation re-entry must select the newest sealed session even if the lifecycle event was missed');
- assert.ok((await page.locator('#v813SessionMeta').innerText()).includes('<1分钟'),'sub-minute sealed session must not be fabricated as one minute');
+ const subMinute=await page.evaluate(()=>{
+  const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),s=(c.sessions||[]).find(x=>x.id==='same-day-8'),e=s?.events?.[0],a=m.events?.[e?.id]?.activity;
+  return{rawSpan:(Number(s?.end)||0)-(Number(s?.start)||0),sessionStart:s?.start,sessionEnd:s?.end,eventTime:e?.time,activityStart:a?.startedAt,activityEnd:a?.finishedAt,selected:document.querySelector('.v813Node.selected')?.dataset.v813Node,sessionMeta:document.querySelector('#v813SessionMeta')?.textContent||'',fingerMeta:document.querySelector('#v813FingerMeta')?.textContent||'',insight:document.querySelector('#v813Insight')?.textContent||''};
+ });
+ assert.equal(subMinute.rawSpan,10000,`sub-minute fixture drifted: ${JSON.stringify(subMinute)}`);
+ assert.ok(subMinute.sessionMeta.includes('<1分钟'),`sub-minute sealed session must not be fabricated as one minute: ${JSON.stringify(subMinute)}`);
  assert.ok(await page.locator('#v813Fingerprint i').count()>=1,'newly sealed metadata-only session fingerprint missing after navigation re-entry');
 
  await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.evaluate(()=>getComputedStyle(document.querySelector('#v813TrackCanvas')).transitionDuration),'0s');
