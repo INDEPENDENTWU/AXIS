@@ -16,8 +16,13 @@ for(const [p,b] of [['**/api/ai-status**',{available:false}],['**/api/owner-conf
 let releaseCore;const coreGate=new Promise(r=>releaseCore=r);
 await page.route('**/axis-core.js*',async r=>{await coreGate;r.continue()});
 try{
- const nav=page.goto(BASE,{waitUntil:'domcontentloaded',timeout:12000});
- await page.waitForSelector('#axisNowHero',{state:'attached',timeout:3000});
+ /* Remote-safe cold-start harness: wait only for the main document commit while
+    axis-core.js is intentionally held. Waiting for DOMContentLoaded here creates
+    a navigation/request dependency on remote CDNs and can reject before the held
+    core is released; commit gives us the real parsed document without weakening
+    the first-paint assertion. */
+ await page.goto(BASE,{waitUntil:'commit',timeout:12000});
+ await page.waitForSelector('#axisNowHero',{state:'attached',timeout:8000});
  for(let i=0;i<12;i++){
   const x=await page.evaluate(()=>{const h=document.querySelector('#axisNowHero'),cs=getComputedStyle(h);return{homeReady:document.documentElement.dataset.axisHomeReady||'',coreReady:document.documentElement.dataset.axisCoreReady||'',visibility:cs.visibility,opacity:cs.opacity,title:document.querySelector('#axisNowTitle')?.textContent?.trim()||'',meta:document.querySelector('#axisNowMeta')?.textContent?.trim()||''}});
   assert.equal(x.homeReady,'','Home unexpectedly committed while canonical core was held');
@@ -25,7 +30,8 @@ try{
   assert.equal(x.visibility,'hidden',`historical Home semantic frame painted during cold start: ${JSON.stringify(x)}`);
   await page.waitForTimeout(40);
  }
- releaseCore();await nav;
+ releaseCore();
+ await page.waitForLoadState('domcontentloaded',{timeout:12000});
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&document.documentElement.dataset.axisHomeReady==='1',undefined,{timeout:6500});
  const x=await page.evaluate(()=>({release:window.__AXIS_RELEASE__,arch:window.__AXIS_ARCH__,seal:window.__AXIS_8151_REGRESSION_SEAL__,homeReady:document.documentElement.dataset.axisHomeReady,visibility:getComputedStyle(document.querySelector('#axisNowHero')).visibility,title:document.querySelector('#axisNowTitle')?.textContent?.trim()||'',meta:document.querySelector('#axisNowMeta')?.textContent?.trim()||''}));
  assert.equal(x.release,'8.15.1');assert.equal(x.arch,'canonical-single-runtime');assert.equal(x.homeReady,'1');assert.equal(x.visibility,'visible');
@@ -33,4 +39,4 @@ try{
  assert.equal(x.seal?.legacyPhotoCompositor,false);assert.equal(x.seal?.centerBrand,false);assert.equal(x.seal?.currentCard,true);assert.equal(x.seal?.photoWatermarkOwner,'v8710-watermark');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
  console.log(`[AXIS 8.15.1 regression seal ${ENGINE}] PASS · no static Home flash before canonical render · one current photo watermark owner · center brand retired`);
-}finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
+}finally{releaseCore?.();await context.close().catch(()=>{});await browser.close().catch(()=>{})}
