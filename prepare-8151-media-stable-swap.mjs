@@ -45,13 +45,15 @@ src=regexOnce(src,/async function renderCompare\(section,bundle,epoch\)\{[\s\S]*
 
 const evidence=`async function renderEvidence(key){
  const root=$('#v814Object');if(!root||root.hidden)return null;
- const bundle=resolveBundle(key),priorKey=currentKey,existing=$('#v815Evidence',root),reuse=!!(existing&&priorKey===key);currentKey=key;renderEpoch++;const epoch=renderEpoch;
+ const bundle=resolveBundle(key),priorKey=currentKey,existing=$('#v815Evidence',root);currentKey=key;renderEpoch++;const epoch=renderEpoch;
  if(!bundle||!bundle.visualEncounters.length){revokeUrls();existing?.remove();return bundle}
+ const signature=bundle.visualEncounters.map(x=>\`\${x.index}:\${x.media.join(',')}\`).join('|')+\`|\${bundle.compareAvailable?'1':'0'}|\${evidenceMeta(bundle)}\`;
+ const reuse=!!(existing&&priorKey===key)&&existing.dataset.v815Signature===signature;
  const compareButton=bundle.compareAvailable?\`<button type="button" class="v815CompareToggle" data-v815-compare="1" aria-pressed="\${compareMode?'true':'false'}">首尾对照</button>\`:'';
  const rail=\`\${bundle.visualEncounters.map(x=>\`<button type="button" role="tab" data-v815-encounter="\${x.index}" aria-selected="\${x.index===(pickEncounter(bundle)?.index)?'true':'false'}"><b>\${esc(fmtDate(x.time))}</b><small>第\${x.index}次 · \${x.videos.length?'照片/视频':'照片'}</small></button>\`).join('')}\`;
  let section=existing;
- if(!reuse){revokeUrls();existing?.remove();section=D.createElement('section');section.id='v815Evidence';section.className='v815Evidence';section.dataset.axisMediaEvidenceOwner='v815-media-evidence';section.innerHTML=\`<div class="v815EvidenceHead"><div><b>时间证据</b><span>\${esc(evidenceMeta(bundle))}</span></div>\${compareButton}</div><div class="v815Stage"></div><div class="v815Rail" role="tablist" aria-label="有影像的真实相遇">\${rail}</div>\`;root.appendChild(section)}
- else{const head=$('.v815EvidenceHead',section),track=$('.v815Rail',section);if(head)head.innerHTML=\`<div><b>时间证据</b><span>\${esc(evidenceMeta(bundle))}</span></div>\${compareButton}\`;if(track)track.innerHTML=rail}
+ if(!reuse){revokeUrls();existing?.remove();section=D.createElement('section');section.id='v815Evidence';section.className='v815Evidence';section.dataset.axisMediaEvidenceOwner='v815-media-evidence';section.dataset.v815Signature=signature;section.innerHTML=\`<div class="v815EvidenceHead"><div><b>时间证据</b><span>\${esc(evidenceMeta(bundle))}</span></div>\${compareButton}</div><div class="v815Stage"></div><div class="v815Rail" role="tablist" aria-label="有影像的真实相遇">\${rail}</div>\`;root.appendChild(section)}
+ else{const compare=$('[data-v815-compare]',section);if(compare)compare.setAttribute('aria-pressed',compareMode?'true':'false');const selected=pickEncounter(bundle)?.index;$$('.v815Rail [data-v815-encounter]',section).forEach(b=>b.setAttribute('aria-selected',Number(b.dataset.v815Encounter)===selected?'true':'false'))}
  if(compareMode&&bundle.compareAvailable)await renderCompare(section,bundle,epoch);else{compareMode=false;const enc=pickEncounter(bundle);selectedEncounter=enc.index;selectedRef=pickRef(enc);await renderVisual(section,bundle,enc,selectedRef,epoch)}return bundle
 }`;
 src=regexOnce(src,/async function renderEvidence\(key\)\{[\s\S]*?\}\nfunction sync/,evidence+'\nfunction sync','stable evidence section reuse');
@@ -59,12 +61,12 @@ src=regexOnce(src,/async function renderEvidence\(key\)\{[\s\S]*?\}\nfunction sy
 src=once(
   src,
   "window.__AXIS_815_MEDIA_EVIDENCE_READY__=true}",
-  "window.__AXIS_8151_MEDIA_SWAP__={version:'8.15.1',owner:'v815-media-evidence',stableSection:true,retainPreviousUntilReady:true,warmBeforeCommit:true,loadingOpacityBlink:false};window.__AXIS_815_MEDIA_EVIDENCE_READY__=true}",
+  "window.__AXIS_8151_MEDIA_SWAP__={version:'8.15.1',owner:'v815-media-evidence',stableSection:true,stableShell:true,retainPreviousUntilReady:true,warmBeforeCommit:true,loadingOpacityBlink:false};window.__AXIS_815_MEDIA_EVIDENCE_READY__=true}",
   'stable swap runtime marker'
 );
 
-for(const forbidden of ["$('#v815Evidence',root)?.remove();if(!bundle",'.v815Evidence[data-loading="1"] .v815Stage{opacity:.72}'])if(src.includes(forbidden))fail(`unstable evidence behavior survived: ${forbidden}`);
-for(const required of ['retainPreviousUntilReady:true','warmBeforeCommit:true','revokeExcept([media.url])','reuse=!!(existing&&priorKey===key)'])if(!src.includes(required))fail(`stable swap marker missing: ${required}`);
+for(const forbidden of ["$('#v815Evidence',root)?.remove();if(!bundle",'.v815Evidence[data-loading="1"] .v815Stage{opacity:.72}',"if(head)head.innerHTML=",'if(track)track.innerHTML='])if(src.includes(forbidden))fail(`unstable evidence behavior survived: ${forbidden}`);
+for(const required of ['retainPreviousUntilReady:true','warmBeforeCommit:true','stableShell:true','revokeExcept([media.url])','reuse=!!(existing&&priorKey===key)','section.dataset.v815Signature=signature'])if(!src.includes(required))fail(`stable swap marker missing: ${required}`);
 try{new Function(src)}catch(e){fail(`runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.15.1 Media Evidence swap] PASS · section/stage stay mounted · previous evidence retained until local asset ready · no opacity pulse · object URLs retired after commit');
+console.log('[AXIS 8.15.1 Media Evidence swap] PASS · section/head/rail/stage stay mounted · previous evidence retained until local asset ready · no opacity/layout pulse · object URLs retired after commit');
