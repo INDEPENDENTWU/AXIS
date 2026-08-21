@@ -1,198 +1,190 @@
 # Current Release
 
-## AXIS 8.15 — Media Evidence Layer
+## AXIS 8.16 — Capture Field + Comparative Evidence
 
-8.15 is the current Web release candidate.
+8.16 is the current Web release candidate.
 
-It advances the sealed 8.14 Evolution Object without changing authoritative training or media persistence. AXIS still records reality first; 8.15 makes existing photos and short videos become **Encounter-bound time evidence** inside an Evolution Object instead of behaving like files, posts, or creator assets.
+It starts from the production-sealed 8.15.1 regression baseline and strengthens both ends of the Evolution loop without adding a new data owner: **Capture becomes a deliberate evidence field**, while Trends can compare more than only the first and latest visual Encounter.
 
-This file is the product/release handoff entry point. Historical version-named modules remain compiler inputs and are not reliable ownership documentation by themselves. Final generated truth remains `axis-build.json`.
+Historical version-named modules remain compiler inputs. Final generated truth remains `axis-build.json`.
 
 ## Product position
 
-AXIS is evolving toward a **Personal Evolution Engine**.
+AXIS is a **Personal Evolution Engine**.
 
-The long-term loop is:
+The long-term loop remains:
 
 `Capture / 留下` → truthful Encounter → time accumulation → `Reveal / 发现` → Evolution → later truthful Replay.
 
-The user should not maintain another database, produce content, or open AXIS only to enter data. Data-only Evolution remains valid. Media is optional evidence of time.
+8.16 deliberately does **not** ship Replay yet. Capture density, Encounter identity, media binding and comparison semantics are sealed first so later Replay can only be assembled from truthful evidence.
 
-AXIS must not become a social feed, ranking system, generic life journal, AI chat coach, creator editor, or data dashboard.
+## 8.16 Capture Field contract
 
-## Media Evidence contract
+The visible Capture surface is `v816-capture-field`, but existing `app.js` remains the sole canonical camera, MediaRecorder and IndexedDB persistence owner.
 
-The top-level Trends presentation owner remains `v8131-evolution-field`. `v814-evolution-objects` remains the Evolution Object owner. 8.15 adds the narrow read-only sub-owner `v815-media-evidence` inside the existing Evolution Object.
+The same Capture Field is used by normal **拍摄记录** and Quick Record supplemental capture.
 
-When an Evolution Object has real stored media references:
+### Photos
 
-- existing `frameRefs` and `clipRef` remain attached to the exact Encounter that created them;
-- `时间证据` appears in place inside the same Evolution surface;
-- the evidence rail represents **media-bearing Encounters**, not every individual frame;
-- selecting an Encounter keeps its real date, factual recorded summary, and encounter position attached to the visual;
-- multiple assets from one Encounter remain grouped as assets of that Encounter;
-- short video requires explicit user playback, has controls, and never autoplays;
-- if earliest and latest visual Encounters both contain real photos, `首尾对照` may display those real endpoint images side-by-side.
+- one Encounter may hold at most **12 photos**;
+- photos may be captured/imported repeatedly into one transient draft before save;
+- the draft rail exposes the real captured photos and allows deletion before commit;
+- choosing a cover reorders a real draft photo to `frameRefs[0]`;
+- no cover field or new event schema is introduced;
+- the existing multi-photo `frameRefs[]` schema remains authoritative.
 
-If no media exists, the 8.14 data-only Evolution Object remains complete. 8.15 must not show an empty gallery, request a photo, penalize missing media, or create creator pressure.
+### Scan
 
-## Evidence semantics
+The inherited short scan remains available and uses the existing persisted scan preference. It adds real sampled frames into the same 8.16 draft and respects the 12-photo bound.
 
-Media is evidence, not content.
+### Video
 
-8.15 does not introduce:
+- one explicit short video may be attached to one Encounter;
+- the hard maximum is **60 seconds**;
+- the recorder automatically stops at the 60-second boundary;
+- the existing `clipRef` schema remains authoritative;
+- 8.16 records video without audio, avoiding a new microphone permission/recorder ownership surface;
+- video never autoplays in evidence views.
 
-- BGM;
-- editing or transitions;
-- templates;
-- titles/captions for publishing;
-- likes, followers, ranking, or social distribution;
-- motivational copy;
-- AI-generated interpretation;
-- fabricated images, frames, dates, or values.
+### Capture ownership
 
-Endpoint comparison may only use stored real endpoint images. Missing evidence remains missing.
+8.16 adds no second camera lifecycle, recorder, database or persistence format.
 
-The viewer is intentionally metric-agnostic. Strength data is the current production domain, but the same Encounter-bound evidence primitive must remain suitable for future running, climbing, rehabilitation, dance, music and repeatable skill practice without turning AXIS into a generic journal.
+- camera owner: `app.js`;
+- MediaRecorder owner: `app.js`;
+- media persistence owner: `app.js`;
+- existing database: `axis_v42_media`;
+- existing event media schema: `frameRefs[]` + `clipRef`;
+- no `axis_v816_*` media store;
+- no new LocalStorage schema;
+- no upload requirement;
+- no AI requirement;
+- closing/hiding the capture surface safely terminates an active draft recording.
 
-## Media ownership / data contract
+## Comparative Evidence contract
 
-8.15 adds no new canonical writer.
+`v815-media-evidence` remains the read-only Media Evidence owner. 8.16 expands its comparison semantics without creating a new persistence/network owner.
 
-- Existing recording owners continue to create media references.
-- Existing `app.js` media persistence remains the sole canonical IndexedDB media owner.
-- The existing database remains `axis_v42_media`, using the existing WebKit-safe `axis-media-arraybuffer-v1` write format and legacy Blob-compatible reads.
-- `app.js` exposes a narrow read-only `window.__AXIS_MEDIA_READ__` bridge whose only product purpose is retrieving already-stored evidence.
-- `v814-evolution-objects` additively exposes already-recorded media refs in its read-only Encounter projection.
-- `v815-media-evidence` reads those refs and stored media but owns no writes.
-- No new LocalStorage schema, IndexedDB writer, upload path, network dependency, AI call, polling owner, observer owner, persistent timer, or training-state writer is introduced.
-- Replay generation remains deferred to 8.16.
+The user may compare **any two real photo-bearing Encounters** from the same Evolution Object.
 
-## 8.14 Evolution Object inheritance
+Available presets are:
 
-8.15 must preserve all 8.14 guarantees:
+- endpoints — earliest ↔ latest;
+- recent — the most recent two;
+- adjacent — a neighboring pair.
 
-- a repeated real activity forms a directly perceptible Evolution Object;
-- encounter count, span, first/latest encounter and literal comparable facts remain truthful;
-- one-time activities remain `第一次 · 也是最近一次` without fabricated progress;
-- same-day encounters remain distinct;
-- literal changes such as `重量 30kg → 35kg` remain evidence rather than a score;
-- no `进步 / 提升 / 改善 / 更好 / 评分 / 分数` interpretation is generated by the Evolution Object owner;
-- the object remains in place and read-only.
+Arbitrary comparison is explicit: the user first chooses the left or right comparison slot, then chooses another real Encounter from the evidence rail. A normal Encounter tap still means inspect that Encounter and is not hijacked by comparison mode.
 
-## 8.13.1 truthful Encounter inheritance
+Endpoint labels remain factual (`最早影像`, `最近影像`) only when the selected evidence is actually an endpoint. Other selections use real Encounter positions such as `第2次` or `第4次`.
 
-8.15 also preserves the 8.13.1 foundation:
+Comparison remains factual and may not emit `进步 / 提升 / 改善 / 更好 / 评分 / 分数` verdicts.
 
-- sealed Sessions project into the Trends time field;
-- embedded event activity and canonical `axis_v8_meta.events[eventId].activity` fallback resolve consistently;
-- same-day Sessions remain distinct;
-- sub-minute Sessions remain truthful as `<1分钟`;
-- lifecycle/navigation re-entry refresh remains correct;
-- Safari edge behavior, horizontal scrub and reduced-motion behavior remain intact;
-- `window.__AXIS_EVOLUTION__` remains read-only.
+## 8.15.1 regression inheritance
 
-## Training-flow inheritance
+8.16 preserves the complete 8.15.1 seal:
 
-The reliable 8.12.4 / 8.12.5 training contracts remain release-blocking: interval-union timing, truthful session sealing, direct Recent Quick Record, stable custom/native/historical equipment identity, atomic Group Plan, read-only deviation-safe Live Route, Settings geometry, personal equipment/photo/search behavior and local recording without required AI/network.
+- no historical Home semantic flash before canonical Home state resolves;
+- `v8710-watermark` remains the sole saved-photo watermark compositor;
+- historical centered AXIS raster/divider stays retired;
+- the factual `AXIS / RECORD` card remains current;
+- Media Evidence swaps remain stable in place;
+- the previous visual remains until the next local media asset is ready;
+- loading does not intentionally dim the stage or expose another page/sheet layer.
 
-Learning remains an independent ownership domain. 8.15 Media Evidence does not consume Learning state, Cloud/AI settings, or remote AI output.
+## Earlier Evolution inheritance
+
+8.16 preserves:
+
+- 8.13.1 truthful sealed Sessions, canonical activity metadata fallback, same-day distinctness, truthful `<1分钟`, lifecycle/navigation refresh and read-only Trends ownership;
+- 8.14 Evolution Objects with encounter count, time span, first/latest Encounter, literal comparable facts and no interpretive score;
+- 8.15 Encounter-bound photo/video evidence, read-only local media access, no autoplay, no creator workflow and complete data-only Evolution when media is absent.
+
+All reliable training, Quick Record, Group Plan, Live Route, Settings, catalog, custom-equipment and Learning ownership contracts remain release-blocking.
 
 ## Production topology
 
-AXIS 8.15 ships one canonical browser runtime:
+AXIS 8.16 must ship as one canonical browser runtime:
 
-- `axis-core.js?v=<content hash>` — one initial JavaScript request;
-- `axis-style.css?v=<content hash>` — one stylesheet;
-- zero dynamic historical runtime chunks;
-- no runtime fallback to a previous public release.
+- one `axis-core.js?v=<content hash>` request;
+- one `axis-style.css?v=<content hash>` request;
+- zero dynamic historical JavaScript chunks;
+- architecture `canonical-single-runtime`;
+- `version: 8.16`;
+- `baseVersion: 8.16`.
 
 `node build-release.mjs` is the sole release build entry point.
 
-The final artifact must report at least:
+The final manifest must include the 8.16 gates for unified Capture, multi-photo bounds, cover reorder, <=60s single-recorder video, existing media-store ownership, Quick Record convergence, arbitrary comparative evidence, comparison presets, stable evidence swapping, factual-only semantics and Replay deferral.
 
-- `version: 8.15`;
-- `baseVersion: 8.15`;
-- architecture `canonical-single-runtime`;
-- one initial JavaScript request and zero dynamic JavaScript requests;
-- all inherited 8.13.1 and 8.14 Evolution gates;
-- `mediaEvidenceLayer815`;
-- `mediaEvidenceEncounterBinding815`;
-- `mediaEvidenceIndexedDbReadOnly815`;
-- `mediaEvidencePhoto815`;
-- `mediaEvidenceShortVideo815`;
-- `mediaEvidenceNoAutoplay815`;
-- `mediaEvidenceInPlaceViewer815`;
-- `mediaEvidenceEndpointCompare815`;
-- `mediaEvidenceNoCreatorWorkflow815`;
-- `mediaEvidenceUniversalBundle815`;
-- `axis815.viewer.owner = v815-media-evidence`;
-- `axis815.evidence.binding = encounter-first`;
-- `axis815.ownership.trainingState/mediaWrites/persistence/network/ai/replay = false`.
+`axis816` must identify:
+
+- Capture surface `v816-capture-field`;
+- camera/persistence owner `app.js`;
+- media store `axis_v42_media`;
+- photo max 12;
+- one video max 60 seconds;
+- no new storage/schema;
+- evidence mode `arbitrary-two-point`;
+- presets `ends / recent / adjacent`;
+- no new training-state, persistence, network, AI or recorder owner;
+- Replay false.
 
 ## Browser release gate
 
-A candidate is incomplete until Chromium and iPhone WebKit both prove:
+A candidate is incomplete until Chromium and iPhone WebKit both prove the real 8.16 behavior:
 
-1. inherited 8.13.1 truthful Encounter behavior passes;
-2. inherited 8.14 Evolution Object behavior passes;
-3. real WebKit-safe IndexedDB photo/video evidence can be read through the narrow read-only bridge;
-4. evidence nodes preserve Encounter identity rather than becoming a raw file list;
-5. selected visual evidence retains factual Encounter date/data context;
-6. earliest/latest comparison uses only real stored endpoint photos;
-7. short video remains user-invoked and non-autoplay;
-8. data-only Evolution remains complete with no capture/creator nag;
-9. Media Evidence interaction never mutates canonical training/metadata storage and never calls an AXIS API;
-10. the viewer stays in place, mobile-safe and reduced-motion-safe.
-
-All inherited Runtime, recording, Group Plan, Live Route, Settings, catalog, smart-create, repository and work-continuity gates remain required.
+1. canonical 8.16 boot and Capture ownership markers;
+2. the same Capture Field opens from the normal record route and Quick Record supplement route;
+3. multiple photos accumulate in one draft and never exceed 12;
+4. a real draft photo can become the cover by safe reorder;
+5. draft photos can be removed without corrupting the remaining draft;
+6. explicit video starts/stops through the one canonical recorder and remains <=60 seconds;
+7. saved media persists only through existing `frameRefs[]`, `clipRef` and `axis_v42_media`;
+8. review/evidence videos never autoplay;
+9. four photo-bearing Encounters can perform endpoint, recent and arbitrary two-point comparison;
+10. ordinary Encounter inspection still works after comparison;
+11. Comparative Evidence mutates no training/metadata storage and calls no AXIS API;
+12. Capture and Evidence remain mobile-safe and reduced-motion-safe;
+13. all inherited 8.15.1, 8.15, 8.14, 8.13.1 and training/runtime gates remain green.
 
 ## Deployment contract
 
 ### Vercel
 
-The fixed production endpoint remains `https://axis-five-puce.vercel.app`. 8.15 is not sealed until it is `READY` for the exact merged `main` SHA and anonymously serves `axis-build.json` whose `sourceCommit` exactly equals that SHA, with `8.15 / 8.15`, canonical topology, `axis815`, and all required 8.15 gates.
+The fixed production endpoint remains `https://axis-five-puce.vercel.app`.
+
+8.16 is not sealed until Vercel Production is `READY` for the exact merged `main` SHA and anonymously serves `/axis-build.json` with:
+
+- `sourceCommit` equal to that exact SHA;
+- `8.16 / 8.16`;
+- `canonical-single-runtime`;
+- all required inherited and 8.16 gates.
 
 ### EdgeOne Makers
 
-The `axisfitness-mirror` project remains a production mirror of the exact verified Vercel artifact. The main-branch workflow must:
+The `axisfitness-mirror` project remains a mirror of the exact verified Vercel artifact. The main workflow must:
 
-1. build and verify the exact 8.15 prebuilt artifact;
-2. wait for Vercel Production to expose the same exact main SHA and `8.15 / 8.15`;
+1. build/verify the exact 8.16 artifact;
+2. wait for Vercel Production to expose the same exact main SHA and `8.16 / 8.16`;
 3. require local/Vercel canonical artifact parity;
 4. deploy the exact prebuilt artifact to EdgeOne Production;
 5. verify authenticated EdgeOne/Vercel API parity;
-6. run real EdgeOne Chromium and iPhone WebKit flows through 8.12.4 training, 8.13.1 Encounter, 8.14 Evolution Objects and 8.15 Media Evidence;
-7. publish `EdgeOne Production` success only after those checks pass.
+6. run real EdgeOne Chromium and iPhone WebKit flows including the 8.16 Capture + Comparative Evidence smoke;
+7. publish `EdgeOne Production` success only after every release flow passes.
 
-EdgeOne project/deployment domains can still be subject to region/authentication behavior. Durable mainland user access is a custom-domain/access-region concern separate from artifact correctness.
+## Next product stage
 
-## Next product stage — AXIS 8.16 Evolution Replay
-
-8.16 may begin only from truthful 8.15 Evidence Bundles.
-
-The first Replay is **time-compressed Evolution**, not a video editor. It should select real first / meaningful middle / latest evidence from one Evolution Object, retain factual dates/data, and produce a concise private Reveal. It must not require BGM, templates, motivational copy, social publishing, invented frames, or fabricated continuity. If real evidence is insufficient for a truthful sequence, AXIS must not pretend a Replay exists.
+Replay remains downstream of truthful Capture and comparison semantics. The next stage may begin exploring a restrained private Replay only after 8.16 is production-sealed. It must use real Encounter-bound evidence, preserve dates/data/identity and refuse fabricated continuity when evidence is insufficient.
 
 ## Product behavior to preserve
 
-- Recording reality remains easier than maintaining an abstract system.
-- A workout can be recorded and finished offline.
-- AI/network failure never blocks manual/local recording.
-- Existing LocalStorage and IndexedDB history remains readable.
-- User activity, not recommendation compliance, remains factual truth.
-- Evolution is derived from Encounters; it does not become a user-authored database.
-- Media is optional evidence of time, not content-production homework.
-- Literal evidence must not silently become a performance score.
-- Reveal should become the reason to return; Capture should remain low-friction.
-
-## Current architecture debt
-
-Continue reducing rather than extending:
-
-- long exact-signature `prepare-*` compatibility transforms;
-- historical modules remaining executable compiler inputs after current owners retire;
-- duplicated current-version allowlists across historical CI workflows;
-- release truth that is easier to understand in generated artifacts than source;
-- tool versions distributed across workflows rather than one dependency manifest.
+- recording reality remains easier than maintaining an abstract system;
+- a workout can be recorded and finished offline;
+- AI/network failure never blocks local/manual recording;
+- existing LocalStorage and IndexedDB history remains readable;
+- media is optional evidence of time, not creator homework;
+- literal evidence does not silently become a score;
+- no social feed, ranking, publishing workflow or motivational-content pressure;
+- Reveal is derived from truthful Encounters rather than invented history.
 
 See [PRODUCT.md](PRODUCT.md), [ARCHITECTURE.md](ARCHITECTURE.md), [CURRENT_WORK.md](CURRENT_WORK.md), [AXIS_EVOLUTION_VISION.md](AXIS_EVOLUTION_VISION.md) and [ROADMAP.md](ROADMAP.md).
