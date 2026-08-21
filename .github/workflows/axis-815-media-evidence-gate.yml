@@ -1,0 +1,99 @@
+name: AXIS 8.15 Media Evidence
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.15 candidate
+        run: node build-release.mjs
+      - name: Verify Media Evidence manifest
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
+          if(m.version!=='8.15'||m.baseVersion!=='8.15')throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
+          for(const g of ['evolutionFoundation8131','evolutionObjects814','evolutionObjectMediaEvidence814','mediaEvidenceLayer815','mediaEvidenceEncounterBinding815','mediaEvidenceIndexedDbReadOnly815','mediaEvidencePhoto815','mediaEvidenceShortVideo815','mediaEvidenceNoAutoplay815','mediaEvidenceInPlaceViewer815','mediaEvidenceEndpointCompare815','mediaEvidenceNoCreatorWorkflow815','mediaEvidenceUniversalBundle815'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
+          if(m.axis815?.viewer?.owner!=='v815-media-evidence'||m.axis815?.evidence?.binding!=='encounter-first'||m.axis815?.ownership?.mediaWrites!==false||m.axis815?.ownership?.network!==false||m.axis815?.ownership?.ai!==false||m.axis815?.ownership?.replay!==false)throw new Error('Media Evidence ownership drift');
+          if(!core.includes('__AXIS_815_MEDIA_EVIDENCE__')||!core.includes('__AXIS_MEDIA_EVIDENCE__')||!core.includes('__AXIS_MEDIA_READ__'))throw new Error('compiled Media Evidence layer missing');
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-815-chromium.log 2>&1 &
+          sleep 1
+      - name: Inherited Evolution foundation
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-8131-evolution-smoke.mjs
+      - name: Inherited Evolution Objects
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-814-evolution-object-smoke.mjs
+      - name: Media Evidence regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-815-media-evidence-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-815-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.15 candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-815-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone inherited Evolution foundation
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-8131-evolution-smoke.mjs
+      - name: iPhone inherited Evolution Objects
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-814-evolution-object-smoke.mjs
+      - name: iPhone Media Evidence regression
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-815-media-evidence-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-815-webkit.log || true
