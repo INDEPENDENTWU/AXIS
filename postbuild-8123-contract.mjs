@@ -16,3 +16,4 @@ await import('./postbuild-8124-contract.mjs');
 await import('./postbuild-8131-evolution-contract.mjs');
 await import('./postbuild-814-evolution-contract.mjs');
 await import('./postbuild-815-media-evidence-contract.mjs');
+await import('./postbuild-8151-regression-contract.mjs');

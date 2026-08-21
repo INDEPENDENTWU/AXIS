@@ -61,3 +61,4 @@ await import('./prepare-8125-smart-create-polish.mjs');
 await import('./prepare-8131-evolution-convergence.mjs');
 await import('./prepare-814-evolution-convergence.mjs');
 await import('./prepare-815-media-evidence-convergence.mjs');
+await import('./prepare-8151-regression-seal.mjs');
