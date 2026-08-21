@@ -25,15 +25,18 @@ const seed=()=>page.evaluate(async()=>{
  });
  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions,active:null,profile:{customEq:[]},prefs:{}}));
  localStorage.setItem('axis_v8_meta',JSON.stringify(meta));
- const db=await new Promise((res,rej)=>{const q=indexedDB.open('axis_v42_media',1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('media'))q.result.createObjectStore('media')};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
+ const store=window.__AXIS_MEDIA_STORE__;
+ if(!store?.put||store.format!=='axis-media-arraybuffer-v1')throw new Error('canonical-media-store-unavailable');
  const svg=(label,bg)=>new Blob([`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400"><rect width="640" height="400" fill="${bg}"/><text x="32" y="210" fill="white" font-size="42" font-family="sans-serif">${label}</text></svg>`],{type:'image/svg+xml'});
- await new Promise((res,rej)=>{const tx=db.transaction('media','readwrite'),s=tx.objectStore('media');s.put(svg('FIRST','#20242b'),'F-ROW-FIRST');s.put(svg('LATEST','#303640'),'F-ROW-LATEST');s.put(new Blob(['axis-test-video'],{type:'video/webm'}),'V-ROW-LATEST');tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close();
+ await store.put('F-ROW-FIRST',svg('FIRST','#20242b'));
+ await store.put('F-ROW-LATEST',svg('LATEST','#303640'));
+ await store.put('V-ROW-LATEST',new Blob(['axis-test-video'],{type:'video/webm'}));
  window.dispatchEvent(new CustomEvent('axis:state-changed',{detail:{test:'815'}}));
 });
 
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:12000}))?.ok());
- await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_814_EVOLUTION_OBJECTS__?.version==='8.14'&&window.__AXIS_815_MEDIA_EVIDENCE__?.version==='8.15'&&window.__AXIS_MEDIA_EVIDENCE__?.version==='8.15'&&window.__AXIS_MEDIA_READ__?.readOnly===true,undefined,{timeout:12000});
+ await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_814_EVOLUTION_OBJECTS__?.version==='8.14'&&window.__AXIS_815_MEDIA_EVIDENCE__?.version==='8.15'&&window.__AXIS_MEDIA_EVIDENCE__?.version==='8.15'&&window.__AXIS_MEDIA_READ__?.readOnly===true&&window.__AXIS_MEDIA_STORE__?.format==='axis-media-arraybuffer-v1',undefined,{timeout:12000});
  assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.15');
  assert.equal(await page.evaluate(()=>window.__AXIS_ARCH__),'canonical-single-runtime');
  assert.equal(await page.evaluate(()=>window.__AXIS_MEDIA_READ__.database),'axis_v42_media');
