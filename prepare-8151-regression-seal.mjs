@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const APP='app.js',WM='v8710-watermark.js',SHELL='first-paint-shell.css';
+const APP='app.js',WM='v8710-watermark.js',SHELL='first-paint-shell.css',HTML='index.html';
 const fail=m=>{throw new Error(`[AXIS 8.15.1 regression seal] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
@@ -16,8 +16,19 @@ const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:
   fs.writeFileSync(SHELL,css);
 }
 {
+  /* External CSS is render-blocking in the normal path, but the semantic seal must
+     also hold at document commit before any stylesheet can participate. Keep Hero
+     geometry in-flow with inline visibility:hidden, then let the canonical Home
+     render remove only that inline hold immediately before committing home-ready. */
+  let html=read(HTML);
+  const hero='<section class="axisNowHero" id="axisNowHero" data-mode="ready" aria-live="polite">';
+  const sealed='<section class="axisNowHero" id="axisNowHero" data-mode="ready" aria-live="polite" style="visibility:hidden">';
+  html=once(html,hero,sealed,'axisNowHero inline first-paint hold');
+  fs.writeFileSync(HTML,html);
+}
+{
   let app=read(APP);
-  app=once(app,'window.__AXIS_HOME_STATE__=x}',"window.__AXIS_HOME_STATE__=x;document.documentElement.dataset.axisHomeReady='1'}",'canonical Home first commit');
+  app=once(app,'window.__AXIS_HOME_STATE__=x}',"window.__AXIS_HOME_STATE__=x;const __axisHomeHero=document.querySelector('#axisNowHero');if(__axisHomeHero)__axisHomeHero.style.removeProperty('visibility');document.documentElement.dataset.axisHomeReady='1'}",'canonical Home first commit');
 
   /* app.js used to rasterize a complete legacy photo watermark before the current
      v8710 owner stamped the same saved frame again. Photo finalization is now raw;
