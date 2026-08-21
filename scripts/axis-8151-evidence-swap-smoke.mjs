@@ -19,7 +19,7 @@ try{
 
  await page.evaluate(async()=>{
   const DAY=864e5,latest=new Date();latest.setHours(9,0,0,0);const t2=latest.getTime(),starts=[t2-DAY,t2],sessions=[],meta={events:{}};
-  starts.forEach((start,i)=>{const id=`elliptical-${i+1}`,weight=0;const e={id,time:start+60000,kind:'cardio',equipmentId:'elliptical',name:'椭圆机',duration:i?15:30,intensity:i?7:9,muscles:['心肺'],frameRefs:[i?'F-ELLIPTICAL-LATEST':'F-ELLIPTICAL-FIRST']};meta.events[id]={activity:{status:'finished',startedAt:start+10000,finishedAt:start+110000,intervals:[{start:start+10000,end:start+110000}]}};sessions.push({id:`session-${i+1}`,start,end:start+20*60000,events:[e]})});
+  starts.forEach((start,i)=>{const id=`elliptical-${i+1}`;const e={id,time:start+60000,kind:'cardio',equipmentId:'elliptical',name:'椭圆机',duration:i?15:30,intensity:i?7:9,muscles:['心肺'],frameRefs:[i?'F-ELLIPTICAL-LATEST':'F-ELLIPTICAL-FIRST']};meta.events[id]={activity:{status:'finished',startedAt:start+10000,finishedAt:start+110000,intervals:[{start:start+10000,end:start+110000}]}};sessions.push({id:`session-${i+1}`,start,end:start+20*60000,events:[e]})});
   localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions,active:null,profile:{customEq:[]},prefs:{}}));
   localStorage.setItem('axis_v8_meta',JSON.stringify(meta));
   const svg=(label,bg)=>new Blob([`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400"><rect width="640" height="400" fill="${bg}"/><text x="30" y="210" fill="white" font-size="40">${label}</text></svg>`],{type:'image/svg+xml'});
@@ -35,26 +35,30 @@ try{
  await tap(page.locator('.v813Activity[data-v814-key="elliptical"]'));
  await page.waitForFunction(()=>document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第2/2次'),undefined,{timeout:2500});
 
+ const firstNode=page.locator('#v815Evidence [data-v815-encounter="1"]');
+ await firstNode.scrollIntoViewIfNeeded();
+ await page.waitForTimeout(80);
  const before=await page.evaluate(()=>{
-  const section=document.querySelector('#v815Evidence'),stage=section?.querySelector('.v815Stage');window.__AXIS_8151_TEST_SECTION__=section;window.__AXIS_8151_NATIVE_MEDIA_GET__=window.__AXIS_MEDIA_READ__.get;window.__AXIS_MEDIA_READ__.get=async(...args)=>{await new Promise(r=>setTimeout(r,320));return window.__AXIS_8151_NATIVE_MEDIA_GET__(...args)};const r=stage?.getBoundingClientRect();return{html:stage?.innerHTML||'',height:r?.height||0,top:r?.top||0}
+  const section=document.querySelector('#v815Evidence'),stage=section?.querySelector('.v815Stage');window.__AXIS_8151_TEST_SECTION__=section;window.__AXIS_8151_NATIVE_MEDIA_GET__=window.__AXIS_MEDIA_READ__.get;window.__AXIS_MEDIA_READ__.get=async(...args)=>{await new Promise(r=>setTimeout(r,320));return window.__AXIS_8151_NATIVE_MEDIA_GET__(...args)};return{html:stage?.innerHTML||'',height:stage?.offsetHeight||0,offsetTop:stage?.offsetTop||0,scrollY:window.scrollY}
  });
  assert.ok(before.html.includes('第2/2次'),'latest evidence was not mounted before swap test');
 
- await tap(page.locator('#v815Evidence [data-v815-encounter="1"]'));
+ await tap(firstNode);
  await page.waitForTimeout(90);
- const during=await page.evaluate(()=>{const section=document.querySelector('#v815Evidence'),stage=section?.querySelector('.v815Stage'),r=stage?.getBoundingClientRect(),cs=stage?getComputedStyle(stage):null;return{same:section===window.__AXIS_8151_TEST_SECTION__,loading:section?.dataset.loading,html:stage?.innerHTML||'',height:r?.height||0,top:r?.top||0,opacity:cs?.opacity,active:document.querySelector('#insightsView')?.classList.contains('active'),sheets:document.querySelectorAll('.sheetWrap.show').length}});
+ const during=await page.evaluate(()=>{const section=document.querySelector('#v815Evidence'),stage=section?.querySelector('.v815Stage'),cs=stage?getComputedStyle(stage):null;return{same:section===window.__AXIS_8151_TEST_SECTION__,loading:section?.dataset.loading,html:stage?.innerHTML||'',height:stage?.offsetHeight||0,offsetTop:stage?.offsetTop||0,scrollY:window.scrollY,opacity:cs?.opacity,active:document.querySelector('#insightsView')?.classList.contains('active'),sheets:document.querySelectorAll('.sheetWrap.show').length}});
  assert.equal(during.same,true,'evidence section was remounted during date switch');
  assert.equal(during.loading,'1','stable swap did not expose local loading state');
  assert.ok(during.html.includes('第2/2次'),'previous evidence was removed before next local asset became ready');
  assert.equal(during.opacity,'1','evidence stage visibly dimmed during date switch');
- assert.ok(Math.abs(during.height-before.height)<1,'evidence stage height changed during pending swap');
- assert.ok(Math.abs(during.top-before.top)<1,'evidence stage shifted during pending swap');
+ assert.equal(during.height,before.height,'evidence stage height changed during pending swap');
+ assert.equal(during.offsetTop,before.offsetTop,'evidence stage moved inside its stable shell during pending swap');
+ assert.ok(Math.abs(during.scrollY-before.scrollY)<1,'date switch unexpectedly scrolled the Trends view');
  assert.equal(during.active,true,'Trends surface stopped being active during evidence swap');
  assert.equal(during.sheets,0,'evidence swap exposed another sheet/page layer');
 
  await page.waitForFunction(()=>document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第1/2次')&&document.querySelector('#v815Evidence')===window.__AXIS_8151_TEST_SECTION__,undefined,{timeout:2500});
  const after=await page.evaluate(()=>{window.__AXIS_MEDIA_READ__.get=window.__AXIS_8151_NATIVE_MEDIA_GET__;delete window.__AXIS_8151_NATIVE_MEDIA_GET__;delete window.__AXIS_8151_TEST_SECTION__;const s=document.querySelector('#v815Evidence');return{loading:s?.dataset.loading,selected:s?.querySelector('[data-v815-encounter="1"]')?.getAttribute('aria-selected'),marker:window.__AXIS_8151_MEDIA_SWAP__}});
- assert.equal(after.loading,'0');assert.equal(after.selected,'true');assert.equal(after.marker.retainPreviousUntilReady,true);assert.equal(after.marker.warmBeforeCommit,true);assert.equal(after.marker.loadingOpacityBlink,false);
+ assert.equal(after.loading,'0');assert.equal(after.selected,'true');assert.equal(after.marker.stableShell,true);assert.equal(after.marker.retainPreviousUntilReady,true);assert.equal(after.marker.warmBeforeCommit,true);assert.equal(after.marker.loadingOpacityBlink,false);
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.15.1 evidence swap ${ENGINE}] PASS · stable section identity · previous visual retained until ready · zero opacity pulse · zero layer exposure`);
+ console.log(`[AXIS 8.15.1 evidence swap ${ENGINE}] PASS · stable shell identity/geometry · previous visual retained until ready · zero opacity pulse · zero layer exposure`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
