@@ -16,8 +16,9 @@ for(const needle of ['CAPTURE816_PHOTO_MAX=12','CAPTURE816_VIDEO_MAX_MS=60000','
 for(const needle of ["maxPhotos:12","maxVideoSeconds:60","audio:false","oneRecorder:true","persistenceOwner:'app.js'","mediaStore:'axis_v42_media'","newStorage:false"])if(!runtime.includes(needle))fail(`Capture ownership marker missing ${needle}`);
 if((app.match(/new MediaRecorder\(/g)||[]).length<1)fail('MediaRecorder owner disappeared');
 if(!app.includes("videoBitsPerSecond:2500000")||!app.includes('rec.start(1000)'))fail('bounded video recorder configuration missing');
-if(!app.includes("setTimeout(()=>{toast('已录满 60 秒');capture816StopVideo(false)},CAPTURE816_VIDEO_MAX_MS)"))fail('hard 60 second stop missing');
-if(!app.includes("state.frames.splice(i,1);state.frames.unshift(f)"))fail('cover reorder contract missing');
+const hardStop=/capture816StopTimer\s*=\s*setTimeout\(function\(\)\{toast\('已录满 60 秒'\);capture816StopVideo\(false\)\},CAPTURE816_VIDEO_MAX_MS\)/;
+if(!hardStop.test(app)||!hardStop.test(runtime))fail('hard 60 second stop missing');
+if(!app.includes("state.frames.splice(i,1)[0];state.frames.unshift(f)"))fail('cover reorder contract missing');
 if(!app.includes('frameRefs:[]')||!app.includes('e.frameRefs.push(ref)')||!app.includes('e.clipRef=`V-${e.id}`'))fail('existing media event schema drift');
 if(!app.includes("DB='axis_v42_media'"))fail('existing media store owner drift');
 if((app.match(/indexedDB\.open\(/g)||[]).length!==1)fail('new IndexedDB owner introduced');
