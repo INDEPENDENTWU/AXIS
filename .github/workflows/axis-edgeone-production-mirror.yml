@@ -129,6 +129,7 @@ jobs:
           node scripts/axis-814-evolution-object-smoke.mjs
           node scripts/axis-815-media-evidence-smoke.mjs
           node scripts/axis-8151-regression-seal-smoke.mjs
+          node scripts/axis-8151-evidence-swap-smoke.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
@@ -143,6 +144,7 @@ jobs:
           node scripts/axis-814-evolution-object-smoke.mjs
           node scripts/axis-815-media-evidence-smoke.mjs
           node scripts/axis-8151-regression-seal-smoke.mjs
+          node scripts/axis-8151-evidence-swap-smoke.mjs
       - name: Mark EdgeOne Production success
         env:
           GH_STATUS_TOKEN: ${{ github.token }}
