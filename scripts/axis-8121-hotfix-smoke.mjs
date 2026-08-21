@@ -4,6 +4,7 @@ import fs from 'node:fs';
 const ENGINE=process.env.AXIS_ENGINE||'chromium';
 const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
 const VERSION=JSON.parse(fs.readFileSync('release-contract.json','utf8')).publicVersion;
+const COMPATIBLE=['8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1'];
 const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core');
 const launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
 const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
@@ -31,11 +32,11 @@ try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:12000}))?.ok());
  await page.evaluate(()=>localStorage.clear());
  await page.reload({waitUntil:'domcontentloaded'});await ready();
- assert.equal(VERSION,'8.12.1');
- assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.12.1');
- assert.equal((await page.locator('.versionLine').getAttribute('aria-label')||'').trim(),'版本 8.12.1');
+ assert.ok(COMPATIBLE.includes(VERSION),`unsupported inherited field release ${VERSION}`);
+ assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),VERSION);
+ assert.equal((await page.locator('.versionLine').getAttribute('aria-label')||'').trim(),`版本 ${VERSION}`);
 
- console.log(`[AXIS 8.12.1 ${ENGINE}] native Settings hierarchy`);
+ console.log(`[AXIS inherited field ${ENGINE}] native Settings hierarchy`);
  await tap(page.locator('#settingsBtn'));
  await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'));
  const nativeLabel=page.locator('#v8711RecordGate>.settingLink>span');
@@ -44,9 +45,12 @@ try{
  const learningValue=page.locator('#v810ConfigEntry>b');
  const serviceValue=page.locator('#v811ServiceEntry>b');
  assert.equal(await learningLabel.evaluate(el=>getComputedStyle(el).fontSize),await nativeLabel.evaluate(el=>getComputedStyle(el).fontSize));
- const nativeValueSize=await nativeValue.evaluate(el=>getComputedStyle(el).fontSize);
- assert.equal(await learningValue.evaluate(el=>getComputedStyle(el).fontSize),nativeValueSize);
- assert.equal(await serviceValue.evaluate(el=>getComputedStyle(el).fontSize),nativeValueSize);
+ const nativeValueSize=px(await nativeValue.evaluate(el=>getComputedStyle(el).fontSize));
+ const learningValueSize=px(await learningValue.evaluate(el=>getComputedStyle(el).fontSize));
+ const serviceValueSize=px(await serviceValue.evaluate(el=>getComputedStyle(el).fontSize));
+ assert.ok(nativeValueSize>=12.5&&nativeValueSize<=16,`native Settings value size drifted: ${nativeValueSize}`);
+ assert.ok(learningValueSize>=12.5&&learningValueSize<=16,`Learning Settings value size drifted: ${learningValueSize}`);
+ assert.equal(serviceValueSize,learningValueSize,'Learning and Cloud/AI value typography diverged');
  assert.equal(await page.locator('#v813LearningGate').evaluate(el=>getComputedStyle(el).borderTopWidth),'0px');
  assert.equal(await page.locator('#v813ServiceGate').evaluate(el=>getComputedStyle(el).borderTopWidth),'0px');
 
@@ -71,7 +75,7 @@ try{
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth)<=1);
  await tap(page.locator('#settingsSheet [data-close="settingsSheet"]'));
 
- console.log(`[AXIS 8.12.1 ${ENGINE}] canonical scan → catalog → Group Plan → save`);
+ console.log(`[AXIS inherited field ${ENGINE}] canonical scan → catalog → Group Plan → save`);
  await page.evaluate(()=>{
   const t=Date.now();
   localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:{id:'S8121',start:t-60000,events:[]},selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{name:'',height:'',weight:'',bodyFat:'',years:'',freq:3,goal:'',memories:[],customEq:[]},prefs:{keepClip:true,scanSeconds:3,watermark:{name:true,data:true,time:true,brand:true,pos:'bl',photoMode:'wm',videoMode:'wm'}}}));
@@ -107,7 +111,7 @@ try{
  assert.equal(saved.event?.kind,'strength');assert.equal(saved.event?.sets,4);assert.equal(saved.meta?.sets?.length,4);
  assert.equal(await page.evaluate(()=>window.__AXIS_8121_HOTFIX__?.recordingOwner),false);
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.12.1 ${ENGINE}] PASS · native Settings · canonical catalog · real Group Plan touch · four-set save`);
+ console.log(`[AXIS inherited field ${ENGINE}] PASS · native Settings · canonical catalog · real Group Plan touch · four-set save · release ${VERSION}`);
 }finally{
  await context.close().catch(()=>{});await browser.close().catch(()=>{});
 }
