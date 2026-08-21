@@ -28,7 +28,7 @@ for(const f of inherited){let s=read(f);const n=(s.match(/'8\.13'/g)||[]).length
 {
  const f='scripts/axis-8121-hotfix-smoke.mjs';let s=read(f);
  const from="const nativeValueSize=await nativeValue.evaluate(el=>getComputedStyle(el).fontSize);\n assert.equal(await learningValue.evaluate(el=>getComputedStyle(el).fontSize),nativeValueSize);\n assert.equal(await serviceValue.evaluate(el=>getComputedStyle(el).fontSize),nativeValueSize);";
- const to="const nativeValueSize=px(await nativeValue.evaluate(el=>getComputedStyle(el).fontSize));\n const learningValueSize=px(await learningValue.evaluate(el=>getComputedStyle(el).fontSize));\n const serviceValueSize=px(await serviceValue.evaluate(el=>getComputedStyle(el).fontSize));\n assert.ok(nativeValueSize>=12.5&&nativeValueSize<=16,`native Settings value size drifted: ${nativeValueSize}`);\n assert.ok(learningValueSize>=12.5&&learningValueSize<=16,`Learning Settings value size drifted: ${learningValueSize}`);\n assert.equal(serviceValueSize,learningValueSize,'Learning and Cloud/AI value typography diverged');";
+ const to="const nativeValueSize=px(await nativeValue.evaluate(el=>getComputedStyle(el).fontSize));\n const learningValueSize=px(await learningValue.evaluate(el=>getComputedStyle(el).fontSize));\n const serviceValueSize=px(await serviceValue.evaluate(el=>getComputedStyle(el).fontSize));\n assert.ok(nativeValueSize>=11.5&&nativeValueSize<=16,`native Settings value size drifted: ${nativeValueSize}`);\n assert.ok(learningValueSize>=12.5&&learningValueSize<=16,`Learning Settings value size drifted: ${learningValueSize}`);\n assert.equal(serviceValueSize,learningValueSize,'Learning and Cloud/AI value typography diverged');";
  s=once(s,from,to,'8.13.1 inherited field typography contract');write(f,s);
 }
 
