@@ -78,7 +78,7 @@ try{
 
  await tap(page.locator('[data-view="todayView"]'));
  await page.evaluate(()=>{
-  const c=JSON.parse(localStorage.getItem('axis_v60_state')),m=JSON.parse(localStorage.getItem('axis_v8_meta')),start=Date.now()-20000,end=start+10000,eid='event-8';
+  const c=JSON.parse(localStorage.getItem('axis_v60_state')),m=JSON.parse(localStorage.getItem('axis_v8_meta')),latest=Math.max(...c.sessions.map(s=>Number(s.start)||0)),start=latest+27*60000,end=start+10000,eid='event-8';
   c.sessions.push({id:'same-day-8',start,end,events:[{id:eid,time:start+2000,kind:'strength',equipmentId:'row',name:'坐姿划船机',weight:35,reps:10,sets:3,muscles:['背部']}]});
   m.events[eid]={activity:{status:'finished',startedAt:start+1000,finishedAt:end-1000,intervals:[{start:start+1000,end:end-1000}]}};
   localStorage.setItem('axis_v60_state',JSON.stringify(c));localStorage.setItem('axis_v8_meta',JSON.stringify(m));
@@ -92,6 +92,7 @@ try{
  });
  assert.equal(subMinute.rawSpan,10000,`sub-minute fixture drifted: ${JSON.stringify(subMinute)}`);
  assert.ok(subMinute.sessionMeta.includes('<1分钟'),`sub-minute sealed session must not be fabricated as one minute: ${JSON.stringify(subMinute)}`);
+ assert.ok(subMinute.fingerMeta.includes('<1分钟'),`sub-minute fingerprint duration must remain truthful: ${JSON.stringify(subMinute)}`);
  assert.ok(await page.locator('#v813Fingerprint i').count()>=1,'newly sealed metadata-only session fingerprint missing after navigation re-entry');
 
  await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.evaluate(()=>getComputedStyle(document.querySelector('#v813TrackCanvas')).transitionDuration),'0s');
