@@ -65,9 +65,9 @@ The 8.8.4 compatibility layer attempted to suppress the old compositor by writin
 - the temporary persisted raw-mode suppression hack is retired;
 - video watermark ownership is intentionally unchanged in this hotfix.
 
-## Validation for 8.15.1
+## Validation for this work
 
-The exact PR head must prove:
+For **AXIS 8.15.1**, the exact PR head must prove:
 
 1. `node build-release.mjs` produces `8.15.1 / 8.15.1`, `canonical-single-runtime`, one initial JavaScript request and zero dynamic JavaScript chunks;
 2. a dedicated Chromium + iPhone WebKit smoke holds `axis-core.js` during cold start and proves `axisNowHero` cannot paint before canonical Home state commits;
