@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+
+const fail=m=>{throw new Error(`[AXIS 8.15 Media Evidence contract] ${m}`)};
+const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
+const contract=JSON.parse(read('release-contract.json')),info=JSON.parse(read('axis-build.json')),runtime=read('axis-core.js'),html=read('index.html'),source=read('v815-media-evidence.js'),app=read('app.js'),objects=read('v814-evolution-objects.js');
+if(contract.publicVersion!=='8.15'||contract.stableBaseVersion!=='8.15')fail(`release identity ${contract.publicVersion}/${contract.stableBaseVersion}`);
+if(info.version!=='8.15'||info.baseVersion!=='8.15')fail(`manifest identity ${info.version}/${info.baseVersion}`);
+if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
+for(const gate of ['evolutionFoundation8131','trendsMetaActivity8131','evolutionObjects814','evolutionObjectFirstLatest814','evolutionObjectMediaEvidence814','evolutionObjectReadOnly814','evolutionObjectInPlace814'])if(info.gates?.[gate]!==true)fail(`inherited Evolution gate missing ${gate}`);
+for(const needle of ['__AXIS_815_MEDIA_EVIDENCE__','__AXIS_MEDIA_EVIDENCE__','v815-media-evidence','resolveBundle','evidenceEncounterCount','earliestVisual','latestVisual','in-place-evidence-lens','首尾对照','时间证据'])if(!runtime.includes(needle))fail(`compiled Media Evidence marker missing ${needle}`);
+for(const needle of ["__AXIS_MEDIA_READ__={version:'8.15'",'readOnly:true','get:getMedia'])if(!app.includes(needle)||!runtime.includes(needle))fail(`read-only media bridge missing ${needle}`);
+if(!objects.includes('media:x.media.slice()'))fail('8.14 encounter projection does not expose bound media refs');
+if((html.match(/data-axis-media-evidence-owner="v815-media-evidence"/g)||[]).length!==2)fail('Media Evidence sub-owner drifted');
+for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','fetch(','XMLHttpRequest'])if(source.includes(forbidden))fail(`Media Evidence source contains forbidden writer/network owner ${forbidden}`);
+if(/<video[^>]*\sautoplay/i.test(source))fail('Media Evidence video autoplay survived');
+for(const forbidden of ['BGM','配乐','模板','发布','粉丝','点赞','排行榜','评分','分数'])if(source.includes(forbidden))fail(`creator/social/score semantics survived ${forbidden}`);
+for(const needle of ['photo:true','shortVideo:true','autoplay:false','creatorWorkflow:false','network:false','persistence:false','trainingOwner:false','replay:false'])if(!source.includes(needle))fail(`Media Evidence ownership marker missing ${needle}`);
+info.gates=info.gates||{};Object.assign(info.gates,{mediaEvidenceLayer815:true,mediaEvidenceEncounterBinding815:true,mediaEvidenceIndexedDbReadOnly815:true,mediaEvidencePhoto815:true,mediaEvidenceShortVideo815:true,mediaEvidenceNoAutoplay815:true,mediaEvidenceInPlaceViewer815:true,mediaEvidenceEndpointCompare815:true,mediaEvidenceNoCreatorWorkflow815:true,mediaEvidenceUniversalBundle815:true});
+info.axis815={release:true,scope:'media-evidence-layer',evidence:{binding:'encounter-first',source:'existing axis_v42_media references',photo:true,shortVideo:true,livePhoto:'native-compatible-future-evidence',textData:'encounter factual summary',fileManager:false},viewer:{owner:'v815-media-evidence',presentation:'in-place-evidence-lens',encounterRail:true,nodeSelection:true,earliestLatestCompare:true,autoplay:false,creatorTools:false},universal:{metricAgnosticViewer:true,identitySource:'inherited Evolution Object',futureDomains:['running','climbing','rehabilitation','dance','music','skill-practice']},ownership:{trainingState:false,mediaWrites:false,persistence:false,network:false,ai:false,replay:false}};
+fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
+console.log('[AXIS 8.15 Media Evidence contract] PASS · encounter-bound photo/video evidence · read-only local media bridge · in-place lens + earliest/latest compare · no autoplay/creator/network ownership');
