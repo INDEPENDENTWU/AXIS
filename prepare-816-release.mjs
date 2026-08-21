@@ -33,10 +33,13 @@ for(const [f,label] of [
  ['scripts/axis-8131-evolution-smoke.mjs','8.13.1'],
  ['scripts/axis-814-evolution-object-smoke.mjs','8.14'],
  ['scripts/axis-815-media-evidence-smoke.mjs','8.15'],
- ['scripts/axis-8151-regression-seal-smoke.mjs','8.15.1 regression'],
  ['scripts/axis-8151-evidence-swap-smoke.mjs','8.15.1 evidence swap']
 ]){
  let s=read(f);s=once(s,`assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'${FROM}');`,`assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'${VERSION}');`,`${label} inherited smoke public identity`);write(f,s);
+}
+{
+ const f='scripts/axis-8151-regression-seal-smoke.mjs';let s=read(f);
+ s=once(s,`assert.equal(x.release,'${FROM}');`,`assert.equal(x.release,'${VERSION}');`,'8.15.1 regression inherited public identity');write(f,s);
 }
 for(const f of ['postbuild-8131-evolution-contract.mjs','postbuild-814-evolution-contract.mjs','postbuild-815-media-evidence-contract.mjs','postbuild-8151-regression-contract.mjs']){
  let s=read(f);
