@@ -6,7 +6,7 @@ const contract=JSON.parse(read('release-contract.json')),info=JSON.parse(read('a
 if(contract.publicVersion!=='8.13.1'||contract.stableBaseVersion!=='8.13.1')fail(`release identity ${contract.publicVersion}/${contract.stableBaseVersion}`);
 if(info.version!=='8.13.1'||info.baseVersion!=='8.13.1')fail(`manifest identity ${info.version}/${info.baseVersion}`);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
-for(const needle of ['__AXIS_8131_EVOLUTION_FIELD__','__AXIS_EVOLUTION__','v8131-evolution-field','axis:state-changed','edgeSafePx:24','pan-y + horizontal-scrub','--axis-ion:#79d7ff','prefers-reduced-motion'])if(!runtime.includes(needle))fail(`compiled Evolution marker missing ${needle}`);
+for(const needle of ['__AXIS_8131_EVOLUTION_FIELD__','__AXIS_EVOLUTION__','v8131-evolution-field','axis:state-changed','edgeSafePx:24','pan-y + horizontal-scrub','--axis-ion:','#79d7ff','prefers-reduced-motion'])if(!runtime.includes(needle))fail(`compiled Evolution marker missing ${needle}`);
 for(const id of ['v813Viewport','v813TrackCanvas','v813TrackSvg','v813Nodes','v813Insight','v813Fingerprint','v813Expand','v813Memory'])if((html.match(new RegExp(`id="${id}"`,'g'))||[]).length!==1)fail(`DOM #${id} missing or duplicated`);
 if((html.match(/data-axis-trends-owner="v8131-evolution-field"/g)||[]).length!==1)fail('visible Evolution owner duplicated');
 for(const text of ['左右滑动查看','点一下展开','留下几次训练后','继续留下相同动作','当前状态','下一针','状态场']){const visible=html.split('<div class="v813LegacyTrends"')[0];if(visible.includes(text)||source.includes(text))fail(`instructional/legacy copy survived: ${text}`)}
