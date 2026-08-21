@@ -28,21 +28,20 @@ const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:
   fs.writeFileSync(APP,app);
 }
 
-/* Retire the historical large center AXIS brand and center divider from the final
-   8.8.4-shaped owner. The factual corner card remains the only visible composition. */
+/* Retire the two final physical draw calls that create the historical center brand.
+   This deliberately targets the converged output rather than depending on older
+   surrounding implementation details. The current factual corner card is preserved. */
 {
   let wm=read(WM);
-  wm=regexOnce(
-    wm,
-    /c\.save\(\);c\.globalAlpha=Math\.max\(\.10,p\.opacity\/100\);c\.fillStyle='#737cff';c\.textAlign='center';c\.textBaseline='middle';c\.font=`800 \$\{Math\.max\(74,Math\.round\(W\*\.12\)\)\}px -apple-system,BlinkMacSystemFont,Arial`;c\.fillText\('AXIS',W\/2,H\*\.48\);c\.globalAlpha=1;c\.fillStyle='rgba\(115,124,255,\.72\)';c\.fillRect\(W\*\.12,H\*\.555,W\*\.76,Math\.max\(2,Math\.round\(W\*\.0025\)\)\);const name=/,
-    "c.save();c.globalAlpha=1;const name=",
-    'final center AXIS brand retirement'
-  );
+  const center="c.fillText('AXIS',W/2,H*.48);";
+  const divider="c.fillRect(W*.12,H*.555,W*.76,Math.max(2,Math.round(W*.0025)));";
+  wm=once(wm,center,'/* AXIS 8.15.1 center brand retired */','final center AXIS draw');
+  wm=once(wm,divider,'/* AXIS 8.15.1 center divider retired */','final center divider draw');
 
-  /* 8.8.4 tried to suppress app.js by writing `photoMode=raw` to LocalStorage, but
-     app.js uses its already-loaded in-memory state during save. With the legacy app
-     photo finalizer now physically retired, this temporary preference mutation is
-     unnecessary and must not remain as a competing save-state owner. */
+  /* 8.8.4 tried to suppress app.js by writing `photoMode=raw` only to persisted
+     storage. app.js uses its already-loaded in-memory state during save, so that
+     never reliably suppressed the old compositor. With that compositor physically
+     retired above, temporary save-state mutation is unnecessary and is removed. */
   wm=regexOnce(
     wm,
     /function suppressLegacy\(\)\{[\s\S]*?\}\nfunction bind\(\)\{/,
@@ -55,6 +54,7 @@ const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:
   const marker="\ntry{window.__AXIS_8151_REGRESSION_SEAL__={version:'8.15.1',homeColdStart:'semantic-sealed',photoWatermarkOwner:'v8710-watermark',legacyPhotoCompositor:false,centerBrand:false,currentCard:true}}catch{}\n";
   wm=wm.slice(0,end)+marker+wm.slice(end);
   if(wm.includes("fillText('A X I S'" )||wm.includes("fillText('AXIS',W/2,H*.48)"))fail('center AXIS brand survived');
+  if(wm.includes(divider))fail('center divider survived');
   if(!wm.includes("fillText('AXIS / RECORD'"))fail('current factual watermark card disappeared');
   try{new Function(wm)}catch(e){fail(`watermark syntax ${e.message}`)}
   fs.writeFileSync(WM,wm);
