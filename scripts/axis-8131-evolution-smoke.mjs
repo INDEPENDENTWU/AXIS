@@ -12,16 +12,17 @@ const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers
 for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>json(r,obj));
 const tap=async l=>ENGINE==='webkit'?l.tap():l.click();
 const seed=async count=>page.evaluate(count=>{
- const now=Date.now(),base=new Date().setHours(9,0,0,0);
- const sessions=[];
+ const base=new Date().setHours(9,0,0,0),sessions=[],meta={events:{}};
  for(let i=0;i<count;i++){
-  const start=base+i*27*60000,end=start+(2+i%3)*60000;
-  const activityStart=start+10000,activityEnd=Math.min(end,activityStart+50000);
-  sessions.push({id:`same-day-${i+1}`,start,end,events:[{id:`event-${i+1}`,time:start+20000,kind:'strength',equipmentId:'row',name:'坐姿划船机',weight:30+(i>=3?2.5:0),reps:10,sets:3,muscles:['背部'],frameRefs:i===0?['P-FIRST']:[],activity:{startedAt:activityStart,finishedAt:activityEnd,intervals:[{start:activityStart,end:activityEnd}]}}]});
+  const start=base+i*27*60000,end=start+(2+i%3)*60000,eid=`event-${i+1}`;
+  const a1=start+10000,a2=Math.min(end,start+35000),b1=Math.min(end,start+45000),b2=Math.min(end,start+65000);
+  sessions.push({id:`same-day-${i+1}`,start,end,events:[{id:eid,time:start+20000,kind:'strength',equipmentId:'row',name:'坐姿划船机',weight:30+(i>=3?2.5:0),reps:10,sets:3,muscles:['背部'],frameRefs:i===0?['P-FIRST']:[]}]});
+  meta.events[eid]={activity:{status:'finished',startedAt:a1,finishedAt:b2,intervals:[{start:a1,end:a2},{start:b1,end:b2}].filter(x=>x.end>=x.start)}};
  }
  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions,active:null,profile:{customEq:[]},prefs:{}}));
+ localStorage.setItem('axis_v8_meta',JSON.stringify(meta));
  window.dispatchEvent(new CustomEvent('axis:state-changed',{detail:{test:true}}));
- return{count:sessions.length,now};
+ return{count:sessions.length};
 },count);
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:12000}))?.ok());
@@ -38,16 +39,18 @@ try{
  assert.equal(await page.locator('#v813Field').isVisible(),true,'first sealed session should immediately create a time-field node');
  const firstInsight=(await page.locator('#v813Insight').innerText()).trim();
  assert.ok(firstInsight.includes('完成1个项目')&&firstInsight.includes('整次训练'),`first-session copy must be factual: ${firstInsight}`);
+ assert.ok(await page.locator('#v813Fingerprint i').count()>=2,'first-session fingerprint must resolve axis_v8_meta activity intervals');
 
  await seed(7);
  await page.waitForFunction(()=>document.querySelectorAll('.v813Node').length===7,undefined,{timeout:3000});
  assert.equal(await page.locator('.v813Node').count(),7,'seven same-day sealed sessions must remain seven distinct nodes');
  assert.equal(await page.locator('.v813Node.selected').count(),1,'exactly one latest node selected');
  assert.equal(Number(await page.locator('.v813Node.selected').getAttribute('data-v813-node')),6,'state lifecycle refresh should select newest sealed session');
- assert.ok(await page.locator('#v813Fingerprint i').count()>0,'session fingerprint missing');
+ assert.ok(await page.locator('#v813Fingerprint i').count()>=2,'session fingerprint must read canonical axis_v8_meta activity intervals');
  const geometry=await page.locator('.v813Node').evaluateAll(nodes=>nodes.map(n=>Number.parseFloat(n.style.left)));
  assert.equal(new Set(geometry.map(Math.round)).size,7,'same-day sessions overlapped instead of retaining minimum spatial separation');
  const rawBefore=await page.evaluate(()=>localStorage.getItem('axis_v60_state'));
+ const metaBefore=await page.evaluate(()=>localStorage.getItem('axis_v8_meta'));
 
  const evo=await page.evaluate(()=>window.__AXIS_EVOLUTION__.resolve());
  assert.equal(evo.sessionCount,7);assert.equal(evo.items.length,1);assert.equal(evo.items[0].name,'坐姿划船机');assert.equal(evo.items[0].encounterCount,7);assert.equal(evo.items[0].firstEncounter.summary,'30kg · 30次');assert.equal(evo.items[0].latestEncounter.summary,'32.5kg · 30次');assert.ok(evo.items[0].mediaEvidence>=1);assert.equal(evo.items[0].timeSpanDays,0);
@@ -71,7 +74,22 @@ try{
  assert.ok(surface.scroll<=surface.inner+1,`horizontal overflow ${surface.scroll}/${surface.inner}`);assert.equal(surface.touch,'pan-y');assert.equal(surface.owner,'v8131-evolution-field');
  for(const text of ['左右滑动查看','点一下展开','留下几次训练后','继续留下相同动作'])assert.ok(!surface.copy.includes(text),`visible helper copy survived: ${text}`);
  assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v60_state')),rawBefore,'read-only Trends/Evolution interaction mutated canonical training storage');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v8_meta')),metaBefore,'read-only Trends/Evolution interaction mutated canonical metadata storage');
+
+ await tap(page.locator('[data-view="todayView"]'));
+ await page.evaluate(()=>{
+  const c=JSON.parse(localStorage.getItem('axis_v60_state')),m=JSON.parse(localStorage.getItem('axis_v8_meta')),start=Date.now()-20000,end=start+10000,eid='event-8';
+  c.sessions.push({id:'same-day-8',start,end,events:[{id:eid,time:start+2000,kind:'strength',equipmentId:'row',name:'坐姿划船机',weight:35,reps:10,sets:3,muscles:['背部']}]});
+  m.events[eid]={activity:{status:'finished',startedAt:start+1000,finishedAt:end-1000,intervals:[{start:start+1000,end:end-1000}]}};
+  localStorage.setItem('axis_v60_state',JSON.stringify(c));localStorage.setItem('axis_v8_meta',JSON.stringify(m));
+ });
+ await tap(page.locator('[data-view="insightsView"]'));
+ await page.waitForFunction(()=>document.querySelectorAll('.v813Node').length===8,undefined,{timeout:3000});
+ assert.equal(Number(await page.locator('.v813Node.selected').getAttribute('data-v813-node')),7,'navigation re-entry must select the newest sealed session even if the lifecycle event was missed');
+ assert.ok((await page.locator('#v813SessionMeta').innerText()).includes('<1分钟'),'sub-minute sealed session must not be fabricated as one minute');
+ assert.ok(await page.locator('#v813Fingerprint i').count()>=1,'newly sealed metadata-only session fingerprint missing after navigation re-entry');
+
  await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.evaluate(()=>getComputedStyle(document.querySelector('#v813TrackCanvas')).transitionDuration),'0s');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.13.1 evolution ${ENGINE}] PASS · empty + first factual state · 7 same-day sealed sessions · live state refresh · read-only Evolution resolver · tap/scrub/edge safety · no helper copy/storage writes`);
+ console.log(`[AXIS 8.13.1 evolution ${ENGINE}] PASS · canonical meta activity · empty/first factual state · 7→8 same-day sealed sessions · lifecycle + navigation refresh · truthful sub-minute duration · read-only resolver · tap/scrub/edge safety`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
