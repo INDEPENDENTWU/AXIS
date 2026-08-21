@@ -45,6 +45,7 @@ for(const f of ['postbuild-8131-evolution-contract.mjs','postbuild-814-evolution
  let s=read(f);
  s=once(s,`contract.publicVersion!=='${FROM}'||contract.stableBaseVersion!=='${FROM}'`,`contract.publicVersion!=='${VERSION}'||contract.stableBaseVersion!=='${VERSION}'`,`${f} release contract`);
  s=once(s,`info.version!=='${FROM}'||info.baseVersion!=='${FROM}'`,`info.version!=='${VERSION}'||info.baseVersion!=='${VERSION}'`,`${f} manifest contract`);
+ if(f==='postbuild-815-media-evidence-contract.mjs')s=once(s,"'首尾对照'","'对照'",'8.16 expanded comparison entry copy');
  write(f,s);
 }
 {
