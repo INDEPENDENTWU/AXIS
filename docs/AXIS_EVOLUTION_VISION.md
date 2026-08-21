@@ -6,7 +6,7 @@ AXIS is not designed to become another fitness dashboard, workout logger, AI coa
 
 The long-term direction is a personal evolution system: a product that captures low-friction evidence of real-world practice and gradually turns repeated experiences into a personal record of change.
 
-The first domain is training. The underlying model is broader: repeated activities where a person returns, practices, improves, changes, or recovers.
+The first domain is training. The underlying model is broader: repeated activities where a person returns, practices, changes, or recovers.
 
 Examples:
 
@@ -59,7 +59,7 @@ A growing record of how something changed over time.
 
 ### Replay
 
-AXIS can transform accumulated evidence into meaningful personal outputs.
+AXIS can eventually transform accumulated evidence into meaningful personal outputs.
 
 Examples:
 
@@ -67,6 +67,31 @@ Examples:
 - before/after comparison
 - time-compressed progress video
 - visual history of a skill or activity
+
+Replay must remain downstream of truthful Capture → Encounter → Evolution semantics. Generated output is not a substitute for real evidence identity.
+
+## Current implementation state
+
+### 8.13.1 — truthful Encounter foundation
+
+8.13.1 makes sealed Sessions visible as a time field and proves that real activity evidence can be recovered from canonical training metadata without inventing missing time. Same-day sessions remain distinct, sub-minute sessions remain truthful, and `window.__AXIS_EVOLUTION__` exposes a read-only semantic projection of first/latest encounter, encounter count, span and media evidence.
+
+### 8.14 — first Evolution Objects
+
+8.14 is the first product step where Evolution becomes something directly perceivable rather than only a resolver/API concept.
+
+Inside an expanded real Session, a recorded activity becomes a semantic object entry. Tapping it reveals, in place:
+
+- how many real encounters exist;
+- how long the evidence spans;
+- the first recorded encounter;
+- the latest recorded encounter;
+- existing media evidence;
+- only literal, directly comparable change between factual endpoints.
+
+The object does not open a dashboard, ask the user to maintain another database, call an AI service, write training state, or claim that a change is good/bad. First-only encounters stay first-only.
+
+This establishes the intended direction: **the user records reality once; AXIS progressively makes the accumulated object more legible.**
 
 ## Product principle
 
@@ -96,6 +121,14 @@ Input everything
 
 AXIS should not fabricate precision. If the user did not provide exact information, the product should preserve uncertainty instead of inventing data.
 
+## Identity philosophy
+
+Evolution requires stable identity across repeated reality.
+
+Identity should come from existing canonical IDs where possible, then careful historical compatibility evidence. Display names alone are fallback evidence, not a reason to silently merge unrelated things.
+
+Future work should improve identity continuity across imperfect historical records before adding ambitious Replay generation.
+
 ## Media philosophy
 
 Photos and videos are not social content inside AXIS.
@@ -116,6 +149,7 @@ The system organizes naturally captured material into useful personal outputs.
 The web app should establish the foundation:
 
 - reliable session model
+- truthful Encounter semantics
 - Evolution objects
 - media evidence layer
 - history projection
@@ -154,6 +188,7 @@ Avoid:
 - motivational slogans
 - AI assistant language
 - vague promises
+- evaluative claims without evidence
 
 Prefer:
 
@@ -162,6 +197,8 @@ Prefer:
 "最近一次：40kg"
 
 "共记录 18 次，跨度 76 天"
+
+A literal `25kg → 40kg` may be shown when both facts exist. AXIS should not automatically translate that into "变强了" or a score.
 
 ## Boundaries
 
