@@ -27,7 +27,8 @@ jobs:
           if(m.version!=='8.15.1'||m.baseVersion!=='8.15.1'||m.architecture!=='canonical-single-runtime')throw new Error(`release mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
           for(const g of ['mediaEvidenceLayer815','coldStartHomeSemanticSeal8151','coldStartCanonicalHomeCommit8151','watermarkSinglePhotoCompositor8151','watermarkLegacyPhotoPainterRetired8151','watermarkCenterBrandRetired8151','watermarkCurrentCardOnly8151'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
           if(!css.includes('data-axis-home-ready')||!core.includes('axisHomeReady'))throw new Error('cold-start semantic seal missing');
-          if(core.includes("fillText('A X I S'"))throw new Error('center AXIS raster survived');
+          if(core.includes("fillText('A X I S'")||core.includes("fillText('AXIS',W/2,H*.48)"))throw new Error('center AXIS raster survived');
+          if(core.includes("fillRect(W*.12,H*.555,W*.76,Math.max(2,Math.round(W*.0025)))"))throw new Error('center divider survived');
           if(!core.includes("fillText('AXIS / RECORD'"))throw new Error('current watermark card missing');
           NODE
       - name: Prepare Chromium
