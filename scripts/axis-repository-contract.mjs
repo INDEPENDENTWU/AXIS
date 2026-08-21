@@ -10,6 +10,7 @@ const required=[
   'docs/README.md','docs/PRODUCT.md','docs/ARCHITECTURE.md','docs/CURRENT_RELEASE.md',
   'docs/RUNTIME_CONTRACT.md','docs/ENGINEERING_PLAYBOOK.md','docs/ROADMAP.md',
   'docs/REPOSITORY_STRUCTURE.md','docs/COMPATIBILITY_LEDGER.md','docs/CI_AND_RELEASE.md',
+  'docs/AXIS_EVOLUTION_VISION.md','docs/8.13.1_EVOLUTION_FOUNDATION.md',
   '.github/CODEOWNERS','.github/PULL_REQUEST_TEMPLATE.md',
   '.github/ISSUE_TEMPLATE/bug.yml','.github/ISSUE_TEMPLATE/change.yml','.github/ISSUE_TEMPLATE/config.yml',
   '.editorconfig','.gitattributes','.gitignore','.nvmrc',
@@ -17,13 +18,22 @@ const required=[
 ];
 for(const path of required)if(!fs.existsSync(path))fail(`required file missing: ${path}`);
 
-const readme=read('README.md');
-if(!readme.slice(0,900).includes('Current release: 8.12'))fail('README current release is not 8.12');
-for(const path of ['docs/CURRENT_RELEASE.md','docs/RUNTIME_CONTRACT.md'])if(!read(path).includes('8.12'))fail(`${path} does not identify the 8.12 baseline`);
+const CURRENT='8.13.1';
+const readme=read('README.md'),currentRelease=read('docs/CURRENT_RELEASE.md'),runtimeContract=read('docs/RUNTIME_CONTRACT.md');
+if(!readme.slice(0,1200).includes(`Current release: ${CURRENT}`))fail(`README current release is not ${CURRENT}`);
+if(!currentRelease.includes(`## AXIS ${CURRENT}`))fail(`docs/CURRENT_RELEASE.md does not identify AXIS ${CURRENT}`);
+if(!currentRelease.includes('Evolution Foundation'))fail('current release does not record the Evolution Foundation boundary');
+if(!runtimeContract.includes('8.12'))fail('docs/RUNTIME_CONTRACT.md no longer identifies the inherited 8.12 runtime baseline');
+for(const path of ['docs/AXIS_EVOLUTION_VISION.md','docs/8.13.1_EVOLUTION_FOUNDATION.md']){
+  const text=read(path);
+  if(!/Evolution|Capture|Encounter|Replay/i.test(text))fail(`${path} does not preserve the Evolution product contract`);
+}
 
 const build=read('build-release.mjs');
 for(const marker of ['prepare-812-release-compat.mjs','prepare-812-learning-content.mjs','prepare-812-learning-settings.mjs','postbuild-812-contract.mjs'])if(!build.includes(marker))fail(`current release build marker missing: ${marker}`);
 if(!build.includes("architecture==='canonical-single-runtime'"))fail('canonical single-runtime release assertion missing');
+if(!read('prepare-813-trends-release.mjs').includes("await import('./prepare-8131-release.mjs')"))fail('8.13.1 release convergence is not chained after 8.13');
+if(!read('postbuild-813-trends-contract.mjs').includes('evolutionFoundation8131'))fail('8.13.1 Evolution release gate is missing');
 
 const stepBlock=build.match(/const STEPS=\[([\s\S]*?)\n\];/);
 if(!stepBlock)fail('cannot parse deterministic build steps');
@@ -65,4 +75,4 @@ try{
 
 const prepareCount=steps.filter(step=>step.startsWith('prepare-')).length;
 const postbuildCount=steps.filter(step=>step.startsWith('postbuild-')).length;
-console.log(`[AXIS repository contract] PASS · documented baseline 8.12 · ${steps.length} deterministic build steps (${prepareCount} prepare / ${postbuildCount} postbuild) · Vercel build + EdgeOne verified-prebuilt publishing aligned`);
+console.log(`[AXIS repository contract] PASS · current release ${CURRENT} · inherited runtime baseline 8.12 · Evolution docs sealed · ${steps.length} deterministic build steps (${prepareCount} prepare / ${postbuildCount} postbuild) · Vercel build + EdgeOne verified-prebuilt publishing aligned`);
