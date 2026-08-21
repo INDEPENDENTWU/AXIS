@@ -33,12 +33,95 @@ The product grew through many releases, but Production is deliberately flattened
 
 **Evidence before interpretation.** AXIS may make recorded reality easier to inspect and compare, but it does not turn factual changes into a score or progress verdict.
 
-## Development
+**Fail open.** Vision, AI, cloud and other optional services degrade to local/manual behavior instead of blocking the workout.
+
+**Quiet interfaces.** The product should spend less attention as it learns more about repeated behavior.
+
+See [docs/PRODUCT.md](docs/PRODUCT.md) for the product contract.
+
+## Production architecture
+
+```text
+historical + compatibility source
+             |
+             v
+   deterministic convergence
+             |
+             v
+      contract assertions
+             |
+             v
+ axis-core.js + axis-style.css
+             |
+             v
+     one production runtime
+```
+
+The release build entry point is:
 
 ```bash
 node build-release.mjs
 ```
 
-The deterministic build compiles the historical source graph into the canonical release artifact and runs the current/inherited release contracts. Generated runtime artifacts such as `axis-core.js`, `axis-style.css` and `axis-build.json` are build outputs and are intentionally not committed.
+Vercel builds `main` with that deterministic command and emits `axis-build.json`. EdgeOne does not independently reinterpret source: its Production mirror waits for the exact-SHA Vercel golden artifact, verifies the prebuilt package, deploys that same artifact and runs live Chromium + iPhone WebKit parity checks.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/ENGINEERING_PLAYBOOK.md](docs/ENGINEERING_PLAYBOOK.md) before changing a runtime owner or release contract.
+The CI baseline is Node 20.18.0. Browser release gates exercise both Chromium and iPhone-like WebKit.
+
+## Repository map
+
+```text
+api/                 same-origin server endpoints
+cloud-functions/     alternate serverless adapter surface
+compiler/            explicit build-time source fragments
+lib/                 reusable contracts and current libraries
+data/                 curated local data
+scripts/              diagnostics, smoke and release verification
+docs/                 product, architecture, delivery and release contracts
+.github/workflows/    CI and Production gates
+
+app.js, v*.js         current/historical source owners used by convergence
+prepare-*.mjs         exact build-time migrations and ownership convergence
+postbuild-*.mjs       canonical packaging and release assertions
+build-release.mjs     only release build entry point
+```
+
+The broad root remains intentional at the inherited 8.12 compatibility foundation: moving versioned source without retiring its build/data role would be a behavior-changing refactor. See [Repository structure](docs/REPOSITORY_STRUCTURE.md) and the [Compatibility ledger](docs/COMPATIBILITY_LEDGER.md) before changing historical source layout.
+
+Do not infer product ownership from version-like filenames. Start with [Current release](docs/CURRENT_RELEASE.md), [Current work](docs/CURRENT_WORK.md), [Architecture](docs/ARCHITECTURE.md) and the [documentation index](docs/README.md).
+
+## Development discipline
+
+A change is complete when the intended owner is clear, competing behavior is retired, the final artifact is deterministic, and the affected real user path is covered by a regression test.
+
+Quick repository check:
+
+```bash
+node scripts/axis-repository-contract.mjs
+```
+
+Release build:
+
+```bash
+node build-release.mjs
+```
+
+The normal release path is:
+
+1. branch from the last verified `main`;
+2. make one coherent product or engineering change;
+3. run the repository contract, deterministic build and relevant local checks;
+4. pass Chromium and WebKit gates on the same candidate;
+5. merge only the verified head;
+6. verify that Vercel and EdgeOne Production serve the exact merged source SHA.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [Engineering playbook](docs/ENGINEERING_PLAYBOOK.md) and [CI and release gates](docs/CI_AND_RELEASE.md).
+
+## Next
+
+Replay remains deliberately deferred until 8.16 Capture density and Comparative Evidence semantics are production-sealed. Any later private Replay must be downstream of real Encounter-bound evidence, preserve factual identity across time and refuse fabricated continuity when evidence is insufficient.
+
+See [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/AXIS_EVOLUTION_VISION.md](docs/AXIS_EVOLUTION_VISION.md).
+
+## Project status
+
+AXIS is under active development. The repository is public, but no software license has been selected yet; public visibility should not be interpreted as a grant of reuse rights.
