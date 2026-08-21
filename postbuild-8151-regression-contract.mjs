@@ -13,8 +13,10 @@ if(!app.includes("document.documentElement.dataset.axisHomeReady='1'"))fail('can
 if(!runtime.includes("document.documentElement.dataset.axisHomeReady='1'"))fail('compiled Home-ready marker missing');
 if(!app.includes('async function finalizeFrame(frame,e,eq){return frame.blob}'))fail('legacy app photo compositor still owns frame finalization');
 if(!runtime.includes('async function finalizeFrame(frame,e,eq){return frame.blob}'))fail('compiled legacy photo compositor retirement missing');
-if(wm.includes("fillText('A X I S'" )||runtime.includes("fillText('A X I S'"))fail('historical center AXIS brand survived');
-if(!wm.includes("fillText('AXIS / RECORD'" )||!runtime.includes("fillText('AXIS / RECORD'"))fail('current factual watermark card missing');
+const hasCenter=s=>s.includes("fillText('A X I S'")||s.includes("fillText('AXIS',W/2,H*.48)");
+if(hasCenter(wm)||hasCenter(runtime))fail('historical center AXIS brand survived');
+if(wm.includes("fillRect(W*.12,H*.555,W*.76,Math.max(2,Math.round(W*.0025)))")||runtime.includes("fillRect(W*.12,H*.555,W*.76,Math.max(2,Math.round(W*.0025)))"))fail('historical center divider survived');
+if(!wm.includes("fillText('AXIS / RECORD'")||!runtime.includes("fillText('AXIS / RECORD'"))fail('current factual watermark card missing');
 for(const needle of ['__AXIS_8151_REGRESSION_SEAL__',"photoWatermarkOwner:'v8710-watermark'",'legacyPhotoCompositor:false','centerBrand:false','currentCard:true'])if(!runtime.includes(needle))fail(`compiled hotfix marker missing ${needle}`);
 
 info.gates=info.gates||{};Object.assign(info.gates,{coldStartHomeSemanticSeal8151:true,coldStartCanonicalHomeCommit8151:true,watermarkSinglePhotoCompositor8151:true,watermarkLegacyPhotoPainterRetired8151:true,watermarkCenterBrandRetired8151:true,watermarkCurrentCardOnly8151:true});
