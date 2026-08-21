@@ -54,3 +54,4 @@ for(const f of ['scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-po
 }
 
 console.log('[AXIS 8.15 Media Evidence release] PASS · public/base 8.15 · 8.14 Evolution Objects remain inherited · Media Evidence becomes current product layer');
+await import('./prepare-8151-regression-release.mjs');
