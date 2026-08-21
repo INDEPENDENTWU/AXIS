@@ -79,7 +79,7 @@ Do not change:
 - storage schema;
 - iOS repository/contracts.
 
-## Validation for PR #64
+## Validation for this work
 
 Before merge:
 
