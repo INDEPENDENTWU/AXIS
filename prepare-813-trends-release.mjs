@@ -34,3 +34,5 @@ for(const f of ['scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-po
  if(s.split(a).length-1!==1)fail('8.12.5 smart-create inherited release anchor');s=s.replace(a,b);write(f,s);
 }
 console.log('[AXIS 8.13 trends release] PASS · public/base 8.13 · inherited 8.12.5 training/catalog/custom-equipment semantics preserved');
+
+await import('./prepare-8131-evolution-release.mjs');
