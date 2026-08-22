@@ -14,27 +14,26 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   const scope="const D=document,$=q=>D.querySelector(q),$$=q=>Array.from(D.querySelectorAll(q));";
   const old=sig+'const D=document;';
   const sealed=sig+scope;
-  /* Function-form replacement is mandatory because replacement strings interpret
-     `$$` specially and would collapse the collection-selector alias. */
   if(s.includes(old))s=s.replace(old,()=>sealed);
   else if(!s.includes(sealed))s=s.replace(sig,()=>sealed);
   if(!s.includes(sealed))fail('gallery geometry local selector scope missing');
 
   /* Early 8.18 used lastIndexOf('})();') and could land inside a historical
-     appended IIFE. Move the entire truth block back into the original app state
-     owner immediately before canonical boot, where state/save/$/$$/media helpers
-     are lexical and authoritative. No shadow state or second owner is created. */
+     appended IIFE. The original app owner is the root IIFE at the beginning of
+     app.js; historical add-on IIFEs follow it. Relocate the full truth block to
+     immediately before that first root close so it shares state/save/$/$$ and
+     the canonical media helpers without creating a shadow owner. */
   const blockStart='/* AXIS 8.18 — Object Truth + Route Truth + Capture Preference foundation. */';
   const blockEnd="setTimeout(()=>{axis818RouteGuard();axis818RenderCapturePrefs();axis818RenderShelf()},260);";
   const bi=s.indexOf(blockStart),ei=bi<0?-1:s.indexOf(blockEnd,bi);
   if(bi<0||ei<0)fail('8.18 truth block boundaries missing');
   const after=ei+blockEnd.length,truthBlock=s.slice(bi,after);
   s=s.slice(0,bi)+s.slice(after);
-  const boot='load();buildChoices();bind();render();aiHealth();';
-  const boots=s.split(boot).length-1;if(boots!==1)fail(`canonical app boot expected once, found ${boots}`);
-  s=s.replace(boot,()=>truthBlock+'\n'+boot);
-  const bootAt=s.indexOf(boot),truthAt=s.indexOf(blockStart);
-  if(truthAt<0||truthAt>bootAt)fail('8.18 truth block not inside canonical pre-boot scope');
+  const rootClose=s.indexOf('})();');
+  if(rootClose<0)fail('canonical root IIFE close missing');
+  s=s.slice(0,rootClose)+truthBlock+'\n'+s.slice(rootClose);
+  const truthAt=s.indexOf(blockStart),closeAt=s.indexOf('})();');
+  if(truthAt<0||truthAt>closeAt)fail('8.18 truth block escaped canonical root IIFE');
   syntax(s,FILE);write(FILE,s);
 }
 
@@ -52,4 +51,4 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   syntax(s,FILE);write(FILE,s);
 }
 
-console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block canonical app-scoped · v874 metric namespace initialized without new owner');
+console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · v874 metric namespace initialized without new owner');
