@@ -39,7 +39,16 @@ try{
  await firstNode.scrollIntoViewIfNeeded();
  await page.waitForTimeout(80);
  const before=await page.evaluate(()=>{
-  const section=document.querySelector('#v815Evidence'),stage=section?.querySelector('.v815Stage');window.__AXIS_8151_TEST_SECTION__=section;window.__AXIS_8151_NATIVE_MEDIA_GET__=window.__AXIS_MEDIA_READ__.get;window.__AXIS_MEDIA_READ__.get=async(...args)=>{await new Promise(r=>setTimeout(r,320));return window.__AXIS_8151_NATIVE_MEDIA_GET__(...args)};return{html:stage?.innerHTML||'',height:stage?.offsetHeight||0,offsetTop:stage?.offsetTop||0,scrollY:window.scrollY}
+  const section=document.querySelector('#v815Evidence'),stage=section?.querySelector('.v815Stage');
+  window.__AXIS_8151_TEST_SECTION__=section;
+  /* 8.17.1 Evidence prefers the clean-source read-only bridge. Older releases use
+     the canonical read bridge. Delay whichever bridge is actually authoritative so
+     the inherited stable-swap contract still tests a real pending local asset. */
+  const preferred=window.__AXIS_MEDIA_SOURCE__?.readOnly&&typeof window.__AXIS_MEDIA_SOURCE__.get==='function'?window.__AXIS_MEDIA_SOURCE__:window.__AXIS_MEDIA_READ__;
+  window.__AXIS_8151_TEST_MEDIA_BRIDGE__=preferred;
+  window.__AXIS_8151_NATIVE_MEDIA_GET__=preferred.get;
+  preferred.get=async(...args)=>{await new Promise(r=>setTimeout(r,320));return window.__AXIS_8151_NATIVE_MEDIA_GET__(...args)};
+  return{html:stage?.innerHTML||'',height:stage?.offsetHeight||0,offsetTop:stage?.offsetTop||0,scrollY:window.scrollY,bridge:preferred===window.__AXIS_MEDIA_SOURCE__?'source':'canonical'}
  });
  assert.ok(before.html.includes('第2/2次'),'latest evidence was not mounted before swap test');
 
@@ -57,8 +66,8 @@ try{
  assert.equal(during.sheets,0,'evidence swap exposed another sheet/page layer');
 
  await page.waitForFunction(()=>document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第1/2次')&&document.querySelector('#v815Evidence')===window.__AXIS_8151_TEST_SECTION__,undefined,{timeout:2500});
- const after=await page.evaluate(()=>{window.__AXIS_MEDIA_READ__.get=window.__AXIS_8151_NATIVE_MEDIA_GET__;delete window.__AXIS_8151_NATIVE_MEDIA_GET__;delete window.__AXIS_8151_TEST_SECTION__;const s=document.querySelector('#v815Evidence');return{loading:s?.dataset.loading,selected:s?.querySelector('[data-v815-encounter="1"]')?.getAttribute('aria-selected'),marker:window.__AXIS_8151_MEDIA_SWAP__}});
+ const after=await page.evaluate(()=>{const bridge=window.__AXIS_8151_TEST_MEDIA_BRIDGE__;if(bridge)bridge.get=window.__AXIS_8151_NATIVE_MEDIA_GET__;delete window.__AXIS_8151_TEST_MEDIA_BRIDGE__;delete window.__AXIS_8151_NATIVE_MEDIA_GET__;delete window.__AXIS_8151_TEST_SECTION__;const s=document.querySelector('#v815Evidence');return{loading:s?.dataset.loading,selected:s?.querySelector('[data-v815-encounter="1"]')?.getAttribute('aria-selected'),marker:window.__AXIS_8151_MEDIA_SWAP__}});
  assert.equal(after.loading,'0');assert.equal(after.selected,'true');assert.equal(after.marker.stableShell,true);assert.equal(after.marker.retainPreviousUntilReady,true);assert.equal(after.marker.warmBeforeCommit,true);assert.equal(after.marker.loadingOpacityBlink,false);
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.15.1 evidence swap ${ENGINE}] PASS · stable shell identity/geometry · previous visual retained until ready · zero opacity pulse · zero layer exposure`);
+ console.log(`[AXIS 8.15.1 evidence swap ${ENGINE}] PASS · stable shell identity/geometry · previous visual retained until ready · zero opacity pulse · zero layer exposure · preferred read bridge delayed`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
