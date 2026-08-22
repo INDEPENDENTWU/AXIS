@@ -58,3 +58,5 @@ for(const f of ['postbuild-8131-evolution-contract.mjs','postbuild-814-evolution
 }
 
 console.log('[AXIS 8.17 release] PASS · public/base 8.17 · 8.16 Capture/Evidence inherited · interaction semantics current');
+await import('./prepare-817-interaction-convergence-driver.mjs');
+await import('./prepare-8171-active-truth-capture.mjs');
