@@ -57,3 +57,4 @@ for(const f of ['postbuild-8131-evolution-contract.mjs','postbuild-814-evolution
 
 console.log('[AXIS 8.16 release] PASS · public/base 8.16 · 8.15.1 regression seal inherited · Capture Field + Comparative Evidence current');
 await import('./prepare-816-test-convergence.mjs');
+await import('./prepare-817-release.mjs');
