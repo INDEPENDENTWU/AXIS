@@ -50,29 +50,32 @@ fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
 /* Give renderStorage and its row handlers a stable app-scope synchronization owner.
- * Some inherited bind-layer implementations also carry a local compatibility helper;
- * that local helper may stay scoped to bind. The renderer must never depend on it. */
+ * Patch by semantic function boundary rather than by the exact one-line renderer
+ * formatting, because inherited convergence is allowed to compact/reformat that
+ * function while preserving behavior. */
 {
  const FILE='app.js';let app=fs.readFileSync(FILE,'utf8');
- const renderAnchor='async function renderStorage(){';
- const renderCount=app.split(renderAnchor).length-1;if(renderCount!==1)fail(`renderStorage owner expected once, found ${renderCount}`);
- const syncFn="function axis8171SyncArchiveSelection(){const rows=$$('[data-delete-session]'),all=!!rows.length&&rows.every(b=>selectedSessions.has(b.dataset.deleteSession));const b=$('#selectAllSessions');if(b){b.textContent=all?'取消全选':'全选';b.setAttribute('aria-pressed',String(all))}}";
- app=app.replace(renderAnchor,syncFn+'\n'+renderAnchor);
- /* Route only renderer/row synchronization calls away from any bind-local helper. */
- const callBlock="$$('[data-delete-session]').forEach(b=>b.onclick=()=>{const id=b.dataset.deleteSession;if(selectedSessions.has(id)){selectedSessions.delete(id);b.classList.remove('selected')}else{selectedSessions.add(id);b.classList.add('selected')}sync8171SelectAll()});sync8171SelectAll()";
- const stableCallBlock="$$('[data-delete-session]').forEach(b=>b.onclick=()=>{const id=b.dataset.deleteSession;if(selectedSessions.has(id)){selectedSessions.delete(id);b.classList.remove('selected')}else{selectedSessions.add(id);b.classList.add('selected')}axis8171SyncArchiveSelection()});axis8171SyncArchiveSelection()";
- const callCount=app.split(callBlock).length-1;if(callCount!==1)fail(`archive renderer sync calls expected once, found ${callCount}`);app=app.replace(callBlock,stableCallBlock);
+ const renderStart=app.indexOf('async function renderStorage(){');
+ const renderEnd=app.indexOf('async function deleteSessions',renderStart);
+ if(renderStart<0||renderEnd<0||renderEnd<=renderStart)fail(`renderStorage boundary missing ${renderStart}/${renderEnd}`);
+ const syncFn="function axis8171SyncArchiveSelection(){const rows=$$('[data-delete-session]'),all=!!rows.length&&rows.every(b=>selectedSessions.has(b.dataset.deleteSession));const b=$('#selectAllSessions');if(b){b.textContent=all?'取消全选':'全选';b.setAttribute('aria-pressed',String(all))}}\n";
+ let render=app.slice(renderStart,renderEnd);
+ const localSyncCalls=(render.match(/sync8171SelectAll\(\)/g)||[]).length;
+ if(localSyncCalls<1)fail(`renderStorage local sync calls missing, found ${localSyncCalls}`);
+ render=render.replaceAll('sync8171SelectAll()','axis8171SyncArchiveSelection()');
 
  /* 8.17's archive renderer rebuilt rows from state and cleared selectedSessions on
   * every render. Inline Settings can legitimately repaint mounted content after a
   * row click. Clear once when opening, preserve/prune the Set on subsequent paints,
   * and derive every row selected class from the Set. */
  const clear='selectedSessions.clear();const groups=new Map();';
- const preserve="const live8171SessionIds=new Set(state.sessions.map(s=>s.id));for(const id of Array.from(selectedSessions))if(!live8171SessionIds.has(id))selectedSessions.delete(id);const groups=new Map();";
- const clearCount=app.split(clear).length-1;if(clearCount!==1)fail(`archive selection reset expected once, found ${clearCount}`);app=app.replace(clear,preserve);
+ const clearCount=render.split(clear).length-1;if(clearCount!==1)fail(`archive selection reset expected once, found ${clearCount}`);
+ render=render.replace(clear,"const live8171SessionIds=new Set(state.sessions.map(s=>s.id));for(const id of Array.from(selectedSessions))if(!live8171SessionIds.has(id))selectedSessions.delete(id);const groups=new Map();");
  const row='class="deleteSession" data-delete-session="${s.id}"';
- const stableRow='class="deleteSession ${selectedSessions.has(s.id)?\'selected\':\'\'}" data-delete-session="${s.id}"';
- const rowCount=app.split(row).length-1;if(rowCount!==1)fail(`archive row class anchor expected once, found ${rowCount}`);app=app.replace(row,stableRow);
+ const rowCount=render.split(row).length-1;if(rowCount!==1)fail(`archive row class anchor expected once, found ${rowCount}`);
+ render=render.replace(row,'class="deleteSession ${selectedSessions.has(s.id)?\'selected\':\'\'}" data-delete-session="${s.id}"');
+ app=app.slice(0,renderStart)+syncFn+render+app.slice(renderEnd);
+
  const open="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()}";
  const fresh="$('#storageBtn').onclick=async()=>{selectedSessions.clear();openSheet('storageSheet');await renderStorage()}";
  const openCount=app.split(open).length-1;if(openCount!==1)fail(`archive open anchor expected once, found ${openCount}`);app=app.replace(open,fresh);
