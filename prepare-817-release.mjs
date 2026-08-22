@@ -53,19 +53,8 @@ for(const f of ['postbuild-8131-evolution-contract.mjs','postbuild-814-evolution
  s=once(s,"info.version!=='8.16'||info.baseVersion!=='8.16'","info.version!=='8.17'||info.baseVersion!=='8.17'",'8.16 inherited manifest contract');write(f,s);
 }
 {
- const f='scripts/axis-816-capture-evidence-smoke.mjs';let s=read(f);
- const candidates=[
-  ["assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.16');","assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.17');"],
-  ["assert.equal(boot.release,'8.16');","assert.equal(boot.release,'8.17');"],
-  ["assert.equal(x.release,'8.16');","assert.equal(x.release,'8.17');"]
- ];
- let changed=0;for(const [a,b] of candidates){if(s.includes(a)){s=s.replace(a,b);changed++}}
- if(!changed)fail('8.16 smoke public release assertion anchor missing');write(f,s);
-}
-{
  const f='scripts/edgeone-prebuilt-verify.mjs';let s=read(f);
- s=once(s,"manifest.version!=='8.16'||manifest.baseVersion!=='8.16'","manifest.version!=='8.17'||manifest.baseVersion!=='8.17'",'EdgeOne release identity');
- s=s.replace('verified exact AXIS 8.16 Capture + Comparative Evidence canonical artifact','verified exact AXIS 8.17 interaction-converged canonical artifact');write(f,s);
+ s=once(s,"manifest.version!=='8.16'||manifest.baseVersion!=='8.16'","manifest.version!=='8.17'||manifest.baseVersion!=='8.17'",'EdgeOne release identity');write(f,s);
 }
 
 console.log('[AXIS 8.17 release] PASS · public/base 8.17 · 8.16 Capture/Evidence inherited · interaction semantics current');
