@@ -72,6 +72,11 @@ try{
  assert.ok(compareText.includes('最早影像')&&compareText.includes('最近影像'),'earliest/latest comparison labels missing');
  assert.equal(await page.locator('#v815Evidence .v815Compare img').count(),2,'endpoint comparison must use two real stored images');
 
+ // 8.17 keeps timeline taps inside Compare bound to the active named slot.
+ // Exit Compare explicitly before inheriting the 8.15 single-Encounter inspection contract.
+ await tap(page.locator('[data-v815-compare]'));
+ await page.waitForFunction(()=>document.querySelector('[data-v815-compare]')?.getAttribute('aria-pressed')==='false'&&!document.querySelector('#v815Evidence .v815Compare'),undefined,{timeout:2000});
+
  await tap(page.locator('#v815Evidence [data-v815-encounter="1"]'));
  await page.waitForFunction(()=>document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第1/3次'),undefined,{timeout:1500});
  assert.ok((await page.locator('#v815Evidence .v815Overlay').innerText()).includes('30kg · 30次'),'earliest evidence lost factual encounter data');
