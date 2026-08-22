@@ -38,8 +38,18 @@ for(const f of [
  'scripts/axis-8122-settings-smoke.mjs','scripts/axis-8123-learning-simplify-smoke.mjs','scripts/axis-8123-field-polish-smoke.mjs','scripts/axis-8121-hotfix-smoke.mjs','scripts/axis-8123-equipment-gallery-picker-smoke.mjs',
  'scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-polish-smoke.mjs','scripts/axis-8124-custom-equipment-smoke.mjs','scripts/axis-8125-smart-create-polish-smoke.mjs',
  'scripts/axis-8131-evolution-smoke.mjs','scripts/axis-814-evolution-object-smoke.mjs','scripts/axis-815-media-evidence-smoke.mjs','scripts/axis-8151-evidence-swap-smoke.mjs','scripts/axis-8151-regression-seal-smoke.mjs',
- 'scripts/axis-816-capture-evidence-smoke.mjs','scripts/axis-817-interaction-smoke.mjs','scripts/axis-8171-source-first-media-smoke.mjs',
+ 'scripts/axis-816-capture-evidence-smoke.mjs','scripts/axis-8171-source-first-media-smoke.mjs',
  'scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs'
 ])replaceIdentity(f,false);
 
-console.log('[AXIS 8.18 release] PASS · public/base 8.18 · hardened build/canonical manifest owners advanced · 8.17.1 factual/media foundations inherited');
+/* 8.17 interaction smoke has two different identities in the same file:
+   public release follows 8.18, while the inherited module marker remains 8.17. */
+{
+ const f='scripts/axis-817-interaction-smoke.mjs';let s=read(f);
+ s=once(s,"window.__AXIS_RELEASE__==='8.17'","window.__AXIS_RELEASE__==='8.18'",'8.17 smoke public runtime identity');
+ s=once(s,"assert.equal(manifest.version,'8.17');assert.equal(manifest.baseVersion,'8.17');","assert.equal(manifest.version,'8.18');assert.equal(manifest.baseVersion,'8.18');",'8.17 smoke public manifest identity');
+ if(!s.includes("window.__AXIS_817_INTERACTION__?.version==='8.17'"))fail('8.17 historical interaction module identity drift');
+ write(f,s);
+}
+
+console.log('[AXIS 8.18 release] PASS · public/base 8.18 · historical module identities preserved · hardened build/canonical manifest owners advanced · 8.17.1 factual/media foundations inherited');
