@@ -2,7 +2,7 @@
 
 > Canonical engineering handoff. `CURRENT_RELEASE.md` is the release contract; this file records the active engineering boundary and next exact action.
 
-## Production baseline
+## Production baseline at start of this work
 
 - **AXIS 8.17 — Interaction Convergence** is the current Production-sealed baseline while 8.17.1 is validated.
 - 8.17 Vercel and EdgeOne served the same canonical artifact and passed real EdgeOne Chromium + iPhone WebKit Production flows.
@@ -46,7 +46,7 @@ A second inherited mismatch attempted to refine the retired v876 automatic remin
 
 A third mismatch targeted the pre-8.8.4 watermark loop. The 8.17.1 source-first patch now binds to the actual final frozen-`shot` compositor rather than weakening or replacing it.
 
-## Required validation before merge
+## Validation for this work
 
 PR #75 must not merge until all of the following are true:
 
