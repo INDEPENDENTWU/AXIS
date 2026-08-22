@@ -1,0 +1,95 @@
+name: AXIS 8.17 Interaction Convergence
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.17 candidate
+        run: node build-release.mjs
+      - name: Verify 8.17 manifest and ownership
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8'),html=fs.readFileSync('index.html','utf8');
+          if(m.version!=='8.17'||m.baseVersion!=='8.17'||m.architecture!=='canonical-single-runtime')throw new Error(`release mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
+          for(const g of ['captureField816','captureUnifiedEntry816','comparativeEvidence816','mediaEvidenceStableSection8151','quickEvidenceSingleEntry817','capturePreferencesCurrent817','captureEntryDefaultsPhoto817','explicitVideoRetained817','comparativeTwoSlot817','comparativeDirectTimeline817','comparativeStableControls817','comparativeNoFlash817','archiveMonthCollection817','archiveNoNewStorage817','interactionConvergence817'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
+          if(m.axis817?.capture?.quickSupplement!=='single-entry'||m.axis817?.capture?.defaultMode!=='photo')throw new Error('Capture interaction contract drift');
+          if(m.axis817?.evidence?.compareModel!=='two-named-slots'||m.axis817?.evidence?.defaultActiveSlot!=='right'||m.axis817?.evidence?.warmBeforeCommit!==true)throw new Error('comparison interaction contract drift');
+          if(m.axis817?.archive?.model!=='time-first-month-groups'||m.axis817?.archive?.newStorage!==false)throw new Error('archive contract drift');
+          if(!core.includes('__AXIS_817_INTERACTION__')||!core.includes('v817QuickEvidence'))throw new Error('8.17 compiled markers missing');
+          if(!html.includes('扫描取样')||!html.includes('资料与收纳'))throw new Error('8.17 current Settings copy missing');
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-817-chromium.log 2>&1 &
+          sleep 1
+      - name: Interaction Convergence
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-817-interaction-smoke.mjs
+      - name: Inherited 8.16 Capture and Comparative Evidence
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-816-capture-evidence-smoke.mjs
+      - name: Inherited stable Evidence swap
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8151-evidence-swap-smoke.mjs
+      - name: Inherited Media Evidence behavior
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-815-media-evidence-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-817-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.17 candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-817-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone Interaction Convergence
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-817-interaction-smoke.mjs
+      - name: iPhone inherited 8.16 Capture and Comparative Evidence
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-816-capture-evidence-smoke.mjs
+      - name: iPhone inherited stable Evidence swap
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8151-evidence-swap-smoke.mjs
+      - name: iPhone inherited Media Evidence behavior
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-815-media-evidence-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-817-webkit.log || true
