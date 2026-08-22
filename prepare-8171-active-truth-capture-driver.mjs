@@ -50,10 +50,10 @@ fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
 /* Give renderStorage and every archive selection path a stable app-scope owner.
- * Do not use the historical $/$$ helper pair for NodeList iteration here: later
- * canonical compilation may collapse helper callsites, and a single-element $
- * result cannot implement forEach/every. Native querySelectorAll + Array.from is
- * explicit, stable and keeps selection semantics independent of helper rewriting. */
+ * Earlier convergence may already normalize `$$` callsites to `$`, so accept both
+ * historical helper shapes and compile this NodeList operation to native DOM APIs.
+ * The final runtime therefore cannot turn a collection iteration into a single-node
+ * `.forEach`/`.every` failure. */
 {
  const FILE='app.js';let app=fs.readFileSync(FILE,'utf8');
  const renderStart=app.indexOf('async function renderStorage(){');
@@ -81,14 +81,12 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  const fresh="$('#storageBtn').onclick=async()=>{selectedSessions.clear();openSheet('storageSheet');await renderStorage()}";
  const openCount=app.split(open).length-1;if(openCount!==1)fail(`archive open anchor expected once, found ${openCount}`);app=app.replace(open,fresh);
 
- /* Replace every remaining archive NodeList helper call, including the bind-local
-  * Select All compatibility path, so single-row selection and batch selection share
-  * the same helper-independent mechanics. */
- const archiveHelper="$$('[data-delete-session]')";
- const archiveHelperCount=app.split(archiveHelper).length-1;
- if(archiveHelperCount<1)fail(`archive helper callsites missing, found ${archiveHelperCount}`);
- app=app.replaceAll(archiveHelper,"Array.from(D.querySelectorAll('[data-delete-session]'))");
- if(app.includes(archiveHelper))fail('archive helper-dependent NodeList call survived');
+ const nativeRows="Array.from(D.querySelectorAll('[data-delete-session]'))";
+ const helperDouble="$$('[data-delete-session]')",helperSingle="$('[data-delete-session]')";
+ const helperDoubleCount=app.split(helperDouble).length-1,helperSingleCount=app.split(helperSingle).length-1;
+ if(helperDoubleCount+helperSingleCount<1)fail(`archive helper callsites missing, found $=${helperSingleCount} $$=${helperDoubleCount}`);
+ app=app.replaceAll(helperDouble,nativeRows).replaceAll(helperSingle,nativeRows);
+ if(app.includes(helperDouble)||app.includes(helperSingle))fail('archive helper-dependent NodeList call survived');
  if(!app.includes('axis8171SyncArchiveSelection')||!app.includes('live8171SessionIds')||!app.includes("selectedSessions.has(s.id)?'selected':''"))fail('stable app-owned archive selection projection missing');
  try{new Function(app)}catch(e){fail(`archive selection syntax ${e.message}`)};fs.writeFileSync(FILE,app);
 }
