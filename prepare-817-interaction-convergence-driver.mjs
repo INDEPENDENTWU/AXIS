@@ -32,3 +32,31 @@ src+=String.raw`
 
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
+
+/* v876 historically owned a three-choice default Capture preference and rewrote
+   #scanSeconds to 单张 / 3秒 / 5秒 after the current HTML had rendered. 8.17 no
+   longer has a default Capture mode: normal Capture always enters Photo and the
+   only persisted preference here is Scan sampling length. Keep v876's unrelated
+   sound/watermark owners, but retire this obsolete UI/entry-mode ownership. */
+{
+ const FILE='v876-runtime.js';let s=fs.readFileSync(FILE,'utf8');
+ const cssOld='#scanSeconds.v876CaptureDefault{width:190px!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;height:38px!important;padding:3px!important;border-radius:12px!important;background:var(--s2)!important}';
+ const cssNew='#scanSeconds.v876CaptureDefault{width:132px!important;display:grid!important;grid-template-columns:repeat(2,1fr)!important;height:38px!important;padding:3px!important;border-radius:12px!important;background:var(--s2)!important}';
+ if(s.split(cssOld).length-1!==1)throw new Error('[AXIS 8.17 interaction driver] v876 capture CSS owner drift');
+ s=s.replace(cssOld,cssNew);
+ const fnOld=`function capturePref(){return meta().prefs.v876CaptureMode||'photo'}
+function syncCaptureSetting(){const host=$('#scanSeconds');if(!host)return;if(!host.classList.contains('v876CaptureDefault')){host.classList.add('v876CaptureDefault');host.innerHTML='<button data-v876-cap="photo">单张</button><button data-v876-cap="3">3秒</button><button data-v876-cap="5">5秒</button>'}$$('[data-v876-cap]',host).forEach(b=>b.classList.toggle('active',b.dataset.v876Cap===capturePref()))}
+function setCapturePref(v){const m=meta();m.prefs.v876CaptureMode=['photo','3','5'].includes(String(v))?String(v):'photo';saveMeta(m);syncCaptureSetting()}
+function applyCaptureMode(){const mode=capturePref(),sheet=$('#scanSheet');if(!sheet?.classList.contains('show'))return;const b=$(`#captureModes [data-mode="${mode}"]`);if(b&&!b.classList.contains('active'))b.click()}`;
+ const fnNew=`function capturePref(){const c=core(),v=String(c.prefs?.scanSeconds||3);return ['3','5'].includes(v)?v:'3'}
+function syncCaptureSetting(){const host=$('#scanSeconds');if(!host)return;host.classList.add('v876CaptureDefault');$$('[data-sec]',host).forEach(b=>b.classList.toggle('active',String(b.dataset.sec)===capturePref()))}
+function setCapturePref(v){return ['3','5'].includes(String(v))?String(v):capturePref()}
+function applyCaptureMode(){return}
+try{window.__AXIS_817_CAPTURE_PREFS__={version:'8.17',owner:'app.js',defaultCapture:'photo',scanSampling:[3,5],legacyDefaultMode:false}}catch{}`;
+ if(s.split(fnOld).length-1!==1)throw new Error('[AXIS 8.17 interaction driver] v876 capture functions drift');
+ s=s.replace(fnOld,fnNew);
+ if(s.includes('data-v876-cap="photo"')||s.includes('>单张</button><button data-v876-cap'))throw new Error('[AXIS 8.17 interaction driver] legacy v876 default Capture UI survived');
+ try{new Function(s)}catch(e){throw new Error(`[AXIS 8.17 interaction driver] v876 syntax ${e.message}`)}
+ fs.writeFileSync(FILE,s);
+ console.log('[AXIS 8.17 interaction driver] PASS · v876 default-mode UI/entry override retired · Scan keeps 3/5 sampling only');
+}
