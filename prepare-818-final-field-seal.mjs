@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const APP='app.js',AUDIO='v876-runtime.js',SMOKE817='scripts/axis-817-interaction-smoke.mjs';
+const APP='app.js',AUDIO='v876-runtime.js',CANON='postbuild-88-canonical.mjs',SMOKE817='scripts/axis-817-interaction-smoke.mjs';
 const fail=m=>{throw new Error(`[AXIS 8.18 final field seal] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
@@ -37,12 +37,22 @@ function replaceFunction(src,signature,replacement,label){
 
 /* v876 is compatibility-only. Its public setter delegates to the app-owned direct
    bridge rather than clicking the same control and recursively re-entering handlers. */
+const setter817="function setCapturePref(v){const x=['3','5'].includes(String(v))?String(v):capturePref(),b=$('#scanSeconds [data-sec=\"'+x+'\"]');if(b)b.click();return capturePref()}";
+const setter818="function setCapturePref(v){const x=['3','5'].includes(String(v))?String(v):capturePref(),bridge=window.__AXIS_818_SCAN_SECONDS__;if(bridge?.set)bridge.set(Number(x));else{const b=$('#scanSeconds [data-sec=\"'+x+'\"]');if(b)b.click()}return capturePref()}";
 {
  let s=read(AUDIO);
- const from="function setCapturePref(v){const x=['3','5'].includes(String(v))?String(v):capturePref(),b=$('#scanSeconds [data-sec=\"'+x+'\"]');if(b)b.click();return capturePref()}";
- const to="function setCapturePref(v){const x=['3','5'].includes(String(v))?String(v):capturePref(),bridge=window.__AXIS_818_SCAN_SECONDS__;if(bridge?.set)bridge.set(Number(x));else{const b=$('#scanSeconds [data-sec=\"'+x+'\"]');if(b)b.click()}return capturePref()}";
- s=once(s,from,to,'v876 scan compatibility delegation');
+ s=once(s,setter817,setter818,'v876 scan compatibility delegation');
  try{new Function(s)}catch(e){fail(`v876 syntax ${e.message}`)};write(AUDIO,s);
+}
+
+/* The 8.17 canonicalizer is inherited audit infrastructure. Teach it the stronger
+   8.18 compatibility shape rather than requiring the retired recursive click setter. */
+{
+ let p=read(CANON);
+ const from=`  const setterNow="${setter817.replaceAll('\\','\\\\').replaceAll('"','\\"')}";\n  if(src.split(setterNow).length-1!==1)fail('8.17 scan-sampling compatibility setter missing');\n  src=src.replace(setterNow,setterNow+"\\nwindow.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCapturePref};");`;
+ const to=`  const setter817=${JSON.stringify(setter817)},setter818=${JSON.stringify(setter818)};\n  const setter817Count=src.split(setter817).length-1,setter818Count=src.split(setter818).length-1;\n  if(setter817Count+setter818Count!==1)fail('8.17/8.18 scan-sampling compatibility setter missing or duplicated');\n  const setterNow=setter818Count===1?setter818:setter817;\n  src=src.replace(setterNow,setterNow+"\\nwindow.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCapturePref};");`;
+ p=once(p,from,to,'canonical scan compatibility acceptance');
+ write(CANON,p);
 }
 
 /* 8.17's historical runtime smoke still protects its real behavior inside 8.18,
@@ -55,4 +65,4 @@ function replaceFunction(src,signature,replacement,label){
  write(SMOKE817,s);
 }
 
-console.log('[AXIS 8.18 final field seal] PASS · immediate Record waits for camera · one app-owned 3/5 pointer owner · v876 recursion retired · inherited 8.17 smoke aligned to intentional 8.18 pseudo-setting retirement');
+console.log('[AXIS 8.18 final field seal] PASS · immediate Record waits for camera · one app-owned 3/5 pointer owner · v876 recursion retired · canonicalizer accepts direct 8.18 bridge · inherited 8.17 smoke aligned to intentional 8.18 pseudo-setting retirement');
