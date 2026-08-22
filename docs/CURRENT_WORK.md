@@ -67,6 +67,7 @@ The 8.18 product boundary is now one coherent release rather than an isolated fo
 - Native repository remains **`INDEPENDENTWU/AXIS-iOS`**.
 - Shared durable contracts remain **`axis.domain.v1`** and **`axis.data.v1`**.
 - 8.18 web work does not replace, weaken or merge Web/iOS runtime ownership; capability differences stay behind the published platform capability and product-matrix contracts.
+- **Chat history is not authoritative project memory.** Repository contracts, ADRs, `CURRENT_RELEASE.md`, this file and shared contract artifacts remain the durable engineering source of truth.
 
 ## Validation for this work
 
