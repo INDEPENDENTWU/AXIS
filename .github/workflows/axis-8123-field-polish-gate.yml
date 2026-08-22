@@ -24,7 +24,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
-          if(!['8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14','8.15','8.15.1'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(!['8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14','8.15','8.15.1','8.16','8.17'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           for(const gate of ['personalEquipmentLibrary8123','personalEquipmentPhotos8123','personalEquipmentVisualMemory8123','personalEquipmentSwipeRemove8123','personalEquipmentBatchRemove8123','personalEquipmentHistoryPreserved8123','groupPlanStableLauncher8123','groupPlanRenderOwnedSync8123','settingsRowAlignmentFieldPolish8123'])if(m.gates?.[gate]!==true)throw new Error(`field gate missing ${gate}`);
           for(const needle of ['__AXIS_8123_EQUIPMENT_MEMORY__','__AXIS_GROUP_PLAN_STABLE__','v8123FieldPolishStyle',"dataset.v8123Plan='1'",'__AXIS_8123_UI_HOTFIX__','__AXIS_8123_EQUIPMENT_GALLERY__','__AXIS_8123_EQUIPMENT_GALLERY_UI_GEOMETRY__','__AXIS_8123_PICKER_ROUTER__','__AXIS_8123_QUICK_PICKER_FIX__','__AXIS_8123_SETTINGS_SURFACE__','__AXIS_8123_DIVIDER_SEAL__'])if(!core.includes(needle))throw new Error(`compiled marker missing ${needle}`);
           NODE
@@ -39,29 +39,19 @@ jobs:
           python3 -m http.server 4173 >/tmp/axis-8123-field-chromium.log 2>&1 &
           sleep 1
       - name: Field polish regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8123-field-polish-smoke.mjs
       - name: Final UI hotfix regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8123-ui-hotfix-smoke.mjs
       - name: Equipment gallery, picker lifecycle and Settings surface regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8123-equipment-gallery-picker-smoke.mjs
       - name: Equipment gallery UI geometry regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8123-equipment-gallery-ui-geometry-smoke.mjs
       - name: Inherited Group Plan regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: chromium
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8121-hotfix-smoke.mjs
       - name: Repository contract
         run: node scripts/axis-repository-contract.mjs
@@ -88,29 +78,19 @@ jobs:
           python3 -m http.server 4173 >/tmp/axis-8123-field-webkit.log 2>&1 &
           sleep 1
       - name: iPhone field polish regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8123-field-polish-smoke.mjs
       - name: iPhone final UI hotfix regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8123-ui-hotfix-smoke.mjs
       - name: iPhone equipment gallery, picker lifecycle and Settings surface regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8123-equipment-gallery-picker-smoke.mjs
       - name: iPhone equipment gallery UI geometry regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8123-equipment-gallery-ui-geometry-smoke.mjs
       - name: iPhone inherited Group Plan regression
-        env:
-          AXIS_URL: http://127.0.0.1:4173
-          AXIS_ENGINE: webkit
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8121-hotfix-smoke.mjs
       - name: Print server log on failure
         if: failure()
