@@ -2,9 +2,9 @@
 
 ## AXIS 8.17 — Interaction Convergence
 
-8.17 is the current Web release candidate. It starts from the Production-sealed 8.16 Capture Field + Comparative Evidence baseline and removes interaction semantics that still belonged to older AXIS versions.
+**AXIS 8.17 is the current Production-sealed Web release.**
 
-Historical version-named modules remain compiler inputs. Final generated truth remains `axis-build.json`.
+It starts from the Production-sealed 8.16 Capture Field + Comparative Evidence baseline and removes interaction semantics that still belonged to older AXIS versions. Historical version-named modules remain compiler inputs; final generated truth remains `axis-build.json`.
 
 ## Product position
 
@@ -22,11 +22,11 @@ It exposes one supplemental action:
 
 **补拍照片 / 视频**
 
-That action delegates to the existing canonical `v816-capture-field`, opening at Photo. Photo, Scan and Video are selected inside the Capture Field itself. No second camera or recorder lifecycle is introduced.
+That action delegates to the existing canonical Capture Field, opening at Photo. Photo, Scan and Video are selected inside the Capture Field itself. No second camera or recorder lifecycle is introduced.
 
-## Current Capture preference contract
+## Capture preference contract
 
-The Settings surface must describe capabilities that actually exist in 8.17:
+The Settings surface reflects capabilities that actually exist in 8.17:
 
 - `扫描取样`: 3秒 / 5秒;
 - `拍摄视频`: 最长60秒 · 自动保存;
@@ -55,7 +55,7 @@ Ownership remains unchanged:
 - **起点** — the first side of the comparison;
 - **对照** — the point currently being compared against it.
 
-When the user enters `对照`, the `对照` slot is active by default. Tapping a real photo-bearing Encounter on the timeline directly replaces that active slot. The user taps `起点` only when intentionally changing the starting point.
+When the user enters Compare, **对照** is active by default. Tapping a real photo-bearing Encounter on the timeline directly replaces that active slot. The user taps **起点** only when intentionally changing the starting point.
 
 The selected pair must always consist of two distinct real Encounters. Existing factual shortcuts remain:
 
@@ -79,11 +79,11 @@ Growing sealed history is organized first by time rather than by arbitrary folde
 - existing selection and deletion semantics remain unchanged;
 - archive grouping creates no duplicate records and no new persistence structure.
 
-This is an intentionally small foundation for 8.18 object-first organization. AXIS is not becoming a file manager.
+This is the storage foundation for 8.18 object-first organization. AXIS is not becoming a file manager.
 
-## Inherited 8.16 contract
+## Inherited guarantees
 
-8.17 preserves all 8.16 Capture and Evidence guarantees:
+8.17 preserves the 8.16 Capture and Evidence guarantees:
 
 - one canonical Capture Field;
 - up to 12 real photos per Encounter;
@@ -99,7 +99,7 @@ It also preserves the complete 8.15.1 no-flash Evidence swap, single current pho
 
 ## Production topology
 
-AXIS 8.17 must ship as one canonical browser runtime:
+AXIS 8.17 ships as one canonical browser runtime:
 
 - one `axis-core.js?v=<content hash>` request;
 - one `axis-style.css?v=<content hash>` request;
@@ -110,7 +110,7 @@ AXIS 8.17 must ship as one canonical browser runtime:
 
 `node build-release.mjs` is the sole release build entry point.
 
-The final manifest must include the inherited 8.16 gates plus:
+The manifest includes the inherited 8.16 gates plus:
 
 - `quickEvidenceSingleEntry817`;
 - `capturePreferencesCurrent817`;
@@ -124,37 +124,34 @@ The final manifest must include the inherited 8.16 gates plus:
 - `archiveNoNewStorage817`;
 - `interactionConvergence817`.
 
-`axis817` must identify the single Quick supplement, Photo default, current Scan/Video semantics, two-slot Evidence model, time-first archive and absence of new training/persistence/network/AI/recorder owners.
+## Production seal record
 
-## Browser release gate
+The first 8.17 EdgeOne seal attempt on merge `b62bc63d7bb97245940874dbf9b06b280f316f27` successfully built, matched Vercel, deployed to EdgeOne and verified live manifest/API parity, but the inherited 8.15 Media Evidence smoke timed out after endpoint Compare rendering.
 
-A candidate is incomplete until Chromium and iPhone WebKit both prove:
+That failure was traced to a test semantic mismatch: 8.17 intentionally binds timeline taps inside Compare to the active named slot, while the inherited 8.15 smoke still expected the old single-Encounter inspection behavior without first leaving Compare.
 
-1. canonical `8.17 / 8.17` boot;
-2. Quick Record exposes exactly one `补拍照片 / 视频` action;
-3. that action opens the canonical Capture Field at Photo;
-4. old Quick 3s/5s video buttons cannot return;
-5. Settings exposes current Scan and Video semantics and no visible obsolete keep-video switch;
-6. an explicitly recorded video persists through existing `clipRef` even when legacy `keepClip:false` is present;
-7. Compare opens with `对照` active;
-8. a timeline tap directly changes only the active slot;
-9. changing `起点` changes only the start slot;
-10. the Evidence stage remains mounted, visible and opacity 1 throughout a local pair change;
-11. month groups compact growing history while existing delete selection still works;
-12. mobile layout has no horizontal overflow;
-13. inherited 8.16 / 8.15.1 / 8.15 / 8.14 / 8.13.1 and repository/runtime gates remain green.
+PR #71 changed only that inherited test boundary. It kept the endpoint comparison assertion, explicitly exited Compare, then continued the inherited 8.15 single-Encounter overlay/photo/video checks. No runtime/product source, timeout budget or product assertion was relaxed.
 
-## Deployment contract
+The corrected release path was then revalidated on exact `main` revision `e6d31c2f08f97e078d85761d25a8fb385b1d6c3f`:
 
-### Vercel
+- Vercel Production: **success** for the exact revision;
+- deterministic `8.17 / 8.17` canonical build: **success**;
+- Vercel/local canonical artifact parity: **success**;
+- EdgeOne exact prebuilt deployment: **success**;
+- EdgeOne live manifest/source parity: **success**;
+- EdgeOne live API parity: **success**;
+- real EdgeOne Chromium full 8.17 release flow: **success**;
+- real EdgeOne iPhone WebKit full 8.17 release flow: **success**;
+- GitHub status `EdgeOne Production`: **success**.
 
-Fixed endpoint: `https://axis-five-puce.vercel.app`.
+Production workflow record: `32573605355`.
 
-8.17 is not sealed until Vercel Production is `READY` for the exact merged `main` SHA and anonymously serves `/axis-build.json` with exact `sourceCommit`, `8.17 / 8.17`, `canonical-single-runtime`, inherited gates and all 8.17 gates.
+This document is the final continuity seal. A docs-only descendant of the validated runtime may advance `main`; it contains no runtime/product change and must itself pass the same exact-SHA Vercel/EdgeOne mirror workflow before it becomes the repository tip.
 
-### EdgeOne Makers
+## Production endpoints
 
-`axisfitness-mirror` remains a mirror of the exact verified Vercel artifact. Production must require exact main/Vercel parity, deploy the verified prebuilt artifact, verify live API/manifest parity, and run the full 8.17 Chromium + iPhone WebKit release flow before publishing `EdgeOne Production: success`.
+- Vercel: `https://axis-five-puce.vercel.app`
+- EdgeOne: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
 
 ## Next stage
 
