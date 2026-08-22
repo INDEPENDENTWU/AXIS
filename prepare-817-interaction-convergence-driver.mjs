@@ -99,3 +99,15 @@ if(captureMigrationRewrites!==1)fail('8.17 scan-sampling convergence did not run
  s=s.replace(from,to);fs.writeFileSync(FILE,s);
  console.log('[AXIS 8.17 interaction driver] PASS · storage smoke follows inline Settings gate contract');
 }
+
+/* 8.16 remains an inherited module contract inside public 8.17. Its browser smoke
+   should assert the current public shell is 8.17 while keeping both 8.16 module
+   markers exact; this changes only release identity, not inherited behavior. */
+{
+ const FILE='scripts/axis-816-capture-evidence-smoke.mjs';let s=fs.readFileSync(FILE,'utf8');
+ const from="assert.equal(boot.release,'8.16');";
+ const to="assert.equal(boot.release,'8.17');";
+ const count=s.split(from).length-1;if(count!==1)throw new Error(`[AXIS 8.17 interaction driver] inherited 8.16 public identity expected once, found ${count}`);
+ s=s.replace(from,to);fs.writeFileSync(FILE,s);
+ console.log('[AXIS 8.17 interaction driver] PASS · inherited 8.16 smoke now validates public 8.17 + module 8.16');
+}
