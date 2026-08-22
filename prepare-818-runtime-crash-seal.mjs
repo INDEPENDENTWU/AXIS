@@ -6,14 +6,17 @@ const write=(f,s)=>fs.writeFileSync(f,s);
 const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}`)}};
 
 /* The historical gallery geometry installer is generated into app.js. In the
-   canonical isolated app module it must never rely on an outer D alias. */
+   canonical isolated app module it must not rely on any outer selector alias. */
 {
   const FILE='app.js';let s=read(FILE);
   const sig='function axis8123InstallEquipmentGalleryUIGeometry(){';
   const n=s.split(sig).length-1;if(n!==1)fail(`gallery geometry installer expected once, found ${n}`);
-  const sealed=sig+'const D=document;';
-  if(!s.includes(sealed))s=s.replace(sig,sealed);
-  if(!s.includes(sealed))fail('gallery geometry document binding missing');
+  const scope="const D=document,$=q=>D.querySelector(q),$$=q=>Array.from(D.querySelectorAll(q));";
+  const old=sig+'const D=document;';
+  const sealed=sig+scope;
+  if(s.includes(old))s=s.replace(old,sealed);
+  else if(!s.includes(sealed))s=s.replace(sig,sealed);
+  if(!s.includes(sealed))fail('gallery geometry local selector scope missing');
   syntax(s,FILE);write(FILE,s);
 }
 
@@ -31,4 +34,4 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   syntax(s,FILE);write(FILE,s);
 }
 
-console.log('[AXIS 8.18 runtime crash seal] PASS · gallery document scope bound · v874 metric namespace initialized without new owner');
+console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · v874 metric namespace initialized without new owner');
