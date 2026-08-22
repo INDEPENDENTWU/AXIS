@@ -19,7 +19,7 @@ const compositor818=contract.publicVersion==='8.18';
 if(compositor818){
  for(const needle of ['captureStream(30)','videoBitsPerSecond:6000000','axis818StartRecordPump',"compositor:'axis818-canvas-30fps'"])if(!app.includes(needle)||!runtime.includes(needle))fail(`8.18 bounded compositor missing ${needle}`);
 }else if(!app.includes("videoBitsPerSecond:2500000")||!app.includes('rec.start(1000)'))fail('bounded video recorder configuration missing');
-const hardStop=/capture816StopTimer\s*=\s*setTimeout\(function\(\)\{toast\('已录满 60 秒'\);capture816StopVideo\(false\)\},CAPTURE816_VIDEO_MAX_MS\)/;
+const hardStop=/capture816StopTimer\s*=\s*setTimeout\((?:function\(\)|\(\)=>)\{toast\('已录满 60 秒'\);capture816StopVideo\(false\)\},CAPTURE816_VIDEO_MAX_MS\)/;
 if(!hardStop.test(app)||!hardStop.test(runtime))fail('hard 60 second stop missing');
 if(!app.includes("state.frames.splice(i,1)[0];state.frames.unshift(f)"))fail('cover reorder contract missing');
 const canonicalVideoPointer=app.includes('e.clipRef=`V-${e.id}`')||app.includes("e.clipRef='V-'+e.id");
