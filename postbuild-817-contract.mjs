@@ -29,7 +29,7 @@ for(const src of [app,runtime])for(const needle of ['v817ArchiveGroup','<details
 if(!css.includes('.v817ArchiveGroup'))fail('archive static style missing');
 
 for(const src of [media,runtime]){
- for(const needle of ['__AXIS_817_INTERACTION__',"compareModel:'two-named-slots'","defaultActiveSlot:'right'",'timelineDirectReplace:true','stableControls:true','warmBeforeCommit:true','v817CompareBar','v817CompareSlots','>起点<','>对照<','data-v817-pair'])if(!src.includes(needle))fail(`two-slot comparison missing ${needle}`);
+ for(const needle of ['__AXIS_817_INTERACTION__',"compareModel:'two-named-slots'","defaultActiveSlot:'right'",'timelineDirectReplace:true','stableControls:true','warmBeforeCommit:true','v817CompareBar','v817CompareSlots','>起点<','>对照<','dataset.v817Pair'])if(!src.includes(needle))fail(`two-slot comparison missing ${needle}`);
  if(src.includes('.v815Evidence[data-loading="1"] .v815Stage{opacity:.72}'))fail('Evidence opacity flash regression returned');
 }
 for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','fetch(','XMLHttpRequest'])if(media.includes(forbidden))fail(`Media Evidence acquired forbidden writer/network owner ${forbidden}`);
