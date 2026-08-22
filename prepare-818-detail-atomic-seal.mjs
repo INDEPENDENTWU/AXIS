@@ -12,9 +12,11 @@ let s=fs.readFileSync(FILE,'utf8');
    before the canonical staged body is ready. */
 const legacyA="$$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
 const legacyB="$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
-const a=s.split(legacyA).length-1,b=s.split(legacyB).length-1;
-if(a+b!==1)fail(`legacy event detail DOM0 router expected once, found ${a}/${b}`);
-s=s.replace(a?legacyA:legacyB,'');
+const doubleCount=s.split(legacyA).length-1;
+const withoutDouble=s.split(legacyA).join('');
+const singleCount=withoutDouble.split(legacyB).length-1;
+if(doubleCount+singleCount!==1)fail(`legacy event detail DOM0 router expected one compiler shape, found ${doubleCount}/${singleCount}`);
+s=doubleCount?s.replace(legacyA,''):s.replace(legacyB,'');
 if(s.includes("onclick=()=>openEvent(b.dataset.event)"))fail('legacy event detail DOM0 router survived');
 if(!s.includes("owner:'atomic-handoff'"))fail('canonical atomic detail commit owner missing');
 if(!s.includes('async function openEvent(id){'))fail('canonical openEvent missing');
@@ -37,4 +39,4 @@ try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'sin
 s=s.slice(0,close)+bridge+s.slice(close);
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.18 detail atomic seal] PASS · one delegated event router · staged openEvent retained · legacy DOM0 route retired');
+console.log(`[AXIS 8.18 detail atomic seal] PASS · one delegated event router · staged openEvent retained · legacy DOM0 route retired · compiler shape ${doubleCount?'collection':'single'}`);
