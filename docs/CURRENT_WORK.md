@@ -4,13 +4,12 @@
 
 ## Production baseline at start of this work
 
-- Public release candidate: **AXIS 8.16 — Capture Field + Comparative Evidence**.
-- PR #68 merged to `main` at exact SHA `f2de9a27336fff3ab0ac3e578ce8cef5a2ccb0fb`.
-- Vercel Production is READY for that exact SHA and `https://axis-five-puce.vercel.app/axis-build.json` reports `8.16 / 8.16`, `canonical-single-runtime`, exact `sourceCommit`, and all 8.16 gates.
-- EdgeOne deployed the exact same canonical artifact as deployment `dpm1zd8vccv8` at `https://axisfitness-mirror-9x91gveo.edgeone.cool`; authenticated live verification and Vercel/API parity passed.
-- Real EdgeOne Chromium passed the inherited release flows plus the full 8.16 Capture + Comparative Evidence flow.
-- EdgeOne Production is **not sealed yet** because real iPhone WebKit emitted an access-control page error when the optional 8.10.3 freshness self-check requested `/axis-build.json?fresh=...`.
-- The same EdgeOne `/axis-build.json` without the provider-sensitive query is anonymously available, exact-SHA verified and matches Vercel Production.
+- **AXIS 8.16 — Capture Field + Comparative Evidence** is Production-sealed.
+- Exact merged `main` SHA: `0dbb25cd432e3cc7de0258affcdc892d8d55ce9b`.
+- Vercel Production `https://axis-five-puce.vercel.app` is READY for that exact SHA and serves `8.16 / 8.16`, `canonical-single-runtime`.
+- EdgeOne Production `https://axisfitness-mirror-9x91gveo.edgeone.cool` serves the exact Vercel-parity artifact.
+- Real EdgeOne Chromium and iPhone WebKit full inherited + 8.16 release flows both passed.
+- Provider-neutral stale-shell freshness is sealed at `/axis-build.json` + `cache:'no-store'`.
 
 ## Product direction
 
@@ -18,41 +17,77 @@ AXIS remains a **Personal Evolution Engine**.
 
 `Capture / 留下` → truthful Encounter → time accumulation → `Reveal / 发现` → Evolution → later truthful Replay.
 
-This hotfix changes no Capture, Encounter, Evolution, media persistence, scoring or Replay semantics. It only seals cross-provider freshness behavior before 8.16 can be called Production-complete.
+8.17 does not add another feature category. It removes obsolete choices and makes existing Capture, Evidence comparison and growing history behave as one coherent product.
 
-## Active change — AXIS 8.16 EdgeOne WebKit Production seal
+## Active change — AXIS 8.17 Interaction Convergence
 
-- Branch: `hotfix/816-edgeone-webkit-freshness`.
-- Base: exact merged 8.16 main SHA `f2de9a27336fff3ab0ac3e578ce8cef5a2ccb0fb`.
-- Public/base product version remains **8.16**; this is a release-platform compatibility seal, not a new product capability version.
-- Runtime ownership remains unchanged.
+- Branch: `web-817-interaction-convergence`.
+- Base: exact sealed 8.16 SHA `0dbb25cd432e3cc7de0258affcdc892d8d55ce9b`.
+- Candidate public/base version: **8.17**.
+- Camera/recorder/media ownership remains `app.js` + existing `axis_v42_media`.
+- Media Evidence remains read-only owner `v815-media-evidence`.
 
-The stale-shell freshness check is event-driven only (`pageshow` / foreground visibility), has no polling, and is optional to the product. It previously combined `cache:'no-store'` with a `?fresh=<timestamp>` asset query. On EdgeOne Production, Chromium accepted that route but WebKit reported a browser-level access-control error even though the async check itself already had fail-open `catch{}` handling.
+### Quick Record
 
-The production seal therefore keeps the same event-driven version comparison and one-time reload behavior, but reads the canonical same-origin manifest from `/axis-build.json` with `cache:'no-store'`. The timestamp remains available for the reload URL only. No custom request header, polling, persistence owner or new network owner is introduced.
+The historical three-button `补拍照片 / 3秒视频 / 5秒视频` supplement is retired. Quick Record exposes one calm action: **补拍照片 / 视频**. It opens the same canonical 8.16 Capture Field at Photo; Scan and Video are chosen inside that field.
 
-`postbuild-8103-contract.mjs` now fails closed unless the canonical runtime contains the provider-neutral same-origin manifest fetch and contains no `/axis-build.json?fresh=` request.
+### Capture preferences
+
+Settings reflects the actual current model:
+
+- `扫描取样`: 3秒 / 5秒;
+- `拍摄视频`: 最长60秒 · 自动保存;
+- normal `拍摄记录` opens at Photo;
+- an explicitly recorded video is retained; the historical visible `保留现场视频` choice is retired.
+
+No new preference store, media database or event schema is introduced.
+
+### Comparative Evidence
+
+Comparison becomes a named two-slot interaction:
+
+- **起点**;
+- **对照**.
+
+Entering comparison activates `对照` by default. A normal timeline tap immediately replaces that active point. The user only taps `起点` when they specifically want to move the start point. `首尾 / 最近 / 相邻` remain factual shortcuts.
+
+The controls remain mounted outside the media stage. Existing images remain visible while the next real local assets are warmed; the stage commits only after the pair is ready. The 8.15.1 zero-opacity-pulse / stable-section contract remains release-blocking.
+
+### Time-first archive
+
+`数据与空间` becomes **资料与收纳**. The historical flat deletion list becomes month groups:
+
+- newest month open;
+- older months collapsed;
+- existing selection/deletion semantics remain unchanged;
+- no folders, tags, duplicated records or migration;
+- time is the first organizing axis.
+
+This is the storage foundation for a later object-first Evolution Library rather than a generic file manager.
 
 ## Validation for this work
 
-The hotfix must prove:
+8.17 is incomplete until all of the following are green:
 
-1. the deterministic 86-step release build remains `8.16 / 8.16`, `canonical-single-runtime`;
-2. `releaseFreshnessEventDriven` remains true and the new provider-neutral freshness contract is present;
-3. `/axis-build.json?fresh=` is absent from the compiled canonical runtime;
-4. `/axis-build.json` with `cache:'no-store'` remains the sole freshness manifest request;
-5. all 8.16 Capture + Comparative Evidence gates remain unchanged and green;
-6. inherited 8.15.1, 8.15, 8.14, 8.13.1 and training/runtime contracts remain green;
-7. after merge, Vercel Production serves the exact new main SHA;
-8. EdgeOne deploys that exact Vercel-parity artifact;
-9. real EdgeOne Chromium passes the full inherited + 8.16 flow;
-10. real EdgeOne iPhone WebKit passes the same flow with no freshness access-control page error;
-11. GitHub combined status reports `EdgeOne Production: success` for the exact same main SHA.
+1. deterministic release build is `8.17 / 8.17`, `canonical-single-runtime`;
+2. Quick Record has exactly one supplemental evidence entry and no legacy 3s/5s video buttons;
+3. that entry opens the canonical Capture Field at Photo;
+4. current Capture preferences replace obsolete visible controls;
+5. explicit video persists through the existing `clipRef` / `axis_v42_media` owner even when a legacy `keepClip:false` value exists;
+6. two-slot comparison defaults to `对照`, timeline selection directly replaces the active slot, and slots never collapse to the same Encounter;
+7. comparison stage identity remains mounted and opacity remains 1 while media changes;
+8. month archive keeps older history collapsed and preserves deletion semantics;
+9. Chromium and iPhone WebKit pass the dedicated 8.17 smoke;
+10. inherited 8.16, 8.15.1, 8.15, 8.14, 8.13.1 and repository/runtime contracts remain green;
+11. after merge, Vercel and EdgeOne both serve the exact merged SHA;
+12. real EdgeOne Chromium + iPhone WebKit 8.17 flows pass before Production is called sealed.
 
-## Deployment after merge
+## Next planned stage — 8.18
 
-Do not call 8.16 production-sealed until Vercel and EdgeOne both serve the exact merged hotfix SHA and both real EdgeOne Chromium and iPhone WebKit release flows succeed. Exact SHA remains authoritative over deployment timing or labels.
+**AXIS 8.18 — Evolution Library / Personal Object Shelf**.
 
-## Next planned stage
+The next scaling problem is not more Settings or more sport tabs. AXIS needs an object-first personal world that stays usable after hundreds or thousands of Encounters. Repeated reality should settle into stable Evolution Objects that can be browsed by recency, duration of relationship and real evidence density across training, routes, rehabilitation, climbing, dance, sport skills and music practice.
 
-Only after this 8.16 Production seal is green should the next product iteration resume. Replay remains deferred until real Encounter-bound evidence is trustworthy enough to support it without fabricated continuity.
+Replay remains downstream. The current preferred sequence is **8.17 Interaction Convergence → 8.18 Evolution Library → 8.19 truthful Evolution Replay**.
+
+See `AXIS_817_818_DIRECTION.md` for the concrete product expansion contract.

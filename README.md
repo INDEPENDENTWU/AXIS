@@ -2,21 +2,24 @@
 
 Local-first training software built around what actually happened.
 
-**Current release: 8.16** · [Open AXIS](https://axis-five-puce.vercel.app) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md) · [Current release](docs/CURRENT_RELEASE.md) · [Documentation](docs/README.md)
+**Current release: 8.17** · [Open AXIS](https://axis-five-puce.vercel.app) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md) · [Current release](docs/CURRENT_RELEASE.md) · [Documentation](docs/README.md)
 
 AXIS records a workout without requiring the workout to behave like a project plan. Training state, sets, equipment memory, media and history remain useful locally; network and AI capabilities are optional additions rather than prerequisites.
 
 The product grew through many releases, but Production is deliberately flattened into one canonical browser runtime. Historical `v8xx` modules remain source and compatibility inputs; they are not separate product layers downloaded at runtime.
 
-## What is in 8.16
+## What is in 8.17
 
 - Strength and cardio recording with set-level weight/repetition state, direct editing and previous-value reuse.
 - Active training state with pause/resume, countdowns, reminders and concise completion behavior.
 - Equipment and exercise memory, custom equipment, search and local visual recognition.
-- One canonical Capture Field for deliberate evidence: repeated photo capture/import up to 12 photos per Encounter, real-photo cover reorder, short scan sampling and one explicit silent video capped at 60 seconds.
-- Existing local media ownership remains authoritative through `axis_v42_media`, `frameRefs[]` and `clipRef`; 8.16 adds no second recorder, database or upload requirement.
+- One canonical Capture Field for deliberate evidence: repeated photo capture/import up to 12 photos per Encounter, real-photo cover reorder, 3/5-second Scan sampling and one explicit silent video capped at 60 seconds.
+- Quick Record exposes one supplemental `补拍照片 / 视频` action and delegates to that same Capture Field instead of presenting legacy duration choices before capture.
+- Explicitly recorded video is retained through the existing `clipRef` / `axis_v42_media` owner; 8.17 adds no second recorder, database, upload path or media schema.
 - Evolution Objects and in-place Media Evidence built from sealed real Encounters rather than synthetic progress scores.
-- Comparative Evidence for any two real photo-bearing Encounters, with factual endpoint/recent/adjacent presets and no autoplay, score or AI verdict.
+- Comparative Evidence uses named `起点 / 对照` slots: `对照` is active by default, a timeline tap directly replaces the active point, and factual `首尾 / 最近 / 相邻` shortcuts remain available.
+- Evidence controls stay mounted while new local media is warmed, preserving the 8.15.1 stable no-flash swap contract.
+- `资料与收纳` organizes growing sealed history by month: newest month open, older months collapsed, with existing selection/deletion semantics and no new persistence structure.
 - History, reports and State Field signals derived from recorded behavior rather than a synthetic fitness score.
 - Optional owner-managed AI services for recognition and insight. Provider secrets stay server-side and model failure never blocks recording.
 - Optional cloud/sync foundation based on local ownership, revisioned entities, idempotent requests and deterministic conflict handling.
@@ -118,9 +121,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md), [Engineering playbook](docs/ENGINEERING_
 
 ## Next
 
-Replay remains deliberately deferred until 8.16 Capture density and Comparative Evidence semantics are production-sealed. Any later private Replay must be downstream of real Encounter-bound evidence, preserve factual identity across time and refuse fabricated continuity when evidence is insufficient.
+8.18 is planned as **Evolution Library / Personal Object Shelf**: repeated real Encounters should settle into stable personal Evolution Objects that remain browsable as history grows, without turning AXIS into a folder manager or category-tab product. Truthful Evolution Replay stays downstream of reliable object identity and real Encounter-bound evidence.
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/AXIS_EVOLUTION_VISION.md](docs/AXIS_EVOLUTION_VISION.md).
+See [docs/ROADMAP.md](docs/ROADMAP.md), [docs/AXIS_817_818_DIRECTION.md](docs/AXIS_817_818_DIRECTION.md) and [docs/AXIS_EVOLUTION_VISION.md](docs/AXIS_EVOLUTION_VISION.md).
 
 ## Project status
 
