@@ -24,7 +24,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
-          if(m.version!=='8.17'||m.baseVersion!=='8.17'||m.architecture!=='canonical-single-runtime')throw new Error(`release mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
+          if(m.version!=='8.18'||m.baseVersion!=='8.18'||m.architecture!=='canonical-single-runtime')throw new Error(`release mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
           for(const g of ['interactionConvergence817','captureCleanSourceSidecar8171','mediaSourceBridge8171','watermarkSourceFirst8171','evidenceSourceFirst8171','mediaCanonicalFallback8171','mediaEventPointersUnchanged8171','mediaNoNewPersistence8171'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
           if(m.axis8171?.sourceMedia?.sourcePolicy!=='clean-sidecar-v1'||m.axis8171?.sourceMedia?.sourceStore!=='axis_v42_media'||m.axis8171?.sourceMedia?.canonicalPointersUnchanged!==true)throw new Error('8.17.1 source-media manifest drift');
           for(const x of ['__AXIS_MEDIA_SOURCE__','__AXIS_8171_SOURCE_MEDIA__','__AXIS_8171_WATERMARK_SOURCE__','__AXIS_8171_EVIDENCE_SOURCE__'])if(!core.includes(x))throw new Error(`compiled marker missing ${x}`);
