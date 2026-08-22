@@ -12,6 +12,44 @@ function replaceFunction(src,signature,replacement,label){
  for(let i=brace;i<src.length;i++){const ch=src[i],next=src[i+1]||'';if(line){if(ch==='\n')line=false;continue}if(block){if(ch==='*'&&next==='/'){block=false;i++}continue}if(quote){if(esc){esc=false;continue}if(ch==='\\'){esc=true;continue}if(ch===quote)quote='';continue}if(ch==='/'&&next==='/'){line=true;i++;continue}if(ch==='/'&&next==='*'){block=true;i++;continue}if(ch==="'"||ch==='"'||ch==='`'){quote=ch;continue}if(ch==='{')depth++;else if(ch==='}'){depth--;if(depth===0){end=i+1;break}}}
  if(end<0)fail(`${label} closing brace missing`);return src.slice(0,start)+replacement+src.slice(end)
 }
+function matchingParen(src,open){
+ let depth=0,quote='',esc=false,line=false,block=false;
+ for(let i=open;i<src.length;i++){
+  const ch=src[i],next=src[i+1]||'';
+  if(line){if(ch==='\n')line=false;continue}
+  if(block){if(ch==='*'&&next==='/'){block=false;i++}continue}
+  if(quote){if(esc){esc=false;continue}if(ch==='\\'){esc=true;continue}if(ch===quote)quote='';continue}
+  if(ch==='/'&&next==='/'){line=true;i++;continue}
+  if(ch==='/'&&next==='*'){block=true;i++;continue}
+  if(ch==="'"||ch==='"'||ch==='`'){quote=ch;continue}
+  if(ch==='(')depth++;
+  else if(ch===')'){depth--;if(depth===0)return i}
+ }
+ return -1;
+}
+function dollarForEachPositions(src){
+ const hits=[];let quote='',esc=false,line=false,block=false;
+ for(let i=0;i<src.length-1;i++){
+  const ch=src[i],next=src[i+1]||'';
+  if(line){if(ch==='\n')line=false;continue}
+  if(block){if(ch==='*'&&next==='/'){block=false;i++}continue}
+  if(quote){if(esc){esc=false;continue}if(ch==='\\'){esc=true;continue}if(ch===quote)quote='';continue}
+  if(ch==='/'&&next==='/'){line=true;i++;continue}
+  if(ch==='/'&&next==='*'){block=true;i++;continue}
+  if(ch==="'"||ch==='"'||ch==='`'){quote=ch;continue}
+  if(ch!=='$'||next!=='('||src[i-1]==='$')continue;
+  const prev=src[i-1]||'';if(/[\w$]/.test(prev))continue;
+  const close=matchingParen(src,i+1);if(close<0)continue;
+  let j=close+1;while(/\s/.test(src[j]||''))j++;
+  if(src.startsWith('.forEach',j)){let k=j+'.forEach'.length;while(/\s/.test(src[k]||''))k++;if(src[k]==='(')hits.push(i)}
+ }
+ return hits;
+}
+function repairDollarForEach(src){
+ const hits=dollarForEachPositions(src);
+ let out=src;for(let i=hits.length-1;i>=0;i--)out=out.slice(0,hits[i])+'$'+out.slice(hits[i]);
+ return{src:out,count:hits.length};
+}
 
 /* Final camera readiness: opening Capture is asynchronous, but an immediate Record
    tap must wait for that exact camera acquisition instead of returning false. */
@@ -34,12 +72,11 @@ function replaceFunction(src,signature,replacement,label){
  if(s.includes("window.__AXIS_CAPTURE_PREF__?.set?.(String(sec))"))fail('recursive compatibility scan setter survived');
  if(!s.includes('__AXIS_818_SCAN_SECONDS__'))fail('canonical scan bridge missing');
 
- /* `$` is AXIS querySelector and `$$` is querySelectorAll. Any final `$().forEach`
-    is therefore structurally invalid. Repair historical compiler residues before
-    canonical bundling and fail closed if this invalid selector shape survives. */
- const badCollection=/\$\(([^()\n;]+)\)\.forEach\(/g;
- s=s.replace(badCollection,(m,args)=>{selectorForEachRepairs++;return `$$(${args}).forEach(`});
- if(/\$\([^()\n;]+\)\.forEach\(/.test(s))fail('single-element selector still used as collection');
+ /* `$` is AXIS querySelector and `$$` is querySelectorAll. A final `$().forEach`
+    is structurally invalid. Use a balanced-parenthesis, string/comment-aware source
+    scan so nested selector arguments are repaired without broad regex rewriting. */
+ const repaired=repairDollarForEach(s);s=repaired.src;selectorForEachRepairs+=repaired.count;
+ const survivors=dollarForEachPositions(s);if(survivors.length)fail(`single-element selector still used as collection at ${survivors.join(',')}`);
  try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};write(APP,s);
 }
 
