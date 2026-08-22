@@ -13,4 +13,5 @@ src=src.replace(marker,replacement);
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 await import('./prepare-818-foundation-hardening.mjs');
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · final truth hardening applied');
+await import('./prepare-818-media-store-seal.mjs');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · final truth hardening + WebKit-safe media seal applied');
