@@ -33,37 +33,6 @@ src+=String.raw`
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
-/* The canonical app remains the only storage-sheet/data owner. Expose one narrow
-   bridge, then let the final Settings convergence bind the current real row after
-   every remount. This avoids stale-node onclick ownership without adding storage. */
-{
- const FILE='app.js';let s=fs.readFileSync(FILE,'utf8');
- const from="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()};";
- const to="window.__AXIS_OPEN_STORAGE__=async()=>{openSheet('storageSheet');await renderStorage();return $('#storageSheet')?.classList.contains('show')===true};D.addEventListener('click',e=>{if(!e.target.closest('#storageBtn'))return;void window.__AXIS_OPEN_STORAGE__?.()},{capture:true});";
- const count=s.split(from).length-1;if(count!==1)throw new Error(`[AXIS 8.17 interaction driver] storage route signature expected once, found ${count}`);
- s=s.replace(from,to);
- try{new Function(s)}catch(e){throw new Error(`[AXIS 8.17 interaction driver] app storage route syntax ${e.message}`)}
- fs.writeFileSync(FILE,s);
- console.log('[AXIS 8.17 interaction driver] PASS · canonical app exposes remount-safe 资料与收纳 bridge');
-}
-{
- const FILE='v87-runtime.js';let s=fs.readFileSync(FILE,'utf8');
- const end=s.lastIndexOf('})();');if(end<0)throw new Error('[AXIS 8.17 interaction driver] Settings runtime IIFE end missing');
- const block=String.raw`
-/* AXIS 8.17 — bind the current visible storage row after Settings convergence. */
-function axis817BindStorageEntry(){const b=$('#storageBtn');if(!b)return false;b.dataset.axisStorageRoute='app-bridge';b.onclick=e=>{e.preventDefault();e.stopPropagation();void window.__AXIS_OPEN_STORAGE__?.()};return true}
-const axis817SettingsConvergeBase=axis813ConvergeSettings;
-axis813ConvergeSettings=function(){const r=axis817SettingsConvergeBase();axis817BindStorageEntry();return r};
-axis817BindStorageEntry();
-D.addEventListener('click',e=>{if(e.target?.closest?.('#settingsBtn'))setTimeout(axis817BindStorageEntry,110)},true);
-try{window.__AXIS_817_STORAGE_ROUTE__={version:'8.17',owner:'app.js',settingsBinding:'v813-inline',remountSafe:true,newStorage:false}}catch{}
-`;
- s=s.slice(0,end)+block+'\n'+s.slice(end);
- try{new Function(s)}catch(e){throw new Error(`[AXIS 8.17 interaction driver] Settings storage binding syntax ${e.message}`)}
- fs.writeFileSync(FILE,s);
- console.log('[AXIS 8.17 interaction driver] PASS · final Settings owner binds current 资料与收纳 row to app bridge');
-}
-
 /* v876 historically owned a three-choice default Capture preference and rewrote
    #scanSeconds to 单张 / 3秒 / 5秒 after the current HTML had rendered. 8.17 no
    longer has a default Capture mode: normal Capture always enters Photo and the
@@ -119,12 +88,14 @@ if(captureMigrationRewrites!==1)fail('8.17 scan-sampling convergence did not run
  console.log('[AXIS 8.17 interaction driver] PASS · canonicalizer now preserves Photo entry + app-owned 3/5 Scan sampling');
 }
 
-/* Keep the final browser gate fast while diagnosing the only remaining route. */
+/* The current Settings architecture portals storageSheet into the exclusive
+   axisConfigGate-storage accordion. It intentionally removes modal .show, so the
+   release smoke must validate the real open gate instead of a retired modal class. */
 {
  const FILE='scripts/axis-817-interaction-smoke.mjs';let s=fs.readFileSync(FILE,'utf8');
  const from="await tap(page.locator('#settingsBtn'));await page.waitForSelector('#settingsSheet.show');await tap(page.locator('#storageBtn'));await page.waitForSelector('#storageSheet.show');";
- const to="await tap(page.locator('#settingsBtn'));await page.waitForSelector('#settingsSheet.show');const storageBefore=await page.evaluate(()=>{const b=document.querySelector('#storageBtn'),x=document.querySelector('#storageSheet');return{bridge:typeof window.__AXIS_OPEN_STORAGE__,marker:window.__AXIS_817_STORAGE_ROUTE__||null,button:{count:document.querySelectorAll('#storageBtn').length,text:b?.textContent?.replace(/\\s+/g,' ').trim(),route:b?.dataset?.axisStorageRoute,onclick:typeof b?.onclick,rect:b?[b.getBoundingClientRect().width,b.getBoundingClientRect().height]:null},sheet:{exists:!!x,className:x?.className,display:x?getComputedStyle(x).display:null,rect:x?[x.getBoundingClientRect().width,x.getBoundingClientRect().height]:null},shown:[...document.querySelectorAll('.sheetWrap.show')].map(n=>n.id)}});console.log('[AXIS 8.17 storage before]',JSON.stringify(storageBefore));await tap(page.locator('#storageBtn'));await page.waitForTimeout(120);const storageAfter=await page.evaluate(()=>{const x=document.querySelector('#storageSheet');return{className:x?.className,display:x?getComputedStyle(x).display:null,visibility:x?getComputedStyle(x).visibility:null,rect:x?[x.getBoundingClientRect().width,x.getBoundingClientRect().height]:null,shown:[...document.querySelectorAll('.sheetWrap.show')].map(n=>n.id)}});console.log('[AXIS 8.17 storage after]',JSON.stringify(storageAfter));await page.waitForFunction(()=>document.querySelector('#storageSheet')?.classList.contains('show'),undefined,{timeout:2500});";
+ const to="await tap(page.locator('#settingsBtn'));await page.waitForSelector('#settingsSheet.show');await tap(page.locator('#storageBtn'));await page.waitForFunction(()=>{const g=document.querySelector('#axisConfigGate-storage'),x=document.querySelector('#storageSheet');return g?.classList.contains('open')&&x?.classList.contains('axisInlineSheetWrap')&&!x.classList.contains('show')},undefined,{timeout:2500});";
  const count=s.split(from).length-1;if(count!==1)throw new Error(`[AXIS 8.17 interaction driver] smoke storage sequence expected once, found ${count}`);
  s=s.replace(from,to);fs.writeFileSync(FILE,s);
- console.log('[AXIS 8.17 interaction driver] PASS · storage browser diagnostic armed with 2.5s class wait');
+ console.log('[AXIS 8.17 interaction driver] PASS · storage smoke follows inline Settings gate contract');
 }
