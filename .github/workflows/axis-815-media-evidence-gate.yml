@@ -24,7 +24,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
-          if(!['8.15','8.15.1','8.16','8.17'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(!['8.15','8.15.1','8.16','8.17','8.18'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           if(m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('runtime topology drift');
           for(const g of ['evolutionFoundation8131','evolutionObjects814','evolutionObjectMediaEvidence814','mediaEvidenceLayer815','mediaEvidenceEncounterBinding815','mediaEvidenceIndexedDbReadOnly815','mediaEvidencePhoto815','mediaEvidenceShortVideo815','mediaEvidenceNoAutoplay815','mediaEvidenceInPlaceViewer815','mediaEvidenceEndpointCompare815','mediaEvidenceNoCreatorWorkflow815','mediaEvidenceUniversalBundle815'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
           if(m.axis815?.viewer?.owner!=='v815-media-evidence'||m.axis815?.evidence?.binding!=='encounter-first'||m.axis815?.ownership?.mediaWrites!==false||m.axis815?.ownership?.network!==false||m.axis815?.ownership?.ai!==false||m.axis815?.ownership?.replay!==false)throw new Error('Media Evidence ownership drift');

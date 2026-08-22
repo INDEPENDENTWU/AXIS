@@ -28,7 +28,7 @@ jobs:
         run: |
           node - <<'NODE'
           const m=require('./axis-build.json'),fs=require('fs'),core=fs.readFileSync('axis-core.js','utf8');
-          if(!['8.13.1','8.14','8.15','8.15.1','8.16','8.17'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
+          if(!['8.13.1','8.14','8.15','8.15.1','8.16','8.17','8.18'].includes(m.version)||m.baseVersion!==m.version)throw new Error(`release mismatch ${m.version}/${m.baseVersion}`);
           for(const gate of ['trainingIntervalUnion8124','projectGapLatestActivity8124','sessionActivitySeal8124','quickRecordDirectRecent8124','liveRouteReadOnly813','settingsVerticalNative8124','trendsTimeField813','trendsSessionFingerprint813','trendsHorizontalScrub813','trendsEdgeSafe813','trendsReducedMotion813','trendsReadOnly813','evolutionFoundation8131','trendsStateLifecycle8131','trendsFactualCopy8131','trendsSameDaySessions8131','trendsMetaActivity8131','trendsNavigationRefresh8131','trendsTruthfulDuration8131'])if(m.gates?.[gate]!==true)throw new Error(`release gate missing ${gate}`);
           for(const needle of ['__AXIS_8124_WORKOUT_OWNER__','__AXIS_8124_CATALOG_POLISH__','__AXIS_8124_CUSTOM_SAFE__','__AXIS_8125_SMART_CREATE_POLISH__','__AXIS_8131_EVOLUTION_FIELD__','__AXIS_EVOLUTION__','v8131-evolution-field','axis:state-changed'])if(!core.includes(needle))throw new Error(`compiled owner missing ${needle}`);
           NODE
