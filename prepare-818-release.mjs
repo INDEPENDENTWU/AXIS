@@ -31,3 +31,4 @@ for(const f of [
 ])replaceIdentity(f,false);
 
 console.log('[AXIS 8.18 release] PASS · public/base 8.18 · 8.17.1 factual/media foundations inherited · Object/Focus work may converge after final 8.17.1 owners');
+await import('./prepare-818-object-route-foundation.mjs');
