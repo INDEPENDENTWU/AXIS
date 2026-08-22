@@ -5,6 +5,7 @@ const fail=m=>{throw new Error(`[AXIS 8.18 final field seal] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(s,from,to,label)=>{const n=s.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return s.replace(from,to)};
+let selectorForEachRepairs=0;
 function replaceFunction(src,signature,replacement,label){
  const start=src.indexOf(signature);if(start<0)fail(`${label} signature missing`);if(src.indexOf(signature,start+signature.length)>=0)fail(`${label} duplicated`);
  const brace=src.indexOf('{',start+signature.length-1);if(brace<0)fail(`${label} brace missing`);let depth=0,quote='',esc=false,line=false,block=false,end=-1;
@@ -32,6 +33,13 @@ function replaceFunction(src,signature,replacement,label){
  s=s.replace("scanTouchOwner:'axis818-final'","scanTouchOwner:'app-direct-pointer'");
  if(s.includes("window.__AXIS_CAPTURE_PREF__?.set?.(String(sec))"))fail('recursive compatibility scan setter survived');
  if(!s.includes('__AXIS_818_SCAN_SECONDS__'))fail('canonical scan bridge missing');
+
+ /* `$` is AXIS querySelector and `$$` is querySelectorAll. Any final `$().forEach`
+    is therefore structurally invalid. Repair historical compiler residues before
+    canonical bundling and fail closed if this invalid selector shape survives. */
+ const badCollection=/\$\(([^()\n;]+)\)\.forEach\(/g;
+ s=s.replace(badCollection,(m,args)=>{selectorForEachRepairs++;return `$$(${args}).forEach(`});
+ if(/\$\([^()\n;]+\)\.forEach\(/.test(s))fail('single-element selector still used as collection');
  try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};write(APP,s);
 }
 
@@ -65,4 +73,4 @@ const setter818="function setCapturePref(v){const x=['3','5'].includes(String(v)
  write(SMOKE817,s);
 }
 
-console.log('[AXIS 8.18 final field seal] PASS · immediate Record waits for camera · one app-owned 3/5 pointer owner · v876 recursion retired · canonicalizer accepts direct 8.18 bridge · inherited 8.17 smoke aligned to intentional 8.18 pseudo-setting retirement');
+console.log(`[AXIS 8.18 final field seal] PASS · immediate Record waits for camera · one app-owned 3/5 pointer owner · v876 recursion retired · canonicalizer accepts direct 8.18 bridge · selector collection repairs ${selectorForEachRepairs} · inherited 8.17 smoke aligned to intentional 8.18 pseudo-setting retirement`);
