@@ -61,6 +61,13 @@ The 8.18 product boundary is now one coherent release rather than an isolated fo
 - Optional stale-shell freshness remains event-driven rather than polled.
 - The final browser freshness probe is same-origin and fail-open; a provider/WebKit cache or transport error cannot become a product runtime failure.
 
+### Native / cross-platform foundation
+
+- The durable native handoff remains **`axis-native-foundation-0`**.
+- Native repository remains **`INDEPENDENTWU/AXIS-iOS`**.
+- Shared durable contracts remain **`axis.domain.v1`** and **`axis.data.v1`**.
+- 8.18 web work does not replace, weaken or merge Web/iOS runtime ownership; capability differences stay behind the published platform capability and product-matrix contracts.
+
 ## Validation for this work
 
 8.18 must not merge until all of the following are true on the exact PR head:
@@ -75,7 +82,7 @@ The 8.18 product boundary is now one coherent release rather than an isolated fo
 - Object Truth, Route Truth, Focus, Evolution Library, source-first media and 30fps watermark contracts pass;
 - inherited 8.17.1 / 8.17 / 8.16 / 8.15 / 8.14 / 8.13 behavioral gates pass under public 8.18 identity;
 - historical Chromium manifest gates recognize 8.18 as a valid inheriting public release instead of failing only on a stale version allow-list;
-- Repository Contract and Work Continuity pass;
+- Repository Contract, Work Continuity and native foundation seal pass;
 - no timeout inflation, assertion weakening, second database/store/recorder owner or v876 sound resurrection is used.
 
 After merge, the exact final `main` runtime SHA must reach Vercel Production and then EdgeOne Production with exact-artifact parity. Real EdgeOne Chromium and iPhone WebKit release flows must both pass before 8.18 is called Production-sealed.
