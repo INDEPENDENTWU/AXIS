@@ -27,7 +27,17 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   const blockEnd="setTimeout(()=>{axis818RouteGuard();axis818RenderCapturePrefs();axis818RenderShelf()},260);";
   const bi=s.indexOf(blockStart),ei=bi<0?-1:s.indexOf(blockEnd,bi);
   if(bi<0||ei<0)fail('8.18 truth block boundaries missing');
-  const after=ei+blockEnd.length,truthBlock=s.slice(bi,after);
+  const after=ei+blockEnd.length;
+  let truthBlock=s.slice(bi,after);
+
+  /* Route Truth must be immune to historical $/$$ postbuild normalization. */
+  const routeCollections=[
+    ["for(const v of $$('.view,.page'))","for(const v of Array.from(D.querySelectorAll('.view,.page')))"],
+    ["for(const b of $$('[data-view]'))","for(const b of Array.from(D.querySelectorAll('[data-view]')))"],
+  ];
+  for(const [from,to] of routeCollections){const c=truthBlock.split(from).length-1;if(c!==1)fail(`route collection selector expected once, found ${c}: ${from}`);truthBlock=truthBlock.replace(from,()=>to)}
+  if(/for\(const [vb] of \$\$\(/.test(truthBlock))fail('Route Truth collection helper survived');
+
   s=s.slice(0,bi)+s.slice(after);
   const rootClose=s.indexOf('})();');
   if(rootClose<0)fail('canonical root IIFE close missing');
@@ -51,4 +61,4 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   syntax(s,FILE);write(FILE,s);
 }
 
-console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · v874 metric namespace initialized without new owner');
+console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · Route Truth helper-independent · v874 metric namespace initialized without new owner');
