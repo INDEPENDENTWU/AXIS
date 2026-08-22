@@ -34,13 +34,11 @@ if(!releaseDriver.includes("await import('./prepare-816-release.mjs')"))fail('8.
 const release816=read('prepare-816-release.mjs');
 if(!release816.includes("await import('./prepare-817-release.mjs')"))fail('8.17 release is not chained from the inherited 8.16 release driver');
 const convergenceDriver=read('prepare-8151-regression-seal.mjs');
-for(const marker of ["await import('./prepare-816-capture-evidence-convergence.mjs')","await import('./prepare-816-evidence-compat-refine.mjs')"])if(!convergenceDriver.includes(marker))fail(`8.16 convergence chain missing: ${marker}`);
+for(const marker of ["await import('./prepare-816-capture-evidence-convergence.mjs')","await import('./prepare-816-evidence-compat-refine.mjs')","await import('./prepare-817-interaction-convergence-driver.mjs')"])if(!convergenceDriver.includes(marker))fail(`8.16/8.17 convergence chain missing: ${marker}`);
 const captureDriver=read('prepare-816-capture-evidence-convergence.mjs');
 if(!captureDriver.includes("prepare-816-capture-evidence-convergence-v2.mjs"))fail('8.16 Capture v2 convergence is not reachable');
 const evidenceDriver=read('prepare-816-evidence-compat-refine.mjs');
 if(!evidenceDriver.includes("prepare-816-capture-marker-seal.mjs"))fail('8.16 final Capture selector/entry seal is not reachable');
-const release817=read('prepare-817-release.mjs');
-if(!release817.includes('prepare-817-interaction-convergence-driver.mjs'))fail('8.17 Interaction Convergence driver is not reachable from release preparation');
 const postDriver=read('postbuild-8151-regression-contract.mjs');
 if(!postDriver.includes("await import('./postbuild-816-contract.mjs')"))fail('8.16 postbuild contract is not chained from the inherited 8.15.1 seal');
 const post816=read('postbuild-816-contract.mjs');
