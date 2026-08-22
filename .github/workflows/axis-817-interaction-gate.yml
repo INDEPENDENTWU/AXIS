@@ -18,18 +18,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build exact AXIS 8.17 candidate
+      - name: Build current AXIS candidate with inherited 8.17
         run: node build-release.mjs
-      - name: Verify 8.17 manifest and ownership
+      - name: Verify inherited 8.17 manifest and ownership
         run: |
           node - <<'NODE'
           const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8'),html=fs.readFileSync('index.html','utf8');
-          if(m.version!=='8.17'||m.baseVersion!=='8.17'||m.architecture!=='canonical-single-runtime')throw new Error(`release mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
+          if(m.version!=='8.18'||m.baseVersion!=='8.18'||m.architecture!=='canonical-single-runtime')throw new Error(`release mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
           for(const g of ['captureField816','captureUnifiedEntry816','comparativeEvidence816','mediaEvidenceStableSection8151','quickEvidenceSingleEntry817','capturePreferencesCurrent817','captureEntryDefaultsPhoto817','explicitVideoRetained817','comparativeTwoSlot817','comparativeDirectTimeline817','comparativeStableControls817','comparativeNoFlash817','archiveMonthCollection817','archiveNoNewStorage817','interactionConvergence817'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
           if(m.axis817?.capture?.quickSupplement!=='single-entry'||m.axis817?.capture?.defaultMode!=='photo')throw new Error('Capture interaction contract drift');
           if(m.axis817?.evidence?.compareModel!=='two-named-slots'||m.axis817?.evidence?.defaultActiveSlot!=='right'||m.axis817?.evidence?.warmBeforeCommit!==true)throw new Error('comparison interaction contract drift');
           if(m.axis817?.archive?.model!=='time-first-month-groups'||m.axis817?.archive?.newStorage!==false)throw new Error('archive contract drift');
-          if(!core.includes('__AXIS_817_INTERACTION__')||!core.includes('v817QuickEvidence'))throw new Error('8.17 compiled markers missing');
+          if(!core.includes("__AXIS_817_INTERACTION__={version:'8.17'")||!core.includes('v817QuickEvidence'))throw new Error('8.17 compiled module identity/markers missing');
           if(!html.includes('扫描取样')||!html.includes('资料与收纳'))throw new Error('8.17 current Settings copy missing');
           NODE
       - name: Prepare Chromium
@@ -68,7 +68,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Build exact AXIS 8.17 candidate
+      - name: Build current AXIS candidate with inherited 8.17
         run: node build-release.mjs
       - name: Prepare iPhone WebKit
         run: |
