@@ -48,4 +48,20 @@ for(const needle of [
 
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
-console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · v8710 sound ownership preserved');
+
+/* 8.17 made Scan sampling app-owned again and 8.17.1 adds a delegated writer so
+ * Settings DOM replacement cannot detach the 3/5-second preference. The historical
+ * 8.8 postbuild expected the old direct onclick writer to exist exactly once before
+ * retiring it. At the final 8.17.1 boundary that direct writer may already be absent;
+ * what must be exact is the delegated app-owned writer. Patch the release-local
+ * canonical check accordingly: reject duplicate legacy writers, retire one if still
+ * present, and require one current delegated persistence event marker. */
+{
+ const FILE='postbuild-88-canonical.mjs';let p=fs.readFileSync(FILE,'utf8');
+ const old=`const legacyScanClick=";$$('#scanSeconds button').forEach(b=>b.onclick=()=>{state.prefs.scanSeconds=Number(b.dataset.sec);save();renderSettings()})";\nif(core.split(legacyScanClick).length-1!==1)fail('legacy scan preference click writer expected once');\ncore=core.replace(legacyScanClick,'');`;
+ const next=`const legacyScanClick=";$$('#scanSeconds button').forEach(b=>b.onclick=()=>{state.prefs.scanSeconds=Number(b.dataset.sec);save();renderSettings()})";\nconst legacyScanClickCount=core.split(legacyScanClick).length-1;if(legacyScanClickCount>1)fail(\`legacy scan preference click writer duplicated ${'${legacyScanClickCount}'} times\`);if(legacyScanClickCount===1)core=core.replace(legacyScanClick,'');\nconst delegatedScanWriter='axis:recording-pref-changed',delegatedScanWriterCount=core.split(delegatedScanWriter).length-1;if(delegatedScanWriterCount!==1)fail(\`8.17.1 delegated scan preference writer expected once, found ${'${delegatedScanWriterCount}'}\`);`;
+ const n=p.split(old).length-1;if(n!==1)fail(`postbuild legacy Scan writer block expected once, found ${n}`);
+ p=p.replace(old,next);fs.writeFileSync(FILE,p);
+}
+
+console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · delegated Scan preference owner sealed · v8710 sound ownership preserved');
