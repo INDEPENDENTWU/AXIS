@@ -18,9 +18,11 @@ for(const [needle,label] of [
  ["shadow:'simultaneous-auto-record-ab'",'shadow recording A/B contract missing'],
  ["function axis8103BestVoice(",'natural system voice selection missing'],
  ["function axis8103AB(",'A/B comparison action missing'],
- ["window.__AXIS_8103_FRESHNESS__={version:'8.10.3',eventDriven:true,polling:false}",'event-driven release freshness missing']
+ ["window.__AXIS_8103_FRESHNESS__={version:'8.10.3',eventDriven:true,polling:false}",'event-driven release freshness missing'],
+ ["fetch('/axis-build.json',{cache:'no-store'})",'provider-neutral same-origin freshness manifest fetch missing']
 ])if(!runtime.includes(needle))fail(label);
 if(runtime.includes("title:'训练已记录'"))fail('redundant completed-home copy survived');
+if(runtime.includes('/axis-build.json?fresh='))fail('provider-sensitive freshness query survived canonical runtime');
 if(!css.includes('#axisNowDial[hidden]{display:none!important}'))fail('idle dial visual guard missing');
 if(!css.includes('#v87Now .v87Actions>#v87AdjustBtn{order:40!important;margin-left:auto!important'))fail('adjust action is not corner-anchored');
 if(!css.includes('.v810Options.track{display:flex!important;overflow-x:auto!important'))fail('learning schedule was not visually converged');
@@ -41,14 +43,15 @@ Object.assign(info.gates,{
  restSpeakFourLanguageVoiceRouting:true,
  restSpeakBestAvailableLocalVoice:true,
  practiceMicrophoneSameOrigin:true,
- releaseFreshnessEventDriven:true
+ releaseFreshnessEventDriven:true,
+ releaseFreshnessProviderNeutral:true
 });
 info.axis8103={
  home:{singleFramework:true,idleDial:false,completedTitleRedundant:false,completedStartEnd:true,adjustAnchor:'bottom-right-secondary'},
  sound:{owner:'v8710',automaticKinds:['item','session'],sessionTargetPreference:'v876SessionTarget',sessionTargets:[0,30,45,60,90],customMinutes:[5,360]},
  learning:{dialogueTurns:4,echo:'listen-then-repeat',shadow:'simultaneous-with-local-recording',comparison:'reference-vs-user-ab',locales:['en-US','ja-JP','ko-KR','zh-CN'],voiceSelection:'best-available-system-voice',autoplay:false},
- freshness:{events:['pageshow','visibilitychange'],polling:false},
+ freshness:{events:['pageshow','visibilitychange'],polling:false,manifest:'/axis-build.json',cache:'no-store',providerNeutral:true},
  ownership:{trainingState:false,trainingControls:false,learningStore:'axis_v89_speak',recordingUpload:false}
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-console.log('[AXIS 8.10.3 contract] PASS · unified home · duration reminder · four-language voice routing · distinct shadow A/B · stale-shell self-heal');
+console.log('[AXIS 8.10.3 contract] PASS · unified home · duration reminder · four-language voice routing · distinct shadow A/B · provider-neutral stale-shell self-heal');
