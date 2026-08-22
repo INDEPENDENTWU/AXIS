@@ -30,13 +30,30 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   const after=ei+blockEnd.length;
   let truthBlock=s.slice(bi,after);
 
-  /* Route Truth must be immune to historical $/$$ postbuild normalization. */
+  /* Route Truth must be immune to historical $/$$ normalization. Earlier build
+     stages may still expose the collection selector as $$(), or may already have
+     collapsed it to $(). Exactly one known input form is accepted, then the final
+     runtime is forced to native querySelectorAll. */
   const routeCollections=[
-    ["for(const v of $$('.view,.page'))","for(const v of Array.from(D.querySelectorAll('.view,.page')))"],
-    ["for(const b of $$('[data-view]'))","for(const b of Array.from(D.querySelectorAll('[data-view]')))"],
+    {
+      variants:["for(const v of $$('.view,.page'))","for(const v of $('.view,.page'))"],
+      to:"for(const v of Array.from(D.querySelectorAll('.view,.page')))"
+    },
+    {
+      variants:["for(const b of $$('[data-view]'))","for(const b of $('[data-view]'))"],
+      to:"for(const b of Array.from(D.querySelectorAll('[data-view]')))"
+    }
   ];
-  for(const [from,to] of routeCollections){const c=truthBlock.split(from).length-1;if(c!==1)fail(`route collection selector expected once, found ${c}: ${from}`);truthBlock=truthBlock.replace(from,()=>to)}
-  if(/for\(const [vb] of \$\$\(/.test(truthBlock))fail('Route Truth collection helper survived');
+  for(const {variants,to} of routeCollections){
+    const hits=variants.reduce((n,from)=>n+(truthBlock.split(from).length-1),0);
+    const nativeHits=truthBlock.split(to).length-1;
+    if(nativeHits===1&&hits===0)continue;
+    if(hits!==1||nativeHits!==0)fail(`route collection selector expected one known source form, found source ${hits}, native ${nativeHits}: ${variants.join(' | ')}`);
+    const from=variants.find(x=>truthBlock.includes(x));
+    truthBlock=truthBlock.replace(from,()=>to);
+    if(truthBlock.split(to).length-1!==1)fail(`route native selector convergence failed: ${to}`);
+  }
+  if(/for\(const [vb] of \$+\(/.test(truthBlock))fail('Route Truth collection helper survived');
 
   s=s.slice(0,bi)+s.slice(after);
   const rootClose=s.indexOf('})();');
@@ -61,4 +78,4 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   syntax(s,FILE);write(FILE,s);
 }
 
-console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · Route Truth helper-independent · v874 metric namespace initialized without new owner');
+console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · Route Truth native-selector sealed · v874 metric namespace initialized without new owner');
