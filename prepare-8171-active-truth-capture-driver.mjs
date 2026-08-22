@@ -49,13 +49,21 @@ for(const needle of [
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
-/* 8.17's archive renderer rebuilt rows from state and cleared selectedSessions on
- * every render. Inline Settings can legitimately repaint its mounted content after
- * a row click, which made a just-selected row visually and semantically disappear.
- * Clear selection once when opening the organizer, then preserve/prune the Set on
- * subsequent repaints and derive every row's selected class from that Set. */
+/* 8.17.1 initially declared sync8171SelectAll inside bind(), while renderStorage()
+ * and its row onclick closures live at app scope. Lift that one function to the same
+ * app owner before refining repaint behavior. This prevents runtime ReferenceError
+ * and gives row selection + Select All exactly one shared state synchronizer. */
 {
  const FILE='app.js';let app=fs.readFileSync(FILE,'utf8');
+ const syncFn="function sync8171SelectAll(){const rows=$$('[data-delete-session]'),all=!!rows.length&&rows.every(b=>selectedSessions.has(b.dataset.deleteSession));const b=$('#selectAllSessions');if(b){b.textContent=all?'取消全选':'全选';b.setAttribute('aria-pressed',String(all))}}";
+ const syncCount=app.split(syncFn).length-1;if(syncCount!==1)fail(`archive sync function expected once, found ${syncCount}`);app=app.replace(syncFn,'');
+ const renderAnchor='async function renderStorage(){';
+ const renderCount=app.split(renderAnchor).length-1;if(renderCount!==1)fail(`renderStorage owner expected once, found ${renderCount}`);app=app.replace(renderAnchor,syncFn+'\n'+renderAnchor);
+
+ /* 8.17's archive renderer rebuilt rows from state and cleared selectedSessions on
+  * every render. Inline Settings can legitimately repaint mounted content after a
+  * row click. Clear once when opening, preserve/prune the Set on subsequent paints,
+  * and derive every row selected class from the Set. */
  const clear='selectedSessions.clear();const groups=new Map();';
  const preserve="const live8171SessionIds=new Set(state.sessions.map(s=>s.id));for(const id of Array.from(selectedSessions))if(!live8171SessionIds.has(id))selectedSessions.delete(id);const groups=new Map();";
  const clearCount=app.split(clear).length-1;if(clearCount!==1)fail(`archive selection reset expected once, found ${clearCount}`);app=app.replace(clear,preserve);
@@ -65,7 +73,7 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  const open="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()}";
  const fresh="$('#storageBtn').onclick=async()=>{selectedSessions.clear();openSheet('storageSheet');await renderStorage()}";
  const openCount=app.split(open).length-1;if(openCount!==1)fail(`archive open anchor expected once, found ${openCount}`);app=app.replace(open,fresh);
- if(!app.includes('live8171SessionIds')||!app.includes("selectedSessions.has(s.id)?'selected':''"))fail('stable archive selection projection missing');
+ if(!app.includes('live8171SessionIds')||!app.includes("selectedSessions.has(s.id)?'selected':''")||app.indexOf(syncFn)>app.indexOf('async function renderStorage(){'))fail('stable app-owned archive selection projection missing');
  try{new Function(app)}catch(e){fail(`archive selection syntax ${e.message}`)};fs.writeFileSync(FILE,app);
 }
 
@@ -84,4 +92,4 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  p=p.replace(old,next);fs.writeFileSync(FILE,p);
 }
 
-console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · stable archive multi-select · delegated Scan preference owner sealed · v8710 sound ownership preserved');
+console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · app-owned stable archive multi-select · delegated Scan preference owner sealed · v8710 sound ownership preserved');
