@@ -4,6 +4,7 @@ const FROM='8.17',VERSION='8.18';
 const fail=m=>{throw new Error(`[AXIS 8.18 release] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
+const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 const replaceIdentity=(f,required=true)=>{let s=read(f),n=(s.match(/'8\.17'/g)||[]).length;if(required&&!n)fail(`${f} missing inherited ${FROM} identity`);if(n){s=s.replaceAll(`'${FROM}'`,`'${VERSION}'`);write(f,s)}};
 
 {
@@ -11,10 +12,21 @@ const replaceIdentity=(f,required=true)=>{let s=read(f),n=(s.match(/'8\.17'/g)||
  if(String(x.publicVersion)!==FROM||String(x.stableBaseVersion)!==FROM)fail(`expected sealed ${FROM} input, found ${x.publicVersion}/${x.stableBaseVersion}`);
  x.publicVersion=VERSION;x.stableBaseVersion=VERSION;write(f,JSON.stringify(x,null,2)+'\n');
 }
+
+/* prepare-882-version has already executed by this late final-field stage. Advance the
+   actual remaining build/postbuild identity owners directly; do not rely on a script
+   that has already run. */
 {
- const f='prepare-882-version.mjs';let s=read(f),from=`const VERSION='${FROM}';`,to=`const VERSION='${VERSION}';`;
- if((s.split(from).length-1)!==1)fail('release version anchor missing');
- s=s.replace(from,to).replaceAll(`AXIS ${FROM}] release identity`,`AXIS ${VERSION}] release identity`);write(f,s);
+ const f='build-hardened.mjs';let s=read(f);s=once(s,`const VERSION='${FROM}';`,`const VERSION='${VERSION}';`,'hardened build version');write(f,s);
+}
+{
+ const f='postbuild-features-hardened.mjs';let s=read(f);s=once(s,`const TARGET_VERSION='${FROM}';`,`const TARGET_VERSION='${VERSION}';`,'feature manifest version');write(f,s);
+}
+{
+ const f='postbuild-88-canonical.mjs';let s=read(f);
+ s=once(s,`const VERSION='${FROM}';`,`const VERSION='${VERSION}';`,'canonical postbuild version');
+ s=once(s,`document.documentElement.dataset.axisCanonical='${FROM}';`,`document.documentElement.dataset.axisCanonical='${VERSION}';`,'canonical dataset version');
+ s=s.replaceAll(`canonical-${FROM}">`,`canonical-${VERSION}">`);write(f,s);
 }
 
 /* Inherited contracts keep their historical scope but validate the current public build identity. */
@@ -30,4 +42,4 @@ for(const f of [
  'scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs'
 ])replaceIdentity(f,false);
 
-console.log('[AXIS 8.18 release] PASS · public/base 8.18 · 8.17.1 factual/media foundations inherited · existing Object/Focus foundation remains the single 8.18 owner');
+console.log('[AXIS 8.18 release] PASS · public/base 8.18 · hardened build/canonical manifest owners advanced · 8.17.1 factual/media foundations inherited');
