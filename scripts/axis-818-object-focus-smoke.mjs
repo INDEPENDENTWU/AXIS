@@ -26,7 +26,20 @@ const tap=async loc=>ENGINE==='webkit'?loc.tap():loc.click();
 
 try{
  const response=await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000});assert.ok(response?.ok());
- await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_RELEASE__==='8.18'&&window.__AXIS_OBJECT_TRUTH__?.version==='8.18'&&window.__AXIS_818_HARDENING__?.version==='8.18'&&window.__AXIS_818_MEDIA__?.version==='8.18'&&window.__AXIS_818_FOCUS__?.version==='8.18'&&window.__AXIS_EVOLUTION_LIBRARY__?.version==='8.18',undefined,{timeout:15000});
+ await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:15000});
+ await page.waitForFunction(()=>window.__AXIS_RELEASE__==='8.18',undefined,{timeout:5000});
+ await page.waitForTimeout(900);
+ const boot=await page.evaluate(()=>({
+  release:window.__AXIS_RELEASE__,core:window.__AXIS_CORE_INTERACTIVE__,
+  object:window.__AXIS_OBJECT_TRUTH__?.version||null,hardening:window.__AXIS_818_HARDENING__?.version||null,
+  media:window.__AXIS_818_MEDIA__?.version||null,focus:window.__AXIS_818_FOCUS__?.version||null,
+  evolution:window.__AXIS_EVOLUTION_LIBRARY__?.version||null,quick:window.__AXIS_818_QUICK_CAPTURE__?.version||null,
+  source:window.__AXIS_MEDIA_SOURCE__?.version||window.__AXIS_MEDIA_SOURCE__?.readOnly||null
+ }));
+ console.log(`[AXIS 8.18 boot ${ENGINE}] ${JSON.stringify(boot)}${errors.length?' errors='+JSON.stringify(errors):''}`);
+ assert.equal(boot.release,'8.18','public runtime identity did not converge');assert.equal(boot.core,true,'core did not become interactive');
+ assert.equal(boot.object,'8.18','Object Truth runtime layer missing');assert.equal(boot.hardening,'8.18','8.18 hardening runtime layer missing');
+ assert.equal(boot.media,'8.18','8.18 media runtime layer missing');assert.equal(boot.focus,'8.18','8.18 Focus runtime layer missing');assert.equal(boot.evolution,'8.18','Evolution Library runtime layer missing');assert.equal(boot.quick,'8.18','Quick Capture intent seal missing');
 
  const manifest=await (await page.request.get(`${BASE}/axis-build.json`)).json();
  assert.equal(manifest.version,'8.18');assert.equal(manifest.baseVersion,'8.18');assert.equal(manifest.architecture,'canonical-single-runtime');
@@ -57,7 +70,7 @@ try{
 
  const insights=page.locator('nav.nav [data-view="insightsView"]');assert.ok(await insights.count(),'Insights navigation missing');await tap(insights);
  await page.waitForFunction(()=>document.querySelector('#insightsView')?.classList.contains('active'),undefined,{timeout:2500});
- await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))).catch(()=>page.evaluate(()=>window.dispatchEvent(new Event('pageshow'))));
+ await page.evaluate(()=>{try{window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))}catch{window.dispatchEvent(new Event('pageshow'))}});
  await page.waitForTimeout(550);
  const route=await page.evaluate(()=>({active:[...document.querySelectorAll('main>.view.active')].map(x=>x.id),todayActive:document.querySelector('#todayView')?.classList.contains('active'),todayInert:document.querySelector('#todayView')?.hasAttribute('inert'),insightsInert:document.querySelector('#insightsView')?.hasAttribute('inert'),away:document.body.classList.contains('axis818-route-away'),dockVisible:document.querySelector('#dock')?getComputedStyle(document.querySelector('#dock')).display!=='none':false}));
  assert.deepEqual(route.active,['insightsView'],'resume created multiple active main views');assert.equal(route.todayActive,false);assert.equal(route.todayInert,true);assert.equal(route.insightsInert,false);assert.equal(route.away,true);assert.equal(route.dockVisible,false,'Today dock leaked onto Insights after resume');
