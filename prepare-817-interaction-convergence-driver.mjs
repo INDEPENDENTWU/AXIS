@@ -96,8 +96,12 @@ if(captureMigrationRewrites!==1)fail('8.17 scan-sampling convergence did not run
  const from="await tap(page.locator('#settingsBtn'));await page.waitForSelector('#settingsSheet.show');await tap(page.locator('#storageBtn'));await page.waitForSelector('#storageSheet.show');";
  const to="await tap(page.locator('#settingsBtn'));await page.waitForSelector('#settingsSheet.show');await tap(page.locator('#storageBtn'));await page.waitForFunction(()=>{const g=document.querySelector('#axisConfigGate-storage'),x=document.querySelector('#storageSheet');return g?.classList.contains('open')&&x?.classList.contains('axisInlineSheetWrap')&&!x.classList.contains('show')},undefined,{timeout:2500});";
  const count=s.split(from).length-1;if(count!==1)throw new Error(`[AXIS 8.17 interaction driver] smoke storage sequence expected once, found ${count}`);
- s=s.replace(from,to);fs.writeFileSync(FILE,s);
- console.log('[AXIS 8.17 interaction driver] PASS · storage smoke follows inline Settings gate contract');
+ s=s.replace(from,to);
+ const archiveFrom="const deleteRow=groups.nth(1).locator('[data-delete-session]').first();await tap(deleteRow);assert.ok((await deleteRow.getAttribute('class')||'').includes('selected'),'existing archive selection semantics broke');";
+ const archiveTo="const deleteRow=groups.nth(1).locator('[data-delete-session]').first();const archiveBefore=await deleteRow.evaluate(el=>({id:el.dataset.deleteSession,cls:el.className,hasOnclick:typeof el.onclick==='function',outer:el.outerHTML.slice(0,500),gate:document.querySelector('#axisConfigGate-storage')?.className||'',errors:[]}));await tap(deleteRow);const archiveAfter=await page.evaluate(id=>{const rows=[...document.querySelectorAll('[data-delete-session]')],el=rows.find(x=>x.dataset.deleteSession===id);return{id,found:!!el,cls:el?.className||'',hasOnclick:typeof el?.onclick==='function',aria:el?.getAttribute('aria-selected')||'',rowCount:rows.length,gate:document.querySelector('#axisConfigGate-storage')?.className||'',storage:document.querySelector('#storageSheet')?.className||''}},archiveBefore.id);console.log('[AXIS 8.17 archive selection diagnostic]',JSON.stringify({before:archiveBefore,after:archiveAfter,pageErrors:errors}));assert.ok((await deleteRow.getAttribute('class')||'').includes('selected'),'existing archive selection semantics broke');";
+ const archiveCount=s.split(archiveFrom).length-1;if(archiveCount!==1)throw new Error(`[AXIS 8.17 interaction driver] archive diagnostic anchor expected once, found ${archiveCount}`);
+ s=s.replace(archiveFrom,archiveTo);fs.writeFileSync(FILE,s);
+ console.log('[AXIS 8.17 interaction driver] PASS · storage smoke follows inline Settings gate contract · archive diagnostics armed');
 }
 
 /* 8.16 remains an inherited module contract inside public 8.17. Its browser smoke
