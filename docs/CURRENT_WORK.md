@@ -2,7 +2,7 @@
 
 > Canonical engineering handoff. `CURRENT_RELEASE.md` is the release contract; this file records the active engineering boundary and next exact action.
 
-## Production baseline
+## Production baseline at start of this work
 
 - **AXIS 8.16 — Capture Field + Comparative Evidence** is Production-sealed.
 - Exact merged `main` SHA: `0dbb25cd432e3cc7de0258affcdc892d8d55ce9b`.
@@ -65,7 +65,7 @@ The controls remain mounted outside the media stage. Existing images remain visi
 
 This is the storage foundation for a later object-first Evolution Library rather than a generic file manager.
 
-## Validation
+## Validation for this work
 
 8.17 is incomplete until all of the following are green:
 
