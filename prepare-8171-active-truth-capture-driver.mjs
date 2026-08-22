@@ -49,6 +49,26 @@ for(const needle of [
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
+/* 8.17's archive renderer rebuilt rows from state and cleared selectedSessions on
+ * every render. Inline Settings can legitimately repaint its mounted content after
+ * a row click, which made a just-selected row visually and semantically disappear.
+ * Clear selection once when opening the organizer, then preserve/prune the Set on
+ * subsequent repaints and derive every row's selected class from that Set. */
+{
+ const FILE='app.js';let app=fs.readFileSync(FILE,'utf8');
+ const clear='selectedSessions.clear();const groups=new Map();';
+ const preserve="const live8171SessionIds=new Set(state.sessions.map(s=>s.id));for(const id of Array.from(selectedSessions))if(!live8171SessionIds.has(id))selectedSessions.delete(id);const groups=new Map();";
+ const clearCount=app.split(clear).length-1;if(clearCount!==1)fail(`archive selection reset expected once, found ${clearCount}`);app=app.replace(clear,preserve);
+ const row='class="deleteSession" data-delete-session="${s.id}"';
+ const stableRow='class="deleteSession ${selectedSessions.has(s.id)?\'selected\':\'\'}" data-delete-session="${s.id}"';
+ const rowCount=app.split(row).length-1;if(rowCount!==1)fail(`archive row class anchor expected once, found ${rowCount}`);app=app.replace(row,stableRow);
+ const open="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()}";
+ const fresh="$('#storageBtn').onclick=async()=>{selectedSessions.clear();openSheet('storageSheet');await renderStorage()}";
+ const openCount=app.split(open).length-1;if(openCount!==1)fail(`archive open anchor expected once, found ${openCount}`);app=app.replace(open,fresh);
+ if(!app.includes('live8171SessionIds')||!app.includes("selectedSessions.has(s.id)?'selected':''"))fail('stable archive selection projection missing');
+ try{new Function(app)}catch(e){fail(`archive selection syntax ${e.message}`)};fs.writeFileSync(FILE,app);
+}
+
 /* 8.17 made Scan sampling app-owned again and 8.17.1 adds a delegated writer so
  * Settings DOM replacement cannot detach the 3/5-second preference. The historical
  * 8.8 postbuild expected the old direct onclick writer to exist exactly once before
@@ -64,4 +84,4 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  p=p.replace(old,next);fs.writeFileSync(FILE,p);
 }
 
-console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · delegated Scan preference owner sealed · v8710 sound ownership preserved');
+console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · stable archive multi-select · delegated Scan preference owner sealed · v8710 sound ownership preserved');
