@@ -17,12 +17,15 @@ for(const [needle,label] of [
  ["dialogueTurns:4",'four-turn dialogue contract missing'],
  ["shadow:'simultaneous-auto-record-ab'",'shadow recording A/B contract missing'],
  ["function axis8103BestVoice(",'natural system voice selection missing'],
- ["function axis8103AB(",'A/B comparison action missing'],
- ["window.__AXIS_8103_FRESHNESS__={version:'8.10.3',eventDriven:true,polling:false",'event-driven release freshness missing']
+ ["function axis8103AB(",'A/B comparison action missing']
 ])if(!runtime.includes(needle))fail(label);
+const freshnessLegacy=runtime.includes("window.__AXIS_8103_FRESHNESS__={version:'8.10.3',eventDriven:true,polling:false");
+const freshnessCurrent=runtime.includes("window.__AXIS_8103_FRESHNESS__={version:'8.18',eventDriven:true,polling:false");
+if(!freshnessLegacy&&!freshnessCurrent)fail('event-driven release freshness missing');
 const freshnessFetch=runtime.includes("fetch('/axis-build.json',{cache:'no-store'})");
 const freshnessXhr=runtime.includes("x.open('GET','/axis-build.json',true)")&&runtime.includes("transport:'xhr',failOpen:true");
 if(!freshnessFetch&&!freshnessXhr)fail('provider-neutral same-origin freshness manifest transport missing');
+if(freshnessCurrent&&!freshnessXhr)fail('8.18 freshness identity requires fail-open XHR transport');
 if(runtime.includes("title:'训练已记录'"))fail('redundant completed-home copy survived');
 if(runtime.includes('/axis-build.json?fresh='))fail('provider-sensitive freshness query survived canonical runtime');
 if(!css.includes('#axisNowDial[hidden]{display:none!important}'))fail('idle dial visual guard missing');
@@ -52,7 +55,7 @@ info.axis8103={
  home:{singleFramework:true,idleDial:false,completedTitleRedundant:false,completedStartEnd:true,adjustAnchor:'bottom-right-secondary'},
  sound:{owner:'v8710',automaticKinds:['item','session'],sessionTargetPreference:'v876SessionTarget',sessionTargets:[0,30,45,60,90],customMinutes:[5,360]},
  learning:{dialogueTurns:4,echo:'listen-then-repeat',shadow:'simultaneous-with-local-recording',comparison:'reference-vs-user-ab',locales:['en-US','ja-JP','ko-KR','zh-CN'],voiceSelection:'best-available-system-voice',autoplay:false},
- freshness:{events:['pageshow','visibilitychange'],polling:false,manifest:'/axis-build.json',cache:freshnessFetch?'no-store':'request-no-cache',providerNeutral:true,transport:freshnessXhr?'xhr':'fetch',failOpen:freshnessXhr},
+ freshness:{events:['pageshow','visibilitychange'],polling:false,manifest:'/axis-build.json',cache:freshnessFetch?'no-store':'request-no-cache',providerNeutral:true,transport:freshnessXhr?'xhr':'fetch',failOpen:freshnessXhr,releaseMarker:freshnessCurrent?'8.18':'8.10.3'},
  ownership:{trainingState:false,trainingControls:false,learningStore:'axis_v89_speak',recordingUpload:false}
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
