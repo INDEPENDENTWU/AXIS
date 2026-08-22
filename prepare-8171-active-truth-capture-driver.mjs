@@ -49,16 +49,17 @@ for(const needle of [
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
-/* Give renderStorage and its row handlers a stable app-scope synchronization owner.
- * Patch by semantic function boundary rather than by the exact one-line renderer
- * formatting, because inherited convergence is allowed to compact/reformat that
- * function while preserving behavior. */
+/* Give renderStorage and every archive selection path a stable app-scope owner.
+ * Do not use the historical $/$$ helper pair for NodeList iteration here: later
+ * canonical compilation may collapse helper callsites, and a single-element $
+ * result cannot implement forEach/every. Native querySelectorAll + Array.from is
+ * explicit, stable and keeps selection semantics independent of helper rewriting. */
 {
  const FILE='app.js';let app=fs.readFileSync(FILE,'utf8');
  const renderStart=app.indexOf('async function renderStorage(){');
  const renderEnd=app.indexOf('async function deleteSessions',renderStart);
  if(renderStart<0||renderEnd<0||renderEnd<=renderStart)fail(`renderStorage boundary missing ${renderStart}/${renderEnd}`);
- const syncFn="function axis8171SyncArchiveSelection(){const rows=$$('[data-delete-session]'),all=!!rows.length&&rows.every(b=>selectedSessions.has(b.dataset.deleteSession));const b=$('#selectAllSessions');if(b){b.textContent=all?'取消全选':'全选';b.setAttribute('aria-pressed',String(all))}}\n";
+ const syncFn="function axis8171SyncArchiveSelection(){const rows=Array.from(D.querySelectorAll('[data-delete-session]')),all=!!rows.length&&rows.every(b=>selectedSessions.has(b.dataset.deleteSession));const b=D.querySelector('#selectAllSessions');if(b){b.textContent=all?'取消全选':'全选';b.setAttribute('aria-pressed',String(all))}}\n";
  let render=app.slice(renderStart,renderEnd);
  const localSyncCalls=(render.match(/sync8171SelectAll\(\)/g)||[]).length;
  if(localSyncCalls<1)fail(`renderStorage local sync calls missing, found ${localSyncCalls}`);
@@ -79,6 +80,15 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  const open="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()}";
  const fresh="$('#storageBtn').onclick=async()=>{selectedSessions.clear();openSheet('storageSheet');await renderStorage()}";
  const openCount=app.split(open).length-1;if(openCount!==1)fail(`archive open anchor expected once, found ${openCount}`);app=app.replace(open,fresh);
+
+ /* Replace every remaining archive NodeList helper call, including the bind-local
+  * Select All compatibility path, so single-row selection and batch selection share
+  * the same helper-independent mechanics. */
+ const archiveHelper="$$('[data-delete-session]')";
+ const archiveHelperCount=app.split(archiveHelper).length-1;
+ if(archiveHelperCount<1)fail(`archive helper callsites missing, found ${archiveHelperCount}`);
+ app=app.replaceAll(archiveHelper,"Array.from(D.querySelectorAll('[data-delete-session]'))");
+ if(app.includes(archiveHelper))fail('archive helper-dependent NodeList call survived');
  if(!app.includes('axis8171SyncArchiveSelection')||!app.includes('live8171SessionIds')||!app.includes("selectedSessions.has(s.id)?'selected':''"))fail('stable app-owned archive selection projection missing');
  try{new Function(app)}catch(e){fail(`archive selection syntax ${e.message}`)};fs.writeFileSync(FILE,app);
 }
@@ -98,4 +108,4 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  p=p.replace(old,next);fs.writeFileSync(FILE,p);
 }
 
-console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · stable archive renderer owner · delegated Scan preference owner sealed · v8710 sound ownership preserved');
+console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · helper-independent archive selection · delegated Scan preference owner sealed · v8710 sound ownership preserved');
