@@ -30,14 +30,16 @@ const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:
 }
 
 /* Re-render the canonical watermarked photo from the untouched capture every time.
-   Historical records without sourceFrameRefs continue to use the canonical photo. */
+   8.8.4 owns the final compositor and passes a frozen `shot` snapshot into stamp().
+   Bind to that final form so this refinement never reintroduces an older watermark
+   owner. Historical records without sourceFrameRefs still use the canonical photo. */
 {
  let s=read(WM);
- const old="for(const ref of e.frameRefs||[]){const b=await dbGet(ref);if(!b)continue;const out=await stamp(b,e);if(out)await dbPut(ref,out)}";
- const next="for(let i=0;i<(e.frameRefs||[]).length;i++){const ref=e.frameRefs[i],source=e.sourceFrameRefs?.[i]||ref,b=await dbGet(source)||await dbGet(ref);if(!b)continue;const out=await stamp(b,e);if(out)await dbPut(ref,out)}";
- s=once(s,old,next,'photo watermark source-first compositor');
+ const finalLoop=/for\(const ref of e\.frameRefs\|\|\[\]\)\{const b=await dbGet\(ref\);if\(!b\)continue;const out=await stamp\(b,e,shot\);if\(out\)await dbPut\(ref,out\)\}/;
+ const next="for(let i=0;i<(e.frameRefs||[]).length;i++){const ref=e.frameRefs[i],source=e.sourceFrameRefs?.[i]||ref,b=await dbGet(source)||await dbGet(ref);if(!b)continue;const out=await stamp(b,e,shot);if(out)await dbPut(ref,out)}";
+ s=regexOnce(s,finalLoop,next,'final photo watermark source-first compositor');
  const end=s.lastIndexOf('})();');if(end<0)fail('watermark IIFE end missing');
- s=s.slice(0,end)+"\ntry{window.__AXIS_8171_WATERMARK_SOURCE__={version:'8.17.1',photoSource:'clean-sidecar-first',canonicalOutput:'frameRefs',legacyFallback:true,destructive:false}}catch{}\n"+s.slice(end);
+ s=s.slice(0,end)+"\ntry{window.__AXIS_8171_WATERMARK_SOURCE__={version:'8.17.1',photoSource:'clean-sidecar-first',canonicalOutput:'frameRefs',frozenShot:true,legacyFallback:true,destructive:false}}catch{}\n"+s.slice(end);
  try{new Function(s)}catch(e){fail(`watermark syntax ${e.message}`)};write(WM,s);
 }
 
@@ -55,4 +57,4 @@ const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:
  try{new Function(s)}catch(e){fail(`Evidence syntax ${e.message}`)};write(MEDIA,s);
 }
 
-console.log('[AXIS 8.17.1 source-first media] PASS · S/SV clean source authoritative for processing · F/V remain canonical derivatives · old records fall back · no new persistence owner');
+console.log('[AXIS 8.17.1 source-first media] PASS · S/SV clean source authoritative for processing · F/V remain canonical derivatives · final frozen-shot watermark preserved · old records fall back · no new persistence owner');
