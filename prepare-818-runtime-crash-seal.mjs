@@ -53,6 +53,22 @@ function axis818RouteGuard(){if(axis818RouteLock)return;axis818RouteLock=true;tr
   s=s.slice(0,rootClose)+truthBlock+'\n'+s.slice(rootClose);
   const truthAt=s.indexOf(blockStart),closeAt=s.indexOf('})();');
   if(truthAt<0||truthAt>closeAt)fail('8.18 truth block escaped canonical root IIFE');
+
+  /* A user can press Record before camera metadata has populated videoWidth.
+     Keep the 30fps canvas compositor authoritative, but seed its dimensions from
+     the live track settings (or a safe frame size) and converge to true video
+     dimensions as soon as frames arrive. Platforms without canvas captureStream
+     retain the existing direct-camera fallback instead of failing to record. */
+  const pumpStart='function axis818StartRecordPump(){';
+  const pumpNext='async function capture816StartVideo(){';
+  const ps=s.indexOf(pumpStart),pn=ps<0?-1:s.indexOf(pumpNext,ps);
+  if(ps<0||pn<0)fail('8.18 record pump structural boundaries missing');
+  const nativePump=`function axis818StartRecordPump(){const v=D.querySelector('#cameraVideo');if(!v)return null;const track=state.stream?.getVideoTracks?.()[0]||null,settings=track?.getSettings?.()||{},cv=D.createElement('canvas');const size=()=>{const w=Math.max(2,Math.round(Number(v.videoWidth)||Number(settings.width)||1280)),h=Math.max(2,Math.round(Number(v.videoHeight)||Number(settings.height)||720));if(cv.width!==w)cv.width=w;if(cv.height!==h)cv.height=h};size();let c=cv.getContext('2d',{alpha:false,desynchronized:true});const quality=()=>{if(!c)return;c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high'};quality();if(typeof cv.captureStream!=='function'){axis818RecordAlive=false;axis818RecordCanvas=null;axis818RecordCtx=null;axis818RecordStream=null;return state.stream||null}axis818RecordCanvas=cv;axis818RecordCtx=c;axis818RecordAlive=true;axis818RecordStream=cv.captureStream(30);const draw=()=>{if(!axis818RecordAlive)return;const ow=cv.width,oh=cv.height;size();if(cv.width!==ow||cv.height!==oh){c=cv.getContext('2d',{alpha:false,desynchronized:true});axis818RecordCtx=c;quality()}try{c?.drawImage(v,0,0,cv.width,cv.height)}catch{}if(v.requestVideoFrameCallback)v.requestVideoFrameCallback(draw);else axis818RecordPump=requestAnimationFrame(draw)};draw();return axis818RecordStream}
+`;
+  s=s.slice(0,ps)+nativePump+s.slice(pn);
+  const pumpSlice=s.slice(s.indexOf(pumpStart),s.indexOf(pumpNext));
+  if(!pumpSlice.includes('cv.captureStream(30)')||!pumpSlice.includes('track?.getSettings?.()')||!pumpSlice.includes('Number(v.videoWidth)'))fail('8.18 record pump race hardening missing');
+
   syntax(s,FILE);write(FILE,s);
 }
 
@@ -70,4 +86,4 @@ function axis818RouteGuard(){if(axis818RouteLock)return;axis818RouteLock=true;tr
   syntax(s,FILE);write(FILE,s);
 }
 
-console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · Route Truth structurally native-selector sealed · v874 metric namespace initialized without new owner');
+console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · Route Truth structurally native-selector sealed · immediate video-start race hardened · v874 metric namespace initialized without new owner');
