@@ -21,8 +21,8 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   /* Early 8.18 used lastIndexOf('})();') and could land inside a historical
      appended IIFE. The original app owner is the root IIFE at the beginning of
      app.js; historical add-on IIFEs follow it. Relocate the full truth block to
-     immediately before that first root close so it shares state/save/$/$$ and
-     the canonical media helpers without creating a shadow owner. */
+     immediately before that first root close so it shares canonical state/save
+     and media helpers without creating a shadow owner. */
   const blockStart='/* AXIS 8.18 — Object Truth + Route Truth + Capture Preference foundation. */';
   const blockEnd="setTimeout(()=>{axis818RouteGuard();axis818RenderCapturePrefs();axis818RenderShelf()},260);";
   const bi=s.indexOf(blockStart),ei=bi<0?-1:s.indexOf(blockEnd,bi);
@@ -30,30 +30,22 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   const after=ei+blockEnd.length;
   let truthBlock=s.slice(bi,after);
 
-  /* Route Truth must be immune to historical $/$$ normalization. Earlier build
-     stages may still expose the collection selector as $$(), or may already have
-     collapsed it to $(). Exactly one known input form is accepted, then the final
-     runtime is forced to native querySelectorAll. */
-  const routeCollections=[
-    {
-      variants:["for(const v of $$('.view,.page'))","for(const v of $('.view,.page'))"],
-      to:"for(const v of Array.from(D.querySelectorAll('.view,.page')))"
-    },
-    {
-      variants:["for(const b of $$('[data-view]'))","for(const b of $('[data-view]'))"],
-      to:"for(const b of Array.from(D.querySelectorAll('[data-view]')))"
-    }
-  ];
-  for(const {variants,to} of routeCollections){
-    const hits=variants.reduce((n,from)=>n+(truthBlock.split(from).length-1),0);
-    const nativeHits=truthBlock.split(to).length-1;
-    if(nativeHits===1&&hits===0)continue;
-    if(hits!==1||nativeHits!==0)fail(`route collection selector expected one known source form, found source ${hits}, native ${nativeHits}: ${variants.join(' | ')}`);
-    const from=variants.find(x=>truthBlock.includes(x));
-    truthBlock=truthBlock.replace(from,()=>to);
-    if(truthBlock.split(to).length-1!==1)fail(`route native selector convergence failed: ${to}`);
-  }
-  if(/for\(const [vb] of \$+\(/.test(truthBlock))fail('Route Truth collection helper survived');
+  /* Foundation hardening intentionally evolves Route Truth before this final
+     prepare. Do not enumerate serialized $/$$ source shapes. Replace the one
+     existing Route Truth function region structurally with the canonical native
+     DOM implementation, preserving nav-first authority and exactly-one-active
+     semantics while making the final runtime independent of selector aliases. */
+  const routeStart='function axis818CurrentRoute(){';
+  const routeNext="D.addEventListener('click',e=>{const b=e.target.closest('[data-view]');";
+  const rs=truthBlock.indexOf(routeStart),rn=rs<0?-1:truthBlock.indexOf(routeNext,rs);
+  if(rs<0||rn<0)fail('Route Truth structural boundaries missing');
+  const nativeRoute=`function axis818CurrentRoute(){const nav=D.querySelector('.nav [data-view].active');if(nav?.dataset.view&&D.getElementById(nav.dataset.view))return nav.dataset.view;const active=Array.from(D.querySelectorAll('main>.view.active'));return active.length===1?active[0].id:(axis818Route||'todayView')}
+function axis818RouteGuard(){if(axis818RouteLock)return;axis818RouteLock=true;try{const active=axis818CurrentRoute();if(active)axis818Route=active;const today=axis818Route==='todayView';for(const v of Array.from(D.querySelectorAll('main>.view'))){const on=v.id===axis818Route;v.classList.toggle('active',on);v.toggleAttribute('inert',!on);v.setAttribute('aria-hidden',on?'false':'true')}for(const b of Array.from(D.querySelectorAll('[data-view]')))b.classList.toggle('active',b.dataset.view===axis818Route);for(const id of ['dock','v87Now','v82ActiveRail']){const x=D.querySelector('#'+id);if(x&&!today){x.classList.remove('show');x.setAttribute('aria-hidden','true')}else if(x&&today)x.removeAttribute('aria-hidden')}D.body.classList.toggle('axis818-route-away',!today)}finally{axis818RouteLock=false}}
+`;
+  truthBlock=truthBlock.slice(0,rs)+nativeRoute+truthBlock.slice(rn);
+  const routeSlice=truthBlock.slice(truthBlock.indexOf(routeStart),truthBlock.indexOf(routeNext));
+  if(!routeSlice.includes("Array.from(D.querySelectorAll('main>.view'))")||!routeSlice.includes("Array.from(D.querySelectorAll('[data-view]'))"))fail('Route Truth native selectors missing');
+  if(routeSlice.includes('$$(')||routeSlice.includes("const x=$('#"))fail('Route Truth selector alias survived');
 
   s=s.slice(0,bi)+s.slice(after);
   const rootClose=s.indexOf('})();');
@@ -78,4 +70,4 @@ const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(`${f} syntax ${e.message}
   syntax(s,FILE);write(FILE,s);
 }
 
-console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · Route Truth native-selector sealed · v874 metric namespace initialized without new owner');
+console.log('[AXIS 8.18 runtime crash seal] PASS · gallery selector scope self-contained · truth block rooted in canonical app IIFE · Route Truth structurally native-selector sealed · v874 metric namespace initialized without new owner');
