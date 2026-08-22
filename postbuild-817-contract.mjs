@@ -17,7 +17,7 @@ for(const src of [v61,runtime]){
 if(!app.includes("$('#scanBtn').onclick=()=>openCanonicalCamera('photo',null,false);"))fail('main Capture does not default to photo');
 if(!runtime.includes("openCanonicalCamera('photo',null,false)"))fail('compiled main Capture photo default missing');
 if(!app.includes('if(state.clip?.blob)')||!runtime.includes('if(state.clip?.blob)'))fail('explicit video retention contract missing');
-if(app.includes('if(state.prefs.keepClip&&state.clip?.blob)')||runtime.includes('if(state.prefs.keepClip&&state.clip?.blob)'))fail('legacy keepClip save gate survived');
+for(const old of ['if(state.prefs.keepClip&&state.clip?.blob)','if((state.prefs.keepClip||state.forceClip)&&state.clip?.blob)'])if(app.includes(old)||runtime.includes(old))fail(`legacy video save gate survived ${old}`);
 
 for(const needle of ['扫描取样','拍摄视频','最长60秒 · 自动保存','资料与收纳','记录整理'])if(!html.includes(needle))fail(`current Settings/archive copy missing ${needle}`);
 if(html.includes('<span>默认扫描</span>')||html.includes('<span>保留现场视频</span>'))fail('obsolete Capture preference labels survived');
