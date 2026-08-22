@@ -4,104 +4,82 @@
 
 ## Production baseline at start of this work
 
-- **AXIS 8.17.1 — Active Truth + Capture Polish is Production-sealed.**
-- Exact sealed runtime SHA: `0cd7884b83289d052ea6450a7916ca95578246f6`.
-- Final docs-only sealed repository tip before 8.18 work: `3b48e5861aa8a0341ce9561208d3347930145e81`.
+- **AXIS 8.17.1 — Active Truth + Capture Polish** is the last fully Production-sealed rollback baseline at the start of the 8.18 work.
+- Exact sealed 8.17.1 runtime SHA: `0cd7884b83289d052ea6450a7916ca95578246f6`.
+- Final 8.17.1 docs-only repository tip: `3b48e5861aa8a0341ce9561208d3347930145e81`.
 - Vercel and EdgeOne both served the exact sealed revisions and passed real Chromium + iPhone WebKit Production flows.
-- 8.17.1 remains the rollback-safe Production baseline while 8.18 is developed on a branch.
+- 8.18 may supersede this baseline only after the exact merged `main` SHA passes the same two-provider Production mirror contract.
 
 ## Active change
 
-**AXIS 8.18 — Object Truth + Focus Foundation**, branch `axis-818-object-focus-foundation`.
+**AXIS 8.18 — Final Capture Polish + Object Truth / Focus seal**, branch `axis-818-final-capture-polish`, PR #78.
 
-8.18 is not being implemented as a new isolated screen over unstable legacy assumptions. The first convergence closes three truth boundaries before the larger Evolution Library surface expands:
+The 8.18 product boundary is now one coherent release rather than an isolated foundation experiment. It keeps the existing canonical app/storage/media owners and closes the remaining field issues found during real-device use.
 
-1. **Object Truth** — the object itself defines what is recorded;
-2. **Route Truth** — one visible app route owns interaction after PWA resume;
-3. **Capture Truth** — Photo / Scan / Video / facing / watermark / export remain one canonical capture lifecycle.
+### Object Truth + Evolution Library
 
-### Object Metric Schema
+- Custom equipment / sport / movement objects define their actual `metricSchema`; explicitly time-only objects do not silently regain weight, reps, sets or intensity.
+- New Encounters snapshot `metricSchemaSnapshot` and `metrics`; historical Encounters remain readable without being rewritten.
+- The visible custom editor remains the existing `v874` owner.
+- Evolution Library / Personal Object Shelf is derived read-only from real Encounters; it creates no second persistence schema or database.
 
-The historical `strength → weight/reps/sets` and `cardio → duration/intensity` split may not override an explicitly configured custom object.
+### Route Truth + Focus
 
-A custom equipment / sport / movement / future object owns an explicit `metricSchema`: weight, reps, sets, duration, intensity, distance, resistance/level, pace/speed, hold time, or user-defined attributes.
+- PWA foreground recovery preserves the active route and physically converges to one active main view.
+- Inactive routes are `inert` / `aria-hidden`; Today-only controls cannot leak over Trends, History or other routes.
+- The 8.18 Focus layer remains presentation-only and delegates completion to the existing `v87-direct-884` owner.
+- Schema types that do not track sets never gain a synthetic `完成一组` action.
+- v8710 remains the sole automatic sound owner.
 
-If a user creates `靠墙站立` and selects only `时间`, future recording surfaces must not silently restore weight, reps or intensity.
+### Capture Truth
 
-Each new Encounter snapshots the schema into `metricSchemaSnapshot` and saves values in `metrics`. Historical Encounters keep their own snapshot when the object definition is edited later. Legacy Encounters remain readable, and the pre-8.18 `axis_v8124_custom_profiles` recording profile is migration input rather than a competing owner.
+- Normal Capture supports Photo / Scan / Video with persisted default mode and default facing preferences.
+- Scan sampling remains exactly `3秒 / 5秒` and is written by the canonical app state owner.
+- The final physical 3/5 control uses direct pointer/touch handling so iPhone sheet gestures cannot swallow the preference change.
+- The compatibility v876 setter delegates to the app-owned direct bridge; it may not recursively click the same control to set itself.
+- The read-only `拍摄视频 / 最长60秒 · 自动保存` pseudo-setting is retired. The 60-second limit remains a Capture runtime capability, not a fake Settings option.
 
-The canonical visible custom editor remains `v874`; 8.18 extends that owner instead of reviving retired v873/v876 duplicate custom editors.
+### Front / rear camera switching
 
-### PWA Route Truth
+- `#v8171CameraFlip` is a real physical control before and during recording.
+- One logical MediaRecorder continues to record a fixed 30fps canvas compositor while the physical camera source changes beneath it.
+- Camera switching does not create a second MediaRecorder, split the logical recording, or replace the recorder track mid-record.
+- On iOS devices that do not permit two camera streams to overlap, the compositor keeps the last valid frame, releases the old camera, opens the requested facing, and recovers the previous facing if acquisition fails.
+- Front-camera preview is mirrored for the user; stored source pixels remain governed by the canonical compositor/source-media contract.
+- An immediate Record tap after opening Capture waits for the in-flight camera acquisition instead of failing because `state.stream` has not committed yet.
 
-Installed-web-app foreground recovery preserves the route that was visible before backgrounding. The active navigation target is authoritative if stale DOM state contains more than one `.view.active`. Route reconciliation physically leaves exactly one main view active. When Trends / History / another route is active, Today/Home Capture controls may not reappear over it. Inactive pages become `inert` and `aria-hidden`; Today-only dock/active layers are physically hidden and non-interactive; `pageshow`, `visibilitychange` and focus reassert the current route instead of defaulting Home. No new route persistence store is introduced.
+### Media / watermark integrity
 
-### Capture preference model
+- `axis_v42_media` remains the only media store and `app.js` remains its owner.
+- Clean `S-* / SV-*` sidecars remain source truth; canonical `F-* / V-*` remain presentation derivatives.
+- Watermark processing remains source-first and v8710-owned.
+- 8.18 video remains a stable 30fps compositor path; no historical 15/20fps or 720p downgrade may return.
+- Encounter export/delete remains additive to the existing data model and must remove corresponding F/V + S/SV refs only when the Encounter itself is deleted.
 
-`记录偏好` must match the real Capture Field rather than exposing Scan sampling as if it were the whole camera model:
+### Release freshness
 
-- default Capture entry: `上次 / 照片 / 扫描 / 视频`;
-- Scan sampling remains `3秒 / 5秒`;
-- default camera: `上次 / 后置 / 前置`;
-- first-ever fallback remains Photo + rear camera;
-- Quick Record continues to delegate to the same canonical Capture owner.
-
-### Camera / video convergence
-
-The historical video path recorded directly from the physical camera stream and the old export compositor re-encoded at 20fps. 8.18 foundation records one logical video from a stable 30fps canvas stream. The physical `#cameraVideo` input may change from rear to front while the compositor stream remains stable, avoiding independent-blob concatenation or unsafe MediaRecorder track replacement.
-
-The clean `SV-*` source remains the source-of-truth sidecar; `V-*` remains the presentation derivative. The final watermark path must not downgrade that 30fps source through a historical compositor.
-
-### Watermark convergence
-
-The watermark preview already shows a central AXIS brand, but 8.15.1 intentionally removed that physical center brand from saved photos. 8.18 intentionally supersedes that presentation decision while preserving the 8.15.1 single-compositor ownership rule.
-
-- physical watermark owner remains `v8710-watermark`;
-- clean source remains untouched;
-- requested derivatives restore central `AXIS` controlled by configured opacity;
-- old v85/v876/v877 physical watermark painters remain retired;
-- video must use the same current design contract rather than an older watermark generation.
-
-### Media export + Encounter deletion
-
-An Encounter may contain multiple photos and one video. Detail export exposes independent `保存照片`, `保存视频`, and `保存全部` actions when relevant. Multi-file export uses browser file sharing when supported with a safe download fallback; it never mutates the Encounter.
-
-A completed/sealed Encounter may be deleted independently. Deletion removes its event data, event-meta record, canonical `F/V` media and clean `S/SV` sidecars, then refreshes derived Timeline / History / Trends / Evolution state. A currently running item may not be silently deleted.
-
-### Active Focus Layer
-
-The existing `v87-direct-884` active-control owner remains canonical. 8.18 adds a presentation-only Focus Layer which never auto-opens. Running/remaining/rest timing becomes visually dominant; normal `完成一组` tap remains; a deliberate press-and-hold completion affordance delegates back to the canonical `#v87Primary` action. Object schemas that do not track sets must not gain a synthetic `完成一组` action merely because their historical type is `strength`. Estimated time remains a reminder only and never completes an item. v8710 remains the sole automatic sound owner.
-
-### Evolution Library / Personal Object Shelf
-
-8.18 starts the Object Shelf as a read-only projection over real Encounters. It creates no duplicate object records or persistence schema. Objects are derived by stable identity and factual recurrence, recency and real media density. Replay/editor scope remains downstream.
-
-## Native / cross-platform foundation remains authoritative
-
-The existing native foundation is not replaced by 8.18 web product work. The durable handoff remains **`axis-native-foundation-0`**, with the native repository **`INDEPENDENTWU/AXIS-iOS`** consuming the shared contracts **`axis.domain.v1`** and **`axis.data.v1`**. Web/iOS capability differences stay isolated behind the published platform capability and product-matrix contracts.
-
-**Chat history is not authoritative project memory.** Repository contracts, ADRs, `CURRENT_RELEASE.md`, this file, and the shared contract artifacts remain the durable engineering source of truth.
+- Optional stale-shell freshness remains event-driven rather than polled.
+- The final browser freshness probe is same-origin and fail-open; a provider/WebKit cache or transport error cannot become a product runtime failure.
 
 ## Validation for this work
 
-8.18 must not merge until:
+8.18 must not merge until all of the following are true on the exact PR head:
 
-- deterministic canonical build succeeds;
-- Object Metric Schema persistence + event snapshot behavior passes;
-- a time-only custom object never renders or persists hidden legacy metrics as canonical truth;
-- PWA background/foreground route regression passes, including deliberately duplicated stale active-view classes;
-- Capture default-mode / Scan / facing preferences remain one app-owned model and actually affect the next Capture opening;
-- front/rear switching works before recording and the compositor stays logically continuous during recording;
-- photo/video/all export behavior passes;
-- completed Encounter deletion removes F/V + S/SV and no unrelated data;
-- current central AXIS watermark is present only on requested derivatives;
-- watermarked video does not fall back to the historical low-frame-rate compositor;
-- Chromium + iPhone WebKit pass new 8.18 smoke plus inherited 8.17 / 8.16 / 8.15.1 gates;
-- Repository Contract, Work Continuity and native foundation seal pass;
-- no timeout inflation, assertion weakening, second persistence owner, second recorder owner or v876 sound resurrection is used.
+- deterministic canonical build and 8.18 manifest contracts pass;
+- physical Settings 3秒 → 5秒 → 3秒 interaction persists and repaints correctly in Chromium and iPhone WebKit;
+- the retired video pseudo-setting is absent from the visible Settings surface;
+- front/rear camera flip works before recording;
+- mid-record front/rear flip keeps the same MediaRecorder identity and uninterrupted logical recording state;
+- immediate Record after Capture opening waits for camera readiness instead of returning false;
+- iOS exclusive-camera fallback and facing recovery remain fail-safe;
+- Object Truth, Route Truth, Focus, Evolution Library, source-first media and 30fps watermark contracts pass;
+- inherited 8.17.1 / 8.17 / 8.16 / 8.15 / 8.14 / 8.13 behavioral gates pass under public 8.18 identity;
+- historical Chromium manifest gates recognize 8.18 as a valid inheriting public release instead of failing only on a stale version allow-list;
+- Repository Contract and Work Continuity pass;
+- no timeout inflation, assertion weakening, second database/store/recorder owner or v876 sound resurrection is used.
 
-Only after merge does the exact final `main` SHA go through Vercel parity, EdgeOne exact prebuilt deployment, live API parity, real EdgeOne Chromium and iPhone WebKit Production flows.
+After merge, the exact final `main` runtime SHA must reach Vercel Production and then EdgeOne Production with exact-artifact parity. Real EdgeOne Chromium and iPhone WebKit release flows must both pass before 8.18 is called Production-sealed.
 
 ## Next planned stage
 
-After Object Truth, Route Truth and Capture Truth are sealed, continue expanding **AXIS 8.18 — Evolution Library / Personal Object Shelf** with object-first browsing at hundreds or thousands of Encounters. Evidence Sequence can then build on the stable media/camera compositor. Truthful Evolution Replay remains downstream rather than being pulled into this foundation.
+After this PR is green and the exact merged 8.18 runtime is Production-sealed, update `CURRENT_RELEASE.md` / this handoff with the final runtime SHA and provider validation record. Further Evolution Replay or larger object-first browsing work is downstream and must not be mixed into this final 8.18 capture/release seal.
