@@ -78,3 +78,4 @@ info.axis8171.sourceMedia={
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 console.log('[AXIS 8.17.1 source-first media contract] PASS · S/SV clean master · F/V canonical derivatives · watermark/Evidence source-first · legacy fallback · no new persistence');
+await import('./postbuild-818-contract.mjs');
