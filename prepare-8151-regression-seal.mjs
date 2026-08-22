@@ -73,3 +73,5 @@ const regexOnce=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:
 
 console.log('[AXIS 8.15.1 regression seal] PASS · static Home semantics hidden until canonical render · one photo watermark compositor · center brand retired');
 await import('./prepare-8151-media-stable-swap.mjs');
+await import('./prepare-816-capture-evidence-convergence.mjs');
+await import('./prepare-816-evidence-compat-refine.mjs');

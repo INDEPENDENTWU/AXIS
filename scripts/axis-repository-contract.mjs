@@ -5,6 +5,7 @@ const fail=message=>{throw new Error(`[AXIS repository contract] ${message}`)};
 const read=path=>{if(!fs.existsSync(path))fail(`missing ${path}`);return fs.readFileSync(path,'utf8')};
 const json=path=>{try{return JSON.parse(read(path))}catch(error){fail(`invalid JSON ${path}: ${error.message}`)}};
 
+const CURRENT='8.16',FOUNDATION='8.12';
 const required=[
   'README.md','CONTRIBUTING.md','SECURITY.md','CODE_OF_CONDUCT.md',
   'docs/README.md','docs/PRODUCT.md','docs/ARCHITECTURE.md','docs/CURRENT_RELEASE.md',
@@ -18,11 +19,24 @@ const required=[
 for(const path of required)if(!fs.existsSync(path))fail(`required file missing: ${path}`);
 
 const readme=read('README.md');
-if(!readme.slice(0,900).includes('Current release: 8.12'))fail('README current release is not 8.12');
-for(const path of ['docs/CURRENT_RELEASE.md','docs/RUNTIME_CONTRACT.md'])if(!read(path).includes('8.12'))fail(`${path} does not identify the 8.12 baseline`);
+if(!readme.slice(0,1200).includes(`Current release: ${CURRENT}`))fail(`README current release is not ${CURRENT}`);
+if(!read('docs/CURRENT_RELEASE.md').includes(`AXIS ${CURRENT}`))fail(`docs/CURRENT_RELEASE.md does not identify ${CURRENT}`);
+if(!read('docs/RUNTIME_CONTRACT.md').includes(FOUNDATION))fail(`docs/RUNTIME_CONTRACT.md does not preserve the ${FOUNDATION} runtime foundation`);
 
 const build=read('build-release.mjs');
-for(const marker of ['prepare-812-release-compat.mjs','prepare-812-learning-content.mjs','prepare-812-learning-settings.mjs','postbuild-812-contract.mjs'])if(!build.includes(marker))fail(`current release build marker missing: ${marker}`);
+for(const marker of ['prepare-812-release-compat.mjs','prepare-812-learning-content.mjs','prepare-812-learning-settings.mjs','postbuild-812-contract.mjs'])if(!build.includes(marker))fail(`inherited foundation build marker missing: ${marker}`);
+/* 8.16 deliberately enters through the existing deterministic convergence chain rather
+   than adding duplicate top-level steps. Validate those real import edges explicitly. */
+const releaseDriver=read('prepare-8151-regression-release.mjs');
+if(!releaseDriver.includes("await import('./prepare-816-release.mjs')"))fail('8.16 release is not chained from the sealed 8.15.1 release driver');
+const convergenceDriver=read('prepare-8151-regression-seal.mjs');
+for(const marker of ["await import('./prepare-816-capture-evidence-convergence.mjs')","await import('./prepare-816-evidence-compat-refine.mjs')"])if(!convergenceDriver.includes(marker))fail(`8.16 convergence chain missing: ${marker}`);
+const captureDriver=read('prepare-816-capture-evidence-convergence.mjs');
+if(!captureDriver.includes("prepare-816-capture-evidence-convergence-v2.mjs"))fail('8.16 Capture v2 convergence is not reachable');
+const evidenceDriver=read('prepare-816-evidence-compat-refine.mjs');
+if(!evidenceDriver.includes("prepare-816-capture-marker-seal.mjs"))fail('8.16 final Capture selector/entry seal is not reachable');
+const postDriver=read('postbuild-8151-regression-contract.mjs');
+if(!postDriver.includes("await import('./postbuild-816-contract.mjs')"))fail('8.16 postbuild contract is not chained from the inherited 8.15.1 seal');
 if(!build.includes("architecture==='canonical-single-runtime'"))fail('canonical single-runtime release assertion missing');
 
 const stepBlock=build.match(/const STEPS=\[([\s\S]*?)\n\];/);
@@ -65,4 +79,4 @@ try{
 
 const prepareCount=steps.filter(step=>step.startsWith('prepare-')).length;
 const postbuildCount=steps.filter(step=>step.startsWith('postbuild-')).length;
-console.log(`[AXIS repository contract] PASS · documented baseline 8.12 · ${steps.length} deterministic build steps (${prepareCount} prepare / ${postbuildCount} postbuild) · Vercel build + EdgeOne verified-prebuilt publishing aligned`);
+console.log(`[AXIS repository contract] PASS · current ${CURRENT} · inherited runtime foundation ${FOUNDATION} · nested 8.16 release/convergence/postbuild graph verified · ${steps.length} deterministic top-level steps (${prepareCount} prepare / ${postbuildCount} postbuild) · Vercel build + EdgeOne verified-prebuilt publishing aligned`);

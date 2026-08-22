@@ -39,3 +39,4 @@ for(const f of ['postbuild-8131-evolution-contract.mjs','postbuild-814-evolution
 }
 
 console.log('[AXIS 8.15.1 regression release] PASS · public/base 8.15.1 · 8.15 Media Evidence inherited unchanged · cold-start/watermark ownership hotfix current');
+await import('./prepare-816-release.mjs');

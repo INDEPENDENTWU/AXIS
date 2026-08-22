@@ -26,3 +26,4 @@ info.gates=info.gates||{};Object.assign(info.gates,{coldStartHomeSemanticSeal815
 info.axis8151={release:true,scope:'coldstart-watermark-evidence-regression-seal',home:{staticHero:'geometry-only-before-canonical-render',readyOwner:'app.js renderHomeState',historicalSemanticFlash:false},watermark:{photoOwner:'v8710-watermark',legacyAppPhotoCompositor:false,centerBrand:false,currentCard:true,videoOwner:'inherited-unchanged'},mediaEvidence:{owner:'v815-media-evidence',swap:'stable-in-place',sectionRemount:false,retainPreviousUntilReady:true,warmBeforeCommit:true,loadingOpacityBlink:false},ownership:{newPersistence:false,newNetwork:false,trainingState:false,evolution:false,replay:false}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 console.log('[AXIS 8.15.1 regression contract] PASS · canonical Home first paint · single saved-photo watermark card · stable in-place Media Evidence swaps');
+await import('./postbuild-816-contract.mjs');

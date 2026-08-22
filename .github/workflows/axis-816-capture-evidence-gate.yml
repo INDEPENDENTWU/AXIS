@@ -1,0 +1,102 @@
+name: AXIS 8.16 Capture + Comparative Evidence
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.16 candidate
+        run: node build-release.mjs
+      - name: Verify 8.16 manifest and ownership
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8'),html=fs.readFileSync('index.html','utf8');
+          if(m.version!=='8.16'||m.baseVersion!=='8.16'||m.architecture!=='canonical-single-runtime')throw new Error(`release mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
+          for(const g of ['coldStartHomeSemanticSeal8151','watermarkSinglePhotoCompositor8151','mediaEvidenceStableSection8151','captureField816','captureUnifiedEntry816','captureMultiPhoto816','capturePhotoCap816','captureCoverReorder816','captureVideo816','captureVideoLimit816','captureVideoSingleRecorder816','captureExistingMediaStore816','captureNoNewStorage816','captureQuickRecordUnified816','comparativeEvidence816','comparativeEvidenceArbitraryPair816','comparativeEvidencePresets816','comparativeEvidenceRailSelection816','comparativeEvidenceStableSwap816','comparativeEvidenceFactualOnly816','replayDeferred816'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
+          if(m.axis816?.capture?.maxPhotosPerEncounter===0)throw new Error('invalid photo contract');
+          if(m.axis816?.capture?.photo?.maxPerEncounter!==12||m.axis816?.capture?.video?.maxSeconds!==60||m.axis816?.capture?.video?.maxPerEncounter!==1)throw new Error('capture bounds drift');
+          if(m.axis816?.capture?.persistenceOwner!=='app.js'||m.axis816?.capture?.mediaStore!=='axis_v42_media'||m.axis816?.capture?.newStorage!==false||m.axis816?.capture?.newSchema!==false)throw new Error('capture ownership drift');
+          if(m.axis816?.evidence?.mode!=='arbitrary-two-point'||m.axis816?.evidence?.stableInPlace!==true||m.axis816?.ownership?.replay!==false)throw new Error('evidence ownership drift');
+          if(!core.includes('__AXIS_816_CAPTURE_FIELD__')||!core.includes('__AXIS_816_COMPARATIVE_EVIDENCE__'))throw new Error('8.16 compiled markers missing');
+          if((html.match(/data-axis-capture-surface="v816-capture-field"/g)||[]).length!==2)throw new Error('Capture Field DOM ownership drift');
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-816-chromium.log 2>&1 &
+          sleep 1
+      - name: Capture Field and Comparative Evidence
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-816-capture-evidence-smoke.mjs
+      - name: Inherited cold-start and watermark seal
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8151-regression-seal-smoke.mjs
+      - name: Inherited stable Evidence swap
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8151-evidence-swap-smoke.mjs
+      - name: Inherited Media Evidence behavior
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-815-media-evidence-smoke.mjs
+      - name: Existing watermark controls
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-watermark-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-816-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.16 candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-816-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone Capture Field and Comparative Evidence
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-816-capture-evidence-smoke.mjs
+      - name: iPhone inherited cold-start and watermark seal
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8151-regression-seal-smoke.mjs
+      - name: iPhone inherited stable Evidence swap
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8151-evidence-swap-smoke.mjs
+      - name: iPhone inherited Media Evidence behavior
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-815-media-evidence-smoke.mjs
+      - name: iPhone existing watermark controls
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-watermark-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-816-webkit.log || true
