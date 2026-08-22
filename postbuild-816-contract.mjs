@@ -19,7 +19,16 @@ if(!app.includes("videoBitsPerSecond:2500000")||!app.includes('rec.start(1000)')
 const hardStop=/capture816StopTimer\s*=\s*setTimeout\(function\(\)\{toast\('已录满 60 秒'\);capture816StopVideo\(false\)\},CAPTURE816_VIDEO_MAX_MS\)/;
 if(!hardStop.test(app)||!hardStop.test(runtime))fail('hard 60 second stop missing');
 if(!app.includes("state.frames.splice(i,1)[0];state.frames.unshift(f)"))fail('cover reorder contract missing');
-if(!app.includes('frameRefs:[]')||!app.includes('e.frameRefs.push(ref)')||!app.includes('e.clipRef=`V-${e.id}`'))fail('existing media event schema drift');
+const canonicalVideoPointer=app.includes('e.clipRef=`V-${e.id}`')||app.includes("e.clipRef='V-'+e.id");
+if(!app.includes('frameRefs:[]')||!app.includes('e.frameRefs.push(ref)')||!canonicalVideoPointer)fail('existing media event schema drift');
+/* 8.17.1 may add untouched source sidecars, but canonical 8.16 pointers must remain
+   authoritative compatibility pointers. If one clean-source field exists, require
+   the complete additive S/SV model rather than accepting a partial pointer migration. */
+const hasSourceMedia=app.includes('sourceFrameRefs:[]')||app.includes('sourceClipRef');
+if(hasSourceMedia){
+ for(const needle of ['sourceFrameRefs:[]',"sourceRef='S-'+e.id+'-'+i",'e.sourceFrameRefs.push(sourceRef)',"sourceClipRef='SV-'+e.id",'e.sourceClipRef=sourceClipRef'])if(!app.includes(needle))fail(`additive clean-source media contract drift ${needle}`);
+ if(!app.includes("e.clipRef='V-'+e.id")&&!app.includes('e.clipRef=`V-${e.id}`'))fail('canonical video pointer replaced by clean source');
+}
 if(!app.includes("DB='axis_v42_media'"))fail('existing media store owner drift');
 if((app.match(/indexedDB\.open\(/g)||[]).length!==1)fail('new IndexedDB owner introduced');
 for(const forbidden of ['axis_v816_media','axis_816_media','axis_v816_capture'])if(app.includes(forbidden)||runtime.includes(forbidden))fail(`new media persistence introduced ${forbidden}`);
@@ -34,5 +43,5 @@ for(const forbidden of ['评分','分数','进步','提升','改善','更好'])i
 info.gates=info.gates||{};Object.assign(info.gates,{captureField816:true,captureUnifiedEntry816:true,captureMultiPhoto816:true,capturePhotoCap816:true,captureCoverReorder816:true,captureVideo816:true,captureVideoLimit816:true,captureVideoSingleRecorder816:true,captureExistingMediaStore816:true,captureNoNewStorage816:true,captureQuickRecordUnified816:true,comparativeEvidence816:true,comparativeEvidenceArbitraryPair816:true,comparativeEvidencePresets816:true,comparativeEvidenceRailSelection816:true,comparativeEvidenceStableSwap816:true,comparativeEvidenceFactualOnly816:true,replayDeferred816:true});
 info.axis816={release:true,scope:'capture-field-comparative-evidence',capture:{surface:'v816-capture-field',cameraOwner:'app.js',persistenceOwner:'app.js',mediaStore:'axis_v42_media',entryPoints:['capture-record','quick-record-supplement'],photo:{multi:true,maxPerEncounter:12,cover:'frameRefs[0]-reorder-no-schema'},video:{enabled:true,maxSeconds:60,maxPerEncounter:1,clipSchema:'clipRef',audio:false,autostop:true,bitrateTarget:2500000},scan:{preserved:true,usesExistingPreference:true,addsFramesToDraft:true},newStorage:false,newSchema:false},evidence:{owner:'v815-media-evidence',mode:'arbitrary-two-point',photoBearingEncounters:true,presets:['ends','recent','adjacent'],railSelectsActiveSide:true,stableInPlace:true,autoplay:false,factualOnly:true},ownership:{trainingState:false,newPersistence:false,newNetwork:false,newAi:false,newRecorderOwner:false,replay:false},next:{replay:'deferred-until-capture-density-and-selection-semantics-are-sealed'}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-console.log('[AXIS 8.16 contract] PASS · unified Capture Field · <=12 photos · one <=60s silent clip · existing app/IndexedDB ownership · arbitrary factual two-point evidence · Replay deferred');
+console.log('[AXIS 8.16 contract] PASS · unified Capture Field · <=12 photos · one <=60s silent clip · canonical F/V pointers preserved with optional additive S/SV sources · existing app/IndexedDB ownership · arbitrary factual two-point evidence · Replay deferred');
 await import('./postbuild-817-contract.mjs');

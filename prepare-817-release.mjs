@@ -57,6 +57,4 @@ for(const f of ['postbuild-8131-evolution-contract.mjs','postbuild-814-evolution
  s=once(s,"manifest.version!=='8.16'||manifest.baseVersion!=='8.16'","manifest.version!=='8.17'||manifest.baseVersion!=='8.17'",'EdgeOne release identity');write(f,s);
 }
 
-console.log('[AXIS 8.17 release] PASS · public/base 8.17 · 8.16 Capture/Evidence inherited · interaction semantics current');
-await import('./prepare-817-interaction-convergence-driver.mjs');
-await import('./prepare-8171-active-truth-capture.mjs');
+console.log('[AXIS 8.17 release] PASS · public/base 8.17 · 8.16 Capture/Evidence inherited · runtime convergence deferred to final field stage');

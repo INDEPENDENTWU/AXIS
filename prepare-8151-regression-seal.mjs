@@ -76,3 +76,5 @@ await import('./prepare-8151-media-stable-swap.mjs');
 await import('./prepare-816-capture-evidence-convergence.mjs');
 await import('./prepare-816-evidence-compat-refine.mjs');
 await import('./prepare-817-interaction-convergence-driver.mjs');
+await import('./prepare-8171-active-truth-capture-driver.mjs');
+await import('./prepare-8171-source-first-media.mjs');
