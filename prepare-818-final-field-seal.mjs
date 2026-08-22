@@ -68,8 +68,11 @@ function repairDollarForEach(src){
  const applyEnd="function axis818ApplyScanSeconds(sec){sec=Number(sec);if(sec!==3&&sec!==5)return false;state.prefs.scanSeconds=sec;save();try{renderSettings()}catch(e){}D.querySelectorAll('#scanSeconds [data-sec],.v817CapturePref [data-sec]').forEach(function(b){var on=Number(b.dataset.sec)===sec;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on?'true':'false')});return true}";
  s=once(s,applyEnd,applyEnd+"\nwindow.__AXIS_818_SCAN_SECONDS__={version:'8.18',owner:'app.js',get:function(){return Number(state.prefs.scanSeconds)||3},set:axis818ApplyScanSeconds};",'scan bridge');
  s=replaceFunction(s,'function axis818BindFieldPolish(){',`function axis818BindFieldPolish(){var flip=D.querySelector('#v8171CameraFlip');if(flip&&flip.dataset.axis818Bound!=='1'){flip.dataset.axis818Bound='1';flip.addEventListener('click',function(e){e.preventDefault();capture8171FlipCamera()})}if(D.documentElement.dataset.axis818ScanBound!=='1'){D.documentElement.dataset.axis818ScanBound='1';var lastPointer=0;var choose=function(e){var b=e.target&&e.target.closest?e.target.closest('#scanSeconds [data-sec],.v817CapturePref [data-sec]'):null;if(!b)return;var now=Date.now();if(e.type==='click'&&now-lastPointer<550)return;if(e.type==='pointerup'){lastPointer=now;e.preventDefault()}axis818ApplyScanSeconds(b.dataset.sec)};D.addEventListener('pointerup',choose,true);D.addEventListener('click',choose,true)}axis818ApplyScanSeconds(state.prefs.scanSeconds);capture8171PaintFacing()}`,'final scan physical binding');
+ const legacyScanClick="$$('#scanSeconds button').forEach(b=>b.onclick=()=>{state.prefs.scanSeconds=Number(b.dataset.sec);save();renderSettings()});";
+ s=once(s,legacyScanClick,'','retire legacy scan click writer');
  s=s.replace("scanTouchOwner:'axis818-final'","scanTouchOwner:'app-direct-pointer'");
  if(s.includes("window.__AXIS_CAPTURE_PREF__?.set?.(String(sec))"))fail('recursive compatibility scan setter survived');
+ if(s.includes('state.prefs.scanSeconds=Number(b.dataset.sec)'))fail('legacy scan preference writer survived retirement');
  if(!s.includes('__AXIS_818_SCAN_SECONDS__'))fail('canonical scan bridge missing');
 
  /* `$` is AXIS querySelector and `$$` is querySelectorAll. A final `$().forEach`
@@ -110,4 +113,4 @@ const setter818="function setCapturePref(v){const x=['3','5'].includes(String(v)
  write(SMOKE817,s);
 }
 
-console.log(`[AXIS 8.18 final field seal] PASS · immediate Record waits for camera · one app-owned 3/5 pointer owner · v876 recursion retired · canonicalizer accepts direct 8.18 bridge · selector collection repairs ${selectorForEachRepairs} · inherited 8.17 smoke aligned to intentional 8.18 pseudo-setting retirement`);
+console.log(`[AXIS 8.18 final field seal] PASS · immediate Record waits for camera · one app-owned 3/5 pointer owner · legacy scan click writer retired · v876 recursion retired · canonicalizer accepts direct 8.18 bridge · selector collection repairs ${selectorForEachRepairs} · inherited 8.17 smoke aligned to intentional 8.18 pseudo-setting retirement`);
