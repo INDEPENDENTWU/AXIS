@@ -118,3 +118,13 @@ if(captureMigrationRewrites!==1)fail('8.17 scan-sampling convergence did not run
  fs.writeFileSync(FILE,p);
  console.log('[AXIS 8.17 interaction driver] PASS · canonicalizer now preserves Photo entry + app-owned 3/5 Scan sampling');
 }
+
+/* Keep the final browser gate fast while diagnosing the only remaining route. */
+{
+ const FILE='scripts/axis-817-interaction-smoke.mjs';let s=fs.readFileSync(FILE,'utf8');
+ const from="await tap(page.locator('#settingsBtn'));await page.waitForSelector('#settingsSheet.show');await tap(page.locator('#storageBtn'));await page.waitForSelector('#storageSheet.show');";
+ const to="await tap(page.locator('#settingsBtn'));await page.waitForSelector('#settingsSheet.show');const storageBefore=await page.evaluate(()=>{const b=document.querySelector('#storageBtn'),x=document.querySelector('#storageSheet');return{bridge:typeof window.__AXIS_OPEN_STORAGE__,marker:window.__AXIS_817_STORAGE_ROUTE__||null,button:{count:document.querySelectorAll('#storageBtn').length,text:b?.textContent?.replace(/\\s+/g,' ').trim(),route:b?.dataset?.axisStorageRoute,onclick:typeof b?.onclick,rect:b?[b.getBoundingClientRect().width,b.getBoundingClientRect().height]:null},sheet:{exists:!!x,className:x?.className,display:x?getComputedStyle(x).display:null,rect:x?[x.getBoundingClientRect().width,x.getBoundingClientRect().height]:null},shown:[...document.querySelectorAll('.sheetWrap.show')].map(n=>n.id)}});console.log('[AXIS 8.17 storage before]',JSON.stringify(storageBefore));await tap(page.locator('#storageBtn'));await page.waitForTimeout(120);const storageAfter=await page.evaluate(()=>{const x=document.querySelector('#storageSheet');return{className:x?.className,display:x?getComputedStyle(x).display:null,visibility:x?getComputedStyle(x).visibility:null,rect:x?[x.getBoundingClientRect().width,x.getBoundingClientRect().height]:null,shown:[...document.querySelectorAll('.sheetWrap.show')].map(n=>n.id)}});console.log('[AXIS 8.17 storage after]',JSON.stringify(storageAfter));await page.waitForFunction(()=>document.querySelector('#storageSheet')?.classList.contains('show'),undefined,{timeout:2500});";
+ const count=s.split(from).length-1;if(count!==1)throw new Error(`[AXIS 8.17 interaction driver] smoke storage sequence expected once, found ${count}`);
+ s=s.replace(from,to);fs.writeFileSync(FILE,s);
+ console.log('[AXIS 8.17 interaction driver] PASS · storage browser diagnostic armed with 2.5s class wait');
+}
