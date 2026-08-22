@@ -4,11 +4,10 @@
 
 ## Production baseline at start of this work
 
-- **AXIS 8.16 — Capture Field + Comparative Evidence** is Production-sealed.
-- Exact sealed 8.16 `main` SHA: `0dbb25cd432e3cc7de0258affcdc892d8d55ce9b`.
-- Vercel Production `https://axis-five-puce.vercel.app` and EdgeOne Production `https://axisfitness-mirror-9x91gveo.edgeone.cool` served the exact same 8.16 canonical artifact.
-- Real EdgeOne Chromium and iPhone WebKit full inherited + 8.16 release flows passed.
-- Provider-neutral stale-shell freshness remains `/axis-build.json` + `cache:'no-store'`.
+- **AXIS 8.16 — Capture Field + Comparative Evidence** was the Production-sealed baseline for the 8.17 convergence work.
+- Exact sealed 8.16 SHA: `0dbb25cd432e3cc7de0258affcdc892d8d55ce9b`.
+- Vercel and EdgeOne served the exact same 8.16 canonical artifact.
+- Real EdgeOne Chromium and iPhone WebKit inherited + 8.16 release flows passed.
 
 ## Product direction
 
@@ -18,19 +17,25 @@ AXIS remains a **Personal Evolution Engine**.
 
 8.17 is an interaction-convergence release, not a new feature category. It unifies Capture entry semantics, makes Comparative Evidence understandable through named slots, and gives growing history a time-first archive without adding a second recorder, media store, training owner or persistence schema.
 
-## Active change — AXIS 8.17 Production Seal
+## Active change — AXIS 8.17 is Production-sealed
 
-- **AXIS 8.17 — Interaction Convergence** merged through PR #70 as `b62bc63d7bb97245940874dbf9b06b280f316f27`.
-- Vercel successfully deployed that exact 8.17 canonical artifact.
-- EdgeOne also deployed the exact Vercel-parity artifact and verified live `8.17 / 8.17`, source parity and all seven API contracts.
-- The first real EdgeOne Chromium seal run stopped in the inherited 8.15 Media Evidence smoke after Compare had already passed endpoint rendering.
-- Root cause was a **test semantic mismatch**, not a product/runtime failure: 8.17 intentionally keeps timeline taps inside Compare bound to the active named slot (`起点` / `对照`), while the inherited 8.15 smoke still expected a timeline tap inside Compare to return to single-Encounter inspection.
-- PR #71 corrected only that inherited test boundary: endpoint Compare is still proved, then the test explicitly exits Compare before inheriting the 8.15 single-Encounter overlay/photo/video contract.
-- PR #71 squash-merged as `798d11b901e1d7f48636d30dd33fd5db67d5fd5c`.
-- No AXIS runtime/product source, storage owner, media owner, Capture semantics, comparison semantics, timeout budget or assertion strength changed in that fix.
-- This handoff update is documentation-only. The exact post-merge `main` SHA must still pass the full Vercel → EdgeOne parity → Chromium → iPhone WebKit Production flow before 8.17 is called sealed.
+There is no remaining 8.17 product or release blocker.
 
-### 8.17 product contract retained
+- PR #70 delivered AXIS 8.17 Interaction Convergence.
+- PR #71 corrected the inherited 8.15 Media Evidence test boundary so old single-Encounter inspection is tested only after explicitly leaving 8.17 Compare mode.
+- No runtime/product source, timeout budget or assertion strength was relaxed by that correction.
+- Exact validated runtime revision: `e6d31c2f08f97e078d85761d25a8fb385b1d6c3f`.
+- Vercel exact revision: success.
+- Canonical build and Vercel/local artifact parity: success.
+- EdgeOne exact prebuilt deployment and live manifest/API parity: success.
+- Real EdgeOne Chromium full 8.17 Production flow: success.
+- Real EdgeOne iPhone WebKit full 8.17 Production flow: success.
+- `EdgeOne Production` status: success.
+- Production workflow record: `32573605355`.
+
+This docs-only continuity seal does not change runtime/product behavior. After merge, the exact docs-only repository tip must pass the same Vercel/EdgeOne mirror workflow so `main`, Vercel and EdgeOne remain exact-revision aligned.
+
+### Sealed 8.17 product contract
 
 - Quick Record exposes one supplemental **补拍照片 / 视频** entry.
 - Canonical Capture opens at Photo; Scan keeps 3秒 / 5秒 sampling; explicit Video is retained automatically up to 60 seconds.
@@ -42,18 +47,18 @@ AXIS remains a **Personal Evolution Engine**.
 
 ## Validation for this work
 
-8.17 is Production-sealed only when all of the following are true for the exact final `main` revision:
+The 8.17 Production-seal criteria have been satisfied:
 
 1. deterministic release build reports `8.17 / 8.17`, `canonical-single-runtime`;
-2. repository/runtime and inherited 8.13.1 → 8.17 contracts remain green;
-3. Vercel Production is READY for the exact final `main` SHA;
-4. Vercel manifest/runtime/CSS/source identity matches the locally built canonical artifact;
-5. EdgeOne publishes that exact verified prebuilt artifact and live manifest/API parity matches Vercel;
-6. real EdgeOne Chromium passes 8.12.4, 8.13.1, 8.14, inherited 8.15, 8.15.1, 8.16 and dedicated 8.17 flows;
+2. Vercel Production serves the exact validated revision;
+3. Vercel/local manifest/runtime/CSS/source identity matches;
+4. EdgeOne publishes the exact verified prebuilt artifact;
+5. EdgeOne live manifest and API contracts match Vercel;
+6. real EdgeOne Chromium passes the inherited + 8.17 release flow;
 7. real EdgeOne iPhone WebKit passes the same Production flow;
-8. only after both engines pass may `EdgeOne Production: success` and **AXIS 8.17 Production-sealed** be recorded.
+8. `EdgeOne Production` is green.
 
-No timeout inflation, product rollback or weakening of the 8.17 named-slot interaction is acceptable as a way to make the seal green.
+No timeout inflation, product rollback or weakening of the 8.17 named-slot interaction was used to obtain the seal.
 
 ## Next planned stage — 8.18
 
