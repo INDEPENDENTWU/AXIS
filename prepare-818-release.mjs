@@ -17,7 +17,7 @@ const replaceIdentity=(f,required=true)=>{let s=read(f),n=(s.match(/'8\.17'/g)||
  s=s.replace(from,to).replaceAll(`AXIS ${FROM}] release identity`,`AXIS ${VERSION}] release identity`);write(f,s);
 }
 
-/* All inherited runtime/smoke contracts keep their historical scope but validate the current public build identity. */
+/* Inherited contracts keep their historical scope but validate the current public build identity. */
 for(const f of [
  'postbuild-882-contract.mjs','postbuild-810-contract.mjs','postbuild-8101-contract.mjs','postbuild-8102-contract.mjs','postbuild-8103-contract.mjs',
  'postbuild-891-contract.mjs','postbuild-811-contract.mjs','postbuild-812-contract.mjs','postbuild-813-live-route.mjs','postbuild-8123-contract.mjs','postbuild-8123-field-polish.mjs','postbuild-8124-contract.mjs',
@@ -30,5 +30,4 @@ for(const f of [
  'scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs'
 ])replaceIdentity(f,false);
 
-console.log('[AXIS 8.18 release] PASS · public/base 8.18 · 8.17.1 factual/media foundations inherited · Object/Focus work may converge after final 8.17.1 owners');
-await import('./prepare-818-object-route-foundation.mjs');
+console.log('[AXIS 8.18 release] PASS · public/base 8.18 · 8.17.1 factual/media foundations inherited · existing Object/Focus foundation remains the single 8.18 owner');
