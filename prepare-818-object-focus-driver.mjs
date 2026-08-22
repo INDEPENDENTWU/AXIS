@@ -15,4 +15,5 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
 await import('./prepare-818-foundation-hardening.mjs');
 await import('./prepare-818-runtime-crash-seal.mjs');
 await import('./prepare-818-media-store-seal.mjs');
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal applied');
+await import('./prepare-818-field-polish.mjs');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish applied');
