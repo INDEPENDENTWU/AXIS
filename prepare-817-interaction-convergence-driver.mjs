@@ -36,8 +36,8 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
 /* v876 historically owned a three-choice default Capture preference and rewrote
    #scanSeconds to 单张 / 3秒 / 5秒 after the current HTML had rendered. 8.17 no
    longer has a default Capture mode: normal Capture always enters Photo and the
-   only persisted preference here is Scan sampling length. Keep v876's unrelated
-   sound/watermark owners, but retire this obsolete UI/entry-mode ownership. */
+   only preference here is Scan sampling length. The compatibility setter delegates
+   to the existing app-owned data-sec button instead of writing another store. */
 {
  const FILE='v876-runtime.js';let s=fs.readFileSync(FILE,'utf8');
  const cssOld='#scanSeconds.v876CaptureDefault{width:190px!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;height:38px!important;padding:3px!important;border-radius:12px!important;background:var(--s2)!important}';
@@ -45,11 +45,45 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  if(s.split(cssOld).length-1!==1)throw new Error('[AXIS 8.17 interaction driver] v876 capture CSS owner drift');
  s=s.replace(cssOld,cssNew);
  const fnOld="function capturePref(){return meta().prefs.v876CaptureMode||'photo'}\nfunction syncCaptureSetting(){const host=$('#scanSeconds');if(!host)return;if(!host.classList.contains('v876CaptureDefault')){host.classList.add('v876CaptureDefault');host.innerHTML='<button data-v876-cap=\"photo\">单张</button><button data-v876-cap=\"3\">3秒</button><button data-v876-cap=\"5\">5秒</button>'}$$('[data-v876-cap]',host).forEach(b=>b.classList.toggle('active',b.dataset.v876Cap===capturePref()))}\nfunction setCapturePref(v){const m=meta();m.prefs.v876CaptureMode=['photo','3','5'].includes(String(v))?String(v):'photo';saveMeta(m);syncCaptureSetting()}\nfunction applyCaptureMode(){const mode=capturePref(),sheet=$('#scanSheet');if(!sheet?.classList.contains('show'))return;const b=$(`#captureModes [data-mode=\"${mode}\"]`);if(b&&!b.classList.contains('active'))b.click()}";
- const fnNew="function capturePref(){const c=core(),v=String(c.prefs?.scanSeconds||3);return ['3','5'].includes(v)?v:'3'}\nfunction syncCaptureSetting(){const host=$('#scanSeconds');if(!host)return;host.classList.add('v876CaptureDefault');$$('[data-sec]',host).forEach(b=>b.classList.toggle('active',String(b.dataset.sec)===capturePref()))}\nfunction setCapturePref(v){return ['3','5'].includes(String(v))?String(v):capturePref()}\nfunction applyCaptureMode(){return}\ntry{window.__AXIS_817_CAPTURE_PREFS__={version:'8.17',owner:'app.js',defaultCapture:'photo',scanSampling:[3,5],legacyDefaultMode:false}}catch{}";
+ const fnNew="function capturePref(){const c=core(),v=String(c.prefs?.scanSeconds||3);return ['3','5'].includes(v)?v:'3'}\nfunction syncCaptureSetting(){const host=$('#scanSeconds');if(!host)return;host.classList.add('v876CaptureDefault');$$('[data-sec]',host).forEach(b=>b.classList.toggle('active',String(b.dataset.sec)===capturePref()))}\nfunction setCapturePref(v){const x=['3','5'].includes(String(v))?String(v):capturePref(),b=$('#scanSeconds [data-sec=\"'+x+'\"]');if(b)b.click();return capturePref()}\ntry{window.__AXIS_817_CAPTURE_PREFS__={version:'8.17',owner:'app.js',defaultCapture:'photo',scanSampling:[3,5],legacyDefaultMode:false}}catch{}";
  if(s.split(fnOld).length-1!==1)throw new Error('[AXIS 8.17 interaction driver] v876 capture functions drift');
  s=s.replace(fnOld,fnNew);
- if(s.includes('data-v876-cap="photo"')||s.includes('>单张</button><button data-v876-cap'))throw new Error('[AXIS 8.17 interaction driver] legacy v876 default Capture UI survived');
+ if(s.includes('data-v876-cap="photo"')||s.includes('>单张</button><button data-v876-cap')||s.includes('function applyCaptureMode'))throw new Error('[AXIS 8.17 interaction driver] legacy v876 default Capture UI/override survived');
  try{new Function(s)}catch(e){throw new Error(`[AXIS 8.17 interaction driver] v876 syntax ${e.message}`)}
  fs.writeFileSync(FILE,s);
  console.log('[AXIS 8.17 interaction driver] PASS · v876 default-mode UI/entry override retired · Scan keeps 3/5 sampling only');
+}
+
+/* The inherited canonicalizer used to turn v876CaptureMode into the final owner.
+   Replace only that historical section with the 8.17 contract: scan sampling is
+   read from app state, compatibility set delegates to app UI, and the delayed
+   main-Capture override is removed. */
+{
+ const FILE='postbuild-88-canonical.mjs';let p=fs.readFileSync(FILE,'utf8');
+ const a=p.indexOf('/* Converge v876 capture preference.');
+ const b=p.indexOf('/* v8710 live catalog carried an older active-item editor.',a);
+ if(a<0||b<0)throw new Error(`[AXIS 8.17 interaction driver] canonical v876 section missing ${a}/${b}`);
+ const block=String.raw`/* AXIS 8.17 — v876 is compatibility-only for Scan sampling. */
+let retiredCaptureCorrectionFragments=0;
+let captureMigrationRewrites=1;
+chunks=chunks.map((src,i)=>{
+  if(chunkFiles[i]!=='axis-enhance-interaction.js')return src;
+  const captureNow="function capturePref(){const c=core(),v=String(c.prefs?.scanSeconds||3);return ['3','5'].includes(v)?v:'3'}";
+  if(src.split(captureNow).length-1!==1)fail('8.17 scan-sampling preference signature missing');
+  const setterNow="function setCapturePref(v){const x=['3','5'].includes(String(v))?String(v):capturePref(),b=$('#scanSeconds [data-sec=\"'+x+'\"]');if(b)b.click();return capturePref()}";
+  if(src.split(setterNow).length-1!==1)fail('8.17 scan-sampling compatibility setter missing');
+  src=src.replace(setterNow,setterNow+"\nwindow.__AXIS_CAPTURE_PREF__={get:capturePref,set:setCapturePref};");
+  const delayed="if(e.target.closest('#scanBtn,.scanPrimary'))setTimeout(applyCaptureMode,90);";
+  const delayedCount=src.split(delayed).length-1;
+  if(delayedCount>1)fail('v876 delayed capture click correction duplicated');
+  if(delayedCount===1){src=src.replace(delayed,'');retiredCaptureCorrectionFragments++}
+  if(/applyCaptureMode|data-v876-cap=|>单张<\//.test(src))fail('legacy v876 default Capture semantics survived retirement');
+  return src;
+});
+if(captureMigrationRewrites!==1)fail('8.17 scan-sampling convergence did not run');
+
+`;
+ p=p.slice(0,a)+block+p.slice(b);
+ fs.writeFileSync(FILE,p);
+ console.log('[AXIS 8.17 interaction driver] PASS · canonicalizer now preserves Photo entry + app-owned 3/5 Scan sampling');
 }
