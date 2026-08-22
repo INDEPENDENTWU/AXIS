@@ -23,6 +23,19 @@ function replaceRegexCall(label,replacement){
 replaceRegexCall('clean camera source'," if(!s.includes('async function frameFromVideo(')||!s.includes('state.frames.push(await frameFromVideo())'))fail('final Capture Field camera frame source missing');");
 replaceRegexCall('clean imported source'," if(!s.includes('async function frameFromFile(')||!s.includes('state.frames.push(await frameFromFile(files[i]))'))fail('final Capture Field imported frame source missing');");
 
+/* v876's automatic reminder poller is deliberately retired by the established
+ * 8.8.2 owner seal; v8710 is the sole automatic sound owner. The new 8.17.1
+ * preparer attempted to add a near-target cue back into that retired v876 path,
+ * which can never match the final runtime and would reintroduce split ownership.
+ * Keep the owner seal rather than reviving a historical audio loop. */
+{
+ const a=src.indexOf('/* Sonic grammar:');
+ const b=src.indexOf("console.log('[AXIS 8.17.1]",a);
+ if(a<0||b<0)fail(`Sonic compatibility block missing ${a}/${b}`);
+ src=src.slice(0,a)+"/* AXIS 8.17.1: adaptive cue deferred; v8710 remains the sole automatic sound owner. */\n"+src.slice(b);
+ src=src.replace(' · adaptive target cue\');',' · v8710 sound owner preserved\');');
+}
+
 /* The actual guarantee is enforced at persistence: S/SV are written directly from
    frame.blob/state.clip.blob before finalizeFrame/watermarkVideoBlob. Require those
    source writes to remain in the generated preparer so this compatibility patch
@@ -35,4 +48,4 @@ for(const needle of [
 
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
-console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence remains the clean-source authority');
+console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · v8710 sound ownership preserved');
