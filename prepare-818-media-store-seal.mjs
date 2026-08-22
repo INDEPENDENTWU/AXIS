@@ -25,6 +25,19 @@ for(const needle of [
 ])if(!s.includes(needle))fail(`canonical WebKit-safe media layer missing ${needle}`);
 if((s.match(/indexedDB\.open\(DB,1\)/g)||[]).length!==1)fail('app media IndexedDB owner count drift');
 if(s.includes('cv.captureStream(15)'))fail('historical 15fps video compositor returned');
+
+/* Quick Record supplemental evidence must enter the same canonical Capture owner with
+   quick-media intent. The old Quick sheet still has historical delegated click paths;
+   stop them from reopening the same sheet as a normal record after this hand-off. */
+const end=s.lastIndexOf('})();');if(end<0)fail('app IIFE end missing');
+const quick=`
+function axis818BeginQuickEvidence(mode,id){return openCanonicalCamera(mode||'photo',id,true)}
+if(window.__AXIS_CAPTURE__)window.__AXIS_CAPTURE__.beginQuickMedia=axis818BeginQuickEvidence;
+D.addEventListener('click',function axis818QuickEvidenceEntry(e){const b=e.target.closest?.('#v882QuickMedia [data-v882-media]');if(!b)return;const box=b.closest('#v882QuickMedia'),id=box?.dataset.eq||state.selectedEq;if(!id)return;e.preventDefault();e.stopImmediatePropagation();axis818BeginQuickEvidence('photo',id)},true);
+try{window.__AXIS_818_QUICK_CAPTURE__={version:'8.18',owner:'app.js',entry:'canonical',intent:'quick-media',singleRecorder:true,newPersistence:false}}catch{}
+`;
+s=s.slice(0,end)+quick+s.slice(end);
+for(const needle of ['axis818BeginQuickEvidence','e.stopImmediatePropagation()','__AXIS_818_QUICK_CAPTURE__',"intent:'quick-media'"])if(!s.includes(needle))fail(`Quick Capture intent seal missing ${needle}`);
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};
 write(FILE,s);
-console.log('[AXIS 8.18 media-store seal] PASS · ArrayBuffer structured-clone codec restored · app.js sole IndexedDB owner · 30fps video compositor retained');
+console.log('[AXIS 8.18 media-store seal] PASS · ArrayBuffer structured-clone codec · app.js sole IndexedDB owner · 30fps compositor · Quick Record canonical quick-media intent');
