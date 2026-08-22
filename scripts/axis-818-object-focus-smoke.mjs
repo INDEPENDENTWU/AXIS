@@ -19,7 +19,9 @@ await context.addInitScript(()=>{
  try{Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:mediaDevices})}catch{try{navigator.mediaDevices.getUserMedia=mediaDevices.getUserMedia}catch{}}
 });
 
-const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(String(e?.stack||e)));
+const page=await context.newPage(),errors=[],consoleLines=[];
+page.on('pageerror',e=>errors.push(String(e?.stack||e)));
+page.on('console',m=>{const line=`${m.type()}: ${m.text()}`;consoleLines.push(line);if(m.type()==='error'||m.type()==='warning')console.log(`[AXIS browser ${ENGINE}] ${line}`)});
 const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(obj)});
 for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>json(r,obj));
 const tap=async loc=>ENGINE==='webkit'?loc.tap():loc.click();
@@ -36,7 +38,7 @@ try{
   evolution:window.__AXIS_EVOLUTION_LIBRARY__?.version||null,quick:window.__AXIS_818_QUICK_CAPTURE__?.version||null,
   source:window.__AXIS_MEDIA_SOURCE__?.version||window.__AXIS_MEDIA_SOURCE__?.readOnly||null
  }));
- console.log(`[AXIS 8.18 boot ${ENGINE}] ${JSON.stringify(boot)}${errors.length?' errors='+JSON.stringify(errors):''}`);
+ console.log(`[AXIS 8.18 boot ${ENGINE}] ${JSON.stringify(boot)}${errors.length?' errors='+JSON.stringify(errors):''}${consoleLines.length?' console='+JSON.stringify(consoleLines.slice(-12)):''}`);
  assert.equal(boot.release,'8.18','public runtime identity did not converge');assert.equal(boot.core,true,'core did not become interactive');
  assert.equal(boot.object,'8.18','Object Truth runtime layer missing');assert.equal(boot.hardening,'8.18','8.18 hardening runtime layer missing');
  assert.equal(boot.media,'8.18','8.18 media runtime layer missing');assert.equal(boot.focus,'8.18','8.18 Focus runtime layer missing');assert.equal(boot.evolution,'8.18','Evolution Library runtime layer missing');assert.equal(boot.quick,'8.18','Quick Capture intent seal missing');
