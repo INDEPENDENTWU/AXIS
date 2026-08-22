@@ -33,6 +33,20 @@ src+=String.raw`
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
+/* Settings rows can be remounted by the later Settings convergence owner. A direct
+   onclick on the original #storageBtn node is therefore not stable. Keep one route
+   owner at document level so 资料与收纳 remains actionable after every repaint. */
+{
+ const FILE='app.js';let s=fs.readFileSync(FILE,'utf8');
+ const from="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()};";
+ const to="D.addEventListener('click',e=>{if(!e.target.closest('#storageBtn'))return;openSheet('storageSheet');void renderStorage()},{capture:true});";
+ const count=s.split(from).length-1;if(count!==1)throw new Error(`[AXIS 8.17 interaction driver] storage route signature expected once, found ${count}`);
+ s=s.replace(from,to);
+ try{new Function(s)}catch(e){throw new Error(`[AXIS 8.17 interaction driver] app storage route syntax ${e.message}`)}
+ fs.writeFileSync(FILE,s);
+ console.log('[AXIS 8.17 interaction driver] PASS · remount-safe delegated 资料与收纳 route');
+}
+
 /* v876 historically owned a three-choice default Capture preference and rewrote
    #scanSeconds to 单张 / 3秒 / 5秒 after the current HTML had rendered. 8.17 no
    longer has a default Capture mode: normal Capture always enters Photo and the
