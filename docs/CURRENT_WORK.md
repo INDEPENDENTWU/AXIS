@@ -2,12 +2,11 @@
 
 > Canonical engineering handoff. `CURRENT_RELEASE.md` is the release contract; this file records the active engineering boundary and next exact action.
 
-## Production baseline at start of this work
+## Production baseline
 
-- **AXIS 8.16 — Capture Field + Comparative Evidence** was the Production-sealed baseline for the 8.17 convergence work.
-- Exact sealed 8.16 SHA: `0dbb25cd432e3cc7de0258affcdc892d8d55ce9b`.
-- Vercel and EdgeOne served the exact same 8.16 canonical artifact.
-- Real EdgeOne Chromium and iPhone WebKit inherited + 8.16 release flows passed.
+- **AXIS 8.17 — Interaction Convergence** is the current Production-sealed baseline while 8.17.1 is validated.
+- 8.17 Vercel and EdgeOne served the same canonical artifact and passed real EdgeOne Chromium + iPhone WebKit Production flows.
+- 8.17 behavior remains the compatibility boundary: one Quick Capture supplement entry, Photo-first Capture, 3/5 second Scan sampling, one explicit <=60 second video, named two-slot Comparative Evidence, stable warm-before-commit media swap and time-first archive.
 
 ## Product direction
 
@@ -15,57 +14,68 @@ AXIS remains a **Personal Evolution Engine**.
 
 `Capture / 留下` → truthful Encounter → time accumulation → `Reveal / 发现` → Evolution → later truthful Replay.
 
-8.17 is an interaction-convergence release, not a new feature category. It unifies Capture entry semantics, makes Comparative Evidence understandable through named slots, and gives growing history a time-first archive without adding a second recorder, media store, training owner or persistence schema.
+8.17.1 is a non-destructive Capture/media integrity patch. It does not add another creator/editor surface, recorder, database, object store, network owner or AI owner.
 
-## Active change — AXIS 8.17 is Production-sealed
+## Active change — AXIS 8.17.1 source-media integrity
 
-There is no remaining 8.17 product or release blocker.
+PR #75 completes one clean-source media model on top of the already-converged 8.17.1 Capture polish.
 
-- PR #70 delivered AXIS 8.17 Interaction Convergence.
-- PR #71 corrected the inherited 8.15 Media Evidence test boundary so old single-Encounter inspection is tested only after explicitly leaving 8.17 Compare mode.
-- No runtime/product source, timeout budget or assertion strength was relaxed by that correction.
-- Exact validated runtime revision: `e6d31c2f08f97e078d85761d25a8fb385b1d6c3f`.
-- Vercel exact revision: success.
-- Canonical build and Vercel/local artifact parity: success.
-- EdgeOne exact prebuilt deployment and live manifest/API parity: success.
-- Real EdgeOne Chromium full 8.17 Production flow: success.
-- Real EdgeOne iPhone WebKit full 8.17 Production flow: success.
-- `EdgeOne Production` status: success.
-- Production workflow record: `32573605355`.
+### Media authority
 
-This docs-only continuity seal does not change runtime/product behavior. After merge, the exact docs-only repository tip must pass the same Vercel/EdgeOne mirror workflow so `main`, Vercel and EdgeOne remain exact-revision aligned.
+- Existing local database remains `axis_v42_media` and remains owned by `app.js`.
+- Clean photo sources use `sourceFrameRefs[]` → `S-*`.
+- Clean video source uses `sourceClipRef` → `SV-*`.
+- Existing canonical/presentation refs remain `frameRefs[]` → `F-*` and `clipRef` → `V-*`.
+- No `F-RAW-*` / `V-RAW-*` competing scheme is allowed.
+- Existing event pointers are not migrated or replaced.
+- Historical records without source sidecars remain readable through canonical fallback.
 
-### Sealed 8.17 product contract
+### Processing contract
 
-- Quick Record exposes one supplemental **补拍照片 / 视频** entry.
-- Canonical Capture opens at Photo; Scan keeps 3秒 / 5秒 sampling; explicit Video is retained automatically up to 60 seconds.
-- Comparative Evidence uses **起点 ↔ 对照**, with `对照` active by default and timeline taps replacing the active slot while Compare is on.
-- Evidence keeps the 8.15.1 stable in-place warm-before-commit/no-opacity-pulse contract.
-- **资料与收纳** groups sealed history by month, newest open and older months collapsed, while preserving existing deletion semantics.
-- Camera/MediaRecorder/media persistence remain owned by `app.js` and `axis_v42_media`; Media Evidence remains read-only `v815-media-evidence`.
-- Replay remains deferred.
+- `window.__AXIS_MEDIA_SOURCE__` is a read-only source resolver owned by `app.js`.
+- Photo watermark regeneration reads the clean `S-*` source first and writes only the canonical `F-*` derivative.
+- The final v8710 watermark compositor retains its frozen capture-time `shot` snapshot; 8.17.1 does not restore an older compositor.
+- Media Evidence reads the clean source first and falls back to the canonical ref for historical records.
+- Media Evidence remains read-only and gains no IndexedDB opener, local-storage writer, recorder, network or AI ownership.
 
-## Validation for this work
+### Build-order correction discovered during validation
 
-The 8.17 Production-seal criteria have been satisfied:
+The first 8.17.1 attempt ran runtime convergence too early, before the final 8.16/8.17 Capture and interaction structures existed. The release chain now keeps version preparation separate and runs 8.17.1 only after the final 8.17 interaction convergence.
 
-1. deterministic release build reports `8.17 / 8.17`, `canonical-single-runtime`;
-2. Vercel Production serves the exact validated revision;
-3. Vercel/local manifest/runtime/CSS/source identity matches;
-4. EdgeOne publishes the exact verified prebuilt artifact;
-5. EdgeOne live manifest and API contracts match Vercel;
-6. real EdgeOne Chromium passes the inherited + 8.17 release flow;
-7. real EdgeOne iPhone WebKit passes the same Production flow;
-8. `EdgeOne Production` is green.
+A second inherited mismatch attempted to refine the retired v876 automatic reminder owner. That path remains retired; v8710 stays the single automatic sound owner.
 
-No timeout inflation, product rollback or weakening of the 8.17 named-slot interaction was used to obtain the seal.
+A third mismatch targeted the pre-8.8.4 watermark loop. The 8.17.1 source-first patch now binds to the actual final frozen-`shot` compositor rather than weakening or replacing it.
+
+## Required validation before merge
+
+PR #75 must not merge until all of the following are true:
+
+1. deterministic release build completes with `8.17 / 8.17` and canonical single runtime;
+2. 8.17.1 source-media postbuild ownership contract passes;
+3. Chromium source-first media smoke passes photo source, video source and legacy fallback;
+4. iPhone WebKit source-first media smoke passes the same behavior;
+5. inherited 8.17 Interaction Convergence smoke passes;
+6. inherited 8.16 Capture + Comparative Evidence smoke passes;
+7. Repository Contract and Work Continuity Contract pass;
+8. no timeout inflation, assertion weakening, second persistence owner or product rollback is used.
+
+## Production seal after merge
+
+After PR #75 is green and merged, the exact final `main` SHA must pass the normal Production path:
+
+- Vercel exact-main success;
+- canonical artifact parity;
+- EdgeOne exact prebuilt deployment and live manifest/API parity;
+- real EdgeOne Chromium Production flow;
+- real EdgeOne iPhone WebKit Production flow;
+- `EdgeOne Production` success on the exact final `main` revision.
+
+Only after those checks pass is 8.17.1 Production-sealed.
 
 ## Next planned stage — 8.18
 
-**AXIS 8.18 — Evolution Library / Personal Object Shelf**.
+**AXIS 8.18 — Evolution Library / Personal Object Shelf** remains next after 8.17.1 is sealed.
 
-The next scaling problem is not more Settings or more sport tabs. AXIS needs an object-first personal world that stays usable after hundreds or thousands of Encounters. Repeated reality should settle into stable Evolution Objects that can be browsed by recency, duration of relationship and real evidence density across training, routes, rehabilitation, climbing, dance, sport skills and music practice.
+The next scaling problem is an object-first personal world that remains usable after hundreds or thousands of Encounters. Replay remains downstream; do not pull Replay/editor scope into 8.17.1.
 
-Replay remains downstream. The preferred sequence stays **8.17 Interaction Convergence → 8.18 Evolution Library → 8.19 truthful Evolution Replay**.
-
-See `AXIS_817_818_DIRECTION.md` for the concrete product expansion contract.
+See `AXIS_817_818_DIRECTION.md` for the expansion contract.
