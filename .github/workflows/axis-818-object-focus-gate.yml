@@ -1,0 +1,79 @@
+name: AXIS 8.18 Object + Route + Capture + Focus
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.18 candidate
+        run: node build-release.mjs
+      - name: Verify 8.18 manifest
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),m=require('./axis-build.json'),core=fs.readFileSync('axis-core.js','utf8');
+          if(m.version!=='8.18'||m.baseVersion!=='8.18'||m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0)throw new Error(`8.18 release topology mismatch ${m.version}/${m.baseVersion}/${m.architecture}`);
+          for(const g of ['objectMetricSchema818','eventMetricSnapshot818','pwaRouteTruth818','capturePreferenceModel818','activeFocusLayer818','mediaBatchExport818','eventDelete818','continuousCameraCompositor818','watermarkCenterBrand818','evolutionObjectShelf818','noNewPersistence818','captureCleanSourceSidecar8171','mediaSourceBridge8171'])if(m.gates?.[g]!==true)throw new Error(`missing ${g}`);
+          for(const x of ['__AXIS_OBJECT_TRUTH__','__AXIS_818_HARDENING__','__AXIS_818_MEDIA__','__AXIS_818_FOCUS__','__AXIS_EVOLUTION_LIBRARY__','axis818StartRecordPump','videoBitsPerSecond:6000000','CAPTURE816_VIDEO_MAX_MS=60000'])if(!core.includes(x))throw new Error(`compiled 8.18 invariant missing ${x}`);
+          NODE
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-818-chromium.log 2>&1 &
+          sleep 1
+      - name: 8.18 behavior smoke
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-818-object-focus-smoke.mjs
+      - name: Source-first media inheritance
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8171-source-first-media-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-818-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 34
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS 8.18 candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-818-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone 8.18 behavior smoke
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-818-object-focus-smoke.mjs
+      - name: iPhone source-first media inheritance
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8171-source-first-media-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-818-webkit.log || true
