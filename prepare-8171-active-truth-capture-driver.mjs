@@ -49,16 +49,19 @@ for(const needle of [
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
-/* 8.17.1 initially declared sync8171SelectAll inside bind(), while renderStorage()
- * and its row onclick closures live at app scope. Lift that one function to the same
- * app owner before refining repaint behavior. This prevents runtime ReferenceError
- * and gives row selection + Select All exactly one shared state synchronizer. */
+/* Give renderStorage and its row handlers a stable app-scope synchronization owner.
+ * Some inherited bind-layer implementations also carry a local compatibility helper;
+ * that local helper may stay scoped to bind. The renderer must never depend on it. */
 {
  const FILE='app.js';let app=fs.readFileSync(FILE,'utf8');
- const syncFn="function sync8171SelectAll(){const rows=$$('[data-delete-session]'),all=!!rows.length&&rows.every(b=>selectedSessions.has(b.dataset.deleteSession));const b=$('#selectAllSessions');if(b){b.textContent=all?'取消全选':'全选';b.setAttribute('aria-pressed',String(all))}}";
- const syncCount=app.split(syncFn).length-1;if(syncCount!==1)fail(`archive sync function expected once, found ${syncCount}`);app=app.replace(syncFn,'');
  const renderAnchor='async function renderStorage(){';
- const renderCount=app.split(renderAnchor).length-1;if(renderCount!==1)fail(`renderStorage owner expected once, found ${renderCount}`);app=app.replace(renderAnchor,syncFn+'\n'+renderAnchor);
+ const renderCount=app.split(renderAnchor).length-1;if(renderCount!==1)fail(`renderStorage owner expected once, found ${renderCount}`);
+ const syncFn="function axis8171SyncArchiveSelection(){const rows=$$('[data-delete-session]'),all=!!rows.length&&rows.every(b=>selectedSessions.has(b.dataset.deleteSession));const b=$('#selectAllSessions');if(b){b.textContent=all?'取消全选':'全选';b.setAttribute('aria-pressed',String(all))}}";
+ app=app.replace(renderAnchor,syncFn+'\n'+renderAnchor);
+ /* Route only renderer/row synchronization calls away from any bind-local helper. */
+ const callBlock="$$('[data-delete-session]').forEach(b=>b.onclick=()=>{const id=b.dataset.deleteSession;if(selectedSessions.has(id)){selectedSessions.delete(id);b.classList.remove('selected')}else{selectedSessions.add(id);b.classList.add('selected')}sync8171SelectAll()});sync8171SelectAll()";
+ const stableCallBlock="$$('[data-delete-session]').forEach(b=>b.onclick=()=>{const id=b.dataset.deleteSession;if(selectedSessions.has(id)){selectedSessions.delete(id);b.classList.remove('selected')}else{selectedSessions.add(id);b.classList.add('selected')}axis8171SyncArchiveSelection()});axis8171SyncArchiveSelection()";
+ const callCount=app.split(callBlock).length-1;if(callCount!==1)fail(`archive renderer sync calls expected once, found ${callCount}`);app=app.replace(callBlock,stableCallBlock);
 
  /* 8.17's archive renderer rebuilt rows from state and cleared selectedSessions on
   * every render. Inline Settings can legitimately repaint mounted content after a
@@ -73,7 +76,7 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  const open="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()}";
  const fresh="$('#storageBtn').onclick=async()=>{selectedSessions.clear();openSheet('storageSheet');await renderStorage()}";
  const openCount=app.split(open).length-1;if(openCount!==1)fail(`archive open anchor expected once, found ${openCount}`);app=app.replace(open,fresh);
- if(!app.includes('live8171SessionIds')||!app.includes("selectedSessions.has(s.id)?'selected':''")||app.indexOf(syncFn)>app.indexOf('async function renderStorage(){'))fail('stable app-owned archive selection projection missing');
+ if(!app.includes('axis8171SyncArchiveSelection')||!app.includes('live8171SessionIds')||!app.includes("selectedSessions.has(s.id)?'selected':''"))fail('stable app-owned archive selection projection missing');
  try{new Function(app)}catch(e){fail(`archive selection syntax ${e.message}`)};fs.writeFileSync(FILE,app);
 }
 
@@ -92,4 +95,4 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  p=p.replace(old,next);fs.writeFileSync(FILE,p);
 }
 
-console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · app-owned stable archive multi-select · delegated Scan preference owner sealed · v8710 sound ownership preserved');
+console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · stable archive renderer owner · delegated Scan preference owner sealed · v8710 sound ownership preserved');
