@@ -33,18 +33,35 @@ src+=String.raw`
 fs.writeFileSync(TMP,src);
 try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlinkSync(TMP)}catch{}}
 
-/* Settings rows can be remounted by the later Settings convergence owner. A direct
-   onclick on the original #storageBtn node is therefore not stable. Keep one route
-   owner at document level so 资料与收纳 remains actionable after every repaint. */
+/* The canonical app remains the only storage-sheet/data owner. Expose one narrow
+   bridge, then let the final Settings convergence bind the current real row after
+   every remount. This avoids stale-node onclick ownership without adding storage. */
 {
  const FILE='app.js';let s=fs.readFileSync(FILE,'utf8');
  const from="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()};";
- const to="D.addEventListener('click',e=>{if(!e.target.closest('#storageBtn'))return;openSheet('storageSheet');void renderStorage()},{capture:true});";
+ const to="window.__AXIS_OPEN_STORAGE__=async()=>{openSheet('storageSheet');await renderStorage();return $('#storageSheet')?.classList.contains('show')===true};D.addEventListener('click',e=>{if(!e.target.closest('#storageBtn'))return;void window.__AXIS_OPEN_STORAGE__?.()},{capture:true});";
  const count=s.split(from).length-1;if(count!==1)throw new Error(`[AXIS 8.17 interaction driver] storage route signature expected once, found ${count}`);
  s=s.replace(from,to);
  try{new Function(s)}catch(e){throw new Error(`[AXIS 8.17 interaction driver] app storage route syntax ${e.message}`)}
  fs.writeFileSync(FILE,s);
- console.log('[AXIS 8.17 interaction driver] PASS · remount-safe delegated 资料与收纳 route');
+ console.log('[AXIS 8.17 interaction driver] PASS · canonical app exposes remount-safe 资料与收纳 bridge');
+}
+{
+ const FILE='v87-runtime.js';let s=fs.readFileSync(FILE,'utf8');
+ const end=s.lastIndexOf('})();');if(end<0)throw new Error('[AXIS 8.17 interaction driver] Settings runtime IIFE end missing');
+ const block=String.raw`
+/* AXIS 8.17 — bind the current visible storage row after Settings convergence. */
+function axis817BindStorageEntry(){const b=$('#storageBtn');if(!b)return false;b.dataset.axisStorageRoute='app-bridge';b.onclick=e=>{e.preventDefault();e.stopPropagation();void window.__AXIS_OPEN_STORAGE__?.()};return true}
+const axis817SettingsConvergeBase=axis813ConvergeSettings;
+axis813ConvergeSettings=function(){const r=axis817SettingsConvergeBase();axis817BindStorageEntry();return r};
+axis817BindStorageEntry();
+D.addEventListener('click',e=>{if(e.target?.closest?.('#settingsBtn'))setTimeout(axis817BindStorageEntry,110)},true);
+try{window.__AXIS_817_STORAGE_ROUTE__={version:'8.17',owner:'app.js',settingsBinding:'v813-inline',remountSafe:true,newStorage:false}}catch{}
+`;
+ s=s.slice(0,end)+block+'\n'+s.slice(end);
+ try{new Function(s)}catch(e){throw new Error(`[AXIS 8.17 interaction driver] Settings storage binding syntax ${e.message}`)}
+ fs.writeFileSync(FILE,s);
+ console.log('[AXIS 8.17 interaction driver] PASS · final Settings owner binds current 资料与收纳 row to app bridge');
 }
 
 /* v876 historically owned a three-choice default Capture preference and rewrote
