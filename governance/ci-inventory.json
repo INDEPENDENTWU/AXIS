@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 4,
-  "capturedAt": "2026-08-23",
+  "schemaVersion": 5,
+  "capturedAt": "2026-08-24",
   "source": {"pullRequest":79,"productionBaselineSha":"254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"},
   "observedPullRequestWorkflowCountBeforeConvergence": 25,
   "phaseOneProof": {"repositoryContract":{"runId":32626662160,"conclusion":"success"},"workContinuity":{"runId":32626662162,"conclusion":"success"}},
@@ -23,15 +23,18 @@
     "repositoryGuardRunId":32630723051,
     "retiredAutomaticWorkflows":[".github/workflows/axis-813-runtime-core-gate.yml",".github/workflows/axis-813-shadow-runtime-gate.yml",".github/workflows/axis-813-live-route-gate.yml",".github/workflows/axis-813-settings-convergence-gate.yml"]
   },
-  "automaticWorkflowCountAfterRuntimeRetirement": 17,
   "deepCompatibilityConvergence": {
-    "status":"candidate-introduced-awaiting-proof",
+    "status":"verified-retired-awaiting-post-retirement-proof",
     "replacementWorkflow":".github/workflows/axis-deep-compatibility-gate.yml",
     "semanticContract":"scripts/axis-deep-compatibility-contract.mjs",
-    "targetResponsibilities":["legacy storage keys","reminder geometry","Home transitions/completion camera","8.9-8.10.3 learning/detail/home/voice","8.12 field/Group Plan/Settings","Personal Equipment/gallery/picker/geometry/history","8.12.3 simplified local Learning","8.12.4 timing/catalog","8.12.5 smart-create"],
-    "candidateRetirements":[".github/workflows/axis-812-field-hardening-gate.yml",".github/workflows/axis-8121-hotfix-gate.yml",".github/workflows/axis-8122-settings-gate.yml",".github/workflows/axis-8123-field-polish-gate.yml",".github/workflows/axis-8123-learning-simplify-gate.yml",".github/workflows/axis-89-gate.yml",".github/workflows/axis-88-reminder-layout-gate.yml",".github/workflows/axis-home-transition-gate.yml",".github/workflows/axis-8124-flow-gate.yml"],
-    "retirementAuthorized": false
+    "firstCandidateRunId":32630933984,
+    "firstCandidateIssue":"replacement Chromium harness installed playwright-core while reminder-layout smoke imports playwright; product artifact and assertions were not changed",
+    "replacementRunId":32631072695,"replacementCandidateSha":"a879d30c2cf6e0b3eb2e0fed91a48f3b62262da0","static":"success","chromium":"success","webkit":"success",
+    "responsibilities":["legacy storage keys","reminder geometry","Home transitions/completion camera","8.9-8.10.3 learning/detail/home/voice","8.12 field/Group Plan/Settings","Personal Equipment/gallery/picker/geometry/history","8.12.3 simplified local Learning","8.12.4 timing/catalog","8.12.5 smart-create"],
+    "retiredAutomaticWorkflows":[".github/workflows/axis-812-field-hardening-gate.yml",".github/workflows/axis-8121-hotfix-gate.yml",".github/workflows/axis-8122-settings-gate.yml",".github/workflows/axis-8123-field-polish-gate.yml",".github/workflows/axis-8123-learning-simplify-gate.yml",".github/workflows/axis-89-gate.yml",".github/workflows/axis-88-reminder-layout-gate.yml",".github/workflows/axis-home-transition-gate.yml",".github/workflows/axis-8124-flow-gate.yml"],
+    "retirementAuthorized":true
   },
-  "preservedCurrentAndProviderGates":["AXIS Repository Contract","AXIS Work Continuity Contract","AXIS Runtime Gate","AXIS Current Release Gate","AXIS Runtime Foundation Gate","AXIS Cross-Platform Foundation Gate","AXIS PR Run Convergence","AXIS EdgeOne Production Mirror"],
-  "nextAudit":["prove Deep Compatibility replacement on one exact SHA alongside all nine old workflow families","retire only after static + Chromium + WebKit replacement success","post-retirement prove exact head and repository resurrection guard","then path-scope docs/governance-only changes and separate provider PR packaging from main Production deployment"]
+  "automaticWorkflowCountAfterDeepCompatibilityRetirement": 9,
+  "preservedCurrentAndProviderGates":["AXIS Repository Contract","AXIS Work Continuity Contract","AXIS Runtime Gate","AXIS Current Release Gate","AXIS Runtime Foundation Gate","AXIS Deep Compatibility Gate","AXIS Cross-Platform Foundation Gate","AXIS PR Run Convergence","AXIS EdgeOne Production Mirror"],
+  "nextAudit":["prove Deep Compatibility on the exact retirement head with all nine old workflow files absent","prove repository resurrection guard on the same retirement head","then update final handoff/PR proof and assess path scoping without weakening runtime/provider release proof"]
 }

@@ -15,35 +15,54 @@ A retirement means an old surface, writer, or orchestration path may no longer d
 | Version-like filenames as current authority | retired governance model | Read machine governance/current contracts instead. |
 | Archived/history content as executable authority | forbidden | Archive/history is provenance-only unless explicitly promoted through a reviewed owner handoff. |
 
-## Sealed CI retirement — 8.14 → 8.18 workflow fanout
+## Sealed CI retirements
 
-The following seven automatic workflow files are retired and physically deleted:
+### Current Release · 8.14 → 8.18
 
-- `axis-814-evolution-object-gate.yml`;
-- `axis-815-media-evidence-gate.yml`;
-- `axis-8151-regression-seal-gate.yml`;
-- `axis-816-capture-evidence-gate.yml`;
-- `axis-817-interaction-gate.yml`;
-- `axis-8171-source-media-gate.yml`;
-- `axis-818-object-focus-gate.yml`.
-
-Replacement:
-
-- `.github/workflows/axis-current-release-gate.yml`;
-- `scripts/axis-current-release-contract.mjs`.
+Seven automatic workflows were replaced by `AXIS Current Release Gate` + `axis-current-release-contract.mjs`.
 
 Evidence:
+- replacement run `32630099680` — Chromium + WebKit **success**;
+- post-retirement run `32630367047` — Chromium + WebKit **success**;
+- repository/retirement guard `32630367007` — **success**.
 
-- candidate `53ba6909b1aed95ae634e1b3bd6429ffe80c2a59`;
-- Current Release Gate run `32630099680`;
-- Chromium — **success**;
-- iPhone-like WebKit — **success**;
-- every inherited 8.14→8.18 semantic contract and browser smoke included in the replacement;
+### Runtime Foundation · 8.13
+
+Four Runtime Core / Shadow Runtime / Live Route / Settings workflows were replaced by `AXIS Runtime Foundation Gate` + `axis-runtime-foundation-contract.mjs`.
+
+Evidence:
+- replacement run `32630563608` — pure-runtime-parity + Chromium + WebKit **success**;
+- post-retirement run `32630723007` — all three jobs **success**;
+- repository/11-workflow resurrection guard `32630723051` — **success**.
+
+### Deep Compatibility · 8.8 → 8.12.5
+
+Nine automatic compatibility workflows are retired in favor of `AXIS Deep Compatibility Gate` + `axis-deep-compatibility-contract.mjs`:
+
+- `axis-812-field-hardening-gate.yml`;
+- `axis-8121-hotfix-gate.yml`;
+- `axis-8122-settings-gate.yml`;
+- `axis-8123-field-polish-gate.yml`;
+- `axis-8123-learning-simplify-gate.yml`;
+- `axis-89-gate.yml`;
+- `axis-88-reminder-layout-gate.yml`;
+- `axis-home-transition-gate.yml`;
+- `axis-8124-flow-gate.yml`.
+
+The replacement preserves legacy storage identities, reminder/Home behavior, 8.9→8.10.3 learning/detail/home/voice, 8.12 field/Group Plan/Settings, Personal Equipment/gallery/picker/history/geometry, simplified local-only Learning, and 8.12.4/8.12.5 flow/catalog/smart-create behavior.
+
+Replacement evidence:
+- exact candidate `a879d30c2cf6e0b3eb2e0fed91a48f3b62262da0`;
+- Deep Compatibility run `32631072695`;
+- static compatibility — **success**;
+- Chromium compatibility — **success**;
+- iPhone-like WebKit compatibility — **success**;
+- all grouped inherited browser smokes — **success**;
 - `main` required status checks — **0**.
 
-This retirement applies to duplicated **CI orchestration**, not to historical source/compiler/data contracts. A historical source file remains until its own reachability/data-compatibility proof exists.
+The earlier replacement attempt `32630933984` failed only because the new Chromium harness installed `playwright-core` while the existing reminder smoke imports full `playwright`; the harness dependency was corrected without changing product code, assertions or timeouts.
 
-`scripts/axis-ci-convergence-contract.mjs` prevents these workflow files from returning and requires the current replacement coverage to remain present.
+`scripts/axis-ci-convergence-contract.mjs` now prohibits all **20** retired workflow files from returning and requires all three replacement families to remain present.
 
 ## Physical deletion gate
 

@@ -26,7 +26,7 @@ GitHub owns current project/release context, owners, retirements and CI evidence
 
 Seven automatic release-era workflow families were replaced by `AXIS Current Release Gate` + `axis-current-release-contract.mjs`.
 
-- replacement run `32630099680` on `53ba6909b1aed95ae634e1b3bd6429ffe80c2a59`: Chromium + WebKit **success**;
+- replacement run `32630099680`: Chromium + WebKit **success**;
 - retirement head `709d801e268e6d06248c21f517aa1a17e565764b`;
 - post-retirement Repository/guard `32630367007`: **success**;
 - post-retirement Current Release `32630367047`: Chromium + WebKit **success**.
@@ -35,55 +35,46 @@ Seven automatic release-era workflow families were replaced by `AXIS Current Rel
 
 Four automatic Runtime Core / Shadow Runtime / Live Route / Settings workflow families were replaced by `AXIS Runtime Foundation Gate` + `axis-runtime-foundation-contract.mjs`.
 
-- replacement run `32630563608` on `4e1d19581a0a4fd91d25823303aa8a6dc25657fa`: pure-runtime-parity + Chromium + WebKit **success**;
+- replacement run `32630563608`: pure-runtime-parity + Chromium + WebKit **success**;
 - retirement head `b4cd93e091ac7368dc2b6e5b57aa96236bbaa70d`;
 - post-retirement Repository/11-workflow resurrection guard `32630723051`: **success**;
-- post-retirement Runtime Foundation `32630723007`: pure-runtime-parity + Chromium + WebKit **success**;
-- automatic workflow families observed after retirement: **17**.
+- post-retirement Runtime Foundation `32630723007`: pure-runtime-parity + Chromium + WebKit **success**.
 
-### Active · Deep Compatibility replacement candidate
+### Completed replacement proof · Deep Compatibility convergence (8.8→8.12.5)
 
-The remaining historical automatic gates have now been mapped to nine workflow families:
-
-- 8.12 Field Hardening;
-- 8.12.x Field Hotfix;
-- 8.12.2 Settings;
-- 8.12.3 Field Polish;
-- 8.12.3 Learning Simplify;
-- 8.10.3 (`axis-89-gate.yml`, containing the inherited 8.9→8.10.3 chain);
-- 8.8 Reminder Layout;
-- Home Transition;
-- Inherited Web Release (`axis-8124-flow-gate.yml`).
-
-They are **not** being deleted because they are old. Their distinct current compatibility promises have been collected into a replacement candidate:
+Nine historical automatic compatibility workflow families were mapped into one responsibility-based replacement:
 
 - `.github/workflows/axis-deep-compatibility-gate.yml`;
 - `scripts/axis-deep-compatibility-contract.mjs`.
 
-The replacement preserves:
+The replacement preserves legacy storage, reminder/Home transitions, 8.9→8.10.3 detail/learning/home/voice, 8.12 field/Group Plan/Settings, Personal Equipment/gallery/picker/history/geometry, local-only simplified Learning, and 8.12.4/8.12.5 flow/catalog/smart-create behavior.
 
-- storage identities `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`;
-- reminder repaint/bottom-stack geometry;
-- Home active hierarchy, inter-item transition, completed Home and canonical Quick camera;
-- 8.9→8.10.3 detail, learning, timer, local recording, home/sound and multilingual voice behavior;
-- 8.12 field hardening, real Group Plan and Settings behavior;
-- Personal Equipment library/photos/history, gallery/picker lifecycle and geometry;
-- simplified local-only Learning/no-upload/no-training-owner boundaries;
-- 8.12.4 training timing/completion/catalog and 8.12.5 smart-create;
-- static syntax of the inherited server/compiler/postbuild chain.
-
-Test preparation order is explicit and safe:
+Test preparation order is fixed:
 
 `build-release → prepare-release-test-contract → prepare-8123-ci-stability → Deep Compatibility contract → browser smokes`.
 
-Both preparers modify inherited tests only; they do not rewrite the built Product artifact.
+The first candidate run `32630933984` found only a replacement harness dependency mismatch (`playwright-core` vs the full `playwright` package imported by the reminder smoke). Product code, assertions and timeouts were not changed. The harness was corrected.
 
-The nine old workflow families remain automatic on the first replacement candidate. **Retirement is not authorized until the new static, Chromium and WebKit jobs all pass on the same SHA.**
+Exact replacement candidate `a879d30c2cf6e0b3eb2e0fed91a48f3b62262da0`, run `32631072695`:
+
+- static compatibility — **success**;
+- Chromium compatibility — **success**;
+- iPhone-like WebKit compatibility — **success**;
+- every grouped inherited smoke — **success**.
+
+This authorizes atomic retirement of the nine old compatibility workflows. After that retirement, the automatic workflow architecture should contain **9 responsibility-based families instead of the original 25**.
 
 ## Validation for this work
 
-Preserve exact 8.18 behavior, one canonical runtime, historical storage/data readability, custom object identity, current camera/media/sound/completion ownership, Chromium/WebKit coverage and exact-SHA Production proof. Do not gain green CI through timeout inflation that hides failures, weaker assertions, duplicate owners/stores, or destructive migration.
+Preserve exact 8.18 behavior, one canonical runtime, historical storage/data readability, custom object identity, current camera/media/sound/completion ownership, Chromium/WebKit coverage and exact-SHA Production proof. Do not gain green CI through timeout inflation, weaker assertions, duplicate owners/stores, or destructive migration.
 
-## Next planned stage
+## Exact next action
 
-Run `AXIS Deep Compatibility Gate` beside all nine existing historical workflow families. If static + Chromium + WebKit are all green, compare exact responsibilities, atomically retire the nine workflow files, extend `axis-ci-convergence-contract.mjs` to prohibit their return, and prove the post-retirement exact head before any path-scoping or provider workflow changes.
+On the retirement head, prove all of the following with the nine old compatibility workflow files physically absent:
+
+1. `AXIS Repository Contract` + 20-workflow resurrection guard — success;
+2. `AXIS Deep Compatibility Gate` static + Chromium + WebKit — success;
+3. current automatic workflow family count — 9;
+4. no retired workflow name returns.
+
+After that proof, update the final handoff/PR evidence and assess path scoping / remaining build-source convergence before declaring PR #79 merge-ready.
