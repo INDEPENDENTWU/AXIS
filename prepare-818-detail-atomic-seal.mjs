@@ -22,7 +22,9 @@ function functionRange(src,signature){
 }
 
 /* bindDynamic has exactly two canonical DOM0 binding responsibilities: event detail
-   and session detail. Historical contract strings elsewhere are irrelevant. */
+   and session detail. Historical contract strings elsewhere are irrelevant. Once
+   detail facts are synchronous/fact-first, a visible sheet must not re-enter the
+   prepaint-hidden state during an item-to-item swap; atomic commit owns that swap. */
 const eventPlainDouble="$$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
 const eventPlainSingle="$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
 const eventGuardDouble="$$('[data-event]').forEach(b=>b.onclick=()=>{const sheet=$('#detailSheet');if(sheet?.classList.contains('show'))sheet.classList.add('axis884Prepaint');return openEvent(b.dataset.event)});";
@@ -39,7 +41,7 @@ const canonical=[
  `function bindDynamic(){${eventGuardDouble}${sessionSingle}}`,
  `function bindDynamic(){${eventGuardSingle}${sessionSingle}}`
 ];
-const target=`function bindDynamic(){${eventGuardDouble}${sessionDouble}}`;
+const target=`function bindDynamic(){${eventPlainDouble}${sessionDouble}}`;
 const bindRange=functionRange(s,'function bindDynamic()');
 const bind=s.slice(bindRange.start,bindRange.end),shape=canonical.indexOf(bind);
 if(shape<0)fail(`unexpected bindDynamic compiler shape: ${bind.replace(/\s+/g,' ')}`);
@@ -99,15 +101,18 @@ if(/\bawait\b/.test(eventBody.slice(0,factAt)))fail('8.18 openEvent awaits befor
 if(/await\s+(?:mediaUrl|axis89MediaUrl)\s*\(/.test(eventBody))fail('8.18 openEvent still owns blocking media reads');
 const hydrateRange=functionRange(s,'async function axis818HydrateEventMedia('),hydrateBody=s.slice(hydrateRange.start,hydrateRange.end);
 if(!hydrateBody.includes('axis89MediaUrl(')||!hydrateBody.includes('txn!==axis89DetailTxn')||!hydrateBody.includes('axis89Revoke(urls)'))fail('async media hydration lost transaction/url safety');
-if(!s.includes("sheet?.classList.remove('axis884Prepaint')"))fail('atomic commit does not release prepaint guard');
+if(!s.includes("sheet?.classList.remove('axis884Prepaint')"))fail('atomic commit does not release session prepaint guard');
 
-const sealed=functionRange(s,'function bindDynamic()');if(s.slice(sealed.start,sealed.end)!==target)fail('deterministic bindDynamic seal did not hold');
+const sealed=functionRange(s,'function bindDynamic()');
+const sealedBody=s.slice(sealed.start,sealed.end);
+if(sealedBody!==target)fail('deterministic bindDynamic seal did not hold');
+if(sealedBody.includes('axis884Prepaint'))fail('visible event swap can still re-enter prepaint');
 const close=s.lastIndexOf('})();');if(close<0)fail('app IIFE close missing');
 if(s.includes('__AXIS_818_DETAIL_ATOMIC__'))fail('detail atomic diagnostic duplicated');
 const bridge=`
-try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'canonical-dom0',guard:'router-prepaint',commitOwner:'atomic-handoff',objectTruth:true,exportDelete:true,factsFirst:true,mediaHydration:'async',mediaFetchBlocking:false,collectionHelper:'$$'}}catch(e){}
+try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'canonical-dom0',guard:'stable-atomic-swap',commitOwner:'atomic-handoff',objectTruth:true,exportDelete:true,factsFirst:true,visibleReprepaint:false,mediaHydration:'async',mediaFetchBlocking:false,collectionHelper:'$$'}}catch(e){}
 `;
 s=s.slice(0,close)+bridge+s.slice(close);
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};
 fs.writeFileSync(FILE,s);
-console.log(`[AXIS 8.18 detail atomic seal] PASS · final Object Truth detail is fact-first · export/delete preserved · async media hydration transaction-safe · collection-safe bindings · input-shape ${shape}`);
+console.log(`[AXIS 8.18 detail atomic seal] PASS · final Object Truth detail is fact-first · visible item swaps never re-prepaint · export/delete preserved · async media hydration transaction-safe · collection-safe bindings · input-shape ${shape}`);
