@@ -54,9 +54,15 @@ const helperAt=s.indexOf('async function axis89HydrateDetailMedia('),commitAt=s.
 if(!(helperAt>=0&&helperAt<commitAt&&commitAt<eventAt))fail('legacy commit compiler consumed or reordered the media hydrator');
 const eventRange=functionRange(s,'async function openEvent(id)');
 const eventBody=s.slice(eventRange.start,eventRange.end);
-const facts=eventBody.indexOf("axis89CommitDetail(txn,e.name,buildStage(''),[],bind)"),hydrate=eventBody.indexOf('void axis89HydrateDetailMedia(txn,e,buildStage,bind)');
-if(facts<0||hydrate<0||facts>hydrate)fail('event detail does not commit facts before media hydration');
-if(/await\s+axis89MediaUrl\(/.test(eventBody))fail('event visibility still waits on media-store reads');
+const factRe=/axis89CommitDetail\s*\(\s*txn\s*,\s*e\.name\s*,\s*buildStage\s*\(\s*(['"])\1\s*\)\s*,\s*\[\s*\]\s*,\s*bind\s*\)/g;
+const hydrateRe=/axis89HydrateDetailMedia\s*\(\s*txn\s*,\s*e\s*,\s*buildStage\s*,\s*bind\s*\)/g;
+const facts=[...eventBody.matchAll(factRe)],hydrates=[...eventBody.matchAll(hydrateRe)];
+if(facts.length!==1||hydrates.length!==1)fail(`event detail fact/hydrate cardinality invalid · facts ${facts.length} · hydrate ${hydrates.length} · ${eventBody.replace(/\s+/g,' ').slice(0,1200)}`);
+const factAt=facts[0].index??-1,hydrateAt=hydrates[0].index??-1;
+if(factAt<0||hydrateAt<0||factAt>hydrateAt)fail('event detail does not commit facts before media hydration');
+if(/\bawait\b/.test(eventBody.slice(0,factAt)))fail('event detail awaits before first factual commit');
+if(/await\s+axis89MediaUrl\s*\(/.test(eventBody))fail('event visibility still waits on media-store reads');
+if((eventBody.match(/axis89CommitDetail\s*\(/g)||[]).length!==1)fail('openEvent gained more than one direct detail commit owner');
 s=s.slice(0,range.start)+target+s.slice(range.end);
 const sealed=functionRange(s,'function bindDynamic()');
 if(s.slice(sealed.start,sealed.end)!==target)fail('deterministic bindDynamic seal did not hold');
@@ -69,4 +75,4 @@ try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'can
 s=s.slice(0,close)+bridge+s.slice(close);
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};
 fs.writeFileSync(FILE,s);
-console.log(`[AXIS 8.18 detail atomic seal] PASS · deterministic bindDynamic · fact-first detail · async media hydrator preserved · collection-safe event/session bindings · input-shape ${shape}`);
+console.log(`[AXIS 8.18 detail atomic seal] PASS · deterministic bindDynamic · semantic fact-first detail · async media hydrator preserved · collection-safe event/session bindings · input-shape ${shape}`);
