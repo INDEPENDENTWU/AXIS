@@ -44,14 +44,14 @@ const requireRecordPrefs=async label=>{
   const s=await page.evaluate(l=>({
     label:l,
     scan:!!document.querySelector('#scanSeconds'),
-    captureButtons:[...document.querySelectorAll('#scanSeconds [data-v876-cap]')].map(x=>x.dataset.v876Cap),
+    scanSeconds:[...document.querySelectorAll('#scanSeconds button[data-sec]')].map(x=>x.dataset.sec),
     keep:!!document.querySelector('#keepClipSwitch'),
     record:!!document.querySelector('#v8711RecordGate'),
     settings:document.querySelector('#settingsSheet')?.className||''
   }),label);
   console.log('[AXIS matrix record prefs]',JSON.stringify(s));
   assert.ok(s.scan&&s.keep&&s.record,`record preferences lost at ${label}: ${JSON.stringify(s)}`);
-  assert.deepEqual(s.captureButtons,['photo','3','5'],`canonical capture choices changed at ${label}: ${JSON.stringify(s.captureButtons)}`);
+  assert.deepEqual(s.scanSeconds,['3','5'],`canonical scan-duration choices changed at ${label}: ${JSON.stringify(s.scanSeconds)}`);
 };
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
@@ -108,7 +108,7 @@ await requireRecordPrefs('after-custom-editor');
 
 console.log('[AXIS matrix] canonical capture preference + keep-video persistence');
 await openGate('#v8711RecordGate > .settingLink','#v8711RecordGate');
-const cap5=page.locator('#scanSeconds [data-v876-cap="5"]');
+const cap5=page.locator('#scanSeconds button[data-sec="5"]');
 assert.ok(await cap5.isVisible(),'canonical 5-second capture preference is not visible');
 await cap5.click();
 const beforeKeep=await page.locator('#keepClipSwitch').getAttribute('aria-checked');
