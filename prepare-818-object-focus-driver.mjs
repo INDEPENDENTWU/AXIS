@@ -22,4 +22,5 @@ await import('./prepare-818-final-field-seal.mjs');
 await import('./prepare-818-camera-readiness-seal.mjs');
 await import('./prepare-818-detail-atomic-seal.mjs');
 await import('./prepare-818-final-smoke-seal.mjs');
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings smoke seals applied');
+await import('./prepare-818-inherited-test-flow-seal.mjs');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied');
