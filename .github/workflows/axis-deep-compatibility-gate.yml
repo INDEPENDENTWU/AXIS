@@ -1,0 +1,173 @@
+name: AXIS Deep Compatibility Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Verify inherited server, compiler and smoke syntax
+        run: |
+          node --input-type=module --check < api/analyze.js
+          node --input-type=module --check < lib/ai-config.js
+          node --input-type=module --check < cloud-functions/api/analyze.js
+          node --input-type=module --check < cloud-functions/_shared/ai-config.js
+          node --input-type=module --check < cloud-functions/api/owner-config.js
+          for f in \
+            prepare-89-detail.mjs prepare-89-vision.mjs prepare-89-catalog.mjs prepare-89-rest-speak.mjs prepare-89-rest-speak-fix.mjs prepare-89-rest-speak-safety.mjs \
+            prepare-891-detail.mjs prepare-891-speak-curriculum.mjs prepare-891-speak-panel.mjs prepare-891-speak-ui.mjs \
+            prepare-810-learning-curriculum.mjs prepare-810-learning-engine.mjs prepare-810-learning-budget-fix.mjs prepare-810-learning-settings.mjs \
+            prepare-8101-home-timer.mjs prepare-8101-learning-immersion.mjs prepare-8102-release-compat.mjs prepare-8102-interaction-stability.mjs \
+            prepare-8103-release-compat.mjs prepare-8103-home-sound.mjs prepare-8103-learning-voice.mjs \
+            postbuild-89-contract.mjs postbuild-891-contract.mjs postbuild-810-contract.mjs postbuild-8101-contract.mjs postbuild-8102-contract.mjs postbuild-8103-contract.mjs \
+            scripts/axis-89-smoke.mjs scripts/axis-891-smoke.mjs scripts/axis-810-smoke.mjs scripts/axis-8101-smoke.mjs scripts/axis-8102-smoke.mjs scripts/axis-8103-smoke.mjs; do
+            node --check "$f"
+          done
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+
+  chromium-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact current AXIS candidate
+        run: node build-release.mjs
+      - name: Align inherited public-release browser assertions
+        run: node scripts/prepare-release-test-contract.mjs
+      - name: Align inherited current-state browser assertions
+        run: node prepare-8123-ci-stability.mjs
+      - name: Verify Deep Compatibility artifact contract
+        run: node scripts/axis-deep-compatibility-contract.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-deep-compat-chromium.log 2>&1 &
+          sleep 1
+      - name: Reminder geometry + Home transitions
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: |
+          node scripts/axis-reminder-layout-smoke.mjs
+          node scripts/axis-882-home-transition-smoke.mjs
+          node scripts/axis-882-completion-camera-smoke.mjs
+      - name: 8.9 through 8.10.3 learning, detail, home and voice compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: |
+          node scripts/axis-89-smoke.mjs
+          node scripts/axis-891-smoke.mjs
+          node scripts/axis-810-smoke.mjs
+          node scripts/axis-8101-smoke.mjs
+          node scripts/axis-8102-smoke.mjs
+          node scripts/axis-8103-smoke.mjs
+      - name: 8.12 field + Group Plan + Settings compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: |
+          node scripts/axis-812-field-hardening-smoke.mjs
+          node scripts/axis-8121-hotfix-smoke.mjs
+          node scripts/axis-8122-settings-smoke.mjs
+      - name: Personal Equipment + picker + geometry compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: |
+          node scripts/axis-8123-field-polish-smoke.mjs
+          node scripts/axis-8123-ui-hotfix-smoke.mjs
+          node scripts/axis-8123-equipment-gallery-picker-smoke.mjs
+          node scripts/axis-8123-equipment-gallery-ui-geometry-smoke.mjs
+      - name: Simplified local Learning compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8123-learning-simplify-smoke.mjs
+      - name: 8.12.4/8.12.5 timing + catalog + smart-create compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: |
+          node scripts/axis-8124-flow-smoke.mjs
+          node scripts/axis-8124-catalog-polish-smoke.mjs
+          node scripts/axis-8125-smart-create-polish-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-deep-compat-chromium.log || true
+
+  webkit-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact current AXIS candidate
+        run: node build-release.mjs
+      - name: Align inherited public-release browser assertions
+        run: node scripts/prepare-release-test-contract.mjs
+      - name: Align inherited current-state browser assertions
+        run: node prepare-8123-ci-stability.mjs
+      - name: Verify Deep Compatibility artifact contract
+        run: node scripts/axis-deep-compatibility-contract.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-deep-compat-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone reminder geometry + Home transitions
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: |
+          node scripts/axis-reminder-layout-smoke.mjs
+          node scripts/axis-882-home-transition-smoke.mjs
+          node scripts/axis-882-completion-camera-smoke.mjs
+      - name: iPhone 8.9 through 8.10.3 compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: |
+          node scripts/axis-89-smoke.mjs
+          node scripts/axis-891-smoke.mjs
+          node scripts/axis-810-smoke.mjs
+          node scripts/axis-8101-smoke.mjs
+          node scripts/axis-8102-smoke.mjs
+          node scripts/axis-8103-smoke.mjs
+      - name: iPhone 8.12 field + Group Plan + Settings compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: |
+          node scripts/axis-812-field-hardening-smoke.mjs
+          node scripts/axis-8121-hotfix-smoke.mjs
+          node scripts/axis-8122-settings-smoke.mjs
+      - name: iPhone Personal Equipment + picker + geometry compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: |
+          node scripts/axis-8123-field-polish-smoke.mjs
+          node scripts/axis-8123-ui-hotfix-smoke.mjs
+          node scripts/axis-8123-equipment-gallery-picker-smoke.mjs
+          node scripts/axis-8123-equipment-gallery-ui-geometry-smoke.mjs
+      - name: iPhone simplified local Learning compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8123-learning-simplify-smoke.mjs
+      - name: iPhone 8.12.4/8.12.5 timing + catalog + smart-create compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: |
+          node scripts/axis-8124-flow-smoke.mjs
+          node scripts/axis-8124-catalog-polish-smoke.mjs
+          node scripts/axis-8125-smart-create-polish-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-deep-compat-webkit.log || true

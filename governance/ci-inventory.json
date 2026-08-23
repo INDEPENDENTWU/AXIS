@@ -1,114 +1,37 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "capturedAt": "2026-08-23",
-  "source": {
-    "pullRequest": 79,
-    "productionBaselineSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"
-  },
-  "phaseOneProof": {
-    "repositoryContract": {"runId":32626662160,"conclusion":"success"},
-    "workContinuity": {"runId":32626662162,"conclusion":"success"}
-  },
+  "source": {"pullRequest":79,"productionBaselineSha":"254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"},
   "observedPullRequestWorkflowCountBeforeConvergence": 25,
-  "classificationPolicy": {
-    "current": "Directly protects current repository/product/release truth.",
-    "provider-release": "Protects provider packaging or Production release policy.",
-    "compatibility-required-pending-equivalence-audit": "Historical/provenance-named gate that may still protect current behavior; must not be retired until equivalent current coverage is mapped.",
-    "superseded": "Equivalent current coverage is proven and retirement evidence exists.",
-    "historical-only": "No executable/current compatibility role remains; provenance only."
-  },
-  "firstOptimization": {
-    "id": "stale-pr-head-run-cancellation",
-    "workflow": ".github/workflows/axis-pr-run-convergence.yml",
-    "status": "verified",
-    "proof": [
-      {"runId":32626897002,"conclusion":"success","eligibleStaleRuns":0,"cancelledRuns":0},
-      {"runId":32626975731,"conclusion":"success","eligibleStaleRuns":10,"cancelRequestsAccepted":8,"alreadyFinishedBeforeCancellation":2,"latestHeadTouched":false}
-    ]
-  },
-  "branchProtectionAudit": {
-    "branch": "main",
-    "protected": false,
-    "requiredStatusChecks": 0,
-    "observedAtProductionSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"
-  },
+  "phaseOneProof": {"repositoryContract":{"runId":32626662160,"conclusion":"success"},"workContinuity":{"runId":32626662162,"conclusion":"success"}},
+  "staleHeadConvergence": {"status":"verified","runId":32626975731,"eligibleStaleRuns":10,"cancelRequestsAccepted":8,"latestHeadTouched":false},
+  "branchProtectionAudit": {"branch":"main","protected":false,"requiredStatusChecks":0,"observedAtProductionSha":"254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"},
   "currentReleaseConvergence": {
-    "status": "verified-and-retired",
-    "replacementWorkflow": ".github/workflows/axis-current-release-gate.yml",
-    "semanticContract": "scripts/axis-current-release-contract.mjs",
-    "replacementRunId": 32630099680,
-    "replacementCandidateSha": "53ba6909b1aed95ae634e1b3bd6429ffe80c2a59",
-    "chromium": "success",
-    "webkit": "success",
-    "postRetirementRunId": 32630367047,
-    "postRetirementCandidateSha": "709d801e268e6d06248c21f517aa1a17e565764b",
-    "postRetirementChromium": "success",
-    "postRetirementWebkit": "success",
-    "retiredAutomaticWorkflows": [
-      ".github/workflows/axis-814-evolution-object-gate.yml",
-      ".github/workflows/axis-815-media-evidence-gate.yml",
-      ".github/workflows/axis-8151-regression-seal-gate.yml",
-      ".github/workflows/axis-816-capture-evidence-gate.yml",
-      ".github/workflows/axis-817-interaction-gate.yml",
-      ".github/workflows/axis-8171-source-media-gate.yml",
-      ".github/workflows/axis-818-object-focus-gate.yml"
-    ]
+    "status":"verified-and-retired",
+    "replacementWorkflow":".github/workflows/axis-current-release-gate.yml",
+    "semanticContract":"scripts/axis-current-release-contract.mjs",
+    "replacementRunId":32630099680,"replacementCandidateSha":"53ba6909b1aed95ae634e1b3bd6429ffe80c2a59","chromium":"success","webkit":"success",
+    "postRetirementRunId":32630367047,"postRetirementCandidateSha":"709d801e268e6d06248c21f517aa1a17e565764b","postRetirementChromium":"success","postRetirementWebkit":"success",
+    "retiredAutomaticWorkflows":[".github/workflows/axis-814-evolution-object-gate.yml",".github/workflows/axis-815-media-evidence-gate.yml",".github/workflows/axis-8151-regression-seal-gate.yml",".github/workflows/axis-816-capture-evidence-gate.yml",".github/workflows/axis-817-interaction-gate.yml",".github/workflows/axis-8171-source-media-gate.yml",".github/workflows/axis-818-object-focus-gate.yml"]
   },
   "runtimeFoundationConvergence": {
-    "status": "verified-ready-to-retire",
-    "replacementWorkflow": ".github/workflows/axis-runtime-foundation-gate.yml",
-    "semanticContract": "scripts/axis-runtime-foundation-contract.mjs",
-    "replacementRunId": 32630563608,
-    "replacementCandidateSha": "4e1d19581a0a4fd91d25823303aa8a6dc25657fa",
-    "pureRuntimeParity": "success",
-    "chromium": "success",
-    "webkit": "success",
-    "responsibilities": [
-      "pure Runtime invariants",
-      "Shadow Runtime invariants",
-      "exact artifact parity against PR base SHA",
-      "Chromium Shadow transition observation",
-      "WebKit Shadow transition observation",
-      "Continue + Live Route behavior",
-      "inline Settings ownership"
-    ],
-    "retiredAutomaticWorkflows": [
-      ".github/workflows/axis-813-runtime-core-gate.yml",
-      ".github/workflows/axis-813-shadow-runtime-gate.yml",
-      ".github/workflows/axis-813-live-route-gate.yml",
-      ".github/workflows/axis-813-settings-convergence-gate.yml"
-    ],
-    "retirementReason": "The replacement runs the same pure/runtime/parity/browser scripts with the union of the original manifest ownership contract, while sharing one exact build per browser engine.",
-    "automaticBuildEffect": "The former 8.13 family performed up to eight canonical builds across four workflow families; Runtime Foundation reduces that responsibility to three builds across three explicit jobs."
+    "status":"verified-and-retired",
+    "replacementWorkflow":".github/workflows/axis-runtime-foundation-gate.yml",
+    "semanticContract":"scripts/axis-runtime-foundation-contract.mjs",
+    "replacementRunId":32630563608,"replacementCandidateSha":"4e1d19581a0a4fd91d25823303aa8a6dc25657fa","pureRuntimeParity":"success","chromium":"success","webkit":"success",
+    "postRetirementRunId":32630723007,"postRetirementCandidateSha":"b4cd93e091ac7368dc2b6e5b57aa96236bbaa70d","postRetirementPureRuntimeParity":"success","postRetirementChromium":"success","postRetirementWebkit":"success",
+    "repositoryGuardRunId":32630723051,
+    "retiredAutomaticWorkflows":[".github/workflows/axis-813-runtime-core-gate.yml",".github/workflows/axis-813-shadow-runtime-gate.yml",".github/workflows/axis-813-live-route-gate.yml",".github/workflows/axis-813-settings-convergence-gate.yml"]
   },
-  "automaticWorkflowCountProjectionAfterRuntimeRetirement": 17,
-  "countDerivation": "20 observed after first retirement + Runtime Foundation replacement - 4 retired 8.13 workflow families",
-  "remainingCompatibilityAudit": [
-    "AXIS 8.12 Field Hardening Gate",
-    "AXIS 8.12.x Field Hotfix Gate",
-    "AXIS 8.12.2 Settings Gate",
-    "AXIS 8.12.3 Field Polish Gate",
-    "AXIS 8.12.3 Learning Simplify Gate",
-    "AXIS 8.10.3 Gate",
-    "AXIS 8.8 Reminder Layout Gate",
-    "AXIS Home Transition Gate",
-    "AXIS Inherited Web Release Gate"
-  ],
-  "preservedCurrentAndProviderGates": [
-    "AXIS Repository Contract",
-    "AXIS Work Continuity Contract",
-    "AXIS Runtime Gate",
-    "AXIS Current Release Gate",
-    "AXIS Runtime Foundation Gate",
-    "AXIS Cross-Platform Foundation Gate",
-    "AXIS PR Run Convergence",
-    "AXIS EdgeOne Production Mirror"
-  ],
-  "nextAudit": [
-    "8.12 Equipment/Group Plan/Settings/Learning semantic overlap",
-    "8.10.3 inherited learning/detail uniqueness versus Runtime Gate",
-    "Home Transition and 8.8 Reminder uniqueness versus Runtime Gate",
-    "old-data compatibility fixtures",
-    "path scoping for docs/governance-only changes"
-  ]
+  "automaticWorkflowCountAfterRuntimeRetirement": 17,
+  "deepCompatibilityConvergence": {
+    "status":"candidate-introduced-awaiting-proof",
+    "replacementWorkflow":".github/workflows/axis-deep-compatibility-gate.yml",
+    "semanticContract":"scripts/axis-deep-compatibility-contract.mjs",
+    "targetResponsibilities":["legacy storage keys","reminder geometry","Home transitions/completion camera","8.9-8.10.3 learning/detail/home/voice","8.12 field/Group Plan/Settings","Personal Equipment/gallery/picker/geometry/history","8.12.3 simplified local Learning","8.12.4 timing/catalog","8.12.5 smart-create"],
+    "candidateRetirements":[".github/workflows/axis-812-field-hardening-gate.yml",".github/workflows/axis-8121-hotfix-gate.yml",".github/workflows/axis-8122-settings-gate.yml",".github/workflows/axis-8123-field-polish-gate.yml",".github/workflows/axis-8123-learning-simplify-gate.yml",".github/workflows/axis-89-gate.yml",".github/workflows/axis-88-reminder-layout-gate.yml",".github/workflows/axis-home-transition-gate.yml",".github/workflows/axis-8124-flow-gate.yml"],
+    "retirementAuthorized": false
+  },
+  "preservedCurrentAndProviderGates":["AXIS Repository Contract","AXIS Work Continuity Contract","AXIS Runtime Gate","AXIS Current Release Gate","AXIS Runtime Foundation Gate","AXIS Cross-Platform Foundation Gate","AXIS PR Run Convergence","AXIS EdgeOne Production Mirror"],
+  "nextAudit":["prove Deep Compatibility replacement on one exact SHA alongside all nine old workflow families","retire only after static + Chromium + WebKit replacement success","post-retirement prove exact head and repository resurrection guard","then path-scope docs/governance-only changes and separate provider PR packaging from main Production deployment"]
 }
