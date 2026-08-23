@@ -14,15 +14,14 @@ let s=fs.readFileSync(FILE,'utf8');
    than relying on one byte-identical quote/spacing form. */
 const singleCollection=/(^|[^$])\$\s*\(\s*(['"`])\[data-event\]\2\s*\)\s*\.forEach/g;
 let collectionRepairs=0;
-s=s.replace(singleCollection,(m,prefix)=>{collectionRepairs++;const body=m.slice(prefix.length).replace(/^\$\s*\(/,"$$('").replace(/(['"`])\[data-event\]\1\s*\)\s*\.forEach$/,"[data-event]').forEach");return prefix+body});
+s=s.replace(singleCollection,(m,prefix)=>{collectionRepairs++;return `${prefix}$$('[data-event]').forEach`});
 
-/* Normalize any formatting differences in the canonical router itself once the
-   receiver is collection-safe. This preserves one DOM0 owner and the existing
-   openEvent/atomic-commit data path. */
+/* Normalize formatting differences in the one canonical event-detail DOM0 router
+   once its receiver is collection-safe. */
 const routerRe=/\$\$\s*\(\s*(['"`])\[data-event\]\1\s*\)\s*\.forEach\s*\(\s*b\s*=>\s*b\.onclick\s*=\s*\(\)\s*=>\s*openEvent\(b\.dataset\.event\)\s*\)\s*;?/g;
 const routers=[...s.matchAll(routerRe)];
-const alreadyGuarded=(s.match(/return\s+openEvent\(b\.dataset\.event\)/g)||[]).length;
-if(routers.length+alreadyGuarded!==1)fail(`canonical event detail router expected one owner, found plain=${routers.length} guarded=${alreadyGuarded}`);
+const guardedCount=(s.match(/return\s+openEvent\(b\.dataset\.event\)/g)||[]).length;
+if(routers.length+guardedCount!==1)fail(`canonical event detail router expected one owner, found plain=${routers.length} guarded=${guardedCount}`);
 if(!s.includes("owner:'atomic-handoff'"))fail('canonical atomic detail commit owner missing');
 if(!s.includes('async function openEvent(id){'))fail('canonical openEvent missing');
 if(!s.includes("sheet?.classList.remove('axis884Prepaint')"))fail('atomic commit does not release prepaint guard');
