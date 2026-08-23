@@ -114,11 +114,13 @@ assert.ok(await cap5.isVisible(),'canonical 5-second capture preference is not v
 await cap5.click();
 await page.waitForTimeout(80);
 let meta=await store('axis_v8_meta');
-assert.equal(meta.prefs?.v876CaptureMode,'5','canonical capture preference did not persist');
+core=await store('axis_v60_state');
+assert.equal(Number(core.prefs?.scanSeconds),5,'canonical app-owned scan preference did not persist');
+assert.equal(await page.evaluate(()=>window.__AXIS_818_SCAN_SECONDS__?.get?.()),5,'app-owned scan preference bridge disagrees with persisted state');
 assert.ok(await cap5.evaluate(x=>x.classList.contains('active')),'canonical 5-second preference is not visibly active');
 assert.equal(await page.locator('#keepClipSwitch:visible').count(),0,'retired keep-video pseudo-setting became visible');
 assert.equal(await page.locator('#keepClipSwitch').getAttribute('aria-hidden'),'true','retired keep-video compatibility node lost aria-hidden');
-assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5','capture preference bridge disagrees with visible setting');
+assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5','capture preference compatibility bridge disagrees with app-owned setting');
 
 await closeSettings();
 await page.locator('#scanBtn').click();
