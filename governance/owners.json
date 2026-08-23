@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "baselineRelease": "8.18",
+  "owners": [
+    {
+      "capability": "training-state",
+      "status": "authoritative",
+      "owner": "app.js",
+      "storage": "axis_v60_state",
+      "notes": "Base local workout/session/profile/preferences state."
+    },
+    {
+      "capability": "strength-set-recording",
+      "status": "authoritative",
+      "owner": "v61.js",
+      "storage": "axis_v8_meta",
+      "notes": "High-frequency set-level recording and metadata."
+    },
+    {
+      "capability": "media-capture-and-persistence",
+      "status": "authoritative",
+      "owner": "app.js",
+      "storage": "axis_v42_media",
+      "notes": "Single camera/MediaRecorder/media persistence ownership; S/SV clean sources and F/V canonical derivatives share the existing store."
+    },
+    {
+      "capability": "media-source-resolution",
+      "status": "derived-read-only",
+      "owner": "window.__AXIS_MEDIA_SOURCE__ via app.js",
+      "storage": "axis_v42_media",
+      "notes": "Source-first resolver with canonical fallback; never a second persistence owner."
+    },
+    {
+      "capability": "custom-equipment-editor",
+      "status": "authoritative-visible-owner",
+      "owner": "v874-professional.js",
+      "notes": "Visible custom equipment/sport/movement editor; 8.18 metric schema truth must not create a competing editor."
+    },
+    {
+      "capability": "automatic-sound",
+      "status": "authoritative",
+      "owner": "established v8710 automatic sound owner",
+      "notes": "The owner identity is contract-level; retired historical reminder loops may not return or become a second writer."
+    },
+    {
+      "capability": "watermark-compositor",
+      "status": "authoritative",
+      "owner": "v8710-watermark.js",
+      "notes": "Shared source-first watermark painter; 8.18 video derivative uses the sealed 30fps compositor contract."
+    },
+    {
+      "capability": "active-focus-presentation",
+      "status": "presentation-only",
+      "owner": "8.18 Focus layer",
+      "delegatesTo": "v87-direct-884 completion owner",
+      "notes": "Focus never becomes a second training/completion writer."
+    },
+    {
+      "capability": "evolution-library",
+      "status": "derived-read-only",
+      "owner": "8.18 Evolution Library projection",
+      "notes": "Derived from real Encounters; no second database or persistence schema."
+    },
+    {
+      "capability": "language-learning-state",
+      "status": "authoritative-within-isolated-domain",
+      "owner": "Language Studio runtime",
+      "storage": "axis_v89_speak",
+      "notes": "Learning state is isolated from training ownership."
+    },
+    {
+      "capability": "legacy-capture-preference-bridge",
+      "status": "compatibility-only",
+      "owner": "v876 compatibility bridge",
+      "delegatesTo": "app-owned current Capture preference state",
+      "notes": "May delegate for compatibility; must not become a current visible or persistence authority."
+    }
+  ],
+  "rules": [
+    "One semantic action has one interactive writer.",
+    "One current training fact has one authoritative store.",
+    "Compatibility bridges delegate; they do not regain authority.",
+    "A derived projection cannot create a second persistence model.",
+    "Changing an owner requires explicit handoff, regression proof, and retirement of the previous writer."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "product": {
+    "name": "AXIS",
+    "identity": "Personal Evolution Engine",
+    "productionRelease": "8.18",
+    "productionRuntimeSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db",
+    "architecture": "canonical-single-runtime",
+    "releaseBuildCommand": "node build-release.mjs"
+  },
+  "production": {
+    "vercel": {
+      "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
+      "deploymentId": "dpl_1QX8YUPjzRF8tmSZ55Gkp1dsnZuU",
+      "sourceSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db",
+      "state": "READY",
+      "target": "production",
+      "publicUrl": "https://axis-five-puce.vercel.app"
+    },
+    "edgeOne": {
+      "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
+      "policy": "exact-prebuilt-artifact-mirror",
+      "verificationRecord": "backfill-from-production-workflow-required"
+    }
+  },
+  "engineering": {
+    "activeMilestone": "AXIS Source Convergence — 8.19 Foundation",
+    "activeBranch": "engineering/source-convergence-819",
+    "baselineRelease": "8.18",
+    "baselineRuntimeSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db",
+    "intendedProductBehaviorChange": false,
+    "nextProductRelease": "8.19"
+  },
+  "compatibility": {
+    "longLivedFoundation": "8.12",
+    "preserveStorage": [
+      "axis_v60_state",
+      "axis_v8_meta",
+      "axis_v89_speak",
+      "axis_v42_media"
+    ]
+  },
+  "presentationFoundation": {
+    "locales": [
+      {"id": "zh-Hans", "name": "简体中文", "requireProfessionalTranslation": true},
+      {"id": "zh-Hant", "name": "繁體中文", "requireProfessionalTranslation": true},
+      {"id": "en", "name": "English", "requireProfessionalTranslation": true}
+    ],
+    "themes": ["system", "light", "dark"],
+    "status": "foundation-planned-after-source-governance"
+  },
+  "authorityOrder": [
+    "governance/project-state.json",
+    "docs/HANDOFF.md",
+    "docs/CURRENT_RELEASE.md",
+    "docs/CURRENT_WORK.md",
+    "docs/RUNTIME_CONTRACT.md",
+    "docs/PRODUCT.md",
+    "docs/ARCHITECTURE.md",
+    "build-release.mjs"
+  ],
+  "notes": [
+    "Chat history is supplementary context, never authoritative project state.",
+    "release-contract.json is currently a legacy mutable build seed and is not the canonical current-release record.",
+    "Historical filenames describe provenance, not current authority."
+  ]
+}

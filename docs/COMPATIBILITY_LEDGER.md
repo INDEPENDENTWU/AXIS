@@ -1,80 +1,109 @@
 # Compatibility ledger
 
-AXIS 8.12 is the compatibility baseline for future source convergence.
+AXIS 8.18 is the current Production behavior baseline. **8.12 remains the long-lived source/data compatibility foundation**, not the current product release.
 
-The production artifact is already a canonical single runtime. The debt tracked here is source-side: historical browser owners and build-time transforms still have to be understood before they can be physically removed.
+Production is already a canonical single runtime. The debt tracked here is primarily source/build/CI-side: historical owners and transforms still participate in producing or proving current behavior.
 
-This ledger exists so compatibility work is reduced deliberately instead of being rediscovered from filenames.
+This ledger exists so compatibility is reduced deliberately instead of being inferred from filenames.
 
 ## Current eras
 
-| Era | What remains | Why it still exists | Exit condition |
-|---|---|---|---|
-| pre-8.8 / legacy | base runtime and historical enhancement source | local data and long-lived product behavior originated here | replacement owners read existing data and inherited gates pass without the old source |
-| 8.8 canonicalization | ownership convergence, first paint, watermark, catalog, canonical packager | established one-runtime production and retired competing writers | behavior moves into direct current owners; exact compiler rewrites become unnecessary |
-| 8.8.x | home state, media, quick record, lifecycle, field refinements | protects important interaction and WebKit regressions | equivalent current modules + product matrix make version-specific rewrites redundant |
-| 8.9 / 8.9.1 | detail handoff, local vision, Rest Speak foundation | still contributes current product behavior and inherited regression expectations | current modules own these surfaces directly |
-| 8.10.x | learning engine, settings, timing, sound and interaction stability | evolved the learning surface while preserving training ownership | Language Runtime is extracted and old DOM patch layers retire |
-| 8.11 | multilingual atlas, State Field, cloud/AI foundation | current data/contracts are inherited by 8.12 | current libraries become source truth and 8.11-only transformation is no longer required |
-| 8.12 | Language Studio content/settings and current release contract | current release behavior | becomes inherited baseline when the next release is proven |
+| Era | Current role | Why it can still exist | Exit condition |
+| --- | --- | --- | --- |
+| pre-8.8 / legacy | compatibility source + long-lived data origin | current user history/storage originated here | current owners read/migrate existing data and inherited behavior passes without old executable source |
+| 8.8 canonicalization | source/build convergence provenance | established canonical runtime, watermark/catalog/first-paint ownership | direct current source owns the surviving behavior and exact compiler rewrites are unnecessary |
+| 8.8.x | compatibility behavior/tests | protects home/media/lifecycle/WebKit regressions | current semantic matrix covers the behavior without historical implementation assertions |
+| 8.9 / 8.9.1 | compatibility behavior/tests | detail handoff, vision and learning regressions remain relevant | direct current owners + current tests fully replace version-shaped execution |
+| 8.10.x | compatibility behavior/tests | learning/settings/timing/sound evolution | current Language/runtime contracts cover surviving behavior |
+| 8.11 | compatibility foundation provenance | multilingual/State Field/cloud contracts feed later product behavior | current libraries/contracts replace 8.11-only transforms |
+| 8.12 / 8.12.x | **long-lived compatibility foundation** | many source/data assumptions converge from here | normalized current adapters make version-specific rewrites unnecessary |
+| 8.13 / 8.13.1 | inherited current behavior | route/evolution foundation | direct domain/runtime source owns these contracts |
+| 8.14 | inherited current behavior | Evolution Objects | current Object/Encounter runtime subsumes the historical transform |
+| 8.15 / 8.15.1 | inherited current behavior | Media Evidence + stable swap/watermark seals | current Evidence/media modules own the behavior directly |
+| 8.16 | inherited current behavior | unified Capture Field + Comparative Evidence | current Capture/Evidence source no longer depends on exact 8.16 mutation |
+| 8.17 / 8.17.1 | inherited current behavior | interaction convergence + source-first media | current owners express the guarantees directly |
+| 8.18 | **current Production behavior baseline** | Object/Route/Capture/Focus/Evolution truth | becomes inherited baseline only after a later Production release is sealed |
+
+Version-like filenames are provenance. Current authority is recorded in `governance/project-state.json`, `docs/HANDOFF.md`, owner/retirement registries and current contracts.
 
 ## Non-negotiable compatibility
 
-The following are user/product contracts, not disposable legacy:
+These are user/product contracts, not disposable legacy:
 
 - existing `axis_v60_state` training history;
 - existing `axis_v8_meta` set/timer/preferences metadata;
 - existing `axis_v89_speak` learning state;
-- IndexedDB media that the product intentionally persisted;
-- current custom equipment identity and aliases;
-- release behavior covered by canonical manifest gates;
-- current browser behavior covered by Chromium and iPhone-like WebKit tests.
+- `axis_v42_media` IndexedDB media intentionally persisted by AXIS;
+- current custom equipment/object identity and aliases;
+- historical Encounter readability;
+- current runtime behavior covered by the canonical product contracts;
+- critical Chromium and iPhone-like WebKit behavior.
 
 A cleanup that loses any of these is not convergence.
 
-## Compiler rule from 8.13 onward
+## Source Convergence — 8.19 Foundation
 
-The default is **not** to add another permanent historical patch layer for each new feature.
+The active engineering milestone is explicitly **not** a rewrite and carries zero intended user-visible behavior change.
 
-New architecture work should prefer:
+Preferred migration:
 
 ```text
-pure domain contract
+current/pure contract
       ↓
-shadow comparison against 8.12 behavior
+shadow or equivalence proof
       ↓
 explicit owner handoff
       ↓
-old owner retirement
+old authority retirement
       ↓
-compiler step deletion
+compiler/test/workflow deletion
 ```
 
-A new `prepare-*` compatibility transform is justified only when a real compatibility boundary cannot be migrated safely in the same change. If one is added, the pull request must document its deletion condition.
+A new permanent `prepare-*` version layer is a last resort. If a real compatibility boundary requires one, its deletion condition must be recorded when introduced.
+
+## Classification model
+
+Every executable historical item should be classified before cleanup:
+
+- `current` — directly owns current behavior;
+- `compatibility-required` — still required to preserve current data/behavior but not a preferred long-term owner;
+- `superseded` — current equivalent exists and deletion evidence is being assembled;
+- `historical-only` — provenance only and must not participate in current execution.
+
+Classification must be based on executable reachability and behavior, not age.
 
 ## Retirement queue
 
-Retirement order should follow dependency risk, not filename age.
+1. One-off operational markers → `docs/history/`, never executable.
+2. Unreferenced build helpers → prove reachability absence, then delete.
+3. Duplicate/stale test assertions → replace implementation-shape checks with current semantic contracts.
+4. Duplicate version-shaped workflows → consolidate after trigger/assertion/browser coverage equivalence is explicit.
+5. Version-only release identity transforms → collapse after checked-in/current source identity no longer needs staged mutation.
+6. Historical DOM/source owners → retire one surface at a time after current ownership exists.
+7. Canonical compiler rewrites → remove as direct source ownership replaces exact historical rewriting.
 
-1. **One-off operational markers** — keep under `docs/history/`; never executable.
-2. **Unreferenced build helpers** — prove with repository references plus full release gates, then delete.
-3. **Duplicate workflow coverage** — consolidate only after required checks and browser coverage remain equivalent.
-4. **Version-only release compatibility transforms** — collapse once source release identity is current without staged mutation.
-5. **Historical DOM/source owners** — retire one surface at a time after a current owner exists.
-6. **Canonical compiler rewrites** — remove as direct source ownership replaces exact historical rewriting.
+## Evidence required before executable deletion
 
-## Evidence required before deletion
-
-For every executable retirement, record:
+Record:
 
 - file/step being removed;
-- behavior it used to preserve;
-- new canonical owner;
-- data migration impact, if any;
-- tests that prove final state;
-- tests that prove transient state where relevant;
-- Chromium result;
-- WebKit result;
-- production artifact topology result.
+- behavior/data it used to preserve;
+- current replacement owner or proof that no replacement is required;
+- LocalStorage/IndexedDB migration impact;
+- current semantic tests;
+- transient-state tests where relevant;
+- Chromium result where user-visible;
+- WebKit result where user-visible;
+- canonical artifact/topology result.
 
-The objective is measurable: the executing product stays stable while the number of historical source owners and deterministic build steps trends downward over time.
+See `governance/retirements.json` for authority that is already forbidden from returning.
+
+## Success metric
+
+Source convergence is successful when the shipped product stays behaviorally stable while these move downward:
+
+- authoritative source owners;
+- historical executable transforms;
+- per-version CI duplication;
+- source-to-artifact indirection;
+- time required to decide whether a failing old assertion is a real regression.
