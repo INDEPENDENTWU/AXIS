@@ -41,9 +41,12 @@
       "observedWorkflowCountPerPrHead": 25,
       "inventory": "governance/ci-inventory.json",
       "firstOptimization": "stale-pr-head-run-cancellation",
-      "firstOptimizationRun": 32626897002,
-      "firstOptimizationRunConclusion": "success",
-      "crossHeadCancellationProof": "pending-next-head"
+      "firstOptimizationStatus": "verified",
+      "proofRuns": [32626897002, 32626975731],
+      "verifiedStaleEligible": 10,
+      "verifiedCancelRequestsAccepted": 8,
+      "verifiedAlreadyFinished": 2,
+      "latestHeadTouched": false
     }
   },
   "compatibility": {

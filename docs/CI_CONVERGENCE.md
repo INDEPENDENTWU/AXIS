@@ -10,11 +10,11 @@ On PR #79, a governance/documentation-oriented Source Convergence change trigger
 
 That means a small follow-up commit can leave dozens of already-obsolete jobs queued or running for the previous PR head. During 8.18 this repeatedly delayed feedback on the actual latest candidate.
 
-This is runner/feedback debt. It is not evidence that the historical assertions themselves are safe to delete.
+This is runner/feedback debt. It is not evidence that historical assertions are safe to delete.
 
 ## Classification rule
 
-Every workflow receives one of these states:
+Every workflow receives one state:
 
 - **current** — directly protects current repository/product/runtime truth;
 - **provider-release** — provider packaging/deployment/Production policy;
@@ -26,32 +26,55 @@ Default for an old workflow is **not** “delete.” It is `compatibility-requir
 
 ## First optimization — stale PR head cancellation
 
-Before merging or deleting any behavioral gate, AXIS adds one orthogonal optimization:
+Before merging/deleting behavioral gates, AXIS added one orthogonal optimization:
 
 > When a pull request gets a newer head SHA, cancel only still-active `pull_request` workflow runs that belong to the same PR but execute an older head SHA.
 
-Implementation: `.github/workflows/axis-pr-run-convergence.yml`.
+Implementation: `.github/workflows/axis-pr-run-convergence.yml` using official `actions/github-script@v9`.
 
 ### Safety boundary
 
-The workflow checks all of the following before cancellation:
+Before cancellation, the workflow requires:
 
 1. event is `pull_request`;
 2. run belongs to the same PR number;
 3. run belongs to the same head branch;
 4. run head SHA is **not** the current PR head;
 5. run is still queued/in-progress/requested/waiting/pending;
-6. the cancellation workflow never cancels itself.
+6. the cancellation workflow does not cancel itself.
 
-It never searches for or cancels `push` runs, so `main` / Production release workflows are outside its cancellation set.
+It never queries `push` as its cancellation event class, so `main` / Production push runs are outside its cancellation set.
 
 Fork PRs may receive a read-only token; a 403 cancellation response is logged as a warning rather than turning a contributor PR red.
+
+### Verification record
+
+The optimization is now **verified on PR #79**.
+
+First execution:
+
+- run `32626897002` — **success**;
+- API/permission path succeeded;
+- latest-head exclusion succeeded;
+- no stale active run happened to remain at that instant.
+
+Cross-head execution after the next meaningful evidence commit:
+
+- run `32626975731` — **success**;
+- current head: `1c30a3006fe1627838eac98ee133a3303a6cf509`;
+- previous stale head: `df1b2507923083e49bde3602425194bccbc22f70`;
+- stale active runs found: **10**;
+- cancellation requests accepted: **8**;
+- **2** runs completed before cancellation reached them and were left untouched;
+- latest current head touched: **false**.
+
+Accepted cancellations included stale-head instances of Runtime Gate, 8.18, 8.17, 8.13, 8.12 and 8.8-era gates. This is direct evidence that obsolete runner work can be removed without reducing latest-candidate coverage.
 
 ### Why this is safe
 
 Coverage on the latest exact candidate does not change. Every existing workflow can still run on the latest head. Only results for a SHA that can no longer be merged as the PR head are discarded.
 
-This addresses feedback latency before making harder decisions about workflow consolidation.
+This improves feedback latency before harder workflow-consolidation decisions.
 
 ## Current workflow groups
 
@@ -69,11 +92,11 @@ The 8.18 name is still version-shaped, but today it protects the current Product
 
 - AXIS EdgeOne Production Mirror
 
-Its PR package-contract responsibilities and main/Production responsibilities should be audited separately before any trigger change.
+Its PR package-contract responsibilities and `main`/Production responsibilities must be audited separately before any trigger change.
 
 ### Compatibility-required pending audit
 
-Current observed list includes:
+Observed list includes:
 
 - 8.17.1 Source Media
 - 8.17 Interaction Convergence
@@ -88,11 +111,11 @@ Current observed list includes:
 - Home Transition Gate
 - Inherited Web Release Gate
 
-No item in this group is currently approved for deletion.
+No item in this group is approved for deletion yet.
 
 ## Equivalence audit template
 
-For each candidate workflow, record:
+For each workflow, record:
 
 | Question | Required answer |
 | --- | --- |
@@ -102,7 +125,7 @@ For each candidate workflow, record:
 | Does it uniquely cover Chromium or WebKit? | Engine and exact path. |
 | Does it uniquely cover old user data? | Storage/schema fixture. |
 | Is its check name required by branch protection? | Must be known before rename/removal. |
-| Can its assertion be moved into Current Product Matrix / Deep Compatibility Gate? | Exact destination. |
+| Can its assertion move into Current Product Matrix / Deep Compatibility Gate? | Exact destination. |
 | What is the retirement proof? | Candidate SHA + green replacement evidence. |
 
 Only after these answers are explicit can a workflow become `superseded`.
@@ -144,16 +167,26 @@ This is where old compatibility belongs once it no longer needs many separate re
 
 Keep strict provider/artifact/browser verification. This layer is not reduced for speed.
 
+## Next audit priority
+
+The next safest targets are not assertion deletion. Audit:
+
+1. workflows with broad `pull_request: main` triggers and no path scoping;
+2. duplicated `node build-release.mjs` work across one head;
+3. assertions already present in Runtime Gate / current 8.18 gate;
+4. historical gates whose unique value is old-data compatibility;
+5. branch-protection check names before renaming/merging anything.
+
 ## Metrics
 
-Source Convergence should track:
+Track:
 
 - workflows triggered per ordinary PR head;
 - duplicate canonical builds per PR head;
 - stale-head runs cancelled;
 - time from push to first meaningful current-candidate result;
-- number of version-shaped workflows remaining;
-- number of assertions migrated to current semantic contracts;
+- version-shaped workflows remaining;
+- assertions migrated to current semantic contracts;
 - Chromium/WebKit coverage retained.
 
 The objective is **less duplicate work, not less verification**.

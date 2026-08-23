@@ -49,14 +49,27 @@
     "id": "stale-pr-head-run-cancellation",
     "workflow": ".github/workflows/axis-pr-run-convergence.yml",
     "implementationSha": "df1b2507923083e49bde3602425194bccbc22f70",
-    "firstRun": {
-      "runId": 32626897002,
-      "conclusion": "success",
-      "eligibleStaleRuns": 0,
-      "cancelledRuns": 0,
-      "interpretation": "Workflow/API/permissions and latest-head exclusion are proven; a subsequent head is required to prove real stale-head cancellation."
-    },
-    "status": "cross-head-cancellation-proof-pending",
+    "status": "verified",
+    "proof": [
+      {
+        "runId": 32626897002,
+        "conclusion": "success",
+        "eligibleStaleRuns": 0,
+        "cancelledRuns": 0,
+        "proves": ["workflow syntax/API/permission path", "latest-head exclusion"]
+      },
+      {
+        "runId": 32626975731,
+        "conclusion": "success",
+        "currentHeadSha": "1c30a3006fe1627838eac98ee133a3303a6cf509",
+        "staleHeadSha": "df1b2507923083e49bde3602425194bccbc22f70",
+        "eligibleStaleRuns": 10,
+        "cancelRequestsAccepted": 8,
+        "alreadyFinishedBeforeCancellation": 2,
+        "latestHeadTouched": false,
+        "proves": ["same-PR cross-head cancellation", "latest candidate preserved", "old queued/in-progress runner work removed"]
+      }
+    ],
     "safetyBoundary": [
       "only pull_request event runs",
       "only the same pull request number",
