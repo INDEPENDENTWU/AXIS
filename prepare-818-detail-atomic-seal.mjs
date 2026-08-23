@@ -5,38 +5,39 @@ const fail=m=>{throw new Error(`[AXIS 8.18 detail atomic seal] ${m}`)};
 if(!fs.existsSync(FILE))fail('missing app.js');
 let s=fs.readFileSync(FILE,'utf8');
 
-/* The 8.9/8.10.2 openEvent implementation already stages a complete event detail
-   and commits title + body in one synchronous animation-frame callback. Historical
-   bindDynamic still attached a DOM0 router to every [data-event] row. Converge that
-   routing to one app-scope capture owner so no legacy handler can write a new title
-   before the canonical staged body is ready. */
+/* 8.9/8.10.2 already owns the correct data path: openEvent stages the complete
+   event detail, waits for local media/decode, then axis89CommitDetail commits the
+   title + body synchronously inside one animation-frame callback. Keep that router
+   intact. The only remaining exposure was the already-visible session sheet during
+   the asynchronous staging window. A capture-phase presentation guard hides that
+   existing sheet until the canonical atomic commit removes axis884Prepaint. */
 const legacyA="$$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
 const legacyB="$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
 const doubleCount=s.split(legacyA).length-1;
 const withoutDouble=s.split(legacyA).join('');
 const singleCount=withoutDouble.split(legacyB).length-1;
-if(doubleCount+singleCount!==1)fail(`legacy event detail DOM0 router expected one compiler shape, found ${doubleCount}/${singleCount}`);
-s=doubleCount?s.replace(legacyA,''):s.replace(legacyB,'');
-if(s.includes("onclick=()=>openEvent(b.dataset.event)"))fail('legacy event detail DOM0 router survived');
+if(doubleCount+singleCount!==1)fail(`canonical event detail router expected one compiler shape, found ${doubleCount}/${singleCount}`);
 if(!s.includes("owner:'atomic-handoff'"))fail('canonical atomic detail commit owner missing');
 if(!s.includes('async function openEvent(id){'))fail('canonical openEvent missing');
+if(!s.includes("sheet?.classList.remove('axis884Prepaint')"))fail('atomic commit does not release prepaint guard');
 
 const close=s.lastIndexOf('})();');if(close<0)fail('app IIFE close missing');
 const bridge=`
-function axis818BindAtomicDetailOwner(){
- if(D.documentElement.dataset.axis818DetailOwner==='1')return;
- D.documentElement.dataset.axis818DetailOwner='1';
+function axis818BindAtomicDetailGuard(){
+ if(D.documentElement.dataset.axis818DetailGuard==='1')return;
+ D.documentElement.dataset.axis818DetailGuard='1';
  D.addEventListener('click',function(e){
   var row=e.target&&e.target.closest?e.target.closest('[data-event]'):null;
-  if(!row||!row.dataset.event)return;
-  e.preventDefault();e.stopImmediatePropagation();
-  try{void openEvent(row.dataset.event)}catch(err){console.error('[AXIS detail owner]',err)}
+  if(!row||!row.closest||!row.closest('#detail'))return;
+  var sheet=D.querySelector('#detailSheet');
+  if(!sheet||!sheet.classList.contains('show'))return;
+  sheet.classList.add('axis884Prepaint');
  },true)
 }
-axis818BindAtomicDetailOwner();
-try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'single-capture',commitOwner:'atomic-handoff',retainPreviousUntilReady:true}}catch(e){}
+axis818BindAtomicDetailGuard();
+try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'canonical-existing',guard:'capture-prepaint',commitOwner:'atomic-handoff',retainPreviousUntilReady:true}}catch(e){}
 `;
 s=s.slice(0,close)+bridge+s.slice(close);
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};
 fs.writeFileSync(FILE,s);
-console.log(`[AXIS 8.18 detail atomic seal] PASS · one delegated event router · staged openEvent retained · legacy DOM0 route retired · compiler shape ${doubleCount?'collection':'single'}`);
+console.log(`[AXIS 8.18 detail atomic seal] PASS · canonical event router retained · capture prepaint guard · staged atomic commit remains sole detail owner · compiler shape ${doubleCount?'collection':'single'}`);
