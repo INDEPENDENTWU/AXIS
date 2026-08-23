@@ -74,9 +74,9 @@ This authorizes atomic retirement of the nine old compatibility workflows. After
 
 Preserve exact 8.18 behavior, one canonical runtime, historical storage/data readability, custom object identity, current camera/media/sound/completion ownership, Chromium/WebKit coverage and exact-SHA Production proof. Do not gain green CI through timeout inflation, weaker assertions, duplicate owners/stores, or destructive migration.
 
-## Exact next action
+## Next planned stage
 
-On the retirement head, prove all of the following with the nine old compatibility workflow files physically absent:
+Exact next action on the retirement head: prove all of the following with the nine old compatibility workflow files physically absent:
 
 1. `AXIS Repository Contract` + 20-workflow resurrection guard — success;
 2. `AXIS Deep Compatibility Gate` static + Chromium + WebKit — success;
