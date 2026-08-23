@@ -2,14 +2,14 @@
 
 > Canonical active-work handoff. Read [`HANDOFF.md`](HANDOFF.md) first; machine current state is [`../governance/project-state.json`](../governance/project-state.json).
 
-## Production baseline
+## Production baseline at start of this work
 
 - Current Production release: **AXIS 8.18**.
 - Exact merged baseline SHA: `254a2fa80fdfd4040a6f695d28ad3bd670c0a7db`.
 - Vercel exact-main Production is verified `READY` on that SHA.
 - This baseline is the rollback and behavior-equivalence reference for source convergence.
 
-## Active milestone
+## Active change
 
 **AXIS Source Convergence — 8.19 Foundation**
 
@@ -17,7 +17,7 @@ Branch: `engineering/source-convergence-819`
 
 This is an engineering milestone, not a product release. **Zero intended user-visible behavior change** is allowed during the initial convergence phases.
 
-## Why this work exists
+### Why this work exists
 
 Production is already a canonical single runtime, but the source/build/CI topology still carries a large amount of historical release evolution. That creates four concrete costs:
 
@@ -28,7 +28,7 @@ Production is already a canonical single runtime, but the source/build/CI topolo
 
 The objective is to make the repository increasingly resemble the product that actually ships without losing compatibility or weakening release proof.
 
-## Phase 1 — Handoff Truth and governance
+### Phase 1 — Handoff Truth and governance
 
 Current scope:
 
@@ -40,14 +40,7 @@ Current scope:
 - explicitly document `release-contract.json` as a legacy mutable build seed rather than checked-in current-release truth;
 - preserve every current runtime/build path unchanged.
 
-Exit criteria:
-
-- repository contract passes from the new machine state;
-- Work Continuity/repository documentation no longer identifies 8.17 as current;
-- current owner/retirement rules are discoverable without chat context;
-- no product/runtime source file changes in this phase.
-
-## Phase 2 — Reachability and CI inventory
+### Phase 2 — Reachability and CI inventory
 
 After Phase 1 is green:
 
@@ -58,7 +51,7 @@ After Phase 1 is green:
 
 No file is retired purely because its version number is old.
 
-## Phase 3 — CI convergence
+### Phase 3 — CI convergence
 
 Target shape:
 
@@ -69,17 +62,17 @@ Target shape:
 
 Version-era workflows may be merged only after equivalent assertions, trigger coverage, Chromium/WebKit requirements and Production checks are accounted for.
 
-## Phase 4 — Source quarantine and direct ownership
+### Phase 4 — Source quarantine and direct ownership
 
 Move/delete executable history only after reachability and compatibility proof. Then migrate current behavior out of brittle exact historical rewrites one owner at a time.
 
 Success is measurable: fewer historical writers, fewer deterministic transforms, shorter source-to-artifact path, same product behavior/data compatibility.
 
-## Phase 5 — Presentation foundation
+### Phase 5 — Presentation foundation
 
 After source governance is stable, establish:
 
-### Locales
+#### Locales
 
 - `zh-Hans` — **简体中文**;
 - `zh-Hant` — **繁體中文**;
@@ -89,7 +82,7 @@ Translations must be professional and semantic. Simplified Chinese must actually
 
 Planned gates include locale-key parity, missing-translation failure, hard-coded user-facing string prevention, terminology glossary enforcement and layout expansion tests.
 
-### Themes
+#### Themes
 
 - `system`;
 - `light`;
@@ -97,7 +90,7 @@ Planned gates include locale-key parity, missing-translation failure, hard-coded
 
 Themes will use semantic design tokens, first-paint-safe preference resolution, separate media/watermark contrast semantics and language × theme × Chromium/WebKit presentation coverage.
 
-## Phase 6 — AXIS 8.19 product work
+### Phase 6 — AXIS 8.19 product work
 
 Only after the foundation above is trustworthy.
 
@@ -105,22 +98,29 @@ Preferred direction: **Universal Practice Objects** — generalize the already-s
 
 The user-facing interface should stay quiet and low-friction even as the underlying object schema becomes more expressive.
 
-## Non-negotiable compatibility
+## Validation for this work
 
-Preserve:
+Phase 1 is not complete until:
 
-- `axis_v60_state`;
-- `axis_v8_meta`;
-- `axis_v89_speak`;
-- `axis_v42_media`;
-- custom object identity/aliases;
-- historical Encounter readability;
-- one canonical runtime;
-- current camera/media/sound/completion ownership;
-- Chromium + iPhone-like WebKit release gates for critical behavior.
+- repository contract passes from the new machine state;
+- Work Continuity and repository documentation no longer identify 8.17 as current;
+- current owner/retirement rules are discoverable without chat context;
+- the branch contains no product/runtime source change for this phase;
+- `zh-Hans` is explicitly **简体中文**, `zh-Hant` is explicitly **繁體中文**, and `en` is **English** in machine governance and the localization contract;
+- the governed theme target is exactly `system / light / dark`;
+- the exact 8.18 Production baseline remains the behavior-equivalence reference.
 
-No timeout inflation, assertion weakening, duplicate database/store/recorder/sound owner or destructive user-data migration is an acceptable convergence technique.
+Non-negotiable compatibility throughout convergence:
 
-## Next exact action
+- preserve `axis_v60_state`;
+- preserve `axis_v8_meta`;
+- preserve `axis_v89_speak`;
+- preserve `axis_v42_media`;
+- preserve custom object identity/aliases and historical Encounter readability;
+- preserve one canonical runtime and current camera/media/sound/completion ownership;
+- preserve Chromium + iPhone-like WebKit release proof for critical behavior;
+- never use timeout inflation, assertion weakening, duplicate database/store/recorder/sound ownership, or destructive user-data migration to obtain green CI.
 
-Finish and validate the Phase 1 governance commit, open a reviewable convergence PR, and require repository/work-continuity checks to pass before changing executable historical build or workflow paths.
+## Next planned stage
+
+Finish Phase 1 green on PR #79. Only after repository/work-continuity checks accept the governed handoff, begin the executable reachability and workflow inventory. Do not remove or relocate historical executable source before that inventory proves which behavior/data contract it still protects.
