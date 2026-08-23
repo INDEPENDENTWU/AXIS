@@ -1,94 +1,18 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "baselineRelease": "8.18",
   "retirements": [
-    {
-      "id": "keep-clip-visible-setting",
-      "status": "retired",
-      "since": "8.18",
-      "historicalSurface": "#keepClipSwitch / 保留现场视频 pseudo-setting",
-      "replacement": "Explicit video is retained by the canonical Capture runtime.",
-      "productionAuthorityAllowed": false,
-      "compatibilityHookAllowed": true,
-      "guard": "The compatibility hook may remain hidden; it may never become a visible Settings owner."
-    },
-    {
-      "id": "three-mode-default-capture-controller",
-      "status": "retired-as-authority",
-      "since": "8.17",
-      "historicalSurface": "单张 / 3秒 / 5秒 default-mode controller",
-      "replacement": "Photo / Scan / Video canonical Capture plus app-owned Scan sampling preference.",
-      "productionAuthorityAllowed": false,
-      "compatibilityHookAllowed": true,
-      "guard": "3秒 / 5秒 mean Scan sampling duration only; they are not video/capture-mode choices."
-    },
-    {
-      "id": "v876-capture-preference-writer",
-      "status": "compatibility-only",
-      "since": "8.17.1",
-      "historicalSurface": "v876 Capture preference setter",
-      "replacement": "app-owned current Capture preference state",
-      "productionAuthorityAllowed": false,
-      "compatibilityHookAllowed": true,
-      "guard": "Delegation is allowed; recursive self-clicking, visible ownership, or independent persistence is forbidden."
-    },
-    {
-      "id": "low-fps-watermark-video-path",
-      "status": "retired",
-      "since": "8.18",
-      "historicalSurface": "15/20fps or 720p downgraded video compositor",
-      "replacement": "8.18 sealed 30fps canvas compositor with source-first media contract",
-      "productionAuthorityAllowed": false,
-      "compatibilityHookAllowed": false,
-      "guard": "Historical low-frame-rate or forced-720p recording paths may not return."
-    },
-    {
-      "id": "historical-source-as-current-truth",
-      "status": "retired-governance-model",
-      "since": "source-convergence-819",
-      "historicalSurface": "Version-like filenames and release notes treated as current authority",
-      "replacement": "governance/project-state.json + docs/HANDOFF.md + current contracts",
-      "productionAuthorityAllowed": false,
-      "compatibilityHookAllowed": true,
-      "guard": "Historical files may preserve provenance or feed a proven compatibility build path, but their filenames never define current product ownership."
-    },
-    {
-      "id": "archive-executable-authority",
-      "status": "forbidden",
-      "since": "source-convergence-819",
-      "historicalSurface": "Archived/history content imported back into current runtime or release authority",
-      "replacement": "Current source or explicit compatibility adapters",
-      "productionAuthorityAllowed": false,
-      "compatibilityHookAllowed": false,
-      "guard": "docs/history and future archive trees are provenance-only unless a file is explicitly promoted back through a reviewed current owner handoff."
-    },
-    {
-      "id": "release-era-814-through-818-automatic-workflow-fanout",
-      "status": "retired-and-deleted",
-      "since": "source-convergence-819",
-      "historicalSurface": "Seven separate automatic PR/push workflows for AXIS 8.14, 8.15, 8.15.1, 8.16, 8.17, 8.17.1 and 8.18",
-      "replacement": ".github/workflows/axis-current-release-gate.yml + scripts/axis-current-release-contract.mjs",
-      "productionAuthorityAllowed": false,
-      "compatibilityHookAllowed": false,
-      "proof": {
-        "runId": 32630099680,
-        "candidateSha": "53ba6909b1aed95ae634e1b3bd6429ffe80c2a59",
-        "chromium": "success",
-        "webkit": "success",
-        "requiredBranchProtectionChecks": 0
-      },
-      "guard": "The seven retired workflow files may not return. Their semantic assertions and user-visible smokes are owned by AXIS Current Release Gate. Historical implementation/source contracts remain elsewhere until separately retired."
-    }
+    {"id":"keep-clip-visible-setting","status":"retired","since":"8.18","historicalSurface":"#keepClipSwitch / 保留现场视频 pseudo-setting","replacement":"Explicit video is retained by the canonical Capture runtime.","productionAuthorityAllowed":false,"compatibilityHookAllowed":true,"guard":"The compatibility hook may remain hidden; it may never become a visible Settings owner."},
+    {"id":"three-mode-default-capture-controller","status":"retired-as-authority","since":"8.17","historicalSurface":"单张 / 3秒 / 5秒 default-mode controller","replacement":"Photo / Scan / Video canonical Capture plus app-owned Scan sampling preference.","productionAuthorityAllowed":false,"compatibilityHookAllowed":true,"guard":"3秒 / 5秒 mean Scan sampling duration only; they are not video/capture-mode choices."},
+    {"id":"v876-capture-preference-writer","status":"compatibility-only","since":"8.17.1","historicalSurface":"v876 Capture preference setter","replacement":"app-owned current Capture preference state","productionAuthorityAllowed":false,"compatibilityHookAllowed":true,"guard":"Delegation is allowed; visible ownership or independent persistence is forbidden."},
+    {"id":"low-fps-watermark-video-path","status":"retired","since":"8.18","historicalSurface":"15/20fps or 720p downgraded video compositor","replacement":"8.18 sealed 30fps canvas compositor with source-first media contract","productionAuthorityAllowed":false,"compatibilityHookAllowed":false,"guard":"Historical low-frame-rate or forced-720p recording paths may not return."},
+    {"id":"historical-source-as-current-truth","status":"retired-governance-model","since":"source-convergence-819","historicalSurface":"Version-like filenames and release notes treated as current authority","replacement":"governance/project-state.json + docs/HANDOFF.md + current contracts","productionAuthorityAllowed":false,"compatibilityHookAllowed":true,"guard":"Historical filenames never define current product ownership."},
+    {"id":"archive-executable-authority","status":"forbidden","since":"source-convergence-819","historicalSurface":"Archived/history content imported back into current runtime or release authority","replacement":"Current source or explicit compatibility adapters","productionAuthorityAllowed":false,"compatibilityHookAllowed":false,"guard":"History/provenance may not become executable authority without an explicit reviewed promotion."},
+    {"id":"release-era-814-through-818-automatic-workflow-fanout","status":"retired-and-deleted","since":"source-convergence-819","historicalSurface":"Seven separate automatic workflows for 8.14 through 8.18","replacement":"AXIS Current Release Gate + axis-current-release-contract.mjs","productionAuthorityAllowed":false,"compatibilityHookAllowed":false,"proof":{"replacementRunId":32630099680,"postRetirementRunId":32630367047,"chromium":"success","webkit":"success","requiredBranchProtectionChecks":0},"guard":"The seven retired workflow files may not return; source/data compatibility remains separately governed."},
+    {"id":"release-era-813-runtime-workflow-fanout","status":"retired-and-deleted","since":"source-convergence-819","historicalSurface":"Four automatic AXIS 8.13 Runtime Core / Shadow Runtime / Live Route / Settings workflow families","replacement":"AXIS Runtime Foundation Gate + axis-runtime-foundation-contract.mjs","productionAuthorityAllowed":false,"compatibilityHookAllowed":false,"proof":{"replacementRunId":32630563608,"candidateSha":"4e1d19581a0a4fd91d25823303aa8a6dc25657fa","pureRuntimeParity":"success","chromium":"success","webkit":"success","requiredBranchProtectionChecks":0},"guard":"The four retired 8.13 workflow files may not return. Pure Runtime, Shadow, base-SHA parity, Live Route and Settings remain required through Runtime Foundation."}
   ],
   "deletionPolicy": {
-    "physicalDeletionRequires": [
-      "replacement owner or proof that no replacement is needed",
-      "data compatibility assessment",
-      "current product contract coverage",
-      "Chromium evidence where user-visible behavior is involved",
-      "WebKit evidence where user-visible behavior is involved",
-      "canonical production topology proof"
-    ],
-    "rule": "Move or delete only after executable reachability is proven absent or safely replaced; retirement status does not by itself authorize deletion."
+    "physicalDeletionRequires": ["replacement owner or proof that no replacement is needed","data compatibility assessment","current semantic coverage","Chromium evidence where user-visible","WebKit evidence where user-visible","canonical topology proof"],
+    "rule": "Retirement does not authorize deletion unless equivalent current responsibility is proven. CI orchestration may be deleted after exact-candidate equivalent coverage and external check-name constraints are verified."
   }
 }

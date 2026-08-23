@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "capturedAt": "2026-08-23",
   "source": {
     "pullRequest": 79,
@@ -20,35 +20,17 @@
   "firstOptimization": {
     "id": "stale-pr-head-run-cancellation",
     "workflow": ".github/workflows/axis-pr-run-convergence.yml",
-    "implementationSha": "df1b2507923083e49bde3602425194bccbc22f70",
     "status": "verified",
     "proof": [
-      {
-        "runId": 32626897002,
-        "conclusion": "success",
-        "eligibleStaleRuns": 0,
-        "cancelledRuns": 0,
-        "proves": ["workflow syntax/API/permission path", "latest-head exclusion"]
-      },
-      {
-        "runId": 32626975731,
-        "conclusion": "success",
-        "currentHeadSha": "1c30a3006fe1627838eac98ee133a3303a6cf509",
-        "staleHeadSha": "df1b2507923083e49bde3602425194bccbc22f70",
-        "eligibleStaleRuns": 10,
-        "cancelRequestsAccepted": 8,
-        "alreadyFinishedBeforeCancellation": 2,
-        "latestHeadTouched": false
-      }
-    ],
-    "coverageEffect": "none on the latest candidate; only obsolete-head runner work is cancelled"
+      {"runId":32626897002,"conclusion":"success","eligibleStaleRuns":0,"cancelledRuns":0},
+      {"runId":32626975731,"conclusion":"success","eligibleStaleRuns":10,"cancelRequestsAccepted":8,"alreadyFinishedBeforeCancellation":2,"latestHeadTouched":false}
+    ]
   },
   "branchProtectionAudit": {
     "branch": "main",
     "protected": false,
     "requiredStatusChecks": 0,
-    "observedAtProductionSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db",
-    "implication": "No required historical check name blocks replacement of version-shaped workflow names."
+    "observedAtProductionSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"
   },
   "currentReleaseConvergence": {
     "status": "verified-and-retired",
@@ -58,19 +40,10 @@
     "replacementCandidateSha": "53ba6909b1aed95ae634e1b3bd6429ffe80c2a59",
     "chromium": "success",
     "webkit": "success",
-    "branchProtectionRequiredChecks": 0,
-    "coverage": [
-      "8.13.1 Evolution foundation",
-      "8.14 Evolution Objects",
-      "8.15 Media Evidence",
-      "8.15.1 regression seal",
-      "8.15.1 stable Evidence swap",
-      "watermark controls",
-      "8.16 Capture + Comparative Evidence",
-      "8.17 Interaction Convergence",
-      "8.17.1 source-first media",
-      "8.18 Object + Route + Capture + Focus"
-    ],
+    "postRetirementRunId": 32630367047,
+    "postRetirementCandidateSha": "709d801e268e6d06248c21f517aa1a17e565764b",
+    "postRetirementChromium": "success",
+    "postRetirementWebkit": "success",
     "retiredAutomaticWorkflows": [
       ".github/workflows/axis-814-evolution-object-gate.yml",
       ".github/workflows/axis-815-media-evidence-gate.yml",
@@ -79,17 +52,38 @@
       ".github/workflows/axis-817-interaction-gate.yml",
       ".github/workflows/axis-8171-source-media-gate.yml",
       ".github/workflows/axis-818-object-focus-gate.yml"
-    ],
-    "retirementReason": "All original manifest/ownership invariants were unified into one current semantic contract and every original user-visible smoke was rerun on the same exact candidate in Chromium and iPhone-like WebKit.",
-    "automaticBuildEffect": "Seven version-shaped dual-engine workflow families become one dual-engine Current Release Gate.",
-    "estimatedAutomaticWorkflowCountAfterRetirement": 20,
-    "countDerivation": "25 observed baseline + PR Run Convergence + Current Release Gate - 7 retired version workflows"
+    ]
   },
+  "runtimeFoundationConvergence": {
+    "status": "verified-ready-to-retire",
+    "replacementWorkflow": ".github/workflows/axis-runtime-foundation-gate.yml",
+    "semanticContract": "scripts/axis-runtime-foundation-contract.mjs",
+    "replacementRunId": 32630563608,
+    "replacementCandidateSha": "4e1d19581a0a4fd91d25823303aa8a6dc25657fa",
+    "pureRuntimeParity": "success",
+    "chromium": "success",
+    "webkit": "success",
+    "responsibilities": [
+      "pure Runtime invariants",
+      "Shadow Runtime invariants",
+      "exact artifact parity against PR base SHA",
+      "Chromium Shadow transition observation",
+      "WebKit Shadow transition observation",
+      "Continue + Live Route behavior",
+      "inline Settings ownership"
+    ],
+    "retiredAutomaticWorkflows": [
+      ".github/workflows/axis-813-runtime-core-gate.yml",
+      ".github/workflows/axis-813-shadow-runtime-gate.yml",
+      ".github/workflows/axis-813-live-route-gate.yml",
+      ".github/workflows/axis-813-settings-convergence-gate.yml"
+    ],
+    "retirementReason": "The replacement runs the same pure/runtime/parity/browser scripts with the union of the original manifest ownership contract, while sharing one exact build per browser engine.",
+    "automaticBuildEffect": "The former 8.13 family performed up to eight canonical builds across four workflow families; Runtime Foundation reduces that responsibility to three builds across three explicit jobs."
+  },
+  "automaticWorkflowCountProjectionAfterRuntimeRetirement": 17,
+  "countDerivation": "20 observed after first retirement + Runtime Foundation replacement - 4 retired 8.13 workflow families",
   "remainingCompatibilityAudit": [
-    "AXIS 8.13 Runtime Core",
-    "AXIS 8.13 Shadow Runtime",
-    "AXIS 8.13 Live Route",
-    "AXIS 8.13 Settings Convergence",
     "AXIS 8.12 Field Hardening Gate",
     "AXIS 8.12.x Field Hotfix Gate",
     "AXIS 8.12.2 Settings Gate",
@@ -105,15 +99,16 @@
     "AXIS Work Continuity Contract",
     "AXIS Runtime Gate",
     "AXIS Current Release Gate",
+    "AXIS Runtime Foundation Gate",
     "AXIS Cross-Platform Foundation Gate",
     "AXIS PR Run Convergence",
     "AXIS EdgeOne Production Mirror"
   ],
   "nextAudit": [
-    "8.13 pure runtime/parity versus browser responsibilities",
-    "8.12 and older old-data compatibility uniqueness",
-    "duplicate current Runtime Gate coverage",
-    "provider PR packaging versus main-only Production deployment",
-    "path scoping for governance/docs-only pull requests"
+    "8.12 Equipment/Group Plan/Settings/Learning semantic overlap",
+    "8.10.3 inherited learning/detail uniqueness versus Runtime Gate",
+    "Home Transition and 8.8 Reminder uniqueness versus Runtime Gate",
+    "old-data compatibility fixtures",
+    "path scoping for docs/governance-only changes"
   ]
 }
