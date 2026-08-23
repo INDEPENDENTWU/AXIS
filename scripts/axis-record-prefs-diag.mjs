@@ -18,7 +18,7 @@ const snapshot=label=>page.evaluate(l=>{
  let target=legacy||children.map(x=>scan.children[x.i]).find(x=>/5\s*秒|^5$/.test(String(x.textContent||'').trim()))||null;
  let center=null,hit=null;if(target){const r=target.getBoundingClientRect();center={x:r.left+r.width/2,y:r.top+r.height/2};const h=document.elementFromPoint(center.x,center.y);hit=h?{tag:h.tagName,id:h.id||'',class:String(h.className||''),text:String(h.textContent||'').trim().slice(0,60),attrs:[...h.attributes].reduce((o,a)=>(o[a.name]=a.value,o),{})}:null}
  const info=e=>{const c=css(e);return e?{box:box(e),display:c.display,visibility:c.visibility,opacity:c.opacity,pointerEvents:c.pointerEvents,overflow:c.overflow,position:c.position,zIndex:c.zIndex}:null};
- return{label:l,settingsClass:q('#settingsSheet')?.className||'',settingsScroll:sheet?.scrollTop||0,openGates:[...document.querySelectorAll('#settingsSheet .v8711SettingGate.open,#settingsSheet .axisConfigGate.open')].map(x=>x.id),gateClass:gate?.className||'',gate:info(gate),fold:info(fold),second:info(second),scan:info(scan),scanHtml:scan?.outerHTML||'',scanChildren:children,target:info(target),keep:info(keep),center,hit};
+ return{label:l,viewport:{w:innerWidth,h:innerHeight},settingsClass:q('#settingsSheet')?.className||'',settingsScroll:sheet?.scrollTop||0,openGates:[...document.querySelectorAll('#settingsSheet .v8711SettingGate.open,#settingsSheet .axisConfigGate.open')].map(x=>x.id),gateClass:gate?.className||'',gate:info(gate),fold:info(fold),second:info(second),scan:info(scan),scanHtml:scan?.outerHTML||'',scanChildren:children,target:info(target),keep:info(keep),center,hit};
 },label);
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());await page.evaluate(()=>localStorage.clear());await page.reload({waitUntil:'domcontentloaded'});await waitReady();
@@ -28,13 +28,15 @@ await openGate('#myEqBtn','#axisConfigGate-equipment');const row=page.locator('#
 
 console.log('[AXIS record-pref before]',JSON.stringify(await snapshot('before-open'),null,2));
 await openGate('#v8711RecordGate > .settingLink','#v8711RecordGate');await page.waitForTimeout(80);
-const after=await snapshot('after-open');console.log('[AXIS record-pref after]',JSON.stringify(after,null,2));
 const target=page.locator('#scanSeconds').locator('button').filter({hasText:/^(5|5秒)$/}).first();
-assert.ok(await target.count(),`canonical 5-second preference control missing: ${JSON.stringify(after.scanChildren)}`);
-assert.ok(await target.isVisible(),`canonical 5-second preference control is not visible: ${JSON.stringify(after)}`);
+assert.ok(await target.count(),'canonical 5-second preference control missing');
+assert.ok(await target.isVisible(),'canonical 5-second preference control is not rendered');
+await target.scrollIntoViewIfNeeded();await page.waitForTimeout(50);
+const after=await snapshot('after-scroll');console.log('[AXIS record-pref after scroll]',JSON.stringify(after,null,2));
 const r=await target.boundingBox();assert.ok(r&&r.width>0&&r.height>0,'canonical record preference target has no geometry');
-assert.ok(after.hit&&after.hit.tag==='BUTTON',`record preference target center is covered: ${JSON.stringify(after.hit)}`);
+assert.ok(r.y>=0&&r.y+r.height<=after.viewport.h,`canonical record preference target did not scroll into viewport: ${JSON.stringify({r,viewport:after.viewport,scroll:after.settingsScroll})}`);
+assert.ok(after.hit&&after.hit.tag==='BUTTON'&&/^(5|5秒)$/.test(after.hit.text),`record preference target center is not the physical 5-second button: ${JSON.stringify(after.hit)}`);
 await target.click({timeout:2000});await page.waitForTimeout(60);assert.ok(await target.evaluate(x=>x.classList.contains('active')),'5-second preference did not activate');
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log('[AXIS record-pref diagnostic] PASS · current equipment detail route · canonical gate opens and control is actionable');
+console.log('[AXIS record-pref diagnostic] PASS · current equipment detail route · canonical gate scrolls to and physically activates 5-second control');
 await context.close();await browser.close();
