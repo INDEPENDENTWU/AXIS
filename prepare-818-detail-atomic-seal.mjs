@@ -21,29 +21,37 @@ function functionRange(src,signature){
  if(end<0)fail(`${signature} closing brace missing`);return{start,end}
 }
 
-/* Only the executable bindDynamic owner is converged. Historical contract strings
-   elsewhere are ignored. `$` is a substring of `$$`, so single-helper counts are
-   measured only after removing the corresponding collection-helper shape. */
+/* bindDynamic has exactly two canonical DOM0 binding responsibilities: event detail
+   and session detail. Historical contract strings elsewhere are irrelevant. Accept
+   the four inherited event-router shapes plus the repaired/legacy session helper,
+   then emit one deterministic collection-safe function. No new listener/owner. */
+const eventPlainDouble="$$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
+const eventPlainSingle="$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
+const eventGuardDouble="$$('[data-event]').forEach(b=>b.onclick=()=>{const sheet=$('#detailSheet');if(sheet?.classList.contains('show'))sheet.classList.add('axis884Prepaint');return openEvent(b.dataset.event)});";
+const eventGuardSingle="$('[data-event]').forEach(b=>b.onclick=()=>{const sheet=$('#detailSheet');if(sheet?.classList.contains('show'))sheet.classList.add('axis884Prepaint');return openEvent(b.dataset.event)});";
+const sessionDouble="$$('[data-session]').forEach(b=>b.onclick=()=>openSession(b.dataset.session))";
+const sessionSingle="$('[data-session]').forEach(b=>b.onclick=()=>openSession(b.dataset.session))";
+const canonical=[
+ `function bindDynamic(){${eventPlainDouble}${sessionDouble}}`,
+ `function bindDynamic(){${eventPlainSingle}${sessionDouble}}`,
+ `function bindDynamic(){${eventGuardDouble}${sessionDouble}}`,
+ `function bindDynamic(){${eventGuardSingle}${sessionDouble}}`,
+ `function bindDynamic(){${eventPlainDouble}${sessionSingle}}`,
+ `function bindDynamic(){${eventPlainSingle}${sessionSingle}}`,
+ `function bindDynamic(){${eventGuardDouble}${sessionSingle}}`,
+ `function bindDynamic(){${eventGuardSingle}${sessionSingle}}`
+];
+const target=`function bindDynamic(){${eventGuardDouble}${sessionDouble}}`;
 const range=functionRange(s,'function bindDynamic()');
-let bind=s.slice(range.start,range.end);
-const plainDouble="$$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
-const plainSingle="$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
-const guardedDouble="$$('[data-event]').forEach(b=>b.onclick=()=>{const sheet=$('#detailSheet');if(sheet?.classList.contains('show'))sheet.classList.add('axis884Prepaint');return openEvent(b.dataset.event)});";
-const guardedSingle="$('[data-event]').forEach(b=>b.onclick=()=>{const sheet=$('#detailSheet');if(sheet?.classList.contains('show'))sheet.classList.add('axis884Prepaint');return openEvent(b.dataset.event)});";
-const pd=bind.split(plainDouble).length-1;
-const ps=bind.split(plainDouble).join('').split(plainSingle).length-1;
-const gd=bind.split(guardedDouble).length-1;
-const gs=bind.split(guardedDouble).join('').split(guardedSingle).length-1;
-const counts=[pd,ps,gd,gs],total=counts.reduce((a,b)=>a+b,0);
-if(total!==1)fail(`bindDynamic event router expected one compiler shape, found ${counts.join('/')}: ${bind.replace(/\s+/g,' ')}`);
+const bind=s.slice(range.start,range.end);
+const shape=canonical.indexOf(bind);
+if(shape<0)fail(`unexpected bindDynamic compiler shape: ${bind.replace(/\s+/g,' ')}`);
 if(!s.includes("owner:'atomic-handoff'"))fail('canonical atomic detail commit owner missing');
 if(!s.includes('async function openEvent(id){'))fail('canonical openEvent missing');
 if(!s.includes("sheet?.classList.remove('axis884Prepaint')"))fail('atomic commit does not release prepaint guard');
-if(pd)bind=bind.replace(plainDouble,guardedDouble);else if(ps)bind=bind.replace(plainSingle,guardedDouble);else if(gs)bind=bind.replace(guardedSingle,guardedDouble);
-if((bind.split(guardedDouble).length-1)!==1)fail('guarded collection router not singular after convergence');
-const survivor=/(^|[^$])\$\s*\(\s*(['"`])\[data-event\]\2\s*\)\s*\.forEach/g;
-if(survivor.test(bind))fail(`single-element event collection survived in bindDynamic: ${bind.replace(/\s+/g,' ')}`);
-s=s.slice(0,range.start)+bind+s.slice(range.end);
+s=s.slice(0,range.start)+target+s.slice(range.end);
+const sealed=functionRange(s,'function bindDynamic()');
+if(s.slice(sealed.start,sealed.end)!==target)fail('deterministic bindDynamic seal did not hold');
 
 const close=s.lastIndexOf('})();');if(close<0)fail('app IIFE close missing');
 if(s.includes('__AXIS_818_DETAIL_ATOMIC__'))fail('detail atomic diagnostic duplicated');
@@ -53,4 +61,4 @@ try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'can
 s=s.slice(0,close)+bridge+s.slice(close);
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};
 fs.writeFileSync(FILE,s);
-console.log(`[AXIS 8.18 detail atomic seal] PASS · bindDynamic-only canonical collection router · guarded prepaint · staged atomic commit sole detail owner · input-shape ${counts.findIndex(Boolean)}`);
+console.log(`[AXIS 8.18 detail atomic seal] PASS · deterministic bindDynamic · collection-safe event/session bindings · guarded prepaint · atomic commit sole detail owner · input-shape ${shape}`);
