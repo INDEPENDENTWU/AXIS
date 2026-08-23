@@ -24,7 +24,8 @@ if(!s.includes('async function openEvent(id){'))fail('canonical openEvent missin
 if(!s.includes("sheet?.classList.remove('axis884Prepaint')"))fail('atomic commit does not release prepaint guard');
 s=doubleCount?s.replace(legacyA,guarded):s.replace(legacyB,guarded);
 if((s.split('return openEvent(b.dataset.event)').length-1)!==1)fail('guarded canonical router not singular');
-if(s.includes("$('[data-event]').forEach"))fail('single-element event router survived collection normalization');
+if(/(^|[^$])\$\('\[data-event\]'\)\.forEach/.test(s))fail('single-element event router survived collection normalization');
+if(!s.includes("$$('[data-event]').forEach"))fail('collection-safe event detail router missing after normalization');
 
 const close=s.lastIndexOf('})();');if(close<0)fail('app IIFE close missing');
 const bridge=`
