@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-08-23",
+  "source": {
+    "pullRequest": 79,
+    "observedHeadSha": "b68b31120b2f4d983af34298b705d7ddc155a53c",
+    "productionBaselineSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"
+  },
+  "phaseOneProof": {
+    "repositoryContract": {
+      "runId": 32626662160,
+      "conclusion": "success"
+    },
+    "workContinuity": {
+      "runId": 32626662162,
+      "conclusion": "success"
+    }
+  },
+  "observedPullRequestWorkflowCount": 25,
+  "classificationPolicy": {
+    "current": "Directly protects current repository/product/release truth.",
+    "provider-release": "Protects provider packaging or Production release policy.",
+    "compatibility-required-pending-equivalence-audit": "Historical/provenance-named gate that may still protect current behavior; must not be retired until equivalent current coverage is mapped.",
+    "superseded": "Equivalent current coverage is proven and retirement evidence exists.",
+    "historical-only": "No executable/current compatibility role remains; provenance only."
+  },
+  "observedRuns": [
+    {"name":"AXIS Repository Contract","runId":32626662160,"classification":"current"},
+    {"name":"AXIS Work Continuity Contract","runId":32626662162,"classification":"current"},
+    {"name":"AXIS Runtime Gate","runId":32626662157,"classification":"current"},
+    {"name":"AXIS Cross-Platform Foundation Gate","runId":32626662202,"classification":"current"},
+    {"name":"AXIS 8.18 Object + Route + Capture + Focus","runId":32626662231,"classification":"current"},
+    {"name":"AXIS EdgeOne Production Mirror","runId":32626662163,"classification":"provider-release"},
+    {"name":"AXIS 8.17.1 Source Media","runId":32626662145,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.17 Interaction Convergence","runId":32626662138,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.16 Capture + Comparative Evidence","runId":32626662216,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.15.1 Regression Seal","runId":32626662137,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.15 Media Evidence","runId":32626662311,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.14 Evolution Objects","runId":32626662152,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.13 Runtime Core","runId":32626662153,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.13 Shadow Runtime","runId":32626662195,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.13 Live Route","runId":32626662156,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.13 Settings Convergence","runId":32626662182,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.12 Field Hardening Gate","runId":32626662169,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.12.x Field Hotfix Gate","runId":32626662165,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.12.2 Settings Gate","runId":32626662309,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.12.3 Field Polish Gate","runId":32626662135,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.12.3 Learning Simplify Gate","runId":32626662174,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.10.3 Gate","runId":32626662159,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS 8.8 Reminder Layout Gate","runId":32626662190,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS Home Transition Gate","runId":32626662151,"classification":"compatibility-required-pending-equivalence-audit"},
+    {"name":"AXIS Inherited Web Release Gate","runId":32626662150,"classification":"compatibility-required-pending-equivalence-audit"}
+  ],
+  "firstOptimization": {
+    "id": "stale-pr-head-run-cancellation",
+    "workflow": ".github/workflows/axis-pr-run-convergence.yml",
+    "status": "implementation-candidate",
+    "safetyBoundary": [
+      "only pull_request event runs",
+      "only the same pull request number",
+      "only the same head branch",
+      "only runs whose head SHA differs from the current PR head",
+      "only queued/in-progress/requested/waiting/pending states",
+      "never push/main Production runs",
+      "never the current convergence workflow run itself"
+    ],
+    "coverageEffect": "none on the latest candidate; only obsolete-head runner work is cancelled"
+  },
+  "nextAudit": [
+    "workflow trigger/path scope",
+    "assertion-to-current-semantic mapping",
+    "Chromium/WebKit coverage ownership",
+    "branch-protection required-check implications",
+    "provider/Production-only responsibilities",
+    "duplicate build cost"
+  ]
+}

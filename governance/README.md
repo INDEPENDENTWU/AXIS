@@ -6,9 +6,10 @@ It exists to make project continuity independent of any chat thread, individual 
 
 ## Files
 
-- `project-state.json` — current Production release, exact sealed baseline, active engineering milestone, compatibility foundation, planned locales/themes and authority order.
+- `project-state.json` — current Production release, exact sealed baseline, active engineering milestone/phase, compatibility foundation, planned locales/themes and authority order.
 - `owners.json` — verified critical capability owners and compatibility-only bridges.
-- `retirements.json` — capabilities/surfaces that may not regain current authority, plus the evidence required before physical deletion.
+- `retirements.json` — capabilities/surfaces that may not regain current authority, plus evidence required before physical deletion.
+- `ci-inventory.json` — observed workflow fan-out, current classifications, proof runs and CI-convergence safety boundaries.
 
 ## Authority
 
@@ -21,8 +22,9 @@ For current project state, read `project-state.json` first, then `docs/HANDOFF.m
 1. Production release fields change only after an exact merged `main` SHA is accepted by the release process.
 2. An owner may change only with an explicit handoff and regression evidence.
 3. A retirement entry is a guard against authority returning; it is not permission to delete executable code without reachability and compatibility proof.
-4. Chat history may explain intent but never overrides repository governance.
-5. This directory contains no credentials, provider secrets or user data.
+4. CI classification can become `superseded` only after equivalent current semantics, browser/data coverage and check-name implications are recorded.
+5. Chat history may explain intent but never overrides repository governance.
+6. This directory contains no credentials, provider secrets or user data.
 
 ## Source convergence rule
 
@@ -40,4 +42,4 @@ current product contracts
 canonical runtime
 ```
 
-Historical transforms should decrease over time. New product work must not add a permanent version-specific patch layer when direct current ownership can be established safely.
+Historical transforms and workflow duplication should decrease over time. New product work must not add a permanent version-specific patch layer when direct current ownership can be established safely.

@@ -26,7 +26,8 @@ Machine-readable companions live in [`../governance/`](../governance/).
 - [`ENGINEERING_PLAYBOOK.md`](ENGINEERING_PLAYBOOK.md) — how changes are designed, tested and released.
 - [`REPOSITORY_STRUCTURE.md`](REPOSITORY_STRUCTURE.md) — what belongs where and why inherited source still exists at the root.
 - [`COMPATIBILITY_LEDGER.md`](COMPATIBILITY_LEDGER.md) — compatibility debt and retirement criteria.
-- [`CI_AND_RELEASE.md`](CI_AND_RELEASE.md) — CI layers, browser gates and Production verification.
+- [`CI_AND_RELEASE.md`](CI_AND_RELEASE.md) — current CI/release layers and Production verification.
+- [`CI_CONVERGENCE.md`](CI_CONVERGENCE.md) — evidence-driven workflow consolidation and runner-latency reduction.
 - [`DEPLOYMENT_POLICY.md`](DEPLOYMENT_POLICY.md) — hosting and promotion policy.
 - [`ROADMAP.md`](ROADMAP.md) — product/runtime direction.
 
@@ -52,12 +53,13 @@ When sources disagree, verify the real Git/Production state and use this order:
 2. `docs/HANDOFF.md`
 3. `docs/CURRENT_RELEASE.md`
 4. `docs/CURRENT_WORK.md`
-5. `docs/RUNTIME_CONTRACT.md`
-6. `docs/PRODUCT.md`
-7. `docs/ARCHITECTURE.md`
-8. deterministic build/release contracts
-9. release history and version-like source filenames
+5. `governance/owners.json` / `governance/retirements.json` / `governance/ci-inventory.json`
+6. `docs/RUNTIME_CONTRACT.md`
+7. `docs/PRODUCT.md`
+8. `docs/ARCHITECTURE.md`
+9. deterministic build/release contracts
+10. release history and version-like source filenames
 
 `release-contract.json` is currently a mutable legacy build seed. It is not the checked-in current-release authority.
 
-If a verified Production fact changes, update machine governance and current handoff in the same engineering change so this hierarchy does not drift.
+If a verified Production or engineering-governance fact changes, update machine governance and current handoff in the same engineering change so this hierarchy does not drift.

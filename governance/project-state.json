@@ -25,11 +25,23 @@
   },
   "engineering": {
     "activeMilestone": "AXIS Source Convergence — 8.19 Foundation",
+    "activePhase": "Phase 2 — Reachability and CI inventory",
     "activeBranch": "engineering/source-convergence-819",
+    "pullRequest": 79,
     "baselineRelease": "8.18",
     "baselineRuntimeSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db",
     "intendedProductBehaviorChange": false,
-    "nextProductRelease": "8.19"
+    "nextProductRelease": "8.19",
+    "phaseOneProof": {
+      "repositoryContractRun": 32626662160,
+      "workContinuityRun": 32626662162,
+      "conclusion": "success"
+    },
+    "phaseTwoEvidence": {
+      "observedWorkflowCountPerPrHead": 25,
+      "inventory": "governance/ci-inventory.json",
+      "firstOptimization": "stale-pr-head-run-cancellation"
+    }
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
@@ -54,6 +66,9 @@
     "docs/HANDOFF.md",
     "docs/CURRENT_RELEASE.md",
     "docs/CURRENT_WORK.md",
+    "governance/owners.json",
+    "governance/retirements.json",
+    "governance/ci-inventory.json",
     "docs/RUNTIME_CONTRACT.md",
     "docs/PRODUCT.md",
     "docs/ARCHITECTURE.md",
@@ -62,6 +77,7 @@
   "notes": [
     "Chat history is supplementary context, never authoritative project state.",
     "release-contract.json is currently a legacy mutable build seed and is not the canonical current-release record.",
-    "Historical filenames describe provenance, not current authority."
+    "Historical filenames describe provenance, not current authority.",
+    "Source Convergence reduces duplicate execution only after current behavior and compatibility evidence are preserved."
   ]
 }

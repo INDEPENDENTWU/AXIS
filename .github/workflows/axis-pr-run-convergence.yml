@@ -1,0 +1,83 @@
+name: AXIS PR Run Convergence
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: axis-pr-run-convergence-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  cancel-stale-pr-runs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Cancel stale workflow runs from previous heads of this PR
+        uses: actions/github-script@v9
+        env:
+          AXIS_PR_NUMBER: ${{ github.event.pull_request.number }}
+          AXIS_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          AXIS_CURRENT_HEAD: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = Number(process.env.AXIS_PR_NUMBER);
+            const headRef = process.env.AXIS_HEAD_REF;
+            const currentHead = process.env.AXIS_CURRENT_HEAD;
+            const cancellable = new Set(['queued', 'in_progress', 'requested', 'waiting', 'pending']);
+
+            if (!Number.isInteger(prNumber) || !headRef || !/^[0-9a-f]{40}$/.test(currentHead)) {
+              core.setFailed('Invalid pull-request identity; refusing to cancel any workflow run.');
+              return;
+            }
+
+            const runs = await github.paginate(
+              github.rest.actions.listWorkflowRunsForRepo,
+              {
+                owner,
+                repo,
+                event: 'pull_request',
+                branch: headRef,
+                per_page: 100
+              }
+            );
+
+            const stale = runs.filter(run => {
+              const belongsToPr = Array.isArray(run.pull_requests) &&
+                run.pull_requests.some(pr => Number(pr.number) === prNumber);
+              return run.id !== context.runId &&
+                run.head_sha !== currentHead &&
+                cancellable.has(run.status) &&
+                belongsToPr;
+            });
+
+            core.info(`PR #${prNumber} current head ${currentHead}`);
+            core.info(`Found ${runs.length} pull-request workflow runs on head ref ${headRef}; ${stale.length} stale active runs are eligible for cancellation.`);
+
+            let cancelled = 0;
+            for (const run of stale) {
+              try {
+                await github.rest.actions.cancelWorkflowRun({ owner, repo, run_id: run.id });
+                cancelled += 1;
+                core.info(`Cancelled stale run ${run.id} · ${run.name} · ${run.head_sha}`);
+              } catch (error) {
+                if (error?.status === 409) {
+                  core.info(`Run ${run.id} finished before cancellation; leaving it untouched.`);
+                  continue;
+                }
+                if (error?.status === 403) {
+                  core.warning(`Token cannot cancel run ${run.id}; this can occur on fork pull requests. No run outside this PR was touched.`);
+                  continue;
+                }
+                throw error;
+              }
+            }
+
+            core.notice(`AXIS PR run convergence: cancelled ${cancelled} stale run(s); latest head ${currentHead} remains untouched.`);
