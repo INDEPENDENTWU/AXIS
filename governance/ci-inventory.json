@@ -7,14 +7,8 @@
     "productionBaselineSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"
   },
   "phaseOneProof": {
-    "repositoryContract": {
-      "runId": 32626662160,
-      "conclusion": "success"
-    },
-    "workContinuity": {
-      "runId": 32626662162,
-      "conclusion": "success"
-    }
+    "repositoryContract": {"runId":32626662160,"conclusion":"success"},
+    "workContinuity": {"runId":32626662162,"conclusion":"success"}
   },
   "observedPullRequestWorkflowCount": 25,
   "classificationPolicy": {
@@ -54,7 +48,15 @@
   "firstOptimization": {
     "id": "stale-pr-head-run-cancellation",
     "workflow": ".github/workflows/axis-pr-run-convergence.yml",
-    "status": "implementation-candidate",
+    "implementationSha": "df1b2507923083e49bde3602425194bccbc22f70",
+    "firstRun": {
+      "runId": 32626897002,
+      "conclusion": "success",
+      "eligibleStaleRuns": 0,
+      "cancelledRuns": 0,
+      "interpretation": "Workflow/API/permissions and latest-head exclusion are proven; a subsequent head is required to prove real stale-head cancellation."
+    },
+    "status": "cross-head-cancellation-proof-pending",
     "safetyBoundary": [
       "only pull_request event runs",
       "only the same pull request number",

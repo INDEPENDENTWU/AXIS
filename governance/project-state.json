@@ -40,7 +40,10 @@
     "phaseTwoEvidence": {
       "observedWorkflowCountPerPrHead": 25,
       "inventory": "governance/ci-inventory.json",
-      "firstOptimization": "stale-pr-head-run-cancellation"
+      "firstOptimization": "stale-pr-head-run-cancellation",
+      "firstOptimizationRun": 32626897002,
+      "firstOptimizationRunConclusion": "success",
+      "crossHeadCancellationProof": "pending-next-head"
     }
   },
   "compatibility": {

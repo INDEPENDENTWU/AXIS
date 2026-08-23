@@ -15,7 +15,7 @@
 
 Branch: `engineering/source-convergence-819`
 
-PR: **#79 — AXIS Source Convergence — Phase 1 Governance & Handoff**
+PR: **#79**
 
 Current phase: **Phase 2 — Reachability and CI inventory**.
 
@@ -36,7 +36,7 @@ Phase 1 established:
   - `en` — **English**;
   - themes `system / light / dark`.
 
-Proof on the same convergence PR:
+Proof:
 
 - AXIS Repository Contract run `32626662160` — **success**;
 - AXIS Work Continuity Contract run `32626662162` — **success**.
@@ -55,9 +55,16 @@ No historical workflow is considered dead merely because its name is old. Pendin
 
 #### First Phase 2 optimization — stale PR head cancellation
 
-Add `.github/workflows/axis-pr-run-convergence.yml`.
+`.github/workflows/axis-pr-run-convergence.yml` was introduced on commit `df1b2507923083e49bde3602425194bccbc22f70` using official `actions/github-script@v9`.
 
-It may cancel only still-active `pull_request` runs that:
+First workflow execution:
+
+- run `32626897002` — **success**;
+- API permission/path validation passed;
+- latest-head exclusion passed;
+- zero stale active runs existed at the instant of that first execution, so real cross-head cancellation remains the next proof step.
+
+The workflow may cancel only still-active `pull_request` runs that:
 
 - belong to the same PR number;
 - belong to the same head branch;
@@ -76,7 +83,7 @@ This changes runner scheduling only. It does **not** remove or weaken any curren
 
 ### Next Phase 2 audit slices
 
-After stale-run cancellation is proven:
+After real stale-run cancellation is proven:
 
 1. record path/trigger scope for each observed workflow;
 2. map each assertion to a current product semantic contract;
@@ -101,11 +108,11 @@ Phase 2's first optimization is acceptable only if:
 
 - Repository Contract remains green;
 - Work Continuity remains green;
-- the new cancellation workflow runs successfully on PR #79;
-- it cancels only prior-head runs from PR #79;
+- the cancellation workflow runs successfully on PR #79;
+- a later PR head proves it cancels only prior-head runs from PR #79;
 - latest-head workflows remain queued/running/completable;
 - no `main`/Production run is cancelled;
-- current PR diff still contains no intended product/runtime behavior change;
+- current PR diff contains no intended product/runtime behavior change;
 - all historical workflows remain present until a separate equivalence audit approves consolidation/retirement.
 
 Non-negotiable compatibility throughout convergence:
@@ -121,4 +128,4 @@ Non-negotiable compatibility throughout convergence:
 
 ## Next planned stage
 
-Prove PR stale-head run cancellation on the current exact PR head, then continue the workflow-by-workflow equivalence inventory. Do not delete or merge historical gates until their surviving semantic/data/browser responsibility and replacement check are explicit.
+Use this evidence-update head to prove real cross-head stale-run cancellation, then continue the workflow-by-workflow equivalence inventory. Do not delete or merge historical gates until their surviving semantic/data/browser responsibility and replacement check are explicit.
