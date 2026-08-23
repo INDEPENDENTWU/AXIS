@@ -47,8 +47,16 @@ const bind=s.slice(range.start,range.end);
 const shape=canonical.indexOf(bind);
 if(shape<0)fail(`unexpected bindDynamic compiler shape: ${bind.replace(/\s+/g,' ')}`);
 if(!s.includes("owner:'atomic-handoff'"))fail('canonical atomic detail commit owner missing');
+if(!s.includes('async function axis89HydrateDetailMedia('))fail('final artifact lost asynchronous detail media hydrator');
 if(!s.includes('async function openEvent(id){'))fail('canonical openEvent missing');
 if(!s.includes("sheet?.classList.remove('axis884Prepaint')"))fail('atomic commit does not release prepaint guard');
+const helperAt=s.indexOf('async function axis89HydrateDetailMedia('),commitAt=s.indexOf('function axis89CommitDetail('),eventAt=s.indexOf('async function openEvent(id){');
+if(!(helperAt>=0&&helperAt<commitAt&&commitAt<eventAt))fail('legacy commit compiler consumed or reordered the media hydrator');
+const eventRange=functionRange(s,'async function openEvent(id)');
+const eventBody=s.slice(eventRange.start,eventRange.end);
+const facts=eventBody.indexOf("axis89CommitDetail(txn,e.name,buildStage(''),[],bind)"),hydrate=eventBody.indexOf('void axis89HydrateDetailMedia(txn,e,buildStage,bind)');
+if(facts<0||hydrate<0||facts>hydrate)fail('event detail does not commit facts before media hydration');
+if(/await\s+axis89MediaUrl\(/.test(eventBody))fail('event visibility still waits on media-store reads');
 s=s.slice(0,range.start)+target+s.slice(range.end);
 const sealed=functionRange(s,'function bindDynamic()');
 if(s.slice(sealed.start,sealed.end)!==target)fail('deterministic bindDynamic seal did not hold');
@@ -56,9 +64,9 @@ if(s.slice(sealed.start,sealed.end)!==target)fail('deterministic bindDynamic sea
 const close=s.lastIndexOf('})();');if(close<0)fail('app IIFE close missing');
 if(s.includes('__AXIS_818_DETAIL_ATOMIC__'))fail('detail atomic diagnostic duplicated');
 const bridge=`
-try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'canonical-dom0',guard:'router-prepaint',commitOwner:'atomic-handoff',retainPreviousUntilReady:true,collectionHelper:'$$'}}catch(e){}
+try{window.__AXIS_818_DETAIL_ATOMIC__={version:'8.18',owner:'app.js',router:'canonical-dom0',guard:'router-prepaint',commitOwner:'atomic-handoff',retainPreviousUntilReady:true,factsFirst:true,mediaFetchBlocking:false,collectionHelper:'$$'}}catch(e){}
 `;
 s=s.slice(0,close)+bridge+s.slice(close);
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)};
 fs.writeFileSync(FILE,s);
-console.log(`[AXIS 8.18 detail atomic seal] PASS · deterministic bindDynamic · collection-safe event/session bindings · guarded prepaint · atomic commit sole detail owner · input-shape ${shape}`);
+console.log(`[AXIS 8.18 detail atomic seal] PASS · deterministic bindDynamic · fact-first detail · async media hydrator preserved · collection-safe event/session bindings · input-shape ${shape}`);
