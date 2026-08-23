@@ -58,7 +58,11 @@ assert.equal(await page.evaluate(()=>window.__AXIS_FIELD_CONTINUITY__.some(x=>!x
 await page.locator('#v87Toggle').click();await page.waitForTimeout(120);
 state=await page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v8_meta')).events.STRENGTH.activity);
 assert.equal(state.status,'active');assert.equal(state.restStartedAt,null);assert.ok(Number(state.restAccumulatedMs)>=900,'first pause was not accumulated');const firstRest=Number(state.restAccumulatedMs);
-await page.locator('#v87Toggle').click();await page.waitForTimeout(650);await page.locator('#v87Toggle').click();await page.waitForTimeout(120);
+await page.locator('#v87Toggle').click();
+await page.waitForFunction(()=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.STRENGTH?.activity;return a?.status==='paused'&&Number(a?.restStartedAt)>0});
+await page.waitForFunction(()=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.STRENGTH?.activity;return a?.status==='paused'&&Number(a?.restStartedAt)>0&&Date.now()-Number(a.restStartedAt)>=500});
+await page.locator('#v87Toggle').click();
+await page.waitForFunction(baseline=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.STRENGTH?.activity;return a?.status==='active'&&a?.restStartedAt==null&&Number(a?.restAccumulatedMs)>Number(baseline)+400},firstRest);
 state=await page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v8_meta')).events.STRENGTH.activity);
 assert.ok(Number(state.restAccumulatedMs)>firstRest+400,'second pause did not accumulate onto first rest');
 
