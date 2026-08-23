@@ -12,6 +12,13 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  const replacement=`let axis89DetailTxn=0,axis89DetailUrls=[];
 function axis89Revoke(urls){for(const u of urls||[])try{URL.revokeObjectURL(u)}catch{}}
 async function axis89MediaUrl(k,urls){try{const b=await getMedia(k);if(!b)return null;const u=URL.createObjectURL(b);urls.push(u);return u}catch{return null}}
+async function axis89HydrateDetailMedia(txn,e,buildStage,bind){
+ const urls=[];let media='';
+ if(e.clipRef){const v=await axis89MediaUrl(e.clipRef,urls);if(txn!==axis89DetailTxn){axis89Revoke(urls);return}const poster=e.frameRefs?.[0]?await axis89MediaUrl(e.frameRefs[0],urls):'';if(txn!==axis89DetailTxn){axis89Revoke(urls);return}if(v)media+=\`<div class="videoCard"><div class="mediaTop"><b>现场片段</b><span>\${e.videoWatermarked?'带水印':'原片'}</span></div><video class="detailVideo" src="\${v}" \${poster?\`poster="\${poster}"\`:''} controls playsinline muted></video><button class="mediaSave" id="saveDetailVideo">保存视频</button></div>\`}
+ if(e.frameRefs?.length){const imgs=[];for(const r of e.frameRefs){const u=await axis89MediaUrl(r,urls);if(txn!==axis89DetailTxn){axis89Revoke(urls);return}if(u)imgs.push(\`<img src="\${u}" alt="现场照片">\`)}if(imgs.length)media+=\`<div class="mediaTop photoTop"><b>现场照片</b><span>\${imgs.length}张 · \${state.prefs.watermark.photoMode==='raw'?'原片':'带水印'}</span></div><div class="detailFilm">\${imgs.join('')}</div>\`}
+ if(txn!==axis89DetailTxn){axis89Revoke(urls);return}
+ if(media)axis89CommitDetail(txn,e.name,buildStage(media),urls,bind);else axis89Revoke(urls)
+}
 function axis89CommitDetail(txn,title,stage,urls,bind){
  if(txn!==axis89DetailTxn){axis89Revoke(urls);return}
  requestAnimationFrame(()=>{
@@ -21,13 +28,6 @@ function axis89CommitDetail(txn,title,stage,urls,bind){
   bind?.();if(!wasOpen)openSheet('detailSheet');requestAnimationFrame(()=>axis89Revoke(old));
   window.__AXIS_89_DETAIL__={owner:'atomic-handoff',txn,committedAt:Date.now(),visible:true,mediaDecodeBlocking:false,mediaFetchBlocking:false}
  })
-}
-async function axis89HydrateDetailMedia(txn,e,buildStage,bind){
- const urls=[];let media='';
- if(e.clipRef){const v=await axis89MediaUrl(e.clipRef,urls);if(txn!==axis89DetailTxn){axis89Revoke(urls);return}const poster=e.frameRefs?.[0]?await axis89MediaUrl(e.frameRefs[0],urls):'';if(txn!==axis89DetailTxn){axis89Revoke(urls);return}if(v)media+=\`<div class="videoCard"><div class="mediaTop"><b>现场片段</b><span>\${e.videoWatermarked?'带水印':'原片'}</span></div><video class="detailVideo" src="\${v}" \${poster?\`poster="\${poster}"\`:''} controls playsinline muted></video><button class="mediaSave" id="saveDetailVideo">保存视频</button></div>\`}
- if(e.frameRefs?.length){const imgs=[];for(const r of e.frameRefs){const u=await axis89MediaUrl(r,urls);if(txn!==axis89DetailTxn){axis89Revoke(urls);return}if(u)imgs.push(\`<img src="\${u}" alt="现场照片">\`)}if(imgs.length)media+=\`<div class="mediaTop photoTop"><b>现场照片</b><span>\${imgs.length}张 · \${state.prefs.watermark.photoMode==='raw'?'原片':'带水印'}</span></div><div class="detailFilm">\${imgs.join('')}</div>\`}
- if(txn!==axis89DetailTxn){axis89Revoke(urls);return}
- if(media)axis89CommitDetail(txn,e.name,buildStage(media),urls,bind);else axis89Revoke(urls)
 }
 async function openEvent(id){
  const e=allEvents().find(x=>x.id===id);if(!e)return;const txn=++axis89DetailTxn,eq=eventEq(e);
@@ -46,8 +46,9 @@ function openSession`;
  if(!eventBody.includes("axis89CommitDetail(txn,e.name,buildStage(''),[],bind)"))fail('event facts are not committed before media hydration');
  if(/await\s+axis89MediaUrl\(/.test(eventBody))fail('event visibility still waits on media-store reads');
  if(!eventBody.includes('void axis89HydrateDetailMedia('))fail('non-blocking media hydration handoff missing');
+ if(!src.includes('async function axis89HydrateDetailMedia('))fail('media hydration helper missing');
  if(src.includes('axis89Decode(')||src.includes('Promise.allSettled(decode)'))fail('media decode still blocks event detail commit');
  if(!src.includes('mediaDecodeBlocking:false,mediaFetchBlocking:false'))fail('non-blocking detail diagnostic missing');
  syntax(src,FILE);write(FILE,src);
 }
-console.log('[AXIS 8.9 detail] PASS · event facts commit before asynchronous media hydration');
+console.log('[AXIS 8.9 detail] PASS · fact-first detail survives legacy commit rewrites · media hydrates asynchronously');
