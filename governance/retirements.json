@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "baselineRelease": "8.18",
   "retirements": [
     {
@@ -61,6 +61,23 @@
       "productionAuthorityAllowed": false,
       "compatibilityHookAllowed": false,
       "guard": "docs/history and future archive trees are provenance-only unless a file is explicitly promoted back through a reviewed current owner handoff."
+    },
+    {
+      "id": "release-era-814-through-818-automatic-workflow-fanout",
+      "status": "retired-and-deleted",
+      "since": "source-convergence-819",
+      "historicalSurface": "Seven separate automatic PR/push workflows for AXIS 8.14, 8.15, 8.15.1, 8.16, 8.17, 8.17.1 and 8.18",
+      "replacement": ".github/workflows/axis-current-release-gate.yml + scripts/axis-current-release-contract.mjs",
+      "productionAuthorityAllowed": false,
+      "compatibilityHookAllowed": false,
+      "proof": {
+        "runId": 32630099680,
+        "candidateSha": "53ba6909b1aed95ae634e1b3bd6429ffe80c2a59",
+        "chromium": "success",
+        "webkit": "success",
+        "requiredBranchProtectionChecks": 0
+      },
+      "guard": "The seven retired workflow files may not return. Their semantic assertions and user-visible smokes are owned by AXIS Current Release Gate. Historical implementation/source contracts remain elsewhere until separately retired."
     }
   ],
   "deletionPolicy": {

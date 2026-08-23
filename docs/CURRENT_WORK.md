@@ -7,7 +7,7 @@
 - Current Production release: **AXIS 8.18**.
 - Exact merged baseline SHA: `254a2fa80fdfd4040a6f695d28ad3bd670c0a7db`.
 - Vercel exact-main Production is verified `READY` on that SHA.
-- This baseline is the rollback and behavior-equivalence reference for source convergence.
+- This baseline remains the rollback and behavior-equivalence reference for Source Convergence.
 
 ## Active change
 
@@ -17,92 +17,121 @@ Branch: `engineering/source-convergence-819`
 
 PR: **#79**
 
-Current phase: **Phase 2 — Reachability and CI inventory**.
+Current phase: **Phase 2 — CI convergence + executable reachability**.
 
-This is an engineering milestone, not a product release. **Zero intended user-visible behavior change** remains the rule for the convergence work being performed now.
+This remains an engineering milestone, not a product release. **Zero intended user-visible behavior change** applies to the convergence work currently being performed.
 
 ### Phase 1 — Handoff Truth and governance · complete
 
 Established:
 
-- machine-readable current project state;
+- `governance/project-state.json` as machine-readable current truth;
 - current owner and retirement registries;
 - `docs/HANDOFF.md` as first human/agent entry;
-- real AXIS 8.18 Production truth in current docs;
-- Repository Contract driven by governance rather than hard-coded 8.17;
-- presentation contract exactly:
+- real AXIS 8.18 Production identity in current docs;
+- Repository Contract driven by governance instead of hard-coded historical release identity;
+- presentation foundation exactly:
   - `zh-Hans` — **简体中文**;
   - `zh-Hant` — **繁體中文**;
   - `en` — **English**;
-  - `system / light / dark` themes.
+  - themes `system / light / dark`.
 
 Proof:
 
 - Repository Contract run `32626662160` — **success**;
 - Work Continuity run `32626662162` — **success**.
 
-No app/runtime/Capture/media source was changed by Phase 1.
+### Phase 2A — stale PR head cancellation · complete
 
-### Phase 2 — Reachability and CI inventory · active
+`.github/workflows/axis-pr-run-convergence.yml` cancels only obsolete still-active workflow runs from previous heads of the same PR.
 
-A governance/docs-oriented PR head was observed to trigger **25 workflows**, spanning 8.8 through 8.18 plus current runtime/cross-platform/provider gates.
+Verified proof:
 
-- machine evidence: [`../governance/ci-inventory.json`](../governance/ci-inventory.json);
-- human audit: [`CI_CONVERGENCE.md`](CI_CONVERGENCE.md).
-
-Old workflow names do not imply safe deletion. Pending historical gates remain `compatibility-required-pending-equivalence-audit` until semantic, browser, data and branch-protection coverage is mapped.
-
-#### First Phase 2 optimization — stale PR head cancellation · verified
-
-`.github/workflows/axis-pr-run-convergence.yml` uses official `actions/github-script@v9` and cancels only obsolete still-active runs from previous heads of the same PR.
-
-Proof:
-
-- first run `32626897002` — **success**, latest-head exclusion/API/permission path proven;
-- cross-head run `32626975731` — **success**;
-- stale active runs found: **10**;
-- cancellation requests accepted: **8**;
-- **2** finished before cancellation and were left untouched;
-- stale SHA: `df1b2507923083e49bde3602425194bccbc22f70`;
-- current SHA during proof: `1c30a3006fe1627838eac98ee133a3303a6cf509`;
+- run `32626897002` — success, API/permission/latest-head exclusion proven;
+- cross-head run `32626975731` — success;
+- 10 stale active runs found;
+- 8 cancellation requests accepted;
+- 2 finished before cancellation and were left untouched;
 - latest head touched: **false**.
 
-This optimization changes runner scheduling only. It removes obsolete candidate work while preserving every existing test/assertion for the newest PR head. It does not target `push`, `main`, Production, another PR, or the current convergence run.
+This changes runner scheduling only; newest-candidate coverage is unchanged.
 
-### Next Phase 2 audit slices
+### Phase 2B — 8.14 → 8.18 Current Release Gate convergence · complete
 
-1. record path/trigger scope for each observed workflow;
-2. map each assertion to a current product semantic contract;
-3. identify unique Chromium/WebKit coverage;
-4. identify old-data/compatibility-only coverage;
-5. inspect branch-protection required check-name implications;
-6. measure duplicate `node build-release.mjs` work;
-7. move only proven-equivalent coverage toward Current Product Matrix / Deep Compatibility Gate.
+The following seven release-era automatic workflow families were proven to be overlapping layers over the same current canonical artifact:
 
-### Later phases
+- 8.14 Evolution Objects;
+- 8.15 Media Evidence;
+- 8.15.1 Regression Seal;
+- 8.16 Capture + Comparative Evidence;
+- 8.17 Interaction Convergence;
+- 8.17.1 Source Media;
+- 8.18 Object + Route + Capture + Focus.
 
-- converge CI into four understandable layers;
-- safely quarantine/delete executable history only after reachability proof;
-- replace exact historical rewrites with direct current ownership one surface at a time;
-- implement professional three-locale i18n foundation;
-- implement semantic System/Light/Dark theme foundation;
-- then begin AXIS 8.19 Universal Practice Objects.
+Replacement:
+
+- `.github/workflows/axis-current-release-gate.yml`;
+- `scripts/axis-current-release-contract.mjs`.
+
+The replacement performs one exact build per engine and keeps the complete inherited semantic/ownership contract plus all original browser smokes:
+
+- Evolution foundation;
+- Evolution Objects;
+- Media Evidence;
+- regression seal;
+- stable Evidence swap;
+- watermark controls;
+- Capture + Comparative Evidence;
+- Interaction Convergence;
+- source-first media;
+- 8.18 Object / Route / Capture / Focus.
+
+Exact replacement proof on candidate `53ba6909b1aed95ae634e1b3bd6429ffe80c2a59`:
+
+- AXIS Current Release Gate run `32630099680`;
+- Chromium — **success**;
+- iPhone-like WebKit — **success**;
+- unified semantic contract — **success** in both jobs;
+- Repository Contract — **success** inside Chromium replacement job;
+- `main` branch protection — disabled; required status checks: **0**.
+
+Therefore the seven old automatic workflow files are physically retired in the next convergence commit. Their source/runtime compatibility contracts are **not** automatically deleted; only duplicated CI orchestration is retired.
+
+### Phase 2C — next compatibility audit
+
+8.13 remains separate for now because it contains responsibilities not equivalent to the Current Release Gate:
+
+- pure Runtime invariants;
+- Shadow Runtime invariants;
+- exact base-SHA build parity;
+- Chromium/WebKit transition observation;
+- Continue + Live Route semantics;
+- inline Settings ownership.
+
+The next audit targets:
+
+1. 8.13 workflow decomposition into Runtime Foundation / Deep Compatibility responsibilities;
+2. 8.12 and older old-data uniqueness;
+3. overlap between Runtime Gate and older interaction/home/watermark gates;
+4. provider PR packaging versus `main`-only Production responsibilities;
+5. path scoping so governance/docs-only changes do not rebuild every behavioral surface.
 
 ## Validation for this work
 
-Source Convergence must continue to preserve:
+Source Convergence must preserve:
 
+- exact AXIS 8.18 behavior-equivalence baseline;
 - Repository Contract and Work Continuity;
-- exact 8.18 behavior-equivalence baseline;
-- latest-head test coverage;
+- one canonical runtime;
+- latest-head Chromium and iPhone-like WebKit coverage;
 - `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`;
 - custom object identity/aliases and historical Encounter readability;
-- one canonical runtime and current camera/media/sound/completion ownership;
-- Chromium + iPhone-like WebKit proof for critical behavior;
-- no timeout inflation, assertion weakening, duplicate store/recorder/sound ownership or destructive user-data migration.
+- current camera/media/sound/completion ownership;
+- exact-SHA provider Production proof;
+- no timeout inflation, assertion weakening, duplicate persistence/recorder/sound ownership or destructive data migration.
 
-No workflow may be removed merely because stale-head cancellation now exists. Workflow consolidation requires its own equivalence proof.
+CI retirement itself must be guarded: `scripts/axis-ci-convergence-contract.mjs` requires the version-neutral replacement surfaces and fails if the seven retired workflow files return.
 
 ## Next planned stage
 
-Continue the workflow-by-workflow equivalence inventory from the verified 25-run snapshot. First prioritize duplicate canonical builds and broad unscoped PR triggers, while preserving current latest-head coverage and exact-SHA Production seal behavior.
+Run the post-retirement exact-head CI. Require the new Repository Contract + CI convergence guard and the Current Release Gate to remain green after the seven workflow files are absent. Then continue with the 8.13 Runtime Foundation / Deep Compatibility audit; do not yet alter product runtime or historical storage semantics.
