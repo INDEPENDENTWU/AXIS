@@ -19,22 +19,16 @@ PR: **#79**
 
 Current phase: **Phase 2 — CI convergence + executable reachability**.
 
-This remains an engineering milestone, not a product release. **Zero intended user-visible behavior change** applies to the convergence work currently being performed.
+This is an engineering milestone, not a product release. **Zero intended user-visible behavior change** applies to the convergence work currently being performed.
 
 ### Phase 1 — Handoff Truth and governance · complete
 
-Established:
+Established machine-readable project/release truth, critical ownership/retirement registries, `docs/HANDOFF.md`, current 8.18 documentation, and the exact presentation foundation:
 
-- `governance/project-state.json` as machine-readable current truth;
-- current owner and retirement registries;
-- `docs/HANDOFF.md` as first human/agent entry;
-- real AXIS 8.18 Production identity in current docs;
-- Repository Contract driven by governance instead of hard-coded historical release identity;
-- presentation foundation exactly:
-  - `zh-Hans` — **简体中文**;
-  - `zh-Hant` — **繁體中文**;
-  - `en` — **English**;
-  - themes `system / light / dark`.
+- `zh-Hans` — **简体中文**;
+- `zh-Hant` — **繁體中文**;
+- `en` — **English**;
+- themes `system / light / dark`.
 
 Proof:
 
@@ -45,76 +39,71 @@ Proof:
 
 `.github/workflows/axis-pr-run-convergence.yml` cancels only obsolete still-active workflow runs from previous heads of the same PR.
 
-Verified proof:
+Proof:
 
-- run `32626897002` — success, API/permission/latest-head exclusion proven;
+- run `32626897002` — success;
 - cross-head run `32626975731` — success;
-- 10 stale active runs found;
-- 8 cancellation requests accepted;
-- 2 finished before cancellation and were left untouched;
+- stale active runs found: 10;
+- cancellation requests accepted: 8;
 - latest head touched: **false**.
-
-This changes runner scheduling only; newest-candidate coverage is unchanged.
 
 ### Phase 2B — 8.14 → 8.18 Current Release Gate convergence · complete
 
-The following seven release-era automatic workflow families were proven to be overlapping layers over the same current canonical artifact:
-
-- 8.14 Evolution Objects;
-- 8.15 Media Evidence;
-- 8.15.1 Regression Seal;
-- 8.16 Capture + Comparative Evidence;
-- 8.17 Interaction Convergence;
-- 8.17.1 Source Media;
-- 8.18 Object + Route + Capture + Focus.
-
-Replacement:
+Seven duplicated release-era automatic workflow families were replaced by:
 
 - `.github/workflows/axis-current-release-gate.yml`;
 - `scripts/axis-current-release-contract.mjs`.
 
-The replacement performs one exact build per engine and keeps the complete inherited semantic/ownership contract plus all original browser smokes:
+Replacement equivalence proof before retirement:
 
-- Evolution foundation;
-- Evolution Objects;
-- Media Evidence;
-- regression seal;
-- stable Evidence swap;
-- watermark controls;
-- Capture + Comparative Evidence;
-- Interaction Convergence;
-- source-first media;
-- 8.18 Object / Route / Capture / Focus.
-
-Exact replacement proof on candidate `53ba6909b1aed95ae634e1b3bd6429ffe80c2a59`:
-
-- AXIS Current Release Gate run `32630099680`;
+- candidate `53ba6909b1aed95ae634e1b3bd6429ffe80c2a59`;
+- run `32630099680`;
 - Chromium — **success**;
 - iPhone-like WebKit — **success**;
-- unified semantic contract — **success** in both jobs;
-- Repository Contract — **success** inside Chromium replacement job;
-- `main` branch protection — disabled; required status checks: **0**.
+- every inherited Evolution / Media Evidence / regression seal / watermark / Capture / Interaction / source-first / 8.18 smoke — success.
 
-Therefore the seven old automatic workflow files are physically retired in the next convergence commit. Their source/runtime compatibility contracts are **not** automatically deleted; only duplicated CI orchestration is retired.
+Retirement commit:
 
-### Phase 2C — next compatibility audit
+- `709d801e268e6d06248c21f517aa1a17e565764b`.
 
-8.13 remains separate for now because it contains responsibilities not equivalent to the Current Release Gate:
+Post-retirement proof on that exact head:
+
+- Repository Contract + CI retirement guard run `32630367007` — **success**;
+- Current Release Gate run `32630367047` — Chromium **success**, iPhone-like WebKit **success**;
+- automatic workflow families observed: **20**;
+- none of the seven retired 8.14→8.18 workflow names returned.
+
+The retirement applies to duplicated CI orchestration only. Historical source/compiler/data compatibility remains until separately proven removable.
+
+### Phase 2C — Runtime Foundation convergence · replacement candidate being introduced
+
+The 8.13 family was audited separately because it carries unique responsibilities that must not be lost:
 
 - pure Runtime invariants;
 - Shadow Runtime invariants;
-- exact base-SHA build parity;
-- Chromium/WebKit transition observation;
+- exact artifact parity against the PR base SHA;
+- authoritative Shadow transition observation in Chromium/WebKit;
 - Continue + Live Route semantics;
 - inline Settings ownership.
 
-The next audit targets:
+`prepare-8123-ci-stability.mjs` was inspected before consolidation. It converges inherited **test scripts only**; it does not mutate `axis-core.js`, `index.html` or `axis-style.css`. Therefore the browser responsibilities can safely share one exact build per engine.
 
-1. 8.13 workflow decomposition into Runtime Foundation / Deep Compatibility responsibilities;
-2. 8.12 and older old-data uniqueness;
-3. overlap between Runtime Gate and older interaction/home/watermark gates;
-4. provider PR packaging versus `main`-only Production responsibilities;
-5. path scoping so governance/docs-only changes do not rebuild every behavioral surface.
+Replacement surfaces now being introduced:
+
+- `.github/workflows/axis-runtime-foundation-gate.yml`;
+- `scripts/axis-runtime-foundation-contract.mjs`.
+
+Target jobs:
+
+1. `pure-runtime-parity` — Runtime Core + Shadow Runtime + one build + exact base-SHA parity;
+2. `chromium-runtime` — one build + Shadow transitions + Live Route + Settings;
+3. `webkit-runtime` — one build + the same browser semantics on iPhone-like WebKit.
+
+The existing four 8.13 workflow families remain automatic for the first replacement candidate so the new gate can be proven on the same current artifact before retirement. No 8.13 workflow is approved for deletion until the replacement gate is fully green and its semantic/engine coverage is recorded.
+
+### Phase 2D — 8.12 and older compatibility audit · queued after 8.13 proof
+
+Initial inspection already shows hierarchical duplication (for example 8.12.2 reruns 8.12.1 Group Plan, and 8.12.3 Field Polish again reruns the same Group Plan path), but these layers also contain potentially unique equipment/history/old-data/UI-geometry coverage. They will move only after those responsibilities are explicitly mapped to a Deep Compatibility Gate.
 
 ## Validation for this work
 
@@ -128,10 +117,10 @@ Source Convergence must preserve:
 - custom object identity/aliases and historical Encounter readability;
 - current camera/media/sound/completion ownership;
 - exact-SHA provider Production proof;
-- no timeout inflation, assertion weakening, duplicate persistence/recorder/sound ownership or destructive data migration.
+- no timeout inflation to hide failures, assertion weakening, duplicate persistence/recorder/sound ownership or destructive data migration.
 
-CI retirement itself must be guarded: `scripts/axis-ci-convergence-contract.mjs` requires the version-neutral replacement surfaces and fails if the seven retired workflow files return.
+Every CI retirement must have its own exact-candidate replacement proof and a guard preventing accidental resurrection.
 
 ## Next planned stage
 
-Run the post-retirement exact-head CI. Require the new Repository Contract + CI convergence guard and the Current Release Gate to remain green after the seven workflow files are absent. Then continue with the 8.13 Runtime Foundation / Deep Compatibility audit; do not yet alter product runtime or historical storage semantics.
+Run the first `AXIS Runtime Foundation Gate` candidate alongside the existing four 8.13 workflows. Require pure-runtime/parity, Chromium and WebKit jobs to pass before classifying the four old 8.13 workflows as superseded. Then perform an atomic retirement with a repository guard, exactly as done for the 8.14→8.18 fanout.
