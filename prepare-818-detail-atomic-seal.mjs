@@ -21,22 +21,25 @@ function functionRange(src,signature){
  if(end<0)fail(`${signature} closing brace missing`);return{start,end}
 }
 
-/* Only the executable bindDynamic owner is converged. The compiled source can carry
-   historical contract strings elsewhere; those must not be mistaken for a second
-   runtime router. Keep canonical openEvent + atomic commit and add no listener. */
+/* Only the executable bindDynamic owner is converged. Historical contract strings
+   elsewhere are ignored. `$` is a substring of `$$`, so single-helper counts are
+   measured only after removing the corresponding collection-helper shape. */
 const range=functionRange(s,'function bindDynamic()');
 let bind=s.slice(range.start,range.end);
 const plainDouble="$$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
 const plainSingle="$('[data-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.event));";
 const guardedDouble="$$('[data-event]').forEach(b=>b.onclick=()=>{const sheet=$('#detailSheet');if(sheet?.classList.contains('show'))sheet.classList.add('axis884Prepaint');return openEvent(b.dataset.event)});";
 const guardedSingle="$('[data-event]').forEach(b=>b.onclick=()=>{const sheet=$('#detailSheet');if(sheet?.classList.contains('show'))sheet.classList.add('axis884Prepaint');return openEvent(b.dataset.event)});";
-const shapes=[plainDouble,plainSingle,guardedDouble,guardedSingle];
-const counts=shapes.map(x=>bind.split(x).length-1),total=counts.reduce((a,b)=>a+b,0);
+const pd=bind.split(plainDouble).length-1;
+const ps=bind.split(plainDouble).join('').split(plainSingle).length-1;
+const gd=bind.split(guardedDouble).length-1;
+const gs=bind.split(guardedDouble).join('').split(guardedSingle).length-1;
+const counts=[pd,ps,gd,gs],total=counts.reduce((a,b)=>a+b,0);
 if(total!==1)fail(`bindDynamic event router expected one compiler shape, found ${counts.join('/')}: ${bind.replace(/\s+/g,' ')}`);
 if(!s.includes("owner:'atomic-handoff'"))fail('canonical atomic detail commit owner missing');
 if(!s.includes('async function openEvent(id){'))fail('canonical openEvent missing');
 if(!s.includes("sheet?.classList.remove('axis884Prepaint')"))fail('atomic commit does not release prepaint guard');
-for(let i=0;i<shapes.length;i++)if(counts[i]===1){bind=bind.replace(shapes[i],guardedDouble);break}
+if(pd)bind=bind.replace(plainDouble,guardedDouble);else if(ps)bind=bind.replace(plainSingle,guardedDouble);else if(gs)bind=bind.replace(guardedSingle,guardedDouble);
 if((bind.split(guardedDouble).length-1)!==1)fail('guarded collection router not singular after convergence');
 const survivor=/(^|[^$])\$\s*\(\s*(['"`])\[data-event\]\2\s*\)\s*\.forEach/g;
 if(survivor.test(bind))fail(`single-element event collection survived in bindDynamic: ${bind.replace(/\s+/g,' ')}`);
