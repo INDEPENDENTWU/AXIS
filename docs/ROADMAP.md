@@ -2,132 +2,171 @@
 
 This is a product and architecture roadmap, not a feature backlog.
 
-## Current baseline — 8.12
+## Current Production baseline — AXIS 8.18
 
-8.12 is the compatibility baseline for the next cycle. Existing training, recording, media, State Field, Vision, cloud/AI foundations and Language Studio remain supported.
+AXIS 8.18 is the current behavior baseline. It seals Object Truth, Route Truth, schema-aware Focus, current Capture preferences/camera switching, source-first media, stable 30fps video composition, fact-first detail behavior and the derived Evolution Library while preserving inherited local-first training/data contracts.
 
-The next cycle does not expand the Language Studio corpus or add another top-level product area.
+Exact current Production baseline is recorded in `governance/project-state.json` and `docs/CURRENT_RELEASE.md`.
 
-## 8.13 · Runtime
+## Now — Source Convergence · 8.19 Foundation
 
-Goal: make the remaining workout adapt to real conditions without turning AXIS into a planner or chat coach.
+Before adding another product layer, make the repository easier and faster to evolve without weakening compatibility.
 
-### Stage 0 — freeze and characterize 8.12
+### Stage A — Handoff Truth
 
-- Keep current training owners unchanged.
-- Capture deterministic fixtures for representative session/history states.
-- Document existing owner boundaries and storage contracts.
-- Add regression cases for refresh, reopen, incomplete sets, early finish and offline operation.
+- one machine-readable current project state;
+- one human/agent handoff entry;
+- explicit current owners;
+- explicit retired authority;
+- current docs no longer describe old releases as current.
 
-Exit condition: current behavior can be reproduced and tested without relying on screenshots alone.
+Exit: a new developer/agent can recover the real Production baseline, active work, ownership and next action from GitHub alone.
 
-### Stage 1 — pure runtime core
+### Stage B — executable reachability inventory
 
-Add a UI-independent module that receives normalized state/context and emits a remaining-workout projection.
+Classify every historical build transform, browser owner and workflow as:
 
-Initial inputs:
+- `current`;
+- `compatibility-required`;
+- `superseded`;
+- `historical-only`.
 
-- current session;
-- completed work;
-- recent history;
-- user goal when known;
-- remaining time / leave time;
-- current exercise;
-- temporary constraints.
+Exit: no cleanup decision depends on filename age or memory.
 
-Initial outputs:
+### Stage C — CI convergence
 
-- current;
-- next;
-- small set of alternatives;
-- remaining route;
-- dropped work;
-- reason codes.
+Move from a permanent workflow-per-release shape toward:
 
-No production writes in this stage.
+1. fast repository/current PR gate;
+2. current product matrix;
+3. explicit deep compatibility/data gate;
+4. exact-SHA Production seal.
 
-Exit condition: deterministic unit/property tests cover identical-input reproducibility and illegal-state prevention.
+Exit: equivalent or stronger proof with materially less duplicate runner work and stale implementation-shape diagnosis.
 
-### Stage 2 — shadow runtime
+### Stage D — source quarantine and direct ownership
 
-Feed real current-state snapshots into the runtime while existing AXIS remains authoritative.
+- remove proven-dead helpers;
+- keep compatibility adapters explicit and narrow;
+- migrate current behavior from exact historical rewrites into current source owners one surface at a time;
+- shorten the deterministic build chain without changing the canonical runtime contract.
 
-Compare projected decisions against fixtures and real test sequences. Runtime failures must have zero effect on recording.
+Exit: the source tree increasingly resembles the product that actually ships.
 
-Exit condition: repeated randomized event sequences do not create invalid projections or require a page refresh.
+## Presentation foundation
 
-### Stage 3 — Continue + Live Route
+After source governance is stable, establish presentation architecture before broadening the product.
 
-The runtime gains narrow ownership of continuation and remaining-route presentation.
+### Professional localization
 
-The user still records through existing recording owners. The route is not a mandatory checklist.
+Initial UI locales are exactly:
 
-Exit condition: refresh/reopen can restore the same visible route from authoritative state without duplicate completion or shadow ownership.
+- `zh-Hans` — **简体中文**;
+- `zh-Hant` — **繁體中文**;
+- `en` — **English**.
 
-### Stage 4 — Reality actions
+Requirements:
 
-Introduce four compact runtime actions:
+- semantic translation keys;
+- professional, context-aware translations;
+- real Simplified Chinese under `zh-Hans`;
+- professionally localized Traditional Chinese under `zh-Hant`, not mechanical conversion;
+- natural product English;
+- locale-key parity and missing-key CI failure;
+- locale-aware date/number formatting;
+- layout expansion tests.
 
-- occupied;
-- replace;
-- less;
-- end.
+### Semantic themes
 
-They change constraints or route state, not historical facts.
+Initial preference:
 
-Exit condition: each action has one owner, one deterministic transition and a fail-open fallback.
+- `system`;
+- `light`;
+- `dark`.
 
-### Stage 5 — Time budget
+Use semantic tokens, first-paint-safe theme resolution, accessible contrast and separate media/watermark contrast semantics. Switching theme must not leave fixed-color logos/icons/symbols or partially converted surfaces.
 
-Leave time becomes a first-class session constraint. Changing it immediately recomputes the remaining route using observed/estimated task duration, transition cost, completed work and redundancy.
+## AXIS 8.19 — Universal Practice Objects
 
-Exit condition: aggressive time changes cannot produce impossible work, negative time or phantom completion.
+8.18 proves the underlying primitive:
 
-### Stage 6 — interaction decay
+```text
+Object
+  ↓
+metric schema
+  ↓
+Encounter
+  ↓
+Evidence
+  ↓
+time
+  ↓
+Evolution
+```
 
-Use repeated history to prefill known weights, settings and common structures when confidence is high enough.
+8.19 should generalize that primitive to more repeated real-world practice without turning AXIS into a category-heavy or setup-heavy product.
 
-Track interaction cost per completed useful workout. The expected long-term direction is down.
+Possible domains include strength/cardio, climbing, swimming, rehabilitation practice, yoga, dance, racket/ball practice, striking, instruments, pronunciation and other repeated skills — only where the same factual model fits naturally.
 
-Exit condition: automation reduces taps without making corrections harder or hiding uncertainty.
+### Metric schema v2 direction
 
-### Stage 7 — durable event journal
+The domain layer may support richer field semantics such as:
 
-Only after the runtime is stable, add an append-only domain journal for runtime actions and replay. Preserve compatibility snapshots until replay equivalence is proven across existing user data.
+- number/count;
+- duration;
+- distance;
+- pace;
+- percentage;
+- rating;
+- boolean;
+- choice.
 
-Exit condition: crash/reload/reopen sequences reconstruct the same authoritative state and no action is applied twice.
+The interface should expose only the fields a given object actually needs. More expressive schema must not mean more visible complexity.
 
-## Source convergence after 8.13
+### 8.19 success criteria
 
-The current compatibility compiler should shrink, not grow indefinitely.
+- broader object/domain expressiveness without mode proliferation;
+- old Encounters remain readable;
+- no second training database or parallel product truth;
+- low-friction creation/recording;
+- Evolution remains factual rather than score-driven;
+- same domain contracts can travel toward native shells.
 
-For every historical transform:
+## After 8.19 — Evidence and Evolution intelligence
 
-1. identify what compatibility requirement it still protects;
-2. move stable behavior into a current canonical source owner;
-3. keep explicit data migration if old user data needs it;
-4. prove final artifact and browser behavior;
-5. remove the historical source and rewrite together.
+Potential later work:
 
-Do not reorganize the entire repository before ownership is clear. A clean directory tree is not worth a regression in user data or interaction behavior.
+- stronger evidence chronology and object timelines;
+- reliable evidence sequence/time anchors;
+- richer factual comparison and recurrence projections;
+- local-first insights that state evidence/uncertainty explicitly;
+- optional AI assistance that never becomes authoritative training truth.
+
+## Truthful Replay — downstream
+
+Replay remains downstream of trustworthy object identity, Encounter chronology, media source truth and sequence semantics.
+
+Do not build a decorative editor/replay workflow merely because media exists. Replay should reconstruct real evolution without fabricating intermediate facts.
 
 ## Multi-platform
 
-Platform expansion follows domain extraction:
+Platform expansion follows stable domain contracts rather than UI-code duplication:
 
-1. browser-independent runtime tests;
+1. browser-independent domain/runtime tests;
 2. stable storage/media/platform ports;
-3. iOS shell with direct Photos/haptics/background support;
-4. Android only after the same core can be reused without forked product logic;
-5. desktop only if a concrete workflow justifies it.
+3. native shells consuming the same domain semantics;
+4. platform-specific camera/Photos/haptics/background capabilities behind adapters;
+5. Android/desktop only when a concrete use case justifies another shell.
 
-The success criterion is shared behavior and data semantics, not the number of shells shipped.
+The success metric is shared product/data truth, not the number of platforms shipped.
 
-## Things deliberately not on this roadmap
+## Deliberately not on the roadmap
 
-- streaks, XP, badges or punishment for gaps;
-- a mandatory account before training;
-- generic AI chat as the primary UI;
-- automatic medical/recovery claims from weak evidence;
-- another large learning-content expansion;
-- a big-bang framework rewrite.
+- streak/XP/punishment systems;
+- mandatory account before core training;
+- generic AI chat as the primary AXIS interface;
+- synthetic fitness/progress scores presented as fact;
+- medical/recovery claims from weak evidence;
+- separate product modes for every activity;
+- a big-bang framework rewrite;
+- permanent new version-specific patch layers without a retirement condition.
