@@ -56,7 +56,7 @@ jobs:
         run: node scripts/axis-deep-compatibility-contract.mjs
       - name: Prepare Chromium
         run: |
-          npm install --no-save playwright-core@1.55.0
+          npm install --no-save playwright@1.55.0
           CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
