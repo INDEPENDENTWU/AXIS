@@ -44,14 +44,15 @@ const requireRecordPrefs=async label=>{
   const s=await page.evaluate(l=>({
     label:l,
     scan:!!document.querySelector('#scanSeconds'),
-    captureButtons:[...document.querySelectorAll('#scanSeconds [data-v876-cap]')].map(x=>x.dataset.v876Cap),
-    keep:!!document.querySelector('#keepClipSwitch'),
+    scanSeconds:[...document.querySelectorAll('#scanSeconds button[data-sec]')].map(x=>x.dataset.sec),
+    keepHidden:document.querySelector('#keepClipSwitch')?.hidden===true||document.querySelector('#keepClipSwitch')?.getAttribute('aria-hidden')==='true',
     record:!!document.querySelector('#v8711RecordGate'),
     settings:document.querySelector('#settingsSheet')?.className||''
   }),label);
   console.log('[AXIS matrix record prefs]',JSON.stringify(s));
-  assert.ok(s.scan&&s.keep&&s.record,`record preferences lost at ${label}: ${JSON.stringify(s)}`);
-  assert.deepEqual(s.captureButtons,['photo','3','5'],`canonical capture choices changed at ${label}: ${JSON.stringify(s.captureButtons)}`);
+  assert.ok(s.scan&&s.record,`record preferences lost at ${label}: ${JSON.stringify(s)}`);
+  assert.deepEqual(s.scanSeconds,['3','5'],`canonical scan-duration choices changed at ${label}: ${JSON.stringify(s.scanSeconds)}`);
+  assert.equal(s.keepHidden,true,`retired keep-video pseudo-setting became interactive at ${label}`);
 };
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
@@ -106,21 +107,20 @@ await closeCustom();
 await openSettings();
 await requireRecordPrefs('after-custom-editor');
 
-console.log('[AXIS matrix] canonical capture preference + keep-video persistence');
+console.log('[AXIS matrix] canonical capture preference + retired keep-video pseudo-setting');
 await openGate('#v8711RecordGate > .settingLink','#v8711RecordGate');
-const cap5=page.locator('#scanSeconds [data-v876-cap="5"]');
+const cap5=page.locator('#scanSeconds button[data-sec="5"]');
 assert.ok(await cap5.isVisible(),'canonical 5-second capture preference is not visible');
 await cap5.click();
-const beforeKeep=await page.locator('#keepClipSwitch').getAttribute('aria-checked');
-await page.locator('#keepClipSwitch').click();
 await page.waitForTimeout(80);
 let meta=await store('axis_v8_meta');
 core=await store('axis_v60_state');
-assert.equal(meta.prefs?.v876CaptureMode,'5','canonical capture preference did not persist');
+assert.equal(Number(core.prefs?.scanSeconds),5,'canonical app-owned scan preference did not persist');
+assert.equal(await page.evaluate(()=>window.__AXIS_818_SCAN_SECONDS__?.get?.()),5,'app-owned scan preference bridge disagrees with persisted state');
 assert.ok(await cap5.evaluate(x=>x.classList.contains('active')),'canonical 5-second preference is not visibly active');
-assert.notEqual(await page.locator('#keepClipSwitch').getAttribute('aria-checked'),beforeKeep);
-assert.equal(Boolean(core.prefs?.keepClip),beforeKeep==='false');
-assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5','capture preference bridge disagrees with visible setting');
+assert.equal(await page.locator('#keepClipSwitch:visible').count(),0,'retired keep-video pseudo-setting became visible');
+assert.equal(await page.locator('#keepClipSwitch').getAttribute('aria-hidden'),'true','retired keep-video compatibility node lost aria-hidden');
+assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5','capture preference compatibility bridge disagrees with app-owned setting');
 
 await closeSettings();
 await page.locator('#scanBtn').click();

@@ -24,7 +24,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs=require('fs');const m=require('./axis-build.json');const core=fs.readFileSync('axis-core.js','utf8');
-          if(!['8.12','8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14','8.15','8.15.1','8.16','8.17'].includes(m.version)||m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('release topology drift');
+          if(!['8.12','8.12.1','8.12.2','8.12.3','8.12.4','8.12.5','8.13','8.13.1','8.14','8.15','8.15.1','8.16','8.17','8.18'].includes(m.version)||m.architecture!=='canonical-single-runtime'||m.requests?.initialJavascript!==1||m.requests?.dynamicJavascript!==0||m.assets?.chunks?.length!==0)throw new Error('release topology drift');
           for(const gate of ['learningSettingsPurpose812','learningSettingsMethod812','learningSettingsNovelty812','serviceSettingsConverged811','serviceSettingsUserInvokedNetwork811','serviceSettingsNoTrainingOwner811','liveRoute813','liveRouteReadOnly813'])if(m.gates?.[gate]!==true)throw new Error(`inherited gate missing: ${gate}`);
           if(!core.includes('__AXIS_813_SETTINGS__')||!core.includes('canonical-settings-inline'))throw new Error('settings convergence marker missing from canonical core');
           NODE

@@ -18,15 +18,23 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
   setText('#detailTitle',title);if(host)host.replaceChildren(...Array.from(stage.childNodes));bind?.();
   if(!wasOpen)openSheet('detailSheet');
   requestAnimationFrame(()=>{host?.style.removeProperty('min-height');sheet?.classList.remove('axis891DetailSwap');axis89Revoke(old)});
-  window.__AXIS_89_DETAIL__={owner:'atomic-handoff',patch:'8.9.1',stableShell:true,txn,committedAt:Date.now(),visible:true}
+  window.__AXIS_89_DETAIL__={owner:'atomic-handoff',patch:'8.9.1',stableShell:true,mediaDecodeBlocking:false,mediaFetchBlocking:false,txn,committedAt:Date.now(),visible:true}
  })
 }`;
  src=regexOnce(src,/function axis89CommitDetail\(txn,title,stage,urls,bind\)\{[\s\S]*?\n\}\nasync function openEvent/,stable+'\nasync function openEvent','stable event detail commit');
  src=once(src,"requestAnimationFrame(()=>setTimeout(()=>detailSheet?.classList.remove('axis884Prepaint'),72));",
                   "requestAnimationFrame(()=>detailSheet?.classList.remove('axis884Prepaint'));",
                   'remove delayed session reveal');
- if(!src.includes("patch:'8.9.1',stableShell:true"))fail('stable detail marker missing');
+ if(!src.includes("patch:'8.9.1',stableShell:true,mediaDecodeBlocking:false,mediaFetchBlocking:false"))fail('stable non-blocking detail marker missing');
  if(src.includes("setTimeout(()=>detailSheet?.classList.remove('axis884Prepaint'),72)"))fail('72ms history reveal delay survived');
+ if(src.includes('axis89Decode(')||src.includes('Promise.allSettled(decode)'))fail('media decode regained ownership of detail commit');
+ if(!src.includes('async function axis89HydrateDetailMedia('))fail('media hydration helper was lost before 8.10.2 compile stage');
+ const helperAt=src.indexOf('async function axis89HydrateDetailMedia('),commitAt=src.indexOf('function axis89CommitDetail('),eventAt=src.indexOf('async function openEvent(');
+ if(!(helperAt>=0&&helperAt<commitAt&&commitAt<eventAt))fail('detail helper/commit/event order no longer protects legacy commit rewrite');
+ const eventBody=src.match(/async function openEvent\(id\)\{[\s\S]*?\n\}/)?.[0]||'';
+ if(/await\s+axis89MediaUrl\(/.test(eventBody))fail('media-store reads regained ownership of detail visibility');
+ if(!eventBody.includes("axis89CommitDetail(txn,e.name,buildStage(''),[],bind)"))fail('fact-first detail commit missing');
+ if(!eventBody.includes('void axis89HydrateDetailMedia('))fail('asynchronous media hydration missing');
  syntax(src,FILE);write(FILE,src);
 }
 
@@ -50,8 +58,9 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
 
 {
  const app=read('app.js'),css=read('v88.css');
- if(!app.includes("stableShell:true"))fail('stable shell diagnostic absent');
+ if(!app.includes("stableShell:true,mediaDecodeBlocking:false,mediaFetchBlocking:false"))fail('stable shell non-blocking diagnostic absent');
+ if(!app.includes('async function axis89HydrateDetailMedia('))fail('stable shell lost async media hydrator');
  if(!css.includes('#detailSheet{display:flex!important;visibility:hidden!important'))fail('precomposed detail surface missing');
  if(!css.includes('backdrop-filter:none!important'))fail('detail Safari blur flash owner survived');
 }
-console.log('[AXIS 8.9.1 detail] PASS · stable shell · one composed reveal · no delayed prepaint · no detail backdrop blur flash');
+console.log('[AXIS 8.9.1 detail] PASS · stable shell · helper survives legacy commit compiler · fact-first reveal independent of media latency');
