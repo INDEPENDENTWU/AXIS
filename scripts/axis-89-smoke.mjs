@@ -37,18 +37,10 @@ await page.evaluate(()=>document.querySelector('#eqSheet')?.classList.remove('sh
 console.log(`[AXIS 8.9 ${ENGINE}] Rest Speak is off by default and geometry-neutral during explicit pause`);
 await page.evaluate(()=>{
  const t=Date.now(),mk=(id,equipmentId,name,offset)=>({id,equipmentId,name,kind:'strength',time:t-offset,weight:20,reps:10,sets:1,muscles:['胸肌'],frameRefs:[]});
- const events=[
-  mk('E89R1','lat','高位下拉',420000),mk('E89R2','row','坐姿划船',330000),mk('E89R3','chest','胸推',240000),mk('E89R4','legext','腿屈伸',150000),mk('E89R5','shoulder','肩推',90000)
- ];
+ const events=[mk('E89R1','lat','高位下拉',420000),mk('E89R2','row','坐姿划船',330000),mk('E89R3','chest','胸推',240000),mk('E89R4','legext','腿屈伸',150000),mk('E89R5','shoulder','肩推',90000)];
  const core={version:60,sessions:[],active:{id:'S89R',start:t-480000,events},selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{name:'',height:'',weight:'',bodyFat:'',years:'',freq:3,goal:'',memories:[],customEq:[]},prefs:{keepClip:true,scanSeconds:3,watermark:{name:true,data:true,time:true,brand:true,pos:'bl',photoMode:'wm',videoMode:'wm'}}};
  const act=(status,start,end=null,restStartedAt=null)=>({status,startedAt:start,lastResumedAt:start,pausedAt:status==='paused'?(end||t-60000):null,finishedAt:status==='finished'?(end||t-60000):null,estimateMs:180000,completedSets:status==='finished'?1:(restStartedAt?1:0),intervals:[{start,end:status==='active'?null:(end||t-60000)}],restStartedAt,restAccumulatedMs:0});
- const meta={prefs:{v89SpeakEnabled:true,v89SpeakNative:'zh',v89SpeakTarget:'en'},events:{
-  E89R1:{activity:act('finished',t-420000,t-360000),sets:[{state:'done',doneAt:t-360000}]},
-  E89R2:{activity:act('paused',t-330000,t-300000),sets:[{state:'assumed',doneAt:null}]},
-  E89R3:{activity:act('paused',t-240000,t-16000,t-16000),sets:[{state:'done',doneAt:t-16000},{state:'assumed',doneAt:null},{state:'assumed',doneAt:null}]},
-  E89R4:{activity:act('paused',t-150000,t-120000),sets:[{state:'assumed',doneAt:null}]},
-  E89R5:{activity:act('finished',t-90000,t-60000),sets:[{state:'done',doneAt:t-60000}]}
- }};
+ const meta={prefs:{v89SpeakEnabled:true,v89SpeakNative:'zh',v89SpeakTarget:'en'},events:{E89R1:{activity:act('finished',t-420000,t-360000),sets:[{state:'done',doneAt:t-360000}]},E89R2:{activity:act('paused',t-330000,t-300000),sets:[{state:'assumed',doneAt:null}]},E89R3:{activity:act('paused',t-240000,t-16000,t-16000),sets:[{state:'done',doneAt:t-16000},{state:'assumed',doneAt:null},{state:'assumed',doneAt:null}]},E89R4:{activity:act('paused',t-150000,t-120000),sets:[{state:'assumed',doneAt:null}]},E89R5:{activity:act('finished',t-90000,t-60000),sets:[{state:'done',doneAt:t-60000}]}}};
  localStorage.setItem('axis_v60_state',JSON.stringify(core));localStorage.setItem('axis_v8_meta',JSON.stringify(meta));
 });
 await page.reload({waitUntil:'domcontentloaded'});await ready();
@@ -89,16 +81,18 @@ await page.evaluate(async()=>{
 await page.reload({waitUntil:'domcontentloaded'});await ready();await page.locator('.nav button[data-view="historyView"]').click();await page.locator('[data-session="S89D"]').click();
 await page.waitForFunction(()=>document.querySelector('#detailSheet')?.classList.contains('show')&&document.querySelector('#detail')?.innerText.includes('训练时间'),undefined,{timeout:1800});
 await page.evaluate(()=>{window.__AXIS_89_OLD_TITLE__=document.querySelector('#detailTitle')?.textContent||'';window.__AXIS_89_DETAIL_FRAMES__=[];let n=80;const loop=()=>{const s=document.querySelector('#detailSheet'),t=document.querySelector('#detailTitle')?.textContent||'',b=(document.querySelector('#detail')?.innerText||'').replace(/\s+/g,' ').trim();if(s?.classList.contains('show')&&getComputedStyle(s).visibility!=='hidden')window.__AXIS_89_DETAIL_FRAMES__.push({t,b});if(n-->0)requestAnimationFrame(loop)};requestAnimationFrame(loop)});
-await page.locator('#detail [data-event="E89D"]').click();
+const eventButton=page.locator('#detail [data-event="E89D"]');
+const before=await eventButton.evaluate(x=>({onclick:typeof x.onclick,source:String(x.onclick||''),sheet:document.querySelector('#detailSheet')?.className||'',title:document.querySelector('#detailTitle')?.textContent||'',body:document.querySelector('#detail')?.innerText||'',diag:window.__AXIS_89_DETAIL__||null,seal:window.__AXIS_818_DETAIL_ATOMIC__||null}));
+console.log('[AXIS 8.9 detail before click]',JSON.stringify(before));
+await eventButton.click();
+await page.waitForTimeout(450);
+const after=await page.evaluate(()=>({sheet:document.querySelector('#detailSheet')?.className||'',visibility:getComputedStyle(document.querySelector('#detailSheet')).visibility,title:document.querySelector('#detailTitle')?.textContent||'',body:(document.querySelector('#detail')?.innerText||'').replace(/\s+/g,' ').trim(),diag:window.__AXIS_89_DETAIL__||null,seal:window.__AXIS_818_DETAIL_ATOMIC__||null,errors:window.__AXIS_ERRORS__||null}));
+console.log('[AXIS 8.9 detail after click]',JSON.stringify(after));
 await page.waitForFunction(()=>document.querySelector('#detailTitle')?.textContent==='胸推'&&document.querySelector('#detail')?.innerText.includes('主要锻炼'),undefined,{timeout:3000});
 await page.waitForTimeout(300);
 const observed=await page.evaluate(()=>({frames:window.__AXIS_89_DETAIL_FRAMES__||[],oldTitle:window.__AXIS_89_OLD_TITLE__||''})),frames=observed.frames;
 assert.ok(frames.length,'detail paint observer captured nothing');
-for(const x of frames){
- const old=x.t===observed.oldTitle&&x.b.includes('训练时间');
- const fresh=x.t==='胸推'&&x.b.includes('主要锻炼')&&x.b.includes('记录时间');
- assert.ok(old||fresh,`half-painted detail frame exposed: ${JSON.stringify(x)}`);
-}
+for(const x of frames){const old=x.t===observed.oldTitle&&x.b.includes('训练时间');const fresh=x.t==='胸推'&&x.b.includes('主要锻炼')&&x.b.includes('记录时间');assert.ok(old||fresh,`half-painted detail frame exposed: ${JSON.stringify(x)}`)}
 assert.equal(await page.evaluate(()=>window.__AXIS_89_DETAIL__?.owner),'atomic-handoff');
 
 assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
