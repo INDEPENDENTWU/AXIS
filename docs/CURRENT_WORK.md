@@ -18,6 +18,12 @@ Current phase: **Phase 2 — CI convergence + executable reachability**.
 
 GitHub owns current project/release context, owners, retirements and CI evidence. Future presentation foundation remains exactly `zh-Hans` **简体中文**, `zh-Hant` **繁體中文**, `en` **English**, themes `system / light / dark`.
 
+### Preserved · native / cross-platform foundation
+
+The native handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`. Shared portable contracts remain `axis.domain.v1` for domain semantics and `axis.data.v1` for durable exchange. Web/iOS capability differences stay isolated behind platform contracts rather than leaking into product truth.
+
+**Chat history is not authoritative project memory.** Durable handoff, ADRs, shared contracts, fixtures and GitHub state are authoritative for future agents and native work.
+
 ### Completed · stale PR head convergence
 
 `AXIS PR Run Convergence` is verified. Cross-head run `32626975731` cancelled obsolete older-SHA work without touching the newest PR head or `push/main` Production runs.
@@ -75,6 +81,7 @@ On the retirement head, prove all of the following with the nine old compatibili
 1. `AXIS Repository Contract` + 20-workflow resurrection guard — success;
 2. `AXIS Deep Compatibility Gate` static + Chromium + WebKit — success;
 3. current automatic workflow family count — 9;
-4. no retired workflow name returns.
+4. no retired workflow name returns;
+5. native/cross-platform foundation seal — success.
 
 After that proof, update the final handoff/PR evidence and assess path scoping / remaining build-source convergence before declaring PR #79 merge-ready.
