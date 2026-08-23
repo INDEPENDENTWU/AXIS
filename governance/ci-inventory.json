@@ -8,12 +8,15 @@
   "branchProtectionAudit": {"branch":"main","protected":false,"requiredStatusChecks":0,"observedAtProductionSha":"254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"},
   "currentReleaseConvergence": {
     "status":"verified-and-retired","replacementWorkflow":".github/workflows/axis-current-release-gate.yml","semanticContract":"scripts/axis-current-release-contract.mjs",
-    "replacementRunId":32630099680,"postRetirementRunId":32630367047,"chromium":"success","webkit":"success",
+    "replacementRunId":32630099680,"replacementCandidateSha":"53ba6909b1aed95ae634e1b3bd6429ffe80c2a59","chromium":"success","webkit":"success",
+    "postRetirementRunId":32630367047,"postRetirementCandidateSha":"709d801e268e6d06248c21f517aa1a17e565764b","postRetirementChromium":"success","postRetirementWebkit":"success",
     "retiredAutomaticWorkflows":[".github/workflows/axis-814-evolution-object-gate.yml",".github/workflows/axis-815-media-evidence-gate.yml",".github/workflows/axis-8151-regression-seal-gate.yml",".github/workflows/axis-816-capture-evidence-gate.yml",".github/workflows/axis-817-interaction-gate.yml",".github/workflows/axis-8171-source-media-gate.yml",".github/workflows/axis-818-object-focus-gate.yml"]
   },
   "runtimeFoundationConvergence": {
     "status":"verified-and-retired","replacementWorkflow":".github/workflows/axis-runtime-foundation-gate.yml","semanticContract":"scripts/axis-runtime-foundation-contract.mjs",
-    "replacementRunId":32630563608,"postRetirementRunId":32630723007,"repositoryGuardRunId":32630723051,"pureRuntimeParity":"success","chromium":"success","webkit":"success",
+    "replacementRunId":32630563608,"replacementCandidateSha":"4e1d19581a0a4fd91d25823303aa8a6dc25657fa","pureRuntimeParity":"success","chromium":"success","webkit":"success",
+    "postRetirementRunId":32630723007,"postRetirementCandidateSha":"b4cd93e091ac7368dc2b6e5b57aa96236bbaa70d","postRetirementPureRuntimeParity":"success","postRetirementChromium":"success","postRetirementWebkit":"success",
+    "repositoryGuardRunId":32630723051,
     "retiredAutomaticWorkflows":[".github/workflows/axis-813-runtime-core-gate.yml",".github/workflows/axis-813-shadow-runtime-gate.yml",".github/workflows/axis-813-live-route-gate.yml",".github/workflows/axis-813-settings-convergence-gate.yml"]
   },
   "deepCompatibilityConvergence": {
@@ -40,5 +43,5 @@
     "notes":["cumulative-rest smoke synchronization now waits for persisted paused/active transitions while preserving the >400ms acceptance threshold","8.12 Browser Gate now recognizes the inherited simplified Learning surface through __AXIS_8123_LEARNING__ semantics rather than public release string"]
   },
   "workflowTopologyRule":"Nine baseline responsibility families run broadly; path-scoped specialist workflows may add focused evidence only when relevant files change and are not counted as baseline fanout.",
-  "nextStage":"Merge the handoff-sealed PR head after its docs/governance-only baseline gates pass, then verify exact merged-main Vercel and EdgeOne Production parity. Source/build transform retirement remains the next engineering phase."
+  "nextStage":"Merge the handoff-sealed PR head after its baseline and triggered specialist gates pass, then verify exact merged-main Vercel and EdgeOne Production parity. Source/build transform retirement remains the next engineering phase."
 }
