@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "capturedAt": "2026-08-24",
   "source": {"pullRequest":79,"productionBaselineSha":"254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"},
   "observedPullRequestWorkflowCountBeforeConvergence": 25,
@@ -24,7 +24,7 @@
     "retiredAutomaticWorkflows":[".github/workflows/axis-813-runtime-core-gate.yml",".github/workflows/axis-813-shadow-runtime-gate.yml",".github/workflows/axis-813-live-route-gate.yml",".github/workflows/axis-813-settings-convergence-gate.yml"]
   },
   "deepCompatibilityConvergence": {
-    "status":"verified-retired-awaiting-post-retirement-proof",
+    "status":"verified-and-retired-final-proof-in-progress",
     "replacementWorkflow":".github/workflows/axis-deep-compatibility-gate.yml",
     "semanticContract":"scripts/axis-deep-compatibility-contract.mjs",
     "firstCandidateRunId":32630933984,
@@ -34,7 +34,11 @@
     "retiredAutomaticWorkflows":[".github/workflows/axis-812-field-hardening-gate.yml",".github/workflows/axis-8121-hotfix-gate.yml",".github/workflows/axis-8122-settings-gate.yml",".github/workflows/axis-8123-field-polish-gate.yml",".github/workflows/axis-8123-learning-simplify-gate.yml",".github/workflows/axis-89-gate.yml",".github/workflows/axis-88-reminder-layout-gate.yml",".github/workflows/axis-home-transition-gate.yml",".github/workflows/axis-8124-flow-gate.yml"],
     "retirementAuthorized":true
   },
-  "automaticWorkflowCountAfterDeepCompatibilityRetirement": 9,
-  "preservedCurrentAndProviderGates":["AXIS Repository Contract","AXIS Work Continuity Contract","AXIS Runtime Gate","AXIS Current Release Gate","AXIS Runtime Foundation Gate","AXIS Deep Compatibility Gate","AXIS Cross-Platform Foundation Gate","AXIS PR Run Convergence","AXIS EdgeOne Production Mirror"],
-  "nextAudit":["prove Deep Compatibility on the exact retirement head with all nine old workflow files absent","prove repository resurrection guard on the same retirement head","then update final handoff/PR proof and assess path scoping without weakening runtime/provider release proof"]
+  "baselineAutomaticWorkflowFamilyCount": 9,
+  "baselineAutomaticWorkflowFamilies":["AXIS Repository Contract","AXIS Work Continuity Contract","AXIS Runtime Gate","AXIS Current Release Gate","AXIS Runtime Foundation Gate","AXIS Deep Compatibility Gate","AXIS Cross-Platform Foundation Gate","AXIS PR Run Convergence","AXIS EdgeOne Production Mirror"],
+  "pathScopedSpecialistWorkflows":[
+    {"name":"AXIS 8.12 Browser Gate","path":".github/workflows/axis-812-browser-gate.yml","scope":"8.12/Language Studio source, compiler, smoke or build-release changes","value":"dual-engine 25,716-unit Language Studio + current Settings + 4/8/12 dialogue + mobile overflow/page-error browser contract","preserve":true}
+  ],
+  "workflowTopologyRule":"Nine baseline responsibility families run broadly; path-scoped specialist workflows may add focused evidence only when relevant files change and are not counted as baseline fanout.",
+  "nextAudit":["prove the current final candidate across all nine baseline families","prove AXIS 8.12 Browser Gate when its path scope is triggered","update PR evidence without weakening any current or path-scoped specialist contract","then merge and verify exact main/Production provider parity"]
 }

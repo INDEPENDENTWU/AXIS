@@ -68,7 +68,17 @@ Exact replacement candidate `a879d30c2cf6e0b3eb2e0fed91a48f3b62262da0`, run `326
 - iPhone-like WebKit compatibility — **success**;
 - every grouped inherited smoke — **success**.
 
-This authorizes atomic retirement of the nine old compatibility workflows. After that retirement, the automatic workflow architecture should contain **9 responsibility-based families instead of the original 25**.
+This authorized atomic retirement of the nine old compatibility workflows. Together with Current Release and Runtime Foundation, **20 historical automatic workflow files are physically retired and guarded against resurrection**.
+
+### Current CI topology · responsibility first
+
+The broad PR/main fanout is now **9 baseline responsibility families instead of the original 25**. This is deliberately a baseline count, not a claim that every useful specialist workflow should disappear.
+
+`AXIS 8.12 Browser Gate` remains as a **path-scoped specialist**. It runs only for 8.12/Language Studio/build-release related changes and provides unique dual-engine browser evidence for the 25,716-unit corpus, 4/8/12 dialogue, current simplified Learning Settings, retired method/shadow/A-B owners, preference persistence, overflow and page errors.
+
+During final convergence this specialist exposed one stale test branch: it recognized the simplified four-group surface only when the public release string was exactly `8.12.3`, although 8.18 intentionally inherits that semantic contract. The browser smoke is now keyed to `__AXIS_8123_LEARNING__` (`settingsMethod:false`, `shadow:false`, `ab:false`) instead of the public version string. The actual four-group counts, labels and retirement assertions remain strict.
+
+Deep Compatibility also exposed an occasional WebKit synchronization race in its second cumulative-rest observation. Comparison proved no runtime difference from a prior successful exact candidate; the test now waits for persisted `paused` / `active` state transitions while retaining the same `>400ms` accumulated-rest requirement. No runtime behavior or acceptance threshold changed.
 
 ## Validation for this work
 
@@ -76,12 +86,13 @@ Preserve exact 8.18 behavior, one canonical runtime, historical storage/data rea
 
 ## Next planned stage
 
-Exact next action on the retirement head: prove all of the following with the nine old compatibility workflow files physically absent:
+Exact next action on the final candidate:
 
 1. `AXIS Repository Contract` + 20-workflow resurrection guard — success;
 2. `AXIS Deep Compatibility Gate` static + Chromium + WebKit — success;
-3. current automatic workflow family count — 9;
-4. no retired workflow name returns;
-5. native/cross-platform foundation seal — success.
+3. all **9 baseline responsibility families** — success;
+4. `AXIS 8.12 Browser Gate` — success when its path scope is triggered;
+5. no retired workflow name returns;
+6. native/cross-platform foundation seal — success.
 
-After that proof, update the final handoff/PR evidence and assess path scoping / remaining build-source convergence before declaring PR #79 merge-ready.
+After that proof, update PR #79 evidence without changing the tested SHA, merge with expected-head protection, then verify the merged main SHA through Vercel/EdgeOne exact artifact parity and real Chromium + iPhone WebKit Production flows.

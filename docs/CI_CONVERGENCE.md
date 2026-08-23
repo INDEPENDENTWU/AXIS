@@ -65,23 +65,11 @@ Exact candidate `a879d30c2cf6e0b3eb2e0fed91a48f3b62262da0`, run `32631072695`:
 - iPhone-like WebKit compatibility — **success**;
 - every grouped inherited browser smoke — **success**.
 
-That exact-candidate proof authorizes atomic retirement of these nine old workflow files:
+That exact-candidate proof authorized atomic retirement of nine old workflow files. Together with the earlier Current Release and Runtime Foundation retirements, `axis-ci-convergence-contract.mjs` now forbids all **20** retired workflow files from returning.
 
-- `axis-812-field-hardening-gate.yml`;
-- `axis-8121-hotfix-gate.yml`;
-- `axis-8122-settings-gate.yml`;
-- `axis-8123-field-polish-gate.yml`;
-- `axis-8123-learning-simplify-gate.yml`;
-- `axis-89-gate.yml`;
-- `axis-88-reminder-layout-gate.yml`;
-- `axis-home-transition-gate.yml`;
-- `axis-8124-flow-gate.yml`.
+## Current workflow topology
 
-`axis-ci-convergence-contract.mjs` now requires the Deep Compatibility replacement and forbids all **20** retired workflow files from returning.
-
-## Current automatic workflow architecture after this retirement
-
-The intended automatic PR/main families are now **9**, organized by responsibility rather than historical version:
+The broad PR/main fanout is now **9 baseline responsibility families**, not 25 historical version families:
 
 1. AXIS Repository Contract;
 2. AXIS Work Continuity Contract;
@@ -93,6 +81,23 @@ The intended automatic PR/main families are now **9**, organized by responsibili
 8. AXIS PR Run Convergence;
 9. AXIS EdgeOne Production Mirror.
 
+This is a **baseline fanout count**, not a claim that the repository contains only nine useful workflows. Focused path-scoped specialists are preserved when they provide unique evidence.
+
+### Preserved path-scoped specialist · AXIS 8.12 Browser Gate
+
+`.github/workflows/axis-812-browser-gate.yml` runs only when 8.12/Language Studio source, compiler, browser smoke, or `build-release.mjs` changes. It remains intentionally active because it uniquely verifies, in Chromium + iPhone-like WebKit:
+
+- the 25,716-unit Language Studio corpus and per-language totals;
+- 4/8/12-turn dialogue diagnostics;
+- teaching-loop metadata and local/no-autoplay/no-training ownership;
+- inherited 8.11 diagnostics;
+- the current simplified four-decision Settings surface when the semantic `__AXIS_8123_LEARNING__` contract is installed;
+- retirement of the method/shadow/A-B current owners;
+- preference persistence;
+- mobile overflow and uncaught page errors.
+
+During convergence this specialist exposed a stale public-version branch: current 8.18 correctly renders the 8.12.3+ four-group simplified surface, while the old browser smoke recognized that semantic surface only when `window.__AXIS_RELEASE__ === '8.12.3'`. The test is now keyed to the stable `__AXIS_8123_LEARNING__` semantic marker instead of a public-version string; group counts, labels, retirement assertions and UX checks remain unchanged.
+
 EdgeOne was separately audited: pull requests run only the prebuilt/package contract; `deploy-production` remains strictly `push` to `main`. No PR can deploy EdgeOne Production through this workflow.
 
 ## Current target architecture
@@ -101,6 +106,7 @@ EdgeOne was separately audited: pull requests run only the prebuilt/package cont
 2. **Current Release Gate** — current user-visible product semantics.
 3. **Runtime Foundation Gate** — pure/shadow runtime + exact base parity + Live Route/Settings.
 4. **Deep Compatibility Gate** — old data and genuinely unique inherited behavior.
-5. **Exact-SHA Production Seal** — provider artifact parity + real Production browser verification.
+5. **Path-scoped specialists** — narrow domain/browser evidence only when affected files change.
+6. **Exact-SHA Production Seal** — provider artifact parity + real Production browser verification.
 
 The objective remains: **less duplicate work, never less verification**.

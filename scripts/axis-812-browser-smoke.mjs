@@ -17,8 +17,9 @@ try{
  await page.click('#settingsBtn');await page.waitForSelector('#settingsSheet.show');assert(await page.locator('.sheetWrap.show').count()===1,'Settings opened an unexpected nested sheet');await page.click('#v810ConfigEntry');await page.waitForSelector('#v813LearningGate.open');
  assert(await page.locator('#v810ConfigPanel').isVisible(),'inline Learning settings are not visible');assert(await page.locator('.sheetWrap.show').count()===1,'Learning Schedule opened a second sheet');
  const groups=await page.locator('#v811CoreLearning .v811CoreGroup').count(),labels=await page.locator('#v811CoreLearning .v811CoreHead span').allTextContents();
- if(d.release==='8.12.3'){
-  assert(groups===4,'expected four current core learning groups, got '+groups);assert(labels.join('|')==='目标|强度|难度|对话','8.12.3 core labels '+labels.join('|'));
+ const simplifiedCurrent=d.r8123?.version==='8.12.3'&&d.r8123?.settingsMethod===false&&d.r8123?.shadow===false&&d.r8123?.ab===false;
+ if(simplifiedCurrent){
+  assert(groups===4,'expected four current core learning groups, got '+groups);assert(labels.join('|')==='目标|强度|难度|对话','8.12.3+ simplified core labels '+labels.join('|'));
   assert(await page.locator('[data-v812-core="method"]').count()===0,'retired method options returned');assert(d.r8123?.shadow===false&&d.r8123?.ab===false,'retired current learning modes returned');
  }else{
   assert(groups===5,'expected five historical core learning groups, got '+groups);assert(labels.join('|')==='目标|学法|强度|难度|对话','historical core labels '+labels.join('|'));
