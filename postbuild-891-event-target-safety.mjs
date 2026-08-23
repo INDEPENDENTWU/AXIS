@@ -28,7 +28,7 @@ function invalidCollectionSelectors(text){
  for(let i=0;i<text.length-1;i++){
   const ch=text[i],next=text[i+1]||'';
   if(line){if(ch==='\n')line=false;continue}
-  if(block){if(ch==='*'&&next==='/'){block=false;i++;continue}
+  if(block){if(ch==='*'&&next==='/'){block=false;i++}continue}
   if(quote){if(esc){esc=false;continue}if(ch==='\\'){esc=true;continue}if(ch===quote)quote='';continue}
   if(ch==='/'&&next==='/'){line=true;i++;continue}
   if(ch==='/'&&next==='*'){block=true;i++;continue}
