@@ -55,7 +55,8 @@ assert.equal(opened.captureIntent,'record','main capture entered the wrong captu
 assert.equal(opened.pref,'5','Scan sampling preference was not preserved through delegation');
 assert.equal(opened.defaultMode,'video','persisted default Capture preference changed during delegation');
 assert.equal(opened.resolvedMode,'video','visible Capture entry ignored the selected default mode');
-assert.ok(await page.locator('#captureModes [data-mode="video"]').evaluate(x=>x.classList.contains('active')),'Capture UI did not open in Video mode');
+assert.equal(opened.captureText,'录制视频','Capture UI did not present the selected Video mode');
+assert.deepEqual(opened.activeModes,[],'retired legacy Capture mode chips became active again');
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
 console.log('[AXIS capture entry diagnostic] PASS · physical Scan 3/5 stays independent · physical default Video -> visible Capture -> canonical Video · retired pseudo-setting stays hidden');
 await context.close();await browser.close();
