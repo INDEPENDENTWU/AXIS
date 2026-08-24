@@ -12,9 +12,10 @@ let src=fs.readFileSync(FILE,'utf8');
 for(const token of [
   'axis818Eq(state.selectedEq)',
   'axis818RenderKey',
-  'axis818RenderSuppressed',
+  'axis819RecorderSuppressed',
   "$('#reviewStage')?.classList.contains('hidden')"
 ])if(!src.includes(token))fail(`final recorder invariant missing ${token}`);
+if((src.match(/let axis819RecorderSuppressed=true;/g)||[]).length!==1)fail('app-owned recorder lifecycle state must exist exactly once');
 
 const resetToken='function resetScan(',nextToken='function setVal(';
 const resetStart=src.indexOf(resetToken),resetAgain=src.indexOf(resetToken,resetStart+1);
@@ -23,8 +24,9 @@ const nextStart=src.indexOf(nextToken,resetStart+resetToken.length);
 if(nextStart<0)fail('canonical setVal boundary missing after resetScan');
 const range=src.slice(resetStart,nextStart),close=range.lastIndexOf('}');
 if(close<0)fail('canonical resetScan closing brace missing');
+if(!range.includes('axis819RecorderSuppressed=true'))fail('source-owned reset lifecycle state missing from canonical runtime');
 if(range.includes('__AXIS_819_FINAL_RECORDER_RESET__'))fail('final recorder reset duplicated');
-const patch=";const axis819FinalRecorder=$('#axis818MetricRecorder');if(axis819FinalRecorder){axis819FinalRecorder.classList.remove('show');axis819FinalRecorder.innerHTML='';axis819FinalRecorder.dataset.axis818RenderKey='';axis819FinalRecorder.dataset.axis818RenderSuppressed='1'}try{window.__AXIS_819_FINAL_RECORDER_RESET__={version:'8.19',owner:'app.js',presentationOnly:true}}catch{}";
+const patch=";axis819RecorderSuppressed=true;const axis819FinalRecorder=$('#axis818MetricRecorder');if(axis819FinalRecorder){axis819FinalRecorder.classList.remove('show');axis819FinalRecorder.innerHTML='';axis819FinalRecorder.dataset.axis818RenderKey='';axis819FinalRecorder.dataset.axis818RenderSuppressed='1'}try{window.__AXIS_819_FINAL_RECORDER_RESET__={version:'8.19',owner:'app.js',presentationOnly:true,lifecycleState:true}}catch{}";
 const sealedRange=range.slice(0,close)+patch+range.slice(close);
 src=src.slice(0,resetStart)+sealedRange+src.slice(nextStart);
 if(!src.includes('__AXIS_819_FINAL_RECORDER_RESET__'))fail('final reset marker missing after patch');
@@ -36,7 +38,7 @@ if(fs.existsSync(MANIFEST)){
  info.gates=info.gates||{};
  info.gates.universalPracticeObjectFinalReset819=true;
  info.axis819=info.axis819||{};
- info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,presentationOwner:'app.js'});
+ info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,lifecycleStateOwnedByApp:true,presentationOwner:'app.js'});
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
-console.log('[AXIS 8.19 UPO final-runtime seal] PASS · canonical recorder invariants present · reset presentation sealed after compiler/postbuild');
+console.log('[AXIS 8.19 UPO final-runtime seal] PASS · canonical recorder lifecycle state + reset presentation sealed after compiler/postbuild');
