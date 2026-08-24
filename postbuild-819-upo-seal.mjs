@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+await import('./postbuild-819-active-truth-schema-seal.mjs');
 
 const FILE='axis-core.js',MANIFEST='axis-build.json';
 const fail=m=>{throw new Error(`[AXIS 8.19 UPO final-runtime seal] ${m}`)};
@@ -15,16 +16,22 @@ for(const token of [
   "[AXIS 8.19 capture cleanup · reset]",
   'axis819CommittedSchema',
   'e.metricSchemaSnapshot',
-  "axis819CommittedKeys.has('weight')&&axis819CommittedKeys.has('reps')"
+  "axis819CommittedKeys.has('weight')&&axis819CommittedKeys.has('reps')",
+  'axis819ClassicActivityEncounter',
+  'axis819ActivityTarget=arguments[0]'
 ])if(!src.includes(token))fail(`final recorder invariant missing ${token}`);
 if((src.match(/let axis819RecorderSuppressed=true;/g)||[]).length!==1)fail('app-owned recorder lifecycle state must exist exactly once');
 if((src.match(/function saveScan\(/g)||[]).length!==1)fail('canonical saveScan must exist exactly once');
 if((src.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('authoritative Encounter append must exist exactly once');
 if((src.match(/function axis818RenderRecorder\(/g)||[]).length!==1)fail('schema recorder renderer must exist exactly once');
 if((src.match(/const axis819CommittedSchema=/g)||[]).length!==1)fail('v61 immutable Encounter-schema attach guard must exist exactly once');
+if((src.match(/function axis819ClassicActivityEncounter\(/g)||[]).length!==1)fail('Active Truth Encounter-schema authority must exist exactly once');
 const v61GuardAt=src.indexOf('const axis819CommittedSchema=');
 const v61MetaReadAt=src.indexOf('const m=mread();',v61GuardAt);
 if(v61GuardAt<0||v61MetaReadAt<0||v61GuardAt>v61MetaReadAt)fail('v61 Encounter-schema authority must run before META read/write');
+const activeGuardAt=src.indexOf('const axis819ActivityTarget=arguments[0]');
+const activePauseAt=src.indexOf('pauseOthers',activeGuardAt);
+if(activeGuardAt<0||activePauseAt<0||activeGuardAt>activePauseAt)fail('Active Truth schema authority must run before activity pause/write');
 
 const resetToken='function resetScan(',nextToken='function setVal(';
 const resetStart=src.indexOf(resetToken),resetAgain=src.indexOf(resetToken,resetStart+1);
@@ -57,9 +64,10 @@ if(fs.existsSync(MANIFEST)){
  info.gates.universalPracticeObjectFinalReset819=true;
  info.gates.inheritedEvolutionNullContinuity819=true;
  info.gates.v61EncounterSchemaAuthority819=true;
+ info.gates.activeTruthEncounterSchemaAuthority819=true;
  info.axis819=info.axis819||{};
- info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,lifecycleStateOwnedByApp:true,resetEntryOwned:true,postCommitFinally:true,presentationOwner:'app.js',v61AttachUsesImmutableEncounterSchema:true});
+ info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,lifecycleStateOwnedByApp:true,resetEntryOwned:true,postCommitFinally:true,presentationOwner:'app.js',v61AttachUsesImmutableEncounterSchema:true,activeTruthUsesImmutableEncounterSchema:true});
  info.axis819.inheritedRuntime=Object.assign({},info.axis819.inheritedRuntime,{evolutionNullContinuityRepaired:true,forbidReturn112:true});
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
-console.log('[AXIS 8.19 UPO final-runtime seal] PASS · reset-entry recorder suppression + durable post-commit reset/render · immutable Encounter-schema v61 authority · inherited Evolution null-continuity repaired · single writers preserved');
+console.log('[AXIS 8.19 UPO final-runtime seal] PASS · reset-entry recorder suppression + durable post-commit reset/render · immutable Encounter-schema v61 + Active Truth authority · inherited Evolution null-continuity repaired · single writers preserved');
