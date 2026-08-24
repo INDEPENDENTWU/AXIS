@@ -67,4 +67,33 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  fs.writeFileSync('app.js',app);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq');
+/*
+ * v61 remains the sole high-frequency repeated-set owner, but only for the
+ * semantic shape it actually owns: explicit weight + reps, or legacy Objects
+ * with no explicit metric schema. An explicit non-classic schema must never
+ * initialize v61 draft sets or create an axis_v8_meta fact row.
+ */
+{
+ let v61=fs.readFileSync('v61.js','utf8');
+ const replaceRange=(re,mutate,label)=>{
+  const matches=[...v61.matchAll(new RegExp(re.source,re.flags.includes('g')?re.flags:re.flags+'g'))];
+  if(matches.length!==1)throw new Error(`[AXIS 8.19 v61 authority] ${label} expected once, found ${matches.length}`);
+  const before=matches[0][0],after=mutate(before);
+  if(!after||after===before)throw new Error(`[AXIS 8.19 v61 authority] ${label} mutation did not change source`);
+  v61=v61.slice(0,matches[0].index)+after+v61.slice(matches[0].index+before.length);
+ };
+ replaceRange(
+  /function selected\(\)\{[\s\S]*?\}(?=\nfunction syncDock)/,
+  fn=>{const from="if(ce)return{id:ce.id,name:ce.name,type:ce.type};";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] custom selected branch changed');const to="if(ce){const axis819Explicit=Array.isArray(ce.metricSchema)&&ce.metricSchema.length>0,axis819Keys=new Set((ce.metricSchema||[]).map(m=>m?.key).filter(Boolean)),axis819Classic=axis819Keys.has('weight')&&axis819Keys.has('reps');return{id:ce.id,name:ce.name,type:axis819Explicit?(axis819Classic?'strength':'schema'):ce.type}};";return fn.replace(from,to)},
+  'selected custom schema classification'
+ );
+ replaceRange(
+  /function onSaveClick\([^)]*\)\{[\s\S]*?\}(?=\nfunction attach)/,
+  fn=>{const from="const e=selected();if(!e)return;";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] save entry contract changed');return fn.replace(from,from+"if(e.type==='schema'){pending=null;deferOnce=false;hideSets();return}")},
+  'schema save bypass'
+ );
+ try{new Function(v61)}catch(e){throw new Error(`[AXIS 8.19 v61 authority] v61 syntax ${e.message}`)}
+ fs.writeFileSync('v61.js',v61);
+}
+
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 remains classic weight×reps-only');
