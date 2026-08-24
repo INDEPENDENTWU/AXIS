@@ -11,10 +11,14 @@ on:
       - 'prepare-819-postcommit-lifecycle.mjs'
       - 'prepare-819-release.mjs'
       - 'prepare-820-executable-practice-objects.mjs'
+      - 'prepare-8201-object-reliability.mjs'
+      - 'postbuild-819-upo-seal.mjs'
+      - 'postbuild-8201-active-lifecycle-seal.mjs'
       - 'prepare-820-release.mjs'
       - 'scripts/axis-819-object-recording-contract.mjs'
       - 'scripts/axis-819-object-recording-smoke.mjs'
       - 'scripts/axis-820-executable-object-smoke.mjs'
+      - 'scripts/axis-8201-object-reliability-smoke.mjs'
       - 'build-release.mjs'
       - '.github/workflows/axis-universal-practice-object-gate.yml'
   push:
@@ -27,10 +31,14 @@ on:
       - 'prepare-819-postcommit-lifecycle.mjs'
       - 'prepare-819-release.mjs'
       - 'prepare-820-executable-practice-objects.mjs'
+      - 'prepare-8201-object-reliability.mjs'
+      - 'postbuild-819-upo-seal.mjs'
+      - 'postbuild-8201-active-lifecycle-seal.mjs'
       - 'prepare-820-release.mjs'
       - 'scripts/axis-819-object-recording-contract.mjs'
       - 'scripts/axis-819-object-recording-smoke.mjs'
       - 'scripts/axis-820-executable-object-smoke.mjs'
+      - 'scripts/axis-8201-object-reliability-smoke.mjs'
       - 'build-release.mjs'
       - '.github/workflows/axis-universal-practice-object-gate.yml'
 
@@ -51,7 +59,7 @@ jobs:
 
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 26
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -75,13 +83,16 @@ jobs:
       - name: 8.20 Explicit Object → Quick Record → immutable Encounter
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-820-executable-object-smoke.mjs
+      - name: 8.20.1 Physical custom schema → Active lifecycle reliability
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8201-object-reliability-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-upo-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 34
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -103,6 +114,9 @@ jobs:
       - name: iPhone 8.20 Explicit Object → Quick Record → immutable Encounter
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-820-executable-object-smoke.mjs
+      - name: iPhone 8.20.1 Physical custom schema → Active lifecycle reliability
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8201-object-reliability-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-upo-webkit.log || true
