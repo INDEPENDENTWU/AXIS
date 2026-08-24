@@ -53,10 +53,10 @@ try{
  await page.click('[data-view="insightsView"]');
  await page.waitForSelector('#insightsView.active');
  await page.waitForTimeout(100);
- const trend=await page.evaluate(()=>({state:document.querySelector('#v811StateName')?.textContent,goal:document.querySelector('#v811GoalName')?.textContent,nodes:document.querySelectorAll('#v811Trajectory .node').length,evidence:document.querySelector('#v811Evidence')?.textContent?.trim(),needle:document.querySelector('#v811Needle')?.textContent?.trim(),oldVisible:getComputedStyle(document.querySelector('.v811LegacyInsights')).display,overflow:document.documentElement.scrollWidth-window.innerWidth}));
+ const trend=await page.evaluate(()=>{const legacy=document.querySelector('.v811LegacyInsights');return{state:document.querySelector('#v811StateName')?.textContent,goal:document.querySelector('#v811GoalName')?.textContent,nodes:document.querySelectorAll('#v811Trajectory .node').length,evidence:document.querySelector('#v811Evidence')?.textContent?.trim(),needle:document.querySelector('#v811Needle')?.textContent?.trim(),legacyRetired:!legacy||getComputedStyle(legacy).display==='none',overflow:document.documentElement.scrollWidth-window.innerWidth}});
  assert(trend.state&&trend.state!=='未成形','State Field did not form from records');
  assert(/力量/.test(trend.goal||'')&&trend.nodes>=3&&trend.evidence&&trend.needle,'goal-aware State Field incomplete');
- assert(trend.oldVisible==='none','legacy generic trends leaked into UI');
+ assert(trend.legacyRetired===true,'legacy generic trends leaked into UI');
  assert(trend.overflow<=1,'mobile horizontal overflow');
  assert(errors.length===0,'page errors: '+errors.join(' | '));
  console.log(`[AXIS 8.11 browser] PASS · ${engine} · inline Settings · user-invoked cloud/AI · six-turn multilingual diagnostics · goal-aware State Field`);

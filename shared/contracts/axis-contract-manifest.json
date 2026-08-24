@@ -5,6 +5,8 @@
   "exchange": "axis.exchange.v1",
   "event": "axis.event.v1",
   "media": "axis.media.v1",
+  "metricSchema": "axis.metric-schema.v1",
+  "encounterMetrics": "axis.encounter-metrics.v1",
   "normalizedStateFixture": "axis.normalized-state-fixture.v1",
   "invariants": {
     "localFirstWorkout": true,
@@ -20,17 +22,12 @@
     "healthKitMirrorOnly": true,
     "versionedPortableData": true,
     "idempotentMigrationRequired": true,
-    "exactRevisionRelease": true
+    "exactRevisionRelease": true,
+    "metricSchemaSnapshotImmutable": true,
+    "legacyRecordingOwnerPreserved": true
   },
   "platforms": {
-    "web": {
-      "productionOwner": "INDEPENDENTWU/AXIS",
-      "releaseIndependent": true
-    },
-    "ios": {
-      "targetRepository": "INDEPENDENTWU/AXIS-iOS",
-      "nativeUI": true,
-      "releaseIndependent": true
-    }
+    "web": {"productionOwner": "INDEPENDENTWU/AXIS", "releaseIndependent": true},
+    "ios": {"targetRepository": "INDEPENDENTWU/AXIS-iOS", "nativeUI": true, "releaseIndependent": true}
   }
 }

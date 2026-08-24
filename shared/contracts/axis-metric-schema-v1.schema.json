@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.metric-schema.v1",
+  "title": "AXIS Metric Schema v1",
+  "type": "object",
+  "required": ["schema", "objectId", "metrics"],
+  "properties": {
+    "schema": {"const": "axis.metric-schema.v1"},
+    "objectId": {"type": "string", "minLength": 1},
+    "source": {"type": "string"},
+    "capturedAt": {"type": "number", "minimum": 0},
+    "metrics": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/metric"}}
+  },
+  "$defs": {
+    "metric": {
+      "type": "object",
+      "required": ["id", "type", "label", "unit", "priority", "repeatability", "aggregation", "presentation", "required"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]*$"},
+        "type": {"enum": ["number", "count", "duration", "distance", "pace", "percentage", "rating", "boolean", "choice"]},
+        "label": {"type": "string", "minLength": 1},
+        "unit": {"type": "string"},
+        "priority": {"enum": ["primary", "secondary", "context"]},
+        "repeatability": {"enum": ["single", "per-entry"]},
+        "aggregation": {"enum": ["last", "max", "min", "sum", "average", "count", "none"]},
+        "presentation": {"enum": ["auto", "stepper", "timer", "distance", "pace", "percentage", "rating", "toggle", "choice"]},
+        "required": {"type": "boolean"},
+        "min": {"type": "number"},
+        "max": {"type": "number"},
+        "step": {"type": "number", "exclusiveMinimum": 0},
+        "options": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["value", "label"], "properties": {"value": {"type": "string", "minLength": 1}, "label": {"type": "string", "minLength": 1}}, "additionalProperties": false}},
+        "extensions": {"type": "object"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

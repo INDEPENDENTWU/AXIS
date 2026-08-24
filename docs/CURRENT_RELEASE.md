@@ -4,9 +4,9 @@
 
 **AXIS 8.18 is the current Production Web release.**
 
-Exact merged Production baseline:
+Exact sealed merged-main Production SHA:
 
-`254a2fa80fdfd4040a6f695d28ad3bd670c0a7db`
+`65e3525e78f021afda7db19d27722626af9514d8`
 
 AXIS remains a **Personal Evolution Engine**:
 
@@ -16,9 +16,7 @@ AXIS remains a **Personal Evolution Engine**:
 
 ### Object Truth
 
-Custom equipment / sport / movement objects define the metrics they actually track through `metricSchema`. New Encounters snapshot that schema and their factual metrics; historical records remain readable without destructive rewrite.
-
-Time-only objects do not silently regain weight, repetitions, sets or intensity. The existing visible custom editor remains the current owner.
+Custom equipment / sport / movement objects can define the metrics they track. 8.18 established Object Truth and schema-aware presentation foundations while preserving historical records without destructive rewrite.
 
 ### Evolution Library
 
@@ -26,60 +24,55 @@ Repeated reality can settle into stable, browsable Evolution Objects derived fro
 
 ### Route Truth
 
-Foreground/PWA recovery preserves the active route and converges to one physically active main view. Inactive routes are inert/hidden from accessibility interaction so Today-only controls cannot leak over History, Trends or other routes.
+Foreground/PWA recovery preserves the active route and converges to one physically active main view. Inactive routes remain inert so Today-only controls cannot leak over History, Trends or other routes.
 
 ### Focus Truth
 
-The 8.18 Focus layer is presentation-only. It delegates factual completion to the established completion owner and respects each object's metric schema; a type that does not track sets does not gain a synthetic “complete set” action.
+The Focus layer is presentation-only. It delegates factual completion to the established completion owner and respects each object's relevant recording semantics.
 
 ### Capture Truth
 
 Canonical Capture remains one app-owned system:
 
-- modes: Photo / Scan / Video;
-- Scan sampling: exactly 3 seconds / 5 seconds;
+- Photo / Scan / Video;
+- Scan sampling exactly 3 seconds / 5 seconds;
 - persisted default mode and facing preferences;
 - front/rear switching before and during recording;
 - one logical MediaRecorder over a stable 30fps canvas compositor;
-- immediate Record waits for in-flight camera readiness;
-- the historical visible video-retention pseudo-setting remains retired.
-
-3/5 seconds are Scan sampling durations, not historical capture/video mode choices.
+- immediate Record waits for camera readiness;
+- historical visible video-retention pseudo-setting remains retired.
 
 ### Media Truth
 
-`app.js` and `axis_v42_media` remain the canonical media persistence owners.
+`app.js` and `axis_v42_media` remain canonical media persistence owners.
 
-- clean photo source: `S-*` sidecars;
-- clean video source: `SV-*` sidecar;
+- clean photo source: `S-*`;
+- clean video source: `SV-*`;
 - canonical photo derivative: `F-*`;
 - canonical video derivative: `V-*`.
 
-Watermark/Evidence processing is source-first with canonical fallback for historical records. 8.18 preserves the sealed 30fps compositor; historical 15/20fps or forced-720p downgrade paths may not return.
+Watermark/Evidence processing is source-first with canonical fallback for historical records. Historical 15/20fps or forced-720p downgrade paths may not return.
 
-Encounter export/delete remains additive to the existing data model and does not create another media store.
+### Detail / interaction truth
 
-### Detail and interaction truth
-
-History/session/Encounter detail opens fact-first rather than blocking visible factual content on media reads. Visible item-to-item swaps stay in the mounted detail shell and hydrate media asynchronously with transaction ownership, preventing stale media and prepaint/flicker regressions.
+History/session/Encounter detail opens fact-first instead of blocking visible factual content on media reads. In-place item swaps retain a mounted shell and hydrate media asynchronously with transaction ownership.
 
 ## Inherited guarantees
 
-8.18 preserves the current contracts established through earlier releases, including:
+8.18 preserves:
 
 - local-first training and existing user history;
-- one Quick Evidence supplemental entry;
+- one authoritative writer/store per semantic fact;
 - source-first clean media;
-- Comparative Evidence named `起点 / 对照` slots and stable warm-before-commit swaps;
-- month-first archive organization;
+- Comparative Evidence;
 - Active Truth and target-time-not-completion semantics;
-- Evolution Objects / Encounter evidence foundations;
+- Evolution Object / Encounter evidence foundations;
 - one canonical runtime and zero dynamic historical JavaScript chunks;
 - Chromium and iPhone-like WebKit release-blocking coverage for critical paths.
 
-Historical release names describe where a guarantee originated. They are not separate runtime layers.
+Historical release names describe provenance, not separate runtime layers.
 
-## Canonical production topology
+## Canonical Production topology
 
 - architecture: `canonical-single-runtime`;
 - release build: `node build-release.mjs`;
@@ -91,29 +84,41 @@ Historical release names describe where a guarantee originated. They are not sep
 
 ### Vercel
 
-Verified during the current source-convergence handoff:
+Current exact Production deployment:
 
-- project: `axis`;
-- deployment: `dpl_1QX8YUPjzRF8tmSZ55Gkp1dsnZuU`;
+- project ID: `prj_8JJhe0nj2CryZb4xHoHV1WBffn8f`;
+- deployment: `dpl_7mYETXKCQzXKh88ybocT65oLiJ1T`;
 - target: `production`;
 - state: **READY**;
 - Git branch: `main`;
-- exact source SHA: `254a2fa80fdfd4040a6f695d28ad3bd670c0a7db`.
+- exact source SHA: `65e3525e78f021afda7db19d27722626af9514d8`.
 
 Public endpoint: `https://axis-five-puce.vercel.app`
 
 ### EdgeOne
 
-EdgeOne remains the required exact-prebuilt-artifact Production mirror and public endpoint:
+Public endpoint:
 
 `https://axisfitness-mirror-9x91gveo.edgeone.cool`
 
-The exact historical 8.18 workflow/run identifier has not yet been backfilled into the new machine governance registry. Do not invent one. Source convergence must recover that record from GitHub Actions history before historical deployment records are reorganized.
+Exact Production Mirror workflow run: `32675374766` — **success**.
 
-## Current engineering milestone
+That run proved:
 
-Product version remains **8.18** while the repository performs **AXIS Source Convergence — 8.19 Foundation**.
+- exact main build;
+- local/Vercel canonical artifact parity;
+- exact prebuilt EdgeOne Production deployment;
+- authenticated live parity verification;
+- Chromium real Production flow;
+- iPhone-like WebKit real Production flow;
+- final Production success status + verification artifact.
 
-This milestone has zero intended product behavior change. Its purpose is to centralize engineering truth, isolate retired authority, converge CI/build history safely, and establish the future three-locale + semantic-theme foundation before 8.19 product capabilities are added.
+## Current product-development milestone
 
-Start with [`HANDOFF.md`](HANDOFF.md) and [`../governance/project-state.json`](../governance/project-state.json).
+Public Production remains **AXIS 8.18** while draft PR #80 develops **AXIS 8.19 — Universal Practice Objects** on branch `product/819-universal-practice-objects`.
+
+8.19 is a real product-capability release line. Its central goal is to make Object recording attributes executable end-to-end:
+
+`Object → Metric Schema → Recording Surface → authoritative metric facts → Encounter schema snapshot → History / Evolution`
+
+Start with [`HANDOFF.md`](HANDOFF.md), [`CURRENT_WORK.md`](CURRENT_WORK.md), and [`../governance/project-state.json`](../governance/project-state.json).
