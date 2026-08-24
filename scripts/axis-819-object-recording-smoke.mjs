@@ -85,6 +85,8 @@ try{
  assert.equal(surface.title,'靠墙站立');
 
  await durationInput.fill('7');
+ assert.equal(await durationInput.inputValue(),'7','duration input did not retain the user value before commit');
+ await page.evaluate(()=>{window.__AXIS_819_SAVE_PROBE__=null;document.querySelector('#saveScan')?.addEventListener('click',()=>{const input=document.querySelector('[data-axis818-metric="duration"]'),rec=document.querySelector('#axis818MetricRecorder');window.__AXIS_819_SAVE_PROBE__={exists:!!input,value:input?.value??null,recorderClass:rec?.className||null,selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null}}, {capture:true,once:true})});
  await tap(page.locator('#saveScan'));
  await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.active?.events?.length===1}catch{return false}},undefined,{timeout:2500});
  const saved=await page.evaluate(()=>{
@@ -93,12 +95,13 @@ try{
   const event=state.active.events[0];
   return{
    event,
+   saveProbe:window.__AXIS_819_SAVE_PROBE__,
    metaHasEvent:!!meta.events?.[event.id],
    customSchema:state.profile.customEq.find(x=>x.id==='wall-hold')?.metricSchema,
    recorderVisible:document.querySelector('#axis818MetricRecorder')?.classList.contains('show')||false
   };
  });
- assert.equal(saved.event.metrics.duration,7,'visible schema input was not saved as the Encounter fact');
+ assert.equal(saved.event.metrics.duration,7,`visible schema input was not saved as the Encounter fact · probe ${JSON.stringify(saved.saveProbe)}`);
  assert.deepEqual(saved.event.metricSchemaSnapshot.map(x=>x.key),['duration'],'Encounter did not freeze the Object schema used for recording');
  for(const irrelevant of ['weight','reps','sets','intensity'])assert.equal(Object.hasOwn(saved.event,irrelevant),false,`irrelevant legacy fact ${irrelevant} leaked into time-only Encounter`);
  assert.equal(saved.event.duration,7,'compatible duration projection missing');
