@@ -39,8 +39,8 @@ range=range.replace(entryEnd,entryEnd+marker);
 src=src.slice(0,resetStart)+range+src.slice(nextStart);
 if(!src.includes('__AXIS_819_FINAL_RECORDER_RESET__'))fail('final reset marker missing after patch');
 
-const bad=src.indexOf('return112');
-if(bad>=0)console.log('[AXIS 8.19 runtime token audit] return112 context · '+src.slice(Math.max(0,bad-420),Math.min(src.length,bad+620)).replace(/\s+/g,' '));
+if(src.includes('return112'))fail('inherited 8.13.1 return112 identifier survived final bundling');
+if(!src.includes('function yFor(s){const c=continuity(s);if(c===null)return 112;'))fail('8.13.1 null-continuity numeric fallback missing from final runtime');
 try{new Function(src)}catch(e){fail(`canonical runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
 
@@ -48,8 +48,10 @@ if(fs.existsSync(MANIFEST)){
  const info=JSON.parse(fs.readFileSync(MANIFEST,'utf8'));
  info.gates=info.gates||{};
  info.gates.universalPracticeObjectFinalReset819=true;
+ info.gates.inheritedEvolutionNullContinuity819=true;
  info.axis819=info.axis819||{};
  info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,lifecycleStateOwnedByApp:true,resetEntryOwned:true,postCommitFinally:true,presentationOwner:'app.js'});
+ info.axis819.inheritedRuntime=Object.assign({},info.axis819.inheritedRuntime,{evolutionNullContinuityRepaired:true,forbidReturn112:true});
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
-console.log('[AXIS 8.19 UPO final-runtime seal] PASS · reset-entry recorder suppression + durable post-commit reset/render sealed · single writers preserved');
+console.log('[AXIS 8.19 UPO final-runtime seal] PASS · reset-entry recorder suppression + durable post-commit reset/render · inherited Evolution null-continuity repaired · single writers preserved');
