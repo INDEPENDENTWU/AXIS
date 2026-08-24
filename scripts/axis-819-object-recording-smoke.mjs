@@ -72,7 +72,8 @@ try{
  await chooseObject('wall-hold','靠墙站立');
  const recorder=page.locator('#axis818MetricRecorder');
  const durationInput=page.locator('[data-axis818-metric="duration"]');
- assert.equal(await recorder.isVisible(),true,'schema recorder exists but is not visible in canonical Review');
+ const recorderDiag=await page.evaluate(()=>{const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),rec=document.querySelector('#axis818MetricRecorder'),sets=document.querySelector('#v8Sets'),strength=document.querySelector('#strengthFields');return{selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null,equipmentName:document.querySelector('#equipmentName')?.textContent?.trim()||'',explicit:window.__AXIS_OBJECT_TRUTH__?.explicit?.('wall-hold')||false,schema:window.__AXIS_OBJECT_TRUTH__?.schemaForEq?.('wall-hold')?.map(x=>x.key)||[],customSchema:state.profile?.customEq?.find(x=>x.id==='wall-hold')?.metricSchema?.map(x=>x.key)||[],recorderClass:rec?.className||null,recorderHtml:rec?.innerHTML||'',setsClass:sets?.className||null,strengthClass:strength?.className||null}});
+ assert.equal(await recorder.isVisible(),true,`schema recorder exists but is not visible in canonical Review · ${JSON.stringify(recorderDiag)}`);
  assert.equal(await durationInput.isVisible(),true,'duration metric is not a real visible Recording control');
  const surface=await page.evaluate(()=>({
   keys:[...document.querySelectorAll('#axis818MetricRecorder [data-axis818-metric]')].map(x=>x.dataset.axis818Metric),
