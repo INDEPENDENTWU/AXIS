@@ -4,58 +4,60 @@
 
 ## Production baseline at start of this work
 
-- Formal public Production is **AXIS 8.19**.
-- AXIS 8.19 capability PR **#80** merged as `d97b483f5b297e4bc9483a7484da5587cc4f17d8`; formal release-seal PR **#81** merged as `430c919e1609589a26864868692ae20cf6ce9617`.
-- Capture default-entry correctness PR **#82** merged to `main` as **`20284a2022d683f2c441197b8348d1de19d82fe2`**.
-- Vercel Production `dpl_5782KLckoN9ZMG9W81eXSronTzsx` is READY at `https://axis-five-puce.vercel.app` and serves the exact PR #82 merged SHA with `version = 8.19`, `baseVersion = 8.19`, `architecture = canonical-single-runtime` and `upo819 = true`.
-- EdgeOne Production Mirror for the PR #82 hotfix is required to reach exact-SHA parity before that mirror is treated as the updated rollback baseline; the prior 8.19 EdgeOne artifact remains the last fully verified mirror meanwhile.
+- Formal public Production is **AXIS 8.20 — Executable Practice Objects**.
+- PR **#83** merged to `main` as **`4be22ce9eb43a72dd208b9cdb835b43b93a62581`**.
+- Vercel Production `dpl_57AteLo7fx3D6HNMrJrhjS9y8VQ8` is READY at `https://axis-five-puce.vercel.app` and serves exact `sourceCommit = 4be22ce9eb43a72dd208b9cdb835b43b93a62581`, `version = 8.20`, `baseVersion = 8.20`, `architecture = canonical-single-runtime`.
+- EdgeOne Production `https://axisfitness-mirror-9x91gveo.edgeone.cool` serves the same canonical artifact; exact Vercel/EdgeOne parity and Chromium + iPhone WebKit Production flows passed for 8.20.
+- AXIS 8.19 capture default-entry hotfix PR **#82** remains inherited: default Photo / Scan / Video resolution is app-owned, while Scan 3/5 seconds is an independent sampling preference.
 
-Machine-governance compatibility note: `governance/project-state.json` still records the last sealed governed work line as **AXIS 8.19 — Universal Practice Objects** on branch `product/819-universal-practice-objects`. That record is intentionally retained as historical governed baseline while PR #83 is under test; it must advance to 8.20 only when 8.20 is formally sealed rather than pretending an in-flight branch is already Production truth.
+Machine-governance compatibility note: `governance/project-state.json` retains the governed historical line **AXIS 8.19 — Universal Practice Objects** on branch `product/819-universal-practice-objects`. Those exact historical strings remain required by repository continuity checks until governance is advanced through a coordinated release record; this file records the newer runtime truth without rewriting historical provenance.
 
 ## Active change
 
-**AXIS 8.20 — Executable Practice Objects** · branch `product/820-executable-practice-objects`.
+**AXIS 8.20.1 — Executable Object Reliability** · branch `fix/8201-executable-object-reliability`.
 
-The user-visible regression that opens this milestone is concrete: an Object can be created/edited with an explicit recording schema such as **时间 + 强度**, while the real **快速记录** path still classifies the Object by coarse `strength/cardio` type and renders **重量 + 次数 + 组数**. Capture/Review already understands explicit Object Truth from 8.19; Quick Record does not. Editing the Object therefore appears to have no practical effect in the high-frequency path.
+This hotfix is opened by three real Production failures observed on the 8.20 user path, not by a speculative feature request:
 
-8.20 closes that split without adding another data store or another Encounter writer:
+1. A newly created/edited custom Object can persist an explicit schema such as **速度 / 配速**, while the immediately opened Quick Record surface still shows **重量 / 次数 / 组数**. Root cause: the 8.18 editor wrote the richer `metricSchema` to `axis_v60_state` after a delayed timer, but `app.js` retained a stale in-memory custom Object. 8.20 correctly trusted Object Truth; the live Object Truth itself had not yet received the editor change.
+2. A non-classic executable Object such as **靠墙站立** can save an Encounter but fail to enter the polished single-item **进行中** surface. Root cause: the 8.19 Active Truth safety seal intentionally allowed activity metadata only for immutable classic weight+reps Encounter schemas. 8.20 generalized Recording but did not yet supersede that classic-only lifecycle restriction.
+3. Chinese picker surfaces can expose stable internal enum IDs such as `strength` / `cardio`. Persisted enum IDs are valid internal data and must remain stable, but visible Chinese presentation must not leak them.
 
-- persisted explicit `metricSchema` is executable truth, not descriptive metadata;
-- Quick Record, Capture/Review and future recording entries resolve the same Object Truth schema;
-- explicit schema wins over coarse category/type; legacy category defaults are fallback only when no explicit schema exists;
-- measurement facts and execution semantics are separated through an execution-mode resolver (`single`, `sets`, `rounds`, `timed`, `hold`, `complete`) while retaining old records and legacy UI compatibility;
-- a duration/intensity Object derives `timed` even when its historical coarse category is `strength`;
-- classic `v61` weight/reps/sets UI remains only for legacy objects or a genuinely classic explicit weight+reps Object with sets execution;
-- a saved Encounter freezes both `metricSchemaSnapshot` and `executionModeSnapshot`; editing the Object later affects future records only and can never rewrite historical facts;
-- no destructive migration is allowed. Existing explicit schemas, legacy events and historical 8.18/8.19 provenance remain readable.
+8.20.1 closes these gaps without creating a new recorder, activity owner, database or persistence store:
 
-The native/cross-platform handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`, with portable contracts `axis.domain.v1` and `axis.data.v1`. 8.20 may extend portable semantics, but must not create a Web-only persistence truth that prevents later native convergence.
+- the existing v874 custom editor remains the one visible Object editor;
+- editor schema persistence publishes one authoritative `axis:object-schema-changed` event after canonical custom save;
+- `app.js`, still the Object Truth/state owner, consumes that event into live `state.profile.customEq` immediately and persists the same truth, preventing a later stale state save from undoing the schema;
+- the complete 8.18 metric vocabulary remains available: weight, reps, sets, duration, intensity, distance, resistance, pace, hold and custom metrics;
+- `recording.metrics` is updated only as a compatibility projection (`version: 2`); authoritative recording semantics remain `metricSchema`;
+- persistent Active lifecycle is controlled by executable semantics: `sets`, `rounds`, `timed`, `hold` are ongoing; `single`, `complete` are one-shot and must not create false ongoing state;
+- v82 remains the Active Truth creation owner and v87 remains the polished Active presentation/action owner;
+- set-only UI such as **完成一组**, set counts and add-set behavior is shown only for `sets`, never merely because an Object carries the historical coarse type `strength`;
+- the 8.19 immutable Encounter-schema restriction on v61 metadata remains untouched: v61 may write classic metadata only for immutable weight+reps Encounter schemas;
+- `strength` and `cardio` remain internal stable IDs, while visible Chinese picker presentation maps them to **力量** and **有氧** only.
 
-Authoritative persistence remains `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak` and `axis_v42_media`. `app.js` remains the canonical base session/Encounter persistence and camera/media owner. `v61.js` remains the classic high-frequency strength-set presentation/metadata owner only when the immutable Object/Encounter schema grants it that ownership.
+Authoritative persistence remains `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak` and `axis_v42_media`. The native/cross-platform handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`, with portable contracts `axis.domain.v1` and `axis.data.v1`.
 
-**Chat history is not authoritative project memory.** GitHub governance, contracts, tests and deployment truth remain authoritative.
+**Chat history is not authoritative project memory. GitHub governance, contracts, tests and deployment truth remain authoritative.**
 
-## Validation for this work
+## Required validation
 
-8.20 may merge only when the exact head proves the real user path, not only source-string contracts.
+8.20.1 may merge only when the exact head proves the physical user flows on Chromium and iPhone-like WebKit:
 
-Required proof:
+- actual no-match Quick Record search → **+ 新建自定义** → choose only **速度 / 配速** → Save → without reload the selected Object is explicit Object Truth and the recorder shows only the schema-driven `pace` field, with legacy strength/cardio fields suppressed;
+- saving that pace-only Object freezes `metricSchemaSnapshot = [pace]`, `executionModeSnapshot = single`, preserves the pace value and creates no false persistent Active lifecycle;
+- actual custom **靠墙站立** with duration-only schema → Quick Record → **记下** creates `executionModeSnapshot = timed`, writes app-owned activity metadata and displays the v87 **进行中** surface with pause/finish but no set-completion or add-set controls;
+- legacy/classic strength fallback still enters the existing set Active flow;
+- Chinese picker presentation contains no standalone visible `strength` / `cardio` labels while internal persisted IDs remain unchanged;
+- 8.20 immutable Encounter semantics, 8.19 v61 schema authority, Capture defaults, Evolution, Media Evidence, Runtime, Repository, Work Continuity and Cross-Platform gates remain green;
+- no second persistence owner, duplicate Active owner, new database, hidden migration or historical capability relabeling is introduced.
 
-- a custom Object whose coarse type is `strength` but whose explicit schema is `duration + intensity` opens through the real **快速记录** entry with only 时间 + 强度 controls;
-- weight/reps/sets controls are not visible or writable for that non-classic explicit Object;
-- saving produces authoritative `metrics.duration` / `metrics.intensity`, an exact immutable `metricSchemaSnapshot`, and an `executionModeSnapshot` of `timed` without stale weight/reps/sets facts;
-- after editing the Object schema, the next Quick Record uses the new schema immediately while the previous Encounter snapshot and metrics remain unchanged;
-- legacy catalog strength objects retain the existing fast set recorder;
-- the same executable-Object regression passes Chromium and iPhone-like WebKit;
-- inherited AXIS 8.19 Universal Practice Object, Active Truth, Capture, runtime, repository, work-continuity and cross-platform gates remain green;
-- no second persistence owner, duplicate recorder owner, destructive migration or historical marker relabeling is introduced.
+## Release plan
 
-## Next planned stage
-
-1. Finish the 8.20 source bridge and exact Quick Record executable-object regression on `product/820-executable-practice-objects`.
-2. Run both Chromium and iPhone-like WebKit against the same built artifact; repair real ownership/runtime failures rather than weakening assertions.
-3. Seal formal public/base identity as **8.20** only after executable-object behavior is green, preserving all historical 8.18/8.19 capability provenance.
-4. Merge only the exact tested head, confirm Vercel Production serves the merged-main SHA and 8.20 manifest, then require EdgeOne exact-artifact parity and both live browser flows.
-5. Use the sealed 8.20 Object → executable recorder → immutable Encounter chain as the foundation for **8.21 Flow / Session Blueprint**, where several Objects may be arranged without making every Object simultaneously Active.
+1. Keep public identity **8.20** while the behavior patch is under exact-head CI so failures are repaired without pretending an unsealed hotfix is Production.
+2. Once Chromium + iPhone WebKit and inherited gates are green, seal formal public/base identity as **8.20.1** through a dedicated release step; do not relabel 8.18/8.19/8.20 capability provenance.
+3. Re-run the full exact-head release matrix after the identity seal.
+4. Merge only the exact green SHA. Verify Vercel Production serves that merged-main SHA with `version/baseVersion = 8.20.1`.
+5. Require EdgeOne exact-artifact/API parity plus real Chromium and iPhone WebKit Production flows before declaring the hotfix complete.
+6. Only then continue to **8.21 Flow / Session Blueprint**. Flow must build on a proven Object → Recorder → Active/one-shot → immutable Encounter chain rather than masking these ownership defects.
 
 **Conversation history is supplemental only. GitHub handoff/contracts/tests are authoritative for this work.**
