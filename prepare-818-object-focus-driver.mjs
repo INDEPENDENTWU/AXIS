@@ -25,52 +25,40 @@ await import('./prepare-818-final-smoke-seal.mjs');
 await import('./prepare-818-inherited-test-flow-seal.mjs');
 
 /*
- * AXIS 8.19 product bridge.
+ * AXIS 8.19 — connect the already-shipped Object Truth to its existing owners.
  *
- * 8.18 already owns the visible metric editor, canonical save path and Encounter
- * snapshot. The missing link is lifecycle: selecting an Object did not invoke
- * its schema recorder. Delegate to the existing functions instead of rewriting
- * their historical source shape, keep persistence/writers unchanged, and remove
- * only irrelevant defaults from newly-created explicit-schema Encounters.
- *
- * This is inserted into the existing canonical app IIFE and intentionally does
- * not add another prepare-819-* transform or another runtime/store owner.
+ * Do not create a second runtime/store/writer. The 8.18 compiler already provides
+ * axis818RenderRecorder() and axis818CaptureEvent(). We place lifecycle behavior
+ * inside the canonical app owner functions themselves so build hardening and
+ * canonicalization carry it forward as normal source, rather than relying on an
+ * appended runtime wrapper.
  */
 {
  let app=fs.readFileSync('app.js','utf8');
- const end=app.lastIndexOf('})();');if(end<0)throw new Error('[AXIS 8.19 recording bridge] canonical app IIFE end missing');
- const bridge=String.raw`
-/* AXIS 8.19 — Universal Practice Object recording bridge. */
-const axis819SelectEqBase=selectEq;
-selectEq=function(id,manual=true){
- const out=axis819SelectEqBase(id,manual);
- $('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');
- $('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');
- axis818RenderRecorder();
- return out
-};
-const axis819ResetScanBase=resetScan;
-resetScan=function(){
- const out=axis819ResetScanBase();
- $('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');
- $('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');
- const host=$('#axis818MetricRecorder');if(host){host.classList.remove('show');host.innerHTML=''}
- return out
-};
-const axis819CaptureEventBase=axis818CaptureEvent;
-axis818CaptureEvent=function(e,eq){
- const out=axis819CaptureEventBase(e,eq);
- if(Array.isArray(eq?.metricSchema)&&eq.metricSchema.length){
-  const keys=new Set(axis818SchemaForEq(eq).map(m=>m.key));
-  for(const k of ['weight','reps','sets','duration','intensity'])if(!keys.has(k))delete out[k]
- }
- return out
-};
-window.__AXIS_819_RECORDING_BRIDGE__={version:'8.19-foundation',owner:'compatibility-delegation',persistence:false,selectOwner:'app.js',saveOwner:'app.js',classicStrengthOwner:'v61'};
-`;
- app=app.slice(0,end)+bridge+'\n'+app.slice(end);
- try{new Function(app)}catch(e){throw new Error(`[AXIS 8.19 recording bridge] app syntax ${e.message}`)}
+ const replaceRange=(re,mutate,label)=>{
+  const matches=[...app.matchAll(new RegExp(re.source,re.flags.includes('g')?re.flags:re.flags+'g'))];
+  if(matches.length!==1)throw new Error(`[AXIS 8.19 recording owner] ${label} expected once, found ${matches.length}`);
+  const before=matches[0][0],after=mutate(before);
+  if(!after||after===before)throw new Error(`[AXIS 8.19 recording owner] ${label} mutation did not change source`);
+  app=app.slice(0,matches[0].index)+after+app.slice(matches[0].index+before.length);
+ };
+ replaceRange(
+  /function selectEq\([^)]*\)\{[\s\S]*?\}(?=\nfunction renderEqList)/,
+  fn=>fn.slice(0,-1)+";$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');axis818RenderRecorder()}",
+  'selectEq lifecycle'
+ );
+ replaceRange(
+  /function resetScan\([^)]*\)\{[\s\S]*?\}(?=\nfunction setVal)/,
+  fn=>fn.slice(0,-1)+";$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.classList.remove('show');axis819Recorder.innerHTML=''}}",
+  'resetScan lifecycle'
+ );
+ replaceRange(
+  /function axis818CaptureEvent\([^)]*\)\{[\s\S]*?\}(?=\nwindow\.__AXIS_OBJECT_TRUTH__)/,
+  fn=>{const token='return e}';if(fn.split(token).length-1!==1)throw new Error('[AXIS 8.19 recording owner] axis818CaptureEvent return contract changed');return fn.replace(token,"if(Array.isArray(eq?.metricSchema)&&eq.metricSchema.length){const axis819Keys=new Set(schema.map(m=>m.key));for(const k of ['weight','reps','sets','duration','intensity'])if(!axis819Keys.has(k))delete e[k]}return e}")},
+  'Encounter truth cleanup'
+ );
+ try{new Function(app)}catch(e){throw new Error(`[AXIS 8.19 recording owner] app syntax ${e.message}`)}
  fs.writeFileSync('app.js',app);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 delegated Object Truth → Recording bridge applied');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners');
