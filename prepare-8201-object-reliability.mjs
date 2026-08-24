@@ -9,13 +9,15 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
 
 /* AXIS 8.20.1 — Executable Object Reliability. No new state/store/recorder. */
 
-/* v874 remains the visible Object editor. Persist its complete schema after the
-   canonical custom save, then publish one authoritative change event. */
+/* v874 remains the visible Object editor. Persist its complete schema only after
+   the canonical custom Object actually exists, then publish one authoritative
+   change event. The bounded retry bridges the inherited async save boundary; it
+   is not a second persistence owner and never creates an Object itself. */
 {
  const FILE='v874-professional.js';let s=read(FILE);
  const old="function axis818MetricPersist(){const c=readCore(),name=$('#customName')?.value.trim()||'';setTimeout(()=>{const cc=readCore(),eq=(cc.profile?.customEq||[]).find(x=>x.id===editId)||(cc.profile?.customEq||[]).filter(x=>x.name===name).at(-1);if(!eq)return;eq.metricSchema=axis818MetricDraft.map(x=>({...x}));eq.metricSchemaVersion='8.18';writeCore(cc);window.dispatchEvent(new CustomEvent('axis:object-schema-changed',{detail:{id:eq.id,schema:eq.metricSchema}}))},90)}";
- const next="function axis818MetricPersist(){const name=$('#customName')?.value.trim()||'',draft=axis818MetricDraft.map(x=>({...x}));queueMicrotask(()=>{const cc=readCore(),eq=(cc.profile?.customEq||[]).find(x=>x.id===editId)||(cc.profile?.customEq||[]).filter(x=>x.name===name).at(-1);if(!eq||!draft.length)return;eq.metricSchema=draft.map(x=>({...x}));eq.metricSchemaVersion='8.20.1';eq.recording=Object.assign({},eq.recording||{},{version:2,metrics:draft.map(x=>x.key)});writeCore(cc);window.dispatchEvent(new CustomEvent('axis:object-schema-changed',{detail:{id:eq.id,schema:eq.metricSchema.map(x=>({...x})),metricSchemaVersion:eq.metricSchemaVersion,recording:eq.recording}}))})}";
- s=once(s,old,next,'live custom metric persistence');
+ const next="function axis818MetricPersist(){const name=$('#customName')?.value.trim()||'',targetId=editId,draft=axis818MetricDraft.map(x=>({...x}));if(!draft.length)return;const commit=(attempt=0)=>{const cc=readCore(),xs=cc.profile?.customEq||[],eq=(targetId&&xs.find(x=>x.id===targetId))||xs.filter(x=>x.name===name).at(-1);if(!eq){if(attempt<20)setTimeout(()=>commit(attempt+1),16);return}eq.metricSchema=draft.map(x=>({...x}));eq.metricSchemaVersion='8.20.1';eq.recording=Object.assign({},eq.recording||{},{version:2,metrics:draft.map(x=>x.key)});writeCore(cc);window.dispatchEvent(new CustomEvent('axis:object-schema-changed',{detail:{id:eq.id,schema:eq.metricSchema.map(x=>({...x})),metricSchemaVersion:eq.metricSchemaVersion,recording:eq.recording}}))};setTimeout(()=>commit(),0)}";
+ s=once(s,old,next,'canonical-save-aware custom metric persistence');
  syntax(s,FILE);write(FILE,s);
 }
 
@@ -69,10 +71,10 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
 
 for(const [file,tokens] of [
  ['app.js',['__AXIS_8201_OBJECT_SYNC__','axis8201ApplyObjectSchemaChange','训练项目','个项目']],
- ['v874-professional.js',["metricSchemaVersion='8.20.1'",'queueMicrotask']],
+ ['v874-professional.js',["metricSchemaVersion='8.20.1'",'attempt<20','setTimeout(()=>commit(),0)']],
  ['v82-runtime.js',['axis8201Ongoing','axis8201EstimateForEvent']],
  ['v87-runtime.js',['axis8201ExecutionMode','axis8201SetExecution']],
  ['v873-smart-input.js',['__AXIS_8201_LOCALIZATION__','axis8201LocalType','axis8201WatchPickerTypes']]
 ]){const s=read(file);for(const t of tokens)if(!s.includes(t))fail(`${file} invariant missing ${t}`)}
 
-console.log('[AXIS 8.20.1 object reliability] PASS · live Object schema sync · executable Active admission · postbuild presentation supersede staged · Chinese picker/Evolution presentation · no new persistence/recorder owner');
+console.log('[AXIS 8.20.1 object reliability] PASS · canonical-save-aware live Object schema sync · executable Active admission · postbuild presentation supersede staged · Chinese picker/Evolution presentation · no new persistence/recorder owner');
