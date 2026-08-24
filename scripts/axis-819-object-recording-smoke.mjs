@@ -8,16 +8,18 @@ const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executabl
 const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true,locale:'zh-CN'});
 
 await context.addInitScript(()=>{
- const now=Date.now();
- const wall={
-  id:'wall-hold',name:'靠墙站立',type:'strength',pattern:'functional',muscles:['腿部'],custom:true,
-  metricSchema:[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1}],metricSchemaVersion:'8.18'
- };
- localStorage.setItem('axis_v60_state',JSON.stringify({
-  version:60,sessions:[],active:{id:'S-819',start:now-60000,events:[]},
-  profile:{customEq:[wall]},prefs:{scanSeconds:3,watermark:{photoMode:'raw',videoMode:'raw'}}
- }));
- localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
+ if(!localStorage.getItem('axis_v60_state')){
+  const now=Date.now();
+  const wall={
+   id:'wall-hold',name:'靠墙站立',type:'strength',pattern:'functional',muscles:['腿部'],custom:true,
+   metricSchema:[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1}],metricSchemaVersion:'8.18'
+  };
+  localStorage.setItem('axis_v60_state',JSON.stringify({
+   version:60,sessions:[],active:{id:'S-819',start:now-60000,events:[]},
+   profile:{customEq:[wall]},prefs:{scanSeconds:3,watermark:{photoMode:'raw',videoMode:'raw'}}
+  }));
+ }
+ if(!localStorage.getItem('axis_v8_meta'))localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
  try{Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{getUserMedia:async()=>{const e=new Error('CI file fallback');e.name='NotAllowedError';throw e},enumerateDevices:async()=>[]}})}catch{}
 });
 
@@ -127,8 +129,10 @@ try{
  const reload=await page.evaluate(()=>{
   const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
   const event=state.active.events[0];
-  return{duration:event.metrics?.duration,snapshot:event.metricSchemaSnapshot?.map(x=>x.key),rows:window.__AXIS_OBJECT_TRUTH__.eventRows(event)};
+  assert;
+  return{duration:event?.metrics?.duration,snapshot:event?.metricSchemaSnapshot?.map(x=>x.key),rows:event?window.__AXIS_OBJECT_TRUTH__.eventRows(event):[],eventPresent:!!event};
  });
+ assert.equal(reload.eventPresent,true,'committed Encounter disappeared across reload');
  assert.equal(reload.duration,7);
  assert.deepEqual(reload.snapshot,['duration']);
  assert.deepEqual(reload.rows.map(x=>x[0]),['时间']);
