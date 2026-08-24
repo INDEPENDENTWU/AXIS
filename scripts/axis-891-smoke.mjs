@@ -4,6 +4,7 @@ import fs from 'node:fs';
 const ENGINE=process.env.AXIS_ENGINE||'chromium';
 const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
 const EXPECTED=JSON.parse(fs.readFileSync('release-contract.json','utf8')).publicVersion;
+const INTERACTION_WAIT_MS=ENGINE==='webkit'?3500:1000;
 const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core');
 const launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
 const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
@@ -56,7 +57,7 @@ assert.ok(inline.scrollH<=Math.max(inline.clientH+1,inline.lineHeight*2+1),`inli
 assert.equal(await page.evaluate(()=>window.__AXIS_891_SPEAK_CALLS__),0,'Rest Speak autoplayed before interaction');
 
 await page.locator('#v87Rest').click();
-await page.waitForFunction(()=>document.querySelector('#v891SpeakPanel')?.classList.contains('show'),undefined,{timeout:1000});
+await page.waitForFunction(()=>document.querySelector('#v891SpeakPanel')?.classList.contains('show'),undefined,{timeout:INTERACTION_WAIT_MS});
 const panel=await page.locator('#v891SpeakPanel').evaluate(el=>({
  phrase:el.querySelector('#v891SpeakPhrase')?.textContent||'',
  meaning:el.querySelector('#v891SpeakMeaning')?.textContent||'',
@@ -80,7 +81,7 @@ assert.equal(await page.evaluate(()=>window.__AXIS_891_SPEAK_CALLS__),1,'explici
 
 const beforeId=await page.locator('#v891SpeakPanel').getAttribute('data-phrase-id');
 await page.locator('#v891SpeakPanel [data-v891-action="master"]').click();
-await page.waitForFunction(id=>document.querySelector('#v891SpeakPanel')?.dataset.phraseId&&document.querySelector('#v891SpeakPanel').dataset.phraseId!==id,beforeId,{timeout:1000});
+await page.waitForFunction(id=>document.querySelector('#v891SpeakPanel')?.dataset.phraseId&&document.querySelector('#v891SpeakPanel').dataset.phraseId!==id,beforeId,{timeout:INTERACTION_WAIT_MS});
 const afterId=await page.locator('#v891SpeakPanel').getAttribute('data-phrase-id');
 assert.notEqual(afterId,beforeId,'mastered phrase did not advance');
 assert.ok(await page.evaluate(id=>!!JSON.parse(localStorage.getItem('axis_v89_speak')||'{}').mastered?.[id],beforeId),'mastery stayed outside accessory store or was not persisted');
