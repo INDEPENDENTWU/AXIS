@@ -2,8 +2,6 @@ import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
 
 const SOURCE='prepare-818-object-focus-foundation.mjs',TMP='.axis-818-object-focus.generated.mjs';
-const replaceOnce=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)throw new Error(`[AXIS 8.19 recording bridge] ${label} expected once, found ${n}`);return src.replace(from,to)};
-
 let src=fs.readFileSync(SOURCE,'utf8');
 const brittle=` s=s.replace("host.classList.add('show');D.body.classList.add('v87-now')}","host.classList.add('show');D.body.classList.add('v87-now');axis818FocusSync()}");\n`;
 const n=src.split(brittle).length-1;if(n!==1)throw new Error(`[AXIS 8.18 driver] v87 render-tail mutation expected once, found ${n}`);
@@ -29,38 +27,50 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
 /*
  * AXIS 8.19 product bridge.
  *
- * 8.18 already owns the visible metric editor and Encounter snapshot logic. The
- * missing link was lifecycle: selecting an Object never rendered that schema's
- * recorder. Keep persistence and writers where they already live; only connect
- * the existing Object Truth to the existing recording surface and prevent
- * irrelevant legacy defaults from becoming facts on schema-driven Encounters.
+ * 8.18 already owns the visible metric editor, canonical save path and Encounter
+ * snapshot. The missing link is lifecycle: selecting an Object did not invoke
+ * its schema recorder. Delegate to the existing functions instead of rewriting
+ * their historical source shape, keep persistence/writers unchanged, and remove
+ * only irrelevant defaults from newly-created explicit-schema Encounters.
  *
- * This deliberately lives at the current 8.18 driver handoff instead of adding
- * another prepare-819-* transform. Source Convergence can later move the bridge
- * into the direct app owner without changing data semantics.
+ * This is inserted into the existing canonical app IIFE and intentionally does
+ * not add another prepare-819-* transform or another runtime/store owner.
  */
 {
  let app=fs.readFileSync('app.js','utf8');
- app=replaceOnce(
-  app,
-  "applyEqDefaults(e,last);if(manual)setText('#aiStatus','已确认')}\nfunction renderEqList",
-  "applyEqDefaults(e,last);$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');axis818RenderRecorder();if(manual)setText('#aiStatus','已确认')}\nfunction renderEqList",
-  'Object selection → schema recorder lifecycle'
- );
- app=replaceOnce(
-  app,
-  "$('#strengthFields').classList.add('hidden');$('#cardioFields').classList.add('hidden');$('#lastValue').classList.add('hidden')}\nfunction setVal",
-  "$('#strengthFields').classList.add('hidden');$('#cardioFields').classList.add('hidden');$('#lastValue').classList.add('hidden');$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.classList.remove('show');axis819Recorder.innerHTML=''}}\nfunction setVal",
-  'recording reset clears schema recorder state'
- );
- app=replaceOnce(
-  app,
-  "function axis818CaptureEvent(e,eq){const schema=axis818SchemaForEq(eq),vals=axis818ReadMetricInputs(schema);e.metricSchemaSnapshot=schema.map(axis818CloneMetric);e.metrics=vals;axis818ApplyLegacy(e,vals);e.objectTruthVersion='8.18';return e}",
-  "function axis818CaptureEvent(e,eq){const schema=axis818SchemaForEq(eq),vals=axis818ReadMetricInputs(schema),keys=new Set(schema.map(m=>m.key));if(Array.isArray(eq?.metricSchema)&&eq.metricSchema.length)for(const k of ['weight','reps','sets','duration','intensity'])if(!keys.has(k))delete e[k];e.metricSchemaSnapshot=schema.map(axis818CloneMetric);e.metrics=vals;axis818ApplyLegacy(e,vals);e.objectTruthVersion='8.18';return e}",
-  'schema-driven Encounter removes irrelevant legacy defaults'
- );
+ const end=app.lastIndexOf('})();');if(end<0)throw new Error('[AXIS 8.19 recording bridge] canonical app IIFE end missing');
+ const bridge=String.raw`
+/* AXIS 8.19 — Universal Practice Object recording bridge. */
+const axis819SelectEqBase=selectEq;
+selectEq=function(id,manual=true){
+ const out=axis819SelectEqBase(id,manual);
+ $('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');
+ $('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');
+ axis818RenderRecorder();
+ return out
+};
+const axis819ResetScanBase=resetScan;
+resetScan=function(){
+ const out=axis819ResetScanBase();
+ $('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');
+ $('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');
+ const host=$('#axis818MetricRecorder');if(host){host.classList.remove('show');host.innerHTML=''}
+ return out
+};
+const axis819CaptureEventBase=axis818CaptureEvent;
+axis818CaptureEvent=function(e,eq){
+ const out=axis819CaptureEventBase(e,eq);
+ if(Array.isArray(eq?.metricSchema)&&eq.metricSchema.length){
+  const keys=new Set(axis818SchemaForEq(eq).map(m=>m.key));
+  for(const k of ['weight','reps','sets','duration','intensity'])if(!keys.has(k))delete out[k]
+ }
+ return out
+};
+window.__AXIS_819_RECORDING_BRIDGE__={version:'8.19-foundation',owner:'compatibility-delegation',persistence:false,selectOwner:'app.js',saveOwner:'app.js',classicStrengthOwner:'v61'};
+`;
+ app=app.slice(0,end)+bridge+'\n'+app.slice(end);
  try{new Function(app)}catch(e){throw new Error(`[AXIS 8.19 recording bridge] app syntax ${e.message}`)}
  fs.writeFileSync('app.js',app);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth → Recording lifecycle bridge applied');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 delegated Object Truth → Recording bridge applied');
