@@ -86,7 +86,20 @@ try{
 
  await durationInput.fill('7');
  assert.equal(await durationInput.inputValue(),'7','duration input did not retain the user value before commit');
- await page.evaluate(()=>{window.__AXIS_819_SAVE_PROBE__=null;document.querySelector('#saveScan')?.addEventListener('click',()=>{const input=document.querySelector('[data-axis818-metric="duration"]'),rec=document.querySelector('#axis818MetricRecorder');window.__AXIS_819_SAVE_PROBE__={exists:!!input,value:input?.value??null,recorderClass:rec?.className||null,selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null}}, {capture:true,once:true})});
+ await page.evaluate(()=>{
+  window.__AXIS_819_RECORDER_TRACE__=[];
+  const stack=(kind,detail)=>window.__AXIS_819_RECORDER_TRACE__.push({kind,detail,stack:String(new Error(`[AXIS 8.19 trace] ${kind}`).stack||'').split('\n').slice(1,9)});
+  const current=()=>document.querySelector('#axis818MetricRecorder');
+  const rec=current();if(rec){rec.__axis819TraceIdentity='pre-save-recorder';window.__AXIS_819_RECORDER_IDENTITY__=rec}
+  const add=DOMTokenList.prototype.add;DOMTokenList.prototype.add=function(...args){if(this===current()?.classList&&args.includes('show'))stack('classList.add',args);return add.apply(this,args)};
+  const toggle=DOMTokenList.prototype.toggle;DOMTokenList.prototype.toggle=function(token,...args){if(this===current()?.classList&&token==='show')stack('classList.toggle',[token,...args]);return toggle.call(this,token,...args)};
+  const setAttribute=Element.prototype.setAttribute;Element.prototype.setAttribute=function(name,value){if(this.id==='axis818MetricRecorder'&&name==='class'&&String(value).split(/\s+/).includes('show'))stack('setAttribute.class',String(value));return setAttribute.call(this,name,value)};
+  const insertBefore=Node.prototype.insertBefore;Node.prototype.insertBefore=function(node,ref){if(node?.id==='axis818MetricRecorder')stack('insertBefore',node.className||'');return insertBefore.call(this,node,ref)};
+  const appendChild=Node.prototype.appendChild;Node.prototype.appendChild=function(node){if(node?.id==='axis818MetricRecorder')stack('appendChild',node.className||'');return appendChild.call(this,node)};
+  const insertAdjacentElement=Element.prototype.insertAdjacentElement;Element.prototype.insertAdjacentElement=function(where,node){if(node?.id==='axis818MetricRecorder')stack('insertAdjacentElement',[where,node.className||'']);return insertAdjacentElement.call(this,where,node)};
+  window.__AXIS_819_SAVE_PROBE__=null;
+  document.querySelector('#saveScan')?.addEventListener('click',()=>{const input=document.querySelector('[data-axis818-metric="duration"]'),r=current();window.__AXIS_819_SAVE_PROBE__={exists:!!input,value:input?.value??null,recorderClass:r?.className||null,selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null}}, {capture:true,once:true})
+ });
  await tap(page.locator('#saveScan'));
  await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.active?.events?.length===1}catch{return false}},undefined,{timeout:2500});
  const saved=await page.evaluate(()=>{
@@ -104,6 +117,8 @@ try{
     recorderSuppressed:rec?.dataset.axis818RenderSuppressed??null,
     recorderRenderKey:rec?.dataset.axis818RenderKey??null,
     recorderHtmlLength:rec?.innerHTML?.length||0,
+    sameRecorderNode:rec===window.__AXIS_819_RECORDER_IDENTITY__,
+    trace:window.__AXIS_819_RECORDER_TRACE__||[],
     reviewHidden:document.querySelector('#reviewStage')?.classList.contains('hidden')??null,
     scanSheetShow:document.querySelector('#scanSheet')?.classList.contains('show')??null,
     selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq??null,
