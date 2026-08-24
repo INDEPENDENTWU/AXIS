@@ -41,13 +41,16 @@ const beginReview=async()=>{
 const chooseObject=async(id,label)=>{
  await tap(page.locator('#equipmentRow'));
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:1500});
- let choice=page.locator('#v8710Cards button:visible').filter({hasText:label}).first();
+ let choice=page.locator(`#v8124PickerContext [data-v8124-pick="${id}"]:visible`).first();
+ if(!(await choice.count()))choice=page.locator('#v8710Cards button:visible').filter({hasText:label}).first();
  if(!(await choice.count())){
   const search=page.locator('#eqSearch');
   assert.equal(await search.count(),1,'current equipment search missing');
   await search.fill(label);
-  await page.waitForFunction(text=>[...document.querySelectorAll('#v8710Cards button')].some(b=>b.offsetParent!==null&&b.textContent.includes(text)),label,{timeout:2500});
-  choice=page.locator('#v8710Cards button:visible').filter({hasText:label}).first();
+  await page.waitForFunction(({id,label})=>[...document.querySelectorAll('#v873SmartResults [data-v8124-pick],#v8710Cards button')].some(b=>b.offsetParent!==null&&(b.dataset.v8124Pick===id||b.textContent.includes(label))),{id,label},{timeout:2500});
+  choice=page.locator(`#v873SmartResults [data-v8124-pick="${id}"]:visible`).first();
+  if(!(await choice.count()))choice=page.locator('#v873SmartResults [data-v8124-pick]:visible').filter({hasText:label}).first();
+  if(!(await choice.count()))choice=page.locator('#v8710Cards button:visible').filter({hasText:label}).first();
  }
  assert.equal(await choice.count(),1,`visible current picker item ${label} missing`);
  assert.equal(await choice.isVisible(),true,`current picker item ${label} is not physically visible`);
@@ -126,5 +129,5 @@ try{
  assert.deepEqual(reload.snapshot,['duration']);
  assert.deepEqual(reload.rows.map(x=>x[0]),['时间']);
  assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
- console.log(`[AXIS Universal Practice Object ${ENGINE}] PASS · real Capture → Review → current visible picker → Object → visible Recording → authoritative Encounter → frozen snapshot → reload · no irrelevant legacy facts · no v61 duplicate owner`);
+ console.log(`[AXIS Universal Practice Object ${ENGINE}] PASS · real Capture → Review → current My/search picker → Object → visible Recording → authoritative Encounter → frozen snapshot → reload · no irrelevant legacy facts · no v61 duplicate owner`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
