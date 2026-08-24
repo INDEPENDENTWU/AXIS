@@ -10,6 +10,8 @@
 - Vercel Production `dpl_5782KLckoN9ZMG9W81eXSronTzsx` is READY at `https://axis-five-puce.vercel.app` and serves the exact PR #82 merged SHA with `version = 8.19`, `baseVersion = 8.19`, `architecture = canonical-single-runtime` and `upo819 = true`.
 - EdgeOne Production Mirror for the PR #82 hotfix is required to reach exact-SHA parity before that mirror is treated as the updated rollback baseline; the prior 8.19 EdgeOne artifact remains the last fully verified mirror meanwhile.
 
+Machine-governance compatibility note: `governance/project-state.json` still records the last sealed governed work line as **AXIS 8.19 — Universal Practice Objects** on branch `product/819-universal-practice-objects`. That record is intentionally retained as historical governed baseline while PR #83 is under test; it must advance to 8.20 only when 8.20 is formally sealed rather than pretending an in-flight branch is already Production truth.
+
 ## Active change
 
 **AXIS 8.20 — Executable Practice Objects** · branch `product/820-executable-practice-objects`.
