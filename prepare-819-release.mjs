@@ -45,13 +45,23 @@ for(const f of [
 ])replaceIdentity(f,false);
 
 /* 8.10.3 freshness was deliberately re-sealed in 8.18 with an 8.18 historical
-   runtime marker. Only the contract's current public build checks advance. */
+   runtime marker. Protect those provenance tokens, advance every other exact
+   current-public 8.18 token, then restore the historical markers. This remains
+   correct after the inherited 8.10.x → 8.18 release transforms have executed. */
 {
  const f='postbuild-8103-contract.mjs';let s=read(f);
- s=once(s,"if(String(contract.publicVersion)!=='8.18')","if(String(contract.publicVersion)!=='8.19')",'8.10.3 contract public identity');
- s=once(s,"if(info.version!=='8.18'||info.baseVersion!=='8.18')","if(info.version!=='8.19'||info.baseVersion!=='8.19')",'8.10.3 contract manifest identity');
- if(!s.includes("window.__AXIS_8103_FRESHNESS__={version:'8.18',eventDriven:true,polling:false"))fail('8.18 freshness provenance drift');
- if(!s.includes("releaseMarker:freshnessCurrent?'8.18':'8.10.3'"))fail('8.18 freshness manifest provenance drift');
+ const freshnessLiteral="window.__AXIS_8103_FRESHNESS__={version:'8.18',eventDriven:true,polling:false";
+ const releaseMarker="releaseMarker:freshnessCurrent?'8.18':'8.10.3'";
+ if(!s.includes(freshnessLiteral))fail('8.18 freshness provenance drift');
+ if(!s.includes(releaseMarker))fail('8.18 freshness manifest provenance drift');
+ s=s.replace(freshnessLiteral,"window.__AXIS_8103_FRESHNESS__={version:'__AXIS_818_FRESHNESS__',eventDriven:true,polling:false");
+ s=s.replace(releaseMarker,"releaseMarker:freshnessCurrent?'__AXIS_818_FRESHNESS__':'8.10.3'");
+ const currentHits=(s.match(/'8\.18'/g)||[]).length;
+ if(currentHits<3)fail(`8.10.3 current identity expected at least 3 exact 8.18 tokens, found ${currentHits}`);
+ s=s.replaceAll("'8.18'","'8.19'");
+ s=s.replaceAll("'__AXIS_818_FRESHNESS__'","'8.18'");
+ if(!s.includes("window.__AXIS_8103_FRESHNESS__={version:'8.18',eventDriven:true,polling:false"))fail('8.18 freshness provenance did not restore');
+ if(!s.includes("releaseMarker:freshnessCurrent?'8.18':'8.10.3'"))fail('8.18 freshness manifest provenance did not restore');
  write(f,s);
 }
 
