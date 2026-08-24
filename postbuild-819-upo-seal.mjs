@@ -17,6 +17,17 @@ for(const token of [
 ])if(!src.includes(token))fail(`final recorder invariant missing ${token}`);
 if((src.match(/let axis819RecorderSuppressed=true;/g)||[]).length!==1)fail('app-owned recorder lifecycle state must exist exactly once');
 
+const occurrences=needle=>{const out=[];let i=-1;while((i=src.indexOf(needle,i+1))>=0)out.push(i);return out};
+const audit={
+ recorderId:occurrences('axis818MetricRecorder'),
+ recorderHead:occurrences('axis818MetricHead'),
+ renderFunction:occurrences('function axis818RenderRecorder'),
+ legacyToggle:occurrences("classList.toggle('show',explicit)"),
+ renderKey:occurrences('axis818RenderKey')
+};
+const contexts=audit.recorderId.slice(0,16).map(i=>src.slice(Math.max(0,i-150),Math.min(src.length,i+260)).replace(/\s+/g,' '));
+console.log('[AXIS 8.19 UPO canonical audit] '+JSON.stringify({counts:Object.fromEntries(Object.entries(audit).map(([k,v])=>[k,v.length])),contexts}));
+
 const resetToken='function resetScan(',nextToken='function setVal(';
 const resetStart=src.indexOf(resetToken),resetAgain=src.indexOf(resetToken,resetStart+1);
 if(resetStart<0||resetAgain>=0)fail(`canonical resetScan expected once, start ${resetStart}, duplicate ${resetAgain}`);
