@@ -38,12 +38,19 @@ const beginReview=async()=>{
  assert.equal(finished,true,'canonical Capture refused a valid evidence draft');
  await page.waitForFunction(()=>!document.querySelector('#reviewStage')?.classList.contains('hidden'),undefined,{timeout:2000});
 };
-const chooseObject=async id=>{
+const chooseObject=async(id,label)=>{
  await tap(page.locator('#equipmentRow'));
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:1500});
- const choice=page.locator(`#eqSheet [data-eq="${id}"]`);
- assert.equal(await choice.count(),1,`Object ${id} missing from real Review picker`);
- assert.equal(await choice.isVisible(),true,`Object ${id} exists but is not visible in real Review picker`);
+ let choice=page.locator('#v8710Cards button:visible').filter({hasText:label}).first();
+ if(!(await choice.count())){
+  const search=page.locator('#eqSearch');
+  assert.equal(await search.count(),1,'current equipment search missing');
+  await search.fill(label);
+  await page.waitForFunction(text=>[...document.querySelectorAll('#v8710Cards button')].some(b=>b.offsetParent!==null&&b.textContent.includes(text)),label,{timeout:2500});
+  choice=page.locator('#v8710Cards button:visible').filter({hasText:label}).first();
+ }
+ assert.equal(await choice.count(),1,`visible current picker item ${label} missing`);
+ assert.equal(await choice.isVisible(),true,`current picker item ${label} is not physically visible`);
  await tap(choice);
  await page.waitForFunction(expected=>window.__AXIS_CAPTURE__.snapshot().selectedEq===expected,id,{timeout:1500});
 };
@@ -59,7 +66,7 @@ try{
 
  /* Real user flow: Capture → Review → choose Object → visible schema Recording. */
  await beginReview();
- await chooseObject('wall-hold');
+ await chooseObject('wall-hold','靠墙站立');
  const recorder=page.locator('#axis818MetricRecorder');
  const durationInput=page.locator('[data-axis818-metric="duration"]');
  assert.equal(await recorder.isVisible(),true,'schema recorder exists but is not visible in canonical Review');
@@ -97,7 +104,7 @@ try{
 
  /* A subsequent real Review selection of a legacy Object must restore its editor. */
  await beginReview();
- await chooseObject('lat');
+ await chooseObject('lat','高位下拉');
  assert.equal(await page.locator('#axis818MetricRecorder').isVisible(),false,'legacy Object inherited schema-driven recorder');
  const legacy=await page.evaluate(()=>({
   strengthHidden:document.querySelector('#strengthFields')?.classList.contains('axis818LegacyMetricHidden')||false,
@@ -119,5 +126,5 @@ try{
  assert.deepEqual(reload.snapshot,['duration']);
  assert.deepEqual(reload.rows.map(x=>x[0]),['时间']);
  assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
- console.log(`[AXIS Universal Practice Object ${ENGINE}] PASS · real Capture → Review → Object → visible Recording → authoritative Encounter → frozen snapshot → reload · no irrelevant legacy facts · no v61 duplicate owner`);
+ console.log(`[AXIS Universal Practice Object ${ENGINE}] PASS · real Capture → Review → current visible picker → Object → visible Recording → authoritative Encounter → frozen snapshot → reload · no irrelevant legacy facts · no v61 duplicate owner`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
