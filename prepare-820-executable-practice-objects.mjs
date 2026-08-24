@@ -3,7 +3,6 @@ import fs from 'node:fs';
 const fail=m=>{throw new Error(`[AXIS 8.20 executable practice objects] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
-const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax ${e.message}`)}};
 
 /* --------------------------------------------------------------------------
@@ -34,9 +33,20 @@ window.__AXIS_EXECUTABLE_OBJECTS__={version:'8.20',owner:'app.js+ObjectTruth',mo
  * weight/reps/sets. Explicit Object Truth now owns Quick Record presentation;
  * classic v61 controls remain only for legacy objects or an explicit classic
  * weight+reps object whose execution mode is sets.
+ *
+ * Earlier release transforms intentionally rewrite the internals of these
+ * functions. Anchor at their stable function boundaries instead of brittle
+ * historical source strings so the 8.20 layer composes with the sealed chain.
  * ----------------------------------------------------------------------- */
 {
  const FILE='v61.js';let s=read(FILE);
+ const replaceRange=(re,mutate,label)=>{
+  const matches=[...s.matchAll(new RegExp(re.source,re.flags.includes('g')?re.flags:re.flags+'g'))];
+  if(matches.length!==1)fail(`${label} expected once, found ${matches.length}`);
+  const before=matches[0][0],after=mutate(before);
+  if(!after||after===before)fail(`${label} mutation did not change source`);
+  s=s.slice(0,matches[0].index)+after+s.slice(matches[0].index+before.length);
+ };
  const anchor='function syncDock(){';
  if(!s.includes(anchor))fail('v61 syncDock anchor missing');
  const bridge=String.raw`
@@ -46,12 +56,16 @@ function axis820ClassicOwner(e,schema=axis820Schema(e)){if(!schema)return false;
 function axis820UseSchemaRecorder(e){const schema=axis820Schema(e);if(!schema)return false;if(axis820ClassicOwner(e,schema)){const host=$('#axis818MetricRecorder');host?.classList.remove('show');if(host){host.dataset.axis820Quick='';host.dataset.axis820RenderKey='';host.innerHTML=''}return false}let host=$('#axis818MetricRecorder');if(!host){host=D.createElement('div');host.id='axis818MetricRecorder';host.className='axis818MetricRecorder';const save=$('#saveScan');save?.parentNode?.insertBefore(host,save)}if(!host)return false;$('#strengthFields')?.classList.add('axis818LegacyMetricHidden');$('#cardioFields')?.classList.add('axis818LegacyMetricHidden');$('#v8Sets')?.classList.add('hidden');host.classList.add('show');host.dataset.axis820Quick='1';const renderKey=e.id+'|'+schema.map(m=>[m.key,m.type,m.unit,m.step].join(':')).join('|');if(host.dataset.axis820RenderKey===renderKey&&host.innerHTML)return true;host.dataset.axis820RenderKey=renderKey;host.innerHTML='<div class="axis818MetricHead"><span>本次记录</span><b>'+esc(e.name)+'</b></div>'+schema.filter(m=>m?.key&&m.key!=='sets').map(m=>'<label class="axis818MetricField"><span>'+esc(m.label||m.key)+'</span><div><input data-axis818-metric="'+esc(m.key)+'" '+(m.type==='text'?'':'inputmode="decimal"')+' placeholder="—"><small>'+esc(m.unit||'')+'</small></div></label>').join('');const prev=last(e.id,editingId),vals=prev?(window.__AXIS_OBJECT_TRUTH__?.eventMetrics?.(prev)||{}):{};for(const m of schema){if(m?.key==='sets')continue;const el=$('[data-axis818-metric="'+m.key+'"]');if(el&&vals[m.key]!=null)el.value=String(vals[m.key])}return true}
 `;
  s=s.replace(anchor,bridge+anchor);
- const quickEditorFrom="const e=selected();if(e?.type==='strength')prepare(id||e.id);syncDock()";
- const quickEditorTo="const e=selected();if(axis820UseSchemaRecorder(e))hideSets();else if(e?.type==='strength')prepare(id||e.id);else hideSets();syncDock()";
- s=once(s,quickEditorFrom,quickEditorTo,'Quick editor presentation ownership');
- const saveFrom="function onSaveClick(ev){const e=selected();if(!e)return;if(e.type==='strength'&&!axis819ClassicStrengthOwner(e)){pending=null;deferOnce=false;hideSets();return}if(editingId){";
- const saveTo="function onSaveClick(ev){const e=selected();if(!e)return;const axis820QuickSchema=axis820Schema(e);if(axis820QuickSchema&&!axis820ClassicOwner(e,axis820QuickSchema)){pending=null;deferOnce=false;if(!core().active){$('#startBtn')?.click();$('#toast')?.classList.remove('show')}pulseSaving();return}if(e.type==='strength'&&!axis819ClassicStrengthOwner(e)){pending=null;deferOnce=false;hideSets();return}if(editingId){";
- s=once(s,saveFrom,saveTo,'Quick Record save ownership');
+ replaceRange(
+  /function showQuickEditor\(id\)\{[\s\S]*?\}(?=\nfunction prepare)/,
+  fn=>{const token='const e=selected();';const hits=fn.split(token).length-1;if(hits!==1)fail(`Quick editor selected boundary expected once, found ${hits}`);return fn.replace(token,token+"if(axis820UseSchemaRecorder(e)){hideSets();syncDock();return}")},
+  'Quick editor presentation ownership'
+ );
+ replaceRange(
+  /function onSaveClick\([^)]*\)\{[\s\S]*?\}(?=\nfunction attach)/,
+  fn=>{const token='const e=selected();if(!e)return;';const hits=fn.split(token).length-1;if(hits!==1)fail(`Quick Record save selected boundary expected once, found ${hits}`);const guard="const axis820QuickSchema=axis820Schema(e);if(axis820QuickSchema&&!axis820ClassicOwner(e,axis820QuickSchema)){pending=null;deferOnce=false;if(!core().active){$('#startBtn')?.click();$('#toast')?.classList.remove('show')}pulseSaving();return}";return fn.replace(token,token+guard)},
+  'Quick Record save ownership'
+ );
  syntax(s,FILE);write(FILE,s);
 }
 
