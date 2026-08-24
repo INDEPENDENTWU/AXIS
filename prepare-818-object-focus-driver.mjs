@@ -74,8 +74,9 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
 /*
  * v61 remains the sole high-frequency repeated-set owner, but only for the
  * semantic shape it actually owns. Selection identity/type remains untouched.
- * The guard lives at v61 prepare/save boundaries: non-classic explicit schemas
- * never create a set draft and never attach an axis_v8_meta event fact.
+ * The guard lives at v61 prepare/save/reconcile boundaries: non-classic explicit
+ * schemas never create a set draft, never attach axis_v8_meta, and never run the
+ * delayed legacy selection reconcile that would replace schema input DOM.
  */
 {
  let v61=fs.readFileSync('v61.js','utf8');
@@ -101,6 +102,11 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
   fn=>{const from="const e=selected();if(!e)return;";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] save entry contract changed');return fn.replace(from,from+"if(e.type==='strength'&&!axis819ClassicStrengthOwner(e)){pending=null;deferOnce=false;hideSets();return}")},
   'non-classic save bypass'
  );
+ const legacyReconcile="window.addEventListener('axis:equipment-selected',()=>setTimeout(axis8123ReconcileSelectedRecording,0));";
+ const reconcileHits=v61.split(legacyReconcile).length-1;
+ if(reconcileHits!==1)throw new Error(`[AXIS 8.19 v61 authority] delayed selection reconcile expected once, found ${reconcileHits}`);
+ const guardedReconcile="window.addEventListener('axis:equipment-selected',()=>setTimeout(()=>{const axis819Selected=selected();if(axis819Selected&&!axis819ClassicStrengthOwner(axis819Selected)){hideSets();return}axis8123ReconcileSelectedRecording()},0));";
+ v61=v61.replace(legacyReconcile,()=>guardedReconcile);
  try{new Function(v61)}catch(e){throw new Error(`[AXIS 8.19 v61 authority] v61 syntax ${e.message}`)}
  fs.writeFileSync('v61.js',v61);
 }
@@ -122,4 +128,4 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  fs.writeFileSync('v873-smart-input.js',smart);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 isolated at stable prepare/save boundaries · custom picker fallback emits canonical equipment-selected lifecycle');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 isolated at prepare/save/delayed-reconcile boundaries · custom picker fallback emits canonical equipment-selected lifecycle');
