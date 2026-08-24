@@ -31,7 +31,7 @@ const videoPref=page.locator('#axis818CapturePrefs [data-axis818-pref="captureDe
 assert.equal(await videoPref.count(),1,'8.18 default Capture-mode preference is missing');
 await videoPref.click();
 await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.prefs?.captureDefaultMode==='video',undefined,{timeout:1200});
-assert.equal(await videoPref.getAttribute('aria-pressed'),'true','Video default preference did not become active');
+assert.equal(await videoPref.evaluate(x=>x.classList.contains('active')),true,'Video default preference did not become visually active');
 assert.equal(await page.locator('#keepClipSwitch').evaluate(x=>x.hidden),true,'retired video pseudo-setting became visible');
 
 await page.locator('#settingsSheet [data-close="settingsSheet"]').click();
