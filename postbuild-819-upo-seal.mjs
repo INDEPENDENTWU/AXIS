@@ -23,10 +23,18 @@ const audit={
  recorderHead:occurrences('axis818MetricHead'),
  renderFunction:occurrences('function axis818RenderRecorder'),
  legacyToggle:occurrences("classList.toggle('show',explicit)"),
- renderKey:occurrences('axis818RenderKey')
+ renderKey:occurrences('axis818RenderKey'),
+ saveFunction:occurrences('function saveScan'),
+ captureEvent:occurrences('axis818CaptureEvent'),
+ eventPush:occurrences('state.active.events.push'),
+ saveScanRefs:occurrences('saveScan')
 };
-const contexts=audit.recorderId.slice(0,16).map(i=>src.slice(Math.max(0,i-150),Math.min(src.length,i+260)).replace(/\s+/g,' '));
-console.log('[AXIS 8.19 UPO canonical audit] '+JSON.stringify({counts:Object.fromEntries(Object.entries(audit).map(([k,v])=>[k,v.length])),contexts}));
+const contextFor=positions=>positions.slice(0,16).map(i=>src.slice(Math.max(0,i-220),Math.min(src.length,i+420)).replace(/\s+/g,' '));
+console.log('[AXIS 8.19 UPO canonical audit] '+JSON.stringify({
+ counts:Object.fromEntries(Object.entries(audit).map(([k,v])=>[k,v.length])),
+ recorderContexts:contextFor(audit.recorderId),
+ saveContexts:contextFor([...audit.saveFunction,...audit.captureEvent,...audit.eventPush,...audit.saveScanRefs])
+}));
 
 const resetToken='function resetScan(',nextToken='function setVal(';
 const resetStart=src.indexOf(resetToken),resetAgain=src.indexOf(resetToken,resetStart+1);
