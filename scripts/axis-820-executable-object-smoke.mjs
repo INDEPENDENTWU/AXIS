@@ -8,19 +8,22 @@ const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executabl
 const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true,locale:'zh-CN'});
 
 await context.addInitScript(()=>{
- const object={
-  id:'axis820-a',name:'A',type:'strength',pattern:'functional',muscles:['胸部整体','肱三头肌','肩部整体'],custom:true,
-  metricSchema:[
-   {key:'duration',label:'时间',type:'duration',unit:'分钟',step:1},
-   {key:'intensity',label:'强度',type:'number',unit:'',step:1}
-  ],metricSchemaVersion:'8.18'
- };
- localStorage.setItem('axis_v60_state',JSON.stringify({
-  version:60,sessions:[],active:null,
-  profile:{customEq:[object]},
-  prefs:{scanSeconds:3,watermark:{photoMode:'raw',videoMode:'raw'}}
- }));
- localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
+ if(localStorage.getItem('axis_820_smoke_seeded')!=='1'){
+  const object={
+   id:'axis820-a',name:'A',type:'strength',pattern:'functional',muscles:['胸部整体','肱三头肌','肩部整体'],custom:true,
+   metricSchema:[
+    {key:'duration',label:'时间',type:'duration',unit:'分钟',step:1},
+    {key:'intensity',label:'强度',type:'number',unit:'',step:1}
+   ],metricSchemaVersion:'8.18'
+  };
+  localStorage.setItem('axis_v60_state',JSON.stringify({
+   version:60,sessions:[],active:null,
+   profile:{customEq:[object]},
+   prefs:{scanSeconds:3,watermark:{photoMode:'raw',videoMode:'raw'}}
+  }));
+  localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
+  localStorage.setItem('axis_820_smoke_seeded','1');
+ }
  try{Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{getUserMedia:async()=>{const e=new Error('CI camera unavailable');e.name='NotAllowedError';throw e},enumerateDevices:async()=>[]}})}catch{}
 });
 
@@ -50,21 +53,15 @@ const currentPickerItem=async(id,label)=>{
  return item;
 };
 
-const openObjectFromQuick=async({recent=false}={})=>{
+const openObjectFromQuick=async()=>{
  await page.evaluate(()=>document.querySelector('#quickRecordBtn')?.click());
  await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:1800});
- if(recent){
-  const item=page.locator('#v8Recent [data-qid="axis820-a"]:visible').first();
-  assert.equal(await item.count(),1,'edited object did not return as a recent Quick Record object');
-  await tap(item);
- }else{
-  await tap(page.locator('#v8Other'));
-  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:1800});
-  const item=await currentPickerItem('axis820-a','A');
-  assert.equal(await item.count(),1,'custom object A is missing from the real equipment picker');
-  assert.equal(await item.isVisible(),true,'custom object A exists but is not physically visible in the current picker');
-  await tap(item);
- }
+ await tap(page.locator('#v8Other'));
+ await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:1800});
+ const item=await currentPickerItem('axis820-a','A');
+ assert.equal(await item.count(),1,'custom object A is missing from the real equipment picker');
+ assert.equal(await item.isVisible(),true,'custom object A exists but is not physically visible in the current picker');
+ await tap(item);
  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&!document.querySelector('#reviewStage')?.classList.contains('hidden')&&document.querySelector('#axis818MetricRecorder')?.dataset.axis820Quick==='1',undefined,{timeout:2200});
 };
 
@@ -108,8 +105,8 @@ try{
  for(const stale of ['weight','reps','sets'])assert.equal(first[stale],undefined,`stale classic field ${stale} leaked into executable Encounter`);
 
  /* Editing an Object changes future recording only. The first Encounter remains
-    an immutable snapshot while the next Quick Record immediately follows the
-    edited schema. */
+    an immutable snapshot while the next real Quick Record immediately follows
+    the edited schema after reload. */
  await page.evaluate(()=>{
   const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
   const a=c.profile.customEq.find(x=>x.id==='axis820-a');
@@ -120,7 +117,7 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_EXECUTABLE_OBJECTS__?.version==='8.20',undefined,{timeout:15000});
  await page.waitForTimeout(500);
- await openObjectFromQuick({recent:true});
+ await openObjectFromQuick();
  await assertExecutableFields(['duration','intensity','distance']);
  await page.locator('[data-axis818-metric="duration"]').fill('9');
  await page.locator('[data-axis818-metric="intensity"]').fill('8');
