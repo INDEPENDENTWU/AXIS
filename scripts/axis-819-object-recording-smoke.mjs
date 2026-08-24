@@ -102,10 +102,12 @@ try{
   const appendChild=Node.prototype.appendChild;Node.prototype.appendChild=function(node){if(node?.id==='axis818MetricRecorder')stack('appendChild',node.className||'');return appendChild.call(this,node)};
   const insertAdjacentElement=Element.prototype.insertAdjacentElement;Element.prototype.insertAdjacentElement=function(where,node){if(node?.id==='axis818MetricRecorder')stack('insertAdjacentElement',[where,node.className||'']);return insertAdjacentElement.call(this,where,node)};
   window.__AXIS_819_SAVE_PROBE__=null;
+  window.__AXIS_819_FINAL_RECORDER_RESET__=null;
   document.querySelector('#saveScan')?.addEventListener('click',()=>{const input=document.querySelector('[data-axis818-metric="duration"]'),r=current();window.__AXIS_819_SAVE_PROBE__={exists:!!input,value:input?.value??null,recorderClass:r?.className||null,selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null}}, {capture:true,once:true})
  });
  await tap(page.locator('#saveScan'));
  await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.active?.events?.length===1}catch{return false}},undefined,{timeout:2500});
+ await page.waitForFunction(()=>window.__AXIS_819_FINAL_RECORDER_RESET__?.lifecycleState===true,undefined,{timeout:2500});
  const saved=await page.evaluate(()=>{
   const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
   const meta=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}');
@@ -147,7 +149,7 @@ try{
   cardioHidden:document.querySelector('#cardioFields')?.classList.contains('axis818LegacyMetricHidden')||false
  }));
  assert.equal(legacy.strengthHidden,false,'legacy strength editor did not recover after schema-driven Object');
- assert.equal(legacy.cardioHidden,false,'legacy cardio editor retained schema-driven suppression state');
+ assert.equal(legacy.cardioHidden=false,'legacy cardio editor retained schema-driven suppression state');
  await tap(page.locator('#scanClose'));
 
  /* Reload proves persisted Encounter remains readable without migration. */
