@@ -16,7 +16,7 @@
 
 The governed product milestone remains **AXIS 8.19 — Universal Practice Objects**. Its original implementation branch `product/819-universal-practice-objects` is merged via PR #80; PR #81 is the release-finalization continuation, not a competing milestone.
 
-The native/cross-platform handoff remains anchored by `axis-native-foundation-0`, with shared portable contracts `axis.domain.v1` and `axis.data.v1`. Web release finalization must not alter native-domain semantics or durable exchange contracts.
+The native/cross-platform handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`, with shared portable contracts `axis.domain.v1` and `axis.data.v1`. Web release finalization must not alter native-domain semantics or durable exchange contracts.
 
 This PR does not invent another product layer. It closes the release contract around the already-merged 8.19 product work:
 
@@ -31,6 +31,8 @@ This PR does not invent another product layer. It closes the release contract ar
 `Object → Metric Schema → Recording Surface → authoritative metric facts → immutable Encounter schema snapshot → History / Evolution`
 
 Authoritative ownership remains unchanged: `app.js` owns base Encounter/session persistence and canonical media; `v61.js` owns classic high-frequency strength set facts; schema resolution is semantic/pure; History/Evolution remain consumers rather than competing writers.
+
+**Chat history is not authoritative project memory.** GitHub governance, contracts, tests and deployment truth remain authoritative.
 
 ## Validation for this work
 
