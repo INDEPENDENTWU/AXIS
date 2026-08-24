@@ -44,8 +44,13 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  };
  replaceRange(
   /function selectEq\([^)]*\)\{[\s\S]*?\}(?=\nfunction renderEqList)/,
-  fn=>fn.slice(0,-1)+";const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.dataset.axis818RenderKey='';axis819Recorder.dataset.axis818RenderSuppressed=''}$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');axis818RenderRecorder()}",
+  fn=>fn.slice(0,-1)+";const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder)axis819Recorder.dataset.axis818RenderKey='';$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');axis818RenderRecorder()}",
   'selectEq lifecycle'
+ );
+ replaceRange(
+  /function reviewFrames\([^)]*\)\{[\s\S]*?\}(?=\nasync function blobDataUrl)/,
+  fn=>{const from="$('#reviewStage').classList.remove('hidden');";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 recording owner] review entry contract changed');return fn.replace(from,from+"const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.dataset.axis818RenderSuppressed='';axis819Recorder.dataset.axis818RenderKey=''}")},
+  'new Review lifecycle releases recorder suppression'
  );
  replaceRange(
   /function resetScan\([^)]*\)\{[\s\S]*?\}(?=\nfunction setVal)/,
@@ -136,4 +141,4 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  fs.writeFileSync('v873-smart-input.js',smart);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · schema recorder is active-review-scoped, idempotent and reset-stable without destroying in-progress values · v61 isolated at prepare/save/delayed-reconcile boundaries · custom picker fallback emits canonical equipment-selected lifecycle');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · recorder suppression is released only by a new Review lifecycle · schema recorder remains active-review-scoped and idempotent without destroying in-progress values · v61 isolated at prepare/save/delayed-reconcile boundaries · custom picker fallback emits canonical equipment-selected lifecycle');
