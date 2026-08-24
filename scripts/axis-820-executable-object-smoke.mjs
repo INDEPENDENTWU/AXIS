@@ -33,6 +33,23 @@ const tap=async locator=>ENGINE==='webkit'?locator.tap({timeout:3500}):locator.c
 const core=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
 const visible=sel=>page.locator(`${sel}:visible`);
 
+const currentPickerItem=async(id,label)=>{
+ let item=page.locator(`#v8124PickerContext [data-v8124-pick="${id}"]:visible`).first();
+ if(!(await item.count()))item=page.locator(`#eqSheet [data-eq="${id}"]:visible`).first();
+ if(!(await item.count()))item=page.locator('#v8710Cards button:visible').filter({hasText:label}).first();
+ if(await item.count())return item;
+ const search=page.locator('#eqSearch');
+ assert.equal(await search.count(),1,'current equipment search missing');
+ await search.fill(label);
+ await page.waitForFunction(({id,label})=>[...document.querySelectorAll('#v873SmartResults [data-v8124-pick],#v8124PickerContext [data-v8124-pick],#eqSheet [data-eq],#v8710Cards button')].some(b=>b.offsetParent!==null&&(b.dataset.v8124Pick===id||b.dataset.eq===id||b.textContent.includes(label))),{id,label},{timeout:2500});
+ item=page.locator(`#v873SmartResults [data-v8124-pick="${id}"]:visible`).first();
+ if(!(await item.count()))item=page.locator(`#v8124PickerContext [data-v8124-pick="${id}"]:visible`).first();
+ if(!(await item.count()))item=page.locator(`#eqSheet [data-eq="${id}"]:visible`).first();
+ if(!(await item.count()))item=page.locator('#v873SmartResults [data-v8124-pick]:visible').filter({hasText:label}).first();
+ if(!(await item.count()))item=page.locator('#v8710Cards button:visible').filter({hasText:label}).first();
+ return item;
+};
+
 const openObjectFromQuick=async({recent=false}={})=>{
  await page.evaluate(()=>document.querySelector('#quickRecordBtn')?.click());
  await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:1800});
@@ -43,14 +60,9 @@ const openObjectFromQuick=async({recent=false}={})=>{
  }else{
   await tap(page.locator('#v8Other'));
   await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:1800});
-  let item=page.locator('#eqSheet [data-eq="axis820-a"]:visible').first();
-  if(!(await item.count())){
-   const search=page.locator('#eqSearch');
-   await search.fill('A');
-   await page.waitForTimeout(120);
-   item=page.locator('#eqSheet [data-eq="axis820-a"]:visible').first();
-  }
+  const item=await currentPickerItem('axis820-a','A');
   assert.equal(await item.count(),1,'custom object A is missing from the real equipment picker');
+  assert.equal(await item.isVisible(),true,'custom object A exists but is not physically visible in the current picker');
   await tap(item);
  }
  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&!document.querySelector('#reviewStage')?.classList.contains('hidden')&&document.querySelector('#axis818MetricRecorder')?.dataset.axis820Quick==='1',undefined,{timeout:2200});
