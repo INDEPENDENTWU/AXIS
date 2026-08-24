@@ -28,10 +28,11 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  * AXIS 8.19 — connect the already-shipped Object Truth to its existing owners.
  *
  * Do not create a second runtime/store/writer. The 8.18 compiler already provides
- * axis818RenderRecorder() and axis818CaptureEvent(). We place lifecycle behavior
- * inside the canonical app owner functions themselves so build hardening and
- * canonicalization carry it forward as normal source, rather than relying on an
- * appended runtime wrapper.
+ * axis818Eq(), axis818RenderRecorder() and axis818CaptureEvent(). Lifecycle stays
+ * inside the canonical app owner functions so build hardening/canonicalization
+ * carry it forward as normal source. The recorder must use the Object Truth
+ * resolver, not the older base-only eqById(), otherwise custom Objects disappear
+ * after a successful picker selection.
  */
 {
  let app=fs.readFileSync('app.js','utf8');
@@ -53,6 +54,11 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
   'resetScan lifecycle'
  );
  replaceRange(
+  /function axis818RenderRecorder\([^)]*\)\{[\s\S]*?\}(?=\nfunction axis818CaptureEvent)/,
+  fn=>{const from='const eq=eqById(state.selectedEq);',to='const eq=axis818Eq(state.selectedEq);';if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 recording owner] recorder resolver contract changed');return fn.replace(from,to)},
+  'Object Truth recorder resolver'
+ );
+ replaceRange(
   /function axis818CaptureEvent\([^)]*\)\{[\s\S]*?\}(?=\nwindow\.__AXIS_OBJECT_TRUTH__)/,
   fn=>{const token='return e}';if(fn.split(token).length-1!==1)throw new Error('[AXIS 8.19 recording owner] axis818CaptureEvent return contract changed');return fn.replace(token,"if(Array.isArray(eq?.metricSchema)&&eq.metricSchema.length){const axis819Keys=new Set(schema.map(m=>m.key));for(const k of ['weight','reps','sets','duration','intensity'])if(!axis819Keys.has(k))delete e[k]}return e}")},
   'Encounter truth cleanup'
@@ -61,4 +67,4 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  fs.writeFileSync('app.js',app);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq');
