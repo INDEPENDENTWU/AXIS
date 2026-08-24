@@ -69,8 +69,8 @@ try{
  const library=await page.evaluate(()=>({persistence:window.__AXIS_EVOLUTION_LIBRARY__.persistence,owner:window.__AXIS_EVOLUTION_LIBRARY__.owner,objects:window.__AXIS_EVOLUTION_LIBRARY__.objects()}));
  assert.equal(library.persistence,false);assert.equal(library.owner,'derived-read-only');assert.ok(library.objects.some(x=>x.id==='wall-hold'&&x.count===1),'Evolution Object projection missing time-only object');
 
- /* Physical Settings controls: 3/5 seconds must respond on touch, and the old
-    non-interactive video information row must not remain visible as a fake setting. */
+ /* Physical Settings controls: 3/5 seconds and the real default Capture mode must
+    persist from touch input; the old video information row stays retired. */
  const settingsBtn=page.locator('#settingsBtn');assert.ok(await settingsBtn.count(),'Settings button missing');await tap(settingsBtn);
  await page.waitForFunction(()=>document.querySelector('#settingsSheet')?.classList.contains('show'),undefined,{timeout:2000});
  assert.equal(await page.locator('#settingsSheet .v817CaptureInfo').count(),0,'read-only video pseudo-setting still visible');
@@ -81,11 +81,15 @@ try{
  await tap(page.locator('#scanSeconds [data-sec="3"]'));
  await page.waitForFunction(()=>{const s=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return Number(s?.prefs?.scanSeconds)===3&&document.querySelector('#scanSeconds [data-sec="3"]')?.classList.contains('active')},undefined,{timeout:1500});
  assert.equal(await page.locator('#scanSeconds [data-sec="3"]').getAttribute('aria-pressed'),'true');
+ await tap(page.locator('#axis818CapturePrefs [data-axis818-pref="captureDefaultMode"][data-value="photo"]'));
+ await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.prefs?.captureDefaultMode==='photo'&&document.querySelector('#axis818CapturePrefs [data-axis818-pref="captureDefaultMode"][data-value="photo"]')?.classList.contains('active'),undefined,{timeout:1500});
+ await tap(page.locator('#axis818CapturePrefs [data-axis818-pref="captureDefaultMode"][data-value="video"]'));
+ await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.prefs?.captureDefaultMode==='video'&&document.querySelector('#axis818CapturePrefs [data-axis818-pref="captureDefaultMode"][data-value="video"]')?.classList.contains('active'),undefined,{timeout:1500});
  await page.evaluate(()=>document.querySelector('#settingsSheet')?.classList.remove('show'));
 
- /* Camera control: tap the actual facing pill, then start one logical recording and
-    flip again. The recorder instance must remain identical while the camera source changes. */
- assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE__.openCanonicalCamera('photo','wall-hold',false)),true);
+ /* Camera control: enter through the real visible Capture button. This is the
+    Settings -> entry -> canonical mode path that must honor captureDefaultMode. */
+ await tap(page.locator('#scanBtn'));
  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&window.__AXIS_CAPTURE__?.snapshot?.().mode==='video',undefined,{timeout:2500});
  assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE__.snapshot().owner),'canonical');
  const facingText=(await page.locator('#v8171CameraFlip').innerText()).trim();assert.equal(facingText,'前置','8.18 default facing was not applied to Capture');
@@ -124,5 +128,5 @@ try{
 
  const overflow=await page.evaluate(()=>({w:document.documentElement.scrollWidth,v:innerWidth}));assert.ok(overflow.w<=overflow.v+1,`horizontal overflow ${overflow.w}/${overflow.v}`);
  assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
- console.log(`[AXIS 8.18 Object + Route + Capture + Focus ${ENGINE}] PASS · time-only schema · resume-safe single route · touch scan 3/5 · physical + mid-record camera flip · applied Capture defaults · schema-aware Focus · source-first media · derived Evolution Library`);
+ console.log(`[AXIS 8.18 Object + Route + Capture + Focus ${ENGINE}] PASS · time-only schema · resume-safe single route · touch scan 3/5 · physical Capture default preference · physical + mid-record camera flip · applied Capture defaults · schema-aware Focus · source-first media · derived Evolution Library`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
