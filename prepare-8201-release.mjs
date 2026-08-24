@@ -58,6 +58,18 @@ for(const f of [
  write(f,s);
 }
 
+/* Runtime parity compares this release candidate against the exact 8.20
+   Production base. Preserve 8.20 in the family and append only the explicitly
+   sealed 8.20.1 identity; architecture/request/chunk parity remains strict. */
+{
+ const f='scripts/axis-813-build-parity.mjs';let s=read(f);
+ const familyTail="'8.18','8.19','8.20'];";
+ const sealedTail="'8.18','8.19','8.20','8.20.1'];";
+ s=once(s,familyTail,sealedTail,'runtime parity patch-family tail');
+ if(!s.includes("assert.equal(candidate.architecture, baseline.architecture")||!s.includes("assert.deepEqual(candidate.requests, baseline.requests")||!s.includes("assert.deepEqual(candidate.chunks ?? [], baseline.chunks ?? []"))fail('runtime parity topology guard drift');
+ write(f,s);
+}
+
 /* 8.10.3 freshness provenance remains 8.18. Only current release assertions
    may advance from 8.20 to 8.20.1. */
 {
