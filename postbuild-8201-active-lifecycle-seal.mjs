@@ -7,18 +7,6 @@ let src=fs.readFileSync(FILE,'utf8');
 
 const replaceOnce=(from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);src=src.replace(from,to)};
 const replaceRange=(re,mutate,label)=>{const flags=re.flags.includes('g')?re.flags:re.flags+'g',matches=[...src.matchAll(new RegExp(re.source,flags))];if(matches.length!==1)fail(`${label} expected once, found ${matches.length}`);const before=matches[0][0],after=mutate(before);if(!after||after===before)fail(`${label} mutation did not change source`);src=src.slice(0,matches[0].index)+after+src.slice(matches[0].index+before.length)};
-const replaceStrengthGuard=(fn,label)=>{
- let out=fn,hits=0;
- const variants=[
-  ["e.kind!=='strength'","!axis8201SetExecution(e)"],
-  ["e?.kind!=='strength'","!axis8201SetExecution(e)"],
-  ["pair.e.kind==='strength'","axis8201SetExecution(pair.e)"],
-  ["pair.e?.kind==='strength'","axis8201SetExecution(pair.e)"]
- ];
- for(const [from,to] of variants){const n=out.split(from).length-1;if(n){out=out.replaceAll(from,to);hits+=n}}
- if(!hits)fail(`${label} coarse strength boundary missing`);
- return out;
-};
 
 /* Historical 8.19 guard remains the single startActivity gate, but 8.20.1
    supersedes only its eligibility semantics after every inherited contract passed. */
@@ -35,37 +23,19 @@ replaceRange(
 );
 replaceOnce("complete=e.kind==='strength'&&done>=planned","complete=axis8201SetExecution(e)&&done>=planned",'8.12.4 current completion projection');
 
-/* v87 stays the polished Active action/presentation owner. Only set-execution
-   Objects receive set completion, set counts, add-set, motion set-complete or
-   Focus set controls. Timed/hold keep clock + pause + explicit finish. */
-replaceOnce(
- "function isPlanComplete(e,a,m){return e?.kind==='strength'&&Number(a?.completedSets||0)>=planned(e,m)}",
- "function isPlanComplete(e,a,m){return axis8201SetExecution(e)&&Number(a?.completedSets||0)>=planned(e,m)}",
- 'v87 plan-complete execution authority'
-);
+/* 8.18 already centralized every v87 set-only surface and action — plan complete,
+   completeSet, add-set presentation, motion and Focus — behind axis818TracksSets.
+   Supersede that one canonical predicate instead of patching those consumers. */
 replaceRange(
- /function completeSet\([^)]*\)\{[\s\S]*?\}(?=\nfunction undoSet)/,
- fn=>replaceStrengthGuard(fn,'v87 set completion'),
- 'v87 set completion execution authority'
-);
-replaceRange(
- /function renderNow\([^)]*\)\{[\s\S]*?\}(?=\nfunction renderTimeline)/,
- fn=>{const n=(fn.match(/e\.kind==='strength'/g)||[]).length;if(n<1)fail('v87 renderNow strength presentation boundary missing');return fn.replaceAll("e.kind==='strength'","axis8201SetExecution(e)")},
- 'v87 Active card execution presentation'
-);
-replaceRange(
- /function motionHandler\([^)]*\)\{[\s\S]*?\}(?=\nfunction installMotion)/,
- fn=>replaceStrengthGuard(fn,'v87 motion set'),
- 'v87 motion set authority'
-);
-replaceRange(
- /function axis818FocusSync\(\)\{[\s\S]*?\}(?=\nD\.addEventListener\('click')/,
- fn=>{const n=(fn.match(/e\.kind==='strength'/g)||[]).length;if(n<1)fail('Focus strength presentation boundary missing');return fn.replaceAll("e.kind==='strength'","axis8201SetExecution(e)")},
- 'Focus execution presentation'
+ /function axis818TracksSets\(e\)\{[\s\S]*?\}(?=\nfunction planned)/,
+ ()=>"function axis818TracksSets(e){return axis8201SetExecution(e)}",
+ 'v87 canonical set predicate'
 );
 
 if((src.match(/function axis819ClassicActivityEncounter\(/g)||[]).length!==1)fail('Active Truth helper must remain single-owner');
 if((src.match(/const axis819ActivityTarget=arguments\[0\]/g)||[]).length!==1)fail('startActivity guard must remain exactly once');
+if((src.match(/function axis818TracksSets\(/g)||[]).length!==1)fail('v87 set predicate must remain single-owner');
+if(!src.includes("function axis818TracksSets(e){return axis8201SetExecution(e)}"))fail('v87 set predicate did not adopt execution mode');
 if(!src.includes("['sets','rounds','timed','hold'].includes(explicit)"))fail('persistent executable modes missing');
 if(!src.includes("['single','complete'].includes(explicit)"))fail('one-shot executable modes missing');
 if(!src.includes("axis819CommittedKeys.has('weight')&&axis819CommittedKeys.has('reps')"))fail('v61 classic immutable-schema authority changed');
@@ -85,11 +55,11 @@ if(fs.existsSync(MANIFEST)){
  info.gates.evolutionShelfLocalized8201=true;
  info.axis8201={
   objectTruth:{liveSchemaSync:true,extendedMetricKeys:true,compatProjection:'recording.metrics-v2'},
-  active:{owner:'existing-v82/v87',executionModeAuthority:true,modes:['sets','rounds','timed','hold'],oneShotModes:['single','complete'],setControls:'sets-only'},
+  active:{owner:'existing-v82/v87',executionModeAuthority:true,modes:['sets','rounds','timed','hold'],oneShotModes:['single','complete'],setControls:'sets-only',setPredicate:'axis818TracksSets -> axis8201SetExecution'},
   localization:{internalEnumsPersisted:true,visibleChinese:true,evolutionShelf:true},
   ownership:{newPersistence:false,newDatabase:false,newRecorder:false,newActiveOwner:false}
  };
  if(info.axis819?.recording)info.axis819.recording.activeTruthClassicOnly=false;
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
-console.log('[AXIS 8.20.1 Active lifecycle seal] PASS · historical contracts verified first · execution-mode Active eligibility + presentation supersede · v61 classic metadata authority unchanged');
+console.log('[AXIS 8.20.1 Active lifecycle seal] PASS · historical contracts verified first · execution-mode Active eligibility · one canonical v87 set predicate superseded · v61 classic metadata authority unchanged');
