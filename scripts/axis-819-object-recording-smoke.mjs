@@ -8,6 +8,14 @@ const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executabl
 const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true,locale:'zh-CN'});
 
 await context.addInitScript(()=>{
+ const nativeSet=Storage.prototype.setItem;
+ Storage.prototype.setItem=function(k,v){
+  if(k==='axis_v8_meta'&&Array.isArray(window.__AXIS_819_META_WRITES__)){
+   let parsed=null;try{parsed=JSON.parse(String(v))}catch{}
+   window.__AXIS_819_META_WRITES__.push({events:Object.keys(parsed?.events||{}),value:String(v).slice(0,1600),stack:String(new Error().stack||'')});
+  }
+  return nativeSet.call(this,k,v)
+ };
  if(!localStorage.getItem('axis_v60_state')){
   const now=Date.now();
   const wall={
@@ -87,6 +95,7 @@ try{
  await durationInput.fill('7');
  assert.equal(await durationInput.inputValue(),'7','duration input did not retain the user value before commit');
  await page.evaluate(()=>{
+  window.__AXIS_819_META_WRITES__=[];
   window.__AXIS_819_SAVE_PROBE__=null;
   window.__AXIS_819_FINAL_RECORDER_RESET__=null;
   document.querySelector('#saveScan')?.addEventListener('click',()=>{const input=document.querySelector('[data-axis818-metric="duration"]');window.__AXIS_819_SAVE_PROBE__={exists:!!input,value:input?.value??null,selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null}}, {capture:true,once:true})
@@ -98,14 +107,14 @@ try{
   const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
   const meta=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}');
   const event=state.active.events[0],rec=document.querySelector('#axis818MetricRecorder');
-  return{event,saveProbe:window.__AXIS_819_SAVE_PROBE__,metaHasEvent:!!meta.events?.[event.id],customSchema:state.profile.customEq.find(x=>x.id==='wall-hold')?.metricSchema,recorderVisible:rec?.classList.contains('show')||false,scanSheetShow:document.querySelector('#scanSheet')?.classList.contains('show')??null};
+  return{event,saveProbe:window.__AXIS_819_SAVE_PROBE__,metaHasEvent:!!meta.events?.[event.id],metaRecord:meta.events?.[event.id]||null,metaKeys:Object.keys(meta.events||{}),metaWrites:window.__AXIS_819_META_WRITES__||[],customSchema:state.profile.customEq.find(x=>x.id==='wall-hold')?.metricSchema,recorderVisible:rec?.classList.contains('show')||false,scanSheetShow:document.querySelector('#scanSheet')?.classList.contains('show')??null};
  });
  assert.equal(saved.saveProbe?.value,'7','Save boundary did not observe the visible schema value');
  assert.equal(saved.event.metrics.duration,7,'visible schema input was not saved as the Encounter fact');
  assert.deepEqual(saved.event.metricSchemaSnapshot.map(x=>x.key),['duration'],'Encounter did not freeze the Object schema used for recording');
  for(const irrelevant of ['weight','reps','sets','intensity'])assert.equal(Object.hasOwn(saved.event,irrelevant),false,`irrelevant legacy fact ${irrelevant} leaked into time-only Encounter`);
  assert.equal(saved.event.duration,7,'compatible duration projection missing');
- assert.equal(saved.metaHasEvent,false,'time-only schema unexpectedly created a v61 strength fact owner');
+ assert.equal(saved.metaHasEvent,false,`time-only schema unexpectedly created a v61 strength fact owner · ${JSON.stringify({eventId:saved.event?.id,snapshot:saved.event?.metricSchemaSnapshot,metaRecord:saved.metaRecord,metaKeys:saved.metaKeys,metaWrites:saved.metaWrites})}`);
  assert.deepEqual(saved.customSchema,[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1}],'Object schema was destructively rewritten during recording');
  assert.equal(saved.recorderVisible,false,'recording reset left schema controls visibly mounted');
  assert.equal(saved.scanSheetShow,false,'committed Encounter left Capture sheet visibly mounted');
