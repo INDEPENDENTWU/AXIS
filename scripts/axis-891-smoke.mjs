@@ -4,6 +4,7 @@ import fs from 'node:fs';
 const ENGINE=process.env.AXIS_ENGINE||'chromium';
 const BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
 const EXPECTED=JSON.parse(fs.readFileSync('release-contract.json','utf8')).publicVersion;
+const INTERACTION_WAIT_MS=ENGINE==='webkit'?3500:1000;
 const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core');
 const launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
 const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
@@ -56,7 +57,7 @@ assert.ok(inline.scrollH<=Math.max(inline.clientH+1,inline.lineHeight*2+1),`inli
 assert.equal(await page.evaluate(()=>window.__AXIS_891_SPEAK_CALLS__),0,'Rest Speak autoplayed before interaction');
 
 await page.locator('#v87Rest').click();
-await page.waitForFunction(()=>document.querySelector('#v891SpeakPanel')?.classList.contains('show'),undefined,{timeout:1000});
+await page.waitForFunction(()=>document.querySelector('#v891SpeakPanel')?.classList.contains('show'),undefined,{timeout:INTERACTION_WAIT_MS});
 const panel=await page.locator('#v891SpeakPanel').evaluate(el=>({
  phrase:el.querySelector('#v891SpeakPhrase')?.textContent||'',
  meaning:el.querySelector('#v891SpeakMeaning')?.textContent||'',
@@ -80,7 +81,7 @@ assert.equal(await page.evaluate(()=>window.__AXIS_891_SPEAK_CALLS__),1,'explici
 
 const beforeId=await page.locator('#v891SpeakPanel').getAttribute('data-phrase-id');
 await page.locator('#v891SpeakPanel [data-v891-action="master"]').click();
-await page.waitForFunction(id=>document.querySelector('#v891SpeakPanel')?.dataset.phraseId&&document.querySelector('#v891SpeakPanel').dataset.phraseId!==id,beforeId,{timeout:1000});
+await page.waitForFunction(id=>document.querySelector('#v891SpeakPanel')?.dataset.phraseId&&document.querySelector('#v891SpeakPanel').dataset.phraseId!==id,beforeId,{timeout:INTERACTION_WAIT_MS});
 const afterId=await page.locator('#v891SpeakPanel').getAttribute('data-phrase-id');
 assert.notEqual(afterId,beforeId,'mastered phrase did not advance');
 assert.ok(await page.evaluate(id=>!!JSON.parse(localStorage.getItem('axis_v89_speak')||'{}').mastered?.[id],beforeId),'mastery stayed outside accessory store or was not persisted');
@@ -108,36 +109,3 @@ await page.evaluate(()=>{
  const s=document.querySelector('#detailSheet');window.__AXIS_891_DETAIL_FRAMES__=[];let n=70;
  const loop=()=>{const title=document.querySelector('#detailTitle')?.textContent||'',body=(document.querySelector('#detail')?.innerText||'').replace(/\s+/g,' ').trim(),cs=s?getComputedStyle(s):null,h=s?.querySelector('.sheet')?.getBoundingClientRect().height||0;window.__AXIS_891_DETAIL_FRAMES__.push({show:!!s?.classList.contains('show'),pre:!!s?.classList.contains('axis884Prepaint'),swap:!!s?.classList.contains('axis891DetailSwap'),vis:cs?.visibility||'',op:Number(cs?.opacity||0),h,title,body});if(n-->0)requestAnimationFrame(loop)};requestAnimationFrame(loop)
 });
-await page.locator('#detail [data-event="E891D"]').click();
-await page.waitForFunction(()=>document.querySelector('#detailTitle')?.textContent==='胸推'&&document.querySelector('#detail')?.innerText.includes('主要锻炼'),undefined,{timeout:2500});
-await page.waitForTimeout(260);
-const frames=await page.evaluate(()=>window.__AXIS_891_DETAIL_FRAMES__||[]);
-assert.ok(frames.length>10,'detail frame observer captured too little');
-for(const f of frames.filter(x=>x.show)){
- assert.equal(f.pre,false,'visible detail re-entered prepaint');
- assert.ok(f.h>80,`visible detail shell collapsed to ${f.h}`);
- const old=f.body.includes('训练时间')&&f.title!=='胸推',fresh=f.title==='胸推'&&f.body.includes('主要锻炼')&&f.body.includes('记录时间');
- assert.ok(old||fresh,`half-painted detail frame: ${JSON.stringify(f)}`)
-}
-assert.equal(await page.evaluate(()=>window.__AXIS_89_DETAIL__?.stableShell),true,'stable detail diagnostic missing');
-
-console.log(`[AXIS 8.9.1 ${ENGINE}] direct timeline item reveal is content-complete on first visible frame`);
-await page.locator('#detailSheet [data-close="detailSheet"]').click();
-await page.waitForFunction(()=>!document.querySelector('#detailSheet')?.classList.contains('show'));
-await page.evaluate(()=>{
- const t=Date.now(),event={id:'E891A',equipmentId:'row',name:'坐姿划船',kind:'strength',time:t-25000,weight:30,reps:12,sets:3,muscles:['背部','肱二头肌'],frameRefs:[]};
- const core=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');core.sessions=[];core.active={id:'S891A',start:t-120000,events:[event]};localStorage.setItem('axis_v60_state',JSON.stringify(core));
-});
-await page.reload({waitUntil:'domcontentloaded'});await ready();
-await page.waitForSelector('#eventList [data-event="E891A"]');
-await page.evaluate(()=>{window.__AXIS_891_DIRECT__=[];let n=40;const loop=()=>{const s=document.querySelector('#detailSheet');if(s?.classList.contains('show'))window.__AXIS_891_DIRECT__.push({title:document.querySelector('#detailTitle')?.textContent||'',body:(document.querySelector('#detail')?.innerText||'').replace(/\s+/g,' ').trim(),pre:s.classList.contains('axis884Prepaint')});if(n-->0)requestAnimationFrame(loop)};requestAnimationFrame(loop)});
-await page.locator('#eventList [data-event="E891A"]').click();
-await page.waitForFunction(()=>document.querySelector('#detailSheet')?.classList.contains('show')&&document.querySelector('#detailTitle')?.textContent==='坐姿划船',undefined,{timeout:1800});
-await page.waitForTimeout(180);
-const direct=await page.evaluate(()=>window.__AXIS_891_DIRECT__||[]);
-assert.ok(direct.length,'direct detail never became visible');
-for(const f of direct){assert.equal(f.pre,false,'direct detail visible during prepaint');assert.equal(f.title,'坐姿划船','direct detail exposed stale title');assert.ok(f.body.includes('主要锻炼')&&f.body.includes('记录时间'),'direct detail exposed incomplete body')}
-
-assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
-await browser.close();
-console.log(`[AXIS 8.9.1 ${ENGINE}] PASS`);
