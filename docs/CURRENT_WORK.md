@@ -15,6 +15,10 @@
 
 **AXIS 8.19 Capture default-entry correctness hotfix** · branch `fix/819-capture-default-entry` · PR **#82**.
 
+The governed product milestone remains **AXIS 8.19 — Universal Practice Objects**. Its original implementation branch `product/819-universal-practice-objects` is already merged through PR #80; PR #82 is a Production correctness continuation, not a competing product milestone.
+
+The native/cross-platform handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`, with shared portable contracts `axis.domain.v1` and `axis.data.v1`. This Web hotfix must not alter native-domain semantics or durable exchange contracts.
+
 Real-device testing found a production defect in the inherited Capture entry path: changing **默认拍摄入口** in Settings to 照片 / 扫描 / 视频 persisted correctly, but opening Capture through the visible `#scanBtn` still always entered Scan.
 
 Root cause is an ownership mix-up between two different preferences:
@@ -51,6 +55,7 @@ Required proof:
 - the real visible `#scanBtn` opens the mode selected in Settings rather than Scan sampling mode;
 - the regression runs in both Chromium and iPhone-like WebKit through the inherited `scripts/axis-818-object-focus-smoke.mjs` path;
 - Current Release, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity and affected specialist gates pass;
+- cross-platform/native foundation contracts remain unchanged and sealed;
 - no destructive user-data migration and no second persistence/camera/recorder owner is introduced;
 - after merge, Vercel Production must serve the exact merged-main SHA with public version/baseVersion `8.19`;
 - EdgeOne must deploy the same prebuilt artifact and pass parity, live Chromium and live iPhone-like WebKit Production verification.
