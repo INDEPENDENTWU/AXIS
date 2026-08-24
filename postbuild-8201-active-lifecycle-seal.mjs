@@ -7,6 +7,18 @@ let src=fs.readFileSync(FILE,'utf8');
 
 const replaceOnce=(from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);src=src.replace(from,to)};
 const replaceRange=(re,mutate,label)=>{const flags=re.flags.includes('g')?re.flags:re.flags+'g',matches=[...src.matchAll(new RegExp(re.source,flags))];if(matches.length!==1)fail(`${label} expected once, found ${matches.length}`);const before=matches[0][0],after=mutate(before);if(!after||after===before)fail(`${label} mutation did not change source`);src=src.slice(0,matches[0].index)+after+src.slice(matches[0].index+before.length)};
+const replaceStrengthGuard=(fn,label)=>{
+ let out=fn,hits=0;
+ const variants=[
+  ["e.kind!=='strength'","!axis8201SetExecution(e)"],
+  ["e?.kind!=='strength'","!axis8201SetExecution(e)"],
+  ["pair.e.kind==='strength'","axis8201SetExecution(pair.e)"],
+  ["pair.e?.kind==='strength'","axis8201SetExecution(pair.e)"]
+ ];
+ for(const [from,to] of variants){const n=out.split(from).length-1;if(n){out=out.replaceAll(from,to);hits+=n}}
+ if(!hits)fail(`${label} coarse strength boundary missing`);
+ return out;
+};
 
 /* Historical 8.19 guard remains the single startActivity gate, but 8.20.1
    supersedes only its eligibility semantics after every inherited contract passed. */
@@ -31,9 +43,9 @@ replaceOnce(
  "function isPlanComplete(e,a,m){return axis8201SetExecution(e)&&Number(a?.completedSets||0)>=planned(e,m)}",
  'v87 plan-complete execution authority'
 );
-replaceOnce(
- "if(!e||!a||a.status!=='active'||e.kind!=='strength')return false;",
- "if(!e||!a||a.status!=='active'||!axis8201SetExecution(e))return false;",
+replaceRange(
+ /function completeSet\([^)]*\)\{[\s\S]*?\}(?=\nfunction undoSet)/,
+ fn=>replaceStrengthGuard(fn,'v87 set completion'),
  'v87 set completion execution authority'
 );
 replaceRange(
@@ -41,7 +53,11 @@ replaceRange(
  fn=>{const n=(fn.match(/e\.kind==='strength'/g)||[]).length;if(n<1)fail('v87 renderNow strength presentation boundary missing');return fn.replaceAll("e.kind==='strength'","axis8201SetExecution(e)")},
  'v87 Active card execution presentation'
 );
-replaceOnce("pair&&pair.e.kind==='strength'&&!isPlanComplete(pair.e,pair.a,readMeta())","pair&&axis8201SetExecution(pair.e)&&!isPlanComplete(pair.e,pair.a,readMeta())",'v87 motion set authority');
+replaceRange(
+ /function motionHandler\([^)]*\)\{[\s\S]*?\}(?=\nfunction installMotion)/,
+ fn=>replaceStrengthGuard(fn,'v87 motion set'),
+ 'v87 motion set authority'
+);
 replaceRange(
  /function axis818FocusSync\(\)\{[\s\S]*?\}(?=\nD\.addEventListener\('click')/,
  fn=>{const n=(fn.match(/e\.kind==='strength'/g)||[]).length;if(n<1)fail('Focus strength presentation boundary missing');return fn.replaceAll("e.kind==='strength'","axis8201SetExecution(e)")},
