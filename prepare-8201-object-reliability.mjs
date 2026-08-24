@@ -4,6 +4,7 @@ const fail=m=>{throw new Error(`[AXIS 8.20.1 object reliability] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
+const onceRe=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:re.flags+'g',matches=src.match(new RegExp(re.source,flags))||[];if(matches.length!==1)fail(`${label} expected once, found ${matches.length}`);return src.replace(re,()=>to)};
 const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax ${e.message}`)}};
 
 /*
@@ -36,12 +37,17 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  * 2. app.js is still the Object Truth/state owner. Consume the editor event into
  *    the live state before any later save can overwrite the freshly persisted
  *    schema. Re-render the active Recording surface immediately when relevant.
+ *    The derived Evolution shelf is also localized at its existing presenter;
+ *    internal object/schema identifiers remain untouched.
  * ----------------------------------------------------------------------- */
 {
  const FILE='app.js';let s=read(FILE);
- const mark="window.__AXIS_OBJECT_TRUTH__={version:'8.18',owner:'app.js',schemaForEq:axis818SchemaForEq,schemaForEvent:axis818SchemaForEvent,eventMetrics:axis818EventMetrics,eventRows:axis818EventRows,explicit:eq=>!!axis818Eq(eq)?.metricSchema?.length};";
- const add=`${mark}\nfunction axis8201ApplyObjectSchemaChange(event){const d=event?.detail||{},eq=(state.profile?.customEq||[]).find(x=>x.id===d.id);if(!eq||!Array.isArray(d.schema)||!d.schema.length)return false;eq.metricSchema=d.schema.map(axis818CloneMetric);eq.metricSchemaVersion=String(d.metricSchemaVersion||'8.20.1');eq.recording=Object.assign({},eq.recording||{},{version:2,metrics:eq.metricSchema.map(x=>x.key)});save();if(state.selectedEq===eq.id){const host=$('#axis818MetricRecorder');if(host)host.dataset.axis818RenderKey='';axis818RenderRecorder()}try{render()}catch{}return true}\nwindow.addEventListener('axis:object-schema-changed',axis8201ApplyObjectSchemaChange);\nwindow.__AXIS_8201_OBJECT_SYNC__={version:'8.20.1',owner:'app.js',liveSchema:true,compatProjection:'recording.metrics-v2',newPersistence:false};`;
- s=once(s,mark,add,'app Object schema live-state bridge');
+ const truthRe=/window\.__AXIS_OBJECT_TRUTH__=\{[^\n]*\};/;
+ const truth=(s.match(truthRe)||[])[0];if(!truth)fail('app Object Truth structural export missing');
+ const add=`${truth}\nfunction axis8201ApplyObjectSchemaChange(event){const d=event?.detail||{},eq=(state.profile?.customEq||[]).find(x=>x.id===d.id);if(!eq||!Array.isArray(d.schema)||!d.schema.length)return false;eq.metricSchema=d.schema.map(axis818CloneMetric);eq.metricSchemaVersion=String(d.metricSchemaVersion||'8.20.1');eq.recording=Object.assign({},eq.recording||{},{version:2,metrics:eq.metricSchema.map(x=>x.key)});save();if(state.selectedEq===eq.id){const host=$('#axis818MetricRecorder');if(host)host.dataset.axis818RenderKey='';axis818RenderRecorder()}try{render()}catch{}return true}\nwindow.addEventListener('axis:object-schema-changed',axis8201ApplyObjectSchemaChange);\nwindow.__AXIS_8201_OBJECT_SYNC__={version:'8.20.1',owner:'app.js',liveSchema:true,compatProjection:'recording.metrics-v2',newPersistence:false};`;
+ s=onceRe(s,truthRe,add,'app Object schema live-state bridge');
+ s=once(s,'Evolution Library','训练项目','Evolution shelf Chinese title');
+ s=once(s,"+' 个对象</b>","+' 个项目</b>",'Evolution shelf Chinese count noun');
  syntax(s,FILE);write(FILE,s);
 }
 
@@ -79,21 +85,21 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
 
 /* --------------------------------------------------------------------------
  * 5. Internal enum IDs remain stable; only their picker presentation is localized.
- *    No persisted type values are translated or migrated.
+ *    A scoped observer covers async search/picker renders without owning data.
  * ----------------------------------------------------------------------- */
 {
  const FILE='v873-smart-input.js';let s=read(FILE),end=s.lastIndexOf('})();');if(end<0)fail('v873 IIFE end missing');
- const block=`\n/* AXIS 8.20.1 — Chinese presentation for stable internal Object type IDs. */\nfunction axis8201LocalType(v){return v==='strength'?'力量':v==='cardio'?'有氧':v}\nfunction axis8201LocalizePickerTypes(){const root=$('#eqSheet');if(!root)return;for(const el of $$('span,small',root)){const t=(el.textContent||'').trim();if(t==='strength'||t==='cardio')el.textContent=axis8201LocalType(t)}}\nD.addEventListener('input',e=>{if(e.target?.id==='eqSearch')queueMicrotask(axis8201LocalizePickerTypes)},true);\nD.addEventListener('click',e=>{if(e.target.closest('#equipmentRow,#quickEquipment,#v8Quick,#v873Quick,#addCustomEq,[data-v8124-pick]'))queueMicrotask(axis8201LocalizePickerTypes)},true);\nwindow.addEventListener('axis:object-schema-changed',()=>queueMicrotask(axis8201LocalizePickerTypes));\nwindow.__AXIS_8201_LOCALIZATION__={version:'8.20.1',internalEnums:true,visibleChinese:true};\n`;
+ const block=`\n/* AXIS 8.20.1 — Chinese presentation for stable internal Object type IDs. */\nfunction axis8201LocalType(v){return v==='strength'?'力量':v==='cardio'?'有氧':v==='relative'?'自重':v}\nfunction axis8201LocalizePickerTypes(){const root=$('#eqSheet');if(!root)return;for(const el of $$('span,small',root)){const t=(el.textContent||'').trim();if(t==='strength'||t==='cardio'||t==='relative')el.textContent=axis8201LocalType(t)}}\nfunction axis8201WatchPickerTypes(){const root=$('#eqSheet');if(!root||root.dataset.axis8201LocaleWatch)return;root.dataset.axis8201LocaleWatch='1';new MutationObserver(()=>queueMicrotask(axis8201LocalizePickerTypes)).observe(root,{subtree:true,childList:true,characterData:true});axis8201LocalizePickerTypes()}\nD.addEventListener('input',e=>{if(e.target?.id==='eqSearch')queueMicrotask(axis8201LocalizePickerTypes)},true);\nD.addEventListener('click',e=>{if(e.target.closest('#equipmentRow,#quickEquipment,#v8Quick,#v873Quick,#addCustomEq,[data-v8124-pick]'))queueMicrotask(()=>{axis8201WatchPickerTypes();axis8201LocalizePickerTypes()})},true);\nwindow.addEventListener('axis:object-schema-changed',()=>queueMicrotask(axis8201LocalizePickerTypes));\naxis8201WatchPickerTypes();\nwindow.__AXIS_8201_LOCALIZATION__={version:'8.20.1',internalEnums:true,visibleChinese:true,evolutionShelf:true};\n`;
  s=s.slice(0,end)+block+s.slice(end);
  syntax(s,FILE);write(FILE,s);
 }
 
 for(const [file,tokens] of [
- ['app.js',['__AXIS_8201_OBJECT_SYNC__','axis8201ApplyObjectSchemaChange']],
+ ['app.js',['__AXIS_8201_OBJECT_SYNC__','axis8201ApplyObjectSchemaChange','训练项目','个项目']],
  ['v874-professional.js',["metricSchemaVersion='8.20.1'",'queueMicrotask']],
  ['v82-runtime.js',['axis8201Ongoing','axis8201EstimateForEvent']],
  ['v87-runtime.js',['axis8201ExecutionMode','axis8201SetExecution']],
- ['v873-smart-input.js',['__AXIS_8201_LOCALIZATION__','axis8201LocalType']]
+ ['v873-smart-input.js',['__AXIS_8201_LOCALIZATION__','axis8201LocalType','axis8201WatchPickerTypes']]
 ]){const s=read(file);for(const t of tokens)if(!s.includes(t))fail(`${file} invariant missing ${t}`)}
 
-console.log('[AXIS 8.20.1 object reliability] PASS · live Object schema sync · executable Active lifecycle · set-only UI authority · localized internal enums · no new persistence/recorder owner');
+console.log('[AXIS 8.20.1 object reliability] PASS · live Object schema sync · executable Active lifecycle · set-only UI authority · Chinese picker/Evolution presentation · no new persistence/recorder owner');
