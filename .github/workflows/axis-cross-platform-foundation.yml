@@ -17,6 +17,8 @@ on:
       - 'docs/decisions/**'
       - 'shared/contracts/**'
       - 'shared/fixtures/**'
+      - 'lib/axis-metric-schema.mjs'
+      - 'scripts/axis-819-metric-schema-contract.mjs'
       - 'scripts/axis-schema-fixture-seal.mjs'
       - 'scripts/axis-cross-platform-foundation-contract.mjs'
       - 'scripts/axis-native-foundation-seal.mjs'
@@ -37,6 +39,8 @@ on:
       - 'docs/decisions/**'
       - 'shared/contracts/**'
       - 'shared/fixtures/**'
+      - 'lib/axis-metric-schema.mjs'
+      - 'scripts/axis-819-metric-schema-contract.mjs'
       - 'scripts/axis-schema-fixture-seal.mjs'
       - 'scripts/axis-cross-platform-foundation-contract.mjs'
       - 'scripts/axis-native-foundation-seal.mjs'
@@ -61,6 +65,8 @@ jobs:
           node-version: '22'
       - name: Validate fixture events against published schemas
         run: node scripts/axis-schema-fixture-seal.mjs
+      - name: Validate Metric Schema and legacy recording compatibility
+        run: node scripts/axis-819-metric-schema-contract.mjs
       - name: Validate contracts and golden fixtures
         run: node scripts/axis-cross-platform-foundation-contract.mjs
       - name: Seal native foundation policies and product matrix

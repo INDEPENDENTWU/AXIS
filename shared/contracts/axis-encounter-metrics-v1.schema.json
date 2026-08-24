@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.encounter-metrics.v1",
+  "title": "AXIS Encounter Metrics Projection v1",
+  "description": "Portable normalized projection of one Encounter's metric facts. Local authoritative facts remain with the declared platform recording owner.",
+  "type": "object",
+  "required": ["schema", "objectId", "activityId", "capturedAt", "factSource", "metricSchema", "values", "entries"],
+  "properties": {
+    "schema": {"const": "axis.encounter-metrics.v1"},
+    "objectId": {"type": "string", "minLength": 1},
+    "activityId": {"type": "string", "minLength": 1},
+    "capturedAt": {"type": "number", "minimum": 0},
+    "factSource": {"enum": ["axis_v60_state", "axis_v8_meta"]},
+    "metricSchema": {"$ref": "axis.metric-schema.v1"},
+    "values": {"type": "object", "additionalProperties": {"type": ["number", "string", "boolean", "null"]}},
+    "entries": {"type": "array", "items": {"type": "object", "required": ["index", "state", "doneAt", "values"], "properties": {"index": {"type": "integer", "minimum": 0}, "state": {"type": "string", "minLength": 1}, "doneAt": {"type": ["number", "null"], "minimum": 0}, "values": {"type": "object", "additionalProperties": {"type": ["number", "string", "boolean", "null"]}}}, "additionalProperties": false}}
+  },
+  "additionalProperties": false
+}
