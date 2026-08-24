@@ -5,7 +5,7 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const info=JSON.parse(read('axis-build.json'));
 const core=read('axis-core.js');
 
-if(info.version!=='8.18'||info.baseVersion!=='8.18')fail(`release identity ${info.version}/${info.baseVersion}`);
+if(info.version!=='8.19'||info.baseVersion!=='8.19')fail(`release identity ${info.version}/${info.baseVersion}`);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
 
 for(const gate of [
