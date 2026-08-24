@@ -5,10 +5,6 @@ const fail=m=>{throw new Error(`[AXIS 8.19 UPO final-runtime seal] ${m}`)};
 if(!fs.existsSync(FILE))fail(`missing ${FILE}`);
 let src=fs.readFileSync(FILE,'utf8');
 
-/*
- * The source owner remains app.js. This seal runs only after canonical bundling so
- * compiler/postbuild stages cannot silently drop the same lifecycle invariants.
- */
 for(const token of [
   'axis818Eq(state.selectedEq)',
   'axis818RenderKey',
@@ -29,14 +25,16 @@ const audit={
  eventPush:occurrences('state.active.events.push'),
  saveScanRefs:occurrences('saveScan'),
  closeSheetFunction:occurrences('function closeSheet'),
- stopCameraFunction:occurrences('function stopCamera')
+ stopCameraFunction:occurrences('function stopCamera'),
+ abortVideoFunction:occurrences('function capture816AbortVideo'),
+ abortVideoRefs:occurrences('capture816AbortVideo')
 };
-const contextFor=positions=>positions.slice(0,16).map(i=>src.slice(Math.max(0,i-260),Math.min(src.length,i+620)).replace(/\s+/g,' '));
+const contextFor=positions=>positions.slice(0,16).map(i=>src.slice(Math.max(0,i-320),Math.min(src.length,i+920)).replace(/\s+/g,' '));
 console.log('[AXIS 8.19 UPO canonical audit] '+JSON.stringify({
  counts:Object.fromEntries(Object.entries(audit).map(([k,v])=>[k,v.length])),
  recorderContexts:contextFor(audit.recorderId),
  saveContexts:contextFor([...audit.saveFunction,...audit.captureEvent,...audit.eventPush,...audit.saveScanRefs]),
- postSaveBoundaryContexts:contextFor([...audit.closeSheetFunction,...audit.stopCameraFunction])
+ postSaveBoundaryContexts:contextFor([...audit.closeSheetFunction,...audit.stopCameraFunction,...audit.abortVideoFunction,...audit.abortVideoRefs])
 }));
 
 const resetToken='function resetScan(',nextToken='function setVal(';
