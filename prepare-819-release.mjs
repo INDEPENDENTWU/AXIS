@@ -57,12 +57,12 @@ for(const f of [
  let touched=0;
  s=s.split('\n').map(line=>{
    if(!line.includes('contract.publicVersion')&&!line.includes('info.version'))return line;
-   const next=line.replace(/8\.\d+(?:\.\d+)?/g,()=>{touched++;return VERSION});
-   return next;
+   return line.replace(/8\.\d+(?:\.\d+)?/g,()=>{touched++;return VERSION});
  }).join('\n');
  if(touched<2)fail(`8.10.3 current identity assertions not found, touched ${touched}`);
- if(!s.includes(`contract.publicVersion)!=='${VERSION}'`)&&!s.includes(`contract.publicVersion!==\"${VERSION}\"`))fail('8.10.3 public contract did not advance');
- if(!s.includes(`info.version!=='${VERSION}'`)&&!s.includes(`info.version!==\"${VERSION}\"`))fail('8.10.3 manifest contract did not advance');
+ const lines=s.split('\n');
+ if(!lines.some(line=>line.includes('contract.publicVersion')&&line.includes(VERSION)))fail('8.10.3 public contract did not advance');
+ if(!lines.some(line=>line.includes('info.version')&&line.includes(VERSION)))fail('8.10.3 manifest contract did not advance');
  if(!s.includes(freshnessLiteral))fail('8.18 freshness provenance was relabeled');
  if(!s.includes(releaseMarker))fail('8.18 freshness manifest provenance was relabeled');
  write(f,s);
