@@ -92,13 +92,23 @@ try{
  const saved=await page.evaluate(()=>{
   const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
   const meta=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}');
-  const event=state.active.events[0];
+  const event=state.active.events[0],rec=document.querySelector('#axis818MetricRecorder');
   return{
    event,
    saveProbe:window.__AXIS_819_SAVE_PROBE__,
    metaHasEvent:!!meta.events?.[event.id],
    customSchema:state.profile.customEq.find(x=>x.id==='wall-hold')?.metricSchema,
-   recorderVisible:document.querySelector('#axis818MetricRecorder')?.classList.contains('show')||false
+   recorderVisible:rec?.classList.contains('show')||false,
+   postDiag:{
+    recorderClass:rec?.className||null,
+    recorderSuppressed:rec?.dataset.axis818RenderSuppressed??null,
+    recorderRenderKey:rec?.dataset.axis818RenderKey??null,
+    recorderHtmlLength:rec?.innerHTML?.length||0,
+    reviewHidden:document.querySelector('#reviewStage')?.classList.contains('hidden')??null,
+    scanSheetShow:document.querySelector('#scanSheet')?.classList.contains('show')??null,
+    selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq??null,
+    finalResetMarker:window.__AXIS_819_FINAL_RECORDER_RESET__||null
+   }
   };
  });
  assert.equal(saved.event.metrics.duration,7,`visible schema input was not saved as the Encounter fact · probe ${JSON.stringify(saved.saveProbe)}`);
@@ -107,7 +117,7 @@ try{
  assert.equal(saved.event.duration,7,'compatible duration projection missing');
  assert.equal(saved.metaHasEvent,false,'time-only schema unexpectedly created a v61 strength fact owner');
  assert.deepEqual(saved.customSchema,[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1}],'Object schema was destructively rewritten during recording');
- assert.equal(saved.recorderVisible,false,'recording reset left schema controls visibly mounted');
+ assert.equal(saved.recorderVisible,false,`recording reset left schema controls visibly mounted · ${JSON.stringify(saved.postDiag)}`);
 
  /* A subsequent real Review selection of a legacy Object must restore its editor. */
  await beginReview();
