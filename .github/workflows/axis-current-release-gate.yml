@@ -12,7 +12,7 @@ permissions:
 jobs:
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 32
+    timeout-minutes: 36
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -64,13 +64,19 @@ jobs:
       - name: 8.18 Object + Route + Capture + Focus
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-818-object-focus-smoke.mjs
+      - name: 8.20 Executable Object
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-820-executable-object-smoke.mjs
+      - name: 8.20.1 Object reliability
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8201-object-reliability-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 46
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -118,6 +124,12 @@ jobs:
       - name: iPhone 8.18 Object + Route + Capture + Focus
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-818-object-focus-smoke.mjs
+      - name: iPhone 8.20 Executable Object
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-820-executable-object-smoke.mjs
+      - name: iPhone 8.20.1 Object reliability
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8201-object-reliability-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-webkit.log || true
