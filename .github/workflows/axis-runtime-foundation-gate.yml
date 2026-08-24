@@ -1,0 +1,110 @@
+name: AXIS Runtime Foundation Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  pure-runtime-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Pure Runtime invariants
+        run: node scripts/axis-813-runtime-core.mjs
+      - name: Shadow Runtime invariants
+        run: node scripts/axis-813-shadow-runtime.mjs
+      - name: Build exact current AXIS candidate
+        run: node build-release.mjs
+      - name: Verify Runtime Foundation artifact contract
+        run: node scripts/axis-runtime-foundation-contract.mjs
+      - name: Exact artifact parity against PR base
+        env:
+          AXIS_PARITY_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/axis-813-build-parity.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+
+  chromium-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact current AXIS candidate
+        run: node build-release.mjs
+      - name: Verify Runtime Foundation artifact contract
+        run: node scripts/axis-runtime-foundation-contract.mjs
+      - name: Align inherited Shadow browser assertions
+        run: node prepare-8123-ci-stability.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-runtime-foundation-chromium.log 2>&1 &
+          sleep 1
+      - name: Shadow transition observation
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-813-shadow-browser.mjs
+      - name: Continue + Live Route
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-813-live-route-ci-diagnostic.mjs
+      - name: Inline Settings ownership
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-813-settings-convergence-smoke.mjs
+      - name: Repository contract
+        run: node scripts/axis-repository-contract.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-runtime-foundation-chromium.log || true
+
+  webkit-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact current AXIS candidate
+        run: node build-release.mjs
+      - name: Verify Runtime Foundation artifact contract
+        run: node scripts/axis-runtime-foundation-contract.mjs
+      - name: Align inherited Shadow browser assertions
+        run: node prepare-8123-ci-stability.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-runtime-foundation-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone Shadow transition observation
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-813-shadow-browser.mjs
+      - name: iPhone Continue + Live Route
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-813-live-route-ci-diagnostic.mjs
+      - name: iPhone inline Settings ownership
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-813-settings-convergence-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-runtime-foundation-webkit.log || true

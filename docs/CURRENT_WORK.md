@@ -1,93 +1,84 @@
 # AXIS Current Work
 
-> Canonical engineering handoff. `CURRENT_RELEASE.md` is the release contract; this file records the active engineering boundary and next exact action.
+> Canonical active-work handoff. Read [`HANDOFF.md`](HANDOFF.md) first; machine truth starts at [`../governance/project-state.json`](../governance/project-state.json).
 
 ## Production baseline at start of this work
 
-- **AXIS 8.17.1 — Active Truth + Capture Polish** is the last fully Production-sealed rollback baseline at the start of the 8.18 work.
-- Exact sealed 8.17.1 runtime SHA: `0cd7884b83289d052ea6450a7916ca95578246f6`.
-- Final 8.17.1 docs-only repository tip: `3b48e5861aa8a0341ce9561208d3347930145e81`.
-- Vercel and EdgeOne both served the exact sealed revisions and passed real Chromium + iPhone WebKit Production flows.
-- 8.18 may supersede this baseline only after the exact merged `main` SHA passes the same two-provider Production mirror contract.
+- Production: **AXIS 8.18**.
+- Exact baseline: `254a2fa80fdfd4040a6f695d28ad3bd670c0a7db`.
+- Source Convergence has **zero intended user-visible behavior change**; this Production artifact remains the equivalence/rollback reference.
 
 ## Active change
 
-**AXIS 8.18 — Final Capture Polish + Object Truth / Focus seal**, branch `axis-818-final-capture-polish`, PR #78.
+**AXIS Source Convergence — 8.19 Foundation** · branch `engineering/source-convergence-819` · PR **#79**.
 
-The 8.18 product boundary is now one coherent release rather than an isolated foundation experiment. It keeps the existing canonical app/storage/media owners and closes the remaining field issues found during real-device use.
+Current phase: **CI convergence sealed before merge; exact merged-main Production verification next**.
 
-### Object Truth + Evolution Library
+### Completed · durable governance
 
-- Custom equipment / sport / movement objects define their actual `metricSchema`; explicitly time-only objects do not silently regain weight, reps, sets or intensity.
-- New Encounters snapshot `metricSchemaSnapshot` and `metrics`; historical Encounters remain readable without being rewritten.
-- The visible custom editor remains the existing `v874` owner.
-- Evolution Library / Personal Object Shelf is derived read-only from real Encounters; it creates no second persistence schema or database.
+GitHub owns current project/release context, owners, retirements and CI evidence. Future presentation foundation remains exactly `zh-Hans` **简体中文**, `zh-Hant` **繁體中文**, `en` **English**, themes `system / light / dark`.
 
-### Route Truth + Focus
+### Preserved · native / cross-platform foundation
 
-- PWA foreground recovery preserves the active route and physically converges to one active main view.
-- Inactive routes are `inert` / `aria-hidden`; Today-only controls cannot leak over Trends, History or other routes.
-- The 8.18 Focus layer remains presentation-only and delegates completion to the existing `v87-direct-884` owner.
-- Schema types that do not track sets never gain a synthetic `完成一组` action.
-- v8710 remains the sole automatic sound owner.
+The native handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`. Shared portable contracts remain `axis.domain.v1` for domain semantics and `axis.data.v1` for durable exchange. Web/iOS capability differences stay isolated behind platform contracts rather than leaking into product truth.
 
-### Capture Truth
+**Chat history is not authoritative project memory.** Durable handoff, ADRs, shared contracts, fixtures and GitHub state are authoritative for future agents and native work.
 
-- Normal Capture supports Photo / Scan / Video with persisted default mode and default facing preferences.
-- Scan sampling remains exactly `3秒 / 5秒` and is written by the canonical app state owner.
-- The final physical 3/5 control uses direct pointer/touch handling so iPhone sheet gestures cannot swallow the preference change.
-- The compatibility v876 setter delegates to the app-owned direct bridge; it may not recursively click the same control to set itself.
-- The read-only `拍摄视频 / 最长60秒 · 自动保存` pseudo-setting is retired. The 60-second limit remains a Capture runtime capability, not a fake Settings option.
+### Completed · CI convergence
 
-### Front / rear camera switching
+- Original broad PR fanout observed: **25 workflow families**.
+- Historical automatic workflow files physically retired: **20**.
+- Broad PR/main topology after convergence: **9 baseline responsibility families**.
+- Path-scoped specialist intentionally preserved: **AXIS 8.12 Browser Gate**.
+- Resurrection guard: retired workflow files may not return.
+- Stale-head cancellation: verified; never cancels current-head or push/main Production work.
 
-- `#v8171CameraFlip` is a real physical control before and during recording.
-- One logical MediaRecorder continues to record a fixed 30fps canvas compositor while the physical camera source changes beneath it.
-- Camera switching does not create a second MediaRecorder, split the logical recording, or replace the recorder track mid-record.
-- On iOS devices that do not permit two camera streams to overlap, the compositor keeps the last valid frame, releases the old camera, opens the requested facing, and recovers the previous facing if acquisition fails.
-- Front-camera preview is mirrored for the user; stored source pixels remain governed by the canonical compositor/source-media contract.
-- An immediate Record tap after opening Capture waits for the in-flight camera acquisition instead of failing because `state.stream` has not committed yet.
+Current Release replacement evidence:
+- `32630099680` — Chromium + WebKit **success**;
+- post-retirement `32630367047` — Chromium + WebKit **success**.
 
-### Media / watermark integrity
+Runtime Foundation replacement evidence:
+- `32630563608` — pure-runtime-parity + Chromium + WebKit **success**;
+- post-retirement `32630723007` — all three jobs **success**.
 
-- `axis_v42_media` remains the only media store and `app.js` remains its owner.
-- Clean `S-* / SV-*` sidecars remain source truth; canonical `F-* / V-*` remain presentation derivatives.
-- Watermark processing remains source-first and v8710-owned.
-- 8.18 video remains a stable 30fps compositor path; no historical 15/20fps or 720p downgrade may return.
-- Encounter export/delete remains additive to the existing data model and must remove corresponding F/V + S/SV refs only when the Encounter itself is deleted.
+Deep Compatibility replacement evidence:
+- `32631072695` — static + Chromium + WebKit **success**;
+- preserves legacy storage, reminder/Home, 8.9→8.10.3 learning/detail/home/voice, 8.12 field/Group Plan/Settings, Personal Equipment, simplified Learning, 8.12.4/8.12.5 behavior.
 
-### Release freshness
+### Final behavior proof before handoff seal
 
-- Optional stale-shell freshness remains event-driven rather than polled.
-- The final browser freshness probe is same-origin and fail-open; a provider/WebKit cache or transport error cannot become a product runtime failure.
+Exact candidate: `88d9ee826dcfab14a465c38837a33c6ecd4727e0`.
 
-### Native / cross-platform foundation
+Every workflow actually triggered on this candidate finished **SUCCESS**:
 
-- The durable native handoff remains **`axis-native-foundation-0`**.
-- Native repository remains **`INDEPENDENTWU/AXIS-iOS`**.
-- Shared durable contracts remain **`axis.domain.v1`** and **`axis.data.v1`**.
-- 8.18 web work does not replace, weaken or merge Web/iOS runtime ownership; capability differences stay behind the published platform capability and product-matrix contracts.
-- **Chat history is not authoritative project memory.** Repository contracts, ADRs, `CURRENT_RELEASE.md`, this file and shared contract artifacts remain the durable engineering source of truth.
+- Repository Contract `32657115841`;
+- Work Continuity `32657115855`;
+- Runtime Gate `32657115895`;
+- Current Release `32657115881`;
+- Runtime Foundation `32657115832`;
+- Deep Compatibility `32657115849` — static + Chromium + iPhone WebKit all success;
+- Cross-Platform Foundation `32657115829`;
+- PR Run Convergence `32657115935`;
+- EdgeOne PR package contract `32657115860`;
+- path-scoped AXIS 8.12 Browser Gate `32657115897` — Chromium + iPhone WebKit success.
+
+Two final test-quality corrections were made without changing product behavior:
+
+1. cumulative-rest regression now synchronizes to persisted `paused`/`active` state instead of fixed wall-clock sleeps; the same `>400ms` accumulated-rest acceptance requirement remains;
+2. 8.12 Browser Gate now recognizes the inherited simplified Learning surface via `__AXIS_8123_LEARNING__` semantic markers instead of an exact public-release string; corpus/group/retirement/overflow/page-error assertions remain strict.
 
 ## Validation for this work
 
-8.18 must not merge until all of the following are true on the exact PR head:
-
-- deterministic canonical build and 8.18 manifest contracts pass;
-- physical Settings 3秒 → 5秒 → 3秒 interaction persists and repaints correctly in Chromium and iPhone WebKit;
-- the retired video pseudo-setting is absent from the visible Settings surface;
-- front/rear camera flip works before recording;
-- mid-record front/rear flip keeps the same MediaRecorder identity and uninterrupted logical recording state;
-- immediate Record after Capture opening waits for camera readiness instead of returning false;
-- iOS exclusive-camera fallback and facing recovery remain fail-safe;
-- Object Truth, Route Truth, Focus, Evolution Library, source-first media and 30fps watermark contracts pass;
-- inherited 8.17.1 / 8.17 / 8.16 / 8.15 / 8.14 / 8.13 behavioral gates pass under public 8.18 identity;
-- historical Chromium manifest gates recognize 8.18 as a valid inheriting public release instead of failing only on a stale version allow-list;
-- Repository Contract, Work Continuity and native foundation seal pass;
-- no timeout inflation, assertion weakening, second database/store/recorder owner or v876 sound resurrection is used.
-
-After merge, the exact final `main` runtime SHA must reach Vercel Production and then EdgeOne Production with exact-artifact parity. Real EdgeOne Chromium and iPhone WebKit release flows must both pass before 8.18 is called Production-sealed.
+Preserve exact 8.18 behavior, one canonical runtime, historical storage/data readability, custom object identity, current camera/media/sound/completion ownership, Chromium/WebKit coverage and exact-SHA Production proof. Do not gain green CI through timeout inflation, weaker assertions, duplicate owners/stores, or destructive migration.
 
 ## Next planned stage
 
-After this PR is green and the exact merged 8.18 runtime is Production-sealed, update `CURRENT_RELEASE.md` / this handoff with the final runtime SHA and provider validation record. Further Evolution Replay or larger object-first browsing work is downstream and must not be mixed into this final 8.18 capture/release seal.
+1. Let this **docs/governance-only handoff-seal head** pass the 9 baseline responsibility gates.
+2. Update PR #79 description/evidence without changing the tested head SHA.
+3. Merge PR #79 with expected-head protection.
+4. Verify the exact merged-main SHA on Vercel Production.
+5. Require EdgeOne exact-prebuilt artifact parity and real Chromium + iPhone WebKit Production flows.
+6. Only then call the Source Convergence CI/handoff phase sealed.
+7. Start **Phase 3 — Source Quarantine / Direct Ownership** on a new engineering branch: shorten the current long `build-release.mjs` historical transform chain one proven owner at a time. Do not rewrite AXIS.
+
+CI/handoff convergence is nearly complete. **Source/build convergence is explicitly not complete yet.**

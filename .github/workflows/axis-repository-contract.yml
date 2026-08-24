@@ -20,3 +20,5 @@ jobs:
           node-version: '20.18.0'
       - name: Verify repository structure and release handoff
         run: node scripts/axis-repository-contract.mjs
+      - name: Verify CI convergence and retired workflow guards
+        run: node scripts/axis-ci-convergence-contract.mjs
