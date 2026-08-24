@@ -45,9 +45,18 @@ for(const f of [
  'scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs',
  'scripts/axis-current-release-contract.mjs','scripts/axis-runtime-foundation-contract.mjs','scripts/axis-deep-compatibility-contract.mjs'
 ])replaceIdentity(f,false);
-/* Repository governance runs again after build; advance only its supported
-   current-built 8.18 semantic-contract identity inside the release workspace. */
-replaceIdentity('scripts/axis-repository-contract.mjs',false);
+
+/* Repository governance must preserve the historical 8.19 -> 8.20 release
+   transition while accepting the new 8.20.1 built semantic identity. */
+{
+ const f='scripts/axis-repository-contract.mjs';let s=read(f);
+ const built820="const built820Identity=post818.includes(\"contract.publicVersion!=='8.20'\")&&post818.includes(\"contract.stableBaseVersion!=='8.20'\")&&post818.includes(\"info.version!=='8.20'\")&&post818.includes(\"info.baseVersion!=='8.20'\");";
+ const built8201="const built8201Identity=post818.includes(\"contract.publicVersion!=='8.20.1'\")&&post818.includes(\"contract.stableBaseVersion!=='8.20.1'\")&&post818.includes(\"info.version!=='8.20.1'\")&&post818.includes(\"info.baseVersion!=='8.20.1'\");";
+ s=once(s,built820,built820+'\n'+built8201,'repository built 8.20 identity anchor');
+ s=once(s,"if(!source818Identity&&!built819Identity&&!built820Identity)fail('8.18 semantic contract has neither sealed source identity nor supported built identity');","if(!source818Identity&&!built819Identity&&!built820Identity&&!built8201Identity)fail('8.18 semantic contract has neither sealed source identity nor supported built identity');",'repository supported built identity gate');
+ if(!s.includes("const FROM='8.19',VERSION='8.20';"))fail('repository 8.20 historical release transition was relabeled');
+ write(f,s);
+}
 
 /* 8.10.3 freshness provenance remains 8.18. Only current release assertions
    may advance from 8.20 to 8.20.1. */
