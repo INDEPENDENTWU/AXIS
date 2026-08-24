@@ -71,3 +71,7 @@ if(fs.existsSync(MANIFEST)){
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
 console.log('[AXIS 8.19 UPO final-runtime seal] PASS · reset-entry recorder suppression + durable post-commit reset/render · immutable Encounter-schema v61 + Active Truth authority · inherited Evolution null-continuity repaired · single writers preserved');
+
+/* 8.20.1 supersedes only the classic-only Active lifecycle restriction after all
+   8.19 immutable Encounter/v61 authority checks are proven. */
+await import('./postbuild-8201-active-lifecycle-seal.mjs');

@@ -51,7 +51,11 @@ fs.writeFileSync(FILE,src);
 console.log('[AXIS 8.19 post-commit lifecycle] PASS · v61 attach authority sealed first · committed Encounter always reaches reset/render · recorder suppression/unmount is reset-entry-owned · capture teardown remains best-effort · pre-commit media failures unchanged');
 
 /* 8.19 closes its historical release identity first. 8.20 then layers the next
-   product contract and finally seals the new public identity before build. */
+   product contract. 8.20.1 reliability hardening runs before the 8.20 public
+   seal; once that exact behavior head is proven green, the dedicated 8.20.1
+   identity seal advances only current/public versioning. */
 await import('./prepare-819-release.mjs');
 await import('./prepare-820-executable-practice-objects.mjs');
+await import('./prepare-8201-object-reliability.mjs');
 await import('./prepare-820-release.mjs');
+await import('./prepare-8201-release.mjs');

@@ -114,7 +114,9 @@ try{
  assert.deepEqual(saved.event.metricSchemaSnapshot.map(x=>x.key),['duration'],'Encounter did not freeze the Object schema used for recording');
  for(const irrelevant of ['weight','reps','sets','intensity'])assert.equal(Object.hasOwn(saved.event,irrelevant),false,`irrelevant legacy fact ${irrelevant} leaked into time-only Encounter`);
  assert.equal(saved.event.duration,7,'compatible duration projection missing');
- assert.equal(saved.metaHasEvent,false,`time-only schema unexpectedly created a v61 strength fact owner · ${JSON.stringify({eventId:saved.event?.id,snapshot:saved.event?.metricSchemaSnapshot,metaRecord:saved.metaRecord,metaKeys:saved.metaKeys,metaWrites:saved.metaWrites})}`);
+ const nonActivityMeta=Object.fromEntries(Object.entries(saved.metaRecord||{}).filter(([key])=>key!=='activity'));
+ assert.deepEqual(nonActivityMeta,{},`time-only schema created non-lifecycle Event metadata and therefore a duplicate v61/classic fact owner · ${JSON.stringify({eventId:saved.event?.id,snapshot:saved.event?.metricSchemaSnapshot,metaRecord:saved.metaRecord,metaKeys:saved.metaKeys,metaWrites:saved.metaWrites})}`);
+ if(saved.metaHasEvent)assert.ok(saved.metaRecord?.activity&&typeof saved.metaRecord.activity==='object','time-only Event meta may exist only as executable lifecycle activity');
  assert.deepEqual(saved.customSchema,[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1}],'Object schema was destructively rewritten during recording');
  assert.equal(saved.recorderVisible,false,'recording reset left schema controls visibly mounted');
  assert.equal(saved.scanSheetShow,false,'committed Encounter left Capture sheet visibly mounted');
