@@ -21,9 +21,10 @@ window.__AXIS_EXECUTABLE_OBJECTS__={version:'8.20',owner:'app.js+ObjectTruth',mo
  const exports=s.split(exportToken).length-1;
  if(exports!==1)fail(`Object Truth export anchor expected once, found ${exports}`);
  s=s.replace(exportToken,bridge+exportToken);
- const captureFrom="function axis818CaptureEvent(e,eq){const schema=axis818SchemaForEq(eq),vals=axis818ReadMetricInputs(schema);e.metricSchemaSnapshot=schema.map(axis818CloneMetric);e.metrics=vals;axis818ApplyLegacy(e,vals);e.objectTruthVersion='8.18';return e}";
- const captureTo="function axis818CaptureEvent(e,eq){const schema=axis818SchemaForEq(eq),vals=axis818ReadMetricInputs(schema);e.metricSchemaSnapshot=schema.map(axis818CloneMetric);e.metrics=vals;axis818ApplyLegacy(e,vals);e.objectTruthVersion='8.18';e.executionModeSnapshot=axis820ExecutionModeForEq(eq);e.executableObjectVersion='8.20';return e}";
- s=once(s,captureFrom,captureTo,'Encounter execution snapshot');
+ const captureMarker="e.objectTruthVersion='8.18';";
+ const captureHits=s.split(captureMarker).length-1;
+ if(captureHits!==1)fail(`Encounter execution snapshot marker expected once, found ${captureHits}`);
+ s=s.replace(captureMarker,captureMarker+"e.executionModeSnapshot=axis820ExecutionModeForEq(eq);e.executableObjectVersion='8.20';");
  syntax(s,FILE);write(FILE,s);
 }
 
