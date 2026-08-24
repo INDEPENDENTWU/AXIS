@@ -7,24 +7,10 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
 const onceRe=(src,re,to,label)=>{const flags=re.flags.includes('g')?re.flags:re.flags+'g',matches=src.match(new RegExp(re.source,flags))||[];if(matches.length!==1)fail(`${label} expected once, found ${matches.length}`);return src.replace(re,()=>to)};
 const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax ${e.message}`)}};
 
-/*
- * AXIS 8.20.1 — Executable Object Reliability
- *
- * 8.20 made an explicit Object metricSchema authoritative for Recording, but two
- * inherited ownership gaps remained in real user flow:
- *   1. the custom editor persisted the schema to localStorage after a timer while
- *      app.js continued to hold a stale in-memory Object;
- *   2. the 8.19 Active Truth safety seal allowed only classic weight+reps Events,
- *      so timed/hold executable Objects never entered the polished Active surface.
- *
- * This stage closes those gaps without introducing a new state/store/recorder.
- */
+/* AXIS 8.20.1 — Executable Object Reliability. No new state/store/recorder. */
 
-/* --------------------------------------------------------------------------
- * 1. v874 remains the visible Object editor. Persist the full 8.18 metric
- *    vocabulary immediately after the canonical custom save and publish one
- *    authoritative schema-change event for the app state owner to consume.
- * ----------------------------------------------------------------------- */
+/* v874 remains the visible Object editor. Persist its complete schema after the
+   canonical custom save, then publish one authoritative change event. */
 {
  const FILE='v874-professional.js';let s=read(FILE);
  const old="function axis818MetricPersist(){const c=readCore(),name=$('#customName')?.value.trim()||'';setTimeout(()=>{const cc=readCore(),eq=(cc.profile?.customEq||[]).find(x=>x.id===editId)||(cc.profile?.customEq||[]).filter(x=>x.name===name).at(-1);if(!eq)return;eq.metricSchema=axis818MetricDraft.map(x=>({...x}));eq.metricSchemaVersion='8.18';writeCore(cc);window.dispatchEvent(new CustomEvent('axis:object-schema-changed',{detail:{id:eq.id,schema:eq.metricSchema}}))},90)}";
@@ -33,13 +19,8 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  syntax(s,FILE);write(FILE,s);
 }
 
-/* --------------------------------------------------------------------------
- * 2. app.js is still the Object Truth/state owner. Consume the editor event into
- *    the live state before any later save can overwrite the freshly persisted
- *    schema. Re-render the active Recording surface immediately when relevant.
- *    The derived Evolution shelf is also localized at its existing presenter;
- *    internal object/schema identifiers remain untouched.
- * ----------------------------------------------------------------------- */
+/* app.js remains Object Truth/state owner. Consume editor schema into live state
+   immediately. The derived shelf changes presentation only. */
 {
  const FILE='app.js';let s=read(FILE);
  const truthRe=/window\.__AXIS_OBJECT_TRUTH__=\{[^\n]*\};/;
@@ -51,42 +32,34 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  syntax(s,FILE);write(FILE,s);
 }
 
-/* --------------------------------------------------------------------------
- * 3. v82 owns Active Truth creation. Persistent activity is now determined by
- *    executable semantics instead of the coarse strength/cardio template.
- *    single/complete remain one-shot; sets/rounds/timed/hold become Active.
- * ----------------------------------------------------------------------- */
+/* v82 remains Active Truth creation owner. Define executable semantics and change
+   only event admission/estimate here. Historical presentation sentinels stay
+   untouched until all inherited postbuild contracts have passed. */
 {
  const FILE='v82-runtime.js';let s=read(FILE);
  const anchor="const pausedEvents=()=>{const m=readMeta(),ss=currentSession();if(!ss)return[];return (ss.events||[]).map(e=>({e,a:m.events?.[e.id]?.activity})).filter(x=>x.a?.status==='paused').sort((x,y)=>(y.a.pausedAt||0)-(x.a.pausedAt||0))};";
  const helper=`${anchor}\n  function axis8201ExecutionMode(e){const explicit=String(e?.executionModeSnapshot||'').trim();if(['single','sets','rounds','timed','hold','complete'].includes(explicit))return explicit;const keys=new Set((Array.isArray(e?.metricSchemaSnapshot)?e.metricSchemaSnapshot:[]).map(m=>m?.key||m?.id).filter(Boolean));if(keys.has('hold'))return'hold';if(keys.has('weight')&&keys.has('reps'))return'sets';if(keys.has('duration'))return'timed';return e?.kind==='cardio'?'timed':'sets'}\n  function axis8201SetExecution(e){return axis8201ExecutionMode(e)==='sets'}\n  function axis8201Ongoing(e){return ['sets','rounds','timed','hold'].includes(axis8201ExecutionMode(e))}\n  function axis8201EstimateForEvent(e,fallback){const mode=axis8201ExecutionMode(e),vals=e?.metrics||{};if(mode==='hold'){const sec=Number(vals.hold??e?.hold);if(Number.isFinite(sec)&&sec>0)return Math.max(1000,sec*1000)}if(mode==='timed'){const min=Number(vals.duration??e?.duration);if(Number.isFinite(min)&&min>0)return Math.max(1000,min*60000)}return Number(fallback)||autoEstimate(e)}`;
  s=once(s,anchor,helper,'v82 execution-mode helpers');
  s=once(s,"if(!a||a.status!=='active'||!e)return;","if(!a||a.status!=='active'||!e||!axis8201SetExecution(e))return;",'v82 set completion authority');
- s=s.replaceAll("e.kind==='strength'","axis8201SetExecution(e)");
  const oldWatch="function watchSavedEvent(attempt=0){if(!saveArmed)return;const cur=currentSession()?.events||[],fresh=cur.filter(e=>!knownEvents.has(e.id));if(fresh.length){fresh.forEach(e=>knownEvents.add(e.id));const e=fresh.at(-1);startActivity(e,e.kind==='cardio'?(Number(e.duration)||15)*60000:estimateMs);saveArmed=false;estimateAuto=true;estimateMs=null;return}if(attempt<160)setTimeout(()=>watchSavedEvent(attempt+1),75);else saveArmed=false}";
  const newWatch="function watchSavedEvent(attempt=0){if(!saveArmed)return;const cur=currentSession()?.events||[],fresh=cur.filter(e=>!knownEvents.has(e.id));if(fresh.length){fresh.forEach(e=>knownEvents.add(e.id));const e=fresh.at(-1);if(axis8201Ongoing(e))startActivity(e,axis8201EstimateForEvent(e,estimateMs));saveArmed=false;estimateAuto=true;estimateMs=null;return}if(attempt<160)setTimeout(()=>watchSavedEvent(attempt+1),75);else saveArmed=false}";
  s=once(s,oldWatch,newWatch,'v82 saved-event executable lifecycle');
  syntax(s,FILE);write(FILE,s);
 }
 
-/* --------------------------------------------------------------------------
- * 4. v87 remains the polished Active presentation/action owner. All set-only
- *    UI/actions follow executionMode instead of a coarse strength classification.
- * ----------------------------------------------------------------------- */
+/* v87 remains polished Active presentation/action owner. Only install helpers at
+   source stage; final set-only presentation supersede is postbuild so inherited
+   contracts can verify their original historical sentinels first. */
 {
  const FILE='v87-runtime.js';let s=read(FILE);
  const anchor="function planned(e,m){return Math.max(1,m.events?.[e.id]?.sets?.length||Number(e.sets)||1)}";
  const helper=`${anchor}\nfunction axis8201ExecutionMode(e){const explicit=String(e?.executionModeSnapshot||'').trim();if(['single','sets','rounds','timed','hold','complete'].includes(explicit))return explicit;const keys=new Set((Array.isArray(e?.metricSchemaSnapshot)?e.metricSchemaSnapshot:[]).map(m=>m?.key||m?.id).filter(Boolean));if(keys.has('hold'))return'hold';if(keys.has('weight')&&keys.has('reps'))return'sets';if(keys.has('duration'))return'timed';return e?.kind==='cardio'?'timed':'sets'}\nfunction axis8201SetExecution(e){return axis8201ExecutionMode(e)==='sets'}`;
  s=once(s,anchor,helper,'v87 execution-mode helpers');
- s=s.replaceAll("e?.kind==='strength'","axis8201SetExecution(e)");
- s=s.replaceAll("e.kind==='strength'","axis8201SetExecution(e)");
  syntax(s,FILE);write(FILE,s);
 }
 
-/* --------------------------------------------------------------------------
- * 5. Internal enum IDs remain stable; only their picker presentation is localized.
- *    A scoped observer covers async search/picker renders without owning data.
- * ----------------------------------------------------------------------- */
+/* Stable internal enum IDs remain untouched. Localize only picker presentation;
+   observer is scoped to the existing picker and owns no data. */
 {
  const FILE='v873-smart-input.js';let s=read(FILE),end=s.lastIndexOf('})();');if(end<0)fail('v873 IIFE end missing');
  const block=`\n/* AXIS 8.20.1 — Chinese presentation for stable internal Object type IDs. */\nfunction axis8201LocalType(v){return v==='strength'?'力量':v==='cardio'?'有氧':v==='relative'?'自重':v}\nfunction axis8201LocalizePickerTypes(){const root=$('#eqSheet');if(!root)return;for(const el of $$('span,small',root)){const t=(el.textContent||'').trim();if(t==='strength'||t==='cardio'||t==='relative')el.textContent=axis8201LocalType(t)}}\nfunction axis8201WatchPickerTypes(){const root=$('#eqSheet');if(!root||root.dataset.axis8201LocaleWatch)return;root.dataset.axis8201LocaleWatch='1';new MutationObserver(()=>queueMicrotask(axis8201LocalizePickerTypes)).observe(root,{subtree:true,childList:true,characterData:true});axis8201LocalizePickerTypes()}\nD.addEventListener('input',e=>{if(e.target?.id==='eqSearch')queueMicrotask(axis8201LocalizePickerTypes)},true);\nD.addEventListener('click',e=>{if(e.target.closest('#equipmentRow,#quickEquipment,#v8Quick,#v873Quick,#addCustomEq,[data-v8124-pick]'))queueMicrotask(()=>{axis8201WatchPickerTypes();axis8201LocalizePickerTypes()})},true);\nwindow.addEventListener('axis:object-schema-changed',()=>queueMicrotask(axis8201LocalizePickerTypes));\naxis8201WatchPickerTypes();\nwindow.__AXIS_8201_LOCALIZATION__={version:'8.20.1',internalEnums:true,visibleChinese:true,evolutionShelf:true};\n`;
@@ -102,4 +75,4 @@ for(const [file,tokens] of [
  ['v873-smart-input.js',['__AXIS_8201_LOCALIZATION__','axis8201LocalType','axis8201WatchPickerTypes']]
 ]){const s=read(file);for(const t of tokens)if(!s.includes(t))fail(`${file} invariant missing ${t}`)}
 
-console.log('[AXIS 8.20.1 object reliability] PASS · live Object schema sync · executable Active lifecycle · set-only UI authority · Chinese picker/Evolution presentation · no new persistence/recorder owner');
+console.log('[AXIS 8.20.1 object reliability] PASS · live Object schema sync · executable Active admission · postbuild presentation supersede staged · Chinese picker/Evolution presentation · no new persistence/recorder owner');
