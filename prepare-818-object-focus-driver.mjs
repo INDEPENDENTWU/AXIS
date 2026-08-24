@@ -69,9 +69,9 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
 
 /*
  * v61 remains the sole high-frequency repeated-set owner, but only for the
- * semantic shape it actually owns. Selection identity/type remains untouched:
- * the guard lives only inside v61 prepare/render/save boundaries so it cannot
- * suppress the Object Truth recorder or alter other presentation owners.
+ * semantic shape it actually owns. Selection identity/type remains untouched.
+ * The guard lives at v61 prepare/save boundaries: non-classic explicit schemas
+ * never create a set draft and never attach an axis_v8_meta event fact.
  */
 {
  let v61=fs.readFileSync('v61.js','utf8');
@@ -93,11 +93,6 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
   'non-classic prepare bypass'
  );
  replaceRange(
-  /function renderSets\(\)\{[\s\S]*?\}(?=\nfunction hideSets)/,
-  fn=>{const from="if(!e||e.type!=='strength'){hideSets();return}";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] render guard contract changed');return fn.replace(from,"if(!e||e.type!=='strength'||!axis819ClassicStrengthOwner(e)){hideSets();return}")},
-  'non-classic set surface bypass'
- );
- replaceRange(
   /function onSaveClick\([^)]*\)\{[\s\S]*?\}(?=\nfunction attach)/,
   fn=>{const from="const e=selected();if(!e)return;";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] save entry contract changed');return fn.replace(from,from+"if(e.type==='strength'&&!axis819ClassicStrengthOwner(e)){pending=null;deferOnce=false;hideSets();return}")},
   'non-classic save bypass'
@@ -106,4 +101,4 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  fs.writeFileSync('v61.js',v61);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 isolated at prepare/render/save without mutating Object selection');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 isolated at stable prepare/save boundaries without mutating Object selection');
