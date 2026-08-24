@@ -11,7 +11,7 @@ const replaceOnce=(from,to,label)=>{
 
 /*
  * Once an Encounter is durably appended + saved, capture/media teardown is no
- * longer allowed to prevent the canonical UI reset.  Pre-commit media failures
+ * longer allowed to prevent the canonical UI reset. Pre-commit media failures
  * remain handled by saveScan's existing persistence catch and still abort the
  * Encounter commit.
  */
@@ -33,6 +33,18 @@ replaceOnce(
  'durable Encounter post-commit boundary'
 );
 
+/*
+ * The schema recorder is owned by the reset lifecycle itself, so suppress it at
+ * reset entry rather than after every inherited Capture reset side effect. This
+ * prevents a stale Recording surface even if a later legacy presentation reset
+ * fails; any such failure remains visible to browser page-error gates.
+ */
+const lifecycleTail=";axis819RecorderSuppressed=true;$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.dataset.axis818RenderKey='';axis819Recorder.dataset.axis818RenderSuppressed='1';axis819Recorder.classList.remove('show');axis819Recorder.innerHTML=''}";
+replaceOnce(lifecycleTail,'','recorder reset tail');
+const resetEntry="function resetScan(preserveSelection=false){try{capture816AbortVideo(true)}catch(e){console.warn('[AXIS 8.19 capture cleanup · reset]',e)};";
+const lifecycleEntry="axis819RecorderSuppressed=true;$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.dataset.axis818RenderKey='';axis819Recorder.dataset.axis818RenderSuppressed='1';axis819Recorder.classList.remove('show');axis819Recorder.innerHTML=''};";
+replaceOnce(resetEntry,resetEntry+lifecycleEntry,'recorder reset entry');
+
 try{new Function(src)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.19 post-commit lifecycle] PASS · committed Encounter always reaches reset/render · capture teardown remains best-effort · pre-commit media failures unchanged');
+console.log('[AXIS 8.19 post-commit lifecycle] PASS · committed Encounter always reaches reset/render · recorder suppression/unmount is reset-entry-owned · capture teardown remains best-effort · pre-commit media failures unchanged');
