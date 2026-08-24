@@ -28,6 +28,7 @@ const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers
 for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>json(r,obj));
 const tap=async locator=>ENGINE==='webkit'?locator.tap({timeout:3000}):locator.click({timeout:3000});
 const EVIDENCE_PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=','base64');
+
 const beginReview=async()=>{
  const opened=await page.evaluate(()=>window.__AXIS_CAPTURE__.openCanonicalCamera('photo',null,false));
  assert.equal(opened,true,'canonical Capture did not open');
@@ -38,6 +39,7 @@ const beginReview=async()=>{
  assert.equal(finished,true,'canonical Capture refused a valid evidence draft');
  await page.waitForFunction(()=>!document.querySelector('#reviewStage')?.classList.contains('hidden'),undefined,{timeout:2000});
 };
+
 const chooseObject=async(id,label)=>{
  await tap(page.locator('#equipmentRow'));
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:1500});
@@ -61,25 +63,22 @@ const chooseObject=async(id,label)=>{
 try{
  const response=await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000});assert.ok(response?.ok());
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:15000});
- await page.waitForFunction(()=>window.__AXIS_RELEASE__==='8.18',undefined,{timeout:5000});
+ const manifest=await (await page.request.get(`${BASE}/axis-build.json`)).json();
+ await page.waitForFunction(expected=>window.__AXIS_RELEASE__===expected,manifest.version,{timeout:5000});
  await page.waitForTimeout(900);
  const boot=await page.evaluate(()=>({object:window.__AXIS_OBJECT_TRUTH__?.version||null,capture:!!window.__AXIS_CAPTURE__}));
  assert.equal(boot.object,'8.18','8.18 Object Truth runtime layer missing');
  assert.equal(boot.capture,true,'canonical Capture API missing');
 
- /* Real user flow: Capture → Review → choose Object → visible schema Recording. */
+ /* Real user flow: Capture → Review → current picker → Object → visible schema Recording. */
  await beginReview();
  await chooseObject('wall-hold','靠墙站立');
  const recorder=page.locator('#axis818MetricRecorder');
  const durationInput=page.locator('[data-axis818-metric="duration"]');
- const recorderDiag=await page.evaluate(()=>{const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),rec=document.querySelector('#axis818MetricRecorder'),sets=document.querySelector('#v8Sets'),strength=document.querySelector('#strengthFields');return{selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null,equipmentName:document.querySelector('#equipmentName')?.textContent?.trim()||'',explicit:window.__AXIS_OBJECT_TRUTH__?.explicit?.('wall-hold')||false,schema:window.__AXIS_OBJECT_TRUTH__?.schemaForEq?.('wall-hold')?.map(x=>x.key)||[],customSchema:state.profile?.customEq?.find(x=>x.id==='wall-hold')?.metricSchema?.map(x=>x.key)||[],recorderClass:rec?.className||null,recorderHtml:rec?.innerHTML||'',setsClass:sets?.className||null,strengthClass:strength?.className||null}});
+ const recorderDiag=await page.evaluate(()=>{const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),rec=document.querySelector('#axis818MetricRecorder');return{selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null,equipmentName:document.querySelector('#equipmentName')?.textContent?.trim()||'',explicit:window.__AXIS_OBJECT_TRUTH__?.explicit?.('wall-hold')||false,schema:window.__AXIS_OBJECT_TRUTH__?.schemaForEq?.('wall-hold')?.map(x=>x.key)||[],customSchema:state.profile?.customEq?.find(x=>x.id==='wall-hold')?.metricSchema?.map(x=>x.key)||[],recorderClass:rec?.className||null}});
  assert.equal(await recorder.isVisible(),true,`schema recorder exists but is not visible in canonical Review · ${JSON.stringify(recorderDiag)}`);
  assert.equal(await durationInput.isVisible(),true,'duration metric is not a real visible Recording control');
- const surface=await page.evaluate(()=>({
-  keys:[...document.querySelectorAll('#axis818MetricRecorder [data-axis818-metric]')].map(x=>x.dataset.axis818Metric),
-  strengthLegacyHidden:document.querySelector('#strengthFields')?.classList.contains('axis818LegacyMetricHidden')||false,
-  title:document.querySelector('#axis818MetricRecorder b')?.textContent||''
- }));
+ const surface=await page.evaluate(()=>({keys:[...document.querySelectorAll('#axis818MetricRecorder [data-axis818-metric]')].map(x=>x.dataset.axis818Metric),strengthLegacyHidden:document.querySelector('#strengthFields')?.classList.contains('axis818LegacyMetricHidden')||false,title:document.querySelector('#axis818MetricRecorder b')?.textContent||''}));
  assert.deepEqual(surface.keys,['duration']);
  assert.equal(surface.strengthLegacyHidden,true,'schema-driven Object leaked the legacy strength editor');
  assert.equal(surface.title,'靠墙站立');
@@ -87,70 +86,40 @@ try{
  await durationInput.fill('7');
  assert.equal(await durationInput.inputValue(),'7','duration input did not retain the user value before commit');
  await page.evaluate(()=>{
-  window.__AXIS_819_RECORDER_TRACE__=[];
-  const stack=(kind,detail)=>window.__AXIS_819_RECORDER_TRACE__.push({kind,detail,stack:String(new Error(`[AXIS 8.19 trace] ${kind}`).stack||'').split('\n').slice(1,10)});
-  const current=()=>document.querySelector('#axis818MetricRecorder');
-  const rec=current();if(rec){rec.__axis819TraceIdentity='pre-save-recorder';window.__AXIS_819_RECORDER_IDENTITY__=rec}
-  const add=DOMTokenList.prototype.add;DOMTokenList.prototype.add=function(...args){if(this===current()?.classList&&args.includes('show'))stack('classList.add',args);return add.apply(this,args)};
-  const toggle=DOMTokenList.prototype.toggle;DOMTokenList.prototype.toggle=function(token,...args){if(this===current()?.classList&&token==='show')stack('classList.toggle',[token,...args]);return toggle.call(this,token,...args)};
-  const setAttribute=Element.prototype.setAttribute;Element.prototype.setAttribute=function(name,value){if(this.id==='axis818MetricRecorder'&&name==='class'&&String(value).split(/\s+/).includes('show'))stack('setAttribute.class',String(value));return setAttribute.call(this,name,value)};
-  for(const proto of [Element.prototype,HTMLElement.prototype]){
-   try{const d=Object.getOwnPropertyDescriptor(proto,'className');if(d?.get&&d?.set&&d.configurable){Object.defineProperty(proto,'className',{configurable:true,enumerable:d.enumerable,get:d.get,set(value){if(this.id==='axis818MetricRecorder'&&String(value).split(/\s+/).includes('show'))stack('className.set',String(value));return d.set.call(this,value)}});break}}catch{}
-  }
-  try{const d=Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');if(d?.get&&d?.set&&d.configurable)Object.defineProperty(Element.prototype,'innerHTML',{configurable:true,enumerable:d.enumerable,get:d.get,set(value){if(this.id==='axis818MetricRecorder'&&String(value).includes('axis818MetricHead'))stack('innerHTML.set',String(value).slice(0,120));return d.set.call(this,value)}})}catch{}
-  const insertBefore=Node.prototype.insertBefore;Node.prototype.insertBefore=function(node,ref){if(node?.id==='axis818MetricRecorder')stack('insertBefore',node.className||'');return insertBefore.call(this,node,ref)};
-  const appendChild=Node.prototype.appendChild;Node.prototype.appendChild=function(node){if(node?.id==='axis818MetricRecorder')stack('appendChild',node.className||'');return appendChild.call(this,node)};
-  const insertAdjacentElement=Element.prototype.insertAdjacentElement;Element.prototype.insertAdjacentElement=function(where,node){if(node?.id==='axis818MetricRecorder')stack('insertAdjacentElement',[where,node.className||'']);return insertAdjacentElement.call(this,where,node)};
   window.__AXIS_819_SAVE_PROBE__=null;
   window.__AXIS_819_FINAL_RECORDER_RESET__=null;
-  document.querySelector('#saveScan')?.addEventListener('click',()=>{const input=document.querySelector('[data-axis818-metric="duration"]'),r=current();window.__AXIS_819_SAVE_PROBE__={exists:!!input,value:input?.value??null,recorderClass:r?.className||null,selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null}}, {capture:true,once:true})
+  document.querySelector('#saveScan')?.addEventListener('click',()=>{const input=document.querySelector('[data-axis818-metric="duration"]');window.__AXIS_819_SAVE_PROBE__={exists:!!input,value:input?.value??null,selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq||null}}, {capture:true,once:true})
  });
  await tap(page.locator('#saveScan'));
  await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.active?.events?.length===1}catch{return false}},undefined,{timeout:2500});
- await page.waitForFunction(()=>window.__AXIS_819_FINAL_RECORDER_RESET__?.lifecycleState===true,undefined,{timeout:2500});
+ await page.waitForFunction(()=>window.__AXIS_819_FINAL_RECORDER_RESET__?.entryOwned===true,undefined,{timeout:2500});
  const saved=await page.evaluate(()=>{
   const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
   const meta=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}');
   const event=state.active.events[0],rec=document.querySelector('#axis818MetricRecorder');
-  return{
-   event,
-   saveProbe:window.__AXIS_819_SAVE_PROBE__,
-   metaHasEvent:!!meta.events?.[event.id],
-   customSchema:state.profile.customEq.find(x=>x.id==='wall-hold')?.metricSchema,
-   recorderVisible:rec?.classList.contains('show')||false,
-   postDiag:{
-    recorderClass:rec?.className||null,
-    recorderSuppressed:rec?.dataset.axis818RenderSuppressed??null,
-    recorderRenderKey:rec?.dataset.axis818RenderKey??null,
-    recorderHtmlLength:rec?.innerHTML?.length||0,
-    sameRecorderNode:rec===window.__AXIS_819_RECORDER_IDENTITY__,
-    trace:window.__AXIS_819_RECORDER_TRACE__||[],
-    reviewHidden:document.querySelector('#reviewStage')?.classList.contains('hidden')??null,
-    scanSheetShow:document.querySelector('#scanSheet')?.classList.contains('show')??null,
-    selectedEq:window.__AXIS_CAPTURE__?.snapshot?.().selectedEq??null,
-    finalResetMarker:window.__AXIS_819_FINAL_RECORDER_RESET__||null
-   }
-  };
+  return{event,saveProbe:window.__AXIS_819_SAVE_PROBE__,metaHasEvent:!!meta.events?.[event.id],customSchema:state.profile.customEq.find(x=>x.id==='wall-hold')?.metricSchema,recorderVisible:rec?.classList.contains('show')||false,reviewHidden:document.querySelector('#reviewStage')?.classList.contains('hidden')??null,scanSheetShow:document.querySelector('#scanSheet')?.classList.contains('show')??null};
  });
- assert.equal(saved.event.metrics.duration,7,`visible schema input was not saved as the Encounter fact · probe ${JSON.stringify(saved.saveProbe)}`);
+ assert.equal(saved.saveProbe?.value,'7','Save boundary did not observe the visible schema value');
+ assert.equal(saved.event.metrics.duration,7,'visible schema input was not saved as the Encounter fact');
  assert.deepEqual(saved.event.metricSchemaSnapshot.map(x=>x.key),['duration'],'Encounter did not freeze the Object schema used for recording');
  for(const irrelevant of ['weight','reps','sets','intensity'])assert.equal(Object.hasOwn(saved.event,irrelevant),false,`irrelevant legacy fact ${irrelevant} leaked into time-only Encounter`);
  assert.equal(saved.event.duration,7,'compatible duration projection missing');
  assert.equal(saved.metaHasEvent,false,'time-only schema unexpectedly created a v61 strength fact owner');
  assert.deepEqual(saved.customSchema,[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1}],'Object schema was destructively rewritten during recording');
- assert.equal(saved.recorderVisible,false,`recording reset left schema controls visibly mounted · ${JSON.stringify(saved.postDiag)}`);
+ assert.equal(saved.recorderVisible,false,'recording reset left schema controls visibly mounted');
+ assert.equal(saved.scanSheetShow,false,'committed Encounter left Capture sheet visibly mounted');
 
  /* A subsequent real Review selection of a legacy Object must restore its editor. */
  await beginReview();
  await chooseObject('lat','高位下拉');
  assert.equal(await page.locator('#axis818MetricRecorder').isVisible(),false,'legacy Object inherited schema-driven recorder');
- const legacy=await page.evaluate(()=>({
-  strengthHidden:document.querySelector('#strengthFields')?.classList.contains('axis818LegacyMetricHidden')||false,
-  cardioHidden:document.querySelector('#cardioFields')?.classList.contains('axis818LegacyMetricHidden')||false
- }));
+ const legacy=await page.evaluate(()=>({strengthHidden:document.querySelector('#strengthFields')?.classList.contains('axis818LegacyMetricHidden')||false,cardioHidden:document.querySelector('#cardioFields')?.classList.contains('axis818LegacyMetricHidden')||false}));
  assert.equal(legacy.strengthHidden,false,'legacy strength editor did not recover after schema-driven Object');
  assert.equal(legacy.cardioHidden,false,'legacy cardio editor retained schema-driven suppression state');
- await tap(page.locator('#scanClose'));
+ const canonicalClose=page.locator('#scanSheet [data-close="scanSheet"]');
+ assert.equal(await canonicalClose.count(),1,'canonical Capture close control missing');
+ await tap(canonicalClose);
+ await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:1500});
 
  /* Reload proves persisted Encounter remains readable without migration. */
  await page.reload({waitUntil:'domcontentloaded',timeout:15000});
@@ -164,5 +133,5 @@ try{
  assert.deepEqual(reload.snapshot,['duration']);
  assert.deepEqual(reload.rows.map(x=>x[0]),['时间']);
  assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
- console.log(`[AXIS Universal Practice Object ${ENGINE}] PASS · real Capture → Review → current My/search picker → Object → visible Recording → authoritative Encounter → frozen snapshot → reload · no irrelevant legacy facts · no v61 duplicate owner`);
+ console.log(`[AXIS Universal Practice Object ${ENGINE}] PASS · real Capture → Review → current My/search picker → Object → visible Recording → authoritative Encounter → reset-entry unmount → frozen snapshot → legacy recovery → reload · no irrelevant legacy facts · no v61 duplicate owner`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
