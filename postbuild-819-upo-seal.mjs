@@ -27,13 +27,16 @@ const audit={
  saveFunction:occurrences('function saveScan'),
  captureEvent:occurrences('axis818CaptureEvent'),
  eventPush:occurrences('state.active.events.push'),
- saveScanRefs:occurrences('saveScan')
+ saveScanRefs:occurrences('saveScan'),
+ closeSheetFunction:occurrences('function closeSheet'),
+ stopCameraFunction:occurrences('function stopCamera')
 };
-const contextFor=positions=>positions.slice(0,16).map(i=>src.slice(Math.max(0,i-220),Math.min(src.length,i+420)).replace(/\s+/g,' '));
+const contextFor=positions=>positions.slice(0,16).map(i=>src.slice(Math.max(0,i-260),Math.min(src.length,i+620)).replace(/\s+/g,' '));
 console.log('[AXIS 8.19 UPO canonical audit] '+JSON.stringify({
  counts:Object.fromEntries(Object.entries(audit).map(([k,v])=>[k,v.length])),
  recorderContexts:contextFor(audit.recorderId),
- saveContexts:contextFor([...audit.saveFunction,...audit.captureEvent,...audit.eventPush,...audit.saveScanRefs])
+ saveContexts:contextFor([...audit.saveFunction,...audit.captureEvent,...audit.eventPush,...audit.saveScanRefs]),
+ postSaveBoundaryContexts:contextFor([...audit.closeSheetFunction,...audit.stopCameraFunction])
 }));
 
 const resetToken='function resetScan(',nextToken='function setVal(';
