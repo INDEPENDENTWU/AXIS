@@ -44,12 +44,12 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  };
  replaceRange(
   /function selectEq\([^)]*\)\{[\s\S]*?\}(?=\nfunction renderEqList)/,
-  fn=>fn.slice(0,-1)+";$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');axis818RenderRecorder()}",
+  fn=>fn.slice(0,-1)+";const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder)axis819Recorder.dataset.axis818RenderKey='';$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');axis818RenderRecorder()}",
   'selectEq lifecycle'
  );
  replaceRange(
   /function resetScan\([^)]*\)\{[\s\S]*?\}(?=\nfunction setVal)/,
-  fn=>fn.slice(0,-1)+";$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.classList.remove('show');axis819Recorder.innerHTML=''}}",
+  fn=>fn.slice(0,-1)+";$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.dataset.axis818RenderKey='';axis819Recorder.classList.remove('show');axis819Recorder.innerHTML=''}}",
   'resetScan lifecycle'
  );
  replaceRange(
@@ -58,12 +58,12 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
    const resolverFrom='const eq=eqById(state.selectedEq);',resolverTo='const eq=axis818Eq(state.selectedEq);';
    if(fn.split(resolverFrom).length-1!==1)throw new Error('[AXIS 8.19 recording owner] recorder resolver contract changed');
    let out=fn.replace(resolverFrom,resolverTo);
-   const renderFrom="const explicit=!!custom?.metricSchema?.length;host.classList.toggle('show',explicit);if(!explicit)return;$('#strengthFields')?.classList.add('axis818LegacyMetricHidden');$('#cardioFields')?.classList.add('axis818LegacyMetricHidden');";
-   const renderTo="const explicit=!!custom?.metricSchema?.length,axis819RenderKey=explicit?eq.id+'|'+schema.map(m=>[m.key,m.type,m.unit,m.step].join(':')).join('|'):'';if(!explicit){host.classList.remove('show');host.dataset.axis818RenderKey='';$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');return}$('#strengthFields')?.classList.add('axis818LegacyMetricHidden');$('#cardioFields')?.classList.add('axis818LegacyMetricHidden');if(host.classList.contains('show')&&host.dataset.axis818RenderKey===axis819RenderKey)return;host.dataset.axis818RenderKey=axis819RenderKey;host.classList.add('show');";
-   if(out.split(renderFrom).length-1!==1)throw new Error('[AXIS 8.19 recording owner] recorder idempotence boundary changed');
-   return out.replace(renderFrom,renderTo)
+   const writeToken="host.innerHTML='<div class=\"axis818MetricHead\"";
+   if(out.split(writeToken).length-1!==1)throw new Error('[AXIS 8.19 recording owner] recorder write boundary changed');
+   const guard="const axis819RenderKey=eq.id+'|'+schema.map(m=>[m.key,m.type,m.unit,m.step].join(':')).join('|');if(host.dataset.axis818RenderKey===axis819RenderKey&&host.innerHTML)return;host.dataset.axis818RenderKey=axis819RenderKey;";
+   return out.replace(writeToken,guard+writeToken)
   },
-  'Object Truth recorder resolver + idempotent presentation'
+  'Object Truth recorder resolver + idempotent write boundary'
  );
  replaceRange(
   /function axis818CaptureEvent\([^)]*\)\{[\s\S]*?\}(?=\nwindow\.__AXIS_OBJECT_TRUTH__)/,
@@ -136,4 +136,4 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  fs.writeFileSync('v873-smart-input.js',smart);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · schema recorder re-renders idempotently without destroying in-progress values · v61 isolated at prepare/save/delayed-reconcile boundaries · custom picker fallback emits canonical equipment-selected lifecycle');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · schema recorder write is idempotent without destroying in-progress values · v61 isolated at prepare/save/delayed-reconcile boundaries · custom picker fallback emits canonical equipment-selected lifecycle');
