@@ -5,80 +5,100 @@
 ## Production baseline at start of this work
 
 - Production: **AXIS 8.18**.
-- Exact baseline: `254a2fa80fdfd4040a6f695d28ad3bd670c0a7db`.
-- Source Convergence has **zero intended user-visible behavior change**; this Production artifact remains the equivalence/rollback reference.
+- Exact sealed main SHA: `65e3525e78f021afda7db19d27722626af9514d8`.
+- Vercel Production deployment: `dpl_7mYETXKCQzXKh88ybocT65oLiJ1T` — **READY**, exact Git SHA above.
+- EdgeOne Production Mirror run `32675374766` — **success**: exact-prebuilt deployment, Vercel/local artifact parity, Chromium real Production flow and iPhone WebKit real Production flow all passed.
+- AXIS 8.18 remains the rollback/reference release while 8.19 is developed. Do not rewrite or migrate historical user data in place.
 
 ## Active change
 
-**AXIS Source Convergence — 8.19 Foundation** · branch `engineering/source-convergence-819` · PR **#79**.
+**AXIS 8.19 — Universal Practice Objects** · branch `product/819-universal-practice-objects` · draft PR **#80**.
 
-Current phase: **CI convergence sealed before merge; exact merged-main Production verification next**.
+Current phase: **Phase 1 — Metric Schema + Recording Truth**.
 
-### Completed · durable governance
+Product goal:
 
-GitHub owns current project/release context, owners, retirements and CI evidence. Future presentation foundation remains exactly `zh-Hans` **简体中文**, `zh-Hant` **繁體中文**, `en` **English**, themes `system / light / dark`.
+`Object → Metric Schema → Recording Surface → authoritative metric facts → Encounter schema snapshot → History / Evolution`
 
-### Preserved · native / cross-platform foundation
+The immediate product defect being fixed is structural: custom/built-in Objects can describe recording attributes, but current recording and History still largely collapse to hard-coded `strength = weight/reps/sets` or `cardio = duration/intensity`. 8.19 makes the Object definition executable without turning AXIS into a generic form builder.
 
-The native handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`. Shared portable contracts remain `axis.domain.v1` for domain semantics and `axis.data.v1` for durable exchange. Web/iOS capability differences stay isolated behind platform contracts rather than leaking into product truth.
+### Completed · Slice 1 Metric Schema foundation
 
-**Chat history is not authoritative project memory.** Durable handoff, ADRs, shared contracts, fixtures and GitHub state are authoritative for future agents and native work.
+Commit `9f45c4ed3bfdad1fa113801b4af0e6d0355dfa8b` establishes:
 
-### Completed · CI convergence
+- `axis.metric-schema.v1`;
+- `axis.encounter-metrics.v1`;
+- pure `lib/axis-metric-schema.mjs` resolver;
+- nine portable metric primitives: `number / count / duration / distance / pace / percentage / rating / boolean / choice`;
+- legacy profile mapping for `weight_reps`, `time_intensity`, and `time_level`;
+- Recording Surface classification without storage ownership;
+- immutable Encounter metric-schema snapshots;
+- classic strength facts projected from authoritative `axis_v8_meta` sets;
+- legacy cardio facts projected from authoritative `axis_v60_state` events;
+- explicit `legacyOwner: v61` for the classic `weight × reps` surface.
 
-- Original broad PR fanout observed: **25 workflow families**.
-- Historical automatic workflow files physically retired: **20**.
-- Broad PR/main topology after convergence: **9 baseline responsibility families**.
-- Path-scoped specialist intentionally preserved: **AXIS 8.12 Browser Gate**.
-- Resurrection guard: retired workflow files may not return.
-- Stale-head cancellation: verified; never cancels current-head or push/main Production work.
+Cross-Platform Foundation run `32676046208` passed the new Metric Schema contract. Slice 1 intentionally changes **no user-visible recording UI** yet.
 
-Current Release replacement evidence:
-- `32630099680` — Chromium + WebKit **success**;
-- post-retirement `32630367047` — Chromium + WebKit **success**.
+### Current ownership boundaries
 
-Runtime Foundation replacement evidence:
-- `32630563608` — pure-runtime-parity + Chromium + WebKit **success**;
-- post-retirement `32630723007` — all three jobs **success**.
+- `v61.js` remains the authoritative high-frequency writer for classic strength set facts.
+- `app.js` remains the current base session/cardio event persistence owner until a separately proved handoff exists.
+- `v874-professional.js` remains the visible custom-Object editor.
+- Metric Schema resolution is pure; it is not a database, event writer, completion owner, or UI owner.
+- History/Evolution will consume normalized metric truth read-only; they may not create facts.
 
-Deep Compatibility replacement evidence:
-- `32631072695` — static + Chromium + WebKit **success**;
-- preserves legacy storage, reminder/Home, 8.9→8.10.3 learning/detail/home/voice, 8.12 field/Group Plan/Settings, Personal Equipment, simplified Learning, 8.12.4/8.12.5 behavior.
+### Durable compatibility
 
-### Final behavior proof before handoff seal
+Preserve without destructive migration:
 
-Exact candidate: `88d9ee826dcfab14a465c38837a33c6ecd4727e0`.
+- `axis_v60_state`;
+- `axis_v8_meta`;
+- `axis_v89_speak`;
+- `axis_v42_media`;
+- historical custom equipment/object identities and aliases;
+- historical Encounters recorded before Metric Schema existed.
 
-Every workflow actually triggered on this candidate finished **SUCCESS**:
+Changing an Object's current schema later must never rewrite an older Encounter. The Encounter keeps the schema snapshot that was true when it was recorded.
 
-- Repository Contract `32657115841`;
-- Work Continuity `32657115855`;
-- Runtime Gate `32657115895`;
-- Current Release `32657115881`;
-- Runtime Foundation `32657115832`;
-- Deep Compatibility `32657115849` — static + Chromium + iPhone WebKit all success;
-- Cross-Platform Foundation `32657115829`;
-- PR Run Convergence `32657115935`;
-- EdgeOne PR package contract `32657115860`;
-- path-scoped AXIS 8.12 Browser Gate `32657115897` — Chromium + iPhone WebKit success.
+### Next implementation slice
 
-Two final test-quality corrections were made without changing product behavior:
+Persist executable Metric Schema on custom Objects first, before altering Recording UI:
 
-1. cumulative-rest regression now synchronizes to persisted `paused`/`active` state instead of fixed wall-clock sleeps; the same `>400ms` accumulated-rest acceptance requirement remains;
-2. 8.12 Browser Gate now recognizes the inherited simplified Learning surface via `__AXIS_8123_LEARNING__` semantic markers instead of an exact public-release string; corpus/group/retirement/overflow/page-error assertions remain strict.
+1. existing custom Objects without `metricSchema` resolve through legacy type/profile defaults;
+2. editing an Object reads its explicit schema when present;
+3. saving writes normalized schema back into the same `axis_v60_state.profile.customEq` Object — no second object store;
+4. legacy `type`, subtype/profile and identity fields remain for compatibility;
+5. Object schema editing cannot mutate any existing session/event/meta record;
+6. only after save/reload compatibility proof should Quick Record / Recording consume the resolver.
 
 ## Validation for this work
 
-Preserve exact 8.18 behavior, one canonical runtime, historical storage/data readability, custom object identity, current camera/media/sound/completion ownership, Chromium/WebKit coverage and exact-SHA Production proof. Do not gain green CI through timeout inflation, weaker assertions, duplicate owners/stores, or destructive migration.
+Every 8.19 slice must preserve one semantic owner and one authoritative fact store. No green CI through weaker assertions, timeout inflation, duplicate writers, fake compatibility fields, or destructive migration.
+
+Required proof as the work advances:
+
+- Metric Schema pure/deterministic contract;
+- old strength/cardio/custom Objects resolve identically to 8.18 behavior;
+- `v61` remains owner for classic weight/reps sets;
+- custom schema save/reload is lossless and does not touch historical Encounters;
+- generic metric recording writes exactly once through the existing event boundary;
+- Encounter schema snapshot is immutable after later Object edits;
+- History/Detail reads snapshot first with legacy fallback;
+- Evolution reads normalized metric facts without persistence ownership;
+- affected real flows pass Chromium and iPhone-like WebKit before merge;
+- final merged 8.19 SHA requires exact Vercel + EdgeOne Production parity before release seal.
 
 ## Next planned stage
 
-1. Let this **docs/governance-only handoff-seal head** pass the 9 baseline responsibility gates.
-2. Update PR #79 description/evidence without changing the tested head SHA.
-3. Merge PR #79 with expected-head protection.
-4. Verify the exact merged-main SHA on Vercel Production.
-5. Require EdgeOne exact-prebuilt artifact parity and real Chromium + iPhone WebKit Production flows.
-6. Only then call the Source Convergence CI/handoff phase sealed.
-7. Start **Phase 3 — Source Quarantine / Direct Ownership** on a new engineering branch: shorten the current long `build-release.mjs` historical transform chain one proven owner at a time. Do not rewrite AXIS.
+1. Seal this handoff update so Work Continuity is green on PR #80.
+2. Implement custom-Object `metricSchema` persistence/reload in the existing `v874-professional.js` owner with explicit legacy fallback.
+3. Add contract/browser proof that editing current Object schema never changes historical event/meta facts.
+4. Integrate the Recording Surface Resolver into Quick Record/recording selection:
+   - exact weight/reps → existing `v61` surface;
+   - existing duration/intensity → existing app owner while compatible;
+   - only unsupported metrics receive the new generic metric controls.
+5. Commit normalized metric facts + immutable schema snapshot atomically at the authoritative recording boundary.
+6. Make History/Detail schema-aware, then Evolution normalized/read-only.
+7. Keep PR #80 Draft until the complete Object → Record → History loop is dual-engine sealed.
 
-CI/handoff convergence is nearly complete. **Source/build convergence is explicitly not complete yet.**
+**Conversation history is supplemental only. GitHub handoff/contracts/tests are authoritative for this work.**

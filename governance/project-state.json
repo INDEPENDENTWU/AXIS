@@ -1,57 +1,100 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
     "productionRelease": "8.18",
-    "productionRuntimeSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db",
+    "productionRuntimeSha": "65e3525e78f021afda7db19d27722626af9514d8",
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
-    "vercel": {"projectId":"prj_8JJhe0nj2CryZb4xHoHV1WBffn8f","deploymentId":"dpl_1QX8YUPjzRF8tmSZ55Gkp1dsnZuU","sourceSha":"254a2fa80fdfd4040a6f695d28ad3bd670c0a7db","state":"READY","target":"production","publicUrl":"https://axis-five-puce.vercel.app"},
-    "edgeOne": {"publicUrl":"https://axisfitness-mirror-9x91gveo.edgeone.cool","policy":"exact-prebuilt-artifact-mirror","verificationRecord":"8.18 production seal preserved; next record is the Source Convergence merged-main production verification"}
+    "vercel": {
+      "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
+      "deploymentId": "dpl_7mYETXKCQzXKh88ybocT65oLiJ1T",
+      "sourceSha": "65e3525e78f021afda7db19d27722626af9514d8",
+      "state": "READY",
+      "target": "production",
+      "publicUrl": "https://axis-five-puce.vercel.app"
+    },
+    "edgeOne": {
+      "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
+      "policy": "exact-prebuilt-artifact-mirror",
+      "verificationRunId": 32675374766,
+      "sourceSha": "65e3525e78f021afda7db19d27722626af9514d8",
+      "packageContract": "success",
+      "deployProduction": "success",
+      "chromiumProductionFlow": "success",
+      "webkitProductionFlow": "success"
+    }
   },
   "engineering": {
-    "activeMilestone": "AXIS Source Convergence — 8.19 Foundation",
-    "activePhase": "Phase 2 CI convergence sealed — merge/Production verification next",
-    "activeBranch": "engineering/source-convergence-819",
-    "pullRequest": 79,
+    "activeMilestone": "AXIS 8.19 — Universal Practice Objects",
+    "activePhase": "Phase 1 — Metric Schema + Recording Truth",
+    "activeBranch": "product/819-universal-practice-objects",
+    "pullRequest": 80,
+    "pullRequestDraft": true,
     "baselineRelease": "8.18",
-    "baselineRuntimeSha": "254a2fa80fdfd4040a6f695d28ad3bd670c0a7db",
-    "intendedProductBehaviorChange": false,
+    "baselineRuntimeSha": "65e3525e78f021afda7db19d27722626af9514d8",
+    "intendedProductBehaviorChange": true,
     "nextProductRelease": "8.19",
-    "ciConvergence": {
-      "status":"sealed-before-merge",
-      "originalBroadWorkflowFanout":25,
-      "baselineResponsibilityFamilies":9,
-      "retiredWorkflowFiles":20,
-      "pathScopedSpecialist":"AXIS 8.12 Browser Gate",
-      "finalBehaviorProofSha":"88d9ee826dcfab14a465c38837a33c6ecd4727e0",
-      "allTriggeredWorkflowRunsSuccessful":true,
-      "inventory":"governance/ci-inventory.json"
+    "foundation": {
+      "metricSchema": "axis.metric-schema.v1",
+      "encounterMetrics": "axis.encounter-metrics.v1",
+      "foundationCommit": "9f45c4ed3bfdad1fa113801b4af0e6d0355dfa8b",
+      "crossPlatformProofRun": 32676046208,
+      "crossPlatformProofConclusion": "success",
+      "primitiveCount": 9,
+      "legacyStrengthOwner": "v61",
+      "legacyStrengthFactStore": "axis_v8_meta",
+      "baseEventFactStore": "axis_v60_state",
+      "schemaSnapshotImmutable": true
     },
-    "nextEngineeringPhase": "Phase 3 — source quarantine and direct ownership; shorten build-release historical transform chain without rewrite"
+    "nextSlice": "Persist normalized metricSchema on custom Objects through the existing v874 editor, preserving legacy profiles and historical Encounter truth before connecting Recording UI."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
-    "preserveStorage": ["axis_v60_state","axis_v8_meta","axis_v89_speak","axis_v42_media"]
+    "preserveStorage": [
+      "axis_v60_state",
+      "axis_v8_meta",
+      "axis_v89_speak",
+      "axis_v42_media"
+    ],
+    "rules": [
+      "No destructive migration of historical sessions/events/meta.",
+      "Classic weight/reps set facts remain v61-owned until an explicit proved handoff.",
+      "Existing custom Objects without metricSchema resolve through legacy type/profile defaults.",
+      "Changing the current Object schema must never rewrite historical Encounter schema snapshots."
+    ]
   },
   "presentationFoundation": {
     "locales": [
-      {"id":"zh-Hans","name":"简体中文","requireProfessionalTranslation":true},
-      {"id":"zh-Hant","name":"繁體中文","requireProfessionalTranslation":true},
-      {"id":"en","name":"English","requireProfessionalTranslation":true}
+      {"id": "zh-Hans", "name": "简体中文", "requireProfessionalTranslation": true},
+      {"id": "zh-Hant", "name": "繁體中文", "requireProfessionalTranslation": true},
+      {"id": "en", "name": "English", "requireProfessionalTranslation": true}
     ],
-    "themes": ["system","light","dark"],
-    "status": "planned after source-governance/source-ownership foundation"
+    "themes": ["system", "light", "dark"],
+    "status": "planned after the 8.19 recording-truth foundation is stable"
   },
-  "authorityOrder": ["governance/project-state.json","docs/HANDOFF.md","docs/CURRENT_RELEASE.md","docs/CURRENT_WORK.md","governance/owners.json","governance/retirements.json","governance/ci-inventory.json","docs/RUNTIME_CONTRACT.md","docs/PRODUCT.md","docs/ARCHITECTURE.md","build-release.mjs"],
+  "authorityOrder": [
+    "governance/project-state.json",
+    "docs/HANDOFF.md",
+    "docs/CURRENT_RELEASE.md",
+    "docs/CURRENT_WORK.md",
+    "governance/owners.json",
+    "governance/retirements.json",
+    "governance/ci-inventory.json",
+    "docs/RUNTIME_CONTRACT.md",
+    "docs/PRODUCT.md",
+    "docs/ARCHITECTURE.md",
+    "shared/contracts/axis-contract-manifest.json",
+    "build-release.mjs"
+  ],
   "notes": [
     "Chat history is supplementary context, never authoritative project state.",
-    "release-contract.json is a legacy mutable build seed and is not the canonical current-release record.",
-    "Historical filenames describe provenance, not current authority.",
-    "CI convergence reduced duplicate execution only after current behavior and compatibility evidence were preserved.",
-    "CI convergence is not source/build convergence: build-release still carries a long historical transform chain that must be strangler-retired in the next phase."
+    "AXIS 8.18 engineering convergence is merged and Production-sealed at 65e3525e78f021afda7db19d27722626af9514d8.",
+    "PR #80 is a real product-capability release line and remains Draft until Object → Recording → History is sealed.",
+    "Metric Schema is a pure semantic contract/resolver and must never become a second persistence owner.",
+    "Source/build historical transform convergence remains separate engineering debt and must not be mixed into 8.19 product truth without explicit scope."
   ]
 }
