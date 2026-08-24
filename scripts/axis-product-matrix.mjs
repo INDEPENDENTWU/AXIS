@@ -107,26 +107,32 @@ await closeCustom();
 await openSettings();
 await requireRecordPrefs('after-custom-editor');
 
-console.log('[AXIS matrix] canonical capture preference + retired keep-video pseudo-setting');
+console.log('[AXIS matrix] canonical Capture default stays independent from Scan sampling');
 await openGate('#v8711RecordGate > .settingLink','#v8711RecordGate');
 const cap5=page.locator('#scanSeconds button[data-sec="5"]');
-assert.ok(await cap5.isVisible(),'canonical 5-second capture preference is not visible');
+assert.ok(await cap5.isVisible(),'canonical 5-second Scan preference is not visible');
 await cap5.click();
 await page.waitForTimeout(80);
 let meta=await store('axis_v8_meta');
 core=await store('axis_v60_state');
-assert.equal(Number(core.prefs?.scanSeconds),5,'canonical app-owned scan preference did not persist');
-assert.equal(await page.evaluate(()=>window.__AXIS_818_SCAN_SECONDS__?.get?.()),5,'app-owned scan preference bridge disagrees with persisted state');
-assert.ok(await cap5.evaluate(x=>x.classList.contains('active')),'canonical 5-second preference is not visibly active');
+assert.equal(Number(core.prefs?.scanSeconds),5,'canonical app-owned Scan preference did not persist');
+assert.equal(await page.evaluate(()=>window.__AXIS_818_SCAN_SECONDS__?.get?.()),5,'app-owned Scan preference bridge disagrees with persisted state');
+assert.ok(await cap5.evaluate(x=>x.classList.contains('active')),'canonical 5-second Scan preference is not visibly active');
 assert.equal(await page.locator('#keepClipSwitch:visible').count(),0,'retired keep-video pseudo-setting became visible');
 assert.equal(await page.locator('#keepClipSwitch').getAttribute('aria-hidden'),'true','retired keep-video compatibility node lost aria-hidden');
-assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5','capture preference compatibility bridge disagrees with app-owned setting');
+assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5','Scan preference compatibility bridge disagrees with app-owned setting');
+const videoDefault=page.locator('#axis818CapturePrefs [data-axis818-pref="captureDefaultMode"][data-value="video"]');
+assert.equal(await videoDefault.count(),1,'canonical Video default preference is missing');
+await videoDefault.click();
+await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.prefs?.captureDefaultMode==='video',undefined,{timeout:1200});
+assert.equal(await videoDefault.evaluate(x=>x.classList.contains('active')),true,'canonical Video default preference did not become active');
 
 await closeSettings();
 await page.locator('#scanBtn').click();
-await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:1200});
-assert.ok(await page.locator('#captureModes [data-mode="5"]').evaluate(x=>x.classList.contains('active')),'capture sheet first frame did not use canonical 5-second preference');
-assert.ok((await page.locator('#captureNow').innerText()).includes('5'),'capture action copy did not use canonical 5-second preference');
+await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&window.__AXIS_CAPTURE__?.snapshot?.().mode==='video',undefined,{timeout:1200});
+assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE__?.snapshot?.().mode),'video','visible Capture entry ignored canonical default Video preference');
+assert.equal(await page.evaluate(()=>window.__AXIS_CAPTURE_PREF__?.get?.()),'5','opening Video mutated independent Scan sampling');
+assert.equal((await page.locator('#captureNow').innerText()).trim(),'录制视频','capture action copy did not use canonical Video default');
 await page.locator('#scanSheet [data-close="scanSheet"]').click();
 await page.waitForTimeout(80);
 
@@ -244,6 +250,6 @@ assert.ok(await page.locator('#v8710ShareReport').isVisible(),'canonical report 
 assert.equal(await page.locator('#shareReport').count(),0,'retired base report share owner survived canonical report hydration');
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log('[AXIS product matrix] PASS · navigation · Settings · capture preference · persistence · recording · active session · history · canonical trends · canonical report');
+console.log('[AXIS product matrix] PASS · navigation · Settings · Capture default/Scan independence · persistence · recording · active session · history · canonical trends · canonical report');
 await context.close();
 await browser.close();
