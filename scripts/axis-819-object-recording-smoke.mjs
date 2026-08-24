@@ -72,7 +72,6 @@ try{
  assert.equal(boot.object,'8.18','8.18 Object Truth runtime layer missing');
  assert.equal(boot.capture,true,'canonical Capture API missing');
 
- /* Real user flow: Capture → Review → current picker → Object → visible schema Recording. */
  await beginReview();
  await chooseObject('wall-hold','靠墙站立');
  const recorder=page.locator('#axis818MetricRecorder');
@@ -99,7 +98,7 @@ try{
   const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
   const meta=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}');
   const event=state.active.events[0],rec=document.querySelector('#axis818MetricRecorder');
-  return{event,saveProbe:window.__AXIS_819_SAVE_PROBE__,metaHasEvent:!!meta.events?.[event.id],customSchema:state.profile.customEq.find(x=>x.id==='wall-hold')?.metricSchema,recorderVisible:rec?.classList.contains('show')||false,reviewHidden:document.querySelector('#reviewStage')?.classList.contains('hidden')??null,scanSheetShow:document.querySelector('#scanSheet')?.classList.contains('show')??null};
+  return{event,saveProbe:window.__AXIS_819_SAVE_PROBE__,metaHasEvent:!!meta.events?.[event.id],customSchema:state.profile.customEq.find(x=>x.id==='wall-hold')?.metricSchema,recorderVisible:rec?.classList.contains('show')||false,scanSheetShow:document.querySelector('#scanSheet')?.classList.contains('show')??null};
  });
  assert.equal(saved.saveProbe?.value,'7','Save boundary did not observe the visible schema value');
  assert.equal(saved.event.metrics.duration,7,'visible schema input was not saved as the Encounter fact');
@@ -111,7 +110,6 @@ try{
  assert.equal(saved.recorderVisible,false,'recording reset left schema controls visibly mounted');
  assert.equal(saved.scanSheetShow,false,'committed Encounter left Capture sheet visibly mounted');
 
- /* A subsequent real Review selection of a legacy Object must restore its editor. */
  await beginReview();
  await chooseObject('lat','高位下拉');
  assert.equal(await page.locator('#axis818MetricRecorder').isVisible(),false,'legacy Object inherited schema-driven recorder');
@@ -123,13 +121,11 @@ try{
  await tap(canonicalClose);
  await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:1500});
 
- /* Reload proves persisted Encounter remains readable without migration. */
  await page.reload({waitUntil:'domcontentloaded',timeout:15000});
  await page.waitForFunction(()=>window.__AXIS_OBJECT_TRUTH__?.version==='8.18',undefined,{timeout:10000});
  const reload=await page.evaluate(()=>{
   const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
   const event=state.active.events[0];
-  assert;
   return{duration:event?.metrics?.duration,snapshot:event?.metricSchemaSnapshot?.map(x=>x.key),rows:event?window.__AXIS_OBJECT_TRUTH__.eventRows(event):[],eventPresent:!!event};
  });
  assert.equal(reload.eventPresent,true,'committed Encounter disappeared across reload');
