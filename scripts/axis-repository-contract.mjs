@@ -70,6 +70,8 @@ const release818=read('prepare-818-release.mjs');
 if(!release818.includes("const FROM='8.17',VERSION='8.18';"))fail('8.18 release transition contract drift');
 const release819=read('prepare-819-release.mjs');
 if(!release819.includes("const FROM='8.18',VERSION='8.19';"))fail('8.19 release transition contract drift');
+const release820=read('prepare-820-release.mjs');
+if(!release820.includes("const FROM='8.19',VERSION='8.20';"))fail('8.20 release transition contract drift');
 const convergenceDriver=read('prepare-8151-regression-seal.mjs');
 for(const marker of ["await import('./prepare-816-capture-evidence-convergence.mjs')","await import('./prepare-816-evidence-compat-refine.mjs')","await import('./prepare-817-interaction-convergence-driver.mjs')"])if(!convergenceDriver.includes(marker))fail(`8.16/8.17 convergence chain missing: ${marker}`);
 const captureDriver=read('prepare-816-capture-evidence-convergence.mjs');
@@ -87,7 +89,8 @@ if(!post8171.includes("await import('./postbuild-818-contract.mjs')"))fail('8.18
 const post818=read('postbuild-818-contract.mjs');
 const source818Identity=post818.includes("contract.publicVersion!=='8.18'")&&post818.includes("contract.stableBaseVersion!=='8.18'")&&post818.includes("info.version!=='8.18'")&&post818.includes("info.baseVersion!=='8.18'");
 const built819Identity=post818.includes("contract.publicVersion!=='8.19'")&&post818.includes("contract.stableBaseVersion!=='8.19'")&&post818.includes("info.version!=='8.19'")&&post818.includes("info.baseVersion!=='8.19'");
-if(!source818Identity&&!built819Identity)fail('8.18 semantic contract has neither sealed source identity nor 8.19 built identity');
+const built820Identity=post818.includes("contract.publicVersion!=='8.20'")&&post818.includes("contract.stableBaseVersion!=='8.20'")&&post818.includes("info.version!=='8.20'")&&post818.includes("info.baseVersion!=='8.20'");
+if(!source818Identity&&!built819Identity&&!built820Identity)fail('8.18 semantic contract has neither sealed source identity nor supported built identity');
 for(const marker of ['objectMetricSchema818:true','pwaRouteTruth818:true','capturePreferenceModel818:true','evolutionObjectShelf818:true'])if(!post818.includes(marker))fail(`8.18 semantic contract missing ${marker}`);
 if(!build.includes("architecture==='canonical-single-runtime'"))fail('canonical single-runtime release assertion missing');
 
@@ -135,4 +138,4 @@ try{
 
 const prepareCount=steps.filter(step=>step.startsWith('prepare-')).length;
 const postbuildCount=steps.filter(step=>step.startsWith('postbuild-')).length;
-console.log(`[AXIS repository contract] PASS · governed current ${CURRENT} @ ${PROD_SHA.slice(0,12)} · inherited runtime foundation ${FOUNDATION} · 8.18 semantic contract reachable/source-or-8.19-built identity sealed · ${steps.length} deterministic top-level steps (${prepareCount} prepare / ${postbuildCount} postbuild) · exact locales zh-Hans/zh-Hant/en · themes system/light/dark · Vercel + EdgeOne policies aligned`);
+console.log(`[AXIS repository contract] PASS · governed current ${CURRENT} @ ${PROD_SHA.slice(0,12)} · inherited runtime foundation ${FOUNDATION} · 8.18 semantic contract reachable/source-or-current-built identity sealed · ${steps.length} deterministic top-level steps (${prepareCount} prepare / ${postbuildCount} postbuild) · exact locales zh-Hans/zh-Hant/en · themes system/light/dark · Vercel + EdgeOne policies aligned`);
