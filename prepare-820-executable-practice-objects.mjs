@@ -13,13 +13,14 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
  * ----------------------------------------------------------------------- */
 {
  const FILE='app.js';let s=read(FILE);
- const anchor="window.__AXIS_OBJECT_TRUTH__={version:'8.18',owner:'app.js',schemaForEq:axis818SchemaForEq,schemaForEvent:axis818SchemaForEvent,eventMetrics:axis818EventMetrics,eventRows:axis818EventRows,explicit:eq=>!!axis818Eq(eq)?.metricSchema?.length};";
+ const exportToken='window.__AXIS_OBJECT_TRUTH__=';
  const bridge=String.raw`
 function axis820ExecutionModeForEq(ref){const eq=axis818Eq(ref);if(!eq)return'single';const explicit=String(eq.executionMode||'').trim();if(['single','sets','rounds','timed','hold','complete'].includes(explicit))return explicit;const keys=new Set(axis818SchemaForEq(eq).map(x=>x.key));if(keys.has('hold'))return'hold';if(keys.has('weight')&&keys.has('reps'))return'sets';if(keys.has('duration'))return'timed';return'single'}
 window.__AXIS_EXECUTABLE_OBJECTS__={version:'8.20',owner:'app.js+ObjectTruth',modeForEq:axis820ExecutionModeForEq,schemaForEq:axis818SchemaForEq,explicit:eq=>!!axis818Eq(eq)?.metricSchema?.length,persistence:'existing-object-only'};
 `;
- if(!s.includes(anchor))fail('Object Truth export anchor missing');
- s=s.replace(anchor,bridge+anchor);
+ const exports=s.split(exportToken).length-1;
+ if(exports!==1)fail(`Object Truth export anchor expected once, found ${exports}`);
+ s=s.replace(exportToken,bridge+exportToken);
  const captureFrom="function axis818CaptureEvent(e,eq){const schema=axis818SchemaForEq(eq),vals=axis818ReadMetricInputs(schema);e.metricSchemaSnapshot=schema.map(axis818CloneMetric);e.metrics=vals;axis818ApplyLegacy(e,vals);e.objectTruthVersion='8.18';return e}";
  const captureTo="function axis818CaptureEvent(e,eq){const schema=axis818SchemaForEq(eq),vals=axis818ReadMetricInputs(schema);e.metricSchemaSnapshot=schema.map(axis818CloneMetric);e.metrics=vals;axis818ApplyLegacy(e,vals);e.objectTruthVersion='8.18';e.executionModeSnapshot=axis820ExecutionModeForEq(eq);e.executableObjectVersion='8.20';return e}";
  s=once(s,captureFrom,captureTo,'Encounter execution snapshot');
