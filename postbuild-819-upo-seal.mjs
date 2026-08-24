@@ -16,13 +16,18 @@ for(const token of [
   "$('#reviewStage')?.classList.contains('hidden')"
 ])if(!src.includes(token))fail(`final recorder invariant missing ${token}`);
 
-const re=/function resetScan\([^)]*\)\{[\s\S]*?\}(?=function setVal)/g;
-const matches=[...src.matchAll(re)];
-if(matches.length!==1)fail(`canonical resetScan expected once, found ${matches.length}`);
-const before=matches[0][0];
-if(before.includes('__AXIS_819_FINAL_RECORDER_RESET__'))fail('final recorder reset duplicated');
-const after=before.slice(0,-1)+";const axis819FinalRecorder=$('#axis818MetricRecorder');if(axis819FinalRecorder){axis819FinalRecorder.classList.remove('show');axis819FinalRecorder.innerHTML='';axis819FinalRecorder.dataset.axis818RenderKey='';axis819FinalRecorder.dataset.axis818RenderSuppressed='1'}try{window.__AXIS_819_FINAL_RECORDER_RESET__={version:'8.19',owner:'app.js',presentationOnly:true}}catch{}}";
-src=src.slice(0,matches[0].index)+after+src.slice(matches[0].index+before.length);
+const resetToken='function resetScan(',nextToken='function setVal(';
+const resetStart=src.indexOf(resetToken),resetAgain=src.indexOf(resetToken,resetStart+1);
+if(resetStart<0||resetAgain>=0)fail(`canonical resetScan expected once, start ${resetStart}, duplicate ${resetAgain}`);
+const nextStart=src.indexOf(nextToken,resetStart+resetToken.length);
+if(nextStart<0)fail('canonical setVal boundary missing after resetScan');
+const range=src.slice(resetStart,nextStart),close=range.lastIndexOf('}');
+if(close<0)fail('canonical resetScan closing brace missing');
+if(range.includes('__AXIS_819_FINAL_RECORDER_RESET__'))fail('final recorder reset duplicated');
+const patch=";const axis819FinalRecorder=$('#axis818MetricRecorder');if(axis819FinalRecorder){axis819FinalRecorder.classList.remove('show');axis819FinalRecorder.innerHTML='';axis819FinalRecorder.dataset.axis818RenderKey='';axis819FinalRecorder.dataset.axis818RenderSuppressed='1'}try{window.__AXIS_819_FINAL_RECORDER_RESET__={version:'8.19',owner:'app.js',presentationOnly:true}}catch{}";
+const sealedRange=range.slice(0,close)+patch+range.slice(close);
+src=src.slice(0,resetStart)+sealedRange+src.slice(nextStart);
+if(!src.includes('__AXIS_819_FINAL_RECORDER_RESET__'))fail('final reset marker missing after patch');
 try{new Function(src)}catch(e){fail(`canonical runtime syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
 
