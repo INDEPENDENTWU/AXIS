@@ -18,31 +18,40 @@ await context.addInitScript(()=>{
   profile:{customEq:[wall]},prefs:{scanSeconds:3,watermark:{photoMode:'raw',videoMode:'raw'}}
  }));
  localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
+ /* Exercise the product's existing file fallback deterministically in CI. */
+ try{Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{getUserMedia:async()=>{const e=new Error('CI file fallback');e.name='NotAllowedError';throw e},enumerateDevices:async()=>[]}})}catch{}
 });
 
 const page=await context.newPage(),errors=[];
+page.setDefaultTimeout(3000);
 page.on('pageerror',e=>errors.push(String(e?.stack||e)));
 const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(obj)});
 for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>json(r,obj));
-const tap=async locator=>ENGINE==='webkit'?locator.tap():locator.click();
-const exposeReview=()=>page.evaluate(()=>{
- document.querySelector('#scanSheet')?.classList.add('show');
- document.querySelector('#captureStage')?.classList.add('hidden');
- document.querySelector('#reviewStage')?.classList.remove('hidden');
-});
+const tap=async locator=>ENGINE==='webkit'?locator.tap({timeout:3000}):locator.click({timeout:3000});
+const EVIDENCE_PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=','base64');
+const attachEvidenceAndReview=async()=>{
+ const input=page.locator('#photoInput');
+ await input.setInputFiles({name:'axis-819-evidence.png',mimeType:'image/png',buffer:EVIDENCE_PNG});
+ await page.waitForFunction(()=>window.__AXIS_CAPTURE__?.draft?.().photos?.length===1,undefined,{timeout:3000});
+ const finished=await page.evaluate(()=>window.__AXIS_CAPTURE__.finish());
+ assert.equal(finished,true,'canonical Capture refused a valid evidence draft');
+ await page.waitForFunction(()=>!document.querySelector('#reviewStage')?.classList.contains('hidden'),undefined,{timeout:2000});
+};
 
 try{
  const response=await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000});assert.ok(response?.ok());
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:15000});
- await page.waitForFunction(()=>window.__AXIS_OBJECT_TRUTH__?.version==='8.18',undefined,{timeout:5000});
- await exposeReview();
+ await page.waitForFunction(()=>window.__AXIS_OBJECT_TRUTH__?.version==='8.18'&&window.__AXIS_819_RECORDING_BRIDGE__?.version==='8.19-foundation',undefined,{timeout:5000});
 
- /* Real Object selection must materialize the existing schema into Recording. */
- await tap(page.locator('#equipmentRow'));
- await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:1500});
- const wallChoice=page.locator('#eqSheet [data-eq="wall-hold"]');assert.equal(await wallChoice.count(),1,'custom Object missing from real equipment picker');
- await tap(wallChoice);
- await page.waitForFunction(()=>document.querySelector('#axis818MetricRecorder')?.classList.contains('show')&&document.querySelectorAll('#axis818MetricRecorder [data-axis818-metric]').length===1,undefined,{timeout:1500});
+ /* Canonical Capture selection must materialize Object Truth into visible Recording. */
+ const opened=await page.evaluate(()=>window.__AXIS_CAPTURE__.openCanonicalCamera('photo','wall-hold',false));
+ assert.equal(opened,true,'canonical Capture did not accept the custom Object');
+ await page.waitForFunction(()=>window.__AXIS_CAPTURE__.snapshot().selectedEq==='wall-hold',undefined,{timeout:2000});
+ await attachEvidenceAndReview();
+ const recorder=page.locator('#axis818MetricRecorder');
+ const durationInput=page.locator('[data-axis818-metric="duration"]');
+ assert.equal(await recorder.isVisible(),true,'schema recorder exists but is not visible in canonical Review');
+ assert.equal(await durationInput.isVisible(),true,'duration metric is not a real visible Recording control');
  const surface=await page.evaluate(()=>({
   keys:[...document.querySelectorAll('#axis818MetricRecorder [data-axis818-metric]')].map(x=>x.dataset.axis818Metric),
   strengthLegacyHidden:document.querySelector('#strengthFields')?.classList.contains('axis818LegacyMetricHidden')||false,
@@ -52,7 +61,7 @@ try{
  assert.equal(surface.strengthLegacyHidden,true,'schema-driven Object leaked the legacy strength editor');
  assert.equal(surface.title,'靠墙站立');
 
- await page.locator('[data-axis818-metric="duration"]').fill('7');
+ await durationInput.fill('7');
  await tap(page.locator('#saveScan'));
  await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}')?.active?.events?.length===1}catch{return false}},undefined,{timeout:2500});
  const saved=await page.evaluate(()=>{
@@ -74,18 +83,18 @@ try{
  assert.deepEqual(saved.customSchema,[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1}],'Object schema was destructively rewritten during recording');
  assert.equal(saved.recorderVisible,false,'recording reset left schema controls visibly mounted');
 
- /* Switching back to a legacy Object must restore its existing editor cleanly. */
- await exposeReview();
- await tap(page.locator('#equipmentRow'));
- await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:1500});
- await tap(page.locator('#eqSheet [data-eq="lat"]'));
- await page.waitForFunction(()=>!document.querySelector('#axis818MetricRecorder')?.classList.contains('show'),undefined,{timeout:1500});
+ /* A subsequent canonical legacy Object must recover its existing editor cleanly. */
+ const legacyOpened=await page.evaluate(()=>window.__AXIS_CAPTURE__.openCanonicalCamera('photo','lat',false));
+ assert.equal(legacyOpened,true,'canonical Capture did not accept a legacy Object after schema recording');
+ await attachEvidenceAndReview();
+ assert.equal(await page.locator('#axis818MetricRecorder').isVisible(),false,'legacy Object inherited schema-driven recorder');
  const legacy=await page.evaluate(()=>({
   strengthHidden:document.querySelector('#strengthFields')?.classList.contains('axis818LegacyMetricHidden')||false,
   cardioHidden:document.querySelector('#cardioFields')?.classList.contains('axis818LegacyMetricHidden')||false
  }));
  assert.equal(legacy.strengthHidden,false,'legacy strength editor did not recover after schema-driven Object');
  assert.equal(legacy.cardioHidden,false,'legacy cardio editor retained schema-driven suppression state');
+ page.locator('#scanClose')&&await tap(page.locator('#scanClose'));
 
  /* Reload proves the same persisted Encounter remains readable without migration. */
  await page.reload({waitUntil:'domcontentloaded',timeout:15000});
@@ -99,5 +108,5 @@ try{
  assert.deepEqual(reload.snapshot,['duration']);
  assert.deepEqual(reload.rows.map(x=>x[0]),['时间']);
  assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
- console.log(`[AXIS Universal Practice Object ${ENGINE}] PASS · Object schema → visible Recording → authoritative Encounter → frozen snapshot → reload · no irrelevant legacy facts · no v61 duplicate owner`);
+ console.log(`[AXIS Universal Practice Object ${ENGINE}] PASS · canonical Capture Object → visible Recording → authoritative Encounter → frozen snapshot → reload · no irrelevant legacy facts · no v61 duplicate owner`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
