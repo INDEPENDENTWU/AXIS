@@ -4,109 +4,52 @@
 
 ## Production baseline at start of this work
 
-- Production: **AXIS 8.18**.
-- Exact sealed main SHA: `65e3525e78f021afda7db19d27722626af9514d8`.
-- Vercel Production deployment: `dpl_7mYETXKCQzXKh88ybocT65oLiJ1T` — **READY**, exact Git SHA above.
-- EdgeOne Production Mirror run `32675374766` — **success**: exact-prebuilt deployment, Vercel/local artifact parity, Chromium real Production flow and iPhone WebKit real Production flow all passed.
-- AXIS 8.18 remains the rollback/reference release while 8.19 is developed. Do not rewrite or migrate historical user data in place.
+- Public Production was **AXIS 8.18** at the start of this release-finalization work.
+- AXIS 8.19 product capability PR **#80** is already merged to `main` as merge SHA `d97b483f5b297e4bc9483a7484da5587cc4f17d8`.
+- That merged code passed the 8.19 Universal Practice Object contract plus real Chromium and iPhone-like WebKit candidate flows.
+- The remaining defect was release identity/deployment truth: the Vercel artifact for that merge still reported `version/baseVersion = 8.18`, so 8.19 was not yet allowed to be called a formal Production release.
+- Stable public endpoint remains `https://axis-five-puce.vercel.app`; EdgeOne mirror endpoint remains `https://axisfitness-mirror-9x91gveo.edgeone.cool`.
 
 ## Active change
 
-**AXIS 8.19 — Universal Practice Objects** · branch `product/819-universal-practice-objects` · draft PR **#80**.
+**AXIS 8.19 — formal Production release seal** · branch `release/819-production` · PR **#81**.
 
-Current phase: **Phase 1 — Metric Schema + Recording Truth**.
+This PR does not invent another product layer. It closes the release contract around the already-merged 8.19 product work:
 
-Product goal:
+- advances only the current public/base identity from `8.18` to `8.19` after the inherited deterministic assembly chain;
+- preserves historical 8.18 Object Truth / Focus / media / freshness / schema provenance rather than relabeling old capability owners;
+- keeps the 8.17 and 8.18 regression suites running against the new 8.19 public artifact with their historical module markers intact;
+- requires EdgeOne to wait for the exact Vercel `main` SHA with `version/baseVersion = 8.19` before publishing;
+- adds the 8.19 Object → Recording → authoritative Encounter browser smoke to both Chromium and iPhone-like WebKit Production verification.
 
-`Object → Metric Schema → Recording Surface → authoritative metric facts → Encounter schema snapshot → History / Evolution`
+8.19 product truth remains:
 
-The immediate product defect being fixed is structural: custom/built-in Objects can describe recording attributes, but current recording and History still largely collapse to hard-coded `strength = weight/reps/sets` or `cardio = duration/intensity`. 8.19 makes the Object definition executable without turning AXIS into a generic form builder.
+`Object → Metric Schema → Recording Surface → authoritative metric facts → immutable Encounter schema snapshot → History / Evolution`
 
-### Completed · Slice 1 Metric Schema foundation
-
-Commit `9f45c4ed3bfdad1fa113801b4af0e6d0355dfa8b` establishes:
-
-- `axis.metric-schema.v1`;
-- `axis.encounter-metrics.v1`;
-- pure `lib/axis-metric-schema.mjs` resolver;
-- nine portable metric primitives: `number / count / duration / distance / pace / percentage / rating / boolean / choice`;
-- legacy profile mapping for `weight_reps`, `time_intensity`, and `time_level`;
-- Recording Surface classification without storage ownership;
-- immutable Encounter metric-schema snapshots;
-- classic strength facts projected from authoritative `axis_v8_meta` sets;
-- legacy cardio facts projected from authoritative `axis_v60_state` events;
-- explicit `legacyOwner: v61` for the classic `weight × reps` surface.
-
-Cross-Platform Foundation run `32676046208` passed the new Metric Schema contract. Slice 1 intentionally changes **no user-visible recording UI** yet.
-
-### Preserved · native / cross-platform foundation
-
-The native handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`.
-
-Shared portable foundations remain exactly `axis.domain.v1` for domain semantics and `axis.data.v1` for durable data exchange. Web/iOS capability differences stay isolated behind platform contracts rather than leaking into product truth.
-
-**Chat history is not authoritative project memory.** Durable handoff, ADRs, shared contracts, fixtures and GitHub state remain authoritative for future agents and native work.
-
-### Current ownership boundaries
-
-- `v61.js` remains the authoritative high-frequency writer for classic strength set facts.
-- `app.js` remains the current base session/cardio event persistence owner until a separately proved handoff exists.
-- `v874-professional.js` remains the visible custom-Object editor.
-- Metric Schema resolution is pure; it is not a database, event writer, completion owner, or UI owner.
-- History/Evolution will consume normalized metric truth read-only; they may not create facts.
-
-### Durable compatibility
-
-Preserve without destructive migration:
-
-- `axis_v60_state`;
-- `axis_v8_meta`;
-- `axis_v89_speak`;
-- `axis_v42_media`;
-- historical custom equipment/object identities and aliases;
-- historical Encounters recorded before Metric Schema existed.
-
-Changing an Object's current schema later must never rewrite an older Encounter. The Encounter keeps the schema snapshot that was true when it was recorded.
-
-### Next implementation slice
-
-Persist executable Metric Schema on custom Objects first, before altering Recording UI:
-
-1. existing custom Objects without `metricSchema` resolve through legacy type/profile defaults;
-2. editing an Object reads its explicit schema when present;
-3. saving writes normalized schema back into the same `axis_v60_state.profile.customEq` Object — no second object store;
-4. legacy `type`, subtype/profile and identity fields remain for compatibility;
-5. Object schema editing cannot mutate any existing session/event/meta record;
-6. only after save/reload compatibility proof should Quick Record / Recording consume the resolver.
+Authoritative ownership remains unchanged: `app.js` owns base Encounter/session persistence and canonical media; `v61.js` owns classic high-frequency strength set facts; schema resolution is semantic/pure; History/Evolution remain consumers rather than competing writers.
 
 ## Validation for this work
 
-Every 8.19 slice must preserve one semantic owner and one authoritative fact store. No green CI through weaker assertions, timeout inflation, duplicate writers, fake compatibility fields, or destructive migration.
+A merge is allowed only when the exact PR head can build a canonical 8.19 artifact and the repository gates remain green. Formal Production is allowed only after the merged `main` SHA is served by the canonical Vercel endpoint and the EdgeOne mirror verifies that same artifact.
 
-Required proof as the work advances:
+Required release proof:
 
-- Metric Schema pure/deterministic contract;
-- old strength/cardio/custom Objects resolve identically to 8.18 behavior;
-- `v61` remains owner for classic weight/reps sets;
-- custom schema save/reload is lossless and does not touch historical Encounters;
-- generic metric recording writes exactly once through the existing event boundary;
-- Encounter schema snapshot is immutable after later Object edits;
-- History/Detail reads snapshot first with legacy fallback;
-- Evolution reads normalized metric facts without persistence ownership;
-- affected real flows pass Chromium and iPhone-like WebKit before merge;
-- final merged 8.19 SHA requires exact Vercel + EdgeOne Production parity before release seal.
+- `node build-release.mjs` emits `version = 8.19` and `baseVersion = 8.19`;
+- historical 8.18 capability markers remain 8.18 where they describe provenance rather than current public identity;
+- Current Release, Runtime Foundation, Deep Compatibility, Repository, Work Continuity and affected specialist gates pass;
+- Universal Practice Object real flow passes Chromium and iPhone-like WebKit;
+- Vercel Production manifest `sourceCommit` equals the final merged-main SHA;
+- EdgeOne deploys only after exact local/Vercel artifact parity;
+- EdgeOne live verification plus Chromium and iPhone-like WebKit Production flows pass, including the 8.19 Object → Recording → Encounter smoke;
+- no destructive user-data migration and no second writer/store is introduced by the release seal.
 
 ## Next planned stage
 
-1. Keep Repository, Work Continuity and Native/Cross-Platform contracts green while 8.19 advances.
-2. Implement custom-Object `metricSchema` persistence/reload in the existing `v874-professional.js` owner with explicit legacy fallback.
-3. Add contract/browser proof that editing current Object schema never changes historical event/meta facts.
-4. Integrate the Recording Surface Resolver into Quick Record/recording selection:
-   - exact weight/reps → existing `v61` surface;
-   - existing duration/intensity → existing app owner while compatible;
-   - only unsupported metrics receive the new generic metric controls.
-5. Commit normalized metric facts + immutable schema snapshot atomically at the authoritative recording boundary.
-6. Make History/Detail schema-aware, then Evolution normalized/read-only.
-7. Keep PR #80 Draft until the complete Object → Record → History loop is dual-engine sealed.
+1. Finish PR #81 with all candidate gates green; fix release-contract regressions rather than weakening assertions.
+2. Merge only the exact tested head.
+3. Confirm `https://axis-five-puce.vercel.app/axis-build.json` reports the final merge SHA and `8.19 / 8.19`.
+4. Let the EdgeOne Production Mirror publish the exact prebuilt artifact, then require live parity plus Chromium/WebKit success.
+5. Record the final Vercel deployment, EdgeOne workflow/run and merged SHA in the durable release/handoff state.
+6. Only after that seal is complete may new product work start from AXIS 8.19 as the rollback/reference baseline.
 
 **Conversation history is supplemental only. GitHub handoff/contracts/tests are authoritative for this work.**
