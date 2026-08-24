@@ -149,7 +149,7 @@ try{
   cardioHidden:document.querySelector('#cardioFields')?.classList.contains('axis818LegacyMetricHidden')||false
  }));
  assert.equal(legacy.strengthHidden,false,'legacy strength editor did not recover after schema-driven Object');
- assert.equal(legacy.cardioHidden=false,'legacy cardio editor retained schema-driven suppression state');
+ assert.equal(legacy.cardioHidden,false,'legacy cardio editor retained schema-driven suppression state');
  await tap(page.locator('#scanClose'));
 
  /* Reload proves persisted Encounter remains readable without migration. */
