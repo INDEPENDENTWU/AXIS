@@ -64,6 +64,17 @@ for(const f of [
  write(f,s);
 }
 
+/* The 8.18 semantic contract is inherited by 8.19. Only its two current-public
+   identity assertions advance; every 818 gate/object marker remains historical
+   evidence that 8.19 inherited the exact 8.18 foundation rather than relabeling it. */
+{
+ const f='postbuild-818-contract.mjs';let s=read(f);
+ s=once(s,"if(contract.publicVersion!=='8.18'||contract.stableBaseVersion!=='8.18')","if(contract.publicVersion!=='8.19'||contract.stableBaseVersion!=='8.19')",'8.18 contract public/base identity');
+ s=once(s,"if(info.version!=='8.18'||info.baseVersion!=='8.18')","if(info.version!=='8.19'||info.baseVersion!=='8.19')",'8.18 contract manifest identity');
+ for(const marker of ['objectMetricSchema818:true','eventMetricSnapshot818:true','pwaRouteTruth818:true','capturePreferenceModel818:true','activeFocusLayer818:true','continuousCameraCompositor818:true','videoWatermark30fps818:true','noNewPersistence818:true','info.axis818={foundation:true'])if(!s.includes(marker))fail(`8.18 semantic provenance drift · ${marker}`);
+ write(f,s);
+}
+
 /* 8.17 regression smoke carries both the public release and its own historical
    8.17 interaction marker. Advance only the public release checks. */
 {
