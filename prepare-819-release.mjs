@@ -33,7 +33,7 @@ const replaceIdentity=(f,required=true)=>{let s=read(f),n=(s.match(/'8\.18'/g)||
    identity during the 8.18 release seal. Their historical module identities are
    older and therefore remain untouched by this replacement. */
 for(const f of [
- 'postbuild-882-contract.mjs','postbuild-810-contract.mjs','postbuild-8101-contract.mjs','postbuild-8102-contract.mjs','postbuild-8103-contract.mjs',
+ 'postbuild-882-contract.mjs','postbuild-810-contract.mjs','postbuild-8101-contract.mjs','postbuild-8102-contract.mjs',
  'postbuild-891-contract.mjs','postbuild-811-contract.mjs','postbuild-812-contract.mjs','postbuild-813-live-route.mjs','postbuild-8123-contract.mjs','postbuild-8123-field-polish.mjs','postbuild-8124-contract.mjs',
  'postbuild-8131-evolution-contract.mjs','postbuild-814-evolution-contract.mjs','postbuild-815-media-evidence-contract.mjs','postbuild-8151-regression-contract.mjs','postbuild-816-contract.mjs','postbuild-817-contract.mjs','postbuild-8171-source-first-media-contract.mjs',
  'scripts/axis-811-experience-smoke.mjs','scripts/axis-882-smoke.mjs','scripts/axis-8102-smoke.mjs','scripts/axis-8103-smoke.mjs','scripts/axis-813-live-route-smoke.mjs','scripts/axis-813-settings-convergence-smoke.mjs',
@@ -43,6 +43,17 @@ for(const f of [
  'scripts/axis-816-capture-evidence-smoke.mjs','scripts/axis-8171-source-first-media-smoke.mjs',
  'scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs'
 ])replaceIdentity(f,false);
+
+/* 8.10.3 freshness was deliberately re-sealed in 8.18 with an 8.18 historical
+   runtime marker. Only the contract's current public build checks advance. */
+{
+ const f='postbuild-8103-contract.mjs';let s=read(f);
+ s=once(s,"if(String(contract.publicVersion)!=='8.18')","if(String(contract.publicVersion)!=='8.19')",'8.10.3 contract public identity');
+ s=once(s,"if(info.version!=='8.18'||info.baseVersion!=='8.18')","if(info.version!=='8.19'||info.baseVersion!=='8.19')",'8.10.3 contract manifest identity');
+ if(!s.includes("window.__AXIS_8103_FRESHNESS__={version:'8.18',eventDriven:true,polling:false"))fail('8.18 freshness provenance drift');
+ if(!s.includes("releaseMarker:freshnessCurrent?'8.18':'8.10.3'"))fail('8.18 freshness manifest provenance drift');
+ write(f,s);
+}
 
 /* 8.17 regression smoke carries both the public release and its own historical
    8.17 interaction marker. Advance only the public release checks. */
