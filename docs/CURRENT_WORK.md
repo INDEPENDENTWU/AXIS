@@ -20,7 +20,7 @@ This hotfix is opened by three real Production failures observed on the 8.20 use
 
 1. A newly created/edited custom Object can persist an explicit schema such as **速度 / 配速**, while the immediately opened Quick Record surface still shows **重量 / 次数 / 组数**. Root cause: the 8.18 editor wrote the richer `metricSchema` to `axis_v60_state` after a delayed timer, but `app.js` retained a stale in-memory custom Object. 8.20 correctly trusted Object Truth; the live Object Truth itself had not yet received the editor change.
 2. A non-classic executable Object such as **靠墙站立** can save an Encounter but fail to enter the polished single-item **进行中** surface. Root cause: the 8.19 Active Truth safety seal intentionally allowed activity metadata only for immutable classic weight+reps Encounter schemas. 8.20 generalized Recording but did not yet supersede that classic-only lifecycle restriction.
-3. Chinese picker surfaces can expose stable internal enum IDs such as `strength` / `cardio`. Persisted enum IDs are valid internal data and must remain stable, but visible Chinese presentation must not leak them.
+3. Chinese picker surfaces can expose stable internal enum IDs such as `strength` / `cardio`. Persisted enum IDs are valid internal data and must remain stable, but visible Chinese presentation must not leak them. The derived history shelf must also present Chinese product language rather than the internal-facing `Evolution Library` label.
 
 8.20.1 closes these gaps without creating a new recorder, activity owner, database or persistence store:
 
@@ -33,13 +33,14 @@ This hotfix is opened by three real Production failures observed on the 8.20 use
 - v82 remains the Active Truth creation owner and v87 remains the polished Active presentation/action owner;
 - set-only UI such as **完成一组**, set counts and add-set behavior is shown only for `sets`, never merely because an Object carries the historical coarse type `strength`;
 - the 8.19 immutable Encounter-schema restriction on v61 metadata remains untouched: v61 may write classic metadata only for immutable weight+reps Encounter schemas;
-- `strength` and `cardio` remain internal stable IDs, while visible Chinese picker presentation maps them to **力量** and **有氧** only.
+- `strength`, `cardio` and `relative` remain internal stable IDs, while visible Chinese presentation maps them to **力量 / 有氧 / 自重** only;
+- the history Object shelf keeps the same derived read-only owner but presents **训练项目** / **个项目** instead of `Evolution Library` / `个对象`.
 
 Authoritative persistence remains `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak` and `axis_v42_media`. The native/cross-platform handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`, with portable contracts `axis.domain.v1` and `axis.data.v1`.
 
 **Chat history is not authoritative project memory. GitHub governance, contracts, tests and deployment truth remain authoritative.**
 
-## Required validation
+## Validation for this work
 
 8.20.1 may merge only when the exact head proves the physical user flows on Chromium and iPhone-like WebKit:
 
@@ -47,11 +48,12 @@ Authoritative persistence remains `axis_v60_state`, `axis_v8_meta`, `axis_v89_sp
 - saving that pace-only Object freezes `metricSchemaSnapshot = [pace]`, `executionModeSnapshot = single`, preserves the pace value and creates no false persistent Active lifecycle;
 - actual custom **靠墙站立** with duration-only schema → Quick Record → **记下** creates `executionModeSnapshot = timed`, writes app-owned activity metadata and displays the v87 **进行中** surface with pause/finish but no set-completion or add-set controls;
 - legacy/classic strength fallback still enters the existing set Active flow;
-- Chinese picker presentation contains no standalone visible `strength` / `cardio` labels while internal persisted IDs remain unchanged;
+- Chinese picker presentation contains no standalone visible `strength` / `cardio` / `relative` labels while internal persisted IDs remain unchanged;
+- history presentation contains no visible `Evolution Library` label and uses the existing derived shelf without changing its data authority;
 - 8.20 immutable Encounter semantics, 8.19 v61 schema authority, Capture defaults, Evolution, Media Evidence, Runtime, Repository, Work Continuity and Cross-Platform gates remain green;
 - no second persistence owner, duplicate Active owner, new database, hidden migration or historical capability relabeling is introduced.
 
-## Release plan
+## Next planned stage
 
 1. Keep public identity **8.20** while the behavior patch is under exact-head CI so failures are repaired without pretending an unsealed hotfix is Production.
 2. Once Chromium + iPhone WebKit and inherited gates are green, seal formal public/base identity as **8.20.1** through a dedicated release step; do not relabel 8.18/8.19/8.20 capability provenance.
