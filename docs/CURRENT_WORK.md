@@ -39,6 +39,14 @@ Commit `9f45c4ed3bfdad1fa113801b4af0e6d0355dfa8b` establishes:
 
 Cross-Platform Foundation run `32676046208` passed the new Metric Schema contract. Slice 1 intentionally changes **no user-visible recording UI** yet.
 
+### Preserved · native / cross-platform foundation
+
+The native handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`.
+
+Shared portable foundations remain exactly `axis.domain.v1` for domain semantics and `axis.data.v1` for durable data exchange. Web/iOS capability differences stay isolated behind platform contracts rather than leaking into product truth.
+
+**Chat history is not authoritative project memory.** Durable handoff, ADRs, shared contracts, fixtures and GitHub state remain authoritative for future agents and native work.
+
 ### Current ownership boundaries
 
 - `v61.js` remains the authoritative high-frequency writer for classic strength set facts.
@@ -90,7 +98,7 @@ Required proof as the work advances:
 
 ## Next planned stage
 
-1. Seal this handoff update so Work Continuity is green on PR #80.
+1. Keep Repository, Work Continuity and Native/Cross-Platform contracts green while 8.19 advances.
 2. Implement custom-Object `metricSchema` persistence/reload in the existing `v874-professional.js` owner with explicit legacy fallback.
 3. Add contract/browser proof that editing current Object schema never changes historical event/meta facts.
 4. Integrate the Recording Surface Resolver into Quick Record/recording selection:

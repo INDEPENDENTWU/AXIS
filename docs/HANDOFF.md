@@ -1,212 +1,167 @@
 # AXIS engineering handoff
 
-> **Read this first.** This is the human entry point for current AXIS engineering context. Machine-readable current state lives in [`../governance/project-state.json`](../governance/project-state.json).
+> **Read this first.** Machine-readable current truth lives in [`../governance/project-state.json`](../governance/project-state.json). Chat history is supplementary, not project authority.
 
 ## 1. Current Production
 
 - Product: **AXIS — Personal Evolution Engine**
-- Current Production release: **8.18**
-- Exact merged Production baseline SHA: `254a2fa80fdfd4040a6f695d28ad3bd670c0a7db`
+- Current public Production release: **AXIS 8.18**
+- Exact sealed merged-main SHA: `65e3525e78f021afda7db19d27722626af9514d8`
 - Architecture: `canonical-single-runtime`
 - Release build: `node build-release.mjs`
-- Vercel: exact baseline SHA is deployed to Production and `READY`.
-- EdgeOne: exact-prebuilt-artifact mirror path; Source Convergence must be re-sealed against the exact new merged-main SHA after PR #79 merges.
+- Vercel Production deployment: `dpl_7mYETXKCQzXKh88ybocT65oLiJ1T` — **READY**, exact SHA above
+- Vercel public endpoint: `https://axis-five-puce.vercel.app`
+- EdgeOne public endpoint: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- EdgeOne exact-artifact Production seal: workflow run `32675374766` — **success**
+- That EdgeOne seal includes Vercel/local canonical artifact parity, exact prebuilt deployment, live verification, Chromium Production flow, and iPhone-like WebKit Production flow.
 
-Production 8.18 remains the rollback/reference behavior for this engineering milestone.
+AXIS 8.18 is the rollback/reference truth while AXIS 8.19 is developed. Do not mutate historical user data in place to make a new feature easier to implement.
 
-## 2. Active engineering work
+## 2. Previous engineering milestone is sealed
 
-**Milestone:** `AXIS Source Convergence — 8.19 Foundation`
+PR #79 **AXIS Source Convergence — Governance + CI Foundation** is merged into the Production SHA above.
 
-**Branch:** `engineering/source-convergence-819`
+It completed governance/handoff + CI convergence without intended product behavior change:
 
-**PR:** `#79`
+- 20 historical automatic workflow files retired after replacement proof;
+- 9 broad responsibility-based CI families retained;
+- `AXIS 8.12 Browser Gate` intentionally retained as a path-scoped specialist;
+- retired workflow resurrection guarded;
+- exact merged-main Vercel + EdgeOne Production proof completed.
 
-**Status:** CI/handoff convergence is sealed at behavior level and awaiting the final docs/governance-only baseline-gate pass → merge → exact merged-main Production verification.
+Source/build historical transform debt still exists in `build-release.mjs`; it is separate from current 8.19 product truth and must not be mixed into product work casually.
 
-**Intent:** zero intended user-visible behavior change while reducing source/build/CI ambiguity before 8.19 product work.
+## 3. Active product work
 
-Do not call this work AXIS 8.18.1 or 8.19. It is an engineering convergence milestone on top of the sealed 8.18 product baseline.
+**Milestone:** `AXIS 8.19 — Universal Practice Objects`
 
-## 3. CI convergence now achieved
+**Branch:** `product/819-universal-practice-objects`
 
-The broad PR fanout was reduced from **25 historical/version-shaped workflow families to 9 baseline responsibility families**, without dropping the unique product/data/browser contracts.
+**Draft PR:** `#80`
 
-Physically retired and resurrection-guarded: **20 historical automatic workflow files**.
+**Current phase:** `Phase 1 — Metric Schema + Recording Truth`
 
-Current baseline families:
-
-1. Repository Contract
-2. Work Continuity Contract
-3. Runtime Gate
-4. Current Release Gate
-5. Runtime Foundation Gate
-6. Deep Compatibility Gate
-7. Cross-Platform Foundation Gate
-8. PR Run Convergence
-9. EdgeOne Production Mirror
-
-A path-scoped specialist remains intentionally preserved:
-
-- `AXIS 8.12 Browser Gate` — runs only for relevant 8.12/Language Studio/build-release changes and adds dual-engine corpus/Settings/dialogue/overflow/page-error evidence.
-
-Exact final behavior-proof candidate before this handoff seal: `88d9ee826dcfab14a465c38837a33c6ecd4727e0`.
-All **10 workflows actually triggered** on that candidate finished **SUCCESS**, including Deep Compatibility static/Chromium/iPhone WebKit and the path-scoped 8.12 Browser Gate Chromium/iPhone WebKit. Run IDs are recorded in [`../governance/ci-inventory.json`](../governance/ci-inventory.json).
-
-Important final test-quality fixes:
-
-- cumulative-rest testing now waits for persisted paused/active transitions while preserving the same `>400ms` required accumulation;
-- 8.12 Browser testing keys the simplified four-group Learning surface to `__AXIS_8123_LEARNING__` semantic authority instead of an obsolete exact public-version branch.
-
-Neither change modifies AXIS product runtime behavior.
-
-## 4. Product model that must survive convergence
-
-AXIS remains local-first and factual-first:
+Product pipeline:
 
 ```text
-Capture / 留下
-      ↓
-truthful Encounter
-      ↓
-time accumulation
-      ↓
-Reveal / 发现
-      ↓
-Evolution Object / Evidence / comparison
+Object
+  ↓
+Metric Schema
+  ↓
+Recording Surface
+  ↓
+authoritative metric facts
+  ↓
+Encounter schema snapshot
+  ↓
+History / Evolution
 ```
 
-8.18 adds or seals:
+The structural defect being fixed: an Object may describe what it should record, but current recording/history still largely collapse to hard-coded strength (`weight/reps/sets`) or cardio (`duration/intensity`) shapes. 8.19 makes the Object definition executable without turning AXIS into a generic form builder.
 
-- Object Truth via explicit `metricSchema` and Encounter snapshots;
-- derived, read-only Evolution Library / Personal Object Shelf;
-- Route Truth with one physically active main route;
-- schema-aware Focus that never becomes a second completion owner;
-- Photo / Scan / Video canonical Capture preferences;
-- exactly 3-second / 5-second Scan sampling;
-- front/rear camera switching under one logical 30fps canvas compositor;
-- source-first S/SV clean media with F/V canonical derivatives;
-- Encounter media export/delete without a second store;
-- fact-first atomic history/detail opening and in-place detail swaps.
+## 4. 8.19 Metric Schema foundation
 
-## 5. Non-negotiable data compatibility
+Foundation commit: `9f45c4ed3bfdad1fa113801b4af0e6d0355dfa8b`
 
-The following existing local data is user truth and must not be invalidated by cleanup:
+Machine contracts:
 
-- `axis_v60_state` — base training/session/profile/preferences state;
-- `axis_v8_meta` — set/timer/high-frequency training metadata;
-- `axis_v89_speak` — Language Studio state;
-- `axis_v42_media` — IndexedDB media store;
-- existing custom equipment identity/aliases and historical Encounter shapes.
+- `axis.metric-schema.v1`
+- `axis.encounter-metrics.v1`
 
-Any physical source retirement that could affect these needs an explicit migration/compatibility test.
+Pure resolver:
 
-## 6. Critical ownership
+- `lib/axis-metric-schema.mjs`
 
-Read [`../governance/owners.json`](../governance/owners.json) and [`OWNERSHIP.md`](OWNERSHIP.md) before changing a current writer.
+Portable metric primitives:
 
-Core rules:
+- `number`
+- `count`
+- `duration`
+- `distance`
+- `pace`
+- `percentage`
+- `rating`
+- `boolean`
+- `choice`
 
-- `app.js` remains the base training state owner and canonical camera/media persistence owner.
-- `v61.js` owns high-frequency strength/set recording.
-- `v874-professional.js` remains the visible custom-object editor.
-- the 8.18 Focus layer is presentation-only and delegates completion to the established `v87-direct-884` owner.
-- v8710 remains the sole automatic sound owner.
-- Evolution Library and media-source bridges are derived/read-only, not new persistence owners.
+Legacy compatibility:
 
-No semantic action gets two interactive writers and no training fact gets two authoritative stores.
+- classic strength resolves to `weight + reps` and explicitly keeps `v61` as writer;
+- legacy cardio resolves to `duration + intensity`;
+- existing custom profiles such as `time_level` remain readable;
+- Encounter metric projections deep-copy the governing schema so later Object edits cannot rewrite old Encounter truth.
 
-## 7. Retired authority that must not return
+Cross-Platform Foundation run `32676046208` passed the Metric Schema foundation contract.
 
-Read [`../governance/retirements.json`](../governance/retirements.json) and [`RETIREMENTS.md`](RETIREMENTS.md).
+## 5. Critical ownership — do not duplicate
 
-Important guards:
+- `app.js` — base session/profile/preferences state and current base/cardio event persistence; canonical camera/media persistence.
+- `v61.js` — authoritative high-frequency classic strength set writer in `axis_v8_meta`.
+- `v874-professional.js` — visible custom Object editor; 8.19 custom schema persistence must extend this owner rather than create another editor/store.
+- v8710 — sole automatic sound owner.
+- 8.18 Focus — presentation only; delegates factual completion.
+- Evolution Library — derived/read-only.
+- Metric Schema resolver — pure semantic resolver only; **not** a store, event writer, completion owner, or UI owner.
 
-- visible `keepClip` / “保留现场视频” pseudo-setting is retired;
-- historical “单张 / 3秒 / 5秒” default-mode controller is retired as authority;
-- 3秒 / 5秒 mean **Scan sampling duration only**;
-- v876 Capture preference logic may exist only as a delegating compatibility bridge;
-- old 15/20fps or forced-720p recording paths may not return;
-- historical filenames and release notes do not define current ownership;
-- the 20 retired CI workflow files may not return simply to recreate historical fanout.
+One semantic action gets one interactive writer. One training fact gets one authoritative store.
 
-Retired authority does **not** automatically mean an executable source file is safe to delete. Product/build source deletion still requires reachability + compatibility + browser proof.
+## 6. User truth that must survive 8.19
 
-## 8. Why source convergence still continues after this PR
+Preserve:
 
-Production is already clean: one canonical runtime, zero dynamic historical JavaScript chunks. CI/handoff is now substantially cleaner too. **Source/build is not yet equally clean.**
+- `axis_v60_state`
+- `axis_v8_meta`
+- `axis_v89_speak`
+- `axis_v42_media`
+- custom equipment/Object identity and aliases
+- historical sessions/events/Encounter shapes
 
-`build-release.mjs` still executes a long chain of historical prepare/postbuild transforms. Those transforms are the next major engineering debt because a current behavior may still be produced by replaying historical source evolution.
+Current custom Object schema changes must never rewrite historical Encounter facts or their schema snapshot.
 
-The next phase remains strangler migration, not a rewrite:
+## 7. Immediate implementation sequence
 
-```text
-pure/current contract
-      ↓
-shadow/equivalence proof
-      ↓
-explicit owner handoff
-      ↓
-old authority retirement
-      ↓
-compiler/test/workflow deletion
-```
+1. Persist normalized `metricSchema` on custom Objects through the existing `v874-professional.js` owner and the same `axis_v60_state.profile.customEq` objects.
+2. Existing custom Objects without explicit schema continue to resolve through their legacy type/profile.
+3. Prove save/reload losslessness and prove no historical event/meta mutation.
+4. Connect the Recording Surface Resolver:
+   - exact weight/reps → existing `v61` UI/writer;
+   - established duration/intensity → existing app owner while compatible;
+   - only truly unsupported metrics receive new generic metric controls.
+5. Commit normalized metric facts + immutable schema snapshot at the existing authoritative recording boundary.
+6. Make History/Detail schema-aware with legacy fallback.
+7. Make Evolution consume normalized metric facts read-only.
+8. Dual-engine Chromium + iPhone-like WebKit proof before PR #80 can leave Draft.
+9. Exact merged 8.19 SHA must receive Vercel + EdgeOne Production parity and real-browser proof before release seal.
 
-## 9. Next engineering sequence
+## 8. Native / cross-platform foundation remains authoritative
 
-1. **Finish PR #79 seal** — final docs/governance-only head passes the 9 baseline gates.
-2. **Merge exact tested head** with expected-head protection.
-3. **Production seal** — Vercel exact merged-main SHA → EdgeOne exact prebuilt parity → real Chromium + iPhone WebKit Production flows.
-4. **Phase 3: Source Quarantine / Direct Ownership** — shorten historical build transforms one owner at a time; preserve 8.18 behavior/data.
-5. **Presentation foundation** — establish professional i18n and semantic theme architecture.
-6. **8.19 product work** — begin broader Universal Practice Object/product expansion only on the stable foundation.
+The native handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`.
 
-Do not claim “all Source Convergence is complete” after PR #79. The accurate statement is: **governance/handoff + CI convergence complete; source/build convergence next.**
+Shared portable foundations remain:
 
-## 10. Localization contract for the next foundation
+- `axis.domain.v1`
+- `axis.data.v1`
 
-Exactly these three UI locales are planned:
+Web/iOS capability differences stay isolated behind platform contracts; shared domain semantics must not be inferred from Web implementation accidents.
+
+## 9. Future presentation foundation
+
+Planned UI locales remain exactly:
 
 - `zh-Hans` — **简体中文**
 - `zh-Hant` — **繁體中文**
 - `en` — **English**
 
-Simplified Chinese must be actual Simplified Chinese. Traditional Chinese must be professionally localized, not mechanical character conversion. English must preserve product meaning rather than translate word-for-word.
+Theme preference remains exactly `system / light / dark` using semantic tokens. Presentation-foundation work comes after the recording-truth foundation is stable.
 
-See [`LOCALIZATION_AND_THEME.md`](LOCALIZATION_AND_THEME.md) and [`GLOSSARY.md`](GLOSSARY.md).
+## 10. What a future developer/agent reads first
 
-## 11. Theme contract for the next foundation
+1. `governance/project-state.json`
+2. this `docs/HANDOFF.md`
+3. `docs/CURRENT_WORK.md`
+4. `governance/owners.json` / `docs/OWNERSHIP.md`
+5. `governance/retirements.json` / `docs/RETIREMENTS.md`
+6. `docs/PRODUCT.md`, `docs/RUNTIME_CONTRACT.md`, `docs/ARCHITECTURE.md`
+7. shared contracts and current tests before changing domain or persistence semantics
 
-Planned theme preference:
-
-- `system`
-- `light`
-- `dark`
-
-Themes must be built from semantic tokens. Logo/icon/watermark behavior must not depend on fixed black/white assumptions. First paint must not flash the wrong theme. Media/watermark contrast is a separate semantic layer from app chrome.
-
-## 12. Release discipline
-
-A candidate is not “done” because a build succeeded.
-
-For user-visible runtime releases and this Source Convergence merge, preserve:
-
-1. exact candidate SHA;
-2. deterministic canonical build;
-3. current product + compatibility gates;
-4. Chromium and iPhone-like WebKit proof for critical paths;
-5. merge of the exact verified head;
-6. Vercel exact merged-main Production verification;
-7. EdgeOne exact-artifact parity;
-8. real Production browser verification before declaring the merge sealed.
-
-## 13. What a future developer/agent should do first
-
-1. Read `governance/project-state.json`.
-2. Read this file.
-3. Read `CURRENT_WORK.md` for the exact active slice.
-4. Read `OWNERSHIP.md` / `RETIREMENTS.md` if touching an owner or legacy path.
-5. Read `PRODUCT.md`, `RUNTIME_CONTRACT.md`, and `ARCHITECTURE.md` before changing product semantics.
-6. Inspect the final generated artifact and current browser contracts; never infer current truth from a version-like filename alone.
-
-**Chat history is not authoritative project memory.** If chat history disagrees with repository state, verify Git/Production and update the repository rather than silently making chat the new authority.
+**Chat history is not authoritative project memory.** If chat disagrees with Git/Production, verify reality and update repository truth.
