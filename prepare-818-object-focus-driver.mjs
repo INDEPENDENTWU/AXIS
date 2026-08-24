@@ -29,10 +29,9 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  *
  * Do not create a second runtime/store/writer. The 8.18 compiler already provides
  * axis818Eq(), axis818RenderRecorder() and axis818CaptureEvent(). Lifecycle stays
- * inside the canonical app owner functions so build hardening/canonicalization
- * carry it forward as normal source. The recorder must use the Object Truth
- * resolver, not the older base-only eqById(), otherwise custom Objects disappear
- * after a successful picker selection.
+ * inside the canonical app owner functions and the existing equipment-selected
+ * event. The event listener is presentation-only and idempotent; no state/storage
+ * authority is added.
  */
 {
  let app=fs.readFileSync('app.js','utf8');
@@ -62,6 +61,11 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
   /function axis818CaptureEvent\([^)]*\)\{[\s\S]*?\}(?=\nwindow\.__AXIS_OBJECT_TRUTH__)/,
   fn=>{const token='return e}';if(fn.split(token).length-1!==1)throw new Error('[AXIS 8.19 recording owner] axis818CaptureEvent return contract changed');return fn.replace(token,"if(Array.isArray(eq?.metricSchema)&&eq.metricSchema.length){const axis819Keys=new Set(schema.map(m=>m.key));for(const k of ['weight','reps','sets','duration','intensity'])if(!axis819Keys.has(k))delete e[k]}return e}")},
   'Encounter truth cleanup'
+ );
+ replaceRange(
+  /window\.__AXIS_OBJECT_TRUTH__=\{[^\n]*\};/,
+  line=>line+"\nwindow.addEventListener('axis:equipment-selected',()=>axis818RenderRecorder());",
+  'canonical equipment-selected recorder lifecycle'
  );
  try{new Function(app)}catch(e){throw new Error(`[AXIS 8.19 recording owner] app syntax ${e.message}`)}
  fs.writeFileSync('app.js',app);
@@ -101,4 +105,21 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  fs.writeFileSync('v61.js',v61);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 isolated at stable prepare/save boundaries without mutating Object selection');
+/*
+ * 8.12.4's visible My/Search picker has a compatibility fallback for ids that
+ * the older eqById() cannot resolve. The fallback already selects the Object but
+ * historically skipped the canonical equipment-selected lifecycle. Complete that
+ * lifecycle here instead of adding observers or another selection owner.
+ */
+{
+ let smart=fs.readFileSync('v873-smart-input.js','utf8');
+ const from="if(window.__AXIS_PICK_EQUIPMENT__?.(id,true)!==true&&window.__AXIS_SELECT_EQUIPMENT__?.(id,true)===true)$('#eqSheet')?.classList.remove('show');axis8124ResetSearch();return";
+ const hits=smart.split(from).length-1;
+ if(hits!==1)throw new Error(`[AXIS 8.19 picker lifecycle] current fallback expected once, found ${hits}`);
+ const to="const axis819Canonical=window.__AXIS_PICK_EQUIPMENT__?.(id,true)===true;if(!axis819Canonical&&window.__AXIS_SELECT_EQUIPMENT__?.(id,true)===true){$('#eqSheet')?.classList.remove('show');try{window.dispatchEvent(new CustomEvent('axis:equipment-selected',{detail:{id,context:window.__AXIS_EQUIPMENT_PICK_CONTEXT__||'recording',compatFallback:true}}))}catch{}}axis8124ResetSearch();return";
+ smart=smart.replace(from,()=>to);
+ try{new Function(smart)}catch(e){throw new Error(`[AXIS 8.19 picker lifecycle] v873 syntax ${e.message}`)}
+ fs.writeFileSync('v873-smart-input.js',smart);
+}
+
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 isolated at stable prepare/save boundaries · custom picker fallback emits canonical equipment-selected lifecycle');
