@@ -45,6 +45,9 @@ for(const f of [
  'scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs',
  'scripts/axis-current-release-contract.mjs','scripts/axis-runtime-foundation-contract.mjs','scripts/axis-deep-compatibility-contract.mjs'
 ])replaceIdentity(f,false);
+/* Repository governance runs again after build; advance only its supported
+   current-built 8.18 semantic-contract identity inside the release workspace. */
+replaceIdentity('scripts/axis-repository-contract.mjs',false);
 
 /* 8.10.3 freshness provenance remains 8.18. Only current release assertions
    may advance from 8.20 to 8.20.1. */
