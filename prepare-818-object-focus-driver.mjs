@@ -69,9 +69,9 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
 
 /*
  * v61 remains the sole high-frequency repeated-set owner, but only for the
- * semantic shape it actually owns: explicit weight + reps, or legacy Objects
- * with no explicit metric schema. An explicit non-classic schema must never
- * initialize v61 draft sets or create an axis_v8_meta fact row.
+ * semantic shape it actually owns. Selection identity/type remains untouched:
+ * the guard lives only inside v61 prepare/render/save boundaries so it cannot
+ * suppress the Object Truth recorder or alter other presentation owners.
  */
 {
  let v61=fs.readFileSync('v61.js','utf8');
@@ -84,16 +84,26 @@ await import('./prepare-818-inherited-test-flow-seal.mjs');
  };
  replaceRange(
   /function selected\(\)\{[\s\S]*?\}(?=\nfunction syncDock)/,
-  fn=>{const from="if(ce)return{id:ce.id,name:ce.name,type:ce.type};";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] custom selected branch changed');const to="if(ce){const axis819Explicit=Array.isArray(ce.metricSchema)&&ce.metricSchema.length>0,axis819Keys=new Set((ce.metricSchema||[]).map(m=>m?.key).filter(Boolean)),axis819Classic=axis819Keys.has('weight')&&axis819Keys.has('reps');return{id:ce.id,name:ce.name,type:axis819Explicit?(axis819Classic?'strength':'schema'):ce.type}};";return fn.replace(from,to)},
-  'selected custom schema classification'
+  fn=>fn+"\nfunction axis819ClassicStrengthOwner(e){if(!e?.id)return true;const c=core(),ce=(c.profile?.customEq||[]).find(x=>x.id===e.id||x.name===e.name);if(!ce||!Array.isArray(ce.metricSchema)||!ce.metricSchema.length)return true;const keys=new Set(ce.metricSchema.map(m=>m?.key).filter(Boolean));return keys.has('weight')&&keys.has('reps')}",
+  'classic strength ownership helper'
+ );
+ replaceRange(
+  /function prepare\(id\)\{[\s\S]*?\}(?=\nfunction deltaText)/,
+  fn=>{const from='function prepare(id){';if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] prepare entry contract changed');return fn.replace(from,from+"const axis819Selected=selected();if(axis819Selected&&!axis819ClassicStrengthOwner(axis819Selected)){draft=[];hideSets();return}")},
+  'non-classic prepare bypass'
+ );
+ replaceRange(
+  /function renderSets\(\)\{[\s\S]*?\}(?=\nfunction hideSets)/,
+  fn=>{const from="if(!e||e.type!=='strength'){hideSets();return}";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] render guard contract changed');return fn.replace(from,"if(!e||e.type!=='strength'||!axis819ClassicStrengthOwner(e)){hideSets();return}")},
+  'non-classic set surface bypass'
  );
  replaceRange(
   /function onSaveClick\([^)]*\)\{[\s\S]*?\}(?=\nfunction attach)/,
-  fn=>{const from="const e=selected();if(!e)return;";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] save entry contract changed');return fn.replace(from,from+"if(e.type==='schema'){pending=null;deferOnce=false;hideSets();return}")},
-  'schema save bypass'
+  fn=>{const from="const e=selected();if(!e)return;";if(fn.split(from).length-1!==1)throw new Error('[AXIS 8.19 v61 authority] save entry contract changed');return fn.replace(from,from+"if(e.type==='strength'&&!axis819ClassicStrengthOwner(e)){pending=null;deferOnce=false;hideSets();return}")},
+  'non-classic save bypass'
  );
  try{new Function(v61)}catch(e){throw new Error(`[AXIS 8.19 v61 authority] v61 syntax ${e.message}`)}
  fs.writeFileSync('v61.js',v61);
 }
 
-console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 remains classic weight×reps-only');
+console.log('[AXIS 8.18 driver] PASS · v87 canonical render signature preserved · Focus mirrors presentation only · runtime owner initialization sealed · final truth hardening + WebKit-safe media seal + field capture polish + track-aware camera readiness + single-owner detail routing + physical Settings + inherited Capture flow seals applied · 8.19 Object Truth recording lifecycle anchored in existing app owners · custom recorder resolves through axis818Eq · v61 isolated at prepare/render/save without mutating Object selection');
