@@ -7,7 +7,7 @@ const runtime=read('axis-core.js');
 const html=read('index.html');
 const css=read('axis-style.css');
 
-if(info.version!=='8.18'||info.baseVersion!=='8.18')fail(`release identity ${info.version}/${info.baseVersion}`);
+if(info.version!=='8.19'||info.baseVersion!=='8.19')fail(`release identity ${info.version}/${info.baseVersion}`);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
 
 const gates=[
