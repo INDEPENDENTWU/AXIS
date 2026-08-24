@@ -14,6 +14,10 @@
 
 **AXIS 8.19 — formal Production release seal** · branch `release/819-production` · PR **#81**.
 
+The governed product milestone remains **AXIS 8.19 — Universal Practice Objects**. Its original implementation branch `product/819-universal-practice-objects` is merged via PR #80; PR #81 is the release-finalization continuation, not a competing milestone.
+
+The native/cross-platform handoff remains anchored by `axis-native-foundation-0`, with shared portable contracts `axis.domain.v1` and `axis.data.v1`. Web release finalization must not alter native-domain semantics or durable exchange contracts.
+
 This PR does not invent another product layer. It closes the release contract around the already-merged 8.19 product work:
 
 - advances only the current public/base identity from `8.18` to `8.19` after the inherited deterministic assembly chain;
