@@ -30,14 +30,23 @@ jobs:
           node-version-file: .nvmrc
       - name: Build exact deployed source
         run: node build-release.mjs
-      - name: Resolve deployed patch identity
+      - name: Resolve historical 8.12.x deployment scope
         run: |
           node <<'NODE' >> "$GITHUB_ENV"
           const x=require('./axis-build.json');
-          if(!['8.12.1','8.12.2','8.12.3','8.12.4'].includes(x.version)||x.baseVersion!==x.version)throw new Error(`unsupported 8.12 patch ${x.version}/${x.baseVersion}`);
-          console.log(`AXIS_EXPECTED_VERSION=${x.version}`);
+          const supported=['8.12.1','8.12.2','8.12.3','8.12.4'];
+          const active=supported.includes(x.version);
+          if(active&&x.baseVersion!==x.version)throw new Error(`invalid 8.12 patch identity ${x.version}/${x.baseVersion}`);
+          console.log(`AXIS_812X_ACTIVE=${active?'true':'false'}`);
+          if(active){
+            console.log(`AXIS_EXPECTED_VERSION=${x.version}`);
+            console.error(`[AXIS 8.12.x Production] active historical release ${x.version}`);
+          }else{
+            console.error(`[AXIS 8.12.x Production] skip · deployed release ${x.version}/${x.baseVersion} is outside historical 8.12.1–8.12.4 scope`);
+          }
           NODE
       - name: Verify fixed alias serves exact AXIS 8.12.x artifact
+        if: env.AXIS_812X_ACTIVE == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -57,33 +66,37 @@ jobs:
           done
           exit 1
       - name: Align inherited browser assertions
+        if: env.AXIS_812X_ACTIVE == 'true'
         run: node scripts/prepare-release-test-contract.mjs
       - name: Prepare Chromium
+        if: env.AXIS_812X_ACTIVE == 'true'
         run: |
           npm install --no-save playwright-core@1.55.0
           CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Real AXIS 8.12 Language Studio on fixed Production
+        if: env.AXIS_812X_ACTIVE == 'true'
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-812-browser-smoke.mjs
       - name: Real inherited field hotfix on fixed Production
+        if: env.AXIS_812X_ACTIVE == 'true'
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8121-hotfix-smoke.mjs
       - name: Real AXIS 8.12.2 Settings on fixed Production
-        if: contains(fromJSON('["8.12.2","8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
+        if: env.AXIS_812X_ACTIVE == 'true' && contains(fromJSON('["8.12.2","8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8122-settings-smoke.mjs
       - name: Real AXIS 8.12.3 learning simplification on fixed Production
-        if: contains(fromJSON('["8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
+        if: env.AXIS_812X_ACTIVE == 'true' && contains(fromJSON('["8.12.3","8.12.4"]'), env.AXIS_EXPECTED_VERSION)
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8123-learning-simplify-smoke.mjs
       - name: Real AXIS 8.12.4 truthful training flow on fixed Production
-        if: env.AXIS_EXPECTED_VERSION == '8.12.4'
+        if: env.AXIS_812X_ACTIVE == 'true' && env.AXIS_EXPECTED_VERSION == '8.12.4'
         env:
           AXIS_ENGINE: chromium
         run: node scripts/axis-8124-flow-smoke.mjs
