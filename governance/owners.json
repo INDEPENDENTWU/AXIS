@@ -93,12 +93,21 @@
       "notes": "May delegate for compatibility; must not become current visible or persistence authority."
     },
     {
+      "capability": "flow-step-resolution-821",
+      "status": "derived-read-only",
+      "owner": "lib/axis-flow.mjs",
+      "contract": "axis.flow.v1",
+      "storage": "none",
+      "delegatesTo": "canonical Object truth and future established recorder/Active/Encounter/session delegation boundary",
+      "notes": "Normalizes portable Flow intent and resolves effective step metric/execution semantics. It cannot write persistence, create Active/Session/Encounter facts, choose durable Flow storage or become a recorder."
+    },
+    {
       "capability": "flow-orchestration-821",
       "status": "planned-delegating-only",
       "owner": "not yet implemented",
       "storage": "no new store allowed",
       "delegatesTo": "canonical Object + existing recorder/Active/Encounter/session owners",
-      "notes": "8.21 Flow may arrange intent and temporary overrides, but cannot become historical truth or a second training writer. Persistence location must be chosen only after inspecting existing plan/session structures."
+      "notes": "Visible/durable orchestration remains future work. Persistence location may be chosen only inside the established app-owned state boundary after resolver/provenance contracts are sealed."
     },
     {
       "capability": "active-action-lens",

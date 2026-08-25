@@ -31,161 +31,158 @@ Exact sealed main SHA:
 
 The fixed Production manifest reports `version/baseVersion = 8.20.1`, `architecture = canonical-single-runtime`, core `1269a6183152`, CSS `fc372a0bf2f9`, one initial JavaScript request and zero dynamic JavaScript requests.
 
-## 2. What 8.20.1 means architecturally
-
-The current recording chain is:
+## 2. Current 8.20.1 truths that 8.21 inherits
 
 ```text
 Object
   ↓
-metricSchema + default execution semantics
+metricSchema + executable semantics
   ↓
 existing Recording owner
   ↓
-existing Active lifecycle when execution is ongoing
+existing Active lifecycle when ongoing
   ↓
 Encounter
   ├─ metricSchemaSnapshot
   ├─ executionModeSnapshot
-  └─ factual metrics / evidence references
+  └─ factual metrics / evidence
 ```
 
-Important current truths:
+- `metricSchema` defines what is recorded.
+- `executionMode` defines how execution progresses.
+- execution modes are `single`, `sets`, `rounds`, `timed`, `hold`, `complete`.
+- classic weight+reps fact ownership remains v61-scoped.
+- `app.js` remains the base Session/Object/Encounter owner.
+- `window.__AXIS_OBJECT_TRUTH__` and `window.__AXIS_EXECUTABLE_OBJECTS__` are APIs, not stores.
+- authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`.
 
-- `metricSchema` defines **what is recorded**.
-- `executionMode` defines **how execution progresses**.
-- supported execution semantics are `single`, `sets`, `rounds`, `timed`, `hold`, `complete`.
-- `single/complete` must not create false ongoing Active state.
-- `sets/rounds/timed/hold` may use existing ongoing lifecycle semantics.
-- classic v61 metadata authority is still restricted to immutable weight+reps Encounter schemas.
-- `window.__AXIS_OBJECT_TRUTH__` is Object/schema truth API; it is not a second store.
-- `window.__AXIS_EXECUTABLE_OBJECTS__` resolves executable semantics/bridges recording; it is not a second store, recorder, Active owner or Encounter writer.
-- current authoritative stores remain exactly `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`.
-
-The 8.20.1 regression that must never return: an explicit pace/duration/etc. Object must not fall back to weight/reps/sets because its old coarse type is `strength/cardio`, and a timed/hold Object must not disappear from ongoing Active merely because it is not a classic set exercise.
+Do not reintroduce the 8.20 regression where explicit pace/duration/etc. Objects fall back to unrelated classic strength fields.
 
 ## 3. Current work
 
 **AXIS 8.21 — Flow / Session Blueprint**
 
-Active branch:
+- branch: `product/821-flow-session-blueprint`
+- Draft PR: **#88**
+- current phase: **Phase 1 — Flow Resolver Foundation**
 
-`product/821-flow-session-blueprint`
+Phase 0 ownership/reuse inspection is sealed at exact head:
 
-Current phase:
+`84310744b528441f3fa8d3feb51e8ed149e02b78`
 
-**Phase 0 — Flow Foundation + Ownership Contract**
+All nine baseline PR workflow families succeeded on that head: Repository, Work Continuity, Runtime Foundation, Current Release, Runtime, Deep Compatibility, Cross-Platform Foundation, PR Run Convergence and EdgeOne package contract.
 
-8.21 is a product-capability release, not a maintenance patch.
+### Phase 0 findings
 
-### Product purpose
+1. `app.js` remains the correct Session/Encounter truth owner.
+2. Group Plan (`v874-set-bridge.js`) is set-level preview/transaction behavior; it is not a reusable Flow store or Session model.
+3. No existing independent Flow truth should be promoted into authority.
+4. Flow therefore begins as portable intent + a pure resolver before persistence/UI.
 
-A Flow is a lightweight arrangement of reusable Objects, for example:
+## 4. Phase 1 foundation
+
+Current foundation artifacts:
+
+- `shared/contracts/axis-flow-v1.schema.json` — portable `axis.flow.v1` definition;
+- `lib/axis-flow.mjs` — pure Flow normalization/effective-step resolver;
+- `shared/fixtures/flow/` — mixed execution + override non-mutation fixtures;
+- `scripts/axis-821-flow-contract.mjs` — resolver purity/precedence/fixture contract;
+- `.github/workflows/axis-cross-platform-foundation.yml` — existing Cross-Platform gate now runs the Flow contract; no new workflow family.
+
+Resolver precedence:
 
 ```text
-A → B → C
+explicit temporary Flow-step override
+            ↓
+Object-specific executable truth
+            ↓
+existing global/default fallback
+            ↓
+legacy compatibility only when current truth is absent
 ```
 
-It represents intent and transition context. It is **not** historical truth and does not require reality to obey it.
+Important: Object schema-derived execution is Object-specific executable truth. A global fallback may not turn an explicit duration Object into an unrelated execution mode.
 
-If the real sequence becomes:
+`metricOverride` and `executionOverride` remain separate. A Flow override is temporary context and never writes back into the Object.
+
+The pure resolver is not authorized to:
+
+- read/write localStorage, IndexedDB or another database;
+- touch DOM/browser UI;
+- create Session, Encounter or Active state;
+- choose durable Flow storage;
+- call network/AI;
+- change Production identity.
+
+## 5. Portable reference proof
+
+The primary heterogeneous fixture is:
 
 ```text
-A → D → B
+A: duration + intensity → timed
+B: weight + reps       → sets
+C: completed           → complete
 ```
 
-AXIS should record that reality without penalty, fake completion math or a “deviation” error state.
+A second fixture proves a temporary Flow step can resolve different metrics/execution without mutating the reusable Object defaults.
 
-### Non-negotiable Flow invariants
-
-1. Flow must not require every referenced Object to become globally Active.
-2. Flow may provide a temporary per-step metric/execution override, but that override may not mutate the reusable Object defaults.
-3. Existing recording/Active/session/Encounter owners remain authoritative.
-4. No second training database, Session writer, Encounter writer, recorder or Active owner.
-5. A saved Encounter freezes the effective schema/execution semantics used at that moment.
-6. Flow provenance may be additive (`flowRef`, `flowStepRef`, frozen effective override provenance), but old Encounters may not depend on live Flow state.
-7. Editing/reordering/deleting a Flow later must not rewrite historical Encounters.
-8. Skip, insert, replace, pause and early finish are valid reality, not failure states.
-9. Flow must remain domain-neutral: gym, running, rehab, climbing, dance, music/skill practice and other compatible repeated practice should use the same primitive.
-10. 8.21 must not introduce streaks, XP, completion percentages, AI coaching copy, rigid calendar programming or category-specific modes.
-
-Read [`AXIS_821_FLOW_SESSION_BLUEPRINT.md`](AXIS_821_FLOW_SESSION_BLUEPRINT.md) before implementation.
-
-## 4. First engineering slice for 8.21
-
-Do not create a new planner/store first.
-
-Inspect and reuse the repository’s existing plan/group-plan/session structures. Then implement the smallest Flow foundation that can prove:
-
-- an ordered set of canonical Object references;
-- effective step resolution (`Object defaults → temporary Flow override → existing global/default fallback` where applicable);
-- start/advance/skip/insert/finish orchestration that delegates to existing owners;
-- A can be a schema-driven timed/single Object;
-- B can be a genuine classic weight+reps/sets Object using v61;
-- C can be one-shot/complete;
-- the user can deviate without corrupting the Flow or history;
-- saved Encounters freeze effective semantics/provenance;
-- changing the Flow afterwards does not rewrite old Encounters;
-- Chromium and iPhone WebKit both pass with no page errors and no extra persistence owner.
-
-Persistence location is **not pre-authorized**. Reuse an existing app-owned state container only after inspecting current structures and proving there is no competing truth model.
-
-## 5. Secondary interaction research — not a release blocker
-
-There is one approved exploration: **Active Action Lens**.
-
-Goal: make high-frequency Active actions such as `完成一组`, `暂停`, `完成` easier to hit one-handed without making the normal Active surface noisy or changing action ownership.
-
-Boundary:
-
-- presentation-only;
-- explicit opt-in entry;
-- fixed viewport layer inside the Web App, not browser Fullscreen API;
-- delegates to existing completion/pause/session owners;
-- zero storage and zero new training state;
-- normal tap semantics remain unchanged;
-- normal page scrolling/iOS edge-back behavior remain untouched outside the Lens;
-- close/downward-dismiss is immediate and creates no training fact;
-- pointer cancel, page hide, visibility loss and multitouch fail safe;
-- reduced-motion safe;
-- if real mobile testing shows no meaningful benefit, retire it rather than forcing it into 8.21.
-
-Read [`ACTIVE_ACTION_LENS_EXPERIMENT.md`](ACTIVE_ACTION_LENS_EXPERIMENT.md). Do not make this experiment a dependency of Flow.
-
-## 6. Ownership summary
-
-- base session/Object/Encounter state: `app.js` / `axis_v60_state`
-- classic set metadata: `v61.js` / `axis_v8_meta`, only where immutable classic schema permits
-- ongoing Active: existing v82/v87 lifecycle/presentation owners
-- media capture/persistence: `app.js` / `axis_v42_media`
-- source-first media resolution: existing read bridge
-- automatic sound: established v8710 owner
-- Evolution: derived read-only projection
-- learning: isolated `axis_v89_speak`
-- Flow 8.21: **not yet an authoritative owner**; orchestration must delegate
-- Active Action Lens: **presentation experiment only**
-
-See [`../governance/owners.json`](../governance/owners.json) and [`../governance/retirements.json`](../governance/retirements.json).
-
-## 7. Cross-platform continuity
-
-Preserve:
+Shared Web/iOS continuity remains:
 
 - native foundation ID: `axis-native-foundation-0`
 - native repo: `INDEPENDENTWU/AXIS-iOS`
-- portable contracts: `axis.domain.v1`, `axis.data.v1`
+- portable foundation: `axis.domain.v1`, `axis.data.v1`
+- additive Flow contract: `axis.flow.v1`
 
-8.21 should define Flow semantics in a portable/domain-neutral way. Browser DOM shape, event hacks and CSS are not the portable contract.
+## 6. Flow product invariants
 
-## 8. Required reading order when resuming in a new chat/session
+1. Flow is intent, not factual history.
+2. Starting a Flow does not make every referenced Object globally Active.
+3. Flow delegates recording/Active/Session/Encounter actions to established owners.
+4. Temporary step override never mutates Object defaults.
+5. Saved Encounter truth remains self-contained after Flow edit/reorder/delete.
+6. Skip, insert, replace and early finish are valid reality, not error states.
+7. No second training database, Session writer, Encounter writer, recorder or Active owner.
+8. No completion score, deviation penalty, streak/XP or category-specific mode proliferation.
+
+Read [`AXIS_821_FLOW_SESSION_BLUEPRINT.md`](AXIS_821_FLOW_SESSION_BLUEPRINT.md).
+
+## 7. Next implementation slice
+
+After the current pure resolver head is green:
+
+**Phase 1B — Immutable Encounter Flow Provenance**
+
+Add the smallest read-only snapshot/provenance builder for fields such as `flowRef`, `flowStepRef` and frozen effective context. It must delegate the actual save to the existing `app.js` Encounter writer and must prove that subsequent Flow edits cannot mutate an already-created snapshot.
+
+Only after this is sealed may Phase 2 select the smallest app-owned representation inside the existing state boundary and add visible Flow composition/launch UI.
+
+## 8. Active Action Lens — independent experiment
+
+`ACTIVE_ACTION_LENS_EXPERIMENT.md` remains non-blocking presentation research for easier one-hand `完成一组` / `暂停` / `完成` actions.
+
+It has zero permission to own Flow state, storage, completion facts, Active truth or history. If mobile testing does not show clear benefit, retire it without affecting 8.21.
+
+## 9. Ownership summary
+
+- base session/Object/Encounter state: `app.js` / `axis_v60_state`
+- classic set metadata: `v61.js` / `axis_v8_meta` where immutable classic schema permits
+- ongoing Active: established v82/v87 lifecycle/presentation owners
+- media: established app/source-first media owners / `axis_v42_media`
+- learning: isolated `axis_v89_speak`
+- Flow resolver: portable/read-only, **not** an authoritative persistence or action owner
+- Active Action Lens: presentation experiment only
+
+## 10. Required reading order when resuming
 
 1. `governance/project-state.json`
 2. this file
 3. `CURRENT_RELEASE.md`
 4. `CURRENT_WORK.md`
 5. `AXIS_821_FLOW_SESSION_BLUEPRINT.md`
-6. `governance/owners.json` + `governance/retirements.json`
-7. relevant runtime contracts/tests
-8. exact current Production manifest/status before declaring or changing a release
+6. `shared/contracts/axis-contract-manifest.json`
+7. `shared/contracts/axis-flow-v1.schema.json`
+8. `scripts/axis-821-flow-contract.mjs`
+9. `governance/owners.json` + `governance/retirements.json`
+10. exact current CI/Production status before declaring any release
 
-If this handoff conflicts with current Git or Production, verify the repository/deployment and repair this handoff. Do not repair reality to match stale documentation.
+If documentation conflicts with current Git or Production, verify reality and repair the handoff. Do not repair reality to match stale documentation.

@@ -19,6 +19,7 @@ Current versions:
 - `axis.media.v1`
 - `axis.metric-schema.v1` — reusable Object recording metrics and presentation-neutral semantics
 - `axis.encounter-metrics.v1` — normalized Encounter metric projection with an immutable schema snapshot
+- `axis.flow.v1` — ordered reusable Object intent with optional temporary step overrides; Flow is not historical truth or a second Session model
 - `axis.normalized-state-fixture.v1` — strict typed input for normalized golden-state fixtures before semantic reduction
 
-Version changes require an explicit compatibility/migration decision and corresponding golden fixtures. Metric contracts are additive to the existing domain/data v1 foundation: they do not replace the current Web persistence owners or reinterpret historical workout facts.
+Version changes require an explicit compatibility/migration decision and corresponding golden fixtures. Metric and Flow contracts are additive to the existing domain/data v1 foundation: they do not replace the current Web persistence owners, create a second training store or reinterpret historical workout facts.

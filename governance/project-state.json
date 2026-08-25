@@ -37,12 +37,14 @@
   },
   "engineering": {
     "activeMilestone": "AXIS 8.21 — Flow / Session Blueprint",
-    "activePhase": "Phase 0 — Flow Foundation + Ownership Contract",
+    "activePhase": "Phase 1 — Flow Resolver Foundation",
     "activeBranch": "product/821-flow-session-blueprint",
     "pullRequest": 88,
     "pullRequestDraft": true,
     "baselineRelease": "8.20.1",
     "baselineRuntimeSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
+    "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
+    "phase0Proof": "Repository, Work Continuity, Runtime Foundation, Current Release, Runtime, Deep Compatibility, Cross-Platform, PR Convergence and EdgeOne package workflows all success",
     "intendedProductBehaviorChange": true,
     "nextProductRelease": "8.21",
     "foundation": {
@@ -56,8 +58,11 @@
       "authoritativeStores": ["axis_v60_state", "axis_v8_meta", "axis_v89_speak", "axis_v42_media"]
     },
     "flow": {
-      "status": "foundation-design",
+      "status": "portable-resolver-foundation-under-ci",
       "principle": "intent is not history; reality remains authoritative",
+      "portableContract": "axis.flow.v1",
+      "pureResolver": "lib/axis-flow.mjs",
+      "contractGate": "scripts/axis-821-flow-contract.mjs via AXIS Cross-Platform Foundation Gate",
       "orderedObjectReferences": true,
       "temporaryOverridesMayMutateObjectDefaults": false,
       "requiresAllObjectsActive": false,
@@ -65,7 +70,8 @@
       "newPersistenceOwnerAllowed": false,
       "newEncounterWriterAllowed": false,
       "historicalEncounterRewriteAllowed": false,
-      "proposedPortableContract": "axis.flow.v1"
+      "persistenceChosen": false,
+      "uiImplemented": false
     },
     "interactionExperiment": {
       "name": "Active Action Lens",
@@ -76,7 +82,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Inspect existing plan/group-plan/session structures, define one minimal Flow resolver and ownership boundary, then prove A→B→C orchestration delegates to the existing recorder/Active/Encounter owners without creating a second truth model."
+    "nextSlice": "Seal axis.flow.v1 + pure resolver on the exact PR head, then add the smallest immutable Encounter Flow provenance adapter before any durable Flow storage or visible composition UI."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
@@ -95,7 +101,7 @@
   "crossPlatform": {
     "foundationId": "axis-native-foundation-0",
     "nativeRepository": "INDEPENDENTWU/AXIS-iOS",
-    "portableContracts": ["axis.domain.v1", "axis.data.v1"],
+    "portableContracts": ["axis.domain.v1", "axis.data.v1", "axis.flow.v1"],
     "rule": "Shared product/data semantics are portable; Web implementation accidents are not domain contracts."
   },
   "presentationFoundation": {
@@ -126,7 +132,9 @@
     "Chat history is supplementary context, never authoritative project state.",
     "AXIS 8.20.1 is dual-provider Production-sealed at fdbfea738489fca6b19b3c8c7b502977373e4e4f with Vercel/EdgeOne exact artifact parity and Chromium/iPhone WebKit proof.",
     "8.20.1 sealed executable Object schema/live-state convergence, execution-mode Active lifecycle, classic v61 authority and localized visible enum presentation without adding a persistence owner.",
-    "8.21 must orchestrate existing truth rather than replace it: Object defaults remain reusable, Flow overrides are temporary, and Encounter snapshots remain immutable.",
+    "Phase 0 ownership/reuse inspection is sealed at 84310744b528441f3fa8d3feb51e8ed149e02b78 with all nine baseline PR workflow families successful.",
+    "8.21 Flow resolver precedence is temporary Flow-step override, then Object-specific executable truth, then existing global/default fallback, then legacy compatibility only when current truth is absent.",
+    "axis.flow.v1 and lib/axis-flow.mjs are portable/read-only foundation artifacts; they do not authorize Flow persistence, UI ownership, Active ownership or Encounter writes.",
     "Active Action Lens is an optional presentation experiment and must be removable without changing training facts or 8.21 Flow semantics."
   ]
 }
