@@ -38,6 +38,9 @@ jobs:
           const fs=require('fs'),x=JSON.parse(fs.readFileSync('edgeone.json','utf8'));
           if(x.buildCommand!=='node scripts/edgeone-prebuilt-verify.mjs')throw new Error(`EdgeOne must publish verified prebuilt artifact, got ${x.buildCommand}`);
           if(x.outputDirectory!=='.')throw new Error(`unexpected EdgeOne output ${x.outputDirectory}`);
+          const wf=fs.readFileSync('.github/workflows/axis-edgeone-production-mirror.yml','utf8');
+          if(!wf.includes('remote.version===local.version')||!wf.includes('remote.baseVersion===local.baseVersion'))throw new Error('EdgeOne Production wait must follow the exact built release identity instead of a hard-coded version');
+          if((wf.match(/node scripts\/axis-8201-object-reliability-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.20.1 reliability smoke in both Chromium and iPhone WebKit');
           NODE
 
   deploy-production:
@@ -60,7 +63,7 @@ jobs:
         run: |
           node --input-type=module - <<'NODE'
           const target=`${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-          const body={state:'pending',context:'EdgeOne Production',description:'Deploying AXIS 8.20 to EdgeOne',target_url:target};
+          const body={state:'pending',context:'EdgeOne Production',description:'Deploying exact AXIS main to EdgeOne',target_url:target};
           const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});
           if(!r.ok)throw new Error(`GitHub pending status ${r.status}: ${await r.text()}`);
           console.log(`[AXIS EdgeOne status] pending · ${target}`);
@@ -72,7 +75,7 @@ jobs:
         run: node build-release.mjs
       - name: Verify exact EdgeOne package
         run: node scripts/edgeone-prebuilt-verify.mjs
-      - name: Wait for Vercel golden Production to serve the same main commit
+      - name: Wait for Vercel golden Production to serve the same exact release
         shell: bash
         run: |
           set -euo pipefail
@@ -80,13 +83,18 @@ jobs:
             code=$(curl -LsS --connect-timeout 5 --max-time 15 -o /tmp/vercel-axis-build.json -w '%{http_code}' "$VERCEL_GOLDEN_URL/axis-build.json" || true)
             if [ "$code" = "200" ] && EXPECTED="$GITHUB_SHA" node <<'NODE'
           const fs=require('fs');
-          try{const x=JSON.parse(fs.readFileSync('/tmp/vercel-axis-build.json','utf8'));process.exit(x.sourceCommit===process.env.EXPECTED&&x.version==='8.20'&&x.baseVersion==='8.20'?0:1)}catch{process.exit(1)}
+          try{
+            const remote=JSON.parse(fs.readFileSync('/tmp/vercel-axis-build.json','utf8'));
+            const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+            process.exit(remote.sourceCommit===process.env.EXPECTED&&remote.version===local.version&&remote.baseVersion===local.baseVersion?0:1)
+          }catch{process.exit(1)}
           NODE
             then exit 0; fi
-            echo "Attempt $attempt · Vercel golden not yet exact $GITHUB_SHA / 8.20"
+            release=$(node -p "require('./axis-build.json').version+' / '+require('./axis-build.json').baseVersion")
+            echo "Attempt $attempt · Vercel golden not yet exact $GITHUB_SHA / $release"
             sleep 4
           done
-          echo '::error::Vercel golden Production did not converge to the exact main commit before EdgeOne deploy.'
+          echo '::error::Vercel golden Production did not converge to the exact main commit and release identity before EdgeOne deploy.'
           exit 1
       - name: Require Vercel/local canonical artifact parity
         run: |
@@ -119,7 +127,7 @@ jobs:
           CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
-      - name: Chromium real EdgeOne 8.20 release flow
+      - name: Chromium real EdgeOne current release flow
         env:
           AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
           AXIS_ENGINE: chromium
@@ -136,11 +144,12 @@ jobs:
           node scripts/axis-818-object-focus-smoke.mjs
           node scripts/axis-819-object-recording-smoke.mjs
           node scripts/axis-820-executable-object-smoke.mjs
+          node scripts/axis-8201-object-reliability-smoke.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps webkit
-      - name: iPhone WebKit real EdgeOne 8.20 release flow
+      - name: iPhone WebKit real EdgeOne current release flow
         env:
           AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
           AXIS_ENGINE: webkit
@@ -157,6 +166,7 @@ jobs:
           node scripts/axis-818-object-focus-smoke.mjs
           node scripts/axis-819-object-recording-smoke.mjs
           node scripts/axis-820-executable-object-smoke.mjs
+          node scripts/axis-8201-object-reliability-smoke.mjs
       - name: Mark EdgeOne Production success
         env:
           GH_STATUS_TOKEN: ${{ github.token }}
@@ -164,7 +174,7 @@ jobs:
           node --input-type=module - <<'NODE'
           const x=JSON.parse((await import('node:fs')).readFileSync('/tmp/edgeone-live-result.json','utf8'));
           if(!x.baseUrl)throw new Error('EdgeOne base URL missing for status');
-          const body={state:'success',context:'EdgeOne Production',description:'AXIS 8.20 verified on EdgeOne Production',target_url:x.baseUrl};
+          const body={state:'success',context:'EdgeOne Production',description:'Exact AXIS main verified on EdgeOne Production',target_url:x.baseUrl};
           const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});
           if(!r.ok)throw new Error(`GitHub success status ${r.status}: ${await r.text()}`);
           console.log(`[AXIS EdgeOne status] success · ${x.baseUrl}`);
