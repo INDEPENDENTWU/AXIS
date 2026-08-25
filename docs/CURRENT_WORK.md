@@ -1,6 +1,6 @@
 # Current Work
 
-## Production baseline
+## Production baseline at start of this work
 
 Current sealed Production is **AXIS 8.20.1 — Executable Object Reliability**.
 
@@ -12,9 +12,15 @@ Current sealed Production is **AXIS 8.20.1 — Executable Object Reliability**.
 - EdgeOne verification run: `32812883590` — success
 - exact artifact/source parity + Chromium + iPhone WebKit Production proof: complete
 
+Cross-platform continuity remains anchored by:
+
+- native foundation ID: `axis-native-foundation-0`
+- native repository: `INDEPENDENTWU/AXIS-iOS`
+- portable contracts: `axis.domain.v1`, `axis.data.v1`
+
 Do not reopen 8.20.1 product behavior merely because an older release filename or historical compatibility source still exists.
 
-## Active milestone
+## Active change
 
 **AXIS 8.21 — Flow / Session Blueprint**
 
@@ -22,13 +28,15 @@ Active branch:
 
 `product/821-flow-session-blueprint`
 
-Draft PR: pending creation from this branch after the coordinated governance/foundation commit.
+Draft PR: **#88** — `AXIS 8.21 — Flow / Session Blueprint Foundation`.
 
 Current phase:
 
 **Phase 0 — Flow Foundation + Ownership Contract**
 
-## Why 8.21 exists
+8.21 is a product-capability release, not a maintenance patch.
+
+### Why 8.21 exists
 
 8.20.1 completes the single-Object execution chain:
 
@@ -50,7 +58,7 @@ existing recorder / Active / session owners
 immutable Encounter truth
 ```
 
-## Product behavior contract
+### Product behavior contract
 
 A Flow may look like:
 
@@ -66,7 +74,7 @@ A → D → B
 
 This is valid. AXIS records reality; it does not punish reality for differing from an intended sequence.
 
-### Required
+Required:
 
 - ordered canonical Object references;
 - lightweight start / advance / skip / insert / replace / finish behavior;
@@ -80,7 +88,7 @@ This is valid. AXIS records reality; it does not punish reality for differing fr
 - domain-neutral behavior across compatible repeated practice;
 - local-first and usable without network/AI.
 
-### Explicitly not 8.21
+Explicitly not 8.21:
 
 - completion percentage;
 - streak / XP / punishment;
@@ -93,7 +101,7 @@ This is valid. AXIS records reality; it does not punish reality for differing fr
 - one mode per activity category;
 - synthetic progress scoring.
 
-## First engineering slice
+### First engineering slice
 
 Before adding any Flow store or new UI:
 
@@ -123,7 +131,7 @@ Required behavior:
 - each Encounter freezes effective semantics and step provenance;
 - reordering the Flow later leaves those Encounters unchanged.
 
-## Persistence / ownership guard
+### Persistence / ownership guard
 
 Persistence location is deliberately **not preselected** in Phase 0.
 
@@ -138,25 +146,7 @@ Existing authoritative stores remain:
 
 Existing owners remain authoritative for training/session/Encounter, classic sets, Active, Capture/media and sound.
 
-## Validation for this work
-
-The first 8.21 behavior head must prove, on the same exact candidate:
-
-- repository/work-continuity governance;
-- deterministic canonical build;
-- Chromium physical Flow path;
-- iPhone-like WebKit physical Flow path;
-- existing 8.20.1 Object reliability regression;
-- classic v61 fallback/authority;
-- no page errors;
-- no second persistence owner;
-- no duplicate Active/session/Encounter writer;
-- historical Encounter immutability after Flow edits;
-- Capture/Evidence/Evolution and deep compatibility remain intact.
-
-Do not deploy 8.21 to Production merely because the Flow happy path works. It must pass the current full release/compatibility contract and exact-SHA Production discipline.
-
-## Secondary, non-blocking experiment
+### Secondary, non-blocking experiment
 
 **Active Action Lens** explores a larger, one-hand Active control surface for actions such as `完成一组`, `暂停`, and `完成`.
 
@@ -175,6 +165,25 @@ Allowed direction:
 
 See [`ACTIVE_ACTION_LENS_EXPERIMENT.md`](ACTIVE_ACTION_LENS_EXPERIMENT.md).
 
+## Validation for this work
+
+The first 8.21 behavior head must prove, on the same exact candidate:
+
+- repository/work-continuity governance;
+- deterministic canonical build;
+- Chromium physical Flow path;
+- iPhone-like WebKit physical Flow path;
+- existing 8.20.1 Object reliability regression;
+- classic v61 fallback/authority;
+- no page errors;
+- no second persistence owner;
+- no duplicate Active/session/Encounter writer;
+- historical Encounter immutability after Flow edits;
+- Capture/Evidence/Evolution and deep compatibility remain intact;
+- `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1` and `axis.data.v1` remain preserved as cross-platform continuity anchors.
+
+Do not deploy 8.21 to Production merely because the Flow happy path works. It must pass the current full release/compatibility contract and exact-SHA Production discipline.
+
 ## Next planned stage
 
 After Phase 0 contract/reuse inspection is sealed:
@@ -182,7 +191,5 @@ After Phase 0 contract/reuse inspection is sealed:
 **Phase 1 — Flow Resolver + Encounter Provenance**
 
 Implement the smallest pure resolver and additive provenance first. Visible Flow composition should sit on that proven foundation rather than inventing its own training semantics.
-
-## Continuity rule
 
 GitHub governance, current docs, contracts, tests and Production evidence are authoritative. Chat history is supplementary. A new chat should be able to resume by reading `governance/project-state.json`, `docs/HANDOFF.md`, this file and the 8.21 blueprint.
