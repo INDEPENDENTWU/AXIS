@@ -192,4 +192,4 @@ After Phase 0 contract/reuse inspection is sealed:
 
 Implement the smallest pure resolver and additive provenance first. Visible Flow composition should sit on that proven foundation rather than inventing its own training semantics.
 
-GitHub governance, current docs, contracts, tests and Production evidence are authoritative. Chat history is supplementary. A new chat should be able to resume by reading `governance/project-state.json`, `docs/HANDOFF.md`, this file and the 8.21 blueprint.
+**Chat history is not authoritative project memory.** GitHub governance, current docs, contracts, tests and Production evidence are authoritative. A new chat should be able to resume by reading `governance/project-state.json`, `docs/HANDOFF.md`, this file and the 8.21 blueprint.
