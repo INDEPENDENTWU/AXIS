@@ -1,92 +1,112 @@
 # AXIS
 
-Local-first training software built around what actually happened.
+Local-first practice software built around what actually happened.
 
-**Current release: 8.18** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md) · [Documentation](docs/README.md)
+**Current release: 8.20.1** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
 
-AXIS records real training/practice without requiring reality to behave like a project plan. Training state, sets, object memory, media and history remain useful locally; network and AI capabilities are optional additions rather than prerequisites.
+AXIS is a **Personal Evolution Engine**. It records real practice without requiring reality to obey a rigid plan. Objects describe what can be practiced, executable schemas describe what is recorded, Encounters freeze what actually happened, Evidence anchors those facts, and Evolution remains a factual read-only projection.
 
-The product grew through many releases, but Production is deliberately flattened into one canonical browser runtime. Historical `v8xx` modules and release transforms remain source/compatibility inputs only where they are still proven necessary; they are not separate product layers downloaded at runtime.
+## Production truth
 
-## What is in 8.18
+AXIS 8.20.1 is the current sealed Web Production release.
 
-- Strength/cardio recording with factual set-level state, direct adjustment and historical continuity.
-- **Object Truth**: custom equipment/sport/movement objects track only the metrics declared by their actual schema; new Encounters snapshot that truth without destructively rewriting old records.
-- **Evolution Library / Personal Object Shelf** derived read-only from repeated real Encounters, without a second persistence model or synthetic progress score.
-- **Route Truth**: foreground/PWA recovery converges to one physically active main route; inactive routes cannot leak controls into the current surface.
-- **Focus** as a presentation layer that respects object metrics and delegates completion to the established owner.
-- One canonical **Capture** system with Photo / Scan / Video, persisted default mode/facing preferences and front/rear camera switching.
-- Scan sampling remains exactly **3秒 / 5秒**; these are sampling durations, not historical capture/video mode choices.
-- One logical MediaRecorder over the sealed **30fps canvas compositor**; historical low-fps/forced-720p downgrade paths are retired.
-- Source-first media: clean `S-* / SV-*` sidecars and canonical `F-* / V-*` derivatives in the existing `axis_v42_media` store.
-- Stable Comparative Evidence, time-first archive organization, batch media export and Encounter deletion on the existing data model.
-- Fact-first History/Encounter details with asynchronous media hydration and stable in-place item swaps.
-- Optional owner-managed AI/cloud capabilities that fail open and do not become training truth.
-- Chromium and iPhone-like WebKit regression gates, plus exact-production-SHA release verification.
+- exact merged-main SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
+- Vercel deployment: `dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD` — **READY**
+- Vercel: <https://axis-five-puce.vercel.app>
+- EdgeOne deployment: `dpemq8bxjopa`
+- EdgeOne verification run: `32812883590` — **success**
+- EdgeOne: <https://axisfitness-mirror-9x91gveo.edgeone.cool>
+- architecture: `canonical-single-runtime`
+- generated runtime: one `axis-core.js` + one `axis-style.css`
+- dynamic historical JavaScript requests: `0`
+- Production proof: exact artifact/source parity plus real Chromium and iPhone-like WebKit flows on both release gates/providers.
 
-## Product rules
+See [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) for the sealed record.
 
-**Reality is authoritative.** A real workout/practice is valid even when it changes, ends early or differs from a suggestion.
+## What 8.20.1 seals
 
-**Local first.** Core training remains usable without an account, network or model call.
-
-**One surface, one owner.** A visible semantic action or authoritative fact has one writer. Replacing an owner includes retiring the previous writer.
-
-**Evidence before interpretation.** AXIS may make recorded reality easier to inspect and compare, but does not turn factual change into a synthetic progress verdict.
-
-**Fail open.** Vision, AI, cloud and other optional services degrade to local/manual behavior instead of blocking recording.
-
-**Quiet interfaces.** The product should require less attention as it learns more about repeated behavior.
-
-See [docs/PRODUCT.md](docs/PRODUCT.md) for the product contract.
+- **Universal Practice Objects** with explicit `metricSchema` truth and immutable Encounter schema snapshots.
+- **Executable Practice Objects**: explicit Object schema drives the actual recorder instead of coarse `strength/cardio` type guesses.
+- **Execution semantics** separated from metric semantics: `single / sets / rounds / timed / hold / complete`.
+- **Active lifecycle authority** follows `executionMode`; one-shot Objects do not create false ongoing state, while timed/hold/sets/rounds can use the existing Active owners.
+- **Classic strength compatibility** remains v61-owned only for genuine immutable weight+reps Encounter schemas.
+- **Visible localization** keeps internal enum IDs internal; Chinese product surfaces do not leak `strength/cardio/relative` as user-facing labels.
+- Existing user truth remains in the established stores: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`.
+- Capture, source-first media, Evidence, Evolution, Learning, sound and historical compatibility remain inherited and release-blocking.
 
 ## Current engineering state
 
-Production remains **AXIS 8.18** while the repository executes **AXIS Source Convergence — 8.19 Foundation** on branch `engineering/source-convergence-819`.
+Active milestone: **AXIS 8.21 — Flow / Session Blueprint**
 
-The convergence milestone has **zero intended product behavior change**. It centralizes current project truth, makes ownership/retirement explicit, reduces historical build/CI debt safely, and prepares the presentation foundation before 8.19 feature development.
+Branch: `product/821-flow-session-blueprint`
 
-Any developer or agent joining the project should read:
+8.21 adds lightweight orchestration over existing truth. A Flow may arrange Objects and temporary step overrides, but **Flow is intent, not history**. The user may skip, insert, reorder or stop; Encounter truth remains authoritative and immutable.
+
+Read [`docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md`](docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md) before changing Flow/session semantics.
+
+A separate, non-blocking interaction research track — [`Active Action Lens`](docs/ACTIVE_ACTION_LENS_EXPERIMENT.md) — explores a larger one-hand Active control layer. It is presentation-only, must delegate to existing completion/pause/session owners, and is not allowed to block or contaminate 8.21.
+
+## Product rules
+
+**Reality is authoritative.** A real workout/practice is valid even when it changes, ends early or differs from an intended Flow.
+
+**Local first.** Core practice remains usable without an account, network or model call.
+
+**One action, one writer.** A semantic action or factual training field has one authoritative writer. Delegating presentation is not ownership.
+
+**Intent is not history.** A Flow can suggest sequence; only saved Encounters become historical truth.
+
+**Evidence before interpretation.** AXIS may reveal recorded change, but does not present synthetic progress scores as fact.
+
+**Quiet interfaces.** Better intelligence should remove questions and taps rather than add AI copy or setup burden.
+
+**Fail open.** Optional cloud/AI capabilities degrade to local/manual behavior rather than blocking recording.
+
+## Authoritative project memory
+
+Future developers/agents should read, in order:
 
 1. [`governance/project-state.json`](governance/project-state.json)
 2. [`docs/HANDOFF.md`](docs/HANDOFF.md)
-3. [`docs/CURRENT_WORK.md`](docs/CURRENT_WORK.md)
+3. [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md)
+4. [`docs/CURRENT_WORK.md`](docs/CURRENT_WORK.md)
+5. current milestone architecture/contract docs
+6. [`governance/owners.json`](governance/owners.json) and [`governance/retirements.json`](governance/retirements.json)
+7. tests/contracts and the exact Production manifest before changing ownership or persistence
 
-Chat history is supplementary context, not authoritative project memory.
+**Chat history is supplementary context, not authoritative project memory.** If chat and Git/Production disagree, verify reality and repair GitHub truth.
 
 ## Production architecture
 
 ```text
-current + required compatibility source
-                 |
-                 v
-       deterministic convergence
-                 |
-                 v
-          contract assertions
-                 |
-                 v
-     axis-core.js + axis-style.css
-                 |
-                 v
-         one production runtime
+current source + required compatibility source
+                    |
+                    v
+          deterministic convergence
+                    |
+                    v
+             contract assertions
+                    |
+                    v
+        axis-core.js + axis-style.css
+                    |
+                    v
+            one production runtime
 ```
 
-Release build entry point:
+Release build:
 
 ```bash
 node build-release.mjs
 ```
 
-Vercel builds `main` through the deterministic release path. EdgeOne is the verified-prebuilt Production mirror path rather than an independent reinterpretation of source.
-
-CI baseline: Node 20.18.0. Critical browser release gates cover Chromium and iPhone-like WebKit.
+Vercel builds `main`. EdgeOne publishes the already-verified prebuilt artifact rather than reinterpreting product source. Critical release paths are verified in Chromium and iPhone-like WebKit.
 
 ## Repository map
 
 ```text
 governance/           machine-readable current project/owner/retirement truth
-docs/                 product, architecture, handoff, delivery and history
+docs/                 product, architecture, handoff, release and milestone contracts
 runtime/              extracted runtime/domain foundation and browser adapters
 shared/contracts/     durable cross-platform contracts and schemas
 api/                  same-origin server endpoints
@@ -96,68 +116,25 @@ lib/                  reusable contracts and current libraries
 data/                 curated local data
 scripts/              diagnostics, smoke and release verification
 .github/workflows/    CI and Production gates
-
-app.js, v*.js         current/historical source owners still used by convergence
-prepare-*.mjs         build-time migrations/ownership convergence
-postbuild-*.mjs       canonical packaging and release assertions
-build-release.mjs     sole release build entry point
 ```
 
-The broad inherited source tree is being converged deliberately rather than rearranged cosmetically. A historical filename is not proof that a file is safe to delete; reachability, ownership, data compatibility and browser behavior must be proven first.
-
-## Localization and theme foundation
-
-The next presentation foundation is explicitly:
-
-- `zh-Hans` — **简体中文**
-- `zh-Hant` — **繁體中文**
-- `en` — **English**
-
-and theme preferences:
-
-- `system`
-- `light`
-- `dark`
-
-Translations must be professional and semantic: Simplified Chinese must actually be Simplified Chinese, Traditional Chinese is not a blind script conversion, and English must read naturally while preserving AXIS product meaning. Themes will use semantic tokens and must not create wrong-color logos/icons, partial conversions or wrong-theme first-paint flashes.
-
-See [Localization and theme](docs/LOCALIZATION_AND_THEME.md) and the [three-language glossary](docs/GLOSSARY.md).
+Historical `v8xx` and release-transform filenames are provenance/compatibility inputs, not proof of current ownership.
 
 ## Development discipline
 
-A change is complete when the intended owner is clear, competing behavior is retired, the final artifact is deterministic, and the affected real user path is covered by the correct current-product contract.
+A change is complete only when:
 
-Quick repository check:
+1. the intended semantic owner is explicit;
+2. competing ownership is absent or retired;
+3. historical data remains readable;
+4. the deterministic artifact is valid;
+5. affected real user paths pass Chromium and WebKit on the same exact candidate;
+6. a Production release is verified against the exact merged SHA before being declared sealed.
+
+Quick governance check:
 
 ```bash
 node scripts/axis-repository-contract.mjs
 ```
 
-Release build:
-
-```bash
-node build-release.mjs
-```
-
-Normal release path:
-
-1. branch from the last verified Production `main`;
-2. make one coherent product or engineering change;
-3. run repository/current contracts and deterministic build;
-4. pass required Chromium/WebKit gates on the same candidate;
-5. merge only the exact verified head;
-6. verify Production against the exact merged source/artifact before declaring a release sealed.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md), [Engineering playbook](docs/ENGINEERING_PLAYBOOK.md) and [CI and release gates](docs/CI_AND_RELEASE.md).
-
-## Next
-
-First: finish **Source Convergence — 8.19 Foundation** without changing 8.18 product behavior.
-
-Then AXIS 8.19 can generalize the sealed `Object → metric schema → Encounter → Evidence → Evolution` model toward **Universal Practice Objects** for a broader range of repeated real-world practice, while keeping the interface low-friction and factual-first.
-
-See [docs/CURRENT_WORK.md](docs/CURRENT_WORK.md) and [docs/ROADMAP.md](docs/ROADMAP.md).
-
-## Project status
-
-AXIS is under active development. The repository is public, but no software license has been selected yet; public visibility should not be interpreted as a grant of reuse rights.
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the product sequence.

@@ -1,20 +1,43 @@
 {
-  "schemaVersion": 1,
-  "baselineRelease": "8.18",
+  "schemaVersion": 2,
+  "baselineRelease": "8.20.1",
   "owners": [
     {
       "capability": "training-state",
       "status": "authoritative",
       "owner": "app.js",
       "storage": "axis_v60_state",
-      "notes": "Base local workout/session/profile/preferences state."
+      "notes": "Base local session/profile/preferences/Object state and canonical Encounter/session persistence."
+    },
+    {
+      "capability": "object-truth-and-metric-schema",
+      "status": "authoritative",
+      "owner": "app.js state + existing v874-professional.js editor",
+      "storage": "axis_v60_state.profile.customEq",
+      "resolver": "window.__AXIS_OBJECT_TRUTH__",
+      "notes": "The visible custom Object editor extends the existing Object state. Metric-schema helpers resolve semantics but do not own persistence."
+    },
+    {
+      "capability": "executable-object-resolution",
+      "status": "derived-runtime-bridge",
+      "owner": "window.__AXIS_EXECUTABLE_OBJECTS__",
+      "storage": "none",
+      "delegatesTo": "existing app.js recorder/Encounter owners and v61 classic path",
+      "notes": "Resolves effective schema/execution semantics. It is not a store, recorder, Active owner or Encounter writer."
     },
     {
       "capability": "strength-set-recording",
       "status": "authoritative",
       "owner": "v61.js",
       "storage": "axis_v8_meta",
-      "notes": "High-frequency set-level recording and metadata."
+      "notes": "High-frequency classic weight+reps set facts only when immutable Encounter schema grants classic ownership."
+    },
+    {
+      "capability": "active-lifecycle",
+      "status": "authoritative-existing-owners",
+      "owner": "existing v82/v87 lifecycle + presentation",
+      "storage": "existing activity metadata in axis_v8_meta",
+      "notes": "8.20.1 uses executionMode as lifecycle/presentation authority. sets/rounds/timed/hold are ongoing; single/complete are one-shot. No new Active owner was created."
     },
     {
       "capability": "media-capture-and-persistence",
@@ -31,35 +54,29 @@
       "notes": "Source-first resolver with canonical fallback; never a second persistence owner."
     },
     {
-      "capability": "custom-equipment-editor",
-      "status": "authoritative-visible-owner",
-      "owner": "v874-professional.js",
-      "notes": "Visible custom equipment/sport/movement editor; 8.18 metric schema truth must not create a competing editor."
-    },
-    {
       "capability": "automatic-sound",
       "status": "authoritative",
       "owner": "established v8710 automatic sound owner",
-      "notes": "The owner identity is contract-level; retired historical reminder loops may not return or become a second writer."
+      "notes": "Retired historical reminder loops may not return or become a second writer."
     },
     {
       "capability": "watermark-compositor",
       "status": "authoritative",
       "owner": "v8710-watermark.js",
-      "notes": "Shared source-first watermark painter; 8.18 video derivative uses the sealed 30fps compositor contract."
+      "notes": "Shared source-first watermark painter; video derivative uses the sealed 30fps compositor contract."
     },
     {
       "capability": "active-focus-presentation",
       "status": "presentation-only",
       "owner": "8.18 Focus layer",
-      "delegatesTo": "v87-direct-884 completion owner",
-      "notes": "Focus never becomes a second training/completion writer."
+      "delegatesTo": "existing v87 completion/action owner",
+      "notes": "Focus never becomes a second training/completion writer. It is the architectural precedent for optional large-control presentation work."
     },
     {
       "capability": "evolution-library",
       "status": "derived-read-only",
-      "owner": "8.18 Evolution Library projection",
-      "notes": "Derived from real Encounters; no second database or persistence schema."
+      "owner": "Evolution Library projection",
+      "notes": "Derived from real Encounters; no second database, persistence schema or synthetic score authority."
     },
     {
       "capability": "language-learning-state",
@@ -73,14 +90,31 @@
       "status": "compatibility-only",
       "owner": "v876 compatibility bridge",
       "delegatesTo": "app-owned current Capture preference state",
-      "notes": "May delegate for compatibility; must not become a current visible or persistence authority."
+      "notes": "May delegate for compatibility; must not become current visible or persistence authority."
+    },
+    {
+      "capability": "flow-orchestration-821",
+      "status": "planned-delegating-only",
+      "owner": "not yet implemented",
+      "storage": "no new store allowed",
+      "delegatesTo": "canonical Object + existing recorder/Active/Encounter/session owners",
+      "notes": "8.21 Flow may arrange intent and temporary overrides, but cannot become historical truth or a second training writer. Persistence location must be chosen only after inspecting existing plan/session structures."
+    },
+    {
+      "capability": "active-action-lens",
+      "status": "experiment-presentation-only",
+      "owner": "not yet implemented",
+      "storage": "none",
+      "delegatesTo": "existing completion/pause/session actions",
+      "notes": "Optional large-control mobile interaction experiment. Must be removable with zero effect on training facts, navigation, execution semantics or 8.21 release success."
     }
   ],
   "rules": [
     "One semantic action has one interactive writer.",
     "One current training fact has one authoritative store.",
     "Compatibility bridges delegate; they do not regain authority.",
-    "A derived projection cannot create a second persistence model.",
+    "A derived projection or resolver cannot create a second persistence model.",
+    "Flow intent may orchestrate existing owners but cannot become Encounter truth.",
     "Changing an owner requires explicit handoff, regression proof, and retirement of the previous writer."
   ]
 }

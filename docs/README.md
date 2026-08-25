@@ -8,6 +8,12 @@ Start here when the repository is unfamiliar. Current project state must be reco
 2. [`HANDOFF.md`](HANDOFF.md) — human/agent handoff: exact baseline, active work, invariants and next action.
 3. [`CURRENT_RELEASE.md`](CURRENT_RELEASE.md) — what is shipping now.
 4. [`CURRENT_WORK.md`](CURRENT_WORK.md) — the active engineering slice and exit criteria.
+5. [`AXIS_821_FLOW_SESSION_BLUEPRINT.md`](AXIS_821_FLOW_SESSION_BLUEPRINT.md) — current 8.21 product/domain contract.
+
+## Current milestone
+
+- [`AXIS_821_FLOW_SESSION_BLUEPRINT.md`](AXIS_821_FLOW_SESSION_BLUEPRINT.md) — Flow as lightweight intent/orchestration over existing Object/Recording/Active/Encounter truth.
+- [`ACTIVE_ACTION_LENS_EXPERIMENT.md`](ACTIVE_ACTION_LENS_EXPERIMENT.md) — non-blocking presentation-only mobile Active interaction experiment; not an 8.21 release dependency.
 
 ## Product and architecture
 
@@ -16,7 +22,7 @@ Start here when the repository is unfamiliar. Current project state must be reco
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — current architecture, debt and target architecture.
 - [`OWNERSHIP.md`](OWNERSHIP.md) — current critical owners and owner-handoff protocol.
 - [`RETIREMENTS.md`](RETIREMENTS.md) — retired authority and physical deletion gates.
-- [`LOCALIZATION_AND_THEME.md`](LOCALIZATION_AND_THEME.md) — planned `zh-Hans` / `zh-Hant` / `en` and System/Light/Dark presentation contract.
+- [`LOCALIZATION_AND_THEME.md`](LOCALIZATION_AND_THEME.md) — `zh-Hans` / `zh-Hant` / `en` and System/Light/Dark presentation contract.
 - [`GLOSSARY.md`](GLOSSARY.md) — canonical three-language product terminology.
 
 Machine-readable companions live in [`../governance/`](../governance/).
@@ -53,13 +59,14 @@ When sources disagree, verify the real Git/Production state and use this order:
 2. `docs/HANDOFF.md`
 3. `docs/CURRENT_RELEASE.md`
 4. `docs/CURRENT_WORK.md`
-5. `governance/owners.json` / `governance/retirements.json` / `governance/ci-inventory.json`
-6. `docs/RUNTIME_CONTRACT.md`
-7. `docs/PRODUCT.md`
-8. `docs/ARCHITECTURE.md`
-9. deterministic build/release contracts
-10. release history and version-like source filenames
+5. current milestone contract (`docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md` while 8.21 is active)
+6. `governance/owners.json` / `governance/retirements.json` / `governance/ci-inventory.json`
+7. `docs/RUNTIME_CONTRACT.md`
+8. `docs/PRODUCT.md`
+9. `docs/ARCHITECTURE.md`
+10. deterministic build/release contracts
+11. release history and version-like source filenames
 
-`release-contract.json` is currently a mutable legacy build seed. It is not the checked-in current-release authority.
+`release-contract.json` is a mutable legacy build seed. It is not the checked-in current-release authority.
 
 If a verified Production or engineering-governance fact changes, update machine governance and current handoff in the same engineering change so this hierarchy does not drift.

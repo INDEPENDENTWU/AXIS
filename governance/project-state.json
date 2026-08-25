@@ -1,71 +1,102 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.18",
-    "productionRuntimeSha": "65e3525e78f021afda7db19d27722626af9514d8",
+    "productionRelease": "8.20.1",
+    "productionRuntimeSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
+    "sealedAt": "2026-08-25",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
-      "deploymentId": "dpl_7mYETXKCQzXKh88ybocT65oLiJ1T",
-      "sourceSha": "65e3525e78f021afda7db19d27722626af9514d8",
+      "deploymentId": "dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD",
+      "sourceSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
       "state": "READY",
       "target": "production",
-      "publicUrl": "https://axis-five-puce.vercel.app"
+      "publicUrl": "https://axis-five-puce.vercel.app",
+      "productionGateRunId": 32812905314,
+      "exactManifestParity": "success",
+      "chromiumProductionFlow": "success"
     },
     "edgeOne": {
       "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
       "policy": "exact-prebuilt-artifact-mirror",
-      "verificationRunId": 32675374766,
-      "sourceSha": "65e3525e78f021afda7db19d27722626af9514d8",
+      "deploymentId": "dpemq8bxjopa",
+      "verificationRunId": 32812883590,
+      "sourceSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
       "packageContract": "success",
       "deployProduction": "success",
+      "boundedFixedDomainConvergence": "success",
+      "vercelApiParity": "success",
       "chromiumProductionFlow": "success",
       "webkitProductionFlow": "success"
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.19 — Universal Practice Objects",
-    "activePhase": "Phase 1 — Metric Schema + Recording Truth",
-    "activeBranch": "product/819-universal-practice-objects",
-    "pullRequest": 80,
+    "activeMilestone": "AXIS 8.21 — Flow / Session Blueprint",
+    "activePhase": "Phase 0 — Flow Foundation + Ownership Contract",
+    "activeBranch": "product/821-flow-session-blueprint",
+    "pullRequest": null,
     "pullRequestDraft": true,
-    "baselineRelease": "8.18",
-    "baselineRuntimeSha": "65e3525e78f021afda7db19d27722626af9514d8",
+    "baselineRelease": "8.20.1",
+    "baselineRuntimeSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
     "intendedProductBehaviorChange": true,
-    "nextProductRelease": "8.19",
+    "nextProductRelease": "8.21",
     "foundation": {
-      "metricSchema": "axis.metric-schema.v1",
-      "encounterMetrics": "axis.encounter-metrics.v1",
-      "foundationCommit": "9f45c4ed3bfdad1fa113801b4af0e6d0355dfa8b",
-      "crossPlatformProofRun": 32676046208,
-      "crossPlatformProofConclusion": "success",
-      "primitiveCount": 9,
-      "legacyStrengthOwner": "v61",
-      "legacyStrengthFactStore": "axis_v8_meta",
-      "baseEventFactStore": "axis_v60_state",
-      "schemaSnapshotImmutable": true
+      "objectTruth": "metricSchema on canonical Object truth",
+      "executableObjectRuntime": "window.__AXIS_EXECUTABLE_OBJECTS__",
+      "executionModes": ["single", "sets", "rounds", "timed", "hold", "complete"],
+      "encounterTruth": "immutable metricSchemaSnapshot + executionModeSnapshot",
+      "classicStrengthWriter": "v61",
+      "sessionEncounterOwner": "app.js",
+      "activeOwners": "existing v82/v87 lifecycle + presentation",
+      "authoritativeStores": ["axis_v60_state", "axis_v8_meta", "axis_v89_speak", "axis_v42_media"]
     },
-    "nextSlice": "Persist normalized metricSchema on custom Objects through the existing v874 editor, preserving legacy profiles and historical Encounter truth before connecting Recording UI."
+    "flow": {
+      "status": "foundation-design",
+      "principle": "intent is not history; reality remains authoritative",
+      "orderedObjectReferences": true,
+      "temporaryOverridesMayMutateObjectDefaults": false,
+      "requiresAllObjectsActive": false,
+      "deviationPenalty": false,
+      "newPersistenceOwnerAllowed": false,
+      "newEncounterWriterAllowed": false,
+      "historicalEncounterRewriteAllowed": false,
+      "proposedPortableContract": "axis.flow.v1"
+    },
+    "interactionExperiment": {
+      "name": "Active Action Lens",
+      "status": "non-blocking-research",
+      "releaseBlocking": false,
+      "presentationOnly": true,
+      "browserFullscreenApi": false,
+      "changesPrimaryTapSemantics": false,
+      "newTrainingOwnerAllowed": false
+    },
+    "nextSlice": "Inspect existing plan/group-plan/session structures, define one minimal Flow resolver and ownership boundary, then prove A→B→C orchestration delegates to the existing recorder/Active/Encounter owners without creating a second truth model."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
-    "preserveStorage": [
-      "axis_v60_state",
-      "axis_v8_meta",
-      "axis_v89_speak",
-      "axis_v42_media"
-    ],
+    "preserveStorage": ["axis_v60_state", "axis_v8_meta", "axis_v89_speak", "axis_v42_media"],
     "rules": [
-      "No destructive migration of historical sessions/events/meta.",
-      "Classic weight/reps set facts remain v61-owned until an explicit proved handoff.",
-      "Existing custom Objects without metricSchema resolve through legacy type/profile defaults.",
-      "Changing the current Object schema must never rewrite historical Encounter schema snapshots."
+      "No destructive migration of historical sessions, Encounters, event metadata or media.",
+      "Classic weight/reps set facts remain v61-owned unless a separately proved owner handoff explicitly retires it.",
+      "Existing Objects without explicit metricSchema continue through proven legacy fallback.",
+      "Object edits affect future recording only and never rewrite historical Encounter schema/execution snapshots.",
+      "Flow is intent/orchestration, not historical truth; skipped, inserted or reordered reality is valid.",
+      "A Flow step may temporarily override recording/execution semantics but may not mutate the referenced Object defaults.",
+      "Encounter truth must remain valid after its source Flow is edited, reordered or deleted.",
+      "No Flow work may create a second Session, Encounter, Active, recorder or persistence owner."
     ]
+  },
+  "crossPlatform": {
+    "foundationId": "axis-native-foundation-0",
+    "nativeRepository": "INDEPENDENTWU/AXIS-iOS",
+    "portableContracts": ["axis.domain.v1", "axis.data.v1"],
+    "rule": "Shared product/data semantics are portable; Web implementation accidents are not domain contracts."
   },
   "presentationFoundation": {
     "locales": [
@@ -74,13 +105,14 @@
       {"id": "en", "name": "English", "requireProfessionalTranslation": true}
     ],
     "themes": ["system", "light", "dark"],
-    "status": "planned after the 8.19 recording-truth foundation is stable"
+    "status": "incremental; current internal enums must never leak into localized visible product copy"
   },
   "authorityOrder": [
     "governance/project-state.json",
     "docs/HANDOFF.md",
     "docs/CURRENT_RELEASE.md",
     "docs/CURRENT_WORK.md",
+    "docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md",
     "governance/owners.json",
     "governance/retirements.json",
     "governance/ci-inventory.json",
@@ -92,9 +124,9 @@
   ],
   "notes": [
     "Chat history is supplementary context, never authoritative project state.",
-    "AXIS 8.18 engineering convergence is merged and Production-sealed at 65e3525e78f021afda7db19d27722626af9514d8.",
-    "PR #80 is a real product-capability release line and remains Draft until Object → Recording → History is sealed.",
-    "Metric Schema is a pure semantic contract/resolver and must never become a second persistence owner.",
-    "Source/build historical transform convergence remains separate engineering debt and must not be mixed into 8.19 product truth without explicit scope."
+    "AXIS 8.20.1 is dual-provider Production-sealed at fdbfea738489fca6b19b3c8c7b502977373e4e4f with Vercel/EdgeOne exact artifact parity and Chromium/iPhone WebKit proof.",
+    "8.20.1 sealed executable Object schema/live-state convergence, execution-mode Active lifecycle, classic v61 authority and localized visible enum presentation without adding a persistence owner.",
+    "8.21 must orchestrate existing truth rather than replace it: Object defaults remain reusable, Flow overrides are temporary, and Encounter snapshots remain immutable.",
+    "Active Action Lens is an optional presentation experiment and must be removable without changing training facts or 8.21 Flow semantics."
   ]
 }
