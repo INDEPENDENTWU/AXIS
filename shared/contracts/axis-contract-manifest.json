@@ -8,6 +8,7 @@
   "metricSchema": "axis.metric-schema.v1",
   "encounterMetrics": "axis.encounter-metrics.v1",
   "flow": "axis.flow.v1",
+  "flowProvenance": "axis.flow-provenance.v1",
   "normalizedStateFixture": "axis.normalized-state-fixture.v1",
   "invariants": {
     "localFirstWorkout": true,
@@ -29,7 +30,8 @@
     "flowIntentNotHistory": true,
     "flowOverrideNoObjectMutation": true,
     "flowResolverPure": true,
-    "flowNoSecondTrainingStore": true
+    "flowNoSecondTrainingStore": true,
+    "flowProvenanceSnapshotImmutable": true
   },
   "platforms": {
     "web": {"productionOwner": "INDEPENDENTWU/AXIS", "releaseIndependent": true},

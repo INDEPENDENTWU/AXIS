@@ -3,11 +3,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   FLOW_SCHEMA_ID,
+  FLOW_PROVENANCE_ID,
   FLOW_RESOLVER_VERSION,
   EXECUTION_MODES,
   normalizeFlow,
   deriveExecutionMode,
-  resolveFlowStep
+  resolveFlowStep,
+  createFlowEncounterProvenance
 } from '../lib/axis-flow.mjs';
 
 const readJson=file=>JSON.parse(fs.readFileSync(file,'utf8'));
@@ -22,18 +24,23 @@ assert.equal(new Set(EXECUTION_MODES).size,6,'execution mode set drift');
 assert.equal(FLOW_RESOLVER_VERSION,'8.21');
 
 const flowSchema=readJson(path.join(ROOT,'shared/contracts/axis-flow-v1.schema.json'));
+const provenanceSchema=readJson(path.join(ROOT,'shared/contracts/axis-flow-provenance-v1.schema.json'));
 const manifest=readJson(path.join(ROOT,'shared/contracts/axis-contract-manifest.json'));
 assert.equal(flowSchema.$id,FLOW_SCHEMA_ID);
 assert.equal(flowSchema.properties?.schema?.const,FLOW_SCHEMA_ID);
 assert.deepEqual(flowSchema.$defs?.step?.properties?.executionOverride?.enum,EXECUTION_MODES);
 assert.equal(flowSchema.$defs?.step?.properties?.metricOverride?.properties?.metrics?.items?.oneOf?.[1]?.$ref,'./axis-metric-schema-v1.schema.json#/$defs/metric');
+assert.equal(provenanceSchema.$id,FLOW_PROVENANCE_ID);
+assert.equal(provenanceSchema.properties?.schema?.const,FLOW_PROVENANCE_ID);
+assert.deepEqual(provenanceSchema.properties?.stepSnapshot?.properties?.effectiveExecutionMode?.enum,EXECUTION_MODES);
 assert.equal(manifest.flow,FLOW_SCHEMA_ID);
-for(const key of ['flowIntentNotHistory','flowOverrideNoObjectMutation','flowResolverPure','flowNoSecondTrainingStore'])assert.equal(manifest.invariants?.[key],true,`manifest Flow invariant ${key}`);
+assert.equal(manifest.flowProvenance,FLOW_PROVENANCE_ID);
+for(const key of ['flowIntentNotHistory','flowOverrideNoObjectMutation','flowResolverPure','flowNoSecondTrainingStore','flowProvenanceSnapshotImmutable'])assert.equal(manifest.invariants?.[key],true,`manifest Flow invariant ${key}`);
 
 const fixtureDir=path.join(ROOT,'shared/fixtures/flow');
 const files=fs.readdirSync(fixtureDir).filter(file=>file.endsWith('.json')).sort();
-assert.ok(files.length>=2,'Flow fixture coverage missing');
-let resolvedCount=0;
+assert.ok(files.length>=3,'Flow fixture coverage missing');
+let resolvedCount=0,provenanceCount=0;
 for(const file of files){
   const fixture=readJson(path.join(fixtureDir,file));
   assert.equal(fixture.schema,'axis.flow-fixture.v1',`${file} fixture schema`);
@@ -54,12 +61,26 @@ for(const file of files){
     assert.equal(resolved.overrideProvenance.metricSchema,expected.metricSource,`${file}/${expected.stepRef} metric provenance`);
     assert.equal(resolved.overrideProvenance.executionMode,expected.executionSource,`${file}/${expected.stepRef} execution provenance`);
     assert.equal(resolved.nextIntent?.stepRef??null,expected.nextStepRef,`${file}/${expected.stepRef} next intent`);
+    if(fixture.expectedProvenance&&expected.stepRef===fixture.expectedProvenance.flowStepRef){
+      const provenance=createFlowEncounterProvenance(resolved);
+      assert.deepEqual(provenance,fixture.expectedProvenance,`${file}/${expected.stepRef} frozen Flow provenance`);
+      const frozen=structuredClone(provenance);
+      resolved.effectiveMetricSchema.metrics[0].label='changed after provenance';
+      resolved.overrideProvenance.metricSchema='changed-after-provenance';
+      fixture.flow.steps[0].objectRef='edited-later';
+      fixture.objects[0].metricSchema={metrics:['pace']};
+      assert.deepEqual(provenance,frozen,`${file}/${expected.stepRef} provenance changed after later Flow/Object edits`);
+      provenanceCount++;
+      fixture.flow=JSON.parse(flowBefore);
+      fixture.objects=JSON.parse(objectsBefore);
+    }
     resolvedCount++;
   }
   assert.equal(JSON.stringify(fixture.flow),flowBefore,`${file} resolver mutated Flow input`);
   assert.equal(JSON.stringify(fixture.objects),objectsBefore,`${file} resolver mutated Object input`);
 }
-assert.ok(resolvedCount>=4,'Flow fixtures did not resolve enough heterogeneous steps');
+assert.ok(resolvedCount>=5,'Flow fixtures did not resolve enough heterogeneous steps');
+assert.ok(provenanceCount>=1,'Flow provenance immutability fixture not exercised');
 
 // Object-specific executable truth must beat global fallbacks.
 {
@@ -80,8 +101,10 @@ assert.ok(resolvedCount>=4,'Flow fixtures did not resolve enough heterogeneous s
   assert.deepEqual(resolved.effectiveMetricSchema.metrics.map(metric=>metric.id),['completed']);
   assert.equal(resolved.effectiveExecutionMode,'complete');
   assert.equal(resolved.overrideProvenance.temporary,true);
+  const provenance=createFlowEncounterProvenance(resolved);
   resolved.effectiveMetricSchema.metrics[0].label='mutated resolved copy';
   assert.equal(JSON.stringify(object),before,'mutating resolved output leaked into Object defaults');
+  assert.deepEqual(provenance.stepSnapshot.effectiveMetricIds,['completed'],'provenance shares mutable metric references');
 }
 
 // Metric-only Flow override may derive execution when the Object has no current executable truth.
@@ -113,5 +136,6 @@ assert.throws(()=>normalizeFlow({schema:FLOW_SCHEMA_ID,id:'bad',steps:[{id:'a',o
 assert.throws(()=>normalizeFlow({schema:FLOW_SCHEMA_ID,id:'bad',steps:[{id:'a',objectRef:'x',executionOverride:'loop'}]}),/invalid execution mode/);
 assert.throws(()=>resolveFlowStep({flow:{schema:FLOW_SCHEMA_ID,id:'bad',steps:[{id:'a',objectRef:'missing'}]},objects:[]}),/was not found/);
 assert.throws(()=>normalizeFlow({schema:'axis.flow.v2',id:'bad',steps:[{id:'a',objectRef:'x'}]}),/unsupported Flow schema/);
+assert.throws(()=>createFlowEncounterProvenance({schema:'axis.resolved-flow-step.v2'}),/unsupported resolved step schema/);
 
-console.log(`[AXIS 8.21 Flow contract] PASS · ${files.length} portable fixtures · ${resolvedCount} resolved steps · Flow override > Object truth > global fallback > legacy compatibility · pure/no-store resolver`);
+console.log(`[AXIS 8.21 Flow contract] PASS · ${files.length} portable fixtures · ${resolvedCount} resolved steps · ${provenanceCount} immutable provenance fixture · pure/no-store resolver + detached Encounter context`);

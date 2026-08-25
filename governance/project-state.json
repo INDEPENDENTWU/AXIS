@@ -37,14 +37,15 @@
   },
   "engineering": {
     "activeMilestone": "AXIS 8.21 — Flow / Session Blueprint",
-    "activePhase": "Phase 1 — Flow Resolver Foundation",
+    "activePhase": "Phase 1B — Immutable Encounter Flow Provenance",
     "activeBranch": "product/821-flow-session-blueprint",
     "pullRequest": 88,
     "pullRequestDraft": true,
     "baselineRelease": "8.20.1",
     "baselineRuntimeSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
     "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
-    "phase0Proof": "Repository, Work Continuity, Runtime Foundation, Current Release, Runtime, Deep Compatibility, Cross-Platform, PR Convergence and EdgeOne package workflows all success",
+    "phase1ResolverProofSha": "2892d8807e6d2688cb366019d64c6e9b573fcb66",
+    "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "intendedProductBehaviorChange": true,
     "nextProductRelease": "8.21",
     "foundation": {
@@ -58,9 +59,10 @@
       "authoritativeStores": ["axis_v60_state", "axis_v8_meta", "axis_v89_speak", "axis_v42_media"]
     },
     "flow": {
-      "status": "portable-resolver-foundation-under-ci",
+      "status": "provenance-foundation-under-ci",
       "principle": "intent is not history; reality remains authoritative",
       "portableContract": "axis.flow.v1",
+      "provenanceContract": "axis.flow-provenance.v1",
       "pureResolver": "lib/axis-flow.mjs",
       "contractGate": "scripts/axis-821-flow-contract.mjs via AXIS Cross-Platform Foundation Gate",
       "orderedObjectReferences": true,
@@ -82,7 +84,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Seal axis.flow.v1 + pure resolver on the exact PR head, then add the smallest immutable Encounter Flow provenance adapter before any durable Flow storage or visible composition UI."
+    "nextSlice": "Seal detached axis.flow-provenance.v1 snapshots, then choose the smallest app-owned Flow definition/runtime representation and integrate provenance only through the established app.js Encounter writer before visible Flow UI."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
@@ -95,13 +97,14 @@
       "Flow is intent/orchestration, not historical truth; skipped, inserted or reordered reality is valid.",
       "A Flow step may temporarily override recording/execution semantics but may not mutate the referenced Object defaults.",
       "Encounter truth must remain valid after its source Flow is edited, reordered or deleted.",
+      "Flow provenance is additive context; metricSchemaSnapshot and executionModeSnapshot remain Encounter fact authority.",
       "No Flow work may create a second Session, Encounter, Active, recorder or persistence owner."
     ]
   },
   "crossPlatform": {
     "foundationId": "axis-native-foundation-0",
     "nativeRepository": "INDEPENDENTWU/AXIS-iOS",
-    "portableContracts": ["axis.domain.v1", "axis.data.v1", "axis.flow.v1"],
+    "portableContracts": ["axis.domain.v1", "axis.data.v1", "axis.flow.v1", "axis.flow-provenance.v1"],
     "rule": "Shared product/data semantics are portable; Web implementation accidents are not domain contracts."
   },
   "presentationFoundation": {
@@ -131,10 +134,10 @@
   "notes": [
     "Chat history is supplementary context, never authoritative project state.",
     "AXIS 8.20.1 is dual-provider Production-sealed at fdbfea738489fca6b19b3c8c7b502977373e4e4f with Vercel/EdgeOne exact artifact parity and Chromium/iPhone WebKit proof.",
-    "8.20.1 sealed executable Object schema/live-state convergence, execution-mode Active lifecycle, classic v61 authority and localized visible enum presentation without adding a persistence owner.",
-    "Phase 0 ownership/reuse inspection is sealed at 84310744b528441f3fa8d3feb51e8ed149e02b78 with all nine baseline PR workflow families successful.",
+    "Phase 0 ownership/reuse inspection is sealed at 84310744b528441f3fa8d3feb51e8ed149e02b78.",
+    "Phase 1 axis.flow.v1 resolver foundation is sealed at 2892d8807e6d2688cb366019d64c6e9b573fcb66 with all nine baseline workflows success.",
     "8.21 Flow resolver precedence is temporary Flow-step override, then Object-specific executable truth, then existing global/default fallback, then legacy compatibility only when current truth is absent.",
-    "axis.flow.v1 and lib/axis-flow.mjs are portable/read-only foundation artifacts; they do not authorize Flow persistence, UI ownership, Active ownership or Encounter writes.",
+    "axis.flow-provenance.v1 freezes only additive Flow/step context; it does not replace Encounter metricSchemaSnapshot or executionModeSnapshot.",
     "Active Action Lens is an optional presentation experiment and must be removable without changing training facts or 8.21 Flow semantics."
   ]
 }

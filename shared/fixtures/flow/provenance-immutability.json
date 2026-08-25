@@ -1,0 +1,30 @@
+{
+  "schema": "axis.flow-fixture.v1",
+  "contract": "axis.flow.v1",
+  "name": "provenance remains detached from later Flow edits",
+  "flow": {
+    "schema": "axis.flow.v1",
+    "id": "flow-provenance",
+    "steps": [
+      {"id": "timed-step", "objectRef": "timed-object", "repeat": 2}
+    ]
+  },
+  "objects": [
+    {"id": "timed-object", "metricSchema": {"metrics": ["duration", "intensity"]}}
+  ],
+  "expected": [
+    {"stepRef": "timed-step", "metricIds": ["duration", "intensity"], "executionMode": "timed", "metricSource": "object", "executionSource": "object", "nextStepRef": null}
+  ],
+  "expectedProvenance": {
+    "schema": "axis.flow-provenance.v1",
+    "flowRef": "flow-provenance",
+    "flowStepRef": "timed-step",
+    "objectRef": "timed-object",
+    "stepSnapshot": {
+      "repeat": 2,
+      "effectiveMetricIds": ["duration", "intensity"],
+      "effectiveExecutionMode": "timed",
+      "overrideProvenance": {"metricSchema": "object", "executionMode": "object", "temporary": false}
+    }
+  }
+}

@@ -12,4 +12,4 @@ Rules:
 
 Current foundation cases cover pause/resume active-only duration, A→B→A latest-real-activity gap semantics, incomplete strength switching, and overlapping legacy interval union.
 
-`flow/` contains AXIS 8.21 portable Flow fixtures. These prove heterogeneous Object sequencing and temporary override non-mutation without introducing a persistence model, UI contract or second Session/Encounter truth.
+`flow/` contains AXIS 8.21 portable Flow fixtures. They prove heterogeneous Object sequencing, temporary override non-mutation and detached Flow provenance that remains unchanged after later Flow/Object edits. These fixtures do not authorize a persistence model, UI contract or second Session/Encounter truth.
