@@ -7,6 +7,23 @@ let src=fs.readFileSync(FILE,'utf8');
 const once=(from,to,label)=>{const hits=src.split(from).length-1;if(hits!==1)fail(`${label} expected once, found ${hits}`);src=src.replace(from,to)};
 
 /*
+ * Flow composition delegates to the established canonical picker API. That API
+ * owns personal/recent projection, composition-aware search, refresh/reset and
+ * canonical Object resolution. Flow intercepts only the final visible selection
+ * while it is in add-step mode, so no second catalog or picker lifecycle exists.
+ */
+once(
+ "function axis821FlowSurfaceBeginPick(){if(!axis821FlowDraft)return;axis821FlowSurfacePullEditor();axis821FlowPick=true;axis821FlowAwaitCustom=false;axis821FlowSurfaceClose();if($('#eqSearch'))$('#eqSearch').value='';renderEqList();openSheet('eqSheet')}",
+ "function axis821FlowSurfaceBeginPick(){if(!axis821FlowDraft)return;axis821FlowSurfacePullEditor();axis821FlowPick=true;axis821FlowAwaitCustom=false;axis821FlowSurfaceClose();const opened=window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('recording');if(opened!==true){if($('#eqSearch'))$('#eqSearch').value='';renderEqList();openSheet('eqSheet')}}",
+ 'Flow add delegates to canonical equipment picker'
+);
+once(
+ "if(axis821FlowPick){const b=e.target.closest?.('#eqSheet [data-eq]');if(b){e.preventDefault();e.stopImmediatePropagation();return axis821FlowSurfaceAddObject(b.dataset.eq)}if(e.target.closest?.('#addCustomEq'))",
+ "if(axis821FlowPick){const b=e.target.closest?.('#eqSheet [data-eq],#eqSheet [data-v8124-pick]');if(b){e.preventDefault();e.stopImmediatePropagation();return axis821FlowSurfaceAddObject(b.dataset.eq||b.dataset.v8124Pick)}if(e.target.closest?.('#addCustomEq'))",
+ 'Flow accepts canonical picker projections'
+);
+
+/*
  * The runtime API intentionally leaves a committed current-step Encounter bound
  * to FlowRun until an orchestrator explicitly advances it. The visible Flow UI
  * may automate that transition only when *it* opened Record Current. This keeps
@@ -56,4 +73,4 @@ once(
 
 try{new Function(src)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.21 Flow user surface compat] PASS · automatic advance is scoped to visible Record Current intent · runtime/direct/ordinary Quick Record remains non-consuming');
+console.log('[AXIS 8.21 Flow user surface compat] PASS · canonical picker delegation · automatic advance scoped to visible Record Current · runtime/direct/ordinary Quick Record non-consuming');
