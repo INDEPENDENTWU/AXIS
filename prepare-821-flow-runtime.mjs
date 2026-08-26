@@ -54,7 +54,6 @@ window.__AXIS_FLOW_RUNTIME__={version:'8.21',schema:AXIS821_FLOW_SCHEMA,owner:'a
  s=once(s,'e.executionModeSnapshot=axis820ExecutionModeForEq(eq);','e.executionModeSnapshot=axis821ExecutionForRecording(eq);','Encounter execution handoff');
  s=once(s,"function axis820BeginQuickRecorder(ref){const eq=axis818Eq(ref);if(!eq||!Array.isArray(eq.metricSchema)||!eq.metricSchema.length)return false;","function axis820BeginQuickRecorder(ref){const eq=axis818Eq(ref);if(!eq||((!Array.isArray(eq.metricSchema)||!eq.metricSchema.length)&&!axis821HasMetricOverrideForRecording(eq)))return false;",'Quick recorder Flow override admission');
  s=once(s,"learnMemory(eq.id);state.active.events.push(e);save();try{closeSheet('scanSheet')}","learnMemory(eq.id);axis821AttachFlowProvenance(e,eq);state.active.events.push(e);save();try{closeSheet('scanSheet')}",'Encounter Flow provenance commit boundary');
- s=once(s,'load();buildChoices();bind();render();','load();axis821FlowState();buildChoices();bind();render();','Flow state boot normalization');
  syntax(s,FILE);write(FILE,s);
 }
 
