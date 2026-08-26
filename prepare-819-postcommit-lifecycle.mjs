@@ -62,3 +62,4 @@ await import('./prepare-821-flow-user-surface-compat.mjs');
 await import('./prepare-821-flow-user-surface-proof.mjs');
 await import('./prepare-821-product-convergence-compat.mjs');
 await import('./prepare-821-product-convergence.mjs');
+await import('./prepare-821-product-convergence-proof.mjs');
