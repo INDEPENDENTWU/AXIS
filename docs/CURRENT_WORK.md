@@ -29,6 +29,8 @@ Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEP
 
 The governed milestone remains **AXIS 8.21 — Flow / Session Blueprint**.
 
+The governed active branch remains `product/821-flow-session-blueprint`; PR #92 is a bounded convergence child branch and does not replace that parent governance identity.
+
 This PR is a bounded convergence child slice after the merged user surface. It exists to prove the real-world deviation path before public release identity is advanced to 8.21.
 
 ## Active change
