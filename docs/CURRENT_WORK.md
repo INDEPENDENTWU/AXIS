@@ -11,6 +11,10 @@ The fixed public endpoints remain:
 
 The public release identity remains deliberately **8.20.1** while 8.21 product semantics are still being corrected and re-sealed.
 
+The governed active milestone remains **AXIS 8.21 — Flow / Session Blueprint** and the governed active branch remains `product/821-flow-session-blueprint`. PR #99 is a bounded correction branch inside that milestone; it does not replace the parent governance identity.
+
+Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1` and `axis.flow-provenance.v1`.
+
 The inherited architecture remains single-owner:
 
 - Flow definitions + one FlowRun: existing `axis_v60_state` app owner;
