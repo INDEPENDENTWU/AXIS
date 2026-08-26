@@ -17,14 +17,17 @@ const waitCore=async()=>{
  await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.version==='8.21'&&window.__AXIS_821_FLOW_SURFACE__?.version==='8.21'&&window.__AXIS_QUICK_RECORD__?.owner==='v61',undefined,{timeout:9000});
 };
 const core=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
-const addStep=async id=>{
+const addStep=async(id,query)=>{
  await tap(page.locator('[data-axis-flow-add]'));
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:2500});
- const pick=page.locator(`#eqSheet [data-eq="${id}"]`).first();assert.equal(await pick.count(),1,`existing Object picker did not expose ${id}`);
- await tap(pick);
+ const search=page.locator('#eqSearch');assert.equal(await search.count(),1,'canonical Object picker search missing');
+ await search.fill(query);
+ await page.waitForFunction(id=>[...document.querySelectorAll(`#eqSheet [data-v8124-pick="${id}"]`)].some(x=>x.getClientRects().length>0&&getComputedStyle(x).visibility!=='hidden'),id,{timeout:3000});
+ const picks=page.locator(`#eqSheet [data-v8124-pick="${id}"]`),index=await picks.evaluateAll(xs=>xs.findIndex(x=>x.getClientRects().length>0&&getComputedStyle(x).visibility!=='hidden'));
+ assert.ok(index>=0,`canonical Object picker did not visibly project ${id}`);
+ await tap(picks.nth(index));
  await page.waitForFunction(()=>document.querySelector('#axis821FlowSheet')?.classList.contains('show'),undefined,{timeout:2500});
 };
-const current=()=>page.evaluate(()=>window.__AXIS_FLOW_RUNTIME__?.current?.()||null);
 
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());
@@ -43,11 +46,11 @@ try{
  assert.equal(surface.definitionOwner,'app.js');assert.equal(surface.pickerOwner,'existing-eqSheet');assert.equal(surface.recordingOwner,'existing-v61+app');assert.equal(surface.newStorage,false);assert.equal(surface.newPicker,false);assert.equal(surface.newRecorder,false);assert.equal(surface.newEncounterWriter,false);
  assert.equal(await page.locator('#axis821FlowHome').getAttribute('data-state'),'empty');
 
- console.log(`[AXIS 8.21 Flow surface ${ENGINE}] compose A/C/B through the existing Object picker, then reorder`);
+ console.log(`[AXIS 8.21 Flow surface ${ENGINE}] compose A/C/B through visible canonical Object picker projections, then reorder`);
  await tap(page.locator('#axis821FlowHome [data-axis-flow-new]'));
  await page.waitForFunction(()=>document.querySelector('#axis821FlowSheet')?.classList.contains('show')&&document.querySelector('#axis821FlowTitleInput'),undefined,{timeout:2500});
  await page.locator('#axis821FlowTitleInput').fill('日常流程');
- await addStep('axis821-ui-a');await addStep('axis821-ui-c');await addStep('chest');
+ await addStep('axis821-ui-a','Flow 时间项');await addStep('axis821-ui-c','Flow 完成项');await addStep('chest','胸推');
  let names=await page.locator('.axis821FlowStep>span>b').allTextContents();assert.deepEqual(names,['Flow 时间项','Flow 完成项','胸推']);
  await tap(page.locator('[data-axis-flow-move="-1"][data-index="2"]'));
  names=await page.locator('.axis821FlowStep>span>b').allTextContents();assert.deepEqual(names,['Flow 时间项','胸推','Flow 完成项']);
@@ -97,5 +100,5 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});await waitCore();
  c=await core();assert.deepEqual(c.flows[0].steps.map(x=>x.objectRef),['axis821-ui-c','axis821-ui-a','chest']);assert.equal(JSON.stringify(c.active.events.map(e=>e.flowProvenance)),frozen,'reload changed immutable Encounter provenance');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.21 Flow surface ${ENGINE}] PASS · existing picker composition · reorder/save/reload · current/next intent · canonical Quick Record · Encounter-gated advance · skip reality tolerance · immutable history`);
+ console.log(`[AXIS 8.21 Flow surface ${ENGINE}] PASS · canonical picker composition · reorder/save/reload · current/next intent · canonical Quick Record · Encounter-gated advance · skip reality tolerance · immutable history`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
