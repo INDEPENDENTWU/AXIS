@@ -11,10 +11,10 @@ const syntax=(src,label)=>{try{new Function(src)}catch(e){fail(`${label} syntax 
    the existing app-owned axis_v60_state boundary. Flow remains intent only. */
 {
  const FILE='app.js';let s=read(FILE);
- s=once(s,"let state={sessions:[],active:null,selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{...DEFAULT_PROFILE},prefs:JSON.parse(JSON.stringify(DEFAULT_PREFS))};","let state={sessions:[],active:null,flows:[],flowRun:null,selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{...DEFAULT_PROFILE},prefs:JSON.parse(JSON.stringify(DEFAULT_PREFS))};",'app state Flow defaults');
- s=once(s,"function save(){try{localStorage.setItem(KEY,JSON.stringify({version:VERSION,sessions:state.sessions,active:state.active,profile:state.profile,prefs:state.prefs}))}catch{}}","function save(){try{localStorage.setItem(KEY,JSON.stringify({version:VERSION,sessions:state.sessions,active:state.active,flows:state.flows,flowRun:state.flowRun,profile:state.profile,prefs:state.prefs}))}catch{}}",'app state Flow persistence');
- s=once(s,"state={sessions:[],active:null,selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{...DEFAULT_PROFILE},prefs:clone(DEFAULT_PREFS)};","state={sessions:[],active:null,flows:[],flowRun:null,selectedEq:null,frames:[],clip:null,stream:null,ai:null,profile:{...DEFAULT_PROFILE},prefs:clone(DEFAULT_PREFS)};",'clearAll Flow reset');
- s=once(s,"JSON.stringify({version:VERSION,exportedAt:new Date().toISOString(),sessions:state.sessions,profile:state.profile,prefs:state.prefs},null,2)","JSON.stringify({version:VERSION,exportedAt:new Date().toISOString(),sessions:state.sessions,flows:state.flows,profile:state.profile,prefs:state.prefs},null,2)",'backup durable Flow definitions');
+ s=onceRe(s,/let state=\{sessions:\[\],active:null,(?!flows:\[\],flowRun:null,)/,"let state={sessions:[],active:null,flows:[],flowRun:null,",'app state Flow defaults');
+ s=onceRe(s,/function save\(\)\{try\{localStorage\.setItem\(KEY,JSON\.stringify\(\{version:VERSION,sessions:state\.sessions,active:state\.active,(?!flows:state\.flows,flowRun:state\.flowRun,)/,"function save(){try{localStorage.setItem(KEY,JSON.stringify({version:VERSION,sessions:state.sessions,active:state.active,flows:state.flows,flowRun:state.flowRun,",'app state Flow persistence');
+ s=onceRe(s,/(?<!let )state=\{sessions:\[\],active:null,(?!flows:\[\],flowRun:null,)/,"state={sessions:[],active:null,flows:[],flowRun:null,",'clearAll Flow reset');
+ s=onceRe(s,/JSON\.stringify\(\{version:VERSION,exportedAt:new Date\(\)\.toISOString\(\),sessions:state\.sessions,(?!flows:state\.flows,)/,"JSON.stringify({version:VERSION,exportedAt:new Date().toISOString(),sessions:state.sessions,flows:state.flows,",'backup durable Flow definitions');
 
  const syncRe=/window\.__AXIS_8201_OBJECT_SYNC__=\{[^\n]*\};/;
  const sync=(s.match(syncRe)||[])[0];if(!sync)fail('8.20.1 Object sync export missing');
