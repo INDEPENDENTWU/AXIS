@@ -55,3 +55,4 @@ await import('./prepare-820-release.mjs');
 await import('./prepare-8201-release.mjs');
 await import('./prepare-821-flow-runtime.mjs');
 await import('./prepare-821-recording-property-surface.mjs');
+await import('./prepare-821-recording-property-proof.mjs');
