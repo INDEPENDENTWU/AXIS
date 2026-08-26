@@ -37,7 +37,7 @@
   },
   "engineering": {
     "activeMilestone": "AXIS 8.21 — Flow / Session Blueprint",
-    "activePhase": "Phase 1B — Immutable Encounter Flow Provenance",
+    "activePhase": "Phase 2 — App-owned Flow Definition / Runtime Boundary",
     "activeBranch": "product/821-flow-session-blueprint",
     "pullRequest": 88,
     "pullRequestDraft": true,
@@ -46,6 +46,8 @@
     "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
     "phase1ResolverProofSha": "2892d8807e6d2688cb366019d64c6e9b573fcb66",
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
+    "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
+    "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed. Current Release Chromium had one inherited Capture async timeout and passed unchanged on exact-head rerun; WebKit passed without retry.",
     "intendedProductBehaviorChange": true,
     "nextProductRelease": "8.21",
     "foundation": {
@@ -59,12 +61,16 @@
       "authoritativeStores": ["axis_v60_state", "axis_v8_meta", "axis_v89_speak", "axis_v42_media"]
     },
     "flow": {
-      "status": "provenance-foundation-under-ci",
+      "status": "runtime-boundary-under-ci",
       "principle": "intent is not history; reality remains authoritative",
       "portableContract": "axis.flow.v1",
       "provenanceContract": "axis.flow-provenance.v1",
       "pureResolver": "lib/axis-flow.mjs",
-      "contractGate": "scripts/axis-821-flow-contract.mjs via AXIS Cross-Platform Foundation Gate",
+      "runtimePrepare": "prepare-821-flow-runtime.mjs",
+      "runtimeContract": "scripts/axis-821-flow-runtime-contract.mjs",
+      "physicalSmoke": "scripts/axis-821-flow-runtime-smoke.mjs",
+      "contractGate": "AXIS Cross-Platform Foundation Gate",
+      "physicalGate": "AXIS Current Release Gate · Chromium + iPhone-like WebKit",
       "orderedObjectReferences": true,
       "temporaryOverridesMayMutateObjectDefaults": false,
       "requiresAllObjectsActive": false,
@@ -72,7 +78,14 @@
       "newPersistenceOwnerAllowed": false,
       "newEncounterWriterAllowed": false,
       "historicalEncounterRewriteAllowed": false,
-      "persistenceChosen": false,
+      "persistenceChosen": true,
+      "stateContainer": "axis_v60_state",
+      "definitionField": "flows",
+      "runField": "flowRun",
+      "newStorageNamespace": false,
+      "encounterIntegrationOwner": "app.js",
+      "classicSetOwner": "v61",
+      "temporaryRecordingSchemaGlobalObjectMutation": false,
       "uiImplemented": false
     },
     "interactionExperiment": {
@@ -84,7 +97,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Seal detached axis.flow-provenance.v1 snapshots, then choose the smallest app-owned Flow definition/runtime representation and integrate provenance only through the established app.js Encounter writer before visible Flow UI."
+    "nextSlice": "Prove the Phase 2 same-store Flow runtime boundary on one exact head in Cross-Platform, Chromium and iPhone-like WebKit while preserving all inherited gates. Only after exact-head green may Phase 3 add the minimal mobile-first Flow composition/launch surface using the established runtime API."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
@@ -98,6 +111,8 @@
       "A Flow step may temporarily override recording/execution semantics but may not mutate the referenced Object defaults.",
       "Encounter truth must remain valid after its source Flow is edited, reordered or deleted.",
       "Flow provenance is additive context; metricSchemaSnapshot and executionModeSnapshot remain Encounter fact authority.",
+      "Flow definitions/current continuity may extend axis_v60_state only under the established app.js owner; no axis_flow_* namespace or new IndexedDB database is allowed.",
+      "Temporary Flow recording context may alter only the current recording handoff, never global Object Truth/history/Evolution projections.",
       "No Flow work may create a second Session, Encounter, Active, recorder or persistence owner."
     ]
   },
@@ -136,7 +151,9 @@
     "AXIS 8.20.1 is dual-provider Production-sealed at fdbfea738489fca6b19b3c8c7b502977373e4e4f with Vercel/EdgeOne exact artifact parity and Chromium/iPhone WebKit proof.",
     "Phase 0 ownership/reuse inspection is sealed at 84310744b528441f3fa8d3feb51e8ed149e02b78.",
     "Phase 1 axis.flow.v1 resolver foundation is sealed at 2892d8807e6d2688cb366019d64c6e9b573fcb66 with all nine baseline workflows success.",
-    "8.21 Flow resolver precedence is temporary Flow-step override, then Object-specific executable truth, then existing global/default fallback, then legacy compatibility only when current truth is absent.",
+    "Phase 1B axis.flow-provenance.v1 is sealed at 289fd1b2cdcbcb4e1cfa56402372b8005daadfa4 with all nine baseline workflows success; one inherited Chromium Capture timeout passed an unchanged exact-head rerun and required no product/test relaxation.",
+    "8.21 Flow resolver precedence preserves Object-specific executable truth while allowing temporary recording context without mutating reusable Object defaults.",
+    "Phase 2 chooses axis_v60_state.flows plus axis_v60_state.flowRun under app.js ownership; this is an extension of the existing store, not a new persistence owner.",
     "axis.flow-provenance.v1 freezes only additive Flow/step context; it does not replace Encounter metricSchemaSnapshot or executionModeSnapshot.",
     "Active Action Lens is an optional presentation experiment and must be removable without changing training facts or 8.21 Flow semantics."
   ]

@@ -19,8 +19,11 @@ on:
       - 'shared/fixtures/**'
       - 'lib/axis-metric-schema.mjs'
       - 'lib/axis-flow.mjs'
+      - 'prepare-819-postcommit-lifecycle.mjs'
+      - 'prepare-821-flow-runtime.mjs'
       - 'scripts/axis-819-metric-schema-contract.mjs'
       - 'scripts/axis-821-flow-contract.mjs'
+      - 'scripts/axis-821-flow-runtime-contract.mjs'
       - 'scripts/axis-schema-fixture-seal.mjs'
       - 'scripts/axis-cross-platform-foundation-contract.mjs'
       - 'scripts/axis-native-foundation-seal.mjs'
@@ -43,8 +46,11 @@ on:
       - 'shared/fixtures/**'
       - 'lib/axis-metric-schema.mjs'
       - 'lib/axis-flow.mjs'
+      - 'prepare-819-postcommit-lifecycle.mjs'
+      - 'prepare-821-flow-runtime.mjs'
       - 'scripts/axis-819-metric-schema-contract.mjs'
       - 'scripts/axis-821-flow-contract.mjs'
+      - 'scripts/axis-821-flow-runtime-contract.mjs'
       - 'scripts/axis-schema-fixture-seal.mjs'
       - 'scripts/axis-cross-platform-foundation-contract.mjs'
       - 'scripts/axis-native-foundation-seal.mjs'
@@ -73,6 +79,8 @@ jobs:
         run: node scripts/axis-819-metric-schema-contract.mjs
       - name: Validate Flow contract and resolver purity
         run: node scripts/axis-821-flow-contract.mjs
+      - name: Validate Flow runtime ownership boundary
+        run: node scripts/axis-821-flow-runtime-contract.mjs
       - name: Validate contracts and golden fixtures
         run: node scripts/axis-cross-platform-foundation-contract.mjs
       - name: Seal native foundation policies and product matrix
