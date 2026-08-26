@@ -40,7 +40,7 @@ const openCurrentFromQuick=async(id,label)=>{
  await tap(page.locator('#v8Other'));
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:2200});
  const item=await currentPickerItem(id,label);assert.equal(await item.count(),1,`${label} missing from real equipment picker`);assert.equal(await item.isVisible(),true,`${label} exists but is not visible in real equipment picker`);await tap(item);
- await page.waitForFunction(id=>document.querySelector('#scanSheet')?.classList.contains('show')&&!document.querySelector('#reviewStage')?.classList.contains('hidden')&&document.querySelector('#equipmentName')?.textContent?.trim()&&JSON.parse(localStorage.getItem('axis_v60_state')||'{}').selectedEq===id,id,{timeout:3000});
+ await page.waitForFunction(label=>document.querySelector('#scanSheet')?.classList.contains('show')&&!document.querySelector('#reviewStage')?.classList.contains('hidden')&&document.querySelector('#equipmentName')?.textContent?.trim()===label,label,{timeout:3000});
 };
 
 try{
