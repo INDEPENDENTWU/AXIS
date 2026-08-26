@@ -14,7 +14,9 @@ for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/ow
 const tap=async l=>ENGINE==='webkit'?l.tap({timeout:4500}):l.click({timeout:4500});
 const metric=(key,label,type='number',unit='',step=1)=>({key,label,type,unit,step});
 const CURRENT={id:'axis821-reality-current',name:'Flow 当前项',type:'cardio',pattern:'cardio',muscles:['心肺'],effect:'现实偏离测试',custom:true,metricSchema:[metric('duration','时间','duration','分钟',1)],metricSchemaVersion:'8.21',recording:{version:2,metrics:['duration']}};
-const DETOUR={id:'axis821-reality-detour',name:'临时其他项',type:'cardio',pattern:'cardio',muscles:['心肺'],effect:'现实偏离测试',custom:true,metricSchema:[metric('duration','时间','duration','分钟',1)],metricSchemaVersion:'8.21',recording:{version:2,metrics:['duration']}};
+/* Use a native canonical Object for the detour. This intentionally proves the ordinary
+   Quick Record → existing catalog path rather than depending on custom-object projection. */
+const DETOUR={id:'chest',name:'胸推'};
 const FLOW={schema:'axis.flow.v1',id:'axis821-reality-flow',title:'现实流程',steps:[{id:'axis821-reality-step',objectRef:CURRENT.id}],metadata:{createdAt:1,updatedAt:1}};
 
 const waitCore=async()=>{
@@ -41,11 +43,11 @@ const fillDurationAndSave=async value=>{
 
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());
- await page.evaluate(({CURRENT,DETOUR})=>{
+ await page.evaluate(CURRENT=>{
   localStorage.clear();
-  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[CURRENT,DETOUR],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
+  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[CURRENT],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
   localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
- },{CURRENT,DETOUR});
+ },CURRENT);
  await page.reload({waitUntil:'domcontentloaded'});await waitCore();
 
  await page.evaluate(flow=>{window.__AXIS_FLOW_RUNTIME__.saveFlow(flow);window.__AXIS_821_FLOW_SURFACE__.render()},FLOW);
@@ -63,7 +65,7 @@ try{
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:3000});
  await tap(await visiblePickerItem(DETOUR.id,DETOUR.name));
  await page.waitForFunction(label=>document.querySelector('#scanSheet')?.classList.contains('show')&&!document.querySelector('#reviewStage')?.classList.contains('hidden')&&document.querySelector('#equipmentName')?.textContent?.trim()===label,DETOUR.name,{timeout:3500});
- await fillDurationAndSave(6);await waitEvent(DETOUR.id);await page.waitForTimeout(180);
+ await tap(page.locator('#saveScan'));await waitEvent(DETOUR.id);await page.waitForTimeout(180);
  const detourEvent=await eventFor(DETOUR.id);assert.ok(detourEvent?.id,'temporary other Encounter was not committed');assert.ok(!detourEvent.flowProvenance,'temporary other Encounter incorrectly inherited current Flow provenance');
  let run=await page.evaluate(()=>window.__AXIS_FLOW_RUNTIME__.run()),current=await page.evaluate(()=>window.__AXIS_FLOW_RUNTIME__.current());
  assert.equal(run.status,'active');assert.equal(run.cursor,0,'temporary other Encounter advanced Flow cursor');assert.equal(run.lastEncounterId,null,'temporary other Encounter became Flow advance authority');assert.equal(current.stepRef,FLOW.steps[0].id);assert.equal(current.objectRef,CURRENT.id);
@@ -84,5 +86,5 @@ try{
  c=await core();assert.equal(c.flowRun,null);assert.equal(c.flows.length,1);assert.equal(c.flows[0].id,FLOW.id);assert.equal(JSON.stringify(c.active.events.map(e=>e.flowProvenance||null)),frozen,'dismiss rewrote factual Encounter provenance');
  assert.ok((await page.locator('#axis821FlowHome').innerText()).includes(FLOW.title),'saved Flow did not return to ready state after dismiss');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.21 Flow reality ${ENGINE}] PASS · temporary other remains factual but non-consuming · current intent survives · matching Record Current advances · dismiss clears run only`);
+ console.log(`[AXIS 8.21 Flow reality ${ENGINE}] PASS · native temporary-other Encounter remains factual but non-consuming · current intent survives · matching Record Current advances · dismiss clears run only`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
