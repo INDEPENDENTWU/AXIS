@@ -128,4 +128,4 @@ The intended Phase 3 interaction remains compact and mobile-first:
 
 Phase 3 must reuse the existing Object picker, Object Truth, recording surface and `window.__AXIS_FLOW_RUNTIME__`. It must not create a second picker/catalog, second recorder, alternate Flow storage, completion-fact writer or “deviation penalty” system.
 
-**Chat history is supplementary only. GitHub governance, contracts, tests, current main and Production evidence are authoritative.**
+Chat history is not authoritative project memory. GitHub governance, contracts, tests, current main and Production evidence are authoritative.
