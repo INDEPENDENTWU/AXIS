@@ -16,3 +16,4 @@ console.log('[AXIS 8.21 product convergence proof] PASS · existing eqSheet owne
 
 await import('./prepare-821-flow-experience-convergence.mjs');
 await import('./prepare-821-flow-experience-smoke-compat.mjs');
+await import('./prepare-821-flow-experience-proof.mjs');
