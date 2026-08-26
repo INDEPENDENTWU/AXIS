@@ -11,7 +11,7 @@ if(starts.length!==1)fail(`startActivity owner expected once, found ${starts.len
 const start=starts[0],brace=src.indexOf('{',start);
 if(brace<0)fail('startActivity body boundary missing');
 
-const helper=`function axis819ClassicActivityEncounter(x){let e=x&&typeof x==='object'?(x.e&&typeof x.e==='object'?x.e:x):null;if(!e){try{const c=readCore(),all=[...(c.active?.events||[]),...(c.sessions||[]).flatMap(s=>s?.events||[])];e=all.find(v=>v?.id===x)||null}catch{}}const schema=Array.isArray(e?.metricSchemaSnapshot)&&e.metricSchemaSnapshot.length?e.metricSchemaSnapshot:null;if(!schema)return true;const keys=new Set(schema.map(m=>m?.key||m?.id).filter(Boolean));return keys.has('weight')&&keys.has('reps')}\n`;
+const helper=`function axis819ClassicActivityEncounter(x){let e=x&&typeof x==='object'?(x.e&&typeof x.e==='object'?x.e:x):null;if(!e){try{const c=readCore(),all=[...(c.active?.events||[]),...(c.sessions||[]).flatMap(s=>s?.events||[])];e=all.find(v=>v?.id===x)||null}catch{}}const schema=Array.isArray(e?.metricSchemaSnapshot)?e.metricSchemaSnapshot:null;if(schema===null)return true;const keys=new Set(schema.map(m=>m?.key||m?.id).filter(Boolean));return keys.has('weight')&&keys.has('reps')}\n`;
 if(src.includes('function axis819ClassicActivityEncounter('))fail('Active Truth schema helper duplicated');
 src=src.slice(0,start)+helper+src.slice(start);
 const shifted=start+helper.length,shiftedBrace=src.indexOf('{',shifted);
@@ -30,7 +30,7 @@ if(fs.existsSync(MANIFEST)){
  info.gates=info.gates||{};
  info.gates.activeTruthEncounterSchemaAuthority819=true;
  info.axis819=info.axis819||{};
- info.axis819.recording=Object.assign({},info.axis819.recording,{activeTruthUsesImmutableEncounterSchema:true,activeTruthClassicOnly:true});
+ info.axis819.recording=Object.assign({},info.axis819.recording,{activeTruthUsesImmutableEncounterSchema:true,activeTruthClassicOnly:true,explicitEmptySchema:true});
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
-console.log('[AXIS 8.19 Active Truth schema seal] PASS · Active Truth activity metadata is restricted to classic weight+reps Encounter schemas · legacy no-snapshot behavior preserved');
+console.log('[AXIS 8.19 Active Truth schema seal] PASS · Active Truth activity metadata is restricted to classic weight+reps Encounter schemas · explicit empty snapshots block false Active · legacy no-snapshot behavior preserved');

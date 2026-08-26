@@ -2,182 +2,130 @@
 
 ## Production baseline at start of this work
 
-Current sealed Production remains **AXIS 8.20.1 — Executable Object Reliability**.
+The baseline at the start of this slice is merged main `90a764c033262db28c7a534292281f766a6f3c99`.
 
-- exact main SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
+That main includes:
+
+- PR #88 — the AXIS 8.21 app-owned Flow runtime boundary, merged at `fb531594b89be3158dcb739b465383abd1671d71`;
+- PR #89 — EdgeOne Production Flow gate seal, merged at `90a764c033262db28c7a534292281f766a6f3c99`;
+- exact Flow runtime smoke coverage in Chromium and iPhone-like WebKit;
+- the same Flow smoke wired into the real EdgeOne Production browser verification after Vercel/main artifact convergence.
+
+Fixed Production URLs remain:
+
 - Vercel: `https://axis-five-puce.vercel.app`
-- Vercel deployment: `dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD` — READY
 - EdgeOne: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
-- EdgeOne deployment: `dpemq8bxjopa`
-- EdgeOne verification run: `32812883590` — success
-- exact artifact/source parity + Chromium + iPhone WebKit Production proof: complete
 
-Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1` and `axis.data.v1`.
+The public release identity still reports the sealed 8.20.1 runtime identity while 8.21 capabilities are being added incrementally. Do not create a parallel runtime, recorder, Session writer, Encounter writer or persistence namespace merely to advance 8.21 product surfaces.
 
-Do not reopen 8.20.1 product behavior merely because historical compiler/runtime files still exist.
+Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1` and `axis.flow-provenance.v1`.
+
+## Governed parent milestone
+
+The governed active milestone remains **AXIS 8.21 — Flow / Session Blueprint** on `product/821-flow-session-blueprint`.
+
+PR #90 is a bounded prerequisite child slice inside that milestone: it closes the Object → recording-property surface contract before Phase 3 exposes visible Flow composition. It does not replace the governed Flow milestone or establish a parallel product track.
 
 ## Active change
 
-**AXIS 8.21 — Flow / Session Blueprint**
+**AXIS 8.21 — Canonical Recording Property Surface**
 
-- branch: `product/821-flow-session-blueprint`
-- Draft PR: **#88**
-- current phase: **Phase 2 — App-owned Flow Definition / Runtime Boundary**
+- branch: `product/821-recording-property-surface`
+- PR: **#90**
+- prerequisite purpose: close the Object/recording-surface gap before visible Flow composition is allowed to depend on Quick Record
 
-## Sealed 8.21 proofs before Phase 2
+The product rule for this slice is strict:
 
-### Phase 0 — ownership/reuse
+> A reusable Object owns which properties exist. Record/Capture owns only the values for those already-selected properties.
 
-Exact proof SHA:
+### Object editor ownership
 
-`84310744b528441f3fa8d3feb51e8ed149e02b78`
+The established v874 custom Object editor remains the sole visible schema editor.
 
-All nine baseline PR workflow families completed success. It established that `app.js` / `axis_v60_state` remains canonical Session/Object/Encounter state ownership and that Group Plan is a classic set transaction bridge, not Flow storage.
+Preset properties are expanded to the common training/practice facts already needed by AXIS:
 
-### Phase 1 — portable resolver
+- weight
+- reps
+- sets
+- duration
+- hold
+- distance
+- pace
+- speed
+- intensity
+- resistance / level
+- incline
+- rating
+- completed
 
-Exact proof SHA:
+The editor groups these properties for compact mobile scanning and adds one inline custom-property path. It does not add a second Object store or sidecar schema owner.
 
-`2892d8807e6d2688cb366019d64c6e9b573fcb66`
+### Explicit zero-property semantics
 
-All nine baseline workflows completed success, including `axis.flow.v1`, pure resolver fixtures and Chromium/iPhone WebKit inherited product coverage.
+`metricSchema: []` is now valid explicit Object truth.
 
-### Phase 1B — immutable provenance
+This is deliberately different from an old Object that has no `metricSchema` field at all:
 
-Exact proof SHA:
+- `metricSchema: []` means the user chose **no numeric/value properties**;
+- missing `metricSchema` remains eligible for inherited legacy compatibility defaults.
 
-`289fd1b2cdcbcb4e1cfa56402372b8005daadfa4`
+Clearing every selected property must therefore stay empty. AXIS must never silently re-select duration/time.
 
-Final workflow evidence on this exact head:
+The portable `axis.metric-schema.v1` contract is aligned with the same distinction, and an explicit empty Encounter snapshot must remain immutable authority rather than being treated as “snapshot missing”.
 
-- EdgeOne PR package `32879396817` — success
-- Repository `32879396818` — success
-- PR Convergence `32879396830` — success
-- Cross-Platform Foundation `32879396838` — success
-- Work Continuity `32879396815` — success
-- Runtime Foundation `32879396831` — success
-- Deep Compatibility `32879396864` — success
-- Runtime `32879396825` — success
-- Current Release `32879396826` — success
+### Recording surface
 
-Current Release Chromium initially hit one inherited 8.16 Capture `waitForFunction` timeout. No runtime/CSS/Capture code changed; the same exact head WebKit path passed. The failed Chromium job was rerun unchanged and passed the same Capture point plus all later 8.18/8.20/8.20.1 checks. No product code or timeout threshold was altered for that retry.
+Capture and Quick Record continue to use the existing app-owned recorder. They render only value controls for the effective Object/Flow recording schema.
 
-Phase 1B therefore seals `axis.flow-provenance.v1`: a detached additive Flow/step context snapshot. It does not replace `metricSchemaSnapshot` or `executionModeSnapshot` Encounter fact authority.
+Canonical control families in this slice are:
 
-## Phase 2 implementation under CI
+- numeric stepper;
+- timer/duration with compact presets;
+- rating 1–10;
+- boolean toggle;
+- pace/direct entry.
 
-Phase 2 makes the first deliberately small runtime integration.
+The Record surface must not contain property-selection/schema-edit buttons. If an Object has zero properties, the user can record it directly with no invented duration/weight/reps field.
 
-### Chosen state boundary
+### Existing ownership preserved
 
-Flow definitions and one reload-safe run context are added **inside the existing app-owned `axis_v60_state` object**:
+- Session/Object/Encounter truth: `app.js` / `axis_v60_state`
+- classic repeated weight+reps facts: `v61.js` / `axis_v8_meta` only when immutable Encounter schema permits
+- ongoing Active: established v82/v87 lifecycle/presentation owners
+- Flow: existing `window.__AXIS_FLOW_RUNTIME__`, still intent/orchestration only
+- media: established source-first/media owners
 
-```text
-axis_v60_state
-├─ sessions
-├─ active
-├─ profile
-├─ prefs
-├─ flows[]      durable intent definitions
-└─ flowRun      current lightweight continuity, or null
-```
-
-There is no `axis_flow_*` localStorage key, no new IndexedDB database and no new persistence owner.
-
-Old version-60 state with no `flows/flowRun` is accepted through the existing merge-load behavior. Boot does not force a rewrite; the fields are persisted naturally on the next relevant canonical `save()`.
-
-Durable `flows` are included in AXIS data backup. Ephemeral `flowRun` is not added to the backup payload, matching the existing policy that current Active runtime is not part of that portable backup surface.
-
-### Runtime ownership
-
-`prepare-821-flow-runtime.mjs` runs after the 8.20.1 preparation seal and before hardened canonical bundling. It injects no extra browser bundle/request.
-
-`window.__AXIS_FLOW_RUNTIME__` is an app-owned orchestration API. It may:
-
-- list/save/remove Flow definitions;
-- launch one Flow into a snapped run intent;
-- expose exactly one current step;
-- select that step through existing `selectEq()` plus the existing `axis:equipment-selected` lifecycle event;
-- advance only after the current step produced a matching committed Encounter;
-- skip without producing an Encounter;
-- finish the run;
-- project a temporary recording schema/execution only at the recording boundary.
-
-It may **not** become a recorder, Active owner, Session writer or second Encounter writer.
-
-### Temporary override boundary
-
-Flow override must never change `axis818SchemaForEq()` / Object Truth globally.
-
-Only these recording-only helpers see temporary context:
-
-- `axis821SchemaForRecording(eq)`
-- `axis821ExecutionForRecording(eq)`
-
-The existing Object Truth, history detail, Evolution and reusable Object defaults continue to see the canonical Object schema.
-
-The temporary schema is handed to the existing 8.18 app recorder. `v61` only reads the Flow bridge to decide whether to delegate to that recorder; v61 still owns genuine classic weight+reps set facts.
-
-### Encounter provenance
-
-The established `app.js` save boundary remains the only Encounter writer. Immediately before the existing `state.active.events.push(e)`, it may add `flowProvenance` if and only if the committed Object matches the current Flow step.
-
-No provenance is attached to unrelated inserted reality. No Flow edit can rewrite an already saved Encounter.
-
-Classic `sets` remains structural and is excluded from portable provenance metric IDs when weight+reps grants v61 ownership.
-
-### Physical proof added
-
-`scripts/axis-821-flow-runtime-smoke.mjs` now runs in the existing Current Release Gate on both Chromium and iPhone-like WebKit. It proves:
-
-1. legacy state loads without destructive migration;
-2. a Flow persists only inside `axis_v60_state` and survives reload;
-3. launch creates no Encounter/Active metadata and exposes only current step A;
-4. editing the durable Flow does not rewrite the running snapped intent;
-5. A temporary `duration + pace` override uses the existing app recorder and does not mutate Object defaults;
-6. the Encounter freezes schema/execution + `axis.flow-provenance.v1`;
-7. B remains genuine v61 classic weight+reps/sets ownership;
-8. C uses `complete` one-shot semantics and creates no false Active record;
-9. later Flow edits do not change saved provenance;
-10. no `axis_flow_*` key appears.
-
-`scripts/axis-821-flow-runtime-contract.mjs` also runs in the existing Cross-Platform Foundation Gate and fails if a second Flow persistence namespace/owner appears.
-
-## Still not implemented in Phase 2
-
-- no visible Flow composition UI;
-- no top-level Flow mode;
-- no automatic transition ceremony;
-- no auto-advance before Encounter commit;
-- no insert/replace UI yet;
-- no calendar/programming layer;
-- no completion percentage, streak, XP or deviation warning;
-- no 8.21 Production identity/release seal yet.
-
-## Active Action Lens
-
-The large one-hand Active control idea remains independent non-blocking research in `ACTIVE_ACTION_LENS_EXPERIMENT.md`. It has no permission to own Flow state, completion facts, Active truth or storage and is not a Phase 2 dependency.
+No new localStorage namespace, IndexedDB database, recorder, Active owner, Session writer or Encounter writer is allowed.
 
 ## Validation for this work
 
-Do not call Phase 2 sealed until the same exact head proves:
+PR #90 is not mergeable until the exact head proves all of the following:
 
-- Repository and Work Continuity success;
-- Cross-Platform source/ownership contract success;
-- deterministic build success;
-- new 8.21 Flow runtime smoke success in Chromium and iPhone-like WebKit;
-- inherited 8.20.1 Object reliability success;
-- genuine v61 classic authority success;
-- Runtime Foundation / Runtime / Deep Compatibility unchanged and green;
-- no new storage namespace or duplicate writer;
-- no page errors.
+- Cross-Platform Metric Schema contract accepts explicit zero-property schemas while preserving missing-schema legacy fallback;
+- deterministic release build succeeds;
+- Repository, Work Continuity, Runtime Foundation, Runtime, Deep Compatibility and Universal Practice Object gates remain green;
+- existing 8.20.1 Object reliability smoke remains green;
+- existing 8.21 Flow runtime smoke remains green;
+- the new physical recording-property smoke runs through the same Flow smoke lane on Chromium and iPhone-like WebKit;
+- physical proof shows clearing every property does not reselect duration;
+- stored Object truth remains `metricSchema: []` and `recording.metrics: []`;
+- Quick Record/Capture for an explicit empty Object displays no value field and produces an Encounter with `metricSchemaSnapshot: []`, `metrics: {}` and no false Active/v61 fact;
+- a multi-property Object such as `duration + intensity` exposes only those two canonical value controls and records their values correctly;
+- Record/Capture contains no schema-selection controls;
+- no page errors, duplicate writer or new persistence namespace appear.
 
-Public Production remains AXIS 8.20.1 throughout this work.
+After merge, the exact main artifact must converge on the fixed Vercel URL and then the exact prebuilt mirror must pass real Chromium and iPhone-like WebKit verification on EdgeOne before this slice is called Production-sealed.
 
 ## Next planned stage
 
-**Phase 3 — Minimal Flow composition / launch surface**
+**AXIS 8.21 Phase 3 — Minimal visible Flow composition / launch surface**
 
-Only after the state/delegation truth path is sealed should AXIS add a compact mobile-first surface to compose/reorder Objects and launch a Flow. The UI must call the existing Phase 2 API rather than creating its own state semantics.
+Only after PR #90 is merged and Production-verified should visible Flow UI advance.
 
-**Chat history is not authoritative project memory.** GitHub governance, current docs, contracts, tests and Production evidence are authoritative.
+The intended Phase 3 interaction remains compact and mobile-first:
+
+`Today Flow entry → create Flow → choose existing Objects → order A → B → C → save → launch → show current step / next intent → delegate the step to the existing Quick Record/Capture path → advance only after matching Encounter commit.`
+
+Phase 3 must reuse the existing Object picker, Object Truth, recording surface and `window.__AXIS_FLOW_RUNTIME__`. It must not create a second picker/catalog, second recorder, alternate Flow storage, completion-fact writer or “deviation penalty” system.
+
+Chat history is not authoritative project memory. GitHub governance, contracts, tests, current main and Production evidence are authoritative.
