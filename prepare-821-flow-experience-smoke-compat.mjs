@@ -52,6 +52,8 @@ once(
  'Flow smoke final proof copy'
 );
 
-try{new Function(s)}catch(e){fail(`smoke syntax ${e.message}`)}
+/* The target is an ESM smoke file with top-level await. Native `node --check` in
+   the established CI lane remains the syntax authority; `new Function` would
+   incorrectly reject valid module syntax here. */
 fs.writeFileSync(FILE,s);
 console.log('[AXIS 8.21 Flow experience smoke compat] PASS · dual-engine physical Flow smoke follows drag editor + focused run surface');
