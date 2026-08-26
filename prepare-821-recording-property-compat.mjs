@@ -25,6 +25,17 @@ src=src.replace(lifecycleFrom,lifecycleTo);
 if(!src.includes("$('#reviewStage')?.classList.contains('hidden')"))fail('8.19 active-review recorder scope invariant not restored');
 if(!src.includes("host.dataset.axis818RenderKey===renderKey&&host.classList.contains('show')"))fail('8.19 in-progress value idempotence invariant not restored');
 
+// Rating/intensity keeps the 1–10 tactile rail, but its canonical value owner is
+// also a real editable input. This preserves keyboard/accessibility/legacy Quick
+// Record behavior and gives users a precise direct-entry path without creating a
+// second value or schema owner; the rating buttons write this same input.
+const ratingFrom="<input type=\"hidden\" data-axis818-metric=\"'+key+'\" value=\"'+esc(value)+'\"><div class=\"axis821Rating\">";
+const ratingTo="<div class=\"axis821Direct axis821RatingDirect\"><input data-axis818-metric=\"'+key+'\" inputmode=\"numeric\" autocomplete=\"off\" value=\"'+esc(value)+'\" placeholder=\"—\" min=\"1\" max=\"10\"><small>/10</small></div><div class=\"axis821Rating\">";
+const ratingHits=src.split(ratingFrom).length-1;
+if(ratingHits!==1)fail(`canonical rating value owner expected once, found ${ratingHits}`);
+src=src.replace(ratingFrom,ratingTo);
+if(!src.includes('axis821RatingDirect'))fail('direct editable rating control missing');
+
 try{new Function(src)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.21 recording property compat] PASS · canonical recorder resolves Object Truth + preserves active-review visibility + keeps in-progress values across idempotent repaints');
+console.log('[AXIS 8.21 recording property compat] PASS · canonical recorder resolves Object Truth + preserves active-review visibility + keeps in-progress values + rating rail shares one directly editable value owner');
