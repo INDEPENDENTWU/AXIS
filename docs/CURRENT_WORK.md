@@ -1,6 +1,6 @@
 # Current Work
 
-## Production baseline
+## Production baseline at start of this work
 
 Current sealed Production remains **AXIS 8.20.1 — Executable Object Reliability**.
 
@@ -158,7 +158,7 @@ Classic `sets` remains structural and is excluded from portable provenance metri
 
 The large one-hand Active control idea remains independent non-blocking research in `ACTIVE_ACTION_LENS_EXPERIMENT.md`. It has no permission to own Flow state, completion facts, Active truth or storage and is not a Phase 2 dependency.
 
-## Validation required for this Phase 2 head
+## Validation for this work
 
 Do not call Phase 2 sealed until the same exact head proves:
 
@@ -174,7 +174,7 @@ Do not call Phase 2 sealed until the same exact head proves:
 
 Public Production remains AXIS 8.20.1 throughout this work.
 
-## Next planned stage after Phase 2 exact-head green
+## Next planned stage
 
 **Phase 3 — Minimal Flow composition / launch surface**
 
