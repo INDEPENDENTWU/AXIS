@@ -13,3 +13,5 @@ const checks=[
 ];
 for(const [f,tokens] of checks){const x=fs.readFileSync(f,'utf8');for(const t of tokens)if(!x.includes(t))fail(`${f} missing ${t}`)}
 console.log('[AXIS 8.21 product convergence proof] PASS · existing eqSheet owner preserved · select-only mode explicit · native property rows + Group Plan geometry sealed');
+
+await import('./prepare-821-flow-experience-convergence.mjs');
