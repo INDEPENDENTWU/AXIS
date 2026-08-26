@@ -30,6 +30,8 @@ Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEP
 
 The governed active milestone remains **AXIS 8.21 — Flow / Session Blueprint**.
 
+The governed active branch remains `product/821-flow-session-blueprint`; PR #91 is a bounded child branch and does not replace that parent governance identity.
+
 PR #91 is the Phase 3 child slice that turns the already-proved Flow runtime into a real user-facing Today interaction. It must remain a thin intent/orchestration surface over existing Object and recording owners rather than becoming a second training product architecture.
 
 ## Active change
