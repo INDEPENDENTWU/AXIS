@@ -20,6 +20,12 @@ The public release identity still reports the sealed 8.20.1 runtime identity whi
 
 Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1` and `axis.flow-provenance.v1`.
 
+## Governed parent milestone
+
+The governed active milestone remains **AXIS 8.21 — Flow / Session Blueprint** on `product/821-flow-session-blueprint`.
+
+PR #90 is a bounded prerequisite child slice inside that milestone: it closes the Object → recording-property surface contract before Phase 3 exposes visible Flow composition. It does not replace the governed Flow milestone or establish a parallel product track.
+
 ## Active change
 
 **AXIS 8.21 — Canonical Recording Property Surface**
