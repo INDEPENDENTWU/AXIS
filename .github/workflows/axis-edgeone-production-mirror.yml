@@ -41,6 +41,7 @@ jobs:
           const wf=fs.readFileSync('.github/workflows/axis-edgeone-production-mirror.yml','utf8');
           if(!wf.includes('remote.version===local.version')||!wf.includes('remote.baseVersion===local.baseVersion'))throw new Error('EdgeOne Production wait must follow the exact built release identity instead of a hard-coded version');
           if((wf.match(/node scripts\/axis-8201-object-reliability-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.20.1 reliability smoke in both Chromium and iPhone WebKit');
+          if((wf.match(/node scripts\/axis-821-flow-runtime-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.21 Flow runtime smoke in both Chromium and iPhone WebKit');
           NODE
 
   deploy-production:
@@ -145,6 +146,7 @@ jobs:
           node scripts/axis-819-object-recording-smoke.mjs
           node scripts/axis-820-executable-object-smoke.mjs
           node scripts/axis-8201-object-reliability-smoke.mjs
+          node scripts/axis-821-flow-runtime-smoke.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
@@ -167,6 +169,7 @@ jobs:
           node scripts/axis-819-object-recording-smoke.mjs
           node scripts/axis-820-executable-object-smoke.mjs
           node scripts/axis-8201-object-reliability-smoke.mjs
+          node scripts/axis-821-flow-runtime-smoke.mjs
       - name: Mark EdgeOne Production success
         env:
           GH_STATUS_TOKEN: ${{ github.token }}
