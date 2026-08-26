@@ -21,11 +21,14 @@ const addStep=async(id,query)=>{
  await tap(page.locator('[data-axis-flow-add]'));
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:2500});
  const search=page.locator('#eqSearch');assert.equal(await search.count(),1,'canonical Object picker search missing');
- await search.fill(query);
- await page.waitForFunction(id=>[...document.querySelectorAll(`#eqSheet [data-v8124-pick="${id}"]`)].some(x=>x.getClientRects().length>0&&getComputedStyle(x).visibility!=='hidden'),id,{timeout:3000});
- const picks=page.locator(`#eqSheet [data-v8124-pick="${id}"]`),index=await picks.evaluateAll(xs=>xs.findIndex(x=>x.getClientRects().length>0&&getComputedStyle(x).visibility!=='hidden'));
- assert.ok(index>=0,`canonical Object picker did not visibly project ${id}`);
- await tap(picks.nth(index));
+ let pick=page.locator(`#eqSheet [data-v8124-pick="${id}"]:visible, #eqSheet [data-eq="${id}"]:visible`).first();
+ if(await pick.count()===0){
+  await search.fill(query);
+  pick=page.locator(`#v873SmartResults.show [data-v8124-pick="${id}"]:visible`).first();
+  await pick.waitFor({state:'visible',timeout:3000});
+ }
+ assert.equal(await pick.count(),1,`canonical Object picker did not visibly expose ${id}`);
+ await tap(pick);
  await page.waitForFunction(()=>document.querySelector('#axis821FlowSheet')?.classList.contains('show'),undefined,{timeout:2500});
 };
 
@@ -46,7 +49,7 @@ try{
  assert.equal(surface.definitionOwner,'app.js');assert.equal(surface.pickerOwner,'existing-eqSheet');assert.equal(surface.recordingOwner,'existing-v61+app');assert.equal(surface.newStorage,false);assert.equal(surface.newPicker,false);assert.equal(surface.newRecorder,false);assert.equal(surface.newEncounterWriter,false);
  assert.equal(await page.locator('#axis821FlowHome').getAttribute('data-state'),'empty');
 
- console.log(`[AXIS 8.21 Flow surface ${ENGINE}] compose A/C/B through visible canonical Object picker projections, then reorder`);
+ console.log(`[AXIS 8.21 Flow surface ${ENGINE}] compose A/C/B through visible canonical Object picker surfaces, then reorder`);
  await tap(page.locator('#axis821FlowHome [data-axis-flow-new]'));
  await page.waitForFunction(()=>document.querySelector('#axis821FlowSheet')?.classList.contains('show')&&document.querySelector('#axis821FlowTitleInput'),undefined,{timeout:2500});
  await page.locator('#axis821FlowTitleInput').fill('日常流程');
