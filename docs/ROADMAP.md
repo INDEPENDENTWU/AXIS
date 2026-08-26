@@ -1,172 +1,174 @@
 # Roadmap
 
-This is a product and architecture roadmap, not a feature backlog.
+This is a product/architecture roadmap, not a feature backlog.
 
-## Current Production baseline — AXIS 8.18
+## Current Production baseline — AXIS 8.20.1
 
-AXIS 8.18 is the current behavior baseline. It seals Object Truth, Route Truth, schema-aware Focus, current Capture preferences/camera switching, source-first media, stable 30fps video composition, fact-first detail behavior and the derived Evolution Library while preserving inherited local-first training/data contracts.
-
-Exact current Production baseline is recorded in `governance/project-state.json` and `docs/CURRENT_RELEASE.md`.
-
-## Now — Source Convergence · 8.19 Foundation
-
-Before adding another product layer, make the repository easier and faster to evolve without weakening compatibility.
-
-### Stage A — Handoff Truth
-
-- one machine-readable current project state;
-- one human/agent handoff entry;
-- explicit current owners;
-- explicit retired authority;
-- current docs no longer describe old releases as current.
-
-Exit: a new developer/agent can recover the real Production baseline, active work, ownership and next action from GitHub alone.
-
-### Stage B — executable reachability inventory
-
-Classify every historical build transform, browser owner and workflow as:
-
-- `current`;
-- `compatibility-required`;
-- `superseded`;
-- `historical-only`.
-
-Exit: no cleanup decision depends on filename age or memory.
-
-### Stage C — CI convergence
-
-Move from a permanent workflow-per-release shape toward:
-
-1. fast repository/current PR gate;
-2. current product matrix;
-3. explicit deep compatibility/data gate;
-4. exact-SHA Production seal.
-
-Exit: equivalent or stronger proof with materially less duplicate runner work and stale implementation-shape diagnosis.
-
-### Stage D — source quarantine and direct ownership
-
-- remove proven-dead helpers;
-- keep compatibility adapters explicit and narrow;
-- migrate current behavior from exact historical rewrites into current source owners one surface at a time;
-- shorten the deterministic build chain without changing the canonical runtime contract.
-
-Exit: the source tree increasingly resembles the product that actually ships.
-
-## Presentation foundation
-
-After source governance is stable, establish presentation architecture before broadening the product.
-
-### Professional localization
-
-Initial UI locales are exactly:
-
-- `zh-Hans` — **简体中文**;
-- `zh-Hant` — **繁體中文**;
-- `en` — **English**.
-
-Requirements:
-
-- semantic translation keys;
-- professional, context-aware translations;
-- real Simplified Chinese under `zh-Hans`;
-- professionally localized Traditional Chinese under `zh-Hant`, not mechanical conversion;
-- natural product English;
-- locale-key parity and missing-key CI failure;
-- locale-aware date/number formatting;
-- layout expansion tests.
-
-### Semantic themes
-
-Initial preference:
-
-- `system`;
-- `light`;
-- `dark`.
-
-Use semantic tokens, first-paint-safe theme resolution, accessible contrast and separate media/watermark contrast semantics. Switching theme must not leave fixed-color logos/icons/symbols or partially converted surfaces.
-
-## AXIS 8.19 — Universal Practice Objects
-
-8.18 proves the underlying primitive:
+AXIS 8.20.1 is the sealed behavior baseline. It proves a complete executable single-Object chain:
 
 ```text
 Object
   ↓
-metric schema
+metric schema + execution semantics
   ↓
-Encounter
+Recording
+  ↓
+Active or one-shot execution
+  ↓
+immutable Encounter
   ↓
 Evidence
-  ↓
-time
   ↓
 Evolution
 ```
 
-8.19 should generalize that primitive to more repeated real-world practice without turning AXIS into a category-heavy or setup-heavy product.
+The current release is dual-provider and dual-engine Production verified. Exact release/deployment truth is recorded in `governance/project-state.json` and `docs/CURRENT_RELEASE.md`.
 
-Possible domains include strength/cardio, climbing, swimming, rehabilitation practice, yoga, dance, racket/ball practice, striking, instruments, pronunciation and other repeated skills — only where the same factual model fits naturally.
+## Now — AXIS 8.21 · Flow / Session Blueprint
 
-### Metric schema v2 direction
+The next product primitive is **Flow**: a lightweight arrangement of reusable Objects that helps a real practice session continue with less friction without turning intended order into factual history.
 
-The domain layer may support richer field semantics such as:
+Example intent:
 
-- number/count;
-- duration;
-- distance;
-- pace;
-- percentage;
-- rating;
-- boolean;
-- choice.
+```text
+A → B → C
+```
 
-The interface should expose only the fields a given object actually needs. More expressive schema must not mean more visible complexity.
+Valid reality:
 
-### 8.19 success criteria
+```text
+A → D → B
+```
 
-- broader object/domain expressiveness without mode proliferation;
-- old Encounters remain readable;
-- no second training database or parallel product truth;
-- low-friction creation/recording;
-- Evolution remains factual rather than score-driven;
-- same domain contracts can travel toward native shells.
+AXIS accepts the second sequence as reality. There is no “plan violation” model.
 
-## After 8.19 — Evidence and Evolution intelligence
+### 8.21 goals
 
-Potential later work:
+- ordered canonical Object references;
+- optional temporary step overrides;
+- no mutation of Object defaults by Flow overrides;
+- start/advance/skip/insert/replace/finish without requiring all Objects to be Active;
+- delegate recording and ongoing execution to existing owners;
+- additive immutable Flow provenance on Encounter where useful;
+- historical Encounters remain valid after Flow edits/deletion;
+- domain-neutral use across compatible repeated practice;
+- local-first, quiet and low-friction interaction.
+
+### 8.21 architecture rule
+
+```text
+Flow = intent/orchestration
+Encounter = history/truth
+```
+
+Flow may influence what happens next. It may never rewrite what already happened.
+
+### 8.21 deliberate exclusions
+
+- plan completion percentage;
+- streaks / XP / punishment;
+- deviation warnings;
+- rigid calendar programming;
+- AI coaching/program generation as the primary experience;
+- separate databases or parallel session models;
+- category-specific product modes;
+- synthetic progress scores.
+
+See `docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md`.
+
+## Parallel research — Active Action Lens
+
+A non-blocking interaction experiment may test a larger one-hand control layer for high-frequency Active actions such as set completion, pause and finish.
+
+It is not a release dependency. It must remain presentation-only, delegate to existing action owners, preserve mobile navigation/scrolling and be removable without data or semantic migration.
+
+See `docs/ACTIVE_ACTION_LENS_EXPERIMENT.md`.
+
+## Next — AXIS 8.22 · Adaptive Defaults / Living Practice
+
+Only after Flow semantics are sealed should AXIS use repeated factual history to remove more setup friction.
+
+Potential adaptive behavior:
+
+- remember typical duration or metric values for an Object;
+- learn which execution mode the user actually keeps using;
+- surface likely next Objects/Flow transitions from personal history;
+- notice repeatedly skipped/reordered Flow steps without judging them;
+- prefill likely values while keeping edits immediate and reversible;
+- reduce questions rather than add AI text.
+
+The guiding rule:
+
+> Intelligence should make AXIS ask less, not speak more.
+
+Adaptive defaults are suggestions. They never rewrite historical Encounter truth and never silently mutate reusable Object defaults without an explicit product contract.
+
+## Later — Evidence / Evolution depth
+
+Potential downstream work:
 
 - stronger evidence chronology and object timelines;
-- reliable evidence sequence/time anchors;
-- richer factual comparison and recurrence projections;
-- local-first insights that state evidence/uncertainty explicitly;
-- optional AI assistance that never becomes authoritative training truth.
+- reliable sequence/time anchors across repeated practice;
+- richer factual comparisons;
+- recurrence/continuity projections with explicit evidence and uncertainty;
+- optional AI assistance that remains non-authoritative;
+- better cross-domain Evolution views without synthetic scoring.
 
 ## Truthful Replay — downstream
 
-Replay remains downstream of trustworthy object identity, Encounter chronology, media source truth and sequence semantics.
+Replay remains downstream of trustworthy Object identity, Encounter chronology, media source truth, Flow provenance and sequence semantics.
 
-Do not build a decorative editor/replay workflow merely because media exists. Replay should reconstruct real evolution without fabricating intermediate facts.
+Do not build a decorative media editor merely because footage exists. Replay should reconstruct factual evolution without fabricating intermediate events.
+
+## Presentation foundation
+
+Localization/theme work remains an architectural foundation rather than a marketing feature.
+
+Initial locales:
+
+- `zh-Hans` — 简体中文
+- `zh-Hant` — 繁體中文
+- `en` — English
+
+Initial themes:
+
+- `system`
+- `light`
+- `dark`
+
+Internal stable IDs must remain stable while visible product text is professionally localized. Theme/localization systems may not create another business-state owner or first-paint semantic flash.
 
 ## Multi-platform
 
 Platform expansion follows stable domain contracts rather than UI-code duplication:
 
-1. browser-independent domain/runtime tests;
-2. stable storage/media/platform ports;
-3. native shells consuming the same domain semantics;
-4. platform-specific camera/Photos/haptics/background capabilities behind adapters;
+1. stable browser-independent product/data semantics;
+2. portable Flow/Object/Encounter contracts;
+3. native shells consuming the same domain truth;
+4. platform camera/Photos/haptics/background capabilities behind adapters;
 5. Android/desktop only when a concrete use case justifies another shell.
 
-The success metric is shared product/data truth, not the number of platforms shipped.
+Current cross-platform anchors:
+
+- `axis-native-foundation-0`
+- `INDEPENDENTWU/AXIS-iOS`
+- `axis.domain.v1`
+- `axis.data.v1`
+
+## Engineering convergence remains continuous
+
+The source tree still contains historical compatibility transforms. Cleanup continues only when reachability, data compatibility and current dual-engine behavior prove that authority has moved.
+
+Do not perform cosmetic mass deletion or a big-bang framework rewrite.
 
 ## Deliberately not on the roadmap
 
-- streak/XP/punishment systems;
-- mandatory account before core training;
+- mandatory account before core practice;
 - generic AI chat as the primary AXIS interface;
+- streak/XP/punishment systems;
 - synthetic fitness/progress scores presented as fact;
 - medical/recovery claims from weak evidence;
 - separate product modes for every activity;
-- a big-bang framework rewrite;
-- permanent new version-specific patch layers without a retirement condition.
+- a second training truth database;
+- a second recorder/Active/Encounter writer;
+- permanent new version-specific patch layers without an explicit retirement condition.

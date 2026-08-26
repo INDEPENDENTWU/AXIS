@@ -12,7 +12,7 @@ permissions:
 jobs:
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 36
+    timeout-minutes: 38
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -70,13 +70,16 @@ jobs:
       - name: 8.20.1 Object reliability
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8201-object-reliability-smoke.mjs
+      - name: 8.21 Flow runtime boundary
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-flow-runtime-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 46
+    timeout-minutes: 48
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -130,6 +133,9 @@ jobs:
       - name: iPhone 8.20.1 Object reliability
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8201-object-reliability-smoke.mjs
+      - name: iPhone 8.21 Flow runtime boundary
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-flow-runtime-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-webkit.log || true

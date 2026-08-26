@@ -1,72 +1,183 @@
-# AXIS Current Work
-
-> Canonical active-work handoff. Read [`HANDOFF.md`](HANDOFF.md) first; machine truth starts at [`../governance/project-state.json`](../governance/project-state.json).
+# Current Work
 
 ## Production baseline at start of this work
 
-- Formal runtime release is **AXIS 8.20.1 — Executable Object Reliability**.
-- Product PR **#84** was sealed only after the exact release head passed Repository, Continuity, Runtime Foundation, Current Release, Runtime, Deep Compatibility, Cross-Platform and Universal Practice Object gates on Chromium and iPhone-like WebKit.
-- Subsequent PRs **#85** and **#86** changed deployment verification/governance only; neither changed product runtime behavior.
-- Current exact `main` baseline before this convergence PR is **`199900ba6b82432c67fd7d25ba50616c03012978`**.
-- Vercel Production `https://axis-five-puce.vercel.app` is READY on that SHA and serves `version = 8.20.1`, `baseVersion = 8.20.1`, `architecture = canonical-single-runtime`, core `1269a6183152`, CSS `fc372a0bf2f9`, one initial JavaScript request and zero dynamic JavaScript requests.
-- The current Vercel **AXIS Production Deployment Gate** has already passed exact local/remote manifest parity, immutable asset checks, inherited real Chromium product foundations and the current release chain through the 8.20.1 Object reliability smoke on `199900ba…`.
-- EdgeOne CLI deployment for `199900ba…` itself returned **Deploy Success**, but the first immediate fixed-domain verification still observed previous sourceCommit `5b9d92d10088cef7378ce8224234b70f4e18b835`; this identified an EdgeOne propagation window in the verifier, not an artifact/runtime mismatch.
-- AXIS 8.19 capture default-entry hotfix PR **#82** remains inherited: default Photo / Scan / Video resolution is app-owned, while Scan 3/5 seconds is an independent sampling preference.
+Current sealed Production remains **AXIS 8.20.1 — Executable Object Reliability**.
 
-Machine-governance compatibility note: `governance/project-state.json` retains the governed historical line **AXIS 8.19 — Universal Practice Objects** on branch `product/819-universal-practice-objects`. Those exact historical strings remain required by repository continuity checks until governance is advanced through a coordinated release record; this file records newer runtime/deployment truth without rewriting historical provenance.
+- exact main SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
+- Vercel: `https://axis-five-puce.vercel.app`
+- Vercel deployment: `dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD` — READY
+- EdgeOne: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- EdgeOne deployment: `dpemq8bxjopa`
+- EdgeOne verification run: `32812883590` — success
+- exact artifact/source parity + Chromium + iPhone WebKit Production proof: complete
+
+Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1` and `axis.data.v1`.
+
+Do not reopen 8.20.1 product behavior merely because historical compiler/runtime files still exist.
 
 ## Active change
 
-**AXIS 8.20.1 — Production Verification Convergence Seal** · branch `fix/8201-retire-812x-production-trigger` · PR **#87**.
+**AXIS 8.21 — Flow / Session Blueprint**
 
-The 8.20.1 product runtime is not being changed. This work closes two deployment-verification defects discovered only after exact Production deployment:
+- branch: `product/821-flow-session-blueprint`
+- Draft PR: **#88**
+- current phase: **Phase 2 — App-owned Flow Definition / Runtime Boundary**
 
-1. The historical **AXIS 8.12.x Production Gate** is subscribed to every successful Production deployment but intentionally supports only 8.12.1–8.12.4. It therefore produced a false failure on 8.20.1 (`unsupported 8.12 patch 8.20.1/8.20.1`). The fix preserves the complete historical 8.12.1–8.12.4 checks when that historical scope is active, while later releases explicitly skip those historical browser steps successfully.
-2. EdgeOne can report deployment completion before the fixed project domain has globally converged to the new release. The old verifier sampled the fixed domain once immediately after `Deploy Success`. The new verifier performs a bounded convergence wait and still requires exact release parity before API or browser verification begins.
+## Sealed 8.21 proofs before Phase 2
 
-EdgeOne convergence remains strict:
+### Phase 0 — ownership/reuse
 
-- deployment log must contain a valid EdgeOne Deploy URL;
-- fixed project origin is checked with authenticated no-cache/cache-busting requests;
-- convergence is bounded to 30 attempts with 4-second intervals, never infinite or fail-open;
-- root must expose the current canonical runtime marker;
-- `version`, `baseVersion`, `sourceCommit`, `architecture`, core hash, CSS hash, runtime hash, initial-JavaScript topology and dynamic-JavaScript topology must all equal the exact local main artifact;
-- after convergence, existing EdgeOne/Vercel API parity remains mandatory;
-- only then may real Chromium and iPhone WebKit current-release flows run, including `axis-8201-object-reliability-smoke.mjs`;
-- failure to converge to the exact main artifact inside the bounded window remains a hard Production failure.
+Exact proof SHA:
 
-The historical 8.12.x gate remains equally strict inside its own scope: 8.12.1–8.12.4 must have matching public/base identity and still run their original Production browser regressions. The fix does not relabel later releases as 8.12.x and does not weaken historical assertions.
+`84310744b528441f3fa8d3feb51e8ed149e02b78`
 
-Authoritative persistence remains `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak` and `axis_v42_media`. The native/cross-platform handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`, with portable contracts `axis.domain.v1` and `axis.data.v1`.
+All nine baseline PR workflow families completed success. It established that `app.js` / `axis_v60_state` remains canonical Session/Object/Encounter state ownership and that Group Plan is a classic set transaction bridge, not Flow storage.
 
-**Chat history is not authoritative project memory. GitHub governance, contracts, tests and deployment truth remain authoritative.**
+### Phase 1 — portable resolver
+
+Exact proof SHA:
+
+`2892d8807e6d2688cb366019d64c6e9b573fcb66`
+
+All nine baseline workflows completed success, including `axis.flow.v1`, pure resolver fixtures and Chromium/iPhone WebKit inherited product coverage.
+
+### Phase 1B — immutable provenance
+
+Exact proof SHA:
+
+`289fd1b2cdcbcb4e1cfa56402372b8005daadfa4`
+
+Final workflow evidence on this exact head:
+
+- EdgeOne PR package `32879396817` — success
+- Repository `32879396818` — success
+- PR Convergence `32879396830` — success
+- Cross-Platform Foundation `32879396838` — success
+- Work Continuity `32879396815` — success
+- Runtime Foundation `32879396831` — success
+- Deep Compatibility `32879396864` — success
+- Runtime `32879396825` — success
+- Current Release `32879396826` — success
+
+Current Release Chromium initially hit one inherited 8.16 Capture `waitForFunction` timeout. No runtime/CSS/Capture code changed; the same exact head WebKit path passed. The failed Chromium job was rerun unchanged and passed the same Capture point plus all later 8.18/8.20/8.20.1 checks. No product code or timeout threshold was altered for that retry.
+
+Phase 1B therefore seals `axis.flow-provenance.v1`: a detached additive Flow/step context snapshot. It does not replace `metricSchemaSnapshot` or `executionModeSnapshot` Encounter fact authority.
+
+## Phase 2 implementation under CI
+
+Phase 2 makes the first deliberately small runtime integration.
+
+### Chosen state boundary
+
+Flow definitions and one reload-safe run context are added **inside the existing app-owned `axis_v60_state` object**:
+
+```text
+axis_v60_state
+├─ sessions
+├─ active
+├─ profile
+├─ prefs
+├─ flows[]      durable intent definitions
+└─ flowRun      current lightweight continuity, or null
+```
+
+There is no `axis_flow_*` localStorage key, no new IndexedDB database and no new persistence owner.
+
+Old version-60 state with no `flows/flowRun` is accepted through the existing merge-load behavior. Boot does not force a rewrite; the fields are persisted naturally on the next relevant canonical `save()`.
+
+Durable `flows` are included in AXIS data backup. Ephemeral `flowRun` is not added to the backup payload, matching the existing policy that current Active runtime is not part of that portable backup surface.
+
+### Runtime ownership
+
+`prepare-821-flow-runtime.mjs` runs after the 8.20.1 preparation seal and before hardened canonical bundling. It injects no extra browser bundle/request.
+
+`window.__AXIS_FLOW_RUNTIME__` is an app-owned orchestration API. It may:
+
+- list/save/remove Flow definitions;
+- launch one Flow into a snapped run intent;
+- expose exactly one current step;
+- select that step through existing `selectEq()` plus the existing `axis:equipment-selected` lifecycle event;
+- advance only after the current step produced a matching committed Encounter;
+- skip without producing an Encounter;
+- finish the run;
+- project a temporary recording schema/execution only at the recording boundary.
+
+It may **not** become a recorder, Active owner, Session writer or second Encounter writer.
+
+### Temporary override boundary
+
+Flow override must never change `axis818SchemaForEq()` / Object Truth globally.
+
+Only these recording-only helpers see temporary context:
+
+- `axis821SchemaForRecording(eq)`
+- `axis821ExecutionForRecording(eq)`
+
+The existing Object Truth, history detail, Evolution and reusable Object defaults continue to see the canonical Object schema.
+
+The temporary schema is handed to the existing 8.18 app recorder. `v61` only reads the Flow bridge to decide whether to delegate to that recorder; v61 still owns genuine classic weight+reps set facts.
+
+### Encounter provenance
+
+The established `app.js` save boundary remains the only Encounter writer. Immediately before the existing `state.active.events.push(e)`, it may add `flowProvenance` if and only if the committed Object matches the current Flow step.
+
+No provenance is attached to unrelated inserted reality. No Flow edit can rewrite an already saved Encounter.
+
+Classic `sets` remains structural and is excluded from portable provenance metric IDs when weight+reps grants v61 ownership.
+
+### Physical proof added
+
+`scripts/axis-821-flow-runtime-smoke.mjs` now runs in the existing Current Release Gate on both Chromium and iPhone-like WebKit. It proves:
+
+1. legacy state loads without destructive migration;
+2. a Flow persists only inside `axis_v60_state` and survives reload;
+3. launch creates no Encounter/Active metadata and exposes only current step A;
+4. editing the durable Flow does not rewrite the running snapped intent;
+5. A temporary `duration + pace` override uses the existing app recorder and does not mutate Object defaults;
+6. the Encounter freezes schema/execution + `axis.flow-provenance.v1`;
+7. B remains genuine v61 classic weight+reps/sets ownership;
+8. C uses `complete` one-shot semantics and creates no false Active record;
+9. later Flow edits do not change saved provenance;
+10. no `axis_flow_*` key appears.
+
+`scripts/axis-821-flow-runtime-contract.mjs` also runs in the existing Cross-Platform Foundation Gate and fails if a second Flow persistence namespace/owner appears.
+
+## Still not implemented in Phase 2
+
+- no visible Flow composition UI;
+- no top-level Flow mode;
+- no automatic transition ceremony;
+- no auto-advance before Encounter commit;
+- no insert/replace UI yet;
+- no calendar/programming layer;
+- no completion percentage, streak, XP or deviation warning;
+- no 8.21 Production identity/release seal yet.
+
+## Active Action Lens
+
+The large one-hand Active control idea remains independent non-blocking research in `ACTIVE_ACTION_LENS_EXPERIMENT.md`. It has no permission to own Flow state, completion facts, Active truth or storage and is not a Phase 2 dependency.
 
 ## Validation for this work
 
-PR #87 may merge only when the exact head proves:
+Do not call Phase 2 sealed until the same exact head proves:
 
-- Repository Contract and Work Continuity are green with this handoff update;
-- Runtime Foundation, Runtime Gate, Current Release and Deep Compatibility remain green with no product runtime changes;
-- EdgeOne package-contract remains green;
-- `scripts/edgeone-live-verify.mjs` preserves every existing exact parity field and adds only bounded release-convergence semantics;
-- the historical 8.12.x Production gate still rejects invalid base/public identity when active but safely skips later releases instead of producing a false failure;
-- no product runtime, UI, persistence owner, schema, Capture behavior, Active lifecycle, Evolution, media, learning, sound or API behavior is altered.
+- Repository and Work Continuity success;
+- Cross-Platform source/ownership contract success;
+- deterministic build success;
+- new 8.21 Flow runtime smoke success in Chromium and iPhone-like WebKit;
+- inherited 8.20.1 Object reliability success;
+- genuine v61 classic authority success;
+- Runtime Foundation / Runtime / Deep Compatibility unchanged and green;
+- no new storage namespace or duplicate writer;
+- no page errors.
 
-After merge, the new exact main SHA must prove all Production layers again:
-
-- fixed Vercel alias READY on the exact main SHA with `version/baseVersion = 8.20.1` and canonical artifact parity;
-- current **AXIS Production Deployment Gate** success, including exact manifest/assets and real Chromium current-release flow through 8.20.1;
-- historical **AXIS 8.12.x Production Gate** success-by-scope on 8.20.1, with historical browser work intentionally skipped;
-- EdgeOne package + deployment success, bounded convergence to the exact main SHA, EdgeOne/Vercel API parity, real Chromium current-release flow and real iPhone WebKit current-release flow through 8.20.1;
-- fixed EdgeOne URL `https://axisfitness-mirror-9x91gveo.edgeone.cool/axis-build.json` must report the same exact main SHA and canonical release identity;
-- no relevant unexplained red Production/deployment check may remain on the final main SHA.
+Public Production remains AXIS 8.20.1 throughout this work.
 
 ## Next planned stage
 
-1. Merge PR #87 only from an exact all-green head.
-2. Treat the resulting merge SHA as the only final 8.20.1 Production candidate; previous successful provider deployments are evidence, not the final seal.
-3. Re-run and verify Vercel fixed alias, current Production Deployment Gate, historical 8.12.x scoped gate and EdgeOne dual-engine Production on that exact SHA.
-4. Close **AXIS 8.20.1 Production** only when both providers and all relevant deployment gates agree on the same exact SHA with no unexplained red check.
-5. Only then continue to **8.21 Flow / Session Blueprint**. Flow must build on the proven Object → Recorder → Active/one-shot → immutable Encounter chain rather than masking ownership defects.
+**Phase 3 — Minimal Flow composition / launch surface**
 
-**Conversation history is supplemental only. GitHub handoff/contracts/tests are authoritative for this work.**
+Only after the state/delegation truth path is sealed should AXIS add a compact mobile-first surface to compose/reorder Objects and launch a Flow. The UI must call the existing Phase 2 API rather than creating its own state semantics.
+
+**Chat history is not authoritative project memory.** GitHub governance, current docs, contracts, tests and Production evidence are authoritative.

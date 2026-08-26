@@ -34,12 +34,6 @@ replaceOnce(
  'durable Encounter post-commit boundary'
 );
 
-/*
- * The schema recorder is owned by the reset lifecycle itself, so suppress it at
- * reset entry rather than after every inherited Capture reset side effect. This
- * prevents a stale Recording surface even if a later legacy presentation reset
- * fails; any such failure remains visible to browser page-error gates.
- */
 const lifecycleTail=";axis819RecorderSuppressed=true;$('#strengthFields')?.classList.remove('axis818LegacyMetricHidden');$('#cardioFields')?.classList.remove('axis818LegacyMetricHidden');const axis819Recorder=$('#axis818MetricRecorder');if(axis819Recorder){axis819Recorder.dataset.axis818RenderKey='';axis819Recorder.dataset.axis818RenderSuppressed='1';axis819Recorder.classList.remove('show');axis819Recorder.innerHTML=''}";
 replaceOnce(lifecycleTail,'','recorder reset tail');
 const resetEntry="function resetScan(preserveSelection=false){try{capture816AbortVideo(true)}catch(e){console.warn('[AXIS 8.19 capture cleanup · reset]',e)};";
@@ -52,10 +46,11 @@ console.log('[AXIS 8.19 post-commit lifecycle] PASS · v61 attach authority seal
 
 /* 8.19 closes its historical release identity first. 8.20 then layers the next
    product contract. 8.20.1 reliability hardening runs before the 8.20 public
-   seal; once that exact behavior head is proven green, the dedicated 8.20.1
-   identity seal advances only current/public versioning. */
+   seal. 8.21 Flow runtime is then layered as an unreleased app-owned capability
+   on top of the sealed 8.20.1 semantics. */
 await import('./prepare-819-release.mjs');
 await import('./prepare-820-executable-practice-objects.mjs');
 await import('./prepare-8201-object-reliability.mjs');
 await import('./prepare-820-release.mjs');
 await import('./prepare-8201-release.mjs');
+await import('./prepare-821-flow-runtime.mjs');

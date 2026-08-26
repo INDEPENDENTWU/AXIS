@@ -1,0 +1,39 @@
+{
+  "schema": "axis.flow-fixture.v1",
+  "contract": "axis.flow.v1",
+  "name": "temporary override does not mutate Object defaults",
+  "flow": {
+    "schema": "axis.flow.v1",
+    "id": "flow-override",
+    "steps": [
+      {
+        "id": "hold-step",
+        "objectRef": "object-pace",
+        "metricOverride": {
+          "metrics": [
+            {
+              "id": "hold",
+              "type": "duration",
+              "label": "保持",
+              "unit": "s",
+              "priority": "primary",
+              "repeatability": "single",
+              "aggregation": "sum",
+              "presentation": "timer",
+              "required": false,
+              "min": 0,
+              "step": 1
+            }
+          ]
+        },
+        "executionOverride": "hold"
+      }
+    ]
+  },
+  "objects": [
+    {"id": "object-pace", "executionMode": "single", "metricSchema": {"metrics": ["pace"]}}
+  ],
+  "expected": [
+    {"stepRef": "hold-step", "metricIds": ["hold"], "executionMode": "hold", "metricSource": "flow-step-override", "executionSource": "flow-step-override", "nextStepRef": null}
+  ]
+}

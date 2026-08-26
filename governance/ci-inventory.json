@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 7,
-  "capturedAt": "2026-08-24",
+  "schemaVersion": 8,
+  "capturedAt": "2026-08-25",
   "source": {"pullRequest":79,"productionBaselineSha":"254a2fa80fdfd4040a6f695d28ad3bd670c0a7db"},
   "observedPullRequestWorkflowCountBeforeConvergence": 25,
   "phaseOneProof": {"repositoryContract":{"runId":32626662160,"conclusion":"success"},"workContinuity":{"runId":32626662162,"conclusion":"success"}},
@@ -34,14 +34,23 @@
   "finalBehaviorProof": {
     "candidateSha":"88d9ee826dcfab14a465c38837a33c6ecd4727e0",
     "allTriggeredWorkflowRunsSuccessful":true,
-    "baselineRuns":{
-      "repository":32657115841,"workContinuity":32657115855,"runtime":32657115895,"currentRelease":32657115881,"runtimeFoundation":32657115832,"deepCompatibility":32657115849,"crossPlatform":32657115829,"prConvergence":32657115935,"edgeOnePackage":32657115860
-    },
+    "baselineRuns":{"repository":32657115841,"workContinuity":32657115855,"runtime":32657115895,"currentRelease":32657115881,"runtimeFoundation":32657115832,"deepCompatibility":32657115849,"crossPlatform":32657115829,"prConvergence":32657115935,"edgeOnePackage":32657115860},
     "pathScopedRuns":{"axis812Browser":32657115897},
     "deepCompatibility":{"static":"success","chromium":"success","webkit":"success"},
     "axis812Browser":{"chromium":"success","webkit":"success"},
     "notes":["cumulative-rest smoke synchronization now waits for persisted paused/active transitions while preserving the >400ms acceptance threshold","8.12 Browser Gate now recognizes the inherited simplified Learning surface through __AXIS_8123_LEARNING__ semantics rather than public release string"]
   },
+  "currentProductionProof": {
+    "release":"8.20.1",
+    "sourceSha":"fdbfea738489fca6b19b3c8c7b502977373e4e4f",
+    "architecture":"canonical-single-runtime",
+    "coreHash":"1269a6183152",
+    "cssHash":"fc372a0bf2f9",
+    "vercel":{"deploymentId":"dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD","state":"READY","publicUrl":"https://axis-five-puce.vercel.app","productionGateRunId":32812905314,"exactManifestAndAssets":"success","chromiumCurrentRelease":"success"},
+    "edgeOne":{"deploymentId":"dpemq8bxjopa","publicUrl":"https://axisfitness-mirror-9x91gveo.edgeone.cool","runId":32812883590,"packageContract":"success","deploy":"success","boundedFixedDomainConvergence":"success","vercelApiParity":"success","chromiumCurrentRelease":"success","webkitCurrentRelease":"success","finalProductionStatus":"success"},
+    "historical812xProductionGate":{"status":"success-by-scope","rule":"8.12.1–8.12.4 retain historical browser checks; later releases explicitly skip instead of false-failing"},
+    "releaseIdentityRule":"Current Production capability verification is exact-manifest/source/artifact/topology based; historical gates remain explicitly scope-limited rather than inferring current behavior from hardcoded version allowlists."
+  },
   "workflowTopologyRule":"Nine baseline responsibility families run broadly; path-scoped specialist workflows may add focused evidence only when relevant files change and are not counted as baseline fanout.",
-  "nextStage":"Merge the handoff-sealed PR head after its baseline and triggered specialist gates pass, then verify exact merged-main Vercel and EdgeOne Production parity. Source/build transform retirement remains the next engineering phase."
+  "nextStage":"AXIS 8.21 Flow / Session Blueprint on product/821-flow-session-blueprint. Preserve the nine-family governance model; add only the minimal Flow-specific semantic/physical gate needed to prove orchestration, immutable Encounter provenance and no second owner."
 }

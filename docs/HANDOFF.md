@@ -1,167 +1,205 @@
-# AXIS engineering handoff
+# AXIS Engineering Handoff
 
-> **Read this first.** Machine-readable current truth lives in [`../governance/project-state.json`](../governance/project-state.json). Chat history is supplementary, not project authority.
+This is the human/agent handoff entry for the current repository state. Chat transcripts are supplementary only.
 
-## 1. Current Production
+## 1. Sealed Production baseline
 
-- Product: **AXIS — Personal Evolution Engine**
-- Current public Production release: **AXIS 8.18**
-- Exact sealed merged-main SHA: `65e3525e78f021afda7db19d27722626af9514d8`
-- Architecture: `canonical-single-runtime`
-- Release build: `node build-release.mjs`
-- Vercel Production deployment: `dpl_7mYETXKCQzXKh88ybocT65oLiJ1T` — **READY**, exact SHA above
-- Vercel public endpoint: `https://axis-five-puce.vercel.app`
-- EdgeOne public endpoint: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
-- EdgeOne exact-artifact Production seal: workflow run `32675374766` — **success**
-- That EdgeOne seal includes Vercel/local canonical artifact parity, exact prebuilt deployment, live verification, Chromium Production flow, and iPhone-like WebKit Production flow.
+**AXIS 8.20.1 — Executable Object Reliability** remains the current Production Web release.
 
-AXIS 8.18 is the rollback/reference truth while AXIS 8.19 is developed. Do not mutate historical user data in place to make a new feature easier to implement.
+Exact sealed main SHA:
 
-## 2. Previous engineering milestone is sealed
+`fdbfea738489fca6b19b3c8c7b502977373e4e4f`
 
-PR #79 **AXIS Source Convergence — Governance + CI Foundation** is merged into the Production SHA above.
+- Vercel: `https://axis-five-puce.vercel.app` · deployment `dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD` · READY · Production gate `32812905314` success
+- EdgeOne: `https://axisfitness-mirror-9x91gveo.edgeone.cool` · deployment `dpemq8bxjopa` · verification `32812883590` success
+- exact Vercel/EdgeOne artifact parity: success
+- Chromium + iPhone-like WebKit Production flows: success
 
-It completed governance/handoff + CI convergence without intended product behavior change:
+Production identity remains `version/baseVersion = 8.20.1`, `architecture = canonical-single-runtime`.
 
-- 20 historical automatic workflow files retired after replacement proof;
-- 9 broad responsibility-based CI families retained;
-- `AXIS 8.12 Browser Gate` intentionally retained as a path-scoped specialist;
-- retired workflow resurrection guarded;
-- exact merged-main Vercel + EdgeOne Production proof completed.
+## 2. Established owners that 8.21 may not replace
 
-Source/build historical transform debt still exists in `build-release.mjs`; it is separate from current 8.19 product truth and must not be mixed into product work casually.
+- Session/Object/Encounter truth: `app.js` / `axis_v60_state`
+- classic weight+reps set facts: `v61.js` / `axis_v8_meta` only where immutable schema permits
+- ongoing Active: established v82/v87 lifecycle/presentation owners
+- media: established app/source-first owners / `axis_v42_media`
+- learning: `axis_v89_speak`
+- portable Metric/Flow contracts: derived semantics, not alternate training storage
 
-## 3. Active product work
+`metricSchemaSnapshot` remains Encounter authority for what was recorded; `executionModeSnapshot` remains authority for how it executed.
 
-**Milestone:** `AXIS 8.19 — Universal Practice Objects`
+## 3. Current milestone
 
-**Branch:** `product/819-universal-practice-objects`
+**AXIS 8.21 — Flow / Session Blueprint**
 
-**Draft PR:** `#80`
+- branch: `product/821-flow-session-blueprint`
+- Draft PR: **#88**
+- current phase: **Phase 2 — App-owned Flow Definition / Runtime Boundary**
 
-**Current phase:** `Phase 1 — Metric Schema + Recording Truth`
+### Prior exact-head proofs
 
-Product pipeline:
+- Phase 0 ownership/reuse: `84310744b528441f3fa8d3feb51e8ed149e02b78` — all nine baseline PR workflow families success.
+- Phase 1 portable resolver: `2892d8807e6d2688cb366019d64c6e9b573fcb66` — all nine success including Flow resolver contract.
+- Phase 1B immutable provenance: `289fd1b2cdcbcb4e1cfa56402372b8005daadfa4` — final all nine success.
+
+Phase 1B run IDs:
+
+- EdgeOne package `32879396817`
+- Repository `32879396818`
+- PR Convergence `32879396830`
+- Cross-Platform `32879396838`
+- Work Continuity `32879396815`
+- Runtime Foundation `32879396831`
+- Deep Compatibility `32879396864`
+- Runtime `32879396825`
+- Current Release `32879396826`
+
+Current Release Chromium had one inherited 8.16 Capture async timeout on the first attempt. The branch had not changed Capture/runtime/CSS; WebKit passed. The same Chromium job was rerun unchanged and passed the same Capture point plus all later checks. No product code/test threshold was altered.
+
+## 4. Portable Flow contracts already sealed
+
+- `axis.flow.v1`
+- `axis.flow-provenance.v1`
+- pure resolver/provenance module: `lib/axis-flow.mjs`
+- contract: `scripts/axis-821-flow-contract.mjs`
+
+Flow means intended continuity; Encounter remains factual history. A Flow can say `A → B → C` while real practice becomes `A → D → B` without an error/deviation state.
+
+Temporary step override never mutates reusable Object defaults. `axis.flow-provenance.v1` is a compact detached source-context snapshot and does not replace full Encounter fact snapshots.
+
+## 5. Phase 2 candidate state decision
+
+Phase 2 deliberately reuses the existing app-owned `axis_v60_state` object instead of creating a new store:
 
 ```text
-Object
-  ↓
-Metric Schema
-  ↓
-Recording Surface
-  ↓
-authoritative metric facts
-  ↓
-Encounter schema snapshot
-  ↓
-History / Evolution
+axis_v60_state
+├─ sessions
+├─ active
+├─ profile
+├─ prefs
+├─ flows[]
+└─ flowRun
 ```
 
-The structural defect being fixed: an Object may describe what it should record, but current recording/history still largely collapse to hard-coded strength (`weight/reps/sets`) or cardio (`duration/intensity`) shapes. 8.19 makes the Object definition executable without turning AXIS into a generic form builder.
+- `flows[]` = durable Flow intent definitions.
+- `flowRun` = one lightweight reload-safe current continuity snapshot, or `null`.
+- old version-60 states without these fields remain valid through existing merge-load behavior.
+- boot does not force a migration write.
+- durable `flows` are included in backup; current `flowRun` is not.
+- no `axis_flow_*` localStorage key and no new IndexedDB database are allowed.
 
-## 4. 8.19 Metric Schema foundation
+This decision is under exact-head CI until the Phase 2 head is green.
 
-Foundation commit: `9f45c4ed3bfdad1fa113801b4af0e6d0355dfa8b`
+## 6. Phase 2 runtime boundary
 
-Machine contracts:
+`prepare-821-flow-runtime.mjs` is imported after `prepare-8201-release.mjs` and before hardened canonical bundling. It injects no extra browser JS request.
 
-- `axis.metric-schema.v1`
-- `axis.encounter-metrics.v1`
+It exposes `window.__AXIS_FLOW_RUNTIME__` with app-owned intent operations:
 
-Pure resolver:
+- list/save/remove Flow definitions;
+- launch a snapped run;
+- resolve exactly one current step;
+- `selectCurrent()` delegates to canonical `selectEq()` and publishes the already-established `axis:equipment-selected` lifecycle event;
+- advance only after a matching Encounter was committed;
+- skip with no Encounter;
+- finish the run;
+- expose temporary recording-only schema/execution handoff.
 
-- `lib/axis-metric-schema.mjs`
+It explicitly reports:
 
-Portable metric primitives:
+- `storage: axis_v60_state`
+- `newStorage: false`
+- `newRecorder: false`
+- `newActiveOwner: false`
+- `newEncounterWriter: false`
 
-- `number`
-- `count`
-- `duration`
-- `distance`
-- `pace`
-- `percentage`
-- `rating`
-- `boolean`
-- `choice`
+## 7. Recording / Object boundary
 
-Legacy compatibility:
+Do **not** modify `axis818SchemaForEq()` globally for Flow context. That function is still Object Truth and is read by history/Evolution/detail surfaces.
 
-- classic strength resolves to `weight + reps` and explicitly keeps `v61` as writer;
-- legacy cardio resolves to `duration + intensity`;
-- existing custom profiles such as `time_level` remain readable;
-- Encounter metric projections deep-copy the governing schema so later Object edits cannot rewrite old Encounter truth.
+Temporary context is visible only through:
 
-Cross-Platform Foundation run `32676046208` passed the Metric Schema foundation contract.
+- `axis821SchemaForRecording(eq)`
+- `axis821ExecutionForRecording(eq)`
 
-## 5. Critical ownership — do not duplicate
+The existing app recorder uses those only for the current save. Reusable Object defaults remain unchanged.
 
-- `app.js` — base session/profile/preferences state and current base/cardio event persistence; canonical camera/media persistence.
-- `v61.js` — authoritative high-frequency classic strength set writer in `axis_v8_meta`.
-- `v874-professional.js` — visible custom Object editor; 8.19 custom schema persistence must extend this owner rather than create another editor/store.
-- v8710 — sole automatic sound owner.
-- 8.18 Focus — presentation only; delegates factual completion.
-- Evolution Library — derived/read-only.
-- Metric Schema resolver — pure semantic resolver only; **not** a store, event writer, completion owner, or UI owner.
+`v61` may query the Flow runtime only to decide whether a temporary schema delegates to the existing schema recorder. It still exclusively owns genuine classic repeated-set metadata.
 
-One semantic action gets one interactive writer. One training fact gets one authoritative store.
+## 8. Encounter provenance integration
 
-## 6. User truth that must survive 8.19
+The existing `app.js` save path remains the only Encounter writer.
+
+Immediately before the existing `state.active.events.push(e)`, Phase 2 may attach `e.flowProvenance` only when the committed Object matches the current Flow step.
+
+This means an unrelated Object inserted into reality does not receive false current-step provenance.
+
+Classic structural `sets` is filtered from portable provenance metric IDs when the immutable shape is weight+reps; v61 remains the fact owner for actual set rows.
+
+No automatic Flow advance occurs before/without a matching committed Encounter. This is intentionally conservative around Undo and post-commit lifecycle semantics.
+
+## 9. Phase 2 physical proof
+
+`scripts/axis-821-flow-runtime-smoke.mjs` is wired into the existing Current Release Gate for Chromium and iPhone-like WebKit after the inherited 8.20.1 smoke.
+
+It proves:
+
+1. legacy same-version state is accepted;
+2. Flow definition persists only inside `axis_v60_state` and survives reload;
+3. launch creates no Encounter or Active metadata;
+4. launch snapshots the ordered run so editing the durable Flow does not rewrite the current run;
+5. A temporary `duration + pace` override records through the existing app recorder while the Object keeps `duration + intensity` defaults;
+6. the Encounter freezes Flow provenance plus current schema/execution snapshots;
+7. B still creates v61-owned classic set metadata;
+8. C with `complete` creates no false Active activity record;
+9. later Flow edits do not rewrite saved Encounter provenance;
+10. no separate Flow localStorage namespace appears.
+
+`scripts/axis-821-flow-runtime-contract.mjs` is also wired into Cross-Platform Foundation to seal ownership/persistence restrictions.
+
+## 10. Still not part of Phase 2
+
+Do not add yet:
+
+- visible Flow composer;
+- heavy planner/top-level Flow mode;
+- auto-advance animation/celebration;
+- calendar programming;
+- completion percentage/streak/XP;
+- AI coach copy;
+- a second training store;
+- 8.21 Production identity/release seal.
+
+## 11. Active Action Lens
+
+`ACTIVE_ACTION_LENS_EXPERIMENT.md` remains independent, non-blocking presentation research. It has no permission to own Flow state, completion facts, Active truth or storage.
+
+## 12. Cross-platform continuity
 
 Preserve:
 
-- `axis_v60_state`
-- `axis_v8_meta`
-- `axis_v89_speak`
-- `axis_v42_media`
-- custom equipment/Object identity and aliases
-- historical sessions/events/Encounter shapes
-
-Current custom Object schema changes must never rewrite historical Encounter facts or their schema snapshot.
-
-## 7. Immediate implementation sequence
-
-1. Persist normalized `metricSchema` on custom Objects through the existing `v874-professional.js` owner and the same `axis_v60_state.profile.customEq` objects.
-2. Existing custom Objects without explicit schema continue to resolve through their legacy type/profile.
-3. Prove save/reload losslessness and prove no historical event/meta mutation.
-4. Connect the Recording Surface Resolver:
-   - exact weight/reps → existing `v61` UI/writer;
-   - established duration/intensity → existing app owner while compatible;
-   - only truly unsupported metrics receive new generic metric controls.
-5. Commit normalized metric facts + immutable schema snapshot at the existing authoritative recording boundary.
-6. Make History/Detail schema-aware with legacy fallback.
-7. Make Evolution consume normalized metric facts read-only.
-8. Dual-engine Chromium + iPhone-like WebKit proof before PR #80 can leave Draft.
-9. Exact merged 8.19 SHA must receive Vercel + EdgeOne Production parity and real-browser proof before release seal.
-
-## 8. Native / cross-platform foundation remains authoritative
-
-The native handoff remains anchored by `axis-native-foundation-0` and repository `INDEPENDENTWU/AXIS-iOS`.
-
-Shared portable foundations remain:
-
+- `axis-native-foundation-0`
+- `INDEPENDENTWU/AXIS-iOS`
 - `axis.domain.v1`
 - `axis.data.v1`
+- additive `axis.flow.v1`
+- additive `axis.flow-provenance.v1`
 
-Web/iOS capability differences stay isolated behind platform contracts; shared domain semantics must not be inferred from Web implementation accidents.
+Browser DOM/CSS details are not portable domain contracts.
 
-## 9. Future presentation foundation
-
-Planned UI locales remain exactly:
-
-- `zh-Hans` — **简体中文**
-- `zh-Hant` — **繁體中文**
-- `en` — **English**
-
-Theme preference remains exactly `system / light / dark` using semantic tokens. Presentation-foundation work comes after the recording-truth foundation is stable.
-
-## 10. What a future developer/agent reads first
+## 13. Resume order
 
 1. `governance/project-state.json`
-2. this `docs/HANDOFF.md`
-3. `docs/CURRENT_WORK.md`
-4. `governance/owners.json` / `docs/OWNERSHIP.md`
-5. `governance/retirements.json` / `docs/RETIREMENTS.md`
-6. `docs/PRODUCT.md`, `docs/RUNTIME_CONTRACT.md`, `docs/ARCHITECTURE.md`
-7. shared contracts and current tests before changing domain or persistence semantics
+2. this file
+3. `CURRENT_RELEASE.md`
+4. `CURRENT_WORK.md`
+5. `AXIS_821_FLOW_SESSION_BLUEPRINT.md`
+6. `governance/owners.json` + `governance/retirements.json`
+7. `lib/axis-flow.mjs`
+8. `prepare-821-flow-runtime.mjs`
+9. `scripts/axis-821-flow-contract.mjs`
+10. `scripts/axis-821-flow-runtime-contract.mjs`
+11. `scripts/axis-821-flow-runtime-smoke.mjs`
+12. exact current PR workflow state before advancing Phase 2 or declaring a release
 
-**Chat history is not authoritative project memory.** If chat disagrees with Git/Production, verify reality and update repository truth.
+If documentation conflicts with current Git/CI/Production, verify reality first and repair the handoff rather than changing reality to match stale text.

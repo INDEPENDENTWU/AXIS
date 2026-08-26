@@ -1,0 +1,25 @@
+{
+  "schema": "axis.flow-fixture.v1",
+  "contract": "axis.flow.v1",
+  "name": "mixed execution semantics",
+  "flow": {
+    "schema": "axis.flow.v1",
+    "id": "flow-mixed",
+    "title": "Mixed practice",
+    "steps": [
+      {"id": "step-a", "objectRef": "object-a"},
+      {"id": "step-b", "objectRef": "object-b"},
+      {"id": "step-c", "objectRef": "object-c"}
+    ]
+  },
+  "objects": [
+    {"id": "object-a", "metricSchema": {"metrics": ["duration", "intensity"]}},
+    {"id": "object-b", "type": "strength", "metricSchema": {"metrics": ["weight", "reps"]}},
+    {"id": "object-c", "metricSchema": {"metrics": ["completed"]}}
+  ],
+  "expected": [
+    {"stepRef": "step-a", "metricIds": ["duration", "intensity"], "executionMode": "timed", "metricSource": "object", "executionSource": "object", "nextStepRef": "step-b"},
+    {"stepRef": "step-b", "metricIds": ["weight", "reps"], "executionMode": "sets", "metricSource": "object", "executionSource": "object", "nextStepRef": "step-c"},
+    {"stepRef": "step-c", "metricIds": ["completed"], "executionMode": "complete", "metricSource": "object", "executionSource": "object", "nextStepRef": null}
+  ]
+}
