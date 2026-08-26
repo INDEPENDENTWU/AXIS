@@ -23,6 +23,7 @@ assert.equal(metricSchema.$id,METRIC_SCHEMA_ID);
 assert.equal(encounterSchema.$id,ENCOUNTER_METRICS_ID);
 assert.equal(manifest.metricSchema,METRIC_SCHEMA_ID);
 assert.equal(manifest.encounterMetrics,ENCOUNTER_METRICS_ID);
+assert.equal(metricSchema.properties.metrics.minItems,undefined,'metric contract still forbids an explicit empty schema');
 
 const strength=resolveMetricSchema({id:'chest',type:'strength'});
 assert.deepEqual(strength.metrics.map(x=>x.id),['weight','reps']);
@@ -50,6 +51,13 @@ assert.deepEqual(explicit.metrics.map(x=>x.id),['duration','distance','resistanc
 assert.equal(explicit.source,'explicit');
 assert.equal(resolveRecordingSurface(explicit).legacyOwner,null);
 
+const explicitEmpty=resolveMetricSchema({id:'no-metrics',type:'strength',metricSchema:[]});
+assert.deepEqual(explicitEmpty.metrics,[],'explicit empty schema fell back to legacy metrics');
+assert.equal(explicitEmpty.source,'explicit');
+assert.deepEqual(resolveRecordingSurface(explicitEmpty),{
+  kind:'fields',objectId:'no-metrics',metricIds:[],primaryMetricIds:[],entryMetricIds:[],singleMetricIds:[],legacyOwner:null
+});
+
 const strengthEvent={id:'E-STRENGTH',equipmentId:'chest',kind:'strength',time:1000,weight:40,reps:10,sets:2};
 const meta={sets:[{weight:40,reps:10,state:'done',doneAt:1100},{weight:42.5,reps:8,state:'done',doneAt:1200}]};
 const metaBefore=JSON.stringify(meta);
@@ -72,6 +80,12 @@ mutable.metricSchema.metrics.push({id:'rating',type:'rating',label:'感受',unit
 assert.deepEqual(historical.metricSchema.metrics.map(x=>x.id),['duration','distance'],'historical schema snapshot changed with current object');
 assert.equal(historical.metricSchema.capturedAt,3000);
 
+const emptyEnvelope=createEncounterMetricEnvelope({object:{id:'no-metrics',type:'strength',metricSchema:[]},event:{id:'E-EMPTY',equipmentId:'no-metrics',kind:'strength',time:3500}});
+assert.equal(emptyEnvelope.factSource,'axis_v60_state','explicit empty schema incorrectly delegated facts to v61');
+assert.deepEqual(emptyEnvelope.metricSchema.metrics,[]);
+assert.deepEqual(emptyEnvelope.values,{});
+assert.deepEqual(emptyEnvelope.entries,[]);
+
 assert.throws(()=>normalizeMetricSchema({objectId:'bad',metrics:['weight','weight']}),/duplicate metric id/);
 assert.throws(()=>normalizeMetricSchema({objectId:'bad',metrics:['not-a-known-primitive']}),/known metric id/);
 assert.throws(()=>normalizeMetricSchema({objectId:'bad',metrics:[{id:'x',type:'choice',label:'X',options:[]}]}),/requires options/);
@@ -80,4 +94,4 @@ const deterministicA=createEncounterMetricEnvelope({object:{id:'chest',type:'str
 const deterministicB=createEncounterMetricEnvelope({object:{id:'chest',type:'strength'},event:strengthEvent,metaRecord:meta,recordedAt:4000});
 assert.deepEqual(deterministicA,deterministicB,'metric resolver is not deterministic');
 
-console.log('[AXIS 8.19 Metric Schema foundation] PASS · 9 primitives · legacy strength/cardio/custom profiles · v61 authority preserved · Encounter schema snapshot immutable');
+console.log('[AXIS 8.21 Metric Schema foundation] PASS · 9 primitives · explicit zero-property schema · legacy strength/cardio/custom profiles · v61 authority preserved · Encounter schema snapshot immutable');
