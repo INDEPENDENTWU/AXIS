@@ -90,4 +90,4 @@ That release-convergence slice should:
 4. prove exact Vercel + EdgeOne parity in Chromium and iPhone-like WebKit after merge;
 5. stop there — do not introduce 8.22 adaptive behavior until 8.21 is fully sealed as one factual product release.
 
-Conversation history is supplemental only. GitHub governance, contracts, tests, current main and Production evidence are authoritative.
+Chat history is not authoritative project memory. Conversation history is supplemental only. GitHub governance, contracts, tests, current main and Production evidence are authoritative.
