@@ -36,6 +36,17 @@ if(ratingHits!==1)fail(`canonical rating value owner expected once, found ${rati
 src=src.replace(ratingFrom,ratingTo);
 if(!src.includes('axis821RatingDirect'))fail('direct editable rating control missing');
 
+// AXIS $$ intentionally returns a collection abstraction and cannot be assumed
+// to expose Array.prototype.find. Normalize it before resolving the one existing
+// canonical metric input so preset/rating/toggle actions work in Chromium and
+// iPhone-like WebKit without introducing another value owner.
+const metricLookupFrom="function axis821MetricInput(key){return $$('[data-axis818-metric]').find(x=>x.dataset.axis818Metric===String(key))||null}";
+const metricLookupTo="function axis821MetricInput(key){return Array.from($$('[data-axis818-metric]')).find(x=>x.dataset.axis818Metric===String(key))||null}";
+const metricLookupHits=src.split(metricLookupFrom).length-1;
+if(metricLookupHits!==1)fail(`canonical metric input lookup expected once, found ${metricLookupHits}`);
+src=src.replace(metricLookupFrom,metricLookupTo);
+if(!src.includes("Array.from($$('[data-axis818-metric]')).find"))fail('collection-safe metric input lookup missing');
+
 try{new Function(src)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.21 recording property compat] PASS · canonical recorder resolves Object Truth + preserves active-review visibility + keeps in-progress values + rating rail shares one directly editable value owner');
+console.log('[AXIS 8.21 recording property compat] PASS · canonical recorder resolves Object Truth + preserves active-review visibility + keeps in-progress values + rating rail shares one directly editable value owner + metric actions use collection-safe lookup');
