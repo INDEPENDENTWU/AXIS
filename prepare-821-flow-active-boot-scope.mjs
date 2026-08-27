@@ -5,37 +5,52 @@ const fail=m=>{throw new Error(`[AXIS 8.21 Flow Active boot scope] ${m}`)};
 let s=fs.readFileSync(FILE,'utf8');
 
 /*
- * Flow Active convergence must subscribe from inside the canonical app IIFE.
- * The first convergence pass intentionally reused app-local state/functions, but
- * its two lifecycle listeners were appended after the IIFE. `D` is app-local,
- * so that placement produced a real Production cold-boot ReferenceError before
- * the callbacks could ever run. Move the exact listeners back under the app
- * owner rather than exporting private state or creating a second lifecycle owner.
+ * Flow Active convergence deliberately reuses private app/Flow state. The
+ * lifecycle listeners therefore have to live in the exact lexical scope that
+ * owns axis821FlowRecordingIntent, axis821FlowRecorderContextClear and
+ * axis821FlowOnActiveFinished. Merely moving them into an earlier app IIFE is
+ * insufficient: the 8.21 Flow helpers are emitted in the item-unit scope.
+ *
+ * Keep the convergence pass as the behavior owner, but relocate its exact
+ * emitted listener block immediately before axis821CompleteCurrentItem(), the
+ * same anchor used to inject the helper block. No private helper is exported.
  */
-const leaked=`\nD.addEventListener('click',e=>{const sheet=$('#scanSheet');if(e.target.closest?.('[data-close="scanSheet"]')||e.target===sheet){axis821FlowRecordingIntent=null;axis821FlowRecorderContextClear()}},true);\nwindow.addEventListener('axis:active-finished',e=>axis821FlowOnActiveFinished(e?.detail?.id));\n`;
-const hits=s.split(leaked).length-1;
-if(hits!==1)fail(`expected one leaked listener block, found ${hits}`);
-s=s.replace(leaked,'\n');
+const listenerBlock=`\nD.addEventListener('click',e=>{const sheet=$('#scanSheet');if(e.target.closest?.('[data-close="scanSheet"]')||e.target===sheet){axis821FlowRecordingIntent=null;axis821FlowRecorderContextClear()}},true);\nwindow.addEventListener('axis:active-finished',e=>axis821FlowOnActiveFinished(e?.detail?.id));\n`;
+const hits=s.split(listenerBlock).length-1;
+if(hits!==1)fail(`expected one emitted listener block, found ${hits}`);
+s=s.replace(listenerBlock,'\n');
+
+const completeAnchor='function axis821CompleteCurrentItem()';
+const completeHits=s.split(completeAnchor).length-1;
+if(completeHits!==1)fail(`completion anchor expected once, found ${completeHits}`);
+const completeAt=s.indexOf(completeAnchor);
+const clearAt=s.indexOf('function axis821FlowRecorderContextClear()');
+const finishAt=s.indexOf('function axis821FlowOnActiveFinished(id)');
+const intentAt=s.indexOf('let axis821FlowRecordingIntent=null;');
+if(intentAt<0||clearAt<0||finishAt<0)fail('Flow private helper block missing');
+if(!(intentAt<clearAt&&clearAt<finishAt&&finishAt<completeAt))fail('Flow helper ordering drift before completion anchor');
+
+s=s.slice(0,completeAt)+listenerBlock+s.slice(completeAt);
 
 const marker=';try{window.__AXIS_821_FLOW_ACTIVE_CONVERGENCE__=';
 const markerAt=s.indexOf(marker);
 if(markerAt<0)fail('Flow Active convergence marker missing');
-const closeAt=s.lastIndexOf('})();',markerAt);
-if(closeAt<0)fail('canonical app IIFE close missing before Flow marker');
-
-const scoped=`\nD.addEventListener('click',e=>{const sheet=$('#scanSheet');if(e.target.closest?.('[data-close="scanSheet"]')||e.target===sheet){axis821FlowRecordingIntent=null;axis821FlowRecorderContextClear()}},true);\nwindow.addEventListener('axis:active-finished',e=>axis821FlowOnActiveFinished(e?.detail?.id));\n`;
-s=s.slice(0,closeAt)+scoped+s.slice(closeAt);
-
 const flag='flowEmbeddedInActiveHome:true';
 if((s.split(flag).length-1)!==1)fail('Flow convergence marker shape drift');
 s=s.replace(flag,'flowEmbeddedInActiveHome:true,bootScopedListeners:true');
 
-const listenerAt=s.indexOf("D.addEventListener('click',e=>{const sheet=$('#scanSheet')");
-const newMarkerAt=s.indexOf(marker);
-if(listenerAt<0||listenerAt>newMarkerAt)fail('Flow listeners are not inside canonical app scope');
-if(s.slice(newMarkerAt).includes("D.addEventListener('click',e=>{const sheet=$('#scanSheet')"))fail('Flow listener still survives outside app scope');
+const closeListener="D.addEventListener('click',e=>{const sheet=$('#scanSheet')";
+const activeListener="window.addEventListener('axis:active-finished',e=>axis821FlowOnActiveFinished";
+if((s.split(closeListener).length-1)!==1)fail('close listener must exist exactly once');
+if((s.split(activeListener).length-1)!==1)fail('active-finished listener must exist exactly once');
+const listenerAt=s.indexOf(closeListener),activeAt=s.indexOf(activeListener),newCompleteAt=s.indexOf(completeAnchor),newMarkerAt=s.indexOf(marker);
+if(!(finishAt<listenerAt&&listenerAt<activeAt&&activeAt<newCompleteAt&&newCompleteAt<newMarkerAt))fail('Flow listeners are not co-located with private Flow helpers');
+if(s.slice(newMarkerAt).includes(closeListener)||s.slice(newMarkerAt).includes(activeListener))fail('Flow listener survives in global convergence tail');
+for(const privateName of ['axis821FlowRecorderContextClear','axis821FlowOnActiveFinished','axis821FlowRecordingIntent']){
+ if(s.includes(`window.${privateName}=`)||s.includes(`window['${privateName}']`))fail(`private Flow helper exported: ${privateName}`);
+}
 if((s.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append ownership drift');
 
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Flow Active boot scope] PASS · Flow close/finish listeners moved inside canonical app IIFE · no private app state exported · one Encounter append retained');
+console.log('[AXIS 8.21 Flow Active boot scope] PASS · lifecycle listeners share the private Flow helper lexical region · no private state exported · one Encounter append retained');
