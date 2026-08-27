@@ -36,6 +36,15 @@ const finalRenderer=functionRange(src,'function eventHtml(e)','final timeline ev
 if(!finalRenderer.includes('axis821EventMetricSummary(e)'))fail('final timeline is not Encounter-schema driven');
 if(finalRenderer.includes("e.kind==='strength'")||finalRenderer.includes('e.weight')||finalRenderer.includes('e.reps'))fail('legacy strength/cardio timeline derivation survived canonicalization');
 if(/undefined次|undefined组|NaN/.test(finalRenderer))fail('invalid metric presentation token survived final renderer');
+
+/* During 8.21 convergence, enumerate every remaining executable source site that
+ * can paint the old weight/reps summary. This is intentionally against final
+ * canonical bytes so hidden secondary presenters cannot evade source-stage seals. */
+{
+ const contexts=[];let at=0;
+ while((at=src.indexOf('kg ·',at))>=0){contexts.push(src.slice(Math.max(0,at-220),Math.min(src.length,at+300)).replace(/\s+/g,' ').trim());at+=4}
+ if(contexts.length)console.log(`[AXIS 8.21 final Object presentation diagnostic] legacy kg contexts ${contexts.length} :: ${contexts.slice(0,12).join(' || ')}`);
+}
 try{new Function(src)}catch(e){fail(`final canonical runtime syntax ${e.message}`)}
 
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex').slice(0,12);
