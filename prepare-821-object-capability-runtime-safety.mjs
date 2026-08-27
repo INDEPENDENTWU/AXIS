@@ -109,6 +109,22 @@ for(const signature of [valueSignature,controlSignature]){
   const text=functionRange(s,signature,signature).text;
   if(text.includes('km$/')||text.includes('km$'))fail(`${signature} still contains compiler-unsafe pace token`);
 }
+
+/* Audit the complete tail, not only known 8.21 blocks. A bare D reference after
+ * the canonical app IIFE is always invalid in hardened isolation because D is an
+ * app-private alias. Keep concise source context in the failure so the owning
+ * transformer can be fixed rather than patching axis-core.js. */
+{
+  const {closeAt}=appOwnerBoundary(s),tail=s.slice(closeAt),leaks=[];
+  const re=/\bD(?:\.|\[)/g;
+  for(const m of tail.matchAll(re)){
+    const at=closeAt+(m.index||0);
+    const context=s.slice(Math.max(closeAt,at-120),Math.min(s.length,at+260)).replace(/\s+/g,' ').trim();
+    leaks.push(context);
+  }
+  if(leaks.length)fail(`app-private D leaks after canonical owner (${leaks.length}) :: ${leaks.slice(0,8).join(' || ')}`);
+}
+
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Object capability runtime safety] PASS · proven 8.18 app boundary reused · choice/localization/pace inside canonical owner · hardened isolation safe');
+console.log('[AXIS 8.21 Object capability runtime safety] PASS · proven 8.18 app boundary reused · choice/localization/pace inside canonical owner · complete D-tail audit · hardened isolation safe');
