@@ -110,15 +110,21 @@ for(const signature of [valueSignature,controlSignature]){
   if(text.includes('km$/')||text.includes('km$'))fail(`${signature} still contains compiler-unsafe pace token`);
 }
 
-/* Audit the complete tail, not only known 8.21 blocks. A bare D reference after
- * the canonical app IIFE is always invalid in hardened isolation because D is an
- * app-private alias. Keep concise source context in the failure so the owning
- * transformer can be fixed rather than patching axis-core.js. */
+/* Audit the complete tail while respecting self-contained later IIFEs that own
+ * their own `const D=document`. A D use is legal only when the nearest enclosing
+ * historical IIFE declares its own D before that use; otherwise it is an app
+ * private-alias leak and must stop the release build with source context. */
 {
   const {closeAt}=appOwnerBoundary(s),tail=s.slice(closeAt),leaks=[];
   const re=/\bD(?:\.|\[)/g;
   for(const m of tail.matchAll(re)){
-    const at=closeAt+(m.index||0);
+    const rel=m.index||0,at=closeAt+rel;
+    const before=s.slice(closeAt,at);
+    const iifeAt=Math.max(before.lastIndexOf('(function '),before.lastIndexOf('(function('),before.lastIndexOf('(()=>{'));
+    const iifeEnd=iifeAt>=0?s.indexOf('})();',closeAt+iifeAt):-1;
+    const localPrefix=iifeAt>=0?s.slice(closeAt+iifeAt,at):'';
+    const ownsLocalD=iifeAt>=0&&iifeEnd>at&&/(?:const|let)\s+D\s*=\s*document\b/.test(localPrefix);
+    if(ownsLocalD)continue;
     const context=s.slice(Math.max(closeAt,at-120),Math.min(s.length,at+260)).replace(/\s+/g,' ').trim();
     leaks.push(context);
   }
@@ -127,4 +133,4 @@ for(const signature of [valueSignature,controlSignature]){
 
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Object capability runtime safety] PASS · proven 8.18 app boundary reused · choice/localization/pace inside canonical owner · complete D-tail audit · hardened isolation safe');
+console.log('[AXIS 8.21 Object capability runtime safety] PASS · proven 8.18 app boundary reused · choice/localization/pace inside canonical owner · local-D-aware tail audit · hardened isolation safe');
