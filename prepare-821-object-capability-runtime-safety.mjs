@@ -15,7 +15,7 @@ function functionRange(src,signature,label){
   for(let i=brace;i<src.length;i++){
     const ch=src[i],next=src[i+1]||'';
     if(line){if(ch==='\n')line=false;continue}
-    if(block){if(ch==='*'&&next==='/'){block=false;i++}continue}
+    if(block){if(ch==='*'&&next==='/'){block=false;i++;continue}
     if(quote){if(escaped){escaped=false;continue}if(ch==='\\'){escaped=true;continue}if(ch===quote)quote='';continue}
     if(ch==='/'&&next==='/'){line=true;i++;continue}
     if(ch==='/'&&next==='*'){block=true;i++;continue}
@@ -32,15 +32,34 @@ function replaceFunction(src,signature,replacement,label){
 }
 
 /*
- * Capability convergence is intentionally emitted after the app IIFE and then
- * canonicalized into the single runtime. Anything injected at that boundary must
- * use browser globals, never app-private aliases such as D. This keeps cold boot
- * identical in Chromium and WebKit without introducing another event owner.
+ * The choice control is emitted inside the canonical app owner. Use the browser
+ * document for the event target so later compiler stages cannot confuse the
+ * helper alias, while still delegating to the one app-owned metric value owner.
  */
 const choicePrefix="D.addEventListener('click',e=>{const b=e.target.closest?.('[data-axis821-choice]');";
 const choiceHits=s.split(choicePrefix).length-1;
-if(choiceHits!==1)fail(`global choice binding expected once, found ${choiceHits}`);
+if(choiceHits!==1)fail(`choice binding expected once, found ${choiceHits}`);
 s=s.replace(choicePrefix,"document.addEventListener('click',e=>{const b=e.target.closest?.('[data-axis821-choice]');");
+
+/*
+ * Executable Object convergence originally emitted the enum/localization bridge
+ * immediately after the app IIFE. That bridge calls axis821VisibleObjectType,
+ * which is deliberately private to the app owner. Moving the whole bridge back
+ * before the same IIFE close fixes the lexical boundary rather than exporting a
+ * second global presentation owner.
+ */
+const enumSignature='function axis821LocalizeVisibleEnums(root=document)';
+const enumStart=s.indexOf(enumSignature);
+const enumTail='queueMicrotask(()=>axis821LocalizeVisibleEnums(document));';
+const enumTailAt=s.indexOf(enumTail,enumStart);
+if(enumStart<0||enumTailAt<0)fail('localization bridge missing after capability convergence');
+const enumEnd=enumTailAt+enumTail.length;
+const ownerClose=s.lastIndexOf('})();',enumStart);
+if(ownerClose<0)fail('canonical app IIFE close missing before localization bridge');
+if(enumStart<ownerClose)fail('localization bridge unexpectedly already inside app owner');
+const enumBlock=s.slice(enumStart,enumEnd);
+s=s.slice(0,enumStart)+s.slice(enumEnd);
+s=s.slice(0,ownerClose)+enumBlock+'\n'+s.slice(ownerClose);
 
 /*
  * Do not emit a slash-heavy pace regular expression through the historical
@@ -69,9 +88,11 @@ const safePaceBranch=`if(kind==='pace'){return'<section class="axis821MetricCont
 const controlText=control.text.slice(0,paceStart)+safePaceBranch+control.text.slice(paceEnd+1);
 s=s.slice(0,control.start)+controlText+s.slice(control.end);
 
-if(s.includes(choicePrefix))fail('app-private D leaked into global choice binding');
+if(s.includes(choicePrefix))fail('app-private D survived in choice binding');
 if(!s.includes("document.addEventListener('click',e=>{const b=e.target.closest?.('[data-axis821-choice]')"))fail('document-scoped choice binding missing');
 if(!s.includes('function axis821CleanPaceValue(v)'))fail('plain-string pace normalizer missing');
+const finalEnumStart=s.indexOf(enumSignature),finalEnumClose=s.indexOf('})();',finalEnumStart);
+if(finalEnumStart<0||finalEnumClose<0||finalEnumStart>finalEnumClose)fail('localization bridge did not return inside canonical app IIFE');
 for(const signature of [valueSignature,controlSignature]){
   const text=functionRange(s,signature,signature).text;
   if(text.includes('km$/'))fail(`${signature} still contains compiler-unsafe pace regex`);
@@ -79,4 +100,4 @@ for(const signature of [valueSignature,controlSignature]){
 }
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Object capability runtime safety] PASS · global choice binding uses document · pace normalization is regex-free · Chromium/WebKit cold-boot compiler boundary sealed');
+console.log('[AXIS 8.21 Object capability runtime safety] PASS · localization returned to app lexical owner · choice binding compiler-safe · pace normalization regex-free · Chromium/WebKit cold-boot boundary sealed');
