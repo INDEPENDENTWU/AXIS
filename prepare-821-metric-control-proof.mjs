@@ -35,3 +35,4 @@ const contract=JSON.parse(read('release-contract.json'));if(String(contract.publ
 console.log('[AXIS 8.21 metric control proof] PASS · five semantic control families · 64px Group Plan geometry · expanded dual-engine physical assertions · public identity still 8.20.1');
 
 await import('./prepare-821-item-unit-flow-convergence-v2.mjs');
+await import('./prepare-821-recording-geometry-diagnostic.mjs');
