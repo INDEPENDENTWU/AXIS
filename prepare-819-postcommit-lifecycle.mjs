@@ -47,7 +47,8 @@ console.log('[AXIS 8.19 post-commit lifecycle] PASS · v61 attach authority seal
 /* 8.19 closes its historical release identity first. 8.20 then layers the next
    product contract. 8.20.1 reliability hardening runs before the 8.20 public
    seal. 8.21 then layers Flow runtime, canonical recording properties and the
-   user-visible Flow surface without introducing a parallel factual owner. */
+   user-visible Flow surface without introducing a parallel factual owner. The
+   8.21 public identity advances only after all 8.21 product convergence passes. */
 await import('./prepare-819-release.mjs');
 await import('./prepare-820-executable-practice-objects.mjs');
 await import('./prepare-8201-object-reliability.mjs');
@@ -63,3 +64,4 @@ await import('./prepare-821-flow-user-surface-proof.mjs');
 await import('./prepare-821-product-convergence-compat.mjs');
 await import('./prepare-821-product-convergence.mjs');
 await import('./prepare-821-product-convergence-proof.mjs');
+await import('./prepare-821-release.mjs');
