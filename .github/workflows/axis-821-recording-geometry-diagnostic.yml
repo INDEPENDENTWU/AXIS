@@ -7,7 +7,7 @@ on:
 jobs:
   production-geometry-diagnostic:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,8 +23,13 @@ jobs:
           CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
-      - name: Diagnose fixed Vercel Production recording geometry
+      - name: Stress fixed Vercel Production recording geometry
         env:
           AXIS_URL: https://axis-five-puce.vercel.app
           AXIS_ENGINE: chromium
-        run: node scripts/axis-completion-smoke.mjs
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 12); do
+            echo "===== Production geometry attempt ${attempt}/12 ====="
+            node scripts/axis-completion-smoke.mjs
+          done
