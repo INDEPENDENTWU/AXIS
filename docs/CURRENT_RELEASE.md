@@ -1,102 +1,119 @@
-# Current Release — AXIS 8.20.1
+# Current Release — AXIS 8.21
 
 **Status: Production sealed**
 
-AXIS 8.20.1 is the current public Web release and the baseline for AXIS 8.21 development.
+AXIS 8.21 is the current public Web release and the exact baseline for the next product milestone.
 
 ## Exact release identity
 
-- release: **8.20.1 — Executable Object Reliability**
-- exact merged-main SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
+- release: **8.21 — Flow / Canonical Recording Property Surface**
+- exact merged-main SHA: `4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d`
 - architecture: `canonical-single-runtime`
 - release build: `node build-release.mjs`
-- core hash: `1269a6183152`
-- CSS hash: `fc372a0bf2f9`
+- release hash: `8fe7eb766721`
+- core/runtime hash: `66ede67e8b84`
+- CSS hash: `cd3d3fbe0f29`
 - initial JavaScript requests: `1`
 - dynamic JavaScript requests: `0`
+
+The fixed Vercel `axis-build.json` serves `version/baseVersion = 8.21`, exact source commit `4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d`, and the hashes above.
 
 ## Production providers
 
 ### Vercel
 
 - fixed URL: `https://axis-five-puce.vercel.app`
-- deployment: `dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD`
+- deployment: `dpl_GJDst6J8hHCtvn2AYjLLDe4yozCh`
 - state: **READY**
 - target: `production`
-- source SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
-- Public Production Alias Gate: **success**
-- current Production Deployment Gate run `32812905314`: **success**
+- source SHA: `4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d`
+- Public Production Alias Gate run `33028649168`: **success**
+- Production Deployment Gate run `33028649208`: **success**
 - exact local/remote manifest + immutable asset verification: **success**
-- real Chromium inherited foundation + current 8.20.1 flow: **success**
+- real Chromium inherited foundation + current 8.21 flow against the fixed Production URL: **success**
 
 ### EdgeOne
 
 - fixed URL: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
-- deployment: `dpemq8bxjopa`
-- verification workflow run: `32812883590`
-- source SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
+- deployment: `dp6r0jcmk58a`
+- verification workflow run: `33028633067`
+- verification artifact: `9629477102`
+- source SHA: `4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d`
 - package contract: **success**
 - exact prebuilt deployment: **success**
 - bounded fixed-domain release convergence: **success**
 - Vercel canonical/API parity: **success**
-- real Chromium current-release flow: **success**
-- real iPhone-like WebKit current-release flow: **success**
+- real Chromium current-release lifecycle: **success**
+- real iPhone-like WebKit current-release lifecycle: **success**
 - final `EdgeOne Production` GitHub status: **success**
 
-The EdgeOne mirror publishes the already-verified prebuilt artifact. It is not allowed to reinterpret product source independently.
+The EdgeOne mirror publishes the already-verified Vercel/main-equivalent prebuilt artifact. It does not reinterpret product source independently.
 
-## Product fixes sealed in 8.20.1
+## Product behavior sealed in 8.21
 
-### 1. Explicit Object schema is executable truth
+### 1. Recording properties belong to Object truth
 
-A custom Object configured for fields such as `pace` or `duration + intensity` must immediately record those fields. It must not fall back to weight/reps/sets merely because an inherited coarse kind is `strength` or `cardio`.
+Recording-property configuration lives on canonical Object create/edit surfaces, not on `记下` / Record.
 
-The visible custom editor remains the established owner. Schema persistence waits for canonical Object creation and then converges live Object Truth without creating a second store.
+An Object can explicitly configure properties such as weight, reps, duration, hold, distance, pace, speed, intensity, resistance, level, incline, rating or completion. The Record surface renders only value controls for the properties actually configured on that Object.
 
-### 2. Active lifecycle follows execution semantics
+An explicit empty schema is valid truth. If a user clears every property, AXIS keeps `metricSchema: []`; it does **not** silently reselect duration or inject a legacy/default field.
 
-`metricSchema` answers **what to record**.
+Legacy fallback remains available only for old Objects that genuinely have no explicit schema.
 
-`executionMode` answers **how the action progresses**.
+### 2. Canonical recording controls are semantic, not one-off widgets
 
-Current modes:
+The established recorder remains the single recorder owner. 8.21 adds one canonical value-control system rather than property-specific mini-recorders.
 
-- `single`
-- `sets`
-- `rounds`
-- `timed`
-- `hold`
-- `complete`
+Current control families cover:
 
-Ongoing lifecycle:
+- quantity / numeric stepping and direct entry;
+- time / duration controls and quick presets;
+- pace entry and stepping;
+- bounded scale/rating controls;
+- boolean/choice completion controls.
 
-- `sets`
-- `rounds`
-- `timed`
-- `hold`
+The Record page does not own schema selection. It only collects current values.
 
-One-shot lifecycle:
+### 3. Flow sequences Objects at item granularity
 
-- `single`
-- `complete`
+Flow is intent/orchestration. Encounter remains factual history.
 
-A duration-only Object such as a wall stand can therefore enter the polished existing `进行中` surface without pretending to be a set exercise. A pace-only one-shot record does not create false Active state.
+For a Flow `A → B → C`, the sealed lifecycle is:
 
-Set-only UI such as `完成一组` / add-set behavior is allowed only when effective execution is actually `sets`.
+```text
+start
+  ↓
+A current
+  ↓ 完成此项
+B current
+  ↓ 完成此项
+C current
+  ↓ 完成此项
+Flow complete
+```
 
-### 3. Classic ownership is preserved
+One Object/item is the minimum Flow completion unit. Flow no longer routes through standalone `记下 → Quick Record → 完成一组` before it can progress.
 
-8.20.1 does not replace the proven classic strength path.
+Completing a Flow item:
 
-`v61.js` remains authoritative for classic set metadata only when the immutable Encounter schema is genuinely weight+reps. The 8.19 immutable Encounter-schema authority remains intact.
+- commits exactly one factual Encounter through the existing app-owned writer;
+- freezes additive Flow provenance;
+- advances immediately to the next item;
+- does not fabricate unconfirmed weight/reps/sets/pace/intensity values;
+- may truthfully record automatic facts such as completion or elapsed duration where the Object schema allows them.
 
-### 4. Internal enums stay internal
+### 4. Standalone Quick Record / Group Plan remain separate
 
-Persisted compatibility IDs such as `strength`, `cardio` and `relative` remain stable internal data. Chinese visible product surfaces map them to product language rather than leaking raw enum strings.
+Classic strength Group Plan and `完成一组` remain valid for standalone compatible Object execution.
 
-The derived Evolution/Object shelf remains read-only and uses user-facing product language.
+During an active Flow, `临时记录其他` may open ordinary Quick Record. That Encounter is normal standalone history: it receives no false Flow provenance and does not consume or advance the Flow cursor.
 
-## Preserved owners and stores
+Skip changes Flow intent only and creates no Encounter.
+
+### 5. Existing ownership remains intact
+
+8.21 did not add a second Session writer, Encounter writer, recorder, Active owner, media owner, or training database.
 
 Authoritative persistence remains:
 
@@ -105,7 +122,19 @@ Authoritative persistence remains:
 - `axis_v89_speak`
 - `axis_v42_media`
 
-No 8.20.1 product or deployment fix added a new database, recorder, Active owner, Encounter writer, media owner or sound owner.
+Flow definitions and one current FlowRun extend the existing app-owned `axis_v60_state`; there is no `axis_flow_*` namespace or new IndexedDB database.
+
+## Historical capability provenance preserved
+
+The public release is 8.21, but prior capability provenance remains truthful:
+
+- 8.18 — Object/Capture/Evidence foundations;
+- 8.19 — Universal Practice Object authority;
+- 8.20 — Executable Practice Objects;
+- 8.20.1 — Object reliability and executionMode-led Active lifecycle;
+- 8.21 — canonical recording-property surface, Flow UI/runtime and item-unit completion.
+
+The 8.21 release-only convergence did not relabel those historical owners.
 
 ## Inherited capabilities still release-blocking
 
@@ -120,18 +149,20 @@ The sealed release continues to protect:
 - historical session/data readability;
 - classic Group Plan and set behavior;
 - WebKit-safe media store behavior;
-- exact canonical topology.
+- exact canonical topology;
+- zero-property Object truth;
+- one authoritative Encounter append boundary.
 
 ## Final verification shape
 
-The exact release candidate/main was accepted only after current Runtime, Current Release, Deep Compatibility, Repository, Work Continuity, Cross-Platform and Production verification completed without an unexplained red check.
+The exact merged main was accepted only after Runtime, Runtime Foundation, Current Release, Deep Compatibility, Repository, Work Continuity, Cross-Platform and Production verification completed without an unexplained red check.
 
-Historical Production workflows are now scope-aware. In particular, the historical `AXIS 8.12.x Production Gate` still runs its original checks for 8.12.1–8.12.4 but safely skips later releases instead of declaring them invalid.
+Vercel fixed Production first converged to the exact 8.21 main artifact. EdgeOne then mirrored that exact prebuilt artifact and proved Vercel/EdgeOne parity plus real Chromium and iPhone-like WebKit Production lifecycles.
 
-Current Production verification is release-agnostic: exact source SHA, current local manifest, immutable assets, runtime topology and capability contracts are authoritative rather than a manually maintained version allowlist.
+Current Production verification remains release-agnostic: exact source SHA, current local manifest, immutable assets, runtime topology and capability contracts are authoritative rather than a manually maintained version allowlist.
 
 ## Development baseline
 
-All AXIS 8.21 work must branch from or remain compatible with this exact sealed baseline unless a newer Production seal explicitly supersedes it.
+All new AXIS product work must branch from or remain compatible with exact sealed 8.21 main `4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d` unless a newer Production seal explicitly supersedes it.
 
 Current work: [`CURRENT_WORK.md`](CURRENT_WORK.md)
