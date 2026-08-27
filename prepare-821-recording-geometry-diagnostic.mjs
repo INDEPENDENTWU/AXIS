@@ -18,3 +18,8 @@ const n2=s.split(assertion).length-1;if(n2!==1)fail(`geometry assertion anchor e
 
 fs.writeFileSync(FILE,s);
 console.log('[AXIS 8.21 recording geometry diagnostic] PASS · unchanged geometry assertion emits direct Review-child before/after evidence only on failure');
+
+// The same bounded Production hotfix also converges inherited physical browser
+// flows that had drifted away from the real sheet/touch interaction path. This
+// mutates test harnesses only; it does not change the shipped runtime artifact.
+await import('./scripts/prepare-821-test-flow-stability.mjs');
