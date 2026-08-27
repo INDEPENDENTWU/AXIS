@@ -5,14 +5,10 @@ const fail=m=>{throw new Error(`[AXIS 8.21 Object capability runtime safety] ${m
 if(!fs.existsSync(FILE))fail(`missing ${FILE}`);
 let s=fs.readFileSync(FILE,'utf8');
 
-function functionRange(src,signature,label){
-  const start=src.indexOf(signature);
-  if(start<0)fail(`${label} signature missing`);
-  if(src.indexOf(signature,start+signature.length)>=0)fail(`${label} duplicated`);
-  const brace=src.indexOf('{',start+signature.length-1);
-  if(brace<0)fail(`${label} opening brace missing`);
+function braceRange(src,open,label){
+  if(open<0||src[open]!=='{')fail(`${label} opening brace missing`);
   let depth=0,quote='',escaped=false,line=false,block=false,end=-1;
-  for(let i=brace;i<src.length;i++){
+  for(let i=open;i<src.length;i++){
     const ch=src[i],next=src[i+1]||'';
     if(line){if(ch==='\n')line=false;continue}
     if(block){if(ch==='*'&&next==='/'){block=false;i++}continue}
@@ -24,48 +20,75 @@ function functionRange(src,signature,label){
     else if(ch==='}'&&--depth===0){end=i+1;break}
   }
   if(end<0)fail(`${label} closing brace missing`);
-  return {start,end,text:src.slice(start,end)};
+  return {start:open,end};
+}
+function functionRange(src,signature,label){
+  const start=src.indexOf(signature);
+  if(start<0)fail(`${label} signature missing`);
+  if(src.indexOf(signature,start+signature.length)>=0)fail(`${label} duplicated`);
+  const brace=src.indexOf('{',start+signature.length-1);
+  const body=braceRange(src,brace,label);
+  return {start,end:body.end,text:src.slice(start,body.end)};
 }
 function replaceFunction(src,signature,replacement,label){
   const r=functionRange(src,signature,label);
   return src.slice(0,r.start)+replacement+src.slice(r.end);
 }
+function appOwnerRange(src){
+  const prefix="(function(){'use strict';";
+  const hits=src.split(prefix).length-1;
+  if(hits!==1)fail(`canonical app IIFE expected once, found ${hits}`);
+  const start=src.indexOf(prefix),open=src.indexOf('{',start);
+  const body=braceRange(src,open,'canonical app IIFE');
+  const stateAt=src.indexOf('let state={',body.start);
+  if(stateAt<0||stateAt>=body.end)fail('canonical app state owner is outside app IIFE');
+  return {start,bodyStart:body.start+1,bodyEnd:body.end-1,stateAt};
+}
+function relocateBlockInsideOwner(src,startNeedle,endNeedle,label){
+  let owner=appOwnerRange(src);
+  const start=src.indexOf(startNeedle);
+  if(start<0)fail(`${label} start missing`);
+  if(src.indexOf(startNeedle,start+startNeedle.length)>=0)fail(`${label} duplicated`);
+  const tail=src.indexOf(endNeedle,start);
+  if(tail<0)fail(`${label} end missing`);
+  const end=tail+endNeedle.length;
+  if(start>owner.bodyStart&&end<=owner.bodyEnd)return src;
+  const block=src.slice(start,end);
+  src=src.slice(0,start)+src.slice(end);
+  owner=appOwnerRange(src);
+  src=src.slice(0,owner.bodyEnd)+'\n'+block+'\n'+src.slice(owner.bodyEnd);
+  const placed=src.indexOf(startNeedle),finalOwner=appOwnerRange(src);
+  if(!(placed>finalOwner.bodyStart&&placed<finalOwner.bodyEnd))fail(`${label} did not land inside canonical app owner`);
+  return src;
+}
 
 /*
- * The choice control is emitted inside the canonical app owner. Use the browser
- * document for the event target so later compiler stages cannot confuse the
- * helper alias, while still delegating to the one app-owned metric value owner.
+ * Choice writes the one app-owned metric input. Its delegated listener must live
+ * in the same lexical owner as axis821MetricInput; browser document is used only
+ * as the event target, never as a second value/state owner.
  */
-const choicePrefix="D.addEventListener('click',e=>{const b=e.target.closest?.('[data-axis821-choice]');";
-const choiceHits=s.split(choicePrefix).length-1;
+const choiceFrom="D.addEventListener('click',e=>{const b=e.target.closest?.('[data-axis821-choice]');";
+const choiceTo="document.addEventListener('click',e=>{const b=e.target.closest?.('[data-axis821-choice]');";
+const choiceHits=s.split(choiceFrom).length-1;
 if(choiceHits!==1)fail(`choice binding expected once, found ${choiceHits}`);
-s=s.replace(choicePrefix,"document.addEventListener('click',e=>{const b=e.target.closest?.('[data-axis821-choice]');");
+s=s.replace(choiceFrom,choiceTo);
+const choiceEnd="},true);";
+s=relocateBlockInsideOwner(s,choiceTo,choiceEnd,'choice metric binding');
 
 /*
- * Executable Object convergence originally emitted the enum/localization bridge
- * immediately after the app IIFE. That bridge calls axis821VisibleObjectType,
- * which is deliberately private to the app owner. Moving the whole bridge back
- * before the same IIFE close fixes the lexical boundary rather than exporting a
- * second global presentation owner.
+ * Enum localization calls the app-private axis821VisibleObjectType helper. Keep
+ * the entire function/observer/initial paint inside the canonical app IIFE. This
+ * is the same scope discipline used by the established 8.18 field scope seal,
+ * but the boundary is found structurally from the function body rather than a
+ * fragile invocation spelling.
  */
 const enumSignature='function axis821LocalizeVisibleEnums(root=document)';
-const enumStart=s.indexOf(enumSignature);
 const enumTail='queueMicrotask(()=>axis821LocalizeVisibleEnums(document));';
-const enumTailAt=s.indexOf(enumTail,enumStart);
-if(enumStart<0||enumTailAt<0)fail('localization bridge missing after capability convergence');
-const enumEnd=enumTailAt+enumTail.length;
-const ownerClose=s.lastIndexOf('})();',enumStart);
-if(ownerClose<0)fail('canonical app IIFE close missing before localization bridge');
-if(enumStart<ownerClose)fail('localization bridge unexpectedly already inside app owner');
-const enumBlock=s.slice(enumStart,enumEnd);
-s=s.slice(0,enumStart)+s.slice(enumEnd);
-s=s.slice(0,ownerClose)+enumBlock+'\n'+s.slice(ownerClose);
+s=relocateBlockInsideOwner(s,enumSignature,enumTail,'visible enum localization bridge');
 
 /*
  * Do not emit a slash-heavy pace regular expression through the historical
- * canonical compiler. The previous generated /...km$/ expression was valid in
- * source but could be tokenized into a runtime km$ identifier. Plain suffix
- * handling is deterministic, portable and preserves the same user value.
+ * canonical compiler. Plain suffix handling is deterministic and portable.
  */
 const paceHelper=`function axis821CleanPaceValue(v){const raw=String(v??'').trim(),low=raw.toLowerCase();for(const suffix of [' / km','/ km',' /km','/km'])if(low.endsWith(suffix))return raw.slice(0,raw.length-suffix.length).trim();return raw}\n`;
 const valueSignature='function axis821MetricValueText(m,v)';
@@ -88,16 +111,18 @@ const safePaceBranch=`if(kind==='pace'){return'<section class="axis821MetricCont
 const controlText=control.text.slice(0,paceStart)+safePaceBranch+control.text.slice(paceEnd+1);
 s=s.slice(0,control.start)+controlText+s.slice(control.end);
 
-if(s.includes(choicePrefix))fail('app-private D survived in choice binding');
-if(!s.includes("document.addEventListener('click',e=>{const b=e.target.closest?.('[data-axis821-choice]')"))fail('document-scoped choice binding missing');
-if(!s.includes('function axis821CleanPaceValue(v)'))fail('plain-string pace normalizer missing');
-const finalEnumStart=s.indexOf(enumSignature),finalEnumClose=s.indexOf('})();',finalEnumStart);
-if(finalEnumStart<0||finalEnumClose<0||finalEnumStart>finalEnumClose)fail('localization bridge did not return inside canonical app IIFE');
+/* Final lexical seal: every new capability block that consumes private app
+ * helpers must sit inside the same canonical owner before hardened isolation. */
+const owner=appOwnerRange(s);
+for(const [needle,label] of [[choiceTo,'choice binding'],[enumSignature,'enum localization'],['function axis821CleanPaceValue(v)','pace helper'],[valueSignature,'metric formatter'],[controlSignature,'metric control']]){
+  const at=s.indexOf(needle);
+  if(at<0||at<=owner.bodyStart||at>=owner.bodyEnd)fail(`${label} is outside canonical app lexical owner`);
+}
+if(s.includes(choiceFrom))fail('app-private D survived in choice binding');
 for(const signature of [valueSignature,controlSignature]){
   const text=functionRange(s,signature,signature).text;
-  if(text.includes('km$/'))fail(`${signature} still contains compiler-unsafe pace regex`);
-  if(text.includes('km$'))fail(`${signature} still contains compiler-unsafe km$ token`);
+  if(text.includes('km$/')||text.includes('km$'))fail(`${signature} still contains compiler-unsafe pace token`);
 }
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Object capability runtime safety] PASS · localization returned to app lexical owner · choice binding compiler-safe · pace normalization regex-free · Chromium/WebKit cold-boot boundary sealed');
+console.log('[AXIS 8.21 Object capability runtime safety] PASS · choice + localization + pace remain inside canonical app lexical owner · regex-free pace · hardened isolation safe');
