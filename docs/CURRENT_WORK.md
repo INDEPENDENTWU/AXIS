@@ -50,7 +50,7 @@ Historical provenance must remain truthful:
 
 The deterministic release transition is implemented in `prepare-821-release.mjs` and is sequenced as the final import of `prepare-819-postcommit-lifecycle.mjs`, after all existing 8.21 product convergence passes.
 
-## Release-blocking validation
+## Validation for this work
 
 The exact release PR head is not mergeable until all triggered current gates are green, including Chromium and iPhone-like WebKit where applicable. The candidate must prove:
 
@@ -85,4 +85,4 @@ Only after that exact dual-provider seal should governance/current-release recor
 
 After 8.21 is formally Production-sealed, first record the exact Production release/governance state. Product expansion after that belongs to a separately governed next milestone; do not smuggle 8.22/adaptive behavior into this release-only change.
 
-Chat history is supplemental only. GitHub governance, contracts, exact main, deterministic build output and Production evidence are authoritative.
+Chat history is not authoritative project memory. Conversation history is supplemental only. GitHub governance, contracts, exact main, deterministic build output and Production evidence are authoritative.
