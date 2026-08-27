@@ -3,30 +3,38 @@
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.20.1",
-    "productionRuntimeSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
+    "productionRelease": "8.21",
+    "productionRuntimeSha": "4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d",
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
-    "sealedAt": "2026-08-25",
+    "sealedAt": "2026-08-27",
+    "releaseHash": "8fe7eb766721",
+    "runtimeHash": "66ede67e8b84",
+    "cssHash": "cd3d3fbe0f29",
+    "initialJavascriptRequests": 1,
+    "dynamicJavascriptRequests": 0,
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
-      "deploymentId": "dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD",
-      "sourceSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
+      "deploymentId": "dpl_GJDst6J8hHCtvn2AYjLLDe4yozCh",
+      "sourceSha": "4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d",
       "state": "READY",
       "target": "production",
       "publicUrl": "https://axis-five-puce.vercel.app",
-      "productionGateRunId": 32812905314,
+      "publicAliasGateRunId": 33028649168,
+      "productionGateRunId": 33028649208,
       "exactManifestParity": "success",
+      "immutableAssetParity": "success",
       "chromiumProductionFlow": "success"
     },
     "edgeOne": {
       "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
       "policy": "exact-prebuilt-artifact-mirror",
-      "deploymentId": "dpemq8bxjopa",
-      "verificationRunId": 32812883590,
-      "sourceSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
+      "deploymentId": "dp6r0jcmk58a",
+      "verificationRunId": 33028633067,
+      "verificationArtifactId": 9629477102,
+      "sourceSha": "4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d",
       "packageContract": "success",
       "deployProduction": "success",
       "boundedFixedDomainConvergence": "success",
@@ -36,20 +44,15 @@
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.21 — Flow / Session Blueprint",
-    "activePhase": "Phase 2 — App-owned Flow Definition / Runtime Boundary",
-    "activeBranch": "product/821-flow-session-blueprint",
-    "pullRequest": 88,
-    "pullRequestDraft": true,
-    "baselineRelease": "8.20.1",
-    "baselineRuntimeSha": "fdbfea738489fca6b19b3c8c7b502977373e4e4f",
-    "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
-    "phase1ResolverProofSha": "2892d8807e6d2688cb366019d64c6e9b573fcb66",
-    "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
-    "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
-    "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed. Current Release Chromium had one inherited Capture async timeout and passed unchanged on exact-head rerun; WebKit passed without retry.",
-    "intendedProductBehaviorChange": true,
-    "nextProductRelease": "8.21",
+    "activeMilestone": "AXIS 8.21 — Production Seal Record",
+    "activePhase": "Governance-only sealed release handoff",
+    "activeBranch": "release/821-production-seal-record",
+    "pullRequest": null,
+    "pullRequestDraft": false,
+    "baselineRelease": "8.21",
+    "baselineRuntimeSha": "4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d",
+    "intendedProductBehaviorChange": false,
+    "nextProductRelease": "8.22",
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
       "executableObjectRuntime": "window.__AXIS_EXECUTABLE_OBJECTS__",
@@ -61,17 +64,20 @@
       "authoritativeStores": ["axis_v60_state", "axis_v8_meta", "axis_v89_speak", "axis_v42_media"]
     },
     "flow": {
-      "status": "runtime-boundary-under-ci",
+      "status": "production-sealed-8.21",
       "principle": "intent is not history; reality remains authoritative",
       "portableContract": "axis.flow.v1",
       "provenanceContract": "axis.flow-provenance.v1",
       "pureResolver": "lib/axis-flow.mjs",
       "runtimePrepare": "prepare-821-flow-runtime.mjs",
       "runtimeContract": "scripts/axis-821-flow-runtime-contract.mjs",
-      "physicalSmoke": "scripts/axis-821-flow-runtime-smoke.mjs",
+      "physicalSmoke": "scripts/axis-821-item-unit-flow-smoke.mjs",
       "contractGate": "AXIS Cross-Platform Foundation Gate",
-      "physicalGate": "AXIS Current Release Gate · Chromium + iPhone-like WebKit",
+      "physicalGate": "AXIS Current Release Gate + EdgeOne Production Mirror · Chromium + iPhone-like WebKit",
       "orderedObjectReferences": true,
+      "itemIsCompletionUnit": true,
+      "directCurrentCompletion": true,
+      "genericEncounterAdvance": false,
       "temporaryOverridesMayMutateObjectDefaults": false,
       "requiresAllObjectsActive": false,
       "deviationPenalty": false,
@@ -86,7 +92,17 @@
       "encounterIntegrationOwner": "app.js",
       "classicSetOwner": "v61",
       "temporaryRecordingSchemaGlobalObjectMutation": false,
-      "uiImplemented": false
+      "uiImplemented": true
+    },
+    "recordingProperties": {
+      "status": "production-sealed-8.21",
+      "configurationOwner": "canonical Object editor",
+      "recordSurface": "value-controls-only",
+      "explicitEmptySchemaAllowed": true,
+      "forcedDurationFallbackForExplicitEmpty": false,
+      "newRecorder": false,
+      "newPersistenceOwner": false,
+      "newEncounterWriter": false
     },
     "interactionExperiment": {
       "name": "Active Action Lens",
@@ -97,7 +113,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Prove the Phase 2 same-store Flow runtime boundary on one exact head in Cross-Platform, Chromium and iPhone-like WebKit while preserving all inherited gates. Only after exact-head green may Phase 3 add the minimal mobile-first Flow composition/launch surface using the established runtime API."
+    "nextSlice": "Complete the docs/governance-only 8.21 Production seal record. Then begin AXIS 8.22 Phase 0 — Adaptive Defaults / Living Practice from exact sealed 8.21, with ownership/evidence inspection before any adaptive product behavior."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
@@ -106,8 +122,10 @@
       "No destructive migration of historical sessions, Encounters, event metadata or media.",
       "Classic weight/reps set facts remain v61-owned unless a separately proved owner handoff explicitly retires it.",
       "Existing Objects without explicit metricSchema continue through proven legacy fallback.",
+      "Explicit Object metricSchema, including an explicit empty array, is current truth and must not be replaced by legacy/default recording fields.",
       "Object edits affect future recording only and never rewrite historical Encounter schema/execution snapshots.",
       "Flow is intent/orchestration, not historical truth; skipped, inserted or reordered reality is valid.",
+      "Flow item completion is one Object-level factual Encounter; standalone Quick Record or Group Plan remains independently owned and cannot consume the Flow cursor.",
       "A Flow step may temporarily override recording/execution semantics but may not mutate the referenced Object defaults.",
       "Encounter truth must remain valid after its source Flow is edited, reordered or deleted.",
       "Flow provenance is additive context; metricSchemaSnapshot and executionModeSnapshot remain Encounter fact authority.",
@@ -148,13 +166,11 @@
   ],
   "notes": [
     "Chat history is supplementary context, never authoritative project state.",
-    "AXIS 8.20.1 is dual-provider Production-sealed at fdbfea738489fca6b19b3c8c7b502977373e4e4f with Vercel/EdgeOne exact artifact parity and Chromium/iPhone WebKit proof.",
-    "Phase 0 ownership/reuse inspection is sealed at 84310744b528441f3fa8d3feb51e8ed149e02b78.",
-    "Phase 1 axis.flow.v1 resolver foundation is sealed at 2892d8807e6d2688cb366019d64c6e9b573fcb66 with all nine baseline workflows success.",
-    "Phase 1B axis.flow-provenance.v1 is sealed at 289fd1b2cdcbcb4e1cfa56402372b8005daadfa4 with all nine baseline workflows success; one inherited Chromium Capture timeout passed an unchanged exact-head rerun and required no product/test relaxation.",
-    "8.21 Flow resolver precedence preserves Object-specific executable truth while allowing temporary recording context without mutating reusable Object defaults.",
-    "Phase 2 chooses axis_v60_state.flows plus axis_v60_state.flowRun under app.js ownership; this is an extension of the existing store, not a new persistence owner.",
-    "axis.flow-provenance.v1 freezes only additive Flow/step context; it does not replace Encounter metricSchemaSnapshot or executionModeSnapshot.",
-    "Active Action Lens is an optional presentation experiment and must be removable without changing training facts or 8.21 Flow semantics."
+    "AXIS 8.21 is dual-provider Production-sealed at 4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d with Vercel/EdgeOne exact prebuilt-artifact parity and Chromium/iPhone-like WebKit proof.",
+    "Vercel fixed Production is READY at deployment dpl_GJDst6J8hHCtvn2AYjLLDe4yozCh; axis-build.json serves version/baseVersion 8.21, sourceCommit 4edc5f9ad37e51f3d1ae43fdc3912bf935703d1d, releaseHash 8fe7eb766721 and runtimeHash 66ede67e8b84.",
+    "EdgeOne exact mirror deployment dp6r0jcmk58a was verified by workflow 33028633067 against the same prebuilt artifact and both real Chromium and iPhone-like WebKit Production lifecycle paths.",
+    "8.21 seals Object-only recording-property configuration, explicit empty schemas, canonical value controls, item-unit Flow completion and immediate next-item progression without introducing another training writer/store.",
+    "Historical 8.18 / 8.19 / 8.20 / 8.20.1 capability provenance remains unchanged by the 8.21 public identity convergence.",
+    "Active Action Lens remains optional presentation research and is not part of the 8.21 release seal."
   ]
 }
