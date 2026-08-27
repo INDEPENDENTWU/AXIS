@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'lib/axis-metric-schema.mjs'
+      - 'lib/axis-object-capabilities.mjs'
       - 'lib/axis-818-metric-adapter.mjs'
       - 'prepare-818-object-focus-driver.mjs'
       - 'prepare-818-object-focus-foundation.mjs'
@@ -12,19 +13,24 @@ on:
       - 'prepare-819-release.mjs'
       - 'prepare-820-executable-practice-objects.mjs'
       - 'prepare-8201-object-reliability.mjs'
+      - 'prepare-821-object-capability-convergence.mjs'
+      - 'prepare-821-executable-object-system-smoke-compat.mjs'
       - 'postbuild-819-upo-seal.mjs'
       - 'postbuild-8201-active-lifecycle-seal.mjs'
       - 'prepare-820-release.mjs'
       - 'scripts/axis-819-object-recording-contract.mjs'
+      - 'scripts/axis-821-object-capability-matrix-contract.mjs'
       - 'scripts/axis-819-object-recording-smoke.mjs'
       - 'scripts/axis-820-executable-object-smoke.mjs'
       - 'scripts/axis-8201-object-reliability-smoke.mjs'
+      - 'scripts/axis-821-executable-object-system-smoke.mjs'
       - 'build-release.mjs'
       - '.github/workflows/axis-universal-practice-object-gate.yml'
   push:
     branches: [main]
     paths:
       - 'lib/axis-metric-schema.mjs'
+      - 'lib/axis-object-capabilities.mjs'
       - 'lib/axis-818-metric-adapter.mjs'
       - 'prepare-818-object-focus-driver.mjs'
       - 'prepare-818-object-focus-foundation.mjs'
@@ -32,13 +38,17 @@ on:
       - 'prepare-819-release.mjs'
       - 'prepare-820-executable-practice-objects.mjs'
       - 'prepare-8201-object-reliability.mjs'
+      - 'prepare-821-object-capability-convergence.mjs'
+      - 'prepare-821-executable-object-system-smoke-compat.mjs'
       - 'postbuild-819-upo-seal.mjs'
       - 'postbuild-8201-active-lifecycle-seal.mjs'
       - 'prepare-820-release.mjs'
       - 'scripts/axis-819-object-recording-contract.mjs'
+      - 'scripts/axis-821-object-capability-matrix-contract.mjs'
       - 'scripts/axis-819-object-recording-smoke.mjs'
       - 'scripts/axis-820-executable-object-smoke.mjs'
       - 'scripts/axis-8201-object-reliability-smoke.mjs'
+      - 'scripts/axis-821-executable-object-system-smoke.mjs'
       - 'build-release.mjs'
       - '.github/workflows/axis-universal-practice-object-gate.yml'
 
@@ -56,10 +66,12 @@ jobs:
           node-version-file: .nvmrc
       - name: 8.18 compatibility → current Metric Schema contract
         run: node scripts/axis-819-object-recording-contract.mjs
+      - name: 8.21 exhaustive Object capability matrix
+        run: node scripts/axis-821-object-capability-matrix-contract.mjs
 
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 32
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -86,13 +98,16 @@ jobs:
       - name: 8.20.1 Physical custom schema → Active lifecycle reliability
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8201-object-reliability-smoke.mjs
+      - name: 8.21 Full executable Object system
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-executable-object-system-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-upo-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 42
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -117,6 +132,9 @@ jobs:
       - name: iPhone 8.20.1 Physical custom schema → Active lifecycle reliability
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8201-object-reliability-smoke.mjs
+      - name: iPhone 8.21 Full executable Object system
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-executable-object-system-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-upo-webkit.log || true
