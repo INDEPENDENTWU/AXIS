@@ -11,7 +11,7 @@ That SHA proves the Flow/Active cold-boot scope defect is fixed:
 - the earlier `D is not defined` and `axis821FlowRecorderContextClear is not defined` failures no longer occur;
 - Flow physical proof follows the established pause-owned-rest lifecycle.
 
-It is still **not Production-sealed** because the exact Vercel Production browser gate exposes a separate real recording-layout defect after a weight value step.
+A subsequent exact Vercel Production browser run reported one recording-layout shift after a weight value step. This bounded hotfix investigates that report without changing product ownership or weakening the geometry contract.
 
 Fixed endpoints remain:
 
@@ -34,14 +34,16 @@ Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEP
 - intended public identity change: **none; remains 8.21**
 - intended ownership change: **none**
 
-Healthy-boot Production evidence shows the geometry failure is independent of the earlier Flow scope defect. Before and after tapping the established weight increment control:
+The original Production failure measured a shared upward displacement of roughly `28.5px` across `#axisSetControls`, `#v8Sets` and the Group Plan row while their own dimensions stayed unchanged. `#reviewStage` kept the same top edge, indicating a possible earlier/upper reflow rather than a control-size mutation.
 
-- `#axisSetControls` keeps the same width and height but moves upward `28.5px`;
-- `#v8Sets` moves upward the same `28.5px`;
-- the Group Plan row moves upward the same `28.5px`;
-- `#reviewStage` top stays fixed while its total height changes.
+The branch therefore added failure-only direct Review-child geometry evidence while preserving the existing `0.5px` stability assertion. A temporary branch-only workflow then ran the same fixed Vercel Production geometry operation **12 consecutive times**. Result: **12 / 12 passed with the unchanged `0.5px` threshold; the reported 28.5px displacement did not reproduce.** No CSS offset, minimum-height compensation or relaxed threshold was introduced.
 
-Therefore the defect is not the control itself. A layout block above `#v8Sets` changes height/visibility during the value-step reconciliation. The current diagnostic records every direct Review child and relevant computed geometry before/after so the actual layout owner is fixed rather than compensating with a magic offset. A temporary branch-only diagnostic lane may exercise the fixed Vercel Production artifact with the branch diagnostic code; that lane must be removed before final merge.
+During exact-head compatibility validation, two independent inherited browser harnesses were also found to be bypassing current physical interaction semantics:
+
+- the 8.18 Object/Capture smoke removed the Settings `.show` class directly instead of using the canonical Settings close action, bypassing route/inert/dock reconciliation before attempting Capture;
+- iPhone-like WebKit compatibility used desktop-style `.click()` for Rest learning and later pause/resume interactions even though the current mobile product path is touch-driven.
+
+Those harnesses now use the real product interaction path: canonical Settings close and touch-capable WebKit `tap`, while Chromium retains its mouse path. Behavioral assertions, pause-owned-rest semantics, geometry thresholds and runtime ownership are unchanged. At exact head `6dde6784cebd380371e699dcdb482d0098a27bf7`, Current Release, Runtime, Runtime Foundation, Deep Compatibility Chromium/WebKit, Repository, Work Continuity, Cross-Platform and PR Convergence all pass; the temporary diagnostic workflow is removed before the final merge candidate is accepted.
 
 The existing product model remains unchanged:
 
@@ -52,30 +54,32 @@ The existing product model remains unchanged:
 - temporary-other Flow recording is record-only;
 - exactly one app-owned Encounter append remains.
 
-This hotfix must not add or change:
+This hotfix does not add or change:
 
 - a second recorder, picker, Flow runtime, Active owner or Encounter writer;
 - persistence namespaces/databases;
 - media/evidence ownership;
 - request/chunk/runtime topology;
-- the established recording geometry threshold merely to make CI pass.
+- the established recording geometry threshold.
 
 ## Validation for this work
 
-The candidate must prove, without weakening the existing assertion:
+Before merge, the clean exact PR head must prove:
 
-- the exact child/layout owner responsible for the vertical shift is identified by deterministic before/after evidence;
-- tapping weight `+` changes only the intended value/state, not `#v8Sets`, `#axisSetControls`, Group Plan entry, or Review-stage geometry;
+- the unchanged `0.5px` recording geometry assertion remains green;
+- failure-only geometry diagnostics remain available without altering layout;
+- tapping weight `+` changes only the intended value/state, not `#v8Sets`, `#axisSetControls` or Group Plan geometry;
 - in-progress recording values remain intact;
 - canonical Object recording properties, including explicit zero-property Objects, remain unchanged;
 - legacy weight/reps recording ownership remains v61 where applicable;
 - Flow current recording, temporary-other detour, Active finish and pause-owned rest remain green;
-- Chromium and iPhone-like WebKit exact-head physical tests pass;
-- all inherited Repository, Work Continuity, Cross-Platform, Universal Practice Object, Runtime, Current Release and Deep Compatibility gates remain green.
+- inherited Chromium and iPhone-like WebKit tests use their real interaction modalities;
+- all inherited Repository, Work Continuity, Cross-Platform, Universal Practice Object, Runtime, Current Release and Deep Compatibility gates remain green;
+- no temporary branch-only diagnostic workflow remains in the merge candidate.
 
 ## Merge / Production discipline
 
-Do not merge until the exact PR head is green. After merge, do not call the work complete until the exact resulting main SHA satisfies all of the following:
+Do not merge until the clean exact PR head is green. After merge, do not call the work complete until the exact resulting main SHA satisfies all of the following:
 
 1. Vercel fixed Production serves the exact local 8.21 manifest/artifact;
 2. Production browser gate passes the unchanged recording geometry assertion;
@@ -83,7 +87,8 @@ Do not merge until the exact PR head is green. After merge, do not call the work
 4. EdgeOne mirrors the same exact prebuilt artifact only after Vercel/main parity converges;
 5. Vercel ↔ EdgeOne manifest/artifact parity remains strict;
 6. real Chromium Production lifecycle passes;
-7. real iPhone-like WebKit Production lifecycle passes.
+7. real iPhone-like WebKit Production lifecycle passes;
+8. the resulting main SHA has no unexplained independent red check.
 
 Only that dual-provider exact-artifact seal completes this hotfix and reopens the next 8.21 Flow / Session Blueprint stage.
 
