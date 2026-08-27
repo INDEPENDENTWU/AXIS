@@ -30,6 +30,7 @@ Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEP
 
 - branch: `hotfix/821-recording-geometry-stability`
 - base: `5a76e94c87463f46c018eb0ccda79ed661623e64`
+- PR: `#103`
 - intended public identity change: **none; remains 8.21**
 - intended ownership change: **none**
 
@@ -40,7 +41,7 @@ Healthy-boot Production evidence shows the geometry failure is independent of th
 - the Group Plan row moves upward the same `28.5px`;
 - `#reviewStage` top stays fixed while its total height changes.
 
-Therefore the defect is not the control itself. A layout block above `#v8Sets` changes height/visibility during the value-step reconciliation. The current diagnostic is being expanded to record every direct Review child and relevant computed geometry before/after so the actual layout owner is fixed rather than compensating with a magic offset.
+Therefore the defect is not the control itself. A layout block above `#v8Sets` changes height/visibility during the value-step reconciliation. The current diagnostic records every direct Review child and relevant computed geometry before/after so the actual layout owner is fixed rather than compensating with a magic offset. A temporary branch-only diagnostic lane may exercise the fixed Vercel Production artifact with the branch diagnostic code; that lane must be removed before final merge.
 
 The existing product model remains unchanged:
 
@@ -85,5 +86,9 @@ Do not merge until the exact PR head is green. After merge, do not call the work
 7. real iPhone-like WebKit Production lifecycle passes.
 
 Only that dual-provider exact-artifact seal completes this hotfix and reopens the next 8.21 Flow / Session Blueprint stage.
+
+## Next planned stage
+
+After the exact geometry hotfix is merged and dual-provider Production-sealed, continue the governed **AXIS 8.21 — Flow / Session Blueprint** from `product/821-flow-session-blueprint`. Preserve the unified model already established: Flow provides sequence/context/progress, the canonical recorder records facts, and existing Active owns execution. Do not create another execution surface to solve later Flow refinements.
 
 Chat history is not authoritative project memory. Conversation history is supplemental only. GitHub governance, contracts, exact main, deterministic build output and Production evidence are authoritative.
