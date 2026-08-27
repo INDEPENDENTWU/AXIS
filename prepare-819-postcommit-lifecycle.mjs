@@ -69,4 +69,5 @@ await import('./prepare-821-flow-active-boot-scope.mjs');
 await import('./prepare-821-flow-session-coordination.mjs');
 await import('./prepare-821-flow-session-coordination-scope.mjs');
 await import('./prepare-821-executable-object-system.mjs');
+await import('./prepare-821-executable-object-system-smoke-compat.mjs');
 await import('./prepare-821-release.mjs');
