@@ -20,7 +20,7 @@ Fixed endpoints remain:
 
 The governed milestone remains **AXIS 8.21 — Flow / Session Blueprint** and the governed active branch remains `product/821-flow-session-blueprint`. This hotfix is a bounded child of that milestone; it does not replace the governance identity.
 
-The cross-platform foundation remains **axis-native-foundation-0**. Its native repository is `INDEPENDENTWU/AXIS-iOS`. Portable Object/metric/execution semantics belong in pure shared contracts; Web DOM or CSS implementation details do not.
+The cross-platform foundation remains **axis-native-foundation-0**. Its native repository is `INDEPENDENTWU/AXIS-iOS`. Portable product semantics are governed by `axis.domain.v1`; durable exchange/state semantics are governed by `axis.data.v1`. Portable Object/metric/execution semantics belong in pure shared contracts; Web DOM or CSS implementation details do not.
 
 ## Active change
 
