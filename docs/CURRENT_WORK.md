@@ -1,17 +1,15 @@
 # Current Work
 
-## Production baseline at start of this work
+## Production baseline
 
-The exact code baseline is merged main `5a76e94c87463f46c018eb0ccda79ed661623e64`, the merged result of PR #102 **AXIS 8.21 — Flow Active Boot Scope Hotfix**.
+The exact Production baseline is merged main `621b93837b8d56982a990abb00d86b758b421337`, AXIS **8.21**.
 
-That SHA proves the Flow/Active cold-boot scope defect is fixed:
+That SHA is dual-provider Production-sealed:
 
-- main Current Release and Deep Compatibility Chromium/WebKit gates are green;
-- Vercel fixed Production anonymously serves the exact 8.21 main manifest/artifact;
-- the earlier `D is not defined` and `axis821FlowRecorderContextClear is not defined` failures no longer occur;
-- Flow physical proof follows the established pause-owned-rest lifecycle.
-
-A subsequent exact Vercel Production browser run reported one recording-layout shift after a weight value step. This bounded hotfix investigates that report without changing product ownership or weakening the geometry contract.
+- fixed Vercel Production serves the exact main artifact;
+- fixed EdgeOne Production mirrors the same exact prebuilt artifact;
+- Production Chromium and iPhone-like WebKit current-release flows pass;
+- the previous recording-geometry investigation retained the strict `0.5px` stability threshold and its automatic diagnostic trigger is retired.
 
 Fixed endpoints remain:
 
@@ -20,82 +18,93 @@ Fixed endpoints remain:
 - public/base release identity: **8.21**
 - architecture: `canonical-single-runtime`
 
-The governed active milestone remains **AXIS 8.21 — Flow / Session Blueprint** and the governed parent branch remains `product/821-flow-session-blueprint`. This bounded Production hotfix does not replace that governance identity.
-
-Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1` and `axis.flow-provenance.v1`.
+The governed milestone remains **AXIS 8.21 — Flow / Session Blueprint**.
 
 ## Active change
 
-**AXIS 8.21 — Recording Geometry Stability Hotfix**
+**AXIS 8.21 — Flow / Active Session Coordination**
 
-- branch: `hotfix/821-recording-geometry-stability`
-- base: `5a76e94c87463f46c018eb0ccda79ed661623e64`
-- PR: `#103`
+- branch: `hotfix/821-flow-active-session-coordination`
+- base: `621b93837b8d56982a990abb00d86b758b421337`
 - intended public identity change: **none; remains 8.21**
-- intended ownership change: **none**
+- intended factual ownership change: **none**
 
-The original Production failure measured a shared upward displacement of roughly `28.5px` across `#axisSetControls`, `#v8Sets` and the Group Plan row while their own dimensions stayed unchanged. `#reviewStage` kept the same top edge, indicating a possible earlier/upper reflow rather than a control-size mutation.
+Manual iPhone Production testing reproduced a real integration gap: a Flow may be waiting on `开始此项` while an unrelated standalone Activity is already running. Tapping the Flow action can silently fail for some current Objects, and the Flow surface does not yet coordinate the existing Active/paused lifecycle or present the current Flow item with the same mature execution language.
 
-The branch therefore added failure-only direct Review-child geometry evidence while preserving the existing `0.5px` stability assertion. A temporary branch-only workflow then ran the same fixed Vercel Production geometry operation **12 consecutive times**. Result: **12 / 12 passed with the unchanged `0.5px` threshold; the reported 28.5px displacement did not reproduce.** No CSS offset, minimum-height compensation or relaxed threshold was introduced.
+The architecture inspection confirms that existing v82/v87 Active truth already supports exactly the required safe model: one foreground Active Activity plus multiple paused Activities in the same canonical Session. Starting/resuming one Activity pauses the previous foreground Activity without finishing or discarding it. This work therefore **must reuse that owner** instead of introducing parallel Active state.
 
-The automatic branch diagnostic trigger has now been retired. The workflow is retained only as explicit `workflow_dispatch` forensic tooling, so it does not run on PR heads, pushes, merges or Production deployments and does not form a second release/deploy path.
+## Product contract for this work
 
-During exact-head compatibility validation, two independent inherited browser harnesses were also found to be bypassing current physical interaction semantics:
+Flow is a multi-Object Session Blueprint:
 
-- the 8.18 Object/Capture smoke removed the Settings `.show` class directly instead of using the canonical Settings close action, bypassing route/inert/dock reconciliation before attempting Capture;
-- iPhone-like WebKit compatibility used desktop-style `.click()` for Rest learning and later pause/resume interactions even though the current mobile product path is touch-driven.
+```text
+Flow owns: ordered intent + current step + overall progress + planned duration context
+Active owns: current Object timing + pause/resume + rest + sets/rounds/timed/hold execution + finish
+Encounter owns: immutable factual record
+```
 
-Those harnesses now use the real product interaction path: canonical Settings close and touch-capable WebKit `tap`, while Chromium retains its mouse path. Behavioral assertions, pause-owned-rest semantics, geometry thresholds and runtime ownership are unchanged. At exact head `6dde6784cebd380371e699dcdb482d0098a27bf7`, Current Release, Runtime, Runtime Foundation, Deep Compatibility Chromium/WebKit, Repository, Work Continuity, Cross-Platform and PR Convergence all passed. The final clean head must prove the same gates with the automatic diagnostic trigger retired.
+For `A → B → C`:
 
-The existing product model remains unchanged:
+1. Flow makes A current.
+2. `开始此项` opens the existing canonical recorder for A only when a factual Encounter is needed.
+3. If another Activity X is running, Flow must never silently fail and must never destroy X. A small coordination surface explains that starting A will pause X; cancellation leaves X untouched.
+4. After the canonical A Encounter commits, existing v82/v87 starts A and automatically pauses X.
+5. Flow links to A's Encounter. Flow does not create another timer or Activity record.
+6. The Flow presentation may project the same Active state and delegate actions to v82/v87, but it must not write Active truth itself.
+7. Pausing A, resuming X, then returning to A must preserve both Activities correctly and must not create another A Encounter.
+8. Finishing A through the established long-hold Active finish is the signal that consumes the Flow step and makes B current.
+9. One-shot `single/complete` items still advance only after their canonical Encounter commit.
+10. `临时记录其他` remains record-only: it must not start another Active, replace the current Flow Encounter, or advance the Flow cursor.
 
-- Flow owns sequence/context only;
-- the canonical recorder owns recording;
-- v82/v87 own ongoing Active execution;
-- pause owns rest;
-- temporary-other Flow recording is record-only;
-- exactly one app-owned Encounter append remains.
+## Duration contract
 
-This hotfix does not add or change:
+A FlowRun may carry launch-only expected-duration snapshots derived from existing Object/history truth. This is planning context, not historical fact and not another timer owner.
 
-- a second recorder, picker, Flow runtime, Active owner or Encounter writer;
-- persistence namespaces/databases;
-- media/evidence ownership;
-- request/chunk/runtime topology;
-- the established recording geometry threshold.
+- total expected Flow duration = sum of step expected durations;
+- the current step may replace its launch estimate with the canonical Active `estimateMs` once that Activity actually starts;
+- Flow elapsed time is derived from `FlowRun.startedAt`;
+- remaining planned work is derived from unconsumed step estimates and the existing Active elapsed time;
+- later editing of the reusable Flow or Object must not rewrite historical Encounters.
 
-## Validation for this work
+## UI contract
 
-Before merge, the clean exact PR head must prove:
+When a Flow item has not started, Today shows current/next item, overall expected duration and one clear `开始此项` action.
 
-- the unchanged `0.5px` recording geometry assertion remains green;
-- failure-only geometry diagnostics remain available without altering layout;
-- tapping weight `+` changes only the intended value/state, not `#v8Sets`, `#axisSetControls` or Group Plan geometry;
-- in-progress recording values remain intact;
-- canonical Object recording properties, including explicit zero-property Objects, remain unchanged;
-- legacy weight/reps recording ownership remains v61 where applicable;
-- Flow current recording, temporary-other detour, Active finish and pause-owned rest remain green;
-- inherited Chromium and iPhone-like WebKit tests use their real interaction modalities;
-- all inherited Repository, Work Continuity, Cross-Platform, Universal Practice Object, Runtime, Current Release and Deep Compatibility gates remain green;
-- no automatic branch-only diagnostic workflow participates in the merge candidate.
+When an unrelated Activity is already foregrounded, starting/resuming the Flow item uses a native coordination sheet rather than a silent no-op.
+
+When the Flow item is executing, Today must feel like the established AXIS Active experience. A Flow-integrated projection may show:
+
+- Flow position (`1 / 3`), current and next Object;
+- current item elapsed / expected / remaining time;
+- Flow total expected / planned remaining time;
+- Active status (`进行中` / `已暂停`);
+- existing set completion where the execution mode is sets;
+- pause/resume delegated to the existing Active owner;
+- the established **long-hold** finish gesture delegated to the existing Active owner.
+
+The floating v87 card must not duplicate the same linked Flow Activity at the same time. If a different standalone Activity is foregrounded while the Flow Activity is paused, the existing v87 card remains visible for that foreground Activity while the Flow surface truthfully shows its own item as paused.
+
+## Release-blocking validation
+
+The physical proof must reproduce the reported state, not a simplified empty-session case:
+
+1. standalone Activity X is already active;
+2. a saved Flow A → B is launched;
+3. tapping `开始此项` for A produces a visible coordination decision, never a silent no-op;
+4. cancelling leaves X active and creates no Encounter;
+5. confirming opens the canonical A recorder, including modern/custom Object selection;
+6. after canonical save, X is paused and A is active under the existing v82/v87 owner;
+7. Flow links to exactly one A Encounter and remains on step A until A actually finishes;
+8. set completion, pause/rest, resume and long-hold finish use existing Active truth;
+9. X can be resumed, which pauses A; returning to A resumes the same A Activity rather than recording A again;
+10. finishing A advances to B;
+11. temporary-other recording does not start Active or advance Flow;
+12. total/remaining expected duration is present and derived from Flow/Active truth;
+13. Chromium and iPhone-like WebKit agree;
+14. no second picker, recorder, Active owner, Encounter writer, Session writer or persistence namespace is introduced.
 
 ## Merge / Production discipline
 
-Do not merge until the clean exact PR head is green. After merge, do not call the work complete until the exact resulting main SHA satisfies all of the following:
-
-1. Vercel fixed Production serves the exact local 8.21 manifest/artifact;
-2. Production browser gate passes the unchanged recording geometry assertion;
-3. no cold-boot or Flow lifecycle page error occurs;
-4. EdgeOne mirrors the same exact prebuilt artifact only after Vercel/main parity converges;
-5. Vercel ↔ EdgeOne manifest/artifact parity remains strict;
-6. real Chromium Production lifecycle passes;
-7. real iPhone-like WebKit Production lifecycle passes;
-8. the resulting main SHA has no unexplained independent red check.
-
-Only that dual-provider exact-artifact seal completes this hotfix and reopens the next 8.21 Flow / Session Blueprint stage.
-
-## Next planned stage
-
-After the exact geometry hotfix is merged and dual-provider Production-sealed, continue the governed **AXIS 8.21 — Flow / Session Blueprint** from `product/821-flow-session-blueprint`. Preserve the unified model already established: Flow provides sequence/context/progress, the canonical recorder records facts, and existing Active owns execution. Do not create another execution surface to solve later Flow refinements.
+Do not merge until the exact PR head is green across Repository, Work Continuity, Cross-Platform, Runtime, Runtime Foundation, Current Release Chromium/WebKit and Deep Compatibility. After merge, do not call the work complete until the exact resulting main SHA is served by fixed Vercel Production, mirrored exactly to EdgeOne, and the same Flow/Active coordination scenario passes real Chromium and iPhone-like WebKit Production verification.
 
 Chat history is not authoritative project memory. Conversation history is supplemental only. GitHub governance, contracts, exact main, deterministic build output and Production evidence are authoritative.
