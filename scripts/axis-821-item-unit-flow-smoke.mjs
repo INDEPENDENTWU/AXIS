@@ -8,15 +8,20 @@ const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executabl
 const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true,locale:'zh-CN'});
 const page=await context.newPage(),errors=[];
 page.on('pageerror',e=>errors.push(String(e?.stack||e)));
-page.on('console',m=>{if(m.type()==='error')console.log(`[AXIS 8.21 item-unit Flow ${ENGINE} console] ${m.text()}`)});
+page.on('console',m=>{if(m.type()==='error')console.log(`[AXIS 8.21 Flow Active ${ENGINE} console] ${m.text()}`)});
 const json=(r,obj)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(obj)});
 for(const [pattern,obj] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>json(r,obj));
-const tap=async l=>ENGINE==='webkit'?l.tap({timeout:4000}):l.click({timeout:4000});
+const tap=async l=>ENGINE==='webkit'?l.tap({timeout:5000}):l.click({timeout:5000});
 const core=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
 const meta=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'));
 const waitCore=async()=>{
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:15000});
- await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.version==='8.21'&&window.__AXIS_FLOW_RUNTIME__?.itemUnit===true&&window.__AXIS_821_ITEM_UNIT_FLOW__?.directCurrentCompletion===true&&window.__AXIS_821_FLOW_SURFACE__?.version==='8.21',undefined,{timeout:9000});
+ await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.version==='8.21'&&window.__AXIS_FLOW_RUNTIME__?.beginCurrent&&window.__AXIS_FLOW_RUNTIME__?.beginDetour&&window.__AXIS_821_FLOW_ACTIVE_CONVERGENCE__?.activeLifecycleDelegated!==false&&window.__AXIS_821_ITEM_UNIT_FLOW__?.canonicalCurrentRecord===true,undefined,{timeout:9000});
+};
+const holdFinish=async()=>{
+ const f=page.locator('#v87Finish');await f.waitFor({state:'visible',timeout:5000});const b=await f.boundingBox();assert.ok(b,'v87 finish geometry missing');
+ const init={pointerId:71,pointerType:'touch',isPrimary:true,clientX:b.x+b.width/2,clientY:b.y+b.height/2,button:0,buttons:1,bubbles:true};
+ await f.dispatchEvent('pointerdown',init);await page.waitForTimeout(1660);await f.dispatchEvent('pointerup',{...init,buttons:0});
 };
 
 try{
@@ -24,69 +29,78 @@ try{
  const now=Date.now();
  await page.evaluate(t=>{
   localStorage.clear();
-  const detour={id:'flow-detour',name:'临时项目',type:'strength',pattern:'core',muscles:['核心'],effect:'临时记录',custom:true,metricSchema:[],metricSchemaVersion:'8.21',executionMode:'complete',recording:{version:2,metrics:[],executionMode:'complete'}};
-  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[detour],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
+  const complete={id:'flow-complete',name:'一次完成测试',type:'strength',pattern:'core',muscles:['核心'],effect:'一次完成',custom:true,metricSchema:[],metricSchemaVersion:'8.21',executionMode:'complete',recording:{version:2,metrics:[],executionMode:'complete'}};
+  const detour={id:'flow-detour',name:'临时计时测试',type:'cardio',pattern:'cardio',muscles:['心肺'],effect:'临时记录',custom:true,metricSchema:[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1}],metricSchemaVersion:'8.21',executionMode:'timed',recording:{version:2,metrics:['duration'],executionMode:'timed'}};
+  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[complete,detour],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
   localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
  },now);
  await page.reload({waitUntil:'domcontentloaded'});await waitCore();
 
- console.log(`[AXIS 8.21 item-unit Flow ${ENGINE}] empty Today keeps Flow entry compact`);
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] empty Today keeps Flow entry compact`);
  assert.equal(await page.locator('#axis821FlowHome').getAttribute('data-state'),'empty');
  assert.equal(await page.locator('#axis821FlowHome [data-axis-flow-new]').count(),1);
- const emptyH=await page.locator('.axis821FlowCompactEmpty').evaluate(x=>Math.round(x.getBoundingClientRect().height));
- assert.ok(emptyH>=50&&emptyH<=58,`empty Flow entry is not compact: ${emptyH}`);
- const emptyText=await page.locator('#axis821FlowHome').innerText();assert.ok(!emptyText.includes('把常用项目排成一个顺序'),'Home still behaves like a Flow feature landing page');
 
- const flow={schema:'axis.flow.v1',id:'item-unit-proof',steps:[{id:'s1',objectRef:'chest'},{id:'s2',objectRef:'shoulder'},{id:'s3',objectRef:'pec'}]};
+ const flow={schema:'axis.flow.v1',id:'active-convergence-proof',steps:[{id:'s1',objectRef:'chest'},{id:'s2',objectRef:'flow-complete'}]};
  await page.evaluate(f=>{window.__AXIS_FLOW_RUNTIME__.saveFlow(f);window.__AXIS_821_FLOW_SURFACE__.render()},flow);
  await page.waitForFunction(()=>document.querySelector('#axis821FlowHome')?.dataset.state==='ready',undefined,{timeout:2500});
- const readyText=await page.locator('#axis821FlowHome').innerText();assert.ok(readyText.includes('3 个项目'));assert.ok(readyText.includes('胸推'));assert.ok(readyText.includes('肩推'));assert.ok(readyText.includes('飞鸟 / 后三角'));
 
- console.log(`[AXIS 8.21 item-unit Flow ${ENGINE}] start goes directly to item 1 without Quick Record or set lifecycle`);
- await tap(page.locator('#axis821FlowHome [data-axis-flow-start="item-unit-proof"]'));
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] launch embeds Flow context into the existing session surface`);
+ await tap(page.locator('#axis821FlowHome [data-axis-flow-start="active-convergence-proof"]'));
  await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.status==='active'&&window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor===0,undefined,{timeout:3000});
- let c=await core();assert.ok(c.active?.id,'Flow start did not start the containing Session');assert.equal(c.active.events.length,0,'Flow start fabricated an Encounter');
- let homeText=await page.locator('#axis821FlowHome').innerText();assert.ok(homeText.includes('流程 · 1 / 3'));assert.ok(homeText.includes('胸推'));assert.ok(homeText.includes('接下来 · 肩推'));assert.ok(!homeText.includes('最后一项'),'first Flow item was incorrectly labelled final');assert.ok(homeText.includes('完成此项'));assert.ok(!homeText.includes('记录当前'));
- assert.equal(await page.locator('#scanSheet').evaluate(x=>x.classList.contains('show')),false,'Flow start opened standalone Quick Record');
- assert.equal(await page.locator('text=完成一组').evaluateAll(xs=>xs.filter(x=>x.offsetParent!==null).length),0,'Flow started a set-level Active lifecycle');
+ assert.equal(await page.locator('#axis821FlowHome').evaluate(x=>x.parentElement?.id),'activeHome','Flow remained a second panel outside the existing Active session surface');
+ let text=await page.locator('#axis821FlowHome').innerText();assert.ok(text.includes('流程 · 1 / 2'));assert.ok(text.includes('胸推'));assert.ok(text.includes('开始此项'));assert.ok(!text.includes('完成此项'),'parallel direct-completion CTA survived');
+ let c=await core();assert.ok(c.active?.id);assert.equal(c.active.events.length,0,'Flow launch fabricated an Encounter');
 
- await page.waitForTimeout(120);
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] current item uses the canonical recorder, then the existing v82/v87 Active lifecycle`);
  await tap(page.locator('#axis821FlowHome [data-axis-flow-record]'));
- await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor===1,undefined,{timeout:3000});
- c=await core();assert.equal(c.active.events.length,1,'item completion did not commit exactly one Encounter');
- const first=c.active.events[0];assert.equal(first.equipmentId,'chest');assert.equal(first.executionModeSnapshot,'complete');assert.equal(first.flowProvenance?.flowRef,flow.id);assert.equal(first.flowProvenance?.flowStepRef,'s1');assert.equal(first.flowProvenance?.stepSnapshot?.effectiveExecutionMode,'complete');assert.ok(Number(first.flowItem?.completedAt)>=Number(first.flowItem?.startedAt));
- let m=await meta();assert.equal(m.events?.[first.id]?.activity??null,null,'item completion created false set/timed Active metadata');
- homeText=await page.locator('#axis821FlowHome').innerText();assert.ok(homeText.includes('流程 · 2 / 3'));assert.ok(homeText.includes('肩推'));assert.ok(homeText.includes('接下来 · 飞鸟 / 后三角'));
- assert.equal(await page.locator('#scanSheet').evaluate(x=>x.classList.contains('show')),false,'complete-current detoured through Quick Record');
- assert.equal(await page.locator('text=完成一组').evaluateAll(xs=>xs.filter(x=>x.offsetParent!==null).length),0,'completed Flow item revealed set-level controls');
-
- console.log(`[AXIS 8.21 item-unit Flow ${ENGINE}] ordinary Quick Record during Flow is factual detour, not Flow completion`);
- await page.evaluate(()=>window.__AXIS_QUICK_RECORD__?.openFor?.('flow-detour'));
- await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#equipmentName')?.textContent?.trim()==='临时项目',undefined,{timeout:3500});
+ await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#axis821FlowRecordContext')?.dataset.mode==='current'&&document.querySelector('#equipmentName')?.textContent?.trim()==='胸推',undefined,{timeout:3500});
+ const recorderText=await page.locator('#axis821FlowRecordContext').innerText();assert.ok(recorderText.includes('流程 · 1 / 2'));assert.ok(recorderText.includes('胸推'));
+ assert.equal((await page.locator('#saveScan').innerText()).trim(),'开始此项');
  await tap(page.locator('#saveScan'));
- await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return c.active?.events?.some(e=>e.equipmentId==='flow-detour')},undefined,{timeout:3500});
- c=await core();assert.equal(c.flowRun.cursor,1,'ordinary Quick Record consumed the current Flow item');
- const detour=c.active.events.find(e=>e.equipmentId==='flow-detour');assert.ok(detour?.id);assert.equal(detour.flowProvenance,undefined,'ordinary Quick Record inherited Flow provenance');
+ await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),r=c.flowRun,e=(c.active?.events||[]).find(x=>x.id===r?.currentEncounterId);return r?.cursor===0&&e?.equipmentId==='chest'&&m.events?.[e.id]?.activity?.status==='active'&&document.querySelector('#v87Now')?.classList.contains('show')},undefined,{timeout:5500});
+ c=await core();let m=await meta();const first=c.active.events.find(e=>e.id===c.flowRun.currentEncounterId);assert.ok(first?.id);assert.equal(first.flowProvenance?.flowRef,flow.id);assert.equal(first.flowProvenance?.flowStepRef,'s1');assert.equal(first.executionModeSnapshot,'sets');assert.equal(c.flowRun.cursor,0,'ongoing item advanced on initial record instead of Active completion');
+ text=await page.locator('#axis821FlowHome').innerText();assert.ok(text.includes('当前项目 · 进行中'));assert.ok(text.includes('时间、暂停、休息与完成'));assert.ok(!text.includes('跳过'),'started item still exposed skip as if it had not begun');
+ assert.equal(await page.locator('#v87Name').innerText(),'胸推');assert.ok((await page.locator('#v87Primary').innerText()).includes('完成一组'));
 
- console.log(`[AXIS 8.21 item-unit Flow ${ENGINE}] skip changes intent only; final item completes the Flow`);
- const beforeSkip=c.active.events.length;
- await tap(page.locator('#axis821FlowHome [data-axis-flow-skip]'));
- await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor===2,undefined,{timeout:2500});
- c=await core();assert.equal(c.active.events.length,beforeSkip,'skip fabricated an Encounter');assert.deepEqual(c.flowRun.skippedStepRefs,['s2']);
- homeText=await page.locator('#axis821FlowHome').innerText();assert.ok(homeText.includes('流程 · 3 / 3'));assert.ok(homeText.includes('飞鸟 / 后三角'));assert.ok(homeText.includes('最后一项'));assert.ok(!homeText.includes('接下来 ·'));
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] rest and pause/resume stay on the established Active owner`);
+ await tap(page.locator('#v87Primary'));
+ await page.waitForFunction(()=>document.querySelector('#v87Rest')?.textContent?.includes('休息'),undefined,{timeout:2500});
+ await tap(page.locator('#v87Toggle'));
+ await page.waitForFunction(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.status==='paused',first.id,{timeout:2500});
+ assert.equal((await core()).flowRun.cursor,0,'pause changed Flow sequencing');
+ await tap(page.locator('#v87Toggle'));
+ await page.waitForFunction(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.status==='active',first.id,{timeout:2500});
+
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] temporary other is a record-only detour: no skip, no second Active, current item remains active`);
+ await tap(page.locator('#axis821FlowHome [data-axis-flow-other]'));
+ await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:2500});
+ const picked=await page.evaluate(()=>window.__AXIS_PICK_EQUIPMENT__?.('flow-detour',true));assert.equal(picked,true,'canonical select-only picker did not return detour Object');
+ await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#axis821FlowRecordContext')?.dataset.mode==='detour'&&document.querySelector('#equipmentName')?.textContent?.trim()==='临时计时测试',undefined,{timeout:3500});
+ assert.ok((await page.locator('#axis821FlowRecordContext').innerText()).includes('不会跳过当前流程项'));
+ assert.equal((await page.locator('#saveScan').innerText()).trim(),'记下，不改变流程');
+ const duration=page.locator('[data-axis818-metric="duration"]');if(await duration.count())await duration.fill('2');
+ await tap(page.locator('#saveScan'));
+ await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return (c.active?.events||[]).some(e=>e.equipmentId==='flow-detour')},undefined,{timeout:3500});
+ await page.waitForTimeout(250);c=await core();m=await meta();const detour=c.active.events.find(e=>e.equipmentId==='flow-detour');assert.ok(detour?.id);assert.equal(detour.flowProvenance,undefined,'detour inherited current Flow provenance');assert.equal(detour.flowDetour?.recordOnly,true);assert.equal(m.events?.[detour.id]?.activity??null,null,'timed detour started a standalone Active item');assert.equal(m.events?.[first.id]?.activity?.status,'active','detour displaced or paused the current Flow Active item');assert.equal(c.flowRun.cursor,0,'detour skipped/consumed the current Flow item');assert.equal(c.flowRun.currentEncounterId,first.id,'detour replaced current Flow Active Encounter');
+ await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show')&&document.querySelector('#v87Name')?.textContent?.trim()==='胸推',undefined,{timeout:3000});
+
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] established Active finish is the only ongoing-item completion signal that advances Flow`);
+ await holdFinish();
+ await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor===1,undefined,{timeout:4500});
+ c=await core();m=await meta();assert.equal(m.events?.[first.id]?.activity?.status,'finished');assert.equal(c.flowRun.currentEncounterId,null);assert.ok(c.flowRun.consumedStepRefs.includes('s1'));
+ text=await page.locator('#axis821FlowHome').innerText();assert.ok(text.includes('流程 · 2 / 2'));assert.ok(text.includes('一次完成测试'));assert.ok(text.includes('开始此项'));
+
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] one-shot current item advances only after its canonical Encounter commit`);
  await tap(page.locator('#axis821FlowHome [data-axis-flow-record]'));
- await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.status==='complete',undefined,{timeout:3000});
- c=await core();const flowEvents=c.active.events.filter(e=>e.flowProvenance?.flowRef===flow.id);assert.equal(flowEvents.length,2);assert.deepEqual(flowEvents.map(e=>e.equipmentId),['chest','pec']);assert.deepEqual(flowEvents.map(e=>e.executionModeSnapshot),['complete','complete']);assert.equal(c.active.events.some(e=>e.equipmentId==='shoulder'),false,'skipped item became factual history');
+ await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#axis821FlowRecordContext')?.dataset.mode==='current'&&document.querySelector('#equipmentName')?.textContent?.trim()==='一次完成测试',undefined,{timeout:3500});
+ assert.equal((await page.locator('#saveScan').innerText()).trim(),'完成并继续');
+ assert.equal(await page.locator('#axis818MetricRecorder [data-axis818-metric]').count(),0,'explicit empty one-shot unexpectedly gained value controls');
+ await tap(page.locator('#saveScan'));
+ await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.status==='complete',undefined,{timeout:4000});
+ c=await core();m=await meta();const one=c.active.events.find(e=>e.equipmentId==='flow-complete');assert.ok(one?.id);assert.deepEqual(one.metricSchemaSnapshot,[]);assert.equal(one.executionModeSnapshot,'complete');assert.equal(one.flowProvenance?.flowRef,flow.id);assert.equal(one.flowProvenance?.flowStepRef,'s2');assert.equal(m.events?.[one.id]?.activity??null,null,'one-shot Flow item created false Active metadata');
  assert.equal(await page.locator('#axis821FlowHome').getAttribute('data-state'),'complete');
- const completeText=await page.locator('#axis821FlowHome').innerText();assert.ok(completeText.includes('流程完成'));assert.ok(completeText.includes('2 项完成'));assert.ok(completeText.includes('1 项跳过'));
-
- console.log(`[AXIS 8.21 item-unit Flow ${ENGINE}] standalone Quick Record remains usable after Flow completion`);
- await page.evaluate(()=>window.__AXIS_QUICK_RECORD__?.openFor?.('flow-detour'));
- await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:3000});
- await tap(page.locator('#saveScan'));
- await page.waitForTimeout(180);
- c=await core();const detours=c.active.events.filter(e=>e.equipmentId==='flow-detour');assert.equal(detours.length,2);assert.ok(detours.every(e=>!e.flowProvenance),'standalone Quick Record gained Flow provenance');assert.equal(c.flowRun.status,'complete','standalone record rewrote completed Flow state');
+ const completeText=await page.locator('#axis821FlowHome').innerText();assert.ok(completeText.includes('流程完成'));assert.ok(completeText.includes('2 项完成'));
 
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.21 item-unit Flow ${ENGINE}] PASS · compact Home · start→item 1 · complete item→next · no Quick/set detour · ordinary Quick cannot advance · skip factuality · final completion`);
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] PASS · Flow embedded in Active Home · canonical current recorder · sets/rest/pause/finish delegated to v82/v87 · detour record-only/no-skip/no-Active · one-shot canonical advance`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
