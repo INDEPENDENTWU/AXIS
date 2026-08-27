@@ -2,327 +2,271 @@
 
 Status: **current milestone architecture contract**
 
-Baseline: **AXIS 8.20.1** · `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
-
-Branch: `product/821-flow-session-blueprint`
+Baseline public identity: **AXIS 8.20.1** until the 8.21 product + Production seal is complete.
 
 ## 1. Product statement
 
-AXIS 8.21 introduces **Flow**: a lightweight, reality-tolerant sequence of reusable Practice Objects.
-
-Flow is not a workout plan database, a completion score, a calendar or a second Session model.
+AXIS Flow is a lightweight ordered sequence of reusable Practice Objects.
 
 ```text
 Flow = intended continuity
 Encounter = factual history
 ```
 
-A Flow may say:
+A Flow is not a second workout database, not a set planner, not a calendar, not a completion score and not another recorder.
+
+The central 8.21 rule is:
+
+> **In Flow execution, one Object / item is the minimum completion unit.**
+
+For a Flow `A → B → C`, the user experience is:
 
 ```text
-A → B → C
+start Flow
+  ↓
+A current
+  ↓ complete item
+B current
+  ↓ complete item
+C current
+  ↓ complete item
+Flow complete
 ```
 
-while real practice becomes:
+It is explicitly **not**:
 
 ```text
-A → D → B
+Flow → Quick Record setup → Object Active → set 1 → set 2 → ... → maybe next Flow step
 ```
 
-The second sequence is valid. AXIS should make that reality easy to continue and record, not label it as failure.
+That extra nesting is a standalone Object execution concern and is the wrong abstraction for Flow.
 
-## 2. Foundation inherited from 8.20.1
-
-8.21 must reuse these established truths:
+## 2. Existing truths that remain owned elsewhere
 
 ### Object
 
-A reusable practice identity with current/default recording semantics.
+Object remains reusable identity and configuration truth. It may define recording properties such as weight, reps, duration, pace, intensity, rating or completion.
 
-Important current fields/semantics include:
+### Standalone Object execution
 
-- canonical Object identity;
-- explicit `metricSchema` where configured;
-- current/default executable semantics resolved by `window.__AXIS_EXECUTABLE_OBJECTS__`;
-- compatibility fallback only when no explicit current schema exists.
-
-### Execution
-
-Current execution modes:
+Camera Record and Quick Record keep existing Object execution semantics and owners:
 
 ```text
 single | sets | rounds | timed | hold | complete
 ```
 
-Ongoing:
-
-```text
-sets | rounds | timed | hold
-```
-
-One-shot:
-
-```text
-single | complete
-```
+Classic strength Group Plan / set execution remains the standalone Object path. Flow does not duplicate or replace it.
 
 ### Encounter
 
-Encounter is immutable factual truth after save.
+Encounter remains immutable factual history. Existing snapshots remain authoritative:
 
-Current releases already freeze:
+- Object identity;
+- `metricSchemaSnapshot`;
+- `executionModeSnapshot`;
+- metrics actually recorded;
+- media/evidence references where applicable.
 
-- `metricSchemaSnapshot`
-- `executionModeSnapshot`
-- factual recorded metrics
-- existing evidence/media references where present
-
-8.21 may add Flow provenance, but it may not replace these snapshots with pointers to mutable Flow/Object state.
+Flow may add frozen provenance, but it never becomes the owner of historical facts.
 
 ## 3. Flow domain model
-
-This is the **semantic model**, not authorization for a new database or final storage shape.
 
 ```text
 Flow
  ├─ id
- ├─ title?                  optional human label/context
- ├─ steps[]                 ordered intent
- │   └─ FlowStep
- │       ├─ id
- │       ├─ objectRef       canonical Object identity
- │       ├─ metricOverride? temporary, optional
- │       ├─ executionOverride? temporary, optional
- │       ├─ repeat?         lightweight intent, optional
- │       └─ note/context?   only if it improves real use
- └─ metadata?               created/updated facts only if needed
+ ├─ title?            optional
+ └─ steps[]           ordered intent
+     └─ FlowStep
+         ├─ id
+         └─ objectRef
 ```
 
-Runtime orchestration is conceptually separate:
+Compatibility fields such as temporary metric/execution overrides may remain readable during 8.21 migration, but the user-visible item-unit Flow must not require a separate configuration screen before an item can be completed.
+
+Runtime:
 
 ```text
 FlowRun
  ├─ flowRef
- ├─ currentStepRef
+ ├─ steps[]                 launch snapshot
+ ├─ cursor                  current item index
+ ├─ itemStartedAt
  ├─ consumedStepRefs[]
  ├─ skippedStepRefs[]
- └─ inserted/replaced reality
+ └─ status                  active | complete
 ```
 
-Do **not** assume `FlowRun` needs durable independent storage. Phase 0 must inspect existing session/plan state and choose the smallest compatible representation.
+Flow definitions and the one current FlowRun continue to live in the existing app-owned `axis_v60_state` boundary. 8.21 does not add another database or localStorage namespace.
 
-## 4. Effective step resolver
+## 4. Start semantics
 
-Recording semantics for a Flow step must be resolved once at the handoff boundary before existing recorder/Active owners act.
+Starting a Flow must:
 
-Conceptual precedence:
+1. snapshot the ordered steps;
+2. start/reuse the existing containing Session;
+3. set cursor to item 1;
+4. make item 1 immediately current on Today;
+5. **not** open Quick Record;
+6. **not** open Object property configuration;
+7. **not** create a set/timed/hold Active lifecycle merely because the current Object normally supports one.
 
-```text
-explicit temporary Flow-step override
-            ↓
-Object-specific executable defaults
-            ↓
-existing global/default fallback
-            ↓
-legacy compatibility fallback only when current truth is absent
-```
+The user has already chosen the Object when composing the Flow. Starting it must therefore feel immediate.
 
-Important distinction:
+## 5. Complete-current semantics
 
-- **what to record** = effective metric schema
-- **how it progresses** = effective execution mode
+The primary Flow action is **完成此项**.
 
-A Flow override is ephemeral context. It does not write back into the referenced Object.
+Completing the current item:
 
-Pure resolver output should be sufficient for downstream delegation, for example:
+1. commits exactly one factual Encounter for that Object using the existing app-owned Encounter writer;
+2. records one-shot Flow execution (`executionModeSnapshot: complete`);
+3. freezes Flow provenance (`flowRef`, `flowStepRef`, `objectRef`, step snapshot);
+4. may truthfully capture automatic facts such as item elapsed time / completion when the Object schema supports them;
+5. must not fabricate weight, reps, sets, pace, intensity or other values from historical defaults;
+6. marks that FlowStep consumed;
+7. increments the cursor immediately;
+8. sets the next item current with no confirmation/success interstitial;
+9. completes the Flow after the last item.
 
-```text
-ResolvedFlowStep
- ├─ flowRef
- ├─ stepRef
- ├─ objectRef
- ├─ effectiveMetricSchema
- ├─ effectiveExecutionMode
- ├─ overrideProvenance
- └─ next-intent context
-```
+The Object's configured metric schema may still be snapshotted for history/context. Optional future inline value entry may use the same canonical metric controls, but values cannot be mandatory for Flow progression and must never require a detour through standalone Quick Record.
 
-The resolver itself must be pure/read-only.
-
-## 5. Encounter provenance
-
-When a Flow-launched action becomes a saved Encounter, history may receive additive frozen provenance such as:
-
-```text
-flowRef
-flowStepRef
-flowSnapshot? / flowContextSnapshot?
-```
-
-Only add fields that survive this test:
-
-> If the Flow is edited, reordered or deleted tomorrow, can the Encounter still explain what happened yesterday without querying that live Flow?
-
-At minimum, existing `metricSchemaSnapshot` and `executionModeSnapshot` remain authoritative for what/how the Encounter was recorded.
-
-Possible provenance should identify **where the intent came from**, not make Flow the owner of factual metrics.
-
-## 6. Orchestration behavior
-
-### Launch
-
-Launching a Flow selects the first actionable step. It must not mark every referenced Object as Active.
-
-### Record / start
-
-A step delegates to the existing Object recording path.
-
-- schema-driven non-classic Object → existing executable Object recorder
-- genuine classic weight+reps sets Object → existing v61 path
-- timed/hold/rounds → existing ongoing Active lifecycle as resolved
-- single/complete → one-shot behavior without false persistent Active
-
-### Advance
-
-After a step produces its real result, the Flow can make the next intended Object immediately available with minimal visual ceremony.
-
-No giant “success” screen is required. The product should feel continuous rather than gamified.
+## 6. Skip, detour and finish early
 
 ### Skip
 
-Skip changes Flow runtime intent only. It does not create an Encounter and is not a failed record.
+Skip changes intent only:
 
-### Insert / replace
+- no Encounter;
+- no fake failure;
+- cursor moves to the next item.
 
-The user may do something not in the original sequence. AXIS should allow the new Object to be recorded normally and then continue the Flow if the user wants.
+### Temporary other
 
-The real Encounter sequence remains factual history.
+`临时记录其他` opens the ordinary standalone Quick Record path.
+
+That Encounter:
+
+- is normal factual history;
+- has no Flow provenance;
+- does not consume or advance the current Flow item;
+- returns the user to the same Flow cursor afterwards.
 
 ### Finish early
 
-Finishing early is valid. No completion score is required.
+Finishing early is valid. No percentage, grade, streak or failure state is required.
 
-## 7. Repetition and Group Plan boundary
+## 7. Flow vs Group Plan boundary
 
-Do not conflate two different concepts:
-
-- a Flow sequences Objects;
-- Group Plan / classic set planning describes repeated set-level execution inside a compatible Object.
-
-For a classic strength Object, Flow should hand control to the established v61/Group Plan semantics rather than recreating sets inside Flow.
-
-If Flow-level `repeat` is introduced, it must mean **repeat this step/sequence intent**, not take ownership of classic set facts.
-
-## 8. Storage decision rule
-
-8.21 is not authorized to add a new IndexedDB database, localStorage namespace or parallel training store merely for architectural neatness.
-
-Before persistence code:
-
-1. inspect existing `axis_v60_state` plan/session/profile structures;
-2. inspect Group Plan and Live Route structures for reusable intent-only concepts;
-3. identify the one existing app-owned state boundary that can host Flow definitions/runtime context without corrupting Session/Encounter truth;
-4. document the chosen field/schema and migration behavior;
-5. add repository/runtime contract coverage before relying on it.
-
-A Flow definition can be durable intent, but the **owner remains the established app state owner** unless an explicit owner migration is separately proved.
-
-## 9. UI principles
-
-Flow should not become a new heavy top-level mode unless real use proves it necessary.
-
-Desired feel:
-
-- quick to compose from existing Objects;
-- compact ordered sequence;
-- one clear current step;
-- next step visible without demanding attention;
-- skip/replace/insert are natural;
-- no “80% complete” framing;
-- no forced confirmation between every step;
-- no duplicated recording controls inside the Flow surface;
-- mobile-first touch targets and iOS-safe navigation;
-- desktop/web width can reveal more context without changing semantics.
-
-The current Active surface remains the place where ongoing execution is actually controlled.
-
-## 10. First reference scenario
-
-Use a heterogeneous three-step test, not three classic exercises.
-
-Example semantic fixture:
+The two concepts must remain separate:
 
 ```text
-A: duration + intensity → timed
-B: weight + reps       → sets
-C: completion-only     → complete/single
+Flow       = sequence of Objects / items
+Group Plan = set-level execution inside a standalone compatible Object
 ```
 
-Required physical flow:
+A strength Object may still use Group Plan when launched independently through Quick Record. The same Object inside Flow is completed as one Flow item.
 
-1. create/seed canonical Objects A/B/C;
-2. create a Flow referencing them;
-3. launch Flow without marking B/C Active;
-4. A opens the schema-driven recorder and enters correct timed Active behavior;
-5. finish A, Flow points to B;
-6. B opens the classic v61 sets path and keeps all existing set ownership;
-7. skip or insert another Object once to prove reality-tolerance;
-8. C uses one-shot completion with no false Active;
-9. inspect Encounters: effective schema/mode + Flow provenance frozen;
-10. edit/reorder the Flow;
-11. reload;
-12. old Encounters remain unchanged and readable.
+This distinction is deliberate: Flow is for continuity across activities; Group Plan is for detailed execution within one activity.
 
-Run on Chromium and iPhone-like WebKit.
+## 8. Today UI contract
 
-## 11. Release-blocking invariants
+Today is not a Flow feature landing page.
 
-8.21 must fail release if any of these occur:
+### No Flow
 
-- explicit Object schema falls back to unrelated legacy fields;
-- Flow override mutates reusable Object defaults;
-- Flow creates a second recorder, Active owner, Session writer or Encounter writer;
-- a new persistence database/store is introduced without an explicit reviewed owner migration;
-- historical Encounter changes after Flow edit/reorder/delete;
-- classic v61 facts are duplicated into another owner;
-- all Flow Objects become globally Active merely because the Flow starts;
-- skip/insert/reorder is treated as corrupted state;
-- Capture/Evidence/Evolution/Language/runtime compatibility regresses;
-- Chromium and WebKit disagree on saved truth or user-visible lifecycle.
-
-## 12. Non-goals
-
-Not 8.21:
-
-- AI auto-programming;
-- coach chat;
-- calendar scheduling system;
-- completion percentage;
-- streaks / badges / XP;
-- social challenge semantics;
-- punishment for deviation;
-- auto-editing historical facts;
-- separate domain modes for gym/running/music/etc.;
-- another storage architecture rewrite.
-
-## 13. Relationship to 8.22
-
-8.22 may use factual Encounter/Flow history to infer **adaptive defaults** only after 8.21 semantics are sealed.
-
-8.22 should make likely values/transitions easier to accept, not turn Flow into prescriptive coaching.
-
-The intended direction is lower friction:
+Flow occupies only a compact entry row:
 
 ```text
-more repeated factual use
-        ↓
-fewer questions / better defaults
-        ↓
-less interface attention
+流程                         + 新建
 ```
 
-## 14. Relationship to Active Action Lens
+No permanent explanatory marketing copy or large empty-state CTA.
 
-`ACTIVE_ACTION_LENS_EXPERIMENT.md` is an independent presentation experiment.
+### Saved, not running
 
-Flow may benefit from a better Active control experience, but 8.21 architecture and release success must not depend on the Lens. The Lens has no permission to own Flow state, execution truth or history.
+A compact saved Flow surface may show:
+
+- optional title, otherwise `N 个项目`;
+- one non-duplicated chain summary;
+- one clear `开始` action;
+- edit/management as secondary action.
+
+### Running
+
+Running Flow earns prominent space because it is the user's current activity:
+
+```text
+流程 · 1 / 3                 全部
+当前项目
+槓片式胸推
+接下来 · 槓铃卧推
+
+[ 完成此项 ]
+
+跳过      临时记录其他      结束
+```
+
+The next item is derived from the immutable launch snapshot (`run.steps[cursor + 1]`), not from stale UI hints.
+
+### Complete
+
+Completion is concise and factual. It may show completed/skipped item counts and a `收起` action. No gamified success screen is required.
+
+## 9. History and truthfulness
+
+A completed Flow item is one factual Encounter. The event may store additive `flowItem` timing facts such as:
+
+```text
+startedAt
+completedAt
+durationMs
+```
+
+Historical UI should describe it as an item completion, not render undefined legacy set values.
+
+Editing, reordering or deleting the reusable Flow later must never mutate previous Encounter provenance.
+
+Zero-property Objects are valid. Flow provenance therefore permits an empty `effectiveMetricIds` array.
+
+## 10. Release-blocking invariants
+
+8.21 must fail release if any of the following occurs:
+
+- Flow current action opens Quick Record before the item can be completed;
+- Flow exposes `完成一组` / set-level progression as its primary lifecycle;
+- completing item 1 does not immediately make item 2 current;
+- an ordinary Quick Record while Flow is active gains Flow provenance or advances the cursor;
+- skip creates an Encounter;
+- Flow creates a second Encounter writer, Session writer, Active owner, recorder or persistence store;
+- a Flow item invents unconfirmed historical weight/reps/sets/metrics;
+- first item of `1 / N` is labelled as the last item;
+- empty Today is dominated by Flow education/marketing UI;
+- Chromium and iPhone-like WebKit disagree on lifecycle or saved truth;
+- fixed Vercel and EdgeOne Production artifacts fail the same physical Flow scenario.
+
+## 11. Physical reference scenario
+
+Use a three-item Flow `A → B → C`:
+
+1. empty Today shows compact Flow entry;
+2. save/compose A/B/C;
+3. start → A is immediately `1 / 3`, no Quick Record sheet;
+4. complete A → exactly one one-shot Encounter, then B is `2 / 3`;
+5. ordinary Quick Record D → D has no Flow provenance, B remains current;
+6. skip B → no B Encounter, C becomes `3 / 3`;
+7. complete C → Flow complete;
+8. no set-level Active metadata was created for A/C merely because they are strength Objects;
+9. standalone Quick Record still behaves normally;
+10. repeat on Chromium and iPhone-like WebKit, then on fixed Production URLs.
+
+## 12. Release identity
+
+The repository may contain 8.21 implementation work while the public release identity remains 8.20.1.
+
+Only move the public version to **8.21** after:
+
+- item-unit product semantics are physically green;
+- recording-property UI remains green;
+- Chromium + iPhone-like WebKit are green;
+- Vercel exact main SHA is green;
+- EdgeOne serves the same exact artifact and passes the same Flow checks.

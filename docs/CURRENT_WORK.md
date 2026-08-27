@@ -2,92 +2,110 @@
 
 ## Production baseline at start of this work
 
-The baseline for this bounded slice is merged main `e8467319a4fd28d42c590e92f9bea5b094808349`, which contains Production-sealed PR #91 **AXIS 8.21 — Flow User Surface**.
+The baseline for this bounded correction is merged main `85ed0ad6ce7d37eef6ec3e8f46eec7e378333328`.
 
-That baseline has already converged as one exact artifact across the fixed Production endpoints:
+The fixed public endpoints remain:
 
 - Vercel: `https://axis-five-puce.vercel.app`
 - EdgeOne: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
 
-The exact merged PR #91 artifact passed real Chromium and iPhone-like WebKit verification on both Production mirrors. It includes the app-owned Flow runtime, canonical Object recording-property surface and user-visible Today Flow composition/run surface while retaining the public 8.20.1 release identity.
+The public release identity remains deliberately **8.20.1** while 8.21 product semantics are still being corrected and re-sealed.
 
-The architecture remains deliberately single-owner:
-
-- Flow definitions and one FlowRun: existing `axis_v60_state` app owner;
-- Object identity/schema: existing Object Truth;
-- Object picker: existing canonical `eqSheet`;
-- Quick Record: existing `v61.js` + app recorder lifecycle;
-- Session/Encounter truth: existing app writer;
-- Active truth: existing Active owners;
-- media: existing source-first/media owners.
-
-No child slice may add a second storage namespace, picker, recorder, Active owner, Session writer or Encounter writer merely to advance 8.21.
+The governed active milestone remains **AXIS 8.21 — Flow / Session Blueprint** and the governed active branch remains `product/821-flow-session-blueprint`. PR #99 is a bounded correction branch inside that milestone; it does not replace the parent governance identity.
 
 Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1` and `axis.flow-provenance.v1`.
 
-## Governed parent milestone
+The inherited architecture remains single-owner:
 
-The governed milestone remains **AXIS 8.21 — Flow / Session Blueprint**.
+- Flow definitions + one FlowRun: existing `axis_v60_state` app owner;
+- Object identity/schema: existing Object Truth;
+- Object picker: existing canonical `eqSheet`;
+- standalone Quick Record / Group Plan: existing `v61.js` + app lifecycle;
+- Session/Encounter truth: existing app writer;
+- Active truth: existing Active owners;
+- media/evidence: existing source-first/media owners.
 
-The governed active branch remains `product/821-flow-session-blueprint`; PR #92 is a bounded convergence child branch and does not replace that parent governance identity.
-
-This PR is a bounded convergence child slice after the merged user surface. It exists to prove the real-world deviation path before public release identity is advanced to 8.21.
+No 8.21 correction may add a second persistence namespace, picker, recorder, Active owner, Session writer or Encounter writer.
 
 ## Active change
 
-**AXIS 8.21 — Flow Reality Seal**
+**AXIS 8.21 — Item-Unit Flow Convergence**
 
-- branch: `product/821-flow-reality-seal`
-- PR: **#92**
-- base: merged/Production-sealed PR #91 main `e8467319a4fd28d42c590e92f9bea5b094808349`
+- branch: `axis-821-item-unit-flow-convergence`
+- PR: **#99**
+- base: `85ed0ad6ce7d37eef6ec3e8f46eec7e378333328`
 
-This slice adds no new product runtime behavior owner. It extends the physical proof chain to the field path users actually need when reality diverges from a Flow:
+Real iPhone product testing demonstrated that the previous Flow implementation used the wrong execution abstraction. It routed a Flow step into standalone Quick Record and then into the Object's set/timed Active lifecycle. That produced the observed path:
 
-`Flow 当前项 → 临时记录其他 → ordinary Quick Record → real non-Flow Encounter → 返回原 Flow 当前项 → 记录当前 → matching real Flow Encounter → advance/complete → 收起`
+`Flow → 记下 → Quick Record/property surface → 记下 → 单项/组执行 → 完成一组`
 
-The required semantics are:
+and did not reliably advance to the next Flow Object.
 
-- `临时记录其他` is a normal factual Encounter and must not inherit Flow provenance;
-- an ordinary detour Encounter must not advance the Flow cursor, set Flow `lastEncounterId`, skip the intended current Object or silently finish the Flow;
-- after that detour, the original current Flow Object remains visibly current;
-- only explicit `记录当前` establishes the UI-owned pending step intent;
-- only the subsequently committed matching Encounter with immutable Flow provenance may advance that step;
-- completed Flow remains explicit until the user chooses `收起`;
-- `收起` clears only FlowRun intent and must preserve the saved Flow definition and all factual Encounter provenance.
+The corrected governed rule is:
 
-The new proof is `scripts/axis-821-flow-reality-smoke.mjs`. It runs through the same dual-engine physical chain as the existing recording-property and Flow user-surface proofs. `prepare-821-flow-user-surface-proof.mjs` now appends that reality proof after the existing user-surface proof.
+> **Flow sequences Objects; one Object/item is the minimum completion unit inside Flow.**
+
+The target physical lifecycle is:
+
+`start A→B→C → A current → 完成此项 → B current → 完成此项 → C current → 完成此项 → Flow complete`
+
+This slice therefore:
+
+- starts/reuses the containing Session when Flow starts;
+- goes directly to item 1 without opening Quick Record;
+- changes the Flow primary action to `完成此项`;
+- commits exactly one one-shot factual Encounter for each completed Flow item through the existing app-owned Encounter append boundary;
+- freezes Flow provenance on that item Encounter;
+- does not fabricate historical weight/reps/sets or other unconfirmed metrics;
+- immediately increments the Flow cursor after completion;
+- keeps skip intent-only with no Encounter;
+- keeps `临时记录其他` as ordinary standalone Quick Record with no Flow provenance and no cursor movement;
+- prevents generic Encounters from advancing Flow;
+- derives the next item from the running Flow snapshot rather than stale UI hints;
+- keeps Group Plan / `完成一组` semantics only in standalone compatible Object execution, not in Flow;
+- reduces the Today no-Flow state to a compact row instead of a feature-education block;
+- avoids duplicate unnamed Flow title/chain text;
+- permits zero-property Objects in Flow provenance;
+- updates the 8.21 architecture blueprint to the corrected item-unit boundary.
+
+The new physical proof is `scripts/axis-821-item-unit-flow-smoke.mjs`. The late convergence prep redirects both the current-release Flow runtime smoke entry and the nested recording-property physical lane to this final item-unit scenario after all earlier 8.21 assembly passes have completed.
+
+The first PR #99 Runtime Gate exposed one inherited Chromium-only failure outside the Flow path: `scripts/axis-completion-smoke.mjs` reports `weight step shifted control geometry` while the equivalent WebKit job is green. The product assertion remains unchanged. `prepare-821-recording-geometry-diagnostic.mjs` now adds failure-only before/after layout evidence for `#axisSetControls`, `#v8Sets`, the Group Plan launcher, scroll positions and computed control geometry so the root cause can be fixed rather than hidden by a wider tolerance or a weaker smoke test.
 
 ## Validation for this work
 
-PR #92 is not mergeable until its exact latest head proves:
+PR #99 is not mergeable until its exact latest head proves all of the following:
 
-- deterministic build and repository contracts remain unchanged;
-- Work Continuity sees this handoff update in the same executable-code PR;
-- Runtime, Runtime Foundation, Deep Compatibility, Current Release, Cross-Platform Foundation and Universal Practice Object gates are green;
-- Chromium and iPhone-like WebKit both execute the existing 8.21 Flow runtime and recording-property proofs;
-- Chromium and iPhone-like WebKit both execute the existing Flow composition/run proof;
-- Chromium and iPhone-like WebKit both execute the new real-world detour proof;
-- the detour Encounter is committed exactly once and has no Flow provenance;
-- the Flow cursor/current step remain unchanged after the detour;
-- the matching `记录当前` Encounter carries exact `flowRef` and `flowStepRef` provenance and is the only fact allowed to advance the step;
-- the two factual Encounters remain ordered as detour then intended current Encounter;
-- explicit dismissal clears only FlowRun while preserving the saved Flow and byte-stable historical provenance;
-- no page errors or duplicate product owners appear.
+- deterministic build succeeds after the late item-unit convergence pass;
+- Work Continuity includes this handoff in the same executable-code PR;
+- repository, Runtime, Runtime Foundation, Deep Compatibility, Cross-Platform Foundation, Current Release and UPO gates remain green;
+- the inherited Chromium recording geometry failure is root-caused and fixed with the original `0.5px` geometry assertion retained;
+- the final source still contains exactly one authoritative `state.active.events.push(` Encounter append;
+- starting Flow creates/reuses one containing Session but no Encounter;
+- item 1 appears immediately as `1 / 3` with the correct next item;
+- the first item cannot incorrectly display `最后一项`;
+- `完成此项` does not open `scanSheet` and does not create `完成一组` / set-level Active metadata;
+- completing an item writes exactly one one-shot Encounter with exact Flow provenance and immediately makes the next item current;
+- ordinary standalone Quick Record during an active Flow writes a normal Encounter with no Flow provenance and leaves the current Flow cursor unchanged;
+- skip creates no Encounter;
+- final item completion moves FlowRun to `complete`;
+- zero-property provenance validates;
+- standalone Quick Record remains usable after Flow completion;
+- Chromium and iPhone-like WebKit execute the same physical lifecycle without page errors.
 
-An inherited browser check may be rerun only when logs demonstrate a pre-existing timing/environment flake unrelated to this slice; product assertions themselves must not be weakened to obtain green CI.
-
-After merge, the exact main artifact must again converge on the fixed Vercel Production URL and the same exact prebuilt artifact must pass real Chromium and iPhone-like WebKit verification on EdgeOne before the reality seal is considered complete.
+After PR merge, the exact main artifact must be verified on the fixed Vercel Production URL, then the same exact prebuilt artifact must be mirrored to EdgeOne and re-run through the same Chromium + iPhone-like WebKit product path before this semantic correction is considered Production-sealed.
 
 ## Next planned stage
 
-Only after PR #92 is merged and Production-sealed should the public release identity converge from **8.20.1 → 8.21**.
+Only after PR #99 is merged and Production-sealed should 8.21 continue to final release convergence.
 
-That release-convergence slice should:
+Before changing the public version, do one final product pass over:
 
-1. advance only the current public/base release owner and current release contracts;
-2. preserve historical 8.18 / 8.19 / 8.20 / 8.20.1 module provenance rather than relabeling old capabilities;
-3. include the Flow runtime, canonical recording-property surface, Flow user surface and reality/deviation proof in the governed current-release boundary;
-4. prove exact Vercel + EdgeOne parity in Chromium and iPhone-like WebKit after merge;
-5. stop there — do not introduce 8.22 adaptive behavior until 8.21 is fully sealed as one factual product release.
+1. Flow composer touch/reorder and optional `开始` vs `保存` friction;
+2. active Flow typography/spacing on real iPhone widths;
+3. optional inline factual metric entry, only if it genuinely reduces friction and never becomes mandatory for Flow progression;
+4. fixed Vercel + EdgeOne exact-artifact dual-engine verification.
+
+Then advance the public identity from **8.20.1 → 8.21** as a release-only convergence change, without relabeling historical 8.18 / 8.19 / 8.20 / 8.20.1 provenance and without introducing 8.22 adaptive behavior.
 
 Chat history is not authoritative project memory. Conversation history is supplemental only. GitHub governance, contracts, tests, current main and Production evidence are authoritative.

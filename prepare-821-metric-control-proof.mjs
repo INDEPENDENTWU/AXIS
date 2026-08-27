@@ -33,3 +33,6 @@ for(const token of [
 ])if(!smoke.includes(token))fail(`physical metric smoke did not converge · ${token}`);
 const contract=JSON.parse(read('release-contract.json'));if(String(contract.publicVersion)!=='8.20.1'||String(contract.stableBaseVersion)!=='8.20.1')fail('public release identity moved before 8.21 product seal');
 console.log('[AXIS 8.21 metric control proof] PASS · five semantic control families · 64px Group Plan geometry · expanded dual-engine physical assertions · public identity still 8.20.1');
+
+await import('./prepare-821-item-unit-flow-convergence-v2.mjs');
+await import('./prepare-821-recording-geometry-diagnostic.mjs');
