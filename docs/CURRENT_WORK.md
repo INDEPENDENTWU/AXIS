@@ -70,6 +70,8 @@ This slice therefore:
 
 The new physical proof is `scripts/axis-821-item-unit-flow-smoke.mjs`. The late convergence prep redirects both the current-release Flow runtime smoke entry and the nested recording-property physical lane to this final item-unit scenario after all earlier 8.21 assembly passes have completed.
 
+The first PR #99 Runtime Gate exposed one inherited Chromium-only failure outside the Flow path: `scripts/axis-completion-smoke.mjs` reports `weight step shifted control geometry` while the equivalent WebKit job is green. The product assertion remains unchanged. `prepare-821-recording-geometry-diagnostic.mjs` now adds failure-only before/after layout evidence for `#axisSetControls`, `#v8Sets`, the Group Plan launcher, scroll positions and computed control geometry so the root cause can be fixed rather than hidden by a wider tolerance or a weaker smoke test.
+
 ## Validation for this work
 
 PR #99 is not mergeable until its exact latest head proves all of the following:
@@ -77,6 +79,7 @@ PR #99 is not mergeable until its exact latest head proves all of the following:
 - deterministic build succeeds after the late item-unit convergence pass;
 - Work Continuity includes this handoff in the same executable-code PR;
 - repository, Runtime, Runtime Foundation, Deep Compatibility, Cross-Platform Foundation, Current Release and UPO gates remain green;
+- the inherited Chromium recording geometry failure is root-caused and fixed with the original `0.5px` geometry assertion retained;
 - the final source still contains exactly one authoritative `state.active.events.push(` Encounter append;
 - starting Flow creates/reuses one containing Session but no Encounter;
 - item 1 appears immediately as `1 / 3` with the correct next item;
