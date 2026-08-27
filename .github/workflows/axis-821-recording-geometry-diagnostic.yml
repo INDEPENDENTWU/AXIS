@@ -1,11 +1,10 @@
-name: AXIS 8.21 Recording Geometry Diagnostic
+name: AXIS Recording Geometry Forensics
 
 on:
-  push:
-    branches: [hotfix/821-recording-geometry-stability]
+  workflow_dispatch:
 
 jobs:
-  production-geometry-diagnostic:
+  production-geometry-forensics:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -13,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-      - name: Prepare exact branch diagnostic contract
+      - name: Prepare exact diagnostic contract
         run: |
           node build-release.mjs
           node scripts/prepare-release-test-contract.mjs
