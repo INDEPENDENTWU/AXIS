@@ -38,12 +38,14 @@ The original Production failure measured a shared upward displacement of roughly
 
 The branch therefore added failure-only direct Review-child geometry evidence while preserving the existing `0.5px` stability assertion. A temporary branch-only workflow then ran the same fixed Vercel Production geometry operation **12 consecutive times**. Result: **12 / 12 passed with the unchanged `0.5px` threshold; the reported 28.5px displacement did not reproduce.** No CSS offset, minimum-height compensation or relaxed threshold was introduced.
 
+The automatic branch diagnostic trigger has now been retired. The workflow is retained only as explicit `workflow_dispatch` forensic tooling, so it does not run on PR heads, pushes, merges or Production deployments and does not form a second release/deploy path.
+
 During exact-head compatibility validation, two independent inherited browser harnesses were also found to be bypassing current physical interaction semantics:
 
 - the 8.18 Object/Capture smoke removed the Settings `.show` class directly instead of using the canonical Settings close action, bypassing route/inert/dock reconciliation before attempting Capture;
 - iPhone-like WebKit compatibility used desktop-style `.click()` for Rest learning and later pause/resume interactions even though the current mobile product path is touch-driven.
 
-Those harnesses now use the real product interaction path: canonical Settings close and touch-capable WebKit `tap`, while Chromium retains its mouse path. Behavioral assertions, pause-owned-rest semantics, geometry thresholds and runtime ownership are unchanged. At exact head `6dde6784cebd380371e699dcdb482d0098a27bf7`, Current Release, Runtime, Runtime Foundation, Deep Compatibility Chromium/WebKit, Repository, Work Continuity, Cross-Platform and PR Convergence all pass; the temporary diagnostic workflow is removed before the final merge candidate is accepted.
+Those harnesses now use the real product interaction path: canonical Settings close and touch-capable WebKit `tap`, while Chromium retains its mouse path. Behavioral assertions, pause-owned-rest semantics, geometry thresholds and runtime ownership are unchanged. At exact head `6dde6784cebd380371e699dcdb482d0098a27bf7`, Current Release, Runtime, Runtime Foundation, Deep Compatibility Chromium/WebKit, Repository, Work Continuity, Cross-Platform and PR Convergence all passed. The final clean head must prove the same gates with the automatic diagnostic trigger retired.
 
 The existing product model remains unchanged:
 
@@ -75,7 +77,7 @@ Before merge, the clean exact PR head must prove:
 - Flow current recording, temporary-other detour, Active finish and pause-owned rest remain green;
 - inherited Chromium and iPhone-like WebKit tests use their real interaction modalities;
 - all inherited Repository, Work Continuity, Cross-Platform, Universal Practice Object, Runtime, Current Release and Deep Compatibility gates remain green;
-- no temporary branch-only diagnostic workflow remains in the merge candidate.
+- no automatic branch-only diagnostic workflow participates in the merge candidate.
 
 ## Merge / Production discipline
 
