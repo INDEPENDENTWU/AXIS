@@ -2,87 +2,99 @@
 
 ## Production baseline at start of this work
 
-The exact baseline is merged main `a6354f734b3cdcf041aeecbd0ce9d7c353641401`, the merged result of PR #99.
+The exact code baseline is merged main `e0e0c7d3b7ddc72e07b3f92ab6955ffc14a8ad79`, the merged result of PR #101 **AXIS 8.21 — Flow / Active Experience Convergence**.
 
-That exact artifact is already product/Production-sealed before the public version move:
+That SHA reached the fixed Vercel Production endpoint and exact manifest/artifact parity was proved before browser execution:
 
 - Vercel fixed Production: `https://axis-five-puce.vercel.app`
-- Vercel exact deployment: `dpl_CweMYGbWJSV9KZeMnE6s4U93ZkjM` · READY · source `a6354f734b3cdcf041aeecbd0ce9d7c353641401`
-- EdgeOne fixed Production: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
-- EdgeOne Production Mirror run: `33025938333` · exact prebuilt artifact · Chromium + iPhone-like WebKit Production lifecycle success
+- source commit served during the failed Production gate: `e0e0c7d3b7ddc72e07b3f92ab6955ffc14a8ad79`
+- public/base release identity: **8.21**
+- architecture: `canonical-single-runtime`
+- exact Production browser gate then failed on a cold-boot `ReferenceError`, so this SHA is **not** considered Production-sealed
+- EdgeOne fixed Production remains `https://axisfitness-mirror-9x91gveo.edgeone.cool`; a new dual-provider seal is required after this hotfix merges
 
-The deployed public release identity at this baseline remains **8.20.1**. The 8.21 Flow/recording product behavior is already present and physically proved; this slice is only the formal identity convergence from **8.20.1 → 8.21**.
+The Production failure was useful evidence, not a reason to weaken a gate: the first Flow/Active convergence pass appended two lifecycle listeners outside the lexical region that owns their private Flow helpers. A first scope correction removed the original `D is not defined` symptom but exact-head Chromium/WebKit then proved the listeners still could not resolve `axis821FlowRecorderContextClear`. This hotfix fixes the lexical ownership boundary itself.
 
-The governed active milestone remains **AXIS 8.21 — Flow / Session Blueprint** and the governed parent branch remains `product/821-flow-session-blueprint` until the formal 8.21 release is Production-sealed. This bounded release branch does not replace that governance identity.
+The governed active milestone remains **AXIS 8.21 — Flow / Session Blueprint** and the governed parent branch remains `product/821-flow-session-blueprint` until the exact 8.21 artifact is dual-provider Production-sealed. This bounded hotfix branch does not replace that governance identity.
 
 Cross-platform continuity remains anchored by `axis-native-foundation-0`, `INDEPENDENTWU/AXIS-iOS`, `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1` and `axis.flow-provenance.v1`.
 
 ## Active change
 
-**AXIS 8.21 — Final Release Convergence**
+**AXIS 8.21 — Flow Active Boot Scope Hotfix**
 
-- branch: `release/821-final-convergence`
-- base: `a6354f734b3cdcf041aeecbd0ce9d7c353641401`
-- intended behavior change: **none**
-- intended public identity change: **8.20.1 → 8.21**
+- branch: `hotfix/821-flow-active-boot-scope`
+- base: `e0e0c7d3b7ddc72e07b3f92ab6955ffc14a8ad79`
+- PR: `#102`
+- intended product behavior change: **none beyond making the already-designed Flow/Active lifecycle actually executable on cold boot**
+- intended public identity change: **none; remains 8.21**
 
-The release pass runs only after every existing 8.21 product convergence/proof pass. It therefore preserves the useful boundary that 8.21 product behavior was first assembled and proved while public/base identity was still 8.20.1, then advances only current/public release identity.
+The product model remains the #101 convergence model:
 
-This release slice must not add or change:
+- Flow owns sequence/context only;
+- the existing canonical recorder owns current-item recording;
+- v82/v87 remain the Active lifecycle owners for sets / rounds / timed / hold;
+- Flow advances only after a matching canonical one-shot commit or established Active finish;
+- `臨時記錄其他` is record-only and cannot skip the current Flow step or create a second Active item;
+- exactly one app-owned Encounter append remains.
 
-- Flow behavior or item-completion semantics;
-- Object recording-property semantics or controls;
+The hotfix moves the Flow close/finish subscriptions into the same private lexical region as `axis821FlowRecordingIntent`, `axis821FlowRecorderContextClear` and `axis821FlowOnActiveFinished`. It must not export those private helpers to `window` merely to make scope resolution work.
+
+This hotfix must not add or change:
+
+- a second Flow runtime/store;
 - Object picker ownership;
-- Quick Record / Group Plan ownership;
+- Quick Record / Capture ownership;
 - Session or Encounter writers;
-- Active lifecycle ownership;
+- Active state ownership;
 - persistence namespaces/databases;
 - media/evidence ownership;
 - request/chunk/runtime topology.
 
-Historical provenance must remain truthful:
+Historical provenance remains truthful:
 
 - 8.18 Object / Capture / Evidence foundations remain 8.18;
 - 8.19 Universal Practice Object remains 8.19;
 - 8.20 Executable Practice Objects remains 8.20;
 - 8.20.1 Object reliability / Active lifecycle remains 8.20.1;
-- 8.21 Flow, canonical recording-property surface, metric-control system and item-unit convergence remain 8.21 product capabilities.
-
-The deterministic release transition is implemented in `prepare-821-release.mjs` and is sequenced as the final import of `prepare-819-postcommit-lifecycle.mjs`, after all existing 8.21 product convergence passes.
+- 8.21 Flow, canonical recording-property surface, metric-control system, item-unit convergence and Flow/Active convergence remain 8.21 capabilities.
 
 ## Validation for this work
 
-The exact release PR head is not mergeable until all triggered current gates are green, including Chromium and iPhone-like WebKit where applicable. The candidate must prove:
+PR #102 is not mergeable until its exact head passes all triggered gates. The candidate must prove, without relaxing assertions:
 
-- generated `publicVersion` and `stableBaseVersion` are exactly `8.21`;
-- generated canonical runtime identity is exactly `8.21`;
-- architecture remains `canonical-single-runtime`;
-- one initial JavaScript request, zero dynamic JavaScript chunks;
-- 8.21 Flow item-unit and recording-property capability markers remain present;
+- no uncaught `D is not defined` or `axis821FlowRecorderContextClear is not defined` page error in Chromium or WebKit;
+- exactly one Flow recorder-close listener and one `axis:active-finished` listener;
+- those listeners are emitted in the private Flow helper region before `axis821CompleteCurrentItem()`;
+- no private Flow helper/state is exported globally;
 - exactly one authoritative `state.active.events.push(` Encounter append remains;
-- no `axis_flow_*` persistence namespace appears;
-- 8.20.1 reliability regression runs against the 8.21 public artifact while retaining 8.20/8.20.1 capability provenance;
-- runtime parity accepts 8.21 as the next controlled public release without relaxing topology equality;
-- repository contract accepts the built 8.21 semantic identity without rewriting historical release transitions;
-- Flow `A → 完成此项 → B → 完成此项 → C → 完成此项` remains physically green;
-- explicit zero-property Objects remain zero-property and Record remains value-only.
+- current Flow sets/rounds/timed/hold delegate to existing Active time, pause/resume, rest and finish controls;
+- one-shot current items advance only after canonical Encounter commit;
+- temporary-other recording does not advance/skip Flow and does not create another Active item;
+- explicit zero-property Objects remain zero-property;
+- Chromium and iPhone-like WebKit physical Flow proof both pass;
+- inherited Universal Practice Object, Deep Compatibility, Runtime and Current Release gates stay green;
+- recording control geometry remains unchanged by a value step. The existing geometry assertion must not be loosened.
+
+The earlier Production run also observed a `-22.75px` recording-control Y shift after the app boot exception. After the lexical scope defect is removed, the exact same geometry smoke decides whether that was a secondary boot symptom or a separate real defect. If it survives, fix the geometry rather than changing the threshold.
 
 ## Merge / Production discipline
 
-After exact-head green, merge the release PR. Do not call AXIS 8.21 Production-sealed merely because the PR merged.
+After exact-head green, merge PR #102. Do not call the work complete merely because the PR merged.
 
-The merged main SHA must then satisfy all of the following on the fixed public endpoints:
+The resulting exact main SHA must then satisfy all of the following on the fixed public endpoints:
 
-1. Vercel Production is READY for that exact main SHA and serves `version/baseVersion = 8.21`;
-2. EdgeOne mirrors the same exact prebuilt artifact after Vercel/main manifest convergence;
-3. Vercel ↔ EdgeOne artifact/manifest parity remains strict;
-4. real Chromium Production lifecycle passes;
-5. real iPhone-like WebKit Production lifecycle passes.
+1. Vercel Production is READY for that exact main SHA and anonymously serves the exact local 8.21 manifest/artifact;
+2. the full Production browser gate passes without cold-boot page errors and without recording geometry drift;
+3. EdgeOne mirrors the same exact prebuilt artifact only after Vercel/main parity converges;
+4. Vercel ↔ EdgeOne manifest/artifact parity remains strict;
+5. real Chromium Production lifecycle passes;
+6. real iPhone-like WebKit Production lifecycle passes.
 
-Only after that exact dual-provider seal should governance/current-release records move from 8.20.1 to the exact 8.21 Production SHA.
+Only after that exact dual-provider seal is 8.21 Production considered healthy enough for the next product stage.
 
 ## Next planned stage
 
-After 8.21 is formally Production-sealed, first record the exact Production release/governance state. Product expansion after that belongs to a separately governed next milestone; do not smuggle 8.22/adaptive behavior into this release-only change.
+After the Flow/Active hotfix is exact-head green, merged, and dual-provider Production-sealed, continue the 8.21 Flow / Session Blueprint from the governed product direction rather than adding another execution owner. The next refinement should build on the now-unified experience: Flow provides context/progress while the established Active surface provides execution.
 
 Chat history is not authoritative project memory. Conversation history is supplemental only. GitHub governance, contracts, exact main, deterministic build output and Production evidence are authoritative.
