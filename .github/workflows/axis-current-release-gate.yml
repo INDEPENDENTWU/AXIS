@@ -12,7 +12,7 @@ permissions:
 jobs:
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 38
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,6 +24,8 @@ jobs:
         run: node scripts/axis-current-release-contract.mjs
       - name: Verify repository governance contract
         run: node scripts/axis-repository-contract.mjs
+      - name: Verify exhaustive Object capability matrix
+        run: node scripts/axis-821-object-capability-matrix-contract.mjs
       - name: Prepare Chromium
         run: |
           npm install --no-save playwright-core@1.55.0
@@ -73,13 +75,16 @@ jobs:
       - name: 8.21 Flow runtime boundary
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-821-flow-runtime-smoke.mjs
+      - name: 8.21 Executable Object system
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-executable-object-system-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 48
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -89,6 +94,8 @@ jobs:
         run: node build-release.mjs
       - name: Verify unified 8.14 through 8.18 semantic contract
         run: node scripts/axis-current-release-contract.mjs
+      - name: Verify exhaustive Object capability matrix
+        run: node scripts/axis-821-object-capability-matrix-contract.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
@@ -136,6 +143,9 @@ jobs:
       - name: iPhone 8.21 Flow runtime boundary
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-821-flow-runtime-smoke.mjs
+      - name: iPhone 8.21 Executable Object system
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-executable-object-system-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-webkit.log || true
