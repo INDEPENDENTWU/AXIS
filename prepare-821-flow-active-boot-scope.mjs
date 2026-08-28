@@ -55,19 +55,21 @@ try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
 
 /*
- * The inherited 8.12 Active contract is pause-owned rest: completing a set does
- * not itself start rest; pausing does. The first Flow/Active proof accidentally
- * asserted the pre-8.12 set-complete rest behavior. Align the physical proof to
- * the established owner instead of changing production behavior to satisfy a
- * stale assertion.
+ * Physical Flow proof is source-owned. Do not mutate tests during the build.
+ * The current proof must exercise the visible integrated projection and retain
+ * the inherited 8.12 pause-owned rest contract: set completion alone does not
+ * start rest; pausing does.
  */
 const SMOKE='scripts/axis-821-item-unit-flow-smoke.mjs';
-let smoke=fs.readFileSync(SMOKE,'utf8');
-const stale=` await tap(page.locator('#v87Primary'));\n await page.waitForFunction(()=>document.querySelector('#v87Rest')?.textContent?.includes('休息'),undefined,{timeout:2500});\n await tap(page.locator('#v87Toggle'));\n await page.waitForFunction(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.status==='paused',first.id,{timeout:2500});\n assert.equal((await core()).flowRun.cursor,0,'pause changed Flow sequencing');\n await tap(page.locator('#v87Toggle'));\n await page.waitForFunction(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.status==='active',first.id,{timeout:2500});`;
-const aligned=` await tap(page.locator('#v87Primary'));\n await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity;return Number(a?.completedSets)>=1&&a?.status==='active'&&!a?.restStartedAt},first.id,{timeout:2500});\n assert.equal((await core()).flowRun.cursor,0,'set completion changed Flow sequencing');\n await tap(page.locator('#v87Toggle'));\n await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity;return a?.status==='paused'&&!!a?.restStartedAt&&document.querySelector('#v87Rest')?.textContent?.includes('休息')},first.id,{timeout:2500});\n assert.equal((await core()).flowRun.cursor,0,'pause/rest changed Flow sequencing');\n await tap(page.locator('#v87Toggle'));\n await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity;return a?.status==='active'&&!a?.restStartedAt},first.id,{timeout:2500});`;
-const smokeHits=smoke.split(stale).length-1;
-if(smokeHits!==1)fail(`pause-owned Flow smoke boundary expected once, found ${smokeHits}`);
-smoke=smoke.replace(stale,aligned);
-fs.writeFileSync(SMOKE,smoke);
+const smoke=fs.readFileSync(SMOKE,'utf8');
+for(const token of [
+ "#axis821FlowHome [data-axis-flow-active-set]",
+ "#axis821FlowHome [data-axis-flow-active-toggle]",
+ "#axis821FlowHome [data-axis-flow-active-finish]",
+ "Number(a?.completedSets)>=1&&a?.status==='active'&&!a?.restStartedAt",
+ "a?.status==='paused'&&!!a?.restStartedAt",
+ "integratedToggleDelegatesActiveOwner"
+])if(!smoke.includes(token))fail(`canonical Flow physical proof missing ${token}`);
+if(smoke.includes("await tap(page.locator('#v87Primary'))")||smoke.includes("await tap(page.locator('#v87Toggle'))"))fail('Flow proof still drives hidden duplicate v87 controls');
 
-console.log('[AXIS 8.21 Flow Active boot scope] PASS · lifecycle listeners share the private Flow helper lexical region · pause-owned rest proof aligned · no private state exported · one Encounter append retained');
+console.log('[AXIS 8.21 Flow Active boot scope] PASS · lifecycle listeners share private Flow scope · canonical smoke remains source-owned · pause-owned rest proof sealed · one Encounter append retained');
