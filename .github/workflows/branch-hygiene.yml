@@ -1,0 +1,68 @@
+name: Branch hygiene
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: branch-hygiene
+  cancel-in-progress: true
+
+jobs:
+  retire-merged-branches:
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main with full history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Retire merged ephemeral branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          open_heads="$(gh pr list --state open --limit 200 --json headRefName --jq '.[].headRefName' || true)"
+          deleted=0
+          kept=0
+
+          while IFS= read -r remote_ref; do
+            branch="${remote_ref#origin/}"
+            case "$branch" in HEAD|main|master) continue ;; esac
+
+            case "$branch" in
+              archive/*|release/*|production/*|prod/*|mirror/*|edgeone/*|ops/*|foundation/*|*production*|*deploy*|*vercel*|*handoff*|*static*)
+                echo "KEEP protected-purpose branch: $branch"; kept=$((kept + 1)); continue ;;
+            esac
+
+            case "$branch" in
+              feat/*|feature/*|fix/*|chore/*|docs/*|test/*|tmp/*|dependabot/*|agent/*|engineering/*|copy/*|iteration/*|product/*|rebuild/*|axis-*) ;;
+              *) echo "KEEP unclassified branch: $branch"; kept=$((kept + 1)); continue ;;
+            esac
+
+            if printf '%s\n' "$open_heads" | grep -Fqx -- "$branch"; then
+              echo "KEEP open-PR branch: $branch"; kept=$((kept + 1)); continue
+            fi
+
+            if git merge-base --is-ancestor "refs/remotes/origin/$branch" refs/remotes/origin/main; then
+              echo "RETIRE fully merged branch: $branch"
+              git push origin --delete "$branch"
+              deleted=$((deleted + 1))
+            else
+              echo "KEEP branch with commits not in main: $branch"
+              kept=$((kept + 1))
+            fi
+          done < <(git for-each-ref --format='%(refname:short)' refs/remotes/origin | sort)
+
+          echo "Branch hygiene complete: retired=$deleted kept=$kept"
