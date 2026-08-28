@@ -53,7 +53,7 @@ const boot82=()=>{
   function startActivity(e,customEstimate){
     if(!e)return;pauseOthers(e.id);const m=readMeta(),rec=m.events[e.id]||(m.events[e.id]={});const t=now();
     rec.activity={status:'active',startedAt:t,lastResumedAt:t,pausedAt:null,finishedAt:null,estimateMs:customEstimate||autoEstimate(e),intervals:[{start:t,end:null}],completedSets:0,setDoneAt:[],restStartedAt:null,restNotified:false,actualMs:null};
-    writeMeta(m);renderActiveRail();decorateTimeline();
+    writeMeta(m);renderActiveRail();decorateTimeline();try{window.dispatchEvent(new CustomEvent('axis:active-truth-changed',{detail:{id:e.id,status:'active'}}))}catch{};
   }
   function pauseActivity(id){const m=readMeta(),a=m.events?.[id]?.activity;if(!a||a.status!=='active')return;closeOpenInterval(a);a.status='paused';a.pausedAt=now();a.restStartedAt=null;writeMeta(m);renderActiveRail();decorateTimeline()}
   function resumeActivity(id){const m=readMeta(),a=m.events?.[id]?.activity;if(!a||a.status==='finished')return;pauseOthers(id);const mm=readMeta(),aa=mm.events?.[id]?.activity;if(!aa)return;aa.status='active';aa.lastResumedAt=now();aa.pausedAt=null;aa.intervals=aa.intervals||[];aa.intervals.push({start:now(),end:null});writeMeta(mm);renderActiveRail();decorateTimeline()}
