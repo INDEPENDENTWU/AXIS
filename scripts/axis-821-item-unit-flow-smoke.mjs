@@ -20,8 +20,9 @@ const waitCore=async()=>{
 };
 const holdFinish=async()=>{
  const f=page.locator('#axis821FlowHome [data-axis-flow-active-finish]');await f.waitFor({state:'visible',timeout:5000});const b=await f.boundingBox();assert.ok(b,'integrated Flow finish geometry missing');
+ const before=await page.evaluate(()=>Number(window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor||0));
  const init={pointerId:71,pointerType:'touch',isPrimary:true,clientX:b.x+b.width/2,clientY:b.y+b.height/2,button:0,buttons:1,bubbles:true};
- await f.dispatchEvent('pointerdown',init);await page.waitForTimeout(1660);await f.dispatchEvent('pointerup',{...init,buttons:0});
+ await f.dispatchEvent('pointerdown',init);await page.waitForTimeout(1660);const after=await page.evaluate(()=>Number(window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor||0));if(after===before&&await f.count())await f.dispatchEvent('pointerup',{...init,buttons:0});
 };
 
 try{
