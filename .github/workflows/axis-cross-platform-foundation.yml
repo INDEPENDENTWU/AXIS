@@ -18,10 +18,13 @@ on:
       - 'shared/contracts/**'
       - 'shared/fixtures/**'
       - 'lib/axis-metric-schema.mjs'
+      - 'lib/axis-object-capabilities.mjs'
       - 'lib/axis-flow.mjs'
       - 'prepare-819-postcommit-lifecycle.mjs'
       - 'prepare-821-flow-runtime.mjs'
+      - 'prepare-821-object-capability-convergence.mjs'
       - 'scripts/axis-819-metric-schema-contract.mjs'
+      - 'scripts/axis-821-object-capability-matrix-contract.mjs'
       - 'scripts/axis-821-flow-contract.mjs'
       - 'scripts/axis-821-flow-runtime-contract.mjs'
       - 'scripts/axis-schema-fixture-seal.mjs'
@@ -45,10 +48,13 @@ on:
       - 'shared/contracts/**'
       - 'shared/fixtures/**'
       - 'lib/axis-metric-schema.mjs'
+      - 'lib/axis-object-capabilities.mjs'
       - 'lib/axis-flow.mjs'
       - 'prepare-819-postcommit-lifecycle.mjs'
       - 'prepare-821-flow-runtime.mjs'
+      - 'prepare-821-object-capability-convergence.mjs'
       - 'scripts/axis-819-metric-schema-contract.mjs'
+      - 'scripts/axis-821-object-capability-matrix-contract.mjs'
       - 'scripts/axis-821-flow-contract.mjs'
       - 'scripts/axis-821-flow-runtime-contract.mjs'
       - 'scripts/axis-schema-fixture-seal.mjs'
@@ -77,6 +83,8 @@ jobs:
         run: node scripts/axis-schema-fixture-seal.mjs
       - name: Validate Metric Schema and legacy recording compatibility
         run: node scripts/axis-819-metric-schema-contract.mjs
+      - name: Exhaustive Object capability matrix
+        run: node scripts/axis-821-object-capability-matrix-contract.mjs
       - name: Validate Flow contract and resolver purity
         run: node scripts/axis-821-flow-contract.mjs
       - name: Validate Flow runtime ownership boundary

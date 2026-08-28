@@ -2,271 +2,360 @@
 
 Status: **current milestone architecture contract**
 
-Baseline public identity: **AXIS 8.20.1** until the 8.21 product + Production seal is complete.
+Public/base identity: **AXIS 8.21**
 
 ## 1. Product statement
 
-AXIS Flow is a lightweight ordered sequence of reusable Practice Objects.
+AXIS Flow is a lightweight ordered Session Blueprint made from reusable Objects.
 
 ```text
-Flow = intended continuity
-Encounter = factual history
+Flow      = intended continuity across Objects
+Active    = execution truth for one foreground Object plus paused Objects
+Encounter = immutable factual history
 ```
 
-A Flow is not a second workout database, not a set planner, not a calendar, not a completion score and not another recorder.
+A Flow is not a second workout database, not a second recorder, not a replacement for Object execution and not a new Active system.
 
-The central 8.21 rule is:
+The central rule remains:
 
-> **In Flow execution, one Object / item is the minimum completion unit.**
+> **One Object / item is the minimum Flow completion unit.**
 
-For a Flow `A → B → C`, the user experience is:
+But “item is the Flow unit” does **not** mean discarding the mature execution lifecycle inside that Object. The correct composition is:
 
 ```text
-start Flow
-  ↓
-A current
-  ↓ complete item
-B current
-  ↓ complete item
-C current
-  ↓ complete item
-Flow complete
+Flow A → B → C
+      │
+      ├─ A uses existing Active execution
+      │    timing / sets / pause / rest / resume / long-hold finish
+      │
+      ├─ A finish consumes Flow step A
+      ↓
+      B becomes current
 ```
 
-It is explicitly **not**:
+Flow owns sequencing. Existing v82/v87 owns execution.
 
-```text
-Flow → Quick Record setup → Object Active → set 1 → set 2 → ... → maybe next Flow step
-```
-
-That extra nesting is a standalone Object execution concern and is the wrong abstraction for Flow.
-
-## 2. Existing truths that remain owned elsewhere
+## 2. Existing truths that remain authoritative
 
 ### Object
 
-Object remains reusable identity and configuration truth. It may define recording properties such as weight, reps, duration, pace, intensity, rating or completion.
-
-### Standalone Object execution
-
-Camera Record and Quick Record keep existing Object execution semantics and owners:
+Object remains reusable identity/configuration truth. It may define recording properties and execution semantics such as:
 
 ```text
 single | sets | rounds | timed | hold | complete
 ```
 
-Classic strength Group Plan / set execution remains the standalone Object path. Flow does not duplicate or replace it.
+### Session / Encounter
 
-### Encounter
+`app.js` / `axis_v60_state` remains canonical Session/Object/Encounter truth. Exactly one existing Encounter append path remains authoritative.
 
-Encounter remains immutable factual history. Existing snapshots remain authoritative:
+### Active
 
-- Object identity;
-- `metricSchemaSnapshot`;
-- `executionModeSnapshot`;
-- metrics actually recorded;
-- media/evidence references where applicable.
+Existing v82/v87 remains Active lifecycle truth. The established model already supports:
 
-Flow may add frozen provenance, but it never becomes the owner of historical facts.
+- one foreground `active` Activity;
+- multiple `paused` Activities in the same canonical Session;
+- switching/resuming by pausing the previous foreground Activity rather than silently finishing it;
+- elapsed intervals;
+- expected duration;
+- set completion where applicable;
+- pause-owned rest behavior;
+- long-hold finish.
+
+Flow must reuse this capability rather than introducing parallel Active state.
+
+### Classic set facts
+
+Where the immutable Encounter schema permits, existing v61 / `axis_v8_meta` classic set ownership remains unchanged.
 
 ## 3. Flow domain model
+
+Reusable definition:
 
 ```text
 Flow
  ├─ id
- ├─ title?            optional
- └─ steps[]           ordered intent
+ ├─ title?                 optional
+ └─ steps[]                ordered intent
      └─ FlowStep
          ├─ id
          └─ objectRef
 ```
 
-Compatibility fields such as temporary metric/execution overrides may remain readable during 8.21 migration, but the user-visible item-unit Flow must not require a separate configuration screen before an item can be completed.
-
-Runtime:
+Runtime snapshot:
 
 ```text
 FlowRun
  ├─ flowRef
- ├─ steps[]                 launch snapshot
- ├─ cursor                  current item index
- ├─ itemStartedAt
+ ├─ startedAt
+ ├─ steps[]                launch snapshot
+ │    └─ expectedDurationMs? planning snapshot only
+ ├─ expectedTotalMs?       sum of planning snapshots
+ ├─ cursor
+ ├─ currentEncounterId?    current Flow item's factual Encounter
+ ├─ currentStepRef?
  ├─ consumedStepRefs[]
  ├─ skippedStepRefs[]
- └─ status                  active | complete
+ └─ status                 active | complete
 ```
 
-Flow definitions and the one current FlowRun continue to live in the existing app-owned `axis_v60_state` boundary. 8.21 does not add another database or localStorage namespace.
+Flow definitions and the one current FlowRun remain inside existing app-owned `axis_v60_state`. There is no new database or localStorage namespace.
 
-## 4. Start semantics
+Expected-duration fields are planning context only. They are not historical truth and do not create a second timer owner.
 
-Starting a Flow must:
+## 4. Launch semantics
 
-1. snapshot the ordered steps;
-2. start/reuse the existing containing Session;
-3. set cursor to item 1;
-4. make item 1 immediately current on Today;
-5. **not** open Quick Record;
-6. **not** open Object property configuration;
-7. **not** create a set/timed/hold Active lifecycle merely because the current Object normally supports one.
+Starting a Flow:
 
-The user has already chosen the Object when composing the Flow. Starting it must therefore feel immediate.
+1. snapshots the ordered steps;
+2. snapshots reasonable per-step expected durations from existing Object/history truth;
+3. starts/reuses the canonical containing Session;
+4. makes step 1 current;
+5. does **not** fabricate an Encounter;
+6. does **not** fabricate an Active Activity;
+7. does not disturb an unrelated Activity that is already running.
 
-## 5. Complete-current semantics
+At this point Flow is ready; the first Object has not yet become factual execution.
 
-The primary Flow action is **完成此项**.
+## 5. Starting the current Flow item
 
-Completing the current item:
+### No other Activity is foregrounded
 
-1. commits exactly one factual Encounter for that Object using the existing app-owned Encounter writer;
-2. records one-shot Flow execution (`executionModeSnapshot: complete`);
-3. freezes Flow provenance (`flowRef`, `flowStepRef`, `objectRef`, step snapshot);
-4. may truthfully capture automatic facts such as item elapsed time / completion when the Object schema supports them;
-5. must not fabricate weight, reps, sets, pace, intensity or other values from historical defaults;
-6. marks that FlowStep consumed;
-7. increments the cursor immediately;
-8. sets the next item current with no confirmation/success interstitial;
-9. completes the Flow after the last item.
+`开始此项` enters the existing canonical recorder for that Object. The recorder is still the only place that commits the factual Encounter needed by existing Active execution.
 
-The Object's configured metric schema may still be snapshotted for history/context. Optional future inline value entry may use the same canonical metric controls, but values cannot be mandatory for Flow progression and must never require a detour through standalone Quick Record.
+The Flow context may simplify the recorder presentation and preselect the correct Object, but must not add another recorder or writer.
 
-## 6. Skip, detour and finish early
+### Another Activity is already foregrounded
+
+This is a normal supported state, not an error.
+
+Flow must not silently fail and must not destroy the running Activity. A native coordination surface explains the transition:
+
+```text
+正在进行
+拉伸放松 · 15:41
+
+开始 杠片式胸推 后，拉伸放松会暂停并保留进度。
+
+[ 暂停当前并开始 ]
+[ 继续当前项目 ]
+```
+
+Cancellation changes nothing.
+
+Confirmation does not prematurely mutate Active truth. The old Activity is paused by the existing Active owner only after the new Flow Encounter is canonically committed and its Activity starts. Therefore cancelling the recorder also leaves the old Activity untouched.
+
+## 6. Flow item execution
+
+For ongoing modes (`sets`, `rounds`, `timed`, `hold`):
+
+1. canonical Encounter commits;
+2. existing v82/v87 creates/starts Activity for that Encounter;
+3. existing Active owner pauses any previously foregrounded Activity;
+4. Flow links `currentEncounterId` to this exact Encounter;
+5. Flow cursor does not advance yet;
+6. all execution semantics remain owned by Active.
+
+The Flow surface may **project** the same Active state so the experience feels native and coherent. Projection is allowed to show and delegate:
+
+- item elapsed time;
+- item expected / remaining time;
+- set progress where applicable;
+- Active status;
+- pause / resume;
+- rest state;
+- complete-set action where applicable;
+- the existing long-hold finish gesture.
+
+Projection must call the existing Active owner. It must never write Active metadata directly.
+
+The floating v87 card must not simultaneously duplicate the same linked Flow Activity. If another standalone Activity is foregrounded while the Flow Activity is paused, v87 remains visible for that other Activity and Flow truthfully shows its own item as paused.
+
+## 7. Switching between Flow and standalone Activities
+
+Suppose Flow item A is running, then the user resumes paused standalone X:
+
+```text
+A active → resume X → A paused, X active
+```
+
+Flow remains on A and retains the same `currentEncounterId`.
+
+Returning to Flow A:
+
+```text
+A paused + X active
+  ↓
+user chooses Continue A
+  ↓
+existing Active owner pauses X and resumes A
+```
+
+No second A Encounter is created. Flow never advances from switching alone.
+
+## 8. Completing an item
+
+For ongoing modes, the only Flow completion signal is the **existing Active finish** for the matching `currentEncounterId`.
+
+After authoritative Active finish:
+
+1. matching Flow step is consumed;
+2. cursor increments;
+3. the next Object becomes current;
+4. the next Object is **ready**, not automatically fabricated as Active;
+5. after the final matching finish, Flow becomes complete.
+
+For one-shot `single` / `complete` modes, there is no persistent Activity. The step advances only after its canonical Encounter commit.
+
+## 9. Skip, temporary other and early Flow finish
 
 ### Skip
 
-Skip changes intent only:
+Skip is available only before the current Flow item has started.
 
 - no Encounter;
 - no fake failure;
-- cursor moves to the next item.
+- cursor advances.
+
+Once the Flow item has a linked Activity, users use the mature Active finish/switch controls rather than pretending the item never started.
 
 ### Temporary other
 
-`临时记录其他` opens the ordinary standalone Quick Record path.
+`临时记录其他` is a factual detour.
 
-That Encounter:
+It uses the existing picker + recorder but is **record-only**:
 
-- is normal factual history;
-- has no Flow provenance;
-- does not consume or advance the current Flow item;
-- returns the user to the same Flow cursor afterwards.
+- normal Encounter history;
+- no Flow provenance;
+- no Flow cursor advance;
+- no replacement of `currentEncounterId`;
+- no new Active Activity, even when the chosen Object would normally be ongoing.
 
-### Finish early
+### Finish Flow early
 
-Finishing early is valid. No percentage, grade, streak or failure state is required.
+Ending Flow early removes Flow orchestration only. It must not silently finish or corrupt a currently running Activity. If a Flow-linked Activity is still active, the UI must state that the item remains a normal standalone Active unless the user separately finishes it.
 
-## 7. Flow vs Group Plan boundary
+## 10. Expected duration
 
-The two concepts must remain separate:
+A Flow provides useful planning time without becoming another timer owner.
+
+At launch:
+
+- each run step receives a best-effort `expectedDurationMs` snapshot derived from existing Object/history truth;
+- `expectedTotalMs` is the sum.
+
+When a linked Activity actually starts, the current step adopts the canonical Active `estimateMs`, because that is more authoritative than the launch guess.
+
+Display may derive:
 
 ```text
-Flow       = sequence of Objects / items
-Group Plan = set-level execution inside a standalone compatible Object
+Flow elapsed            = now - FlowRun.startedAt
+Current item elapsed    = existing Active elapsed intervals
+Current item remaining  = max(0, estimate - Active elapsed)
+Planned Flow remaining  = remaining current estimate + future step estimates
 ```
 
-A strength Object may still use Group Plan when launched independently through Quick Record. The same Object inside Flow is completed as one Flow item.
+Labels must remain approximate (`约`, `预计`, `计划剩余`) where appropriate. These values are planning context, not immutable Encounter facts.
 
-This distinction is deliberate: Flow is for continuity across activities; Group Plan is for detailed execution within one activity.
-
-## 8. Today UI contract
-
-Today is not a Flow feature landing page.
+## 11. Today UI contract
 
 ### No Flow
 
-Flow occupies only a compact entry row:
+Compact entry only:
 
 ```text
-流程                         + 新建
+流程                                      + 新建
 ```
-
-No permanent explanatory marketing copy or large empty-state CTA.
 
 ### Saved, not running
 
-A compact saved Flow surface may show:
+Show one concise saved Flow summary and clear start/edit actions.
 
-- optional title, otherwise `N 个项目`;
-- one non-duplicated chain summary;
-- one clear `开始` action;
-- edit/management as secondary action.
-
-### Running
-
-Running Flow earns prominent space because it is the user's current activity:
+### Running, item not started
 
 ```text
-流程 · 1 / 3                 全部
+流程 · 1 / 3                              全部
 当前项目
-槓片式胸推
-接下来 · 槓铃卧推
+杠片式胸推
+接下来 · 杠铃卧推
 
-[ 完成此项 ]
+预计总时长 约42分 · 计划剩余约42分
 
-跳过      临时记录其他      结束
+[ 开始此项 ]
 ```
 
-The next item is derived from the immutable launch snapshot (`run.steps[cursor + 1]`), not from stale UI hints.
+If another Activity is running, add a restrained factual hint rather than disabling the button.
+
+### Running, linked item executing
+
+The Flow surface becomes an integrated projection of the existing Active state:
+
+```text
+流程 · 1 / 3                              全部
+杠片式胸推
+接下来 · 杠铃卧推
+
+进行中                         本项 03:42 / 约15分
+计划剩余约34分
+──────── progress ────────
+
+[ 完成一组 ]        休息 / 组信息
+[ 暂停 ]            [ 长按完成此项 ]
+```
+
+Exact controls depend on execution mode. There is no fake `完成一组` for timed/hold/complete items.
+
+### Linked Flow item paused while another Activity runs
+
+Flow shows `已暂停` and a clear `继续此项`. The ordinary Active surface remains visible for whichever different Activity is actually foregrounded.
 
 ### Complete
 
-Completion is concise and factual. It may show completed/skipped item counts and a `收起` action. No gamified success screen is required.
+Concise factual completion. No score, streak or forced success screen.
 
-## 9. History and truthfulness
+## 12. Truthfulness and history
 
-A completed Flow item is one factual Encounter. The event may store additive `flowItem` timing facts such as:
+- Flow never fabricates weight, reps, sets, pace, intensity or other unconfirmed values.
+- Flow definitions edited later never rewrite historical Encounter provenance.
+- zero-property Objects remain valid.
+- temporary-other Encounters remain ordinary facts without Flow provenance.
+- Active timing remains Active truth; Flow planning time remains run context.
 
-```text
-startedAt
-completedAt
-durationMs
-```
-
-Historical UI should describe it as an item completion, not render undefined legacy set values.
-
-Editing, reordering or deleting the reusable Flow later must never mutate previous Encounter provenance.
-
-Zero-property Objects are valid. Flow provenance therefore permits an empty `effectiveMetricIds` array.
-
-## 10. Release-blocking invariants
+## 13. Release-blocking invariants
 
 8.21 must fail release if any of the following occurs:
 
-- Flow current action opens Quick Record before the item can be completed;
-- Flow exposes `完成一组` / set-level progression as its primary lifecycle;
-- completing item 1 does not immediately make item 2 current;
-- an ordinary Quick Record while Flow is active gains Flow provenance or advances the cursor;
-- skip creates an Encounter;
-- Flow creates a second Encounter writer, Session writer, Active owner, recorder or persistence store;
-- a Flow item invents unconfirmed historical weight/reps/sets/metrics;
-- first item of `1 / N` is labelled as the last item;
-- empty Today is dominated by Flow education/marketing UI;
-- Chromium and iPhone-like WebKit disagree on lifecycle or saved truth;
-- fixed Vercel and EdgeOne Production artifacts fail the same physical Flow scenario.
+- `开始此项` silently does nothing for a valid current Object;
+- modern/custom Objects cannot be opened reliably through the canonical Quick Record route;
+- starting a Flow item destroys or finishes an unrelated active Activity;
+- cancelling a Flow start pauses the unrelated Activity;
+- starting Flow item A creates more than one A Encounter;
+- resuming a paused A creates another A Encounter;
+- switching Activities advances Flow;
+- a matching ongoing Flow step advances before authoritative Active finish;
+- `临时记录其他` starts another Active or advances/replaces Flow current state;
+- Flow writes Active metadata directly;
+- Flow creates a second recorder, picker, Active owner, Encounter writer, Session writer or persistence store;
+- the same linked Flow Activity is rendered simultaneously as two competing Active surfaces;
+- Chromium and iPhone-like WebKit disagree on switching, pause/resume, finish or saved truth;
+- fixed Vercel and EdgeOne Production artifacts fail the same physical coordination scenario.
 
-## 11. Physical reference scenario
+## 14. Physical reference scenario
 
-Use a three-item Flow `A → B → C`:
+Use existing standalone Activity X plus Flow `A → B`:
 
-1. empty Today shows compact Flow entry;
-2. save/compose A/B/C;
-3. start → A is immediately `1 / 3`, no Quick Record sheet;
-4. complete A → exactly one one-shot Encounter, then B is `2 / 3`;
-5. ordinary Quick Record D → D has no Flow provenance, B remains current;
-6. skip B → no B Encounter, C becomes `3 / 3`;
-7. complete C → Flow complete;
-8. no set-level Active metadata was created for A/C merely because they are strength Objects;
-9. standalone Quick Record still behaves normally;
-10. repeat on Chromium and iPhone-like WebKit, then on fixed Production URLs.
-
-## 12. Release identity
-
-The repository may contain 8.21 implementation work while the public release identity remains 8.20.1.
-
-Only move the public version to **8.21** after:
-
-- item-unit product semantics are physically green;
-- recording-property UI remains green;
-- Chromium + iPhone-like WebKit are green;
-- Vercel exact main SHA is green;
-- EdgeOne serves the same exact artifact and passes the same Flow checks.
+1. X is already active with elapsed time;
+2. launch Flow; A is ready, X remains active;
+3. tap `开始此项` → coordination surface appears;
+4. cancel → X remains active, no A Encounter;
+5. tap again, confirm → canonical recorder opens directly on A;
+6. save A → one A Encounter, X becomes paused, A becomes active;
+7. Flow shows A runtime from existing Active truth; no duplicate A v87 surface;
+8. complete one set where applicable; Flow stays on A;
+9. pause/resume retains A state;
+10. resume X → A pauses, X becomes active, Flow stays on A;
+11. choose `继续此项` → X pauses, same A resumes, no extra A Encounter;
+12. long-hold finish A → A finishes, Flow moves to B;
+13. temporary-other ongoing Object records history but creates no Activity and does not move B;
+14. total expected / remaining duration remains coherent;
+15. repeat in Chromium and iPhone-like WebKit, then fixed Vercel and EdgeOne Production.

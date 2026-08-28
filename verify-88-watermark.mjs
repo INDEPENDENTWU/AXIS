@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import './postbuild-821-executable-object-presentation-seal.mjs';
 
 const fail=m=>{throw new Error(`AXIS 8.8 watermark gate: ${m}`)};
 for(const f of ['axis-core.js','axis-build.json','v8710-watermark.js'])if(!fs.existsSync(f))fail(`missing ${f}`);
@@ -32,8 +33,10 @@ if(/toFixed\(6\).*±|LAT |LON |纬度 .*经度/.test(finalWatermark))fail('raw c
    `$` is a single-element helper and must never own the event-detail collection. */
 if(/(^|[^$])\$\('\[data-event\]'\)\.forEach/.test(runtime))fail('final runtime regressed event-detail collection to single-element $ helper');
 if(!runtime.includes("$$('[data-event]').forEach"))fail('final runtime collection-safe event-detail owner missing');
+if(!runtime.includes('function axis821EventMetricSummary(e)'))fail('final executable Object summary helper missing');
+if(!runtime.includes('meta=axis821EventMetricSummary(e)'))fail('final timeline does not consume Encounter schema summary');
 
-manifest.gates={...(manifest.gates||{}),watermarkFourSwitchContract:true,precisePlaceResolver:true,noRawCoordinatePresentation:true,watermarkSingleLocateOwner:true,watermarkPreferenceSingleWriter:true,finalDetailCollectionBinding818:true};
-manifest.canonical={...(manifest.canonical||{}),watermarkSwitches:['name','data','location','time'],placeResolver:'OpenStreetMap Nominatim -> BigDataCloud fallback',locateOwner:'v8710 canonical precise resolver',preferenceOwner:'v85 setWm event bridge',privateGpsOwner:'setGeo stores coordinates only',rawCoordinatePresentation:false,detailEventBinding:'collection-safe $$'};
+manifest.gates={...(manifest.gates||{}),watermarkFourSwitchContract:true,precisePlaceResolver:true,noRawCoordinatePresentation:true,watermarkSingleLocateOwner:true,watermarkPreferenceSingleWriter:true,finalDetailCollectionBinding818:true,executableObjectSchemaAwareTimeline821:true};
+manifest.canonical={...(manifest.canonical||{}),watermarkSwitches:['name','data','location','time'],placeResolver:'OpenStreetMap Nominatim -> BigDataCloud fallback',locateOwner:'v8710 canonical precise resolver',preferenceOwner:'v85 setWm event bridge',privateGpsOwner:'setGeo stores coordinates only',rawCoordinatePresentation:false,detailEventBinding:'collection-safe $$',executableObjectTimeline:'Encounter schema snapshot'};
 fs.writeFileSync('axis-build.json',JSON.stringify(manifest,null,2));
-console.log('[AXIS 8.8 watermark gate] PASS · four switches · one preference writer · one precise locate owner · no raw coordinate presentation · final 8.18 detail collection binding sealed');
+console.log('[AXIS 8.8 watermark gate] PASS · four switches · one preference writer · one precise locate owner · no raw coordinate presentation · final 8.18 detail collection binding + 8.21 schema-aware timeline sealed');

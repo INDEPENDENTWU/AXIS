@@ -19,9 +19,10 @@ const waitCore=async()=>{
  await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.version==='8.21'&&window.__AXIS_FLOW_RUNTIME__?.beginCurrent&&window.__AXIS_FLOW_RUNTIME__?.beginDetour&&window.__AXIS_821_FLOW_ACTIVE_CONVERGENCE__?.activeLifecycleDelegated!==false&&window.__AXIS_821_ITEM_UNIT_FLOW__?.canonicalCurrentRecord===true,undefined,{timeout:9000});
 };
 const holdFinish=async()=>{
- const f=page.locator('#v87Finish');await f.waitFor({state:'visible',timeout:5000});const b=await f.boundingBox();assert.ok(b,'v87 finish geometry missing');
+ const f=page.locator('#axis821FlowHome [data-axis-flow-active-finish]');await f.waitFor({state:'visible',timeout:5000});const b=await f.boundingBox();assert.ok(b,'integrated Flow finish geometry missing');
+ const before=await page.evaluate(()=>Number(window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor||0));
  const init={pointerId:71,pointerType:'touch',isPrimary:true,clientX:b.x+b.width/2,clientY:b.y+b.height/2,button:0,buttons:1,bubbles:true};
- await f.dispatchEvent('pointerdown',init);await page.waitForTimeout(1660);await f.dispatchEvent('pointerup',{...init,buttons:0});
+ await f.dispatchEvent('pointerdown',init);await page.waitForTimeout(1660);const after=await page.evaluate(()=>Number(window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor||0));if(after===before&&await f.count())await f.dispatchEvent('pointerup',{...init,buttons:0});
 };
 
 try{
@@ -59,17 +60,27 @@ try{
  await tap(page.locator('#saveScan'));
  await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),r=c.flowRun,e=(c.active?.events||[]).find(x=>x.id===r?.currentEncounterId);return r?.cursor===0&&e?.equipmentId==='chest'&&m.events?.[e.id]?.activity?.status==='active'&&document.querySelector('#v87Now')?.classList.contains('show')},undefined,{timeout:5500});
  c=await core();let m=await meta();const first=c.active.events.find(e=>e.id===c.flowRun.currentEncounterId);assert.ok(first?.id);assert.equal(first.flowProvenance?.flowRef,flow.id);assert.equal(first.flowProvenance?.flowStepRef,'s1');assert.equal(first.executionModeSnapshot,'sets');assert.equal(c.flowRun.cursor,0,'ongoing item advanced on initial record instead of Active completion');
- text=await page.locator('#axis821FlowHome').innerText();assert.ok(text.includes('当前项目 · 进行中'));assert.ok(text.includes('时间、暂停、休息与完成'));assert.ok(!text.includes('跳过'),'started item still exposed skip as if it had not begun');
+ await page.waitForFunction(()=>{const host=document.querySelector('#axis821FlowHome'),coord=window.__AXIS_821_FLOW_SESSION_COORDINATION__;return host?.querySelector('.axis821FlowActiveProjection')&&host.querySelector('[data-axis-flow-active-toggle]')&&host.querySelector('[data-axis-flow-active-finish]')&&coord?.activeOwner==='v87'&&coord?.newActiveOwner===false&&coord?.integratedToggleDelegatesActiveOwner===true},undefined,{timeout:3000});
+ text=await page.locator('#axis821FlowHome').innerText();assert.ok(text.includes('当前项目 · 进行中'));assert.ok(!text.includes('跳过'),'started item still exposed skip as if it had not begun');
+ assert.equal(await page.locator('#axis821FlowHome .axis821FlowActiveProjection').count(),1,'Flow did not project the canonical Active lifecycle');
+ assert.equal(await page.locator('#axis821FlowHome [data-axis-flow-active-toggle]').count(),1,'Flow Active projection lost delegated pause/resume');
+ assert.equal(await page.locator('#axis821FlowHome [data-axis-flow-active-finish]').count(),1,'Flow Active projection lost delegated finish');
+ assert.equal(await page.locator('#axis821FlowHome [data-axis-flow-active-set]').count(),1,'set-mode Flow Active projection lost delegated set completion');
+ const coordination=await page.evaluate(()=>window.__AXIS_821_FLOW_SESSION_COORDINATION__);assert.equal(coordination.activeOwner,'v87');assert.equal(coordination.integratedToggleDelegatesActiveOwner,true);assert.equal(coordination.newActiveOwner,false);assert.equal(coordination.newRecorder,false);assert.equal(coordination.newEncounterWriter,false);
  assert.equal(await page.locator('#v87Name').innerText(),'胸推');assert.ok((await page.locator('#v87Primary').innerText()).includes('完成一组'));
+ assert.equal(await page.locator('#v87Now').evaluate(x=>getComputedStyle(x).display),'none','duplicate v87 card remained visible beside integrated Flow Active projection');
 
- console.log(`[AXIS 8.21 Flow Active ${ENGINE}] rest and pause/resume stay on the established Active owner`);
- await tap(page.locator('#v87Primary'));
- await page.waitForFunction(()=>document.querySelector('#v87Rest')?.textContent?.includes('休息'),undefined,{timeout:2500});
- await tap(page.locator('#v87Toggle'));
- await page.waitForFunction(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.status==='paused',first.id,{timeout:2500});
- assert.equal((await core()).flowRun.cursor,0,'pause changed Flow sequencing');
- await tap(page.locator('#v87Toggle'));
- await page.waitForFunction(id=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity?.status==='active',first.id,{timeout:2500});
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] visible Flow controls preserve pause-owned rest and delegate to the established Active owner`);
+ await tap(page.locator('#axis821FlowHome [data-axis-flow-active-set]'));
+ await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity;return Number(a?.completedSets)>=1&&a?.status==='active'&&!a?.restStartedAt},first.id,{timeout:2500});
+ assert.equal((await core()).flowRun.cursor,0,'set completion changed Flow sequencing');
+ await tap(page.locator('#axis821FlowHome [data-axis-flow-active-toggle]'));
+ await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity;return a?.status==='paused'&&!!a?.restStartedAt&&document.querySelector('#axis821FlowHome .axis821FlowActiveProjection')?.textContent?.includes('休息')},first.id,{timeout:2500});
+ await page.waitForFunction(()=>document.querySelector('#axis821FlowHome')?.dataset.substate==='paused'&&document.querySelector('#axis821FlowHome [data-axis-flow-active-toggle]')?.textContent?.includes('继续'),undefined,{timeout:2500});
+ assert.equal((await core()).flowRun.cursor,0,'pause/rest changed Flow sequencing');
+ await tap(page.locator('#axis821FlowHome [data-axis-flow-active-toggle]'));
+ await page.waitForFunction(id=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.[id]?.activity;return a?.status==='active'&&!a?.restStartedAt},first.id,{timeout:2500});
+ await page.waitForFunction(()=>document.querySelector('#axis821FlowHome')?.dataset.substate==='active'&&document.querySelector('#axis821FlowHome [data-axis-flow-active-toggle]')?.textContent?.trim()==='暂停',undefined,{timeout:2500});
 
  console.log(`[AXIS 8.21 Flow Active ${ENGINE}] temporary other is a record-only detour: no skip, no second Active, current item remains active`);
  await tap(page.locator('#axis821FlowHome [data-axis-flow-other]'));
@@ -82,9 +93,9 @@ try{
  await tap(page.locator('#saveScan'));
  await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return (c.active?.events||[]).some(e=>e.equipmentId==='flow-detour')},undefined,{timeout:3500});
  await page.waitForTimeout(250);c=await core();m=await meta();const detour=c.active.events.find(e=>e.equipmentId==='flow-detour');assert.ok(detour?.id);assert.equal(detour.flowProvenance,undefined,'detour inherited current Flow provenance');assert.equal(detour.flowDetour?.recordOnly,true);assert.equal(m.events?.[detour.id]?.activity??null,null,'timed detour started a standalone Active item');assert.equal(m.events?.[first.id]?.activity?.status,'active','detour displaced or paused the current Flow Active item');assert.equal(c.flowRun.cursor,0,'detour skipped/consumed the current Flow item');assert.equal(c.flowRun.currentEncounterId,first.id,'detour replaced current Flow Active Encounter');
- await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show')&&document.querySelector('#v87Name')?.textContent?.trim()==='胸推',undefined,{timeout:3000});
+ await page.waitForFunction(()=>document.querySelector('#axis821FlowHome .axis821FlowActiveProjection')&&document.querySelector('#axis821FlowHome')?.dataset.substate==='active'&&document.querySelector('#axis821FlowHome [data-axis-flow-active-toggle]')?.textContent?.trim()==='暂停',undefined,{timeout:3000});
 
- console.log(`[AXIS 8.21 Flow Active ${ENGINE}] established Active finish is the only ongoing-item completion signal that advances Flow`);
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] delegated Active finish is the only ongoing-item completion signal that advances Flow`);
  await holdFinish();
  await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.cursor===1,undefined,{timeout:4500});
  c=await core();m=await meta();assert.equal(m.events?.[first.id]?.activity?.status,'finished');assert.equal(c.flowRun.currentEncounterId,null);assert.ok(c.flowRun.consumedStepRefs.includes('s1'));
@@ -102,5 +113,5 @@ try{
  const completeText=await page.locator('#axis821FlowHome').innerText();assert.ok(completeText.includes('流程完成'));assert.ok(completeText.includes('2 项完成'));
 
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.21 Flow Active ${ENGINE}] PASS · Flow embedded in Active Home · canonical current recorder · sets/rest/pause/finish delegated to v82/v87 · detour record-only/no-skip/no-Active · one-shot canonical advance`);
+ console.log(`[AXIS 8.21 Flow Active ${ENGINE}] PASS · integrated projection delegates set/pause-owned-rest/resume/finish to v87 · detour record-only/no-skip/no-Active · one-shot canonical advance`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
