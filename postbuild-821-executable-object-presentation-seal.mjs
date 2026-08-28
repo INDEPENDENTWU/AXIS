@@ -114,22 +114,23 @@ src=replaceModuleFunction(
  'v87 schema-aware Active timeline repaint'
 );
 
-/* v879's Adjust Once controls are specifically classic sets tooling. A current
- * execution snapshot is authoritative; only genuinely old records without that
- * snapshot may fall back to historical Object kind. The entry and editor use the
- * same predicate so a timed custom Object can never open strength/set controls. */
+/* Current 8.21 execution snapshots are authoritative: only set-mode Objects may
+ * use the inherited one-time adjust surface, so a timed custom Object never gets
+ * legacy weight/reps or duration/intensity controls. Records from before execution
+ * snapshots keep their historical strength AND cardio adjustment behavior. Also
+ * preserve the postbuild-kernel v87AdjustBtn identity/render-sync dedupe contract. */
 src=replaceModuleFunction(
  src,
  'v879-runtime.js',
  'function editEntry()',
- `function editEntry(){const id=activeId(),host=$('#v87Now .v87Actions');if(!id||!host)return;const r=meta().events?.[id],e=eventById(id),mode=String(e?.executionModeSnapshot||'').trim(),classicSet=mode?mode==='sets':e?.kind==='strength';if(!r?.activity||r.activity.status==='finished'||r.v879EditAt||!classicSet){$('#v879EditBtn')?.remove();return}if(!$('#v879EditBtn')){const b=D.createElement('button');b.id='v879EditBtn';b.className='v879EditBtn';b.textContent='调整一次';b.onclick=()=>openEdit(id);host.appendChild(b)}}`,
+ `function editEntry(){const id=activeId(),host=$('#v87Now .v87Actions');if(!id||!host)return;const prune=()=>{let kept=false;for(const x of Array.from(host.querySelectorAll('button'))){if(!String(x.textContent||'').trim().startsWith('调整'))continue;if(x.id==='v87AdjustBtn'&&!kept){kept=true;continue}x.remove()}};prune();const r=meta().events?.[id],e=eventById(id),mode=String(e?.executionModeSnapshot||'').trim(),eligible=mode?mode==='sets':!!e&&(e.kind==='strength'||e.kind==='cardio');if(!r?.activity||r.activity.status==='finished'||r.v879EditAt||!eligible){$('#v87AdjustBtn')?.remove();return}if(!$('#v87AdjustBtn')){const b=D.createElement('button');b.id='v87AdjustBtn';b.className='v879EditBtn';b.textContent='调整';b.onclick=()=>openEdit(id);host.appendChild(b);queueMicrotask(prune);setTimeout(prune,120)}}`,
  'execution-scoped Adjust Once entry'
 );
 src=replaceModuleFunction(
  src,
  'v879-runtime.js',
  'function openEdit(id)',
- `function openEdit(id){ensureEdit();const c=core(),m=meta(),e=eventById(id,c),r=m.events?.[id];if(!e||!r||r.v879EditAt)return;editId=id;const mode=String(e.executionModeSnapshot||'').trim(),setLike=mode?mode==='sets':e.kind==='strength';if(setLike){const ss=Array.isArray(r.sets)?r.sets:[],done=Number(r.activity?.completedSets)||0,b=ss[done]||ss.at(-1)||{weight:e.weight||20,reps:e.reps||10};editDraft={kind:'s',done,sets:Math.max(done+1,ss.length||e.sets||1),w:Number(b.weight)||20,r:clamp(Number(b.reps)||10,1,300)}}else editDraft={kind:'c',min:Number(e.duration)||15,int:Number(e.intensity)||1};renderEdit();$('#v879Edit').classList.add('show');layer()}`,
+ `function openEdit(id){ensureEdit();const c=core(),m=meta(),e=eventById(id,c),r=m.events?.[id];if(!e||!r||r.v879EditAt)return;const mode=String(e.executionModeSnapshot||'').trim(),eligible=mode?mode==='sets':e.kind==='strength'||e.kind==='cardio';if(!eligible)return;editId=id;const setLike=mode?mode==='sets':e.kind==='strength';if(setLike){const ss=Array.isArray(r.sets)?r.sets:[],done=Number(r.activity?.completedSets)||0,b=ss[done]||ss.at(-1)||{weight:e.weight||20,reps:e.reps||10};editDraft={kind:'s',done,sets:Math.max(done+1,ss.length||e.sets||1),w:Number(b.weight)||20,r:clamp(Number(b.reps)||10,1,300)}}else editDraft={kind:'c',min:Number(e.duration)||15,int:Number(e.intensity)||1};renderEdit();$('#v879Edit').classList.add('show');layer()}`,
  'execution-scoped Adjust Once editor'
 );
 
@@ -159,8 +160,9 @@ const editEntry=moduleFunctionRange(src,'v879-runtime.js','function editEntry()'
 const openEdit=moduleFunctionRange(src,'v879-runtime.js','function openEdit(id)','Adjust Once editor').text;
 for(const [label,fn] of [['Adjust Once entry',editEntry],['Adjust Once editor',openEdit]]){
  if(!fn.includes('executionModeSnapshot')||!fn.includes("mode==='sets'"))fail(`${label} is not execution-scoped`);
- if(!fn.includes("mode?mode==='sets':e")||!fn.includes("kind==='strength'"))fail(`${label} legacy fallback is not snapshot-absent-only`);
+ if(!fn.includes("kind==='strength'")||!fn.includes("kind==='cardio'"))fail(`${label} did not preserve snapshot-absent classic adjustment fallback`);
 }
+if(!editEntry.includes('v87AdjustBtn')||!editEntry.includes('queueMicrotask(prune)')||!editEntry.includes('setTimeout(prune,120)'))fail('post-kernel active-adjust identity/render-sync dedupe was lost');
 const v879=moduleRange(src,'v879-runtime.js','v879 presentation owner').text;
 if(v879.includes(legacyV879TimelineWriter))fail('legacy v879 direct Timeline fact writer survived final convergence');
 if((v879.split(canonicalV879TimelineWriter).length-1)!==1)fail('canonical v879 Timeline fact writer is not singular');
@@ -174,7 +176,7 @@ fs.writeFileSync(runtimeFile,src);
 html=html.replace(`/axis-core.js?v=${oldHash}`,`/axis-core.js?v=${newHash}`);fs.writeFileSync(indexFile,html);
 const info=JSON.parse(fs.readFileSync(infoFile,'utf8'));
 info.assets=info.assets||{};info.assets.core=newHash;
-info.gates={...(info.gates||{}),executableObjectSchemaAwareTimeline821:true,activeTimelineSchemaAware821:true,adjustOnceExecutionScoped821:true,eventDetailAtomicSchemaAware821:true};
-info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,atomicSchemaAwareDetail:true,adjustOnce:'sets-only',legacyFallback:'snapshot-absent-only',postCanonical:true,ownerScoped:true,idempotent:true}};
+info.gates={...(info.gates||{}),executableObjectSchemaAwareTimeline821:true,activeTimelineSchemaAware821:true,adjustOnceExecutionScoped821:true,eventDetailAtomicSchemaAware821:true,legacyActiveAdjustPreserved821:true};
+info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,atomicSchemaAwareDetail:true,adjustOnce:'current-sets-legacy-classic',legacyFallback:'snapshot-absent-strength-cardio',postCanonical:true,ownerScoped:true,idempotent:true}};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
-console.log(`[AXIS 8.21 final Object presentation] PASS · app/v61/v82/v87/v879 owner-scoped Encounter formatter · atomic schema-aware event detail · Adjust Once execution-scoped · core ${oldHash}->${newHash}`);
+console.log(`[AXIS 8.21 final Object presentation] PASS · app/v61/v82/v87/v879 owner-scoped Encounter formatter · atomic schema-aware event detail · snapshot-aware Adjust Once with legacy classic compatibility · core ${oldHash}->${newHash}`);
