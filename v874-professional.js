@@ -30,7 +30,7 @@ const CORE_DEFAULT={
 function readCore(){try{return JSON.parse(localStorage.getItem(CORE)||'null')||{sessions:[],active:null,profile:{customEq:[]}}}catch{return{sessions:[],active:null,profile:{customEq:[]}}}}
 function writeCore(c){try{localStorage.setItem(CORE,JSON.stringify(c));return true}catch{return false}}
 function readMeta(){try{const m=JSON.parse(localStorage.getItem(META)||'null')||{};m.events=m.events||{};return m}catch{return{events:{}}}}
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]))}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function norm(s){return String(s||'').toLowerCase().replace(/[\s\-_/·.,，。()（）\[\]【】:+]/g,'').replace(/[飛鳥槓鈴舉彎臥撐繩後頭側臺階機圓強間髖內轉輪動單]/g,ch=>({'飛':'飞','鳥':'鸟','槓':'杠','鈴':'铃','舉':'举','彎':'弯','臥':'卧','撐':'撑','繩':'绳','後':'后','頭':'头','側':'侧','臺':'台','階':'阶','機':'机','圓':'圆','強':'强','間':'间','髖':'髋','內':'内','轉':'转','輪':'轮','動':'动','單':'单'}[ch]||ch))}
 function coreEvents(){const c=readCore();return(c.active?[c.active]:[]).concat(c.sessions||[]).flatMap(s=>s.events||[])}
 function currentName(){return $('#equipmentName')?.textContent?.trim()||''}
