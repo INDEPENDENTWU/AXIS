@@ -2,95 +2,104 @@
 
 ## Production baseline at start of this work
 
-The exact Production baseline for this governance slice is merged main `75f2798d694a5e450398be19f97c491cdf4c1c2f`, AXIS **8.21**.
+The current merged main baseline is `a22641616097d6ef65c1850269d4c4573999a93d`, AXIS **8.21**, from PR #105 (`AXIS 8.21 — deterministic recording layout settle`).
 
-That SHA is Production-sealed before this change:
+The deployment itself is healthy and exact: fixed Vercel Production serves the deterministic artifact for `a22641616097d6ef65c1850269d4c4573999a93d`, the release manifest reports AXIS 8.21 and `canonical-single-runtime`, and immutable core/CSS asset parity was verified by the Production gate. Vercel therefore is not the current blocker.
 
-- fixed Vercel Production serves the exact merged main artifact;
-- fixed EdgeOne Production mirrors the same exact prebuilt artifact;
-- Current Release, Runtime, Universal Practice Object, Deep Compatibility, Runtime Foundation, Cross-Platform Foundation, Repository and Work Continuity gates are green on the sealed release evidence;
-- Production Chromium and iPhone-like WebKit flows pass on both providers;
-- Vercel reported no runtime-error clusters in the post-release observation window;
-- architecture remains `canonical-single-runtime`, one JavaScript request and zero dynamic runtime chunks.
+However, merged main is **not yet Production-certified**. `AXIS Production Deployment Gate` run `33183992501` failed its real-Chromium inherited product foundation after exact Production parity had already passed. The failure is a real first-interaction geometry defect, so this work remains a bounded 8.21 Production hotfix and no broader cleanup may ride with it.
 
-The product/runtime ownership baseline is unchanged: Object/Session/Encounter truth remains app-owned, recording remains on the canonical app/v61 route, ongoing execution remains v82/v87-owned, and Flow remains sequence/context rather than a second Active owner.
-
-Repository governance still identifies the long-running product milestone as **AXIS 8.21 — Flow / Session Blueprint** on governed active branch `product/821-flow-session-blueprint`. PR #105 is a bounded post-release child fix and does not replace that milestone identity.
-
-The cross-platform foundation remains **axis-native-foundation-0**. Its native repository is `INDEPENDENTWU/AXIS-iOS`. Portable product/data/Flow semantics remain governed by `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1` and `axis.flow-provenance.v1`; Web DOM/CSS timing is an implementation detail and must not become a portable domain contract.
+Product/runtime ownership remains unchanged: Object/Session/Encounter truth is app-owned, recording stays on the canonical app/v61 route, ongoing execution stays v82/v87-owned, and Flow remains sequence/context rather than a second Active owner. Public identity remains **8.21**.
 
 ## Active change
 
-**AXIS 8.21 — deterministic recording layout settle / first post-release source-governance slice**
+**AXIS 8.21 — Production recording prepaint geometry stabilization**
 
-- active branch: `fix/821-production-layout-stability`
-- PR: `#105`
-- base Production SHA: `75f2798d694a5e450398be19f97c491cdf4c1c2f`
-- governed milestone: `AXIS 8.21 — Flow / Session Blueprint`
-- governed milestone branch: `product/821-flow-session-blueprint`
+- active branch: `fix/821-recording-layout-prepaint`
+- base main SHA: `a22641616097d6ef65c1850269d4c4573999a93d`
 - intended public identity change: **none; remains 8.21**
 - intended factual ownership change: **none**
-- executable diff: one source line in `v874-professional.js`
+- product source touched: `v874-professional.js`
+- governance handoff touched: `docs/CURRENT_WORK.md`
 
-The sealed main Runtime Gate exposed one Chromium-only race that then passed on an isolated rerun. The failure was still useful evidence: the inherited recording surface could apply the already-intended `v874Tidy` presentation class roughly 35 ms after `#equipmentName` changed. A sufficiently fast first weight interaction could therefore observe a 5 px vertical settle even though the underlying recording value update was correct.
+### Production evidence
 
-The source cause was an arbitrary timer inside the existing equipment-name MutationObserver:
-
-```text
-equipment identity mutation
-  → wait 35 ms
-  → tidyMusclePanel()
-  → patchSetPlan()
-```
-
-PR #105 removes only that timer. The same existing v874 owner now performs the idempotent presentation convergence synchronously in the MutationObserver microtask:
+The failing Production smoke is `scripts/axis-completion-smoke.mjs` with:
 
 ```text
-equipment identity mutation
-  → tidyMusclePanel()
-  → patchSetPlan()
+AssertionError: weight step shifted control geometry
 ```
 
-The review-stage observer remains an idempotent lifecycle backup. No new observer, timer, CSS owner, persistence path, recorder, Encounter writer, Active owner or Flow owner is introduced.
+The strict existing invariant allows no more than `0.5px` movement across the first recording value interaction. Production diagnostics measured:
 
-This is intentionally a source-owner fix rather than a test relaxation. The strict existing recording-geometry assertion remains unchanged and must continue to require no more than `0.5px` movement across a first value interaction.
+```text
+#axisSetControls
+before y = 574.25
+ after y = 579.25
+ delta y = +5px
+```
 
-## Validation for this work
+The upstream cause was also physically captured:
 
-PR #105 is mergeable only if the exact head proves all of the following without weakening inherited assertions:
+```text
+before: #musclePanel = "musclePanel v875Tidy"       · height 56px
+after:  #musclePanel = "musclePanel v875Tidy v874Tidy" · height 61px
+```
 
-1. deterministic release build remains valid and AXIS identity remains 8.21;
-2. the existing Chromium completion/recording geometry smoke passes unchanged, including the first weight-step geometry comparison;
-3. iPhone-like WebKit inherited recording flows remain green;
-4. Current Release Chromium/WebKit remain green through the 8.21 executable Object system;
-5. Universal Practice Object and exhaustive Object capability contracts remain green;
-6. Runtime Foundation, Deep Compatibility, Repository, Work Continuity and Cross-Platform Foundation gates remain green;
-7. `axis-native-foundation-0` and the native `INDEPENDENTWU/AXIS-iOS` portability boundary remain unchanged;
-8. no ownership or persistence contract changes are introduced by the presentation timing fix.
+The first weight interaction was therefore exposing a late presentation settle. The recording value itself was correct; the already-owned v874 presentation class was simply reaching its final geometry only after the first visible interaction.
 
-The critical regression invariant is deliberately unchanged:
+### Source-owner correction
+
+The existing v874 hook already installs its stylesheet and runs the idempotent `tidyMusclePanel()` owner. This hotfix adds one next-frame convergence immediately after the v874 stylesheet is installed:
+
+```text
+install v874 stylesheet
+  → requestAnimationFrame(tidyMusclePanel)
+  → first user interaction occurs against final v874 geometry
+```
+
+This does **not** create a new presentation owner. It reuses the same `tidyMusclePanel()` function, does not mutate factual state, and does not change recording, persistence, Encounter, Active, Flow, media or navigation ownership.
+
+No smoke delay, tolerance increase, retry or assertion weakening is allowed. The existing `≤0.5px` geometry requirement remains unchanged.
+
+## Validation required before merge
+
+The PR is mergeable only when the exact head proves all of the following without weakening inherited assertions:
+
+1. deterministic release build remains AXIS 8.21 / `canonical-single-runtime`;
+2. the existing Chromium completion smoke passes its original first-weight-step `≤0.5px` geometry assertion;
+3. the dedicated 8.21 recording-geometry diagnostic remains green;
+4. iPhone-like WebKit inherited recording flows remain green;
+5. Current Release Chromium + WebKit pass through the full 8.21 executable Object and Flow paths;
+6. Runtime and Runtime Foundation gates pass;
+7. Universal Practice Object and exhaustive Object capability contracts pass;
+8. Deep Compatibility, Cross-Platform Foundation, Repository, Work Continuity and PR Run Convergence gates pass;
+9. no second recorder, Encounter writer, Active owner, Flow owner, persistence owner or presentation owner is introduced.
+
+The governing regression invariant remains:
 
 ```text
 first recording value interaction
   must not rebuild the active row
-  must not move the canonical recording controls by > 0.5 px
+  must not move canonical recording controls by > 0.5 px
 ```
 
-A green result therefore proves deterministic source convergence rather than hiding the original timing race with an added test wait.
+## Production certification after merge
+
+PR CI is necessary but not sufficient because PR #105 was green before the defect was exposed against fixed Production.
+
+After merge, completion requires all of the following on the exact merged main SHA:
+
+1. Vercel Production deployment is `READY` and serves the exact merged SHA;
+2. Production manifest and immutable assets match the deterministic local build;
+3. `AXIS Production Deployment Gate` passes real Chromium inherited product foundation **and** current release flow against `https://axis-five-puce.vercel.app`;
+4. deployment-triggered 8.12.x compatibility Production gate remains green;
+5. EdgeOne Production mirror reaches success for the same governed release state;
+6. main Current Release / Runtime / compatibility governance remains green.
+
+Only after those checks pass is this 8.21 Production geometry incident considered closed.
 
 ## Next planned stage
 
-After PR #105 is fully green and merged, re-verify the resulting exact main artifact on fixed Vercel and EdgeOne before beginning broader architecture cleanup.
+After Production certification, resume the broader evidence-preserving architecture cleanup already planned: progressively move runtime behavior out of historical `prepare-*` / `postbuild-*` mutation stages into explicit canonical source owners, one bounded PR at a time. No broad refactor is allowed inside this hotfix.
 
-The next governance phase will be incremental and evidence-preserving. It will inventory the current deterministic build pipeline and move runtime behavior out of historical `prepare-*` / `postbuild-*` string-rewrite stages into explicit source owners in small independent PRs. Priority order:
-
-1. remove timer/observer-driven presentation convergence where the same owner can update synchronously or from a direct lifecycle signal;
-2. identify postbuild behavioral rewrites that duplicate or supersede source logic;
-3. move each behavior back to its canonical source owner before deleting the corresponding rewrite;
-4. keep one factual/interaction owner for Recorder, Encounter, Active, Route, Flow, History and media domains;
-5. preserve one-JS / zero-dynamic-chunk production behavior unless a separately reviewed architecture change proves a better result;
-6. add governance gates that prevent new runtime behavioral mutation from being introduced in postbuild stages.
-
-No broad refactor is allowed to ride inside a release/hotfix PR. Every cleanup slice must retain exact behavioral parity and pass Chromium + iPhone-like WebKit release evidence before merge.
-
-Chat history is not authoritative project memory. GitHub governance, this handoff, contracts, exact main, deterministic build output and Production evidence are authoritative.
+Chat history is not authoritative project memory. GitHub governance, contracts, exact main, deterministic build output and Production evidence are authoritative.
