@@ -12,6 +12,8 @@ Product/runtime ownership remains unchanged: Object/Session/Encounter truth is a
 
 Repository governance still identifies the long-running active milestone as **AXIS 8.21 — Flow / Session Blueprint** on governed active branch `product/821-flow-session-blueprint`. This bounded Production hotfix is a child repair and does not replace that milestone identity or branch authority.
 
+The cross-platform foundation remains **axis-native-foundation-0** with native repository `INDEPENDENTWU/AXIS-iOS`. Portable Web/iOS semantics remain governed by `axis.domain.v1` and `axis.data.v1` (along with the established Flow contracts); browser DOM/CSS timing is an implementation detail and is not promoted into the portable domain model by this fix.
+
 ## Active change
 
 **AXIS 8.21 — Production recording prepaint geometry stabilization**
@@ -65,7 +67,7 @@ This does **not** create a new presentation owner. It reuses the same `tidyMuscl
 
 No smoke delay, tolerance increase, retry or assertion weakening is allowed. The existing `≤0.5px` geometry requirement remains unchanged.
 
-## Validation required before merge
+## Validation for this work
 
 The PR is mergeable only when the exact head proves all of the following without weakening inherited assertions:
 
