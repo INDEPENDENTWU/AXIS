@@ -69,7 +69,7 @@ try{
  assert.ok((await state()).active,'individual finish incorrectly ended Session');
 
  console.log(`[AXIS 8.21 Object system ${ENGINE}] session finish → schema-aware History`);
- await longPress(page.locator('#finishHold'),1200);await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return !c.active&&(c.sessions||[]).some(s=>(s.events||[]).some(e=>e.name==='测试A'))},undefined,{timeout:3500});
+ await longPress(page.locator('#finishHold'),1700);await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return !c.active&&(c.sessions||[]).some(s=>(s.events||[]).some(e=>e.name==='测试A'))},undefined,{timeout:3500});
  if(await page.locator('#finishDone').isVisible().catch(()=>false))await tap(page.locator('#finishDone'));
  await tap(page.locator('.nav button[data-view="historyView"]'));await page.waitForFunction(()=>document.querySelector('#historyView')?.classList.contains('active')&&document.querySelector('#historyList .history'));
  await tap(page.locator('#historyList .history').first());await page.waitForFunction(()=>document.querySelector('#detailSheet')?.classList.contains('show'));
