@@ -2,220 +2,88 @@
 
 ## Production baseline at start of this work
 
-The exact Production baseline is merged main `621b93837b8d56982a990abb00d86b758b421337`, AXIS **8.21**.
+The exact Production baseline for this governance slice is merged main `75f2798d694a5e450398be19f97c491cdf4c1c2f`, AXIS **8.21**.
 
-That SHA is dual-provider Production-sealed:
+That SHA is Production-sealed before this change:
 
-- fixed Vercel Production serves the exact main artifact;
+- fixed Vercel Production serves the exact merged main artifact;
 - fixed EdgeOne Production mirrors the same exact prebuilt artifact;
-- Production Chromium and iPhone-like WebKit current-release flows pass;
-- the strict recording geometry stability threshold remains `0.5px`.
+- Current Release, Runtime, Universal Practice Object, Deep Compatibility, Runtime Foundation, Cross-Platform Foundation, Repository and Work Continuity gates are green on the sealed release evidence;
+- Production Chromium and iPhone-like WebKit flows pass on both providers;
+- Vercel reported no runtime-error clusters in the post-release observation window;
+- architecture remains `canonical-single-runtime`, one JavaScript request and zero dynamic runtime chunks.
 
-Fixed endpoints remain:
-
-- Vercel Production: `https://axis-five-puce.vercel.app`
-- EdgeOne Production: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
-- public/base release identity: **8.21**
-- architecture: `canonical-single-runtime`
-
-The governed milestone remains **AXIS 8.21 — Flow / Session Blueprint** and the governed active branch remains `product/821-flow-session-blueprint`. This hotfix is a bounded child of that milestone; it does not replace the governance identity.
-
-The cross-platform foundation remains **axis-native-foundation-0**. Its native repository is `INDEPENDENTWU/AXIS-iOS`. Portable product semantics are governed by `axis.domain.v1`; durable exchange/state semantics are governed by `axis.data.v1`. Portable Object/metric/execution semantics belong in pure shared contracts; Web DOM or CSS implementation details do not.
+The product/runtime ownership baseline is unchanged: Object/Session/Encounter truth remains app-owned, recording remains on the canonical app/v61 route, ongoing execution remains v82/v87-owned, and Flow remains sequence/context rather than a second Active owner.
 
 ## Active change
 
-**AXIS 8.21 — Executable Object System + Flow / Active Session Coordination**
+**AXIS 8.21 — deterministic recording layout settle / first post-release source-governance slice**
 
-- active implementation branch: `hotfix/821-executable-object-system`
-- parent integration branch: `hotfix/821-flow-active-session-coordination`
-- base Production SHA: `621b93837b8d56982a990abb00d86b758b421337`
-- draft PR: `#104`
+- active branch: `fix/821-production-layout-stability`
+- PR: `#105`
+- base Production SHA: `75f2798d694a5e450398be19f97c491cdf4c1c2f`
 - intended public identity change: **none; remains 8.21**
 - intended factual ownership change: **none**
+- executable diff: one source line in `v874-professional.js`
 
-Manual iPhone Production testing exposed two related integration gaps. A Flow item could collide with an already-running standalone Activity, and a newly created custom Object could successfully record valid properties such as `坡度 + 速度` while failing to enter the mature single-Object Active lifecycle and later rendering legacy `kg / 次 / 组` history with raw `undefined`.
+The sealed main Runtime Gate exposed one Chromium-only race that then passed on an isolated rerun. The failure was still useful evidence: the inherited recording surface could apply the already-intended `v874Tidy` presentation class roughly 35 ms after `#equipmentName` changed. A sufficiently fast first weight interaction could therefore observe a 5 px vertical settle even though the underlying recording value update was correct.
 
-These are not isolated slope/speed defects. They show that Object definition, recording schema, value controls, execution semantics, immutable Encounter facts, Active lifecycle and historical presentation must converge on one generic executable Object contract.
-
-## Canonical executable Object contract
-
-The required ownership chain is:
+The source cause was an arbitrary timer inside the existing equipment-name MutationObserver:
 
 ```text
-Object definition
-  ↓
-metricSchema + executionMode
-  ↓
-existing canonical recorder
-  ↓
-immutable Encounter metricSchemaSnapshot + executionModeSnapshot + metrics
-  ↓
-existing v82/v87 Active lifecycle when execution is ongoing
-  ↓
-schema-aware Today / History / Detail / later Evolution presentation
+equipment identity mutation
+  → wait 35 ms
+  → tidyMusclePanel()
+  → patchSetPlan()
 ```
 
-Ownership remains fixed:
-
-- Object/Session/Encounter truth: `app.js` / `axis_v60_state`;
-- recording: existing app/v61 route only;
-- classic weight/reps set metadata: existing v61 / `axis_v8_meta` authority only where immutable Encounter schema permits it;
-- ongoing execution: existing v82/v87 Active owner;
-- Flow: sequence/context/planning only;
-- media/evidence: existing owners unchanged.
-
-No second database, storage namespace, picker, recorder, Active owner, Session writer or Encounter writer is allowed.
-
-### Capability matrix
-
-`lib/axis-object-capabilities.mjs` is the pure capability registry for the current product layer. The current built-in metric set is exactly:
+PR #105 removes only that timer. The same existing v874 owner now performs the idempotent presentation convergence synchronously in the MutationObserver microtask:
 
 ```text
-weight | reps | sets | duration | hold | distance | pace | speed |
-intensity | resistance | level | incline | rating | completed
+equipment identity mutation
+  → tidyMusclePanel()
+  → patchSetPlan()
 ```
 
-Each capability defines its stable id, user-facing label, group, metric type, unit, presentation/control family, bounds/step where applicable, aggregation/repeatability semantics and execution hint.
+The review-stage observer remains an idempotent lifecycle backup. No new observer, timer, CSS owner, persistence path, recorder, Encounter writer, Active owner or Flow owner is introduced.
 
-The current custom metric type set is exactly:
-
-```text
-number | count | duration | distance | pace | percentage | rating | boolean | choice
-```
-
-A custom property is not a second-class field. Its type must be enough to choose a valid recorder control, normalize its value, serialize it into Encounter truth, format it again later, and provide a deterministic execution hint where the type itself implies ongoing or completion behavior.
-
-### Measurement and execution are separate
-
-`metricSchema` answers **what is recorded**. `executionMode` answers **how the Object runs**.
-
-Supported execution modes:
-
-```text
-auto | single | sets | rounds | timed | hold | complete
-```
-
-When execution remains `auto`, one deterministic capability resolver governs both editor preview and runtime behavior. Current precedence is:
-
-1. explicit manual non-auto mode always wins;
-2. rounds semantics → `rounds`;
-3. set/repetition semantics → `sets`;
-4. hold semantics → `hold`;
-5. completion-only → `complete`;
-6. any continuous metric → `timed`;
-7. otherwise → `single`.
-
-Continuous semantics include built-in duration, distance, pace, speed, intensity, resistance, level and incline, plus custom duration/distance/pace metrics. A custom `坡度 + 速度` Object therefore resolves to the existing timed Active lifecycle after canonical Encounter commit. It receives existing elapsed/estimated time, pause/resume and long-hold individual finish; it does not acquire a fake set count or a second timer owner.
-
-Combination behavior is a domain contract, not a list of UI special cases. CI enumerates all **16,384** possible subsets of the fourteen built-in properties and requires every selection to resolve deterministically to a supported execution mode without throwing.
-
-## Object editor / recording UI contract
-
-The main Object form exposes two compact native rows rather than a long fourteen-row property list:
-
-- `记录属性` — selected-property summary + count;
-- `进行方式` — resolved mode, normally automatic unless the user explicitly overrides it.
-
-`记录属性` opens one dedicated compact bottom sheet with grouped touch-safe controls. The property registry groups current built-ins into training volume, time/motion, load/device, and result/feeling. `进行方式` opens one dedicated execution choice sheet. These are configuration surfaces over the same Object truth, not new owners.
-
-The recording page remains value-only and schema-driven. It must never expose schema-selection controls. Every supported metric type maps to an engineered control family:
-
-- number/count/distance/percentage: centered stepper, with capability-specific presets where useful;
-- duration/hold: timer-style stepper + useful presets;
-- pace: direct pace entry;
-- rating: directly editable numeric owner + tactile 1–10 rail;
-- boolean: two-state control;
-- choice: explicit options backed by one canonical value owner.
-
-Changing a value may change only the value/state, never surrounding geometry. The existing `≤ 0.5px` recording geometry assertion remains release-blocking.
-
-## History / localization contract
-
-Historical presentation is derived from immutable Encounter facts, not coarse legacy `kind === strength/cardio` assumptions.
-
-For an Encounter whose snapshot is `坡度 + 速度`, Today/history/detail renders those facts only, for example:
-
-```text
-坡度 8 % · 速度 12 km/h
-```
-
-It must never fabricate irrelevant weight/reps/sets. Raw `undefined`, `NaN`, internal enum IDs or missing values must never reach visible product copy. Choice values render their stored user-facing option labels; pace values remain pace strings rather than being coerced to invalid numbers.
-
-Legacy Encounters that genuinely have no schema snapshot may continue through bounded legacy compatibility formatting. An explicit empty snapshot remains authoritative and must never trigger legacy fallback.
-
-Internal stable enum IDs such as `strength`, `cardio` and `relative` may remain persisted/internal, but visible localized surfaces must render professional user-facing text. Unknown identifier-like enum tokens fail closed rather than leaking directly into UI.
-
-## Flow / Active coordination contract
-
-Flow remains a multi-Object Session Blueprint:
-
-```text
-Flow owns: ordered intent + current step + overall progress + planned duration context
-Active owns: current Object timing + pause/resume + rest + sets/rounds/timed/hold execution + finish
-Encounter owns: immutable factual record
-```
-
-Starting a Flow item while another Activity is foregrounded uses the existing one-foreground-plus-paused v82/v87 model. Cancellation preserves the current Activity; confirmation records through the canonical recorder, then existing Active truth pauses the previous foreground Activity and starts/resumes the Flow item. Temporary-other remains record-only and cannot advance Flow or displace Active truth.
+This is intentionally a source-owner fix rather than a test relaxation. The strict existing recording-geometry assertion remains unchanged and must continue to require no more than `0.5px` movement across a first value interaction.
 
 ## Validation for this work
 
-This work is not considered proven by the slope/speed example alone. Validation has three layers.
+PR #105 is mergeable only if the exact head proves all of the following without weakening inherited assertions:
 
-### 1. Exhaustive pure capability contract
+1. deterministic release build remains valid and AXIS identity remains 8.21;
+2. the existing Chromium completion/recording geometry smoke passes unchanged, including the first weight-step geometry comparison;
+3. iPhone-like WebKit inherited recording flows remain green;
+4. Current Release Chromium/WebKit remain green through the 8.21 executable Object system;
+5. Universal Practice Object and exhaustive Object capability contracts remain green;
+6. Runtime Foundation, Deep Compatibility, Repository and Work Continuity gates remain green;
+7. no ownership or persistence contract changes are introduced by the presentation timing fix.
 
-`axis-821-object-capability-matrix-contract.mjs` must prove:
+The critical regression invariant is deliberately unchanged:
 
-- all fourteen built-ins have complete valid capability metadata and match the portable Metric Schema registry;
-- all nine custom metric types normalize, format and resolve without raw invalid values;
-- explicit zero-property schema remains empty and one-shot rather than falling back;
-- pace strings survive the portable Encounter envelope;
-- choice values validate against options and preserve user-facing labels;
-- manual execution overrides win;
-- representative precedence cases are fixed;
-- all 16,384 built-in property subsets resolve deterministically to a legal execution mode.
+```text
+first recording value interaction
+  must not rebuild the active row
+  must not move the canonical recording controls by > 0.5 px
+```
 
-### 2. Full custom Object physical scenario
-
-On Chromium and iPhone-like WebKit:
-
-1. create custom Object `测试A` through the real editor;
-2. choose only `坡度` and `速度` in the compact property selector;
-3. keep execution `自动` and verify `连续计时`;
-4. save and use real Quick Record + canonical Object picker;
-5. verify the recorder contains exactly those two controls;
-6. set slope `8` and speed `12` using the real preset controls;
-7. prove value changes move surrounding geometry by no more than `0.5px`;
-8. tap `记下` and verify immutable schema/value/execution snapshots;
-9. verify existing v87 Active appears for `测试A`;
-10. physically pause/resume;
-11. physically long-hold finish the individual Activity while the Session remains active;
-12. physically finish/seal the Session separately;
-13. open archived History/detail and verify only slope/speed facts, with no `undefined`, `NaN`, fake kg/reps/sets or raw enum tokens.
-
-### 3. Recorder-family physical matrix
-
-The same dual-engine browser proof also opens representative Objects for every control family: number, count, duration, hold, distance, pace, percentage, rating, boolean and choice. Each must render through the same canonical recorder with exactly the requested metric and mobile-safe geometry.
-
-The separate Flow conflict scenario remains release-blocking as well: standalone Activity X active → Flow A/B launch → visible switch decision → cancel preserves X → confirm records A → existing Active pauses X/starts A → resume X/return A without duplicate Encounter → finish A advances Flow → temporary-other remains record-only.
+A green result therefore proves deterministic source convergence rather than hiding the original timing race with an added test wait.
 
 ## Next planned stage
 
-First close PR #104 itself: repair every exact-head CI failure at the real owner, keep the exhaustive matrix and dual-engine physical proof green, and do not weaken inherited gates. Only after that exact head is fully green may the PR leave draft state and merge.
+After PR #105 is fully green and merged, re-verify the resulting exact main artifact on fixed Vercel and EdgeOne before beginning broader architecture cleanup.
 
-After merge, verify the resulting exact main artifact on fixed Vercel and the exact mirrored EdgeOne artifact. Re-run the full custom Object lifecycle and Flow/Active conflict scenario against Production Chromium and iPhone-like WebKit. Only then continue the broader 8.21 Flow / Session Blueprint roadmap from the new sealed main baseline.
+The next governance phase will be incremental and evidence-preserving. It will inventory the current deterministic build pipeline and move runtime behavior out of historical `prepare-*` / `postbuild-*` string-rewrite stages into explicit source owners in small independent PRs. Priority order:
 
-## Merge / Production discipline
+1. remove timer/observer-driven presentation convergence where the same owner can update synchronously or from a direct lifecycle signal;
+2. identify postbuild behavioral rewrites that duplicate or supersede source logic;
+3. move each behavior back to its canonical source owner before deleting the corresponding rewrite;
+4. keep one factual/interaction owner for Recorder, Encounter, Active, Route, Flow, History and media domains;
+5. preserve one-JS / zero-dynamic-chunk production behavior unless a separately reviewed architecture change proves a better result;
+6. add governance gates that prevent new runtime behavioral mutation from being introduced in postbuild stages.
 
-Do not merge PR #104 until the exact PR head is green across Repository, Work Continuity, Cross-Platform, Universal Practice Object, Runtime, Runtime Foundation, Current Release Chromium/WebKit and Deep Compatibility. Test failures must be repaired at their actual owner; no thresholds, historical guards or assertions may be weakened merely to obtain green CI.
+No broad refactor is allowed to ride inside a release/hotfix PR. Every cleanup slice must retain exact behavioral parity and pass Chromium + iPhone-like WebKit release evidence before merge.
 
-After merge, do not call this work complete until:
-
-1. fixed Vercel Production serves the exact resulting main artifact;
-2. the full custom Object scenario passes on Production Chromium and iPhone-like WebKit;
-3. the Flow/Active conflict scenario passes on both engines;
-4. no cold-boot/runtime page error occurs;
-5. EdgeOne mirrors the same exact prebuilt artifact only after Vercel/main parity converges;
-6. Vercel ↔ EdgeOne manifest/artifact parity remains strict;
-7. the resulting main SHA has no unexplained independent red check.
-
-Chat history is not authoritative project memory. Conversation history is supplemental only. GitHub governance, contracts, exact main, deterministic build output and Production evidence are authoritative.
+Chat history is not authoritative project memory. GitHub governance, this handoff, contracts, exact main, deterministic build output and Production evidence are authoritative.
