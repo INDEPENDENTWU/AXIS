@@ -8,12 +8,18 @@ That baseline is Production-certified. Fixed Vercel Production is green for the 
 
 Product/runtime ownership is unchanged: Object/Session/Encounter truth is app-owned, recording remains on the canonical app/v61 route, ongoing execution remains v82/v87-owned, and Flow remains sequence/context rather than a second Active owner. This work is architecture governance only; it must not change factual, persistence or product behavior.
 
+Repository governance still identifies the long-running active milestone as **AXIS 8.21 — Flow / Session Blueprint** on governed active branch `product/821-flow-session-blueprint`. PR #107 is a bounded child architecture cleanup and does not replace that milestone or branch authority.
+
+The cross-platform foundation remains **axis-native-foundation-0** with native repository `INDEPENDENTWU/AXIS-iOS`. Portable Web/iOS semantics remain governed by `axis.domain.v1` and `axis.data.v1`; browser build/postbuild mechanics are implementation details and are not promoted into the portable domain model by this refactor.
+
 ## Active change
 
 **AXIS 8.21 — source-own Active projection**
 
 - active branch: `refactor/821-active-projection-source-owner`
 - PR: `#107`
+- governed active milestone: `AXIS 8.21 — Flow / Session Blueprint`
+- governed active branch: `product/821-flow-session-blueprint`
 - base main SHA: `1fa5a51b29ecefe0c40d58c62b7498039469c8e5`
 - intended public identity change: **none; remains 8.21**
 - intended factual ownership change: **none**
@@ -60,7 +66,7 @@ The PR is mergeable only when the exact final head proves all of the following w
 4. the final 8.21 presentation seal contains no build-time mutation of those two source functions;
 5. same-task Active projection remains physically correct in Chromium and iPhone WebKit;
 6. Current Release, Runtime, Runtime Foundation and Deep Compatibility gates pass;
-7. Repository, Work Continuity and PR Run Convergence contracts pass;
+7. Repository, Work Continuity, Cross-Platform Foundation and PR Run Convergence contracts pass;
 8. EdgeOne package/parity validation remains green;
 9. no factual, storage, recorder, Encounter, Active or Flow ownership changes are introduced.
 
@@ -72,4 +78,4 @@ After PR #107 is fully green, merge it with the exact tested head, then verify t
 
 The broader direction remains incremental and evidence-preserving: retire historical `prepare-*` / `postbuild-*` behavioral mutation one owner at a time, move behavior into explicit canonical source owners, and keep every bounded PR behavior-compatible and dual-engine green. Do not combine multiple ownership families into one large rewrite.
 
-Conversation history is supplemental only. GitHub governance, contracts, exact `main`, deterministic build output and Production evidence are authoritative.
+Chat history is not authoritative project memory. GitHub governance, contracts, exact `main`, deterministic build output and Production evidence are authoritative.
