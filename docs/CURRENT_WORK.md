@@ -10,11 +10,15 @@ However, merged main is **not yet Production-certified**. `AXIS Production Deplo
 
 Product/runtime ownership remains unchanged: Object/Session/Encounter truth is app-owned, recording stays on the canonical app/v61 route, ongoing execution stays v82/v87-owned, and Flow remains sequence/context rather than a second Active owner. Public identity remains **8.21**.
 
+Repository governance still identifies the long-running active milestone as **AXIS 8.21 — Flow / Session Blueprint** on governed active branch `product/821-flow-session-blueprint`. This bounded Production hotfix is a child repair and does not replace that milestone identity or branch authority.
+
 ## Active change
 
 **AXIS 8.21 — Production recording prepaint geometry stabilization**
 
-- active branch: `fix/821-recording-layout-prepaint`
+- active hotfix branch: `fix/821-recording-layout-prepaint`
+- governed active milestone: `AXIS 8.21 — Flow / Session Blueprint`
+- governed active branch: `product/821-flow-session-blueprint`
 - base main SHA: `a22641616097d6ef65c1850269d4c4573999a93d`
 - intended public identity change: **none; remains 8.21**
 - intended factual ownership change: **none**
