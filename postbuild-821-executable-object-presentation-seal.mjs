@@ -93,12 +93,11 @@ src=convergeOwnedLiteral(src,'v61.js',legacyV61TimelineWriter,canonicalV61Timeli
 /* v82 keeps Active Truth creation. Publish a synchronous presentation invalidation
  * immediately after the metadata commit so v87 cannot remain visibly bound to the
  * previous Encounter until its 500ms maintenance tick. */
-src=mutateModuleFunction(src,'v82-runtime.js','function startActivity(e,customEstimate)',fn=>{
- const from='writeMeta(m);renderActiveRail();decorateTimeline();';
- const to="writeMeta(m);renderActiveRail();decorateTimeline();try{window.dispatchEvent(new CustomEvent('axis:active-truth-changed',{detail:{id:e.id,status:'active'}}))}catch{};";
- if(!fn.includes(from))fail('v82 Active start projection anchor missing');
- return fn.replace(from,to);
-},'v82 Active synchronous presentation invalidation');
+{
+ const fn=moduleFunctionRange(src,'v82-runtime.js','function startActivity(e,customEstimate)','v82 source-owned Active synchronous presentation invalidation').text;
+ const signal="window.dispatchEvent(new CustomEvent('axis:active-truth-changed',{detail:{id:e.id,status:'active'}}))";
+ if(fn.split(signal).length-1!==1)fail('v82 source-owned Active presentation invalidation missing or duplicated');
+}
 
 src=replaceModuleFunction(
  src,'v82-runtime.js','function decorateTimeline()',
@@ -115,13 +114,11 @@ src=replaceModuleFunction(
  'v87 schema-aware Active timeline repaint'
 );
 
-src=mutateModuleFunction(src,'v87-runtime.js','function installEvents()',fn=>{
- const anchor="window.addEventListener('pageshow',()=>{injectAudio();renderNow(true);renderTimeline()});";
- const next="window.addEventListener('axis:active-truth-changed',()=>{renderNow(true);renderTimeline()});"+anchor;
- if(!fn.includes(anchor))fail('v87 presentation event anchor missing');
- if(fn.includes("axis:active-truth-changed"))fail('v87 Active presentation listener duplicated');
- return fn.replace(anchor,next);
-},'v87 synchronous Active projection listener');
+{
+ const fn=moduleFunctionRange(src,'v87-runtime.js','function installEvents()','v87 source-owned Active projection listener').text;
+ const listener="window.addEventListener('axis:active-truth-changed',()=>{renderNow(true);renderTimeline()})";
+ if(fn.split(listener).length-1!==1)fail('v87 source-owned Active presentation listener missing or duplicated');
+}
 
 /* Current execution snapshots are authoritative. Preserve old strength/cardio
  * adjustment only for records that predate the snapshot contract, plus the 8.12
@@ -186,6 +183,6 @@ html=html.replace(`/axis-core.js?v=${oldHash}`,`/axis-core.js?v=${newHash}`);fs.
 const info=JSON.parse(fs.readFileSync(infoFile,'utf8'));
 info.assets=info.assets||{};info.assets.core=newHash;
 info.gates={...(info.gates||{}),executableObjectSchemaAwareTimeline821:true,activeTimelineSchemaAware821:true,adjustOnceExecutionScoped821:true,eventDetailAtomicSchemaAware821:true,legacyActiveAdjustPreserved821:true,activeAdjustCurrentEventPreserved821:true,activeProjectionSynchronous821:true,flowProjectionSynchronous821:true,completedArchivePreserved821:true};
-info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,atomicSchemaAwareDetail:true,adjustOnce:'current-sets-legacy-classic',legacyFallback:'snapshot-absent-strength-cardio',activeAdjustBinding:'live-current-event',activeProjection:'same-task-invalidation',flowProjection:'same-task-current-encounter',completedArchive:'preserved-884',postCanonical:true,ownerScoped:true,idempotent:true}};
+info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,atomicSchemaAwareDetail:true,adjustOnce:'current-sets-legacy-classic',legacyFallback:'snapshot-absent-strength-cardio',activeAdjustBinding:'live-current-event',activeProjection:'same-task-invalidation',activeProjectionOwner:'v82-runtime.js+v87-runtime.js',activeProjectionPostbuildMutation:false,flowProjection:'same-task-current-encounter',completedArchive:'preserved-884',postCanonical:true,ownerScoped:true,idempotent:true}};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
 console.log(`[AXIS 8.21 final Object presentation] PASS · canonical Encounter facts · atomic detail · synchronous Active/Flow projection · 8.8.4 archive preserved · snapshot-aware live-current Adjust Once · core ${oldHash}->${newHash}`);
