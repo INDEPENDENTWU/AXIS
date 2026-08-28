@@ -15,6 +15,10 @@ That SHA is Production-sealed before this change:
 
 The product/runtime ownership baseline is unchanged: Object/Session/Encounter truth remains app-owned, recording remains on the canonical app/v61 route, ongoing execution remains v82/v87-owned, and Flow remains sequence/context rather than a second Active owner.
 
+Repository governance still identifies the long-running product milestone as **AXIS 8.21 — Flow / Session Blueprint** on governed active branch `product/821-flow-session-blueprint`. PR #105 is a bounded post-release child fix and does not replace that milestone identity.
+
+The cross-platform foundation remains **axis-native-foundation-0**. Its native repository is `INDEPENDENTWU/AXIS-iOS`. Portable product/data/Flow semantics remain governed by `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1` and `axis.flow-provenance.v1`; Web DOM/CSS timing is an implementation detail and must not become a portable domain contract.
+
 ## Active change
 
 **AXIS 8.21 — deterministic recording layout settle / first post-release source-governance slice**
@@ -22,6 +26,8 @@ The product/runtime ownership baseline is unchanged: Object/Session/Encounter tr
 - active branch: `fix/821-production-layout-stability`
 - PR: `#105`
 - base Production SHA: `75f2798d694a5e450398be19f97c491cdf4c1c2f`
+- governed milestone: `AXIS 8.21 — Flow / Session Blueprint`
+- governed milestone branch: `product/821-flow-session-blueprint`
 - intended public identity change: **none; remains 8.21**
 - intended factual ownership change: **none**
 - executable diff: one source line in `v874-professional.js`
@@ -58,8 +64,9 @@ PR #105 is mergeable only if the exact head proves all of the following without 
 3. iPhone-like WebKit inherited recording flows remain green;
 4. Current Release Chromium/WebKit remain green through the 8.21 executable Object system;
 5. Universal Practice Object and exhaustive Object capability contracts remain green;
-6. Runtime Foundation, Deep Compatibility, Repository and Work Continuity gates remain green;
-7. no ownership or persistence contract changes are introduced by the presentation timing fix.
+6. Runtime Foundation, Deep Compatibility, Repository, Work Continuity and Cross-Platform Foundation gates remain green;
+7. `axis-native-foundation-0` and the native `INDEPENDENTWU/AXIS-iOS` portability boundary remain unchanged;
+8. no ownership or persistence contract changes are introduced by the presentation timing fix.
 
 The critical regression invariant is deliberately unchanged:
 
