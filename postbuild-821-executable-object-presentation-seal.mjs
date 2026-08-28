@@ -118,12 +118,13 @@ src=replaceModuleFunction(
  * use the inherited one-time adjust surface, so a timed custom Object never gets
  * legacy weight/reps or duration/intensity controls. Records from before execution
  * snapshots keep their historical strength AND cardio adjustment behavior. Also
- * preserve the postbuild-kernel v87AdjustBtn identity/render-sync dedupe contract. */
+ * preserve the postbuild-kernel identity/dedupe and 8.12 live-current-event click
+ * resolution instead of closing over whichever activity created the button. */
 src=replaceModuleFunction(
  src,
  'v879-runtime.js',
  'function editEntry()',
- `function editEntry(){const id=activeId(),host=$('#v87Now .v87Actions');if(!id||!host)return;const prune=()=>{let kept=false;for(const x of Array.from(host.querySelectorAll('button'))){if(!String(x.textContent||'').trim().startsWith('调整'))continue;if(x.id==='v87AdjustBtn'&&!kept){kept=true;continue}x.remove()}};prune();const r=meta().events?.[id],e=eventById(id),mode=String(e?.executionModeSnapshot||'').trim(),eligible=mode?mode==='sets':!!e&&(e.kind==='strength'||e.kind==='cardio');if(!r?.activity||r.activity.status==='finished'||r.v879EditAt||!eligible){$('#v87AdjustBtn')?.remove();return}if(!$('#v87AdjustBtn')){const b=D.createElement('button');b.id='v87AdjustBtn';b.className='v879EditBtn';b.textContent='调整';b.onclick=()=>openEdit(id);host.appendChild(b);queueMicrotask(prune);setTimeout(prune,120)}}`,
+ `function editEntry(){const id=activeId(),host=$('#v87Now .v87Actions');if(!id||!host)return;const prune=()=>{let kept=false;for(const x of Array.from(host.querySelectorAll('button'))){if(!String(x.textContent||'').trim().startsWith('调整'))continue;if(x.id==='v87AdjustBtn'&&!kept){kept=true;continue}x.remove()}};prune();const r=meta().events?.[id],e=eventById(id),mode=String(e?.executionModeSnapshot||'').trim(),eligible=mode?mode==='sets':!!e&&(e.kind==='strength'||e.kind==='cardio');if(!r?.activity||r.activity.status==='finished'||r.v879EditAt||!eligible){$('#v87AdjustBtn')?.remove();return}if(!$('#v87AdjustBtn')){const b=D.createElement('button');b.id='v87AdjustBtn';b.className='v879EditBtn';b.textContent='调整';b.onclick=()=>{const current=activeId();if(current)openEdit(current)};host.appendChild(b);queueMicrotask(prune);setTimeout(prune,120)}}`,
  'execution-scoped Adjust Once entry'
 );
 src=replaceModuleFunction(
@@ -163,6 +164,7 @@ for(const [label,fn] of [['Adjust Once entry',editEntry],['Adjust Once editor',o
  if(!fn.includes("kind==='strength'")||!fn.includes("kind==='cardio'"))fail(`${label} did not preserve snapshot-absent classic adjustment fallback`);
 }
 if(!editEntry.includes('v87AdjustBtn')||!editEntry.includes('queueMicrotask(prune)')||!editEntry.includes('setTimeout(prune,120)'))fail('post-kernel active-adjust identity/render-sync dedupe was lost');
+if(editEntry.includes('b.onclick=()=>openEdit(id)')||!editEntry.includes('const current=activeId();if(current)openEdit(current)'))fail('8.12 live current-event adjustment resolver was lost');
 const v879=moduleRange(src,'v879-runtime.js','v879 presentation owner').text;
 if(v879.includes(legacyV879TimelineWriter))fail('legacy v879 direct Timeline fact writer survived final convergence');
 if((v879.split(canonicalV879TimelineWriter).length-1)!==1)fail('canonical v879 Timeline fact writer is not singular');
@@ -176,7 +178,7 @@ fs.writeFileSync(runtimeFile,src);
 html=html.replace(`/axis-core.js?v=${oldHash}`,`/axis-core.js?v=${newHash}`);fs.writeFileSync(indexFile,html);
 const info=JSON.parse(fs.readFileSync(infoFile,'utf8'));
 info.assets=info.assets||{};info.assets.core=newHash;
-info.gates={...(info.gates||{}),executableObjectSchemaAwareTimeline821:true,activeTimelineSchemaAware821:true,adjustOnceExecutionScoped821:true,eventDetailAtomicSchemaAware821:true,legacyActiveAdjustPreserved821:true};
-info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,atomicSchemaAwareDetail:true,adjustOnce:'current-sets-legacy-classic',legacyFallback:'snapshot-absent-strength-cardio',postCanonical:true,ownerScoped:true,idempotent:true}};
+info.gates={...(info.gates||{}),executableObjectSchemaAwareTimeline821:true,activeTimelineSchemaAware821:true,adjustOnceExecutionScoped821:true,eventDetailAtomicSchemaAware821:true,legacyActiveAdjustPreserved821:true,activeAdjustCurrentEventPreserved821:true};
+info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,atomicSchemaAwareDetail:true,adjustOnce:'current-sets-legacy-classic',legacyFallback:'snapshot-absent-strength-cardio',activeAdjustBinding:'live-current-event',postCanonical:true,ownerScoped:true,idempotent:true}};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
-console.log(`[AXIS 8.21 final Object presentation] PASS · app/v61/v82/v87/v879 owner-scoped Encounter formatter · atomic schema-aware event detail · snapshot-aware Adjust Once with legacy classic compatibility · core ${oldHash}->${newHash}`);
+console.log(`[AXIS 8.21 final Object presentation] PASS · app/v61/v82/v87/v879 owner-scoped Encounter formatter · atomic schema-aware event detail · snapshot-aware live-current Adjust Once with legacy classic compatibility · core ${oldHash}->${newHash}`);
