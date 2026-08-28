@@ -65,6 +65,14 @@ src=replaceModuleFunction(
  'final timeline event renderer'
 );
 
+/* v61 is an inherited timeline observer and can repaint the first <small> after
+ * app/v82/v87 have already rendered. Keep its scheduling/observer ownership, but
+ * make the factual text delegate to the app-owned Encounter formatter for every
+ * current Object instead of re-deriving strength facts from legacy set metadata. */
+const legacyV61TimelineWriter="for(const r of $$('#eventList [data-event]')){const e=(c.active?.events||[]).find(x=>x.id===r.dataset.event);if(e?.kind==='strength'){const sm=$('small',r),v=summary(e);if(sm&&sm.textContent!==v)sm.textContent=v}}";
+const canonicalV61TimelineWriter="for(const r of $$('#eventList [data-event]')){const e=(c.active?.events||[]).find(x=>x.id===r.dataset.event);if(e){const sm=$('small',r),v=window.__AXIS_821_EVENT_PRESENTATION__?.summary?.(e)||summary(e);if(sm&&sm.textContent!==v)sm.textContent=v}}";
+src=convergeOwnedLiteral(src,'v61.js',legacyV61TimelineWriter,canonicalV61TimelineWriter,'v61 inherited Timeline fact observer');
+
 /* v82 starts/pauses/resumes Activities after app.render(). Reassert the base
  * event summary at that exact later lifecycle boundary, then append status. */
 src=replaceModuleFunction(
@@ -117,6 +125,9 @@ const finalRenderer=moduleFunctionRange(src,'app.js','function eventHtml(e)','fi
 if(!finalRenderer.includes('axis821EventMetricSummary(e)'))fail('final timeline is not Encounter-schema driven');
 if(finalRenderer.includes("e.kind==='strength'")||finalRenderer.includes('e.weight')||finalRenderer.includes('e.reps'))fail('legacy strength/cardio timeline derivation survived canonicalization');
 if(/undefined次|undefined组|NaN/.test(finalRenderer))fail('invalid metric presentation token survived final renderer');
+const v61Decorate=moduleFunctionRange(src,'v61.js','function decorate()','v61 inherited Timeline observer').text;
+if(!v61Decorate.includes('__AXIS_821_EVENT_PRESENTATION__'))fail('v61 inherited Timeline observer does not consume canonical Encounter presentation bridge');
+if(v61Decorate.includes(legacyV61TimelineWriter))fail('legacy v61 strength-only Timeline fact writer survived final convergence');
 for(const [file,signature,label] of [['v82-runtime.js','function decorateTimeline()','v82 timeline'],['v87-runtime.js','function renderTimeline()','v87 timeline']]){
  const fn=moduleFunctionRange(src,file,signature,label).text;if(!fn.includes('__AXIS_821_EVENT_PRESENTATION__'))fail(`${label} does not consume canonical Encounter presentation bridge`);
 }
@@ -142,4 +153,4 @@ info.assets=info.assets||{};info.assets.core=newHash;
 info.gates={...(info.gates||{}),executableObjectSchemaAwareTimeline821:true,activeTimelineSchemaAware821:true,adjustOnceExecutionScoped821:true};
 info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,adjustOnce:'sets-only',legacyFallback:'snapshot-absent-only',postCanonical:true,ownerScoped:true,idempotent:true}};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
-console.log(`[AXIS 8.21 final Object presentation] PASS · app/v82/v87/v879 owner-scoped Encounter formatter · Adjust Once execution-scoped · core ${oldHash}->${newHash}`);
+console.log(`[AXIS 8.21 final Object presentation] PASS · app/v61/v82/v87/v879 owner-scoped Encounter formatter · Adjust Once execution-scoped · core ${oldHash}->${newHash}`);
