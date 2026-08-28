@@ -1,0 +1,42 @@
+name: AXIS 8.21 source owner migration
+
+on:
+  push:
+    branches:
+      - refactor/821-active-projection-source-owner
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Apply bounded source-owner migration
+        run: node scripts/migrate-821-active-projection-source-owner.mjs
+      - name: Verify source syntax and diff
+        run: |
+          node --check v82-runtime.js
+          node --check v87-runtime.js
+          node --check postbuild-821-executable-object-presentation-seal.mjs
+          git diff --check
+      - name: Seal migration commit locally
+        run: |
+          git rm scripts/migrate-821-active-projection-source-owner.mjs
+          git rm .github/workflows/axis-821-source-owner-migration.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add v82-runtime.js v87-runtime.js postbuild-821-executable-object-presentation-seal.mjs
+          git commit -m "refactor(8.21): source-own Active projection"
+      - name: Build exact migrated release
+        run: node build-release.mjs
+      - name: Push sealed migration
+        run: |
+          git reset --hard HEAD
+          git push origin HEAD:refactor/821-active-projection-source-owner
