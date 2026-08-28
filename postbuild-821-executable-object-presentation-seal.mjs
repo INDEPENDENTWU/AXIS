@@ -65,6 +65,25 @@ src=replaceModuleFunction(
  'final timeline event renderer'
 );
 
+/* 8.21 source preparation must not undo the 8.18 atomic detail handoff. The
+ * final app owner keeps one transaction commit for title + facts, while the
+ * existing async media hydrator remains additive. The factual rows consume the
+ * immutable Encounter schema so custom Objects never fall back to strength/cardio. */
+src=replaceModuleFunction(
+ src,
+ 'app.js',
+ "function axis818DetailStage(e,eq,media='')",
+ `function axis818DetailStage(e,eq,media=''){const rows=[['主要锻炼',(e.muscles||eq.muscles||[]).join(' · ')||'—'],...axis821EventMetricEntries(e).map(x=>[x.label,x.text]),['记录时间',dlabel(e.time)+' '+tlabel(e.time)]],buttons=[];if(e.frameRefs?.length)buttons.push('<button id="axis818SavePhotos">保存照片</button>');if(e.clipRef)buttons.push('<button id="axis818SaveVideo">保存视频</button>');if(e.frameRefs?.length&&e.clipRef)buttons.push('<button id="axis818SaveAll">保存全部</button>');buttons.push('<button class="axis818DeleteEvent" id="axis818DeleteEvent">删除记录</button>');const stage=D.createElement('div');stage.innerHTML=(media||'')+'<div class="detailList">'+rows.map(r=>'<div class="detailRow"><span>'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>').join('')+'</div><div class="detailActions axis818DetailActions">'+buttons.join('')+'<button id="makeSessionReport">训练报告</button></div>';return stage}`,
+ 'schema-aware atomic detail stage'
+);
+src=replaceModuleFunction(
+ src,
+ 'app.js',
+ 'async function openEvent(id)',
+ `async function openEvent(id){const e=allEvents().find(x=>x.id===id);if(!e)return;const txn=++axis89DetailTxn,eq=eventEq(e);axis89CommitDetail(txn,e.name,axis818DetailStage(e,eq,''),[],()=>axis818BindDetailActions(e));void axis818HydrateEventMedia(txn,e,eq)}`,
+ 'schema-aware atomic event detail'
+);
+
 /* v61 is an inherited timeline observer and can repaint the first <small> after
  * app/v82/v87 have already rendered. Keep its scheduling/observer ownership, but
  * make the factual text delegate to the app-owned Encounter formatter for every
@@ -125,6 +144,11 @@ const finalRenderer=moduleFunctionRange(src,'app.js','function eventHtml(e)','fi
 if(!finalRenderer.includes('axis821EventMetricSummary(e)'))fail('final timeline is not Encounter-schema driven');
 if(finalRenderer.includes("e.kind==='strength'")||finalRenderer.includes('e.weight')||finalRenderer.includes('e.reps'))fail('legacy strength/cardio timeline derivation survived canonicalization');
 if(/undefined次|undefined组|NaN/.test(finalRenderer))fail('invalid metric presentation token survived final renderer');
+const atomicDetail=moduleFunctionRange(src,'app.js','async function openEvent(id)','schema-aware atomic event detail').text;
+const detailStage=moduleFunctionRange(src,'app.js',"function axis818DetailStage(e,eq,media='')",'schema-aware atomic detail stage').text;
+if(!atomicDetail.includes('axis89CommitDetail(txn,e.name,axis818DetailStage(e,eq,\'\')')||!atomicDetail.includes('void axis818HydrateEventMedia(txn,e,eq)'))fail('event detail lost atomic facts-first handoff');
+if(atomicDetail.includes("setText('#detailTitle'")||/await\s+(?:mediaUrl|axis89MediaUrl|getMedia)\s*\(/.test(atomicDetail))fail('event detail reintroduced title/media precommit');
+if(!detailStage.includes('axis821EventMetricEntries(e)'))fail('event detail stage is not Encounter-schema driven');
 const v61Decorate=moduleFunctionRange(src,'v61.js','function decorate()','v61 inherited Timeline observer').text;
 if(!v61Decorate.includes('__AXIS_821_EVENT_PRESENTATION__'))fail('v61 inherited Timeline observer does not consume canonical Encounter presentation bridge');
 if(v61Decorate.includes(legacyV61TimelineWriter))fail('legacy v61 strength-only Timeline fact writer survived final convergence');
@@ -150,7 +174,7 @@ fs.writeFileSync(runtimeFile,src);
 html=html.replace(`/axis-core.js?v=${oldHash}`,`/axis-core.js?v=${newHash}`);fs.writeFileSync(indexFile,html);
 const info=JSON.parse(fs.readFileSync(infoFile,'utf8'));
 info.assets=info.assets||{};info.assets.core=newHash;
-info.gates={...(info.gates||{}),executableObjectSchemaAwareTimeline821:true,activeTimelineSchemaAware821:true,adjustOnceExecutionScoped821:true};
-info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,adjustOnce:'sets-only',legacyFallback:'snapshot-absent-only',postCanonical:true,ownerScoped:true,idempotent:true}};
+info.gates={...(info.gates||{}),executableObjectSchemaAwareTimeline821:true,activeTimelineSchemaAware821:true,adjustOnceExecutionScoped821:true,eventDetailAtomicSchemaAware821:true};
+info.axis821={...(info.axis821||{}),executableObjectPresentation:{schemaAwareTimeline:true,activeRepaintSchemaAware:true,atomicSchemaAwareDetail:true,adjustOnce:'sets-only',legacyFallback:'snapshot-absent-only',postCanonical:true,ownerScoped:true,idempotent:true}};
 fs.writeFileSync(infoFile,JSON.stringify(info,null,2));
-console.log(`[AXIS 8.21 final Object presentation] PASS · app/v61/v82/v87/v879 owner-scoped Encounter formatter · Adjust Once execution-scoped · core ${oldHash}->${newHash}`);
+console.log(`[AXIS 8.21 final Object presentation] PASS · app/v61/v82/v87/v879 owner-scoped Encounter formatter · atomic schema-aware event detail · Adjust Once execution-scoped · core ${oldHash}->${newHash}`);
