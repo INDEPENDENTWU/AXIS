@@ -1,0 +1,36 @@
+name: AXIS 8.21 Metric Source Repair
+
+on:
+  push:
+    branches:
+      - fix/821-native-flow-recording-convergence
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/821-native-flow-recording-convergence
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply metric source repair
+        run: node scripts/axis-821-metric-source-repair.mjs
+      - name: Validate repaired source
+        run: |
+          node --check prepare-821-metric-control-system.mjs
+          git diff --check
+      - name: Commit clean metric repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 1
+          git commit -m "AXIS 8.21 — correct metric control generation boundary"
+          git push origin HEAD:fix/821-native-flow-recording-convergence
