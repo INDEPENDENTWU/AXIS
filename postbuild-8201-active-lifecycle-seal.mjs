@@ -10,9 +10,12 @@ const replaceRange=(re,mutate,label)=>{const flags=re.flags.includes('g')?re.fla
 
 /* Historical 8.19 guard remains the single startActivity gate, but 8.20.1
    supersedes only its eligibility semantics after every inherited contract passed.
-   An explicit empty Encounter schema is distinct from a legacy missing snapshot. */
+   An explicit empty Encounter schema is distinct from a legacy missing snapshot.
+   AXIS 8.21 adds one narrow exception: an Encounter already committed as an
+   immutable Flow whole-item fact may use the same v82/v87 Active lifecycle even
+   when the reusable Object's ordinary execution mode is single/complete. */
 const old="function axis819ClassicActivityEncounter(x){let e=x&&typeof x==='object'?(x.e&&typeof x.e==='object'?x.e:x):null;if(!e){try{const c=readCore(),all=[...(c.active?.events||[]),...(c.sessions||[]).flatMap(s=>s?.events||[])];e=all.find(v=>v?.id===x)||null}catch{}}const schema=Array.isArray(e?.metricSchemaSnapshot)?e.metricSchemaSnapshot:null;if(schema===null)return true;const keys=new Set(schema.map(m=>m?.key||m?.id).filter(Boolean));return keys.has('weight')&&keys.has('reps')}";
-const next="function axis819ClassicActivityEncounter(x){let e=x&&typeof x==='object'?(x.e&&typeof x.e==='object'?x.e:x):null;if(!e){try{const c=readCore(),all=[...(c.active?.events||[]),...(c.sessions||[]).flatMap(s=>s?.events||[])];e=all.find(v=>v?.id===x)||null}catch{}}const schema=Array.isArray(e?.metricSchemaSnapshot)?e.metricSchemaSnapshot:null;if(schema===null)return true;const explicit=String(e?.executionModeSnapshot||'').trim();if(['sets','rounds','timed','hold'].includes(explicit))return true;if(['single','complete'].includes(explicit))return false;const keys=new Set(schema.map(m=>m?.key||m?.id).filter(Boolean));if(keys.has('hold'))return true;if(keys.has('weight')&&keys.has('reps'))return true;if(keys.has('duration'))return true;return false}";
+const next="function axis819ClassicActivityEncounter(x){let e=x&&typeof x==='object'?(x.e&&typeof x.e==='object'?x.e:x):null;if(!e){try{const c=readCore(),all=[...(c.active?.events||[]),...(c.sessions||[]).flatMap(s=>s?.events||[])];e=all.find(v=>v?.id===x)||null}catch{}}const schema=Array.isArray(e?.metricSchemaSnapshot)?e.metricSchemaSnapshot:null;if(schema===null)return true;const flowItem=e?.flowItemUnit==='item'&&e?.flowProvenance?.schema==='axis.flow-provenance.v1';if(flowItem)return true;const explicit=String(e?.executionModeSnapshot||'').trim();if(['sets','rounds','timed','hold'].includes(explicit))return true;if(['single','complete'].includes(explicit))return false;const keys=new Set(schema.map(m=>m?.key||m?.id).filter(Boolean));if(keys.has('hold'))return true;if(keys.has('weight')&&keys.has('reps'))return true;if(keys.has('duration'))return true;return false}";
 replaceOnce(old,next,'8.19 Active Truth helper');
 
 /* v82 keeps activity creation. Its visible legacy rail and the 8.12.4 completion
@@ -37,8 +40,9 @@ if((src.match(/function axis819ClassicActivityEncounter\(/g)||[]).length!==1)fai
 if((src.match(/const axis819ActivityTarget=arguments\[0\]/g)||[]).length!==1)fail('startActivity guard must remain exactly once');
 if((src.match(/function axis818TracksSets\(/g)||[]).length!==1)fail('v87 set predicate must remain single-owner');
 if(!src.includes("function axis818TracksSets(e){return axis8201SetExecution(e)}"))fail('v87 set predicate did not adopt execution mode');
+if(!src.includes("e?.flowItemUnit==='item'&&e?.flowProvenance?.schema==='axis.flow-provenance.v1'"))fail('whole-item Flow Active eligibility missing');
 if(!src.includes("['sets','rounds','timed','hold'].includes(explicit)"))fail('persistent executable modes missing');
-if(!src.includes("['single','complete'].includes(explicit)"))fail('one-shot executable modes missing');
+if(!src.includes("['single','complete'].includes(explicit)"))fail('ordinary one-shot executable modes missing');
 if(!src.includes("const schema=Array.isArray(e?.metricSchemaSnapshot)?e.metricSchemaSnapshot:null;if(schema===null)return true;"))fail('explicit empty Encounter schema authority lost');
 if(!src.includes("axis819CommittedKeys.has('weight')&&axis819CommittedKeys.has('reps')"))fail('v61 classic immutable-schema authority changed');
 if(!src.includes('function axis8201SetExecution(e)'))fail('execution presentation helper missing');
@@ -52,16 +56,17 @@ if(fs.existsSync(MANIFEST)){
  info.gates.executableObjectLiveSchemaSync8201=true;
  info.gates.activeLifecycleExecutionMode8201=true;
  info.gates.activeLifecycleSingleCompleteNoFalseActive8201=true;
+ info.gates.activeLifecycleWholeItemFlow821=true;
  info.gates.activePresentationExecutionMode8201=true;
  info.gates.customEnumLocalized8201=true;
  info.gates.evolutionShelfLocalized8201=true;
  info.axis8201={
   objectTruth:{liveSchemaSync:true,extendedMetricKeys:true,compatProjection:'recording.metrics-v2'},
-  active:{owner:'existing-v82/v87',executionModeAuthority:true,modes:['sets','rounds','timed','hold'],oneShotModes:['single','complete'],setControls:'sets-only',setPredicate:'axis818TracksSets -> axis8201SetExecution'},
+  active:{owner:'existing-v82/v87',executionModeAuthority:true,modes:['sets','rounds','timed','hold'],oneShotModes:['single','complete'],flowItemUnitOverride:'axis.flow-provenance.v1',setControls:'sets-only',setPredicate:'axis818TracksSets -> axis8201SetExecution'},
   localization:{internalEnumsPersisted:true,visibleChinese:true,evolutionShelf:true},
   ownership:{newPersistence:false,newDatabase:false,newRecorder:false,newActiveOwner:false}
  };
  if(info.axis819?.recording)info.axis819.recording.activeTruthClassicOnly=false;
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
-console.log('[AXIS 8.20.1 Active lifecycle seal] PASS · historical contracts verified first · explicit-empty Encounter authority retained · execution-mode Active eligibility · one canonical v87 set predicate superseded · v61 classic metadata authority unchanged');
+console.log('[AXIS 8.20.1 Active lifecycle seal] PASS · ordinary single/complete remain one-shot · proven Flow whole-items may reuse v82/v87 Active · execution-mode presentation preserved · no new Active owner');
