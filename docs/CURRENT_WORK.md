@@ -1,6 +1,6 @@
 # Current Work
 
-## Production baseline
+## Production baseline at start of this work
 
 AXIS **8.21** is Production-sealed.
 
@@ -17,29 +17,13 @@ AXIS **8.21** is Production-sealed.
 
 The runtime baseline SHA is durable product release evidence. It is intentionally not defined as “the latest documentation/governance deployment SHA,” because a governance-only commit can itself cause a new provider deployment without changing product runtime behavior.
 
-## Product state already sealed
-
-The following 8.21 behavior is complete and must be preserved:
-
-- source-owned localized Quick Record saved-item metadata
-- explicit Object metric/execution semantics with immutable Encounter snapshots
-- one complete Object as the Flow completion unit
-- direct Flow current-item start through existing v82/v87 Active owners
-- pause/resume/hold-finish delegation through those owners
-- explicit Quick Record detours that do not consume/advance the Flow item
-- ordinary `single/complete` one-shot behavior outside Flow
-- narrow immutable Flow whole-item reuse of the existing Active lifecycle
-- smart run-only item/gap planning and native Today Flow projection
-- quantity/time/pace/scale/choice metric controls under the existing recorder owner
-- applicable number/unit optical centering physically asserted at **≤ 0.5 CSS px**
-- symmetric/full-width preset geometry
-- no new Session, Encounter, Active, recorder, database or persistence owner
+The following 8.21 behavior is already sealed and must be preserved: source-owned localized Quick Record saved-item metadata; explicit Object metric/execution semantics with immutable Encounter snapshots; one complete Object as the Flow completion unit; direct Flow current-item start through existing v82/v87 Active owners; pause/resume/hold-finish delegation through those owners; explicit Quick Record detours that do not consume/advance the Flow item; ordinary `single/complete` one-shot behavior outside Flow; narrow immutable Flow whole-item reuse of the existing Active lifecycle; smart run-only item/gap planning; quantity/time/pace/scale/choice metric controls; applicable number/unit optical centering at **≤ 0.5 CSS px**; symmetric/full-width preset geometry; and no new Session, Encounter, Active, recorder, database or persistence owner.
 
 All ten formal PR workflow families passed on the exact PR #108 head before merge. Merged-main Vercel and EdgeOne Production verification also passed.
 
-## Active milestone
+## Active change
 
-**AXIS 8.21 — Post-release Architecture Governance**
+**AXIS 8.21 — Post-release Architecture Governance · Production governance truth reconciliation**
 
 - governed active branch: `main`
 - public identity change: **none; remains 8.21**
@@ -49,20 +33,22 @@ All ten formal PR workflow families passed on the exact PR #108 head before merg
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`
 
-## Current bounded change
+This bounded change is governance-only. It repairs stale repository authority that still described 8.20.1 after the real 8.21 product had already been sealed.
 
-**Production governance truth reconciliation**
+It also defines a sustainable Production evidence model: `productionRuntimeSha` is the last runtime-changing product commit sealed through Production, while provider deployment IDs are that release's evidence snapshot. A later governance-only deployment may have a newer source SHA without changing the sealed runtime baseline; current provider truth remains externally verified by deployment gates.
 
-This change is governance-only. It repairs stale repository authority that still described 8.20.1 after the real 8.21 product had already been sealed.
+## Validation for this work
 
-Required outcomes:
+This governance reconciliation is mergeable only if all of the following are true without weakening existing product assertions:
 
 1. `governance/project-state.json`, README, HANDOFF and CURRENT_RELEASE all identify AXIS 8.21 as current.
-2. owner and retirement registries use 8.21 as their baseline and capture the final whole-item Flow ownership/retirement rules.
+2. owner and retirement registries use 8.21 as their baseline and encode the final whole-item Flow ownership/retirement rules.
 3. provider IDs are explicitly described as the **8.21 product/runtime seal evidence snapshot**, not a self-referential promise to equal every later governance-only deployment.
-4. a dedicated Production Governance Contract independently reads the actual current release owner and fails if governed current release drifts behind it again.
-5. the existing Repository Contract, build/runtime/product gates and canonical artifact behavior remain unchanged.
-6. no runtime, storage, recorder, Object, Encounter, Active or Flow product code changes occur in this governance reconciliation.
+4. `scripts/axis-production-governance-contract.mjs` independently reads the current release owner and fails if governed current release drifts behind it again.
+5. the existing Repository Contract and Work Continuity Contract both pass with their established machine-readable handoff structure intact.
+6. Runtime, Current Release, Deep Compatibility, Runtime Foundation, UPO, Cross-Platform, PR Convergence and EdgeOne gates remain green.
+7. canonical product runtime behavior, factual ownership, persistence semantics and artifact topology remain unchanged.
+8. no runtime, storage, recorder, Object, Encounter, Active or Flow product code is changed by this PR.
 
 ## Next planned stage
 
