@@ -14,4 +14,5 @@ const stateAt=app.indexOf('let state={'),closeAt=app.indexOf('})();'),consumerAt
 if(!(stateAt>=0&&consumerAt>stateAt&&consumerAt<closeAt))fail('Flow coordination consumers are outside canonical app owner');
 if(app.slice(closeAt).includes("D.addEventListener('click',e=>{if(e.target.closest?.('[data-axis-flow-switch-cancel]')"))fail('app-private Flow click consumer survives after canonical owner');
 if(app.includes("[data-axis-flow-active-set]"))fail('retired set-level Flow action returned');
+if(!app.includes('function axis821FlowToggleCurrentActive()')||!app.includes("own.status==='active'")||!app.includes('api.pause?.(id)===true')||!app.includes("own.status==='paused'")||!app.includes('return axis821BeginCurrentItem()'))fail('Flow Active toggle lost v87 pause / conflict-safe resume delegation');
 console.log('[AXIS 8.21 Flow Session coordination scope] PASS · whole-item consumers app-scoped · current item direct start · detour only Quick route · v82/v87 owners preserved · one Encounter writer');
