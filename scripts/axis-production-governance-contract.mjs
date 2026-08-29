@@ -78,7 +78,8 @@ has(handoff,releaseLabel,'HANDOFF');
 has(handoff,prLabel,'HANDOFF');
 has(currentRelease,releaseLabel,'CURRENT_RELEASE');
 has(currentRelease,prLabel,'CURRENT_RELEASE');
-has(currentRelease,'product/runtime seal evidence snapshot','CURRENT_RELEASE self-reference semantics');
+has(currentRelease,'runtime seal baseline','CURRENT_RELEASE durable baseline semantics');
+has(currentRelease,'not a self-referential requirement','CURRENT_RELEASE non-self-referential semantics');
 has(currentWork,project.engineering.activeMilestone,'CURRENT_WORK');
 has(currentWork,'governed active branch: `main`','CURRENT_WORK');
 
