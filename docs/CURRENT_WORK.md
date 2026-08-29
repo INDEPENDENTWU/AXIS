@@ -79,3 +79,13 @@ After PR #107 is fully green, merge it with the exact tested head, then verify t
 The broader direction remains incremental and evidence-preserving: retire historical `prepare-*` / `postbuild-*` behavioral mutation one owner at a time, move behavior into explicit canonical source owners, and keep every bounded PR behavior-compatible and dual-engine green. Do not combine multiple ownership families into one large rewrite.
 
 Chat history is not authoritative project memory. GitHub governance, contracts, exact `main`, deterministic build output and Production evidence are authoritative.
+
+
+## AXIS 8.21 native Flow / recording convergence — active work
+
+- Certified rollback baseline before this work: `a591f40d093280a30cb0991e3623aae30276e0db`.
+- Single bounded branch: `fix/821-native-flow-recording-convergence`; no additional product branches are required.
+- Scope: source-own Quick Record saved-item metadata in `v61.js`; enforce optical center/full-width metric geometry in the existing 8.21 metric-control owner; restore Flow semantics so one complete Object is the execution unit and `开始此项` starts the existing v82/v87 Active lifecycle directly rather than opening Quick Record; keep Quick Record only for explicit temporary/detour records; render Flow Active/timeline/queue as native Today content; add smart run-only item/gap estimates.
+- Ownership constraints: no new persistence namespace, recorder, Encounter writer, Activity owner, Flow truth owner, or schema migration. Existing `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, and `axis.flow-provenance.v1` remain authoritative.
+- Cross-platform foundation remains `axis-native-foundation-0` and native repository remains `INDEPENDENTWU/AXIS-iOS`. Governed milestone remains `AXIS 8.21 — Flow / Session Blueprint` on `product/821-flow-session-blueprint`.
+- Merge criterion: unchanged inherited suites plus new dual-engine whole-item Flow, Quick metadata and <=0.5px value/unit optical-center proofs; then exact Vercel fixed-Production and EdgeOne Production parity before sealing.
