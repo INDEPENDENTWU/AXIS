@@ -55,6 +55,8 @@ const boot82=()=>{
     rec.activity={status:'active',startedAt:t,lastResumedAt:t,pausedAt:null,finishedAt:null,estimateMs:customEstimate||autoEstimate(e),intervals:[{start:t,end:null}],completedSets:0,setDoneAt:[],restStartedAt:null,restNotified:false,actualMs:null};
     writeMeta(m);renderActiveRail();decorateTimeline();try{window.dispatchEvent(new CustomEvent('axis:active-truth-changed',{detail:{id:e.id,status:'active'}}))}catch{};
   }
+  function axis821StartExistingActivity(id,customEstimate){const e=currentSession()?.events?.find(x=>x.id===id);if(!e)return false;const a=activityFor(id);if(a?.status==='active')return true;if(a?.status==='finished')return false;if(a?.status==='paused'){resumeActivity(id);return activityFor(id)?.status==='active'}startActivity(e,customEstimate);return activityFor(id)?.status==='active'}
+  window.__AXIS_ACTIVE_START__={version:'8.21',owner:'v82',truth:'axis_v8_meta',start:axis821StartExistingActivity};
   function pauseActivity(id){const m=readMeta(),a=m.events?.[id]?.activity;if(!a||a.status!=='active')return;closeOpenInterval(a);a.status='paused';a.pausedAt=now();a.restStartedAt=null;writeMeta(m);renderActiveRail();decorateTimeline()}
   function resumeActivity(id){const m=readMeta(),a=m.events?.[id]?.activity;if(!a||a.status==='finished')return;pauseOthers(id);const mm=readMeta(),aa=mm.events?.[id]?.activity;if(!aa)return;aa.status='active';aa.lastResumedAt=now();aa.pausedAt=null;aa.intervals=aa.intervals||[];aa.intervals.push({start:now(),end:null});writeMeta(mm);renderActiveRail();decorateTimeline()}
   function finishActivity(id){

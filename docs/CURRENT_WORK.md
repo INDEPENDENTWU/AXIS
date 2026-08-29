@@ -79,3 +79,18 @@ After PR #107 is fully green, merge it with the exact tested head, then verify t
 The broader direction remains incremental and evidence-preserving: retire historical `prepare-*` / `postbuild-*` behavioral mutation one owner at a time, move behavior into explicit canonical source owners, and keep every bounded PR behavior-compatible and dual-engine green. Do not combine multiple ownership families into one large rewrite.
 
 Chat history is not authoritative project memory. GitHub governance, contracts, exact `main`, deterministic build output and Production evidence are authoritative.
+
+
+## AXIS 8.21 native Flow / recording convergence — active work
+
+- Certified rollback baseline before this work: `a591f40d093280a30cb0991e3623aae30276e0db`.
+- Single bounded branch: `fix/821-native-flow-recording-convergence`; no additional product branches are required.
+- Scope: source-own Quick Record saved-item metadata in `v61.js`; enforce optical center/full-width metric geometry in the existing 8.21 metric-control owner; restore Flow semantics so one complete Object is the execution unit and `开始此项` starts the existing v82/v87 Active lifecycle directly rather than opening Quick Record; keep Quick Record only for explicit temporary/detour records; render Flow Active/timeline/queue as native Today content; add smart run-only item/gap estimates.
+- Ownership constraints: no new persistence namespace, recorder, Encounter writer, Activity owner, Flow truth owner, or schema migration. Existing `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, and `axis.flow-provenance.v1` remain authoritative.
+- Cross-platform foundation remains `axis-native-foundation-0` and native repository remains `INDEPENDENTWU/AXIS-iOS`. Governed milestone remains `AXIS 8.21 — Flow / Session Blueprint` on `product/821-flow-session-blueprint`.
+- Source-owner repair after the first PR gate: the inherited 8.17 interaction build still requires the Quick media evidence hook. `ensureQuickMedia()` is now source-owned in `v61.js` beside the Quick shell/metadata owner instead of restoring the retired 8.8.2 Quick renderer mutation. No additional runtime or persistence owner was introduced.
+- Metric generation repair after the second PR gate: optical-fit listeners are generated into the canonical `app.js` runtime instead of executing in the Node prepare script; initial numeric width is emitted with each quantity/time control, then the same runtime fit helper updates width after direct input, step and preset changes. The physical centering thresholds remain unchanged.
+- Whole-item build-contract convergence: stale set-level Flow proof tokens were retired; Flow click/pointer/timer consumers now emit inside the canonical app lexical owner; the retired Flow `active-set` action no longer exists; the coordination scope explicitly proves zero app-private Flow consumer leakage after the app IIFE.
+- Deterministic release proof: the clean formal source set completed `build-release.mjs` successfully after the ownership and verifier convergence. Generated build mutations were not published to the branch; the final net diff remains bounded to source/test/governance files only.
+- Flow Active control repair from physical Current Release proof: the integrated Flow pause control now delegates active→pause directly to the existing v87 Active API, while paused→resume continues through the established conflict-safe Flow path. The scope contract verifies both branches and the exact deterministic release build is green with this delegation.
+- Merge criterion: unchanged inherited suites plus new dual-engine whole-item Flow, Quick metadata and <=0.5px value/unit optical-center proofs; then exact Vercel fixed-Production and EdgeOne Production parity before sealing.
