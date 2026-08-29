@@ -62,4 +62,4 @@ After this governance reconciliation is fully green and merged:
 
 Do not combine the Node toolchain change with source-owner governance. Do not perform a giant rewrite. Each bounded change must be independently reversible and green.
 
-Chat history is supplementary context. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
+Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
