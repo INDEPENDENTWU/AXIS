@@ -1,137 +1,107 @@
-# Current Release — AXIS 8.20.1
+# Current Release — AXIS 8.21
 
 **Status: Production sealed**
 
-AXIS 8.20.1 is the current public Web release and the baseline for AXIS 8.21 development.
+AXIS **8.21** is the current public Web release. This document records the product/runtime seal baseline. It deliberately does **not** claim that its recorded provider deployment IDs will forever be the latest deployment: later governance-only commits can redeploy `main` without changing the sealed runtime behavior.
 
 ## Exact release identity
 
-- release: **8.20.1 — Executable Object Reliability**
-- exact merged-main SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
+- release: **AXIS 8.21 — Executable Object System + native whole-item Flow**
+- release PR: **#108**
+- sealed runtime baseline SHA: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - architecture: `canonical-single-runtime`
-- release build: `node build-release.mjs`
-- core hash: `1269a6183152`
-- CSS hash: `fc372a0bf2f9`
-- initial JavaScript requests: `1`
-- dynamic JavaScript requests: `0`
+- deterministic build: `node build-release.mjs`
+- release build: **89 deterministic top-level steps**
+- canonical topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
 
-## Production providers
+The SHA above is the last runtime-changing product commit sealed through both providers. It is a durable release baseline, not a self-referential requirement that every later documentation/governance deployment use the same Git SHA.
+
+## Production seal evidence
 
 ### Vercel
 
-- fixed URL: `https://axis-five-puce.vercel.app`
-- deployment: `dpl_HWt8nGboTeNGBTdkqqJv9wsyMJaD`
+- public alias: `https://axis-five-puce.vercel.app`
+- seal deployment: `dpl_4ac8LR615ULNWJ45m1kSB7A6q9jX`
+- seal source SHA: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - state: **READY**
-- target: `production`
-- source SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
-- Public Production Alias Gate: **success**
-- current Production Deployment Gate run `32812905314`: **success**
-- exact local/remote manifest + immutable asset verification: **success**
-- real Chromium inherited foundation + current 8.20.1 flow: **success**
+- target: **Production**
+- AXIS Production Deployment Gate: `33278987731` — **success**
+- AXIS Public Production Alias Gate: `33278987745` — **success**
+- exact manifest / immutable asset parity: **success**
+- real current-release Chromium Production flow: **success**
+- Vercel runtime error query after seal: **no runtime errors found**
 
 ### EdgeOne
 
-- fixed URL: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
-- deployment: `dpemq8bxjopa`
-- verification workflow run: `32812883590`
-- source SHA: `fdbfea738489fca6b19b3c8c7b502977373e4e4f`
-- package contract: **success**
-- exact prebuilt deployment: **success**
-- bounded fixed-domain release convergence: **success**
-- Vercel canonical/API parity: **success**
-- real Chromium current-release flow: **success**
-- real iPhone-like WebKit current-release flow: **success**
-- final `EdgeOne Production` GitHub status: **success**
+- public mirror: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- seal deployment: `dpysj966i0hh`
+- seal verification run: `33278965885` — **success**
+- exact prebuilt 8.21 source/manifest parity with Vercel: **success**
+- seven API contracts matched Vercel: **success**
+- live Chromium product/Flow proof: **success**
+- live iPhone-like WebKit product/Flow proof: **success**
 
-The EdgeOne mirror publishes the already-verified prebuilt artifact. It is not allowed to reinterpret product source independently.
+EdgeOne remains an exact prebuilt-artifact mirror; it does not reinterpret product source independently of the verified Vercel release.
 
-## Product fixes sealed in 8.20.1
+## What 8.21 seals
 
-### 1. Explicit Object schema is executable truth
+### Object and recording truth
 
-A custom Object configured for fields such as `pace` or `duration + intensity` must immediately record those fields. It must not fall back to weight/reps/sets merely because an inherited coarse kind is `strength` or `cardio`.
+- Explicit Object `metricSchema` remains reusable Object truth.
+- `executionMode` remains separate from metric semantics: `single / sets / rounds / timed / hold / complete`.
+- Every saved Encounter freezes `metricSchemaSnapshot` + `executionModeSnapshot`.
+- Classic repeated weight+reps set facts remain v61-owned only when immutable Encounter schema grants that authority.
+- Quick Record saved-item metadata is source-owned and localized; raw internal `strength/cardio/...` enum IDs do not leak into user-facing saved-item metadata.
 
-The visible custom editor remains the established owner. Schema persistence waits for canonical Object creation and then converges live Object Truth without creating a second store.
+### Whole-item Flow
 
-### 2. Active lifecycle follows execution semantics
+- `axis.flow.v1` describes intended continuity; Flow is not historical truth.
+- A **complete Object is the Flow completion unit**. Set-level Flow completion authority is retired.
+- `开始此项` starts the current Flow item directly through the existing v82/v87 Active lifecycle instead of opening Quick Record configuration.
+- Pause/resume/finish continue to delegate to the established Active owners.
+- Explicit detours use canonical Quick Record as record-only actions and do not consume or advance the current Flow item.
+- Ordinary `single/complete` Objects remain one-shot outside Flow. Only an Encounter already frozen as an immutable Flow whole-item may reuse the existing v82/v87 Active lifecycle.
+- Flow definitions/run continuity stay inside `axis_v60_state`; no `axis_flow_*` storage namespace, new database, recorder, Encounter writer or Active owner exists.
 
-`metricSchema` answers **what to record**.
+### Metric controls and geometry
 
-`executionMode` answers **how the action progresses**.
+- Quantity, time, pace, scale and choice controls share the canonical recording owner.
+- Initial numeric width is resolved before interaction and the same fit helper updates after direct input, step and preset changes.
+- Value + unit optical alignment is physically asserted at **≤ 0.5 CSS px** where applicable.
+- Preset rails use symmetric, full-width geometry rather than content-width drift.
+- The strict physical assertions were not relaxed to make the release pass.
 
-Current modes:
+## Acceptance evidence
 
-- `single`
-- `sets`
-- `rounds`
-- `timed`
-- `hold`
-- `complete`
+The exact PR #108 head passed all ten formal PR workflow families before merge:
 
-Ongoing lifecycle:
+1. Current Release
+2. Runtime
+3. Deep Compatibility
+4. Runtime Foundation
+5. Universal Practice Object
+6. Repository Contract
+7. Work Continuity
+8. Cross-Platform Foundation
+9. PR Run Convergence
+10. EdgeOne Production Mirror
 
-- `sets`
-- `rounds`
-- `timed`
-- `hold`
+Chromium and iPhone-like WebKit both passed the current 8.21 Flow and executable Object paths. The merged-main Production deployment gate then passed exact manifest/assets plus real Production Chromium behavior. EdgeOne passed exact parity and dual-engine live verification.
 
-One-shot lifecycle:
+A `Branch hygiene` push run was cancelled only because the workflow intentionally uses one concurrency group with `cancel-in-progress: true`; the subsequent PR-close hygiene run completed successfully. It is not an unresolved release failure.
 
-- `single`
-- `complete`
+## Authoritative ownership after 8.21
 
-A duration-only Object such as a wall stand can therefore enter the polished existing `进行中` surface without pretending to be a set exercise. A pace-only one-shot record does not create false Active state.
+- Session / Object / Encounter truth: `app.js` / `axis_v60_state`
+- classic repeated-set facts: `v61.js` / `axis_v8_meta` when immutable schema permits
+- ongoing Active lifecycle/presentation: existing v82/v87 owners
+- Flow intent/orchestration: app-owned fields `axis_v60_state.flows` + `axis_v60_state.flowRun`
+- media persistence: established app owner / `axis_v42_media`
+- learning: isolated `axis_v89_speak`
+- portable semantics: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`
 
-Set-only UI such as `完成一组` / add-set behavior is allowed only when effective execution is actually `sets`.
+No factual owner was added by the 8.21 release.
 
-### 3. Classic ownership is preserved
+## Baseline for further work
 
-8.20.1 does not replace the proven classic strength path.
-
-`v61.js` remains authoritative for classic set metadata only when the immutable Encounter schema is genuinely weight+reps. The 8.19 immutable Encounter-schema authority remains intact.
-
-### 4. Internal enums stay internal
-
-Persisted compatibility IDs such as `strength`, `cardio` and `relative` remain stable internal data. Chinese visible product surfaces map them to product language rather than leaking raw enum strings.
-
-The derived Evolution/Object shelf remains read-only and uses user-facing product language.
-
-## Preserved owners and stores
-
-Authoritative persistence remains:
-
-- `axis_v60_state`
-- `axis_v8_meta`
-- `axis_v89_speak`
-- `axis_v42_media`
-
-No 8.20.1 product or deployment fix added a new database, recorder, Active owner, Encounter writer, media owner or sound owner.
-
-## Inherited capabilities still release-blocking
-
-The sealed release continues to protect:
-
-- Capture defaults and Scan 3/5-second sampling separation;
-- 30fps source-first media/watermark path;
-- Route Truth / foreground recovery;
-- Focus presentation-only semantics;
-- Media Evidence and factual Evolution;
-- Learning/Language Studio isolation;
-- historical session/data readability;
-- classic Group Plan and set behavior;
-- WebKit-safe media store behavior;
-- exact canonical topology.
-
-## Final verification shape
-
-The exact release candidate/main was accepted only after current Runtime, Current Release, Deep Compatibility, Repository, Work Continuity, Cross-Platform and Production verification completed without an unexplained red check.
-
-Historical Production workflows are now scope-aware. In particular, the historical `AXIS 8.12.x Production Gate` still runs its original checks for 8.12.1–8.12.4 but safely skips later releases instead of declaring them invalid.
-
-Current Production verification is release-agnostic: exact source SHA, current local manifest, immutable assets, runtime topology and capability contracts are authoritative rather than a manually maintained version allowlist.
-
-## Development baseline
-
-All AXIS 8.21 work must branch from or remain compatible with this exact sealed baseline unless a newer Production seal explicitly supersedes it.
-
-Current work: [`CURRENT_WORK.md`](CURRENT_WORK.md)
+Future work starts from AXIS **8.21** as the sealed product/runtime baseline. Post-release architecture governance must preserve this behavior while incrementally moving behavioral build-time mutation back into explicit source owners. Any later product behavior change requires its own bounded scope and physical proof.
