@@ -10,4 +10,8 @@ if(!v87.includes('__AXIS_ACTIVE_RUNTIME__')||!v87.includes("owner:'v87'"))fail('
 if((app.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append ownership drift');
 for(const forbidden of ['axis_flow_state','axis_flow_run',"localStorage.setItem('axis_flow",'localStorage.setItem("axis_flow'])if(app.includes(forbidden))fail(`forbidden Flow persistence owner returned · ${forbidden}`);
 if(!app.includes('axis821FlowActiveApi()?.get')&&!app.includes('axis821FlowActiveApi()?.current'))fail('Flow lost read-only Active projection');
-console.log('[AXIS 8.21 Flow Session coordination scope] PASS · current item direct whole-item start · detour only Quick route · v82/v87 owners preserved · one Encounter writer · no parallel persistence');
+const stateAt=app.indexOf('let state={'),closeAt=app.indexOf('})();'),consumerAt=app.indexOf("window.addEventListener('axis:active-started',e=>axis821FlowOnActiveStarted");
+if(!(stateAt>=0&&consumerAt>stateAt&&consumerAt<closeAt))fail('Flow coordination consumers are outside canonical app owner');
+if(app.slice(closeAt).includes("D.addEventListener('click',e=>{if(e.target.closest?.('[data-axis-flow-switch-cancel]')"))fail('app-private Flow click consumer survives after canonical owner');
+if(app.includes("[data-axis-flow-active-set]"))fail('retired set-level Flow action returned');
+console.log('[AXIS 8.21 Flow Session coordination scope] PASS · whole-item consumers app-scoped · current item direct start · detour only Quick route · v82/v87 owners preserved · one Encounter writer');

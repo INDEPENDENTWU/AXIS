@@ -80,7 +80,7 @@ const marker="window.__AXIS_821_RECORDING_SURFACE__={version:'8.21',owner:'app.j
 }
 
 for(const [f,tokens] of [
- ['app.js',['__AXIS_821_METRIC_CONTROLS__',"families:['quantity','time','pace','scale','choice']",'axis821PaceSeconds','data-axis821-pace-step','ratingDirectAndRail:true']],
- ['styles.css',['AXIS 8.21 Metric Control System','.axis821Stepper input{min-width:0','.axis821Rating{display:grid','.axis821Toggle{display:grid']]
+ ['app.js',['__AXIS_821_METRIC_CONTROLS__',"families:['quantity','time','pace','scale','choice']",'axis821PaceSeconds','axis821MetricFitInput','data-axis821-pace-step','ratingDirectAndRail:true']],
+ ['styles.css',['AXIS 8.21 Metric Control System','.axis821Stepper input{min-width:1ch','--axis821-preset-count','grid-template-columns:repeat(var(--axis821-preset-count,6)','.axis821Rating{display:grid','.axis821Toggle{display:grid']]
 ]){const s=read(f);for(const t of tokens)if(!s.includes(t))fail(`${f} missing ${t}`)}
 console.log('[AXIS 8.21 metric control system] PASS · one native Group Plan geometry + specialized quantity/time/pace/scale/choice semantics · no new schema/recorder/storage owner');

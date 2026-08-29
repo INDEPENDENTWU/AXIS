@@ -56,20 +56,22 @@ fs.writeFileSync(FILE,s);
 
 /*
  * Physical Flow proof is source-owned. Do not mutate tests during the build.
- * The current proof must exercise the visible integrated projection and retain
- * the inherited 8.12 pause-owned rest contract: set completion alone does not
- * start rest; pausing does.
+ * The current contract treats one complete Object as the Flow execution unit:
+ * current-item start bypasses Quick configuration, delegates pause/resume/finish
+ * to the existing Active owner, and only whole-item finish advances the cursor.
  */
 const SMOKE='scripts/axis-821-item-unit-flow-smoke.mjs';
 const smoke=fs.readFileSync(SMOKE,'utf8');
 for(const token of [
- "#axis821FlowHome [data-axis-flow-active-set]",
  "#axis821FlowHome [data-axis-flow-active-toggle]",
  "#axis821FlowHome [data-axis-flow-active-finish]",
- "Number(a?.completedSets)>=1&&a?.status==='active'&&!a?.restStartedAt",
- "a?.status==='paused'&&!!a?.restStartedAt",
- "integratedToggleDelegatesActiveOwner"
-])if(!smoke.includes(token))fail(`canonical Flow physical proof missing ${token}`);
+ "[data-axis-flow-active-set]').count(),0",
+ "current Flow start opened Quick configuration",
+ "first.flowItemUnit,'item'",
+ "activity?.status==='paused'",
+ "activity?.status==='active'",
+ "suggestedGapMs>=45000&&c.flowRun.suggestedGapMs<=120000"
+])if(!smoke.includes(token))fail(`canonical whole-item Flow physical proof missing ${token}`);
 if(smoke.includes("await tap(page.locator('#v87Primary'))")||smoke.includes("await tap(page.locator('#v87Toggle'))"))fail('Flow proof still drives hidden duplicate v87 controls');
 
-console.log('[AXIS 8.21 Flow Active boot scope] PASS · lifecycle listeners share private Flow scope · canonical smoke remains source-owned · pause-owned rest proof sealed · one Encounter append retained');
+console.log('[AXIS 8.21 Flow Active boot scope] PASS · lifecycle listeners share private Flow scope · canonical whole-item smoke remains source-owned · direct start/pause/resume/finish sealed · one Encounter append retained');
