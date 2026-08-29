@@ -1,0 +1,39 @@
+name: AXIS 8.21 Flow Toggle Owner Fix
+
+on:
+  push:
+    branches:
+      - fix/821-native-flow-recording-convergence
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/821-native-flow-recording-convergence
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Apply bounded Flow toggle fix
+        run: node scripts/axis-821-flow-toggle-owner-fix.mjs
+      - name: Validate formal source
+        run: |
+          node --check prepare-821-flow-session-coordination.mjs
+          node --check prepare-821-flow-session-coordination-scope.mjs
+          git diff --check
+      - name: Commit formal source before build
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 1
+          git commit -m "AXIS 8.21 — delegate Flow pause to canonical Active owner"
+          git push origin HEAD:fix/821-native-flow-recording-convergence
+      - name: Validate exact deterministic release without publishing build mutations
+        run: node build-release.mjs
