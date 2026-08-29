@@ -20,26 +20,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Source-own Quick media hook
+      - name: Apply source repair
+        run: node scripts/axis-821-source-repair.mjs
+      - name: Validate repaired source
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('v61.js')
-          s=p.read_text()
-          if 'function ensureQuickMedia(id)' not in s:
-              anchor='function showQuickEditor(id)'
-              if anchor not in s:
-                  raise SystemExit('showQuickEditor anchor missing')
-              fn="""function ensureQuickMedia(id){let box=$('#v882QuickMedia');if(!box){box=D.createElement('div');box.id='v882QuickMedia';box.className='v882QuickMedia v817QuickEvidence';box.innerHTML='<span>现场</span><button type=\"button\" class=\"v817QuickEvidenceBtn\" data-v882-media=\"photo\"><span>补拍照片 / 视频</span><i>›</i></button>';$('#saveScan')?.insertAdjacentElement('beforebegin',box);box.onclick=e=>{const b=e.target.closest('[data-v882-media]');if(!b)return;const eq=selected();if(!eq?.id)return toast('请先确认器械');window.__AXIS_CAPTURE__?.beginQuickMedia?.('photo',eq.id)}}box.classList.remove('hidden');box.dataset.eq=id||''}
-"""
-              s=s.replace(anchor,fn+anchor,1)
-          p.write_text(s)
-          PY
           node --check v61.js
           git diff --check
       - name: Commit clean source repair
         run: |
-          rm -f .github/workflows/axis-821-source-repair.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
