@@ -18,7 +18,6 @@ const inputOld="<input data-axis818-metric=\"'+key+'\" inputmode=\"'+inputmode+'
 const inputNew="<input data-axis818-metric=\"'+key+'\" inputmode=\"'+inputmode+'\" autocomplete=\"off\" style=\"width:'+valueChars+'ch\"";
 if((s.split(inputOld).length-1)!==1)throw new Error('[AXIS 8.21 metric repair] generic metric input anchor drift');
 s=s.replace(inputOld,inputNew);
-new Function(s);
 fs.writeFileSync(file,s);
 fs.rmSync('scripts/axis-821-metric-source-repair.mjs',{force:true});
 fs.rmSync('.github/workflows/axis-821-metric-source-repair.yml',{force:true});
