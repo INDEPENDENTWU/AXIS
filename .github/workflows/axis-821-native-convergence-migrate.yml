@@ -20,6 +20,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Harden one-shot migration template literals
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/axis-821-native-convergence-migrate.mjs')
+          s=p.read_text()
+          start="s=replaceFunction(s,'function openQuick()',`"
+          end="`,'v61 source-owned quick metadata');"
+          a=s.index(start)+len(start)
+          b=s.index(end,a)
+          segment=s[a:b].replace('${','\\${')
+          p.write_text(s[:a]+segment+s[b:])
+          PY
       - name: Apply source-owner convergence
         run: node scripts/axis-821-native-convergence-migrate.mjs
       - name: Validate migrated sources
