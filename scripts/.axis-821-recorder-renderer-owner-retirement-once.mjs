@@ -49,6 +49,18 @@ const once=(s,from,to,label)=>{const n=s.split(from).length-1;if(n!==1)fail(`${l
  s=once(s,marker,assertion+marker,'Object Capability renderer ownership assertion');write(file,s);
 }
 
+/* Runtime safety keeps lexical/sanitization ownership but becomes assertion-only
+ * for recorder presentation. It must never rewrite the canonical metric renderer. */
+{
+ const file='prepare-821-object-capability-runtime-safety.mjs';let s=read(file);
+ const startToken="const controlSignature='function axis821MetricControl(m,prev)';";
+ const endToken='/* Final lexical seal.';
+ const a=s.indexOf(startToken),b=s.indexOf(endToken,a);if(a<0||b<=a)fail('runtime-safety metric renderer block missing');
+ const replacement=`const controlSignature='function axis821MetricControl(m,prev)';\nconst control=functionRange(s,controlSignature,'metric-control-system recorder renderer');\nfor(const token of ['axis821MetricFamily(m)','AXIS821_RUNTIME_CAPABILITIES',\"if(kind==='pace'){\",'data-axis821-family','data-axis821-choice','data-axis821-pace-step','data-axis821-rate','data-axis821-bool'])if(!control.text.includes(token))fail('metric-control-system recorder renderer safety contract missing '+token);\nif(control.text.includes('km$/')||control.text.includes('km$'))fail('metric-control-system recorder renderer contains compiler-unsafe pace token');\n\n`;
+ s=s.slice(0,a)+replacement+s.slice(b);
+ write(file,s);
+}
+
 /* Final release seal only asserts the unified renderer; it does not repair it. */
 {
  const file='postbuild-821-executable-object-presentation-seal.mjs';let s=read(file);
@@ -57,4 +69,4 @@ const once=(s,from,to,label)=>{const n=s.split(from).length-1;if(n!==1)fail(`${l
  s=once(s,anchor,anchor+proof,'final unified renderer assertion');write(file,s);
 }
 
-console.log('[AXIS 8.21 recorder renderer owner retirement] staged · one Metric Control renderer owns geometry + capability semantics · downstream renderer replacements retired');
+console.log('[AXIS 8.21 recorder renderer owner retirement] staged · one Metric Control renderer owns geometry + capability semantics · downstream renderer replacements retired · runtime safety assertion-only');
