@@ -4,7 +4,7 @@ let s=fs.readFileSync(FILE,'utf8');
 const once=(from,to,label)=>{const n=s.split(from).length-1;if(n!==1)throw new Error(`${label} expected once, found ${n}`);s=s.replace(from,to)};
 
 const apiLine=` const editorApi="window.__AXIS_CUSTOM_EDITOR__.metricSchema=()=>axis818MetricDraft.map(x=>({...x}));";if((s.split(editorApi).length-1)!==1)fail('canonical custom-editor API anchor missing or duplicated');s=s.replace(editorApi,editorApi+"window.__AXIS_CUSTOM_EDITOR__.refresh=axis821RefreshCustomEditor;");\n`;
-const apiNext=apiLine+` const hookAnchor="function hook(){injectStyle();ensureProfessionalSelector();installEventObserver();tidyMusclePanel();patchSetPlan();";if((s.split(hookAnchor).length-1)!==1)fail('canonical v874 hook anchor missing or duplicated');s=s.replace(hookAnchor,hookAnchor+"if($('#customEqSheet')?.classList.contains('show'))axis821RefreshCustomEditor();");\n`;
+const apiNext=apiLine+` const hookBoundary="function hook(){";if((s.split(hookBoundary).length-1)!==1)fail('canonical v874 hook boundary missing or duplicated');s=s.replace(hookBoundary,hookBoundary+"if($('#customEqSheet')?.classList.contains('show'))axis821RefreshCustomEditor();");\n`;
 once(apiLine,apiNext,'v874 late-ready open-sheet catch-up');
 
 once(
