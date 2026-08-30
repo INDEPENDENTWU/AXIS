@@ -1,0 +1,38 @@
+name: AXIS 8.21 Metric Mount Nullsafe Once
+on:
+  push:
+    branches: [fix/821-quick-photo-metric-centering]
+    paths:
+      - scripts/.axis-821-metric-mount-nullsafe-once.mjs
+      - .github/workflows/axis-821-metric-mount-nullsafe-once.yml
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/821-quick-photo-metric-centering
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Apply null-safe canonical mount repair
+        run: node scripts/.axis-821-metric-mount-nullsafe-once.mjs
+      - name: Validate full deterministic release
+        run: |
+          node --check prepare-821-metric-control-system.mjs
+          cp prepare-821-metric-control-system.mjs /tmp/prepare-821-metric-control-system.mjs
+          node build-release.mjs
+          git reset --hard HEAD
+          cp /tmp/prepare-821-metric-control-system.mjs prepare-821-metric-control-system.mjs
+      - name: Commit formal repair and retire one-shot runner
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/axis-821-metric-mount-nullsafe-once.yml scripts/.axis-821-metric-mount-nullsafe-once.mjs
+          git add prepare-821-metric-control-system.mjs
+          git diff --cached --check
+          git commit -m "AXIS 8.21 — harden canonical metric editor mount"
+          git push origin HEAD:fix/821-quick-photo-metric-centering
