@@ -89,13 +89,9 @@ s=replaceFunction(
 );
 
 const controlSignature='function axis821MetricControl(m,prev)';
-const control=functionRange(s,controlSignature,'metric control');
-const paceStart=control.text.indexOf("if(kind==='pace'){");
-const paceEnd=control.text.indexOf('}const inputMode=',paceStart);
-if(paceStart<0||paceEnd<0)fail('pace control branch missing');
-const safePaceBranch=`if(kind==='pace'){return'<section class="axis821MetricControl" data-axis821-kind="pace" data-axis821-key="'+key+'">'+head+'<div class="axis821Direct"><input data-axis818-metric="'+key+'" inputmode="text" autocomplete="off" value="'+esc(axis821CleanPaceValue(value))+'" placeholder="5:30"><small>'+(unit||'min/km')+'</small></div></section>'}`;
-const controlText=control.text.slice(0,paceStart)+safePaceBranch+control.text.slice(paceEnd+1);
-s=s.slice(0,control.start)+controlText+s.slice(control.end);
+const control=functionRange(s,controlSignature,'metric-control-system recorder renderer');
+for(const token of ['axis821MetricFamily(m)','AXIS821_RUNTIME_CAPABILITIES',"if(kind==='pace'){",'data-axis821-family','data-axis821-choice','data-axis821-pace-step','data-axis821-rate','data-axis821-bool'])if(!control.text.includes(token))fail('metric-control-system recorder renderer safety contract missing '+token);
+if(control.text.includes('km$/')||control.text.includes('km$'))fail('metric-control-system recorder renderer contains compiler-unsafe pace token');
 
 /* Final lexical seal. All capability code that consumes private app helpers must
  * be before the proven canonical app close. */
