@@ -15,6 +15,7 @@ on:
       - 'prepare-8201-object-reliability.mjs'
       - 'prepare-821-object-capability-convergence.mjs'
       - 'prepare-821-executable-object-system-smoke-compat.mjs'
+      - 'prepare-821-metric-control-system.mjs'
       - 'postbuild-819-upo-seal.mjs'
       - 'postbuild-8201-active-lifecycle-seal.mjs'
       - 'prepare-820-release.mjs'
@@ -23,6 +24,8 @@ on:
       - 'scripts/axis-819-object-recording-smoke.mjs'
       - 'scripts/axis-820-executable-object-smoke.mjs'
       - 'scripts/axis-8201-object-reliability-smoke.mjs'
+      - 'scripts/axis-821-recording-property-surface-smoke.mjs'
+      - 'scripts/axis-821-quick-photo-metric-centering-smoke.mjs'
       - 'scripts/axis-821-executable-object-system-smoke.mjs'
       - 'build-release.mjs'
       - '.github/workflows/axis-universal-practice-object-gate.yml'
@@ -40,6 +43,7 @@ on:
       - 'prepare-8201-object-reliability.mjs'
       - 'prepare-821-object-capability-convergence.mjs'
       - 'prepare-821-executable-object-system-smoke-compat.mjs'
+      - 'prepare-821-metric-control-system.mjs'
       - 'postbuild-819-upo-seal.mjs'
       - 'postbuild-8201-active-lifecycle-seal.mjs'
       - 'prepare-820-release.mjs'
@@ -48,6 +52,8 @@ on:
       - 'scripts/axis-819-object-recording-smoke.mjs'
       - 'scripts/axis-820-executable-object-smoke.mjs'
       - 'scripts/axis-8201-object-reliability-smoke.mjs'
+      - 'scripts/axis-821-recording-property-surface-smoke.mjs'
+      - 'scripts/axis-821-quick-photo-metric-centering-smoke.mjs'
       - 'scripts/axis-821-executable-object-system-smoke.mjs'
       - 'build-release.mjs'
       - '.github/workflows/axis-universal-practice-object-gate.yml'
@@ -71,7 +77,7 @@ jobs:
 
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 32
+    timeout-minutes: 36
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -98,6 +104,12 @@ jobs:
       - name: 8.20.1 Physical custom schema → Active lifecycle reliability
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8201-object-reliability-smoke.mjs
+      - name: 8.21 Recording property surface geometry
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-recording-property-surface-smoke.mjs
+      - name: 8.21 Quick + Photo numeric centering
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
       - name: 8.21 Full executable Object system
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-821-executable-object-system-smoke.mjs
@@ -107,7 +119,7 @@ jobs:
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 42
+    timeout-minutes: 46
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -132,6 +144,12 @@ jobs:
       - name: iPhone 8.20.1 Physical custom schema → Active lifecycle reliability
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8201-object-reliability-smoke.mjs
+      - name: iPhone 8.21 Recording property surface geometry
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-recording-property-surface-smoke.mjs
+      - name: iPhone 8.21 Quick + Photo numeric centering
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
       - name: iPhone 8.21 Full executable Object system
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-821-executable-object-system-smoke.mjs
