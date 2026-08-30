@@ -5,6 +5,16 @@ const fail=m=>{throw new Error(`[AXIS 8.21 final Object presentation] ${m}`)};
 const runtimeFile='axis-core.js',indexFile='index.html',infoFile='axis-build.json';
 for(const f of [runtimeFile,indexFile,infoFile])if(!fs.existsSync(f))fail(`missing ${f}`);
 let src=fs.readFileSync(runtimeFile,'utf8');
+const axis821GeometryHtml=fs.readFileSync(indexFile,'utf8'),axis821GeometryCssHref=(axis821GeometryHtml.match(/href=["']([^"']*axis-style\.css(?:\?[^"']*)?)["']/)||[])[1];
+if(!axis821GeometryCssHref)fail('canonical CSS asset reference missing');
+const axis821GeometryCssFile=axis821GeometryCssHref.split('?')[0].replace(/^\/+/,''),axis821GeometryCssPath=fs.existsSync(axis821GeometryCssFile)?axis821GeometryCssFile:'axis-style.css';
+if(!fs.existsSync(axis821GeometryCssPath))fail('canonical CSS asset missing · '+axis821GeometryCssPath);
+const axis821GeometryFinalCss=fs.readFileSync(axis821GeometryCssPath,'utf8'),axis821GeometryMetricMarker='/* AXIS 8.21 Metric Control System */',axis821GeometryExecMarker='/* AXIS 8.21 Executable Object System */',axis821GeometryMetricAt=axis821GeometryFinalCss.indexOf(axis821GeometryMetricMarker),axis821GeometryExecAt=axis821GeometryFinalCss.indexOf(axis821GeometryExecMarker);
+if(axis821GeometryMetricAt<0)fail('final metric-control CSS owner marker missing');
+if(axis821GeometryExecAt<0||axis821GeometryExecAt<=axis821GeometryMetricAt)fail('final Executable Object CSS marker/order drift');
+const axis821GeometryMetricCss=axis821GeometryFinalCss.slice(axis821GeometryMetricAt,axis821GeometryExecAt),axis821GeometryExecCss=axis821GeometryFinalCss.slice(axis821GeometryExecAt);
+for(const axis821GeometryToken of ['.axis821Stepper>div{height:64px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;','.axis821Stepper input{grid-column:2!important;justify-self:center!important;','text-align:center!important'])if(!axis821GeometryMetricCss.includes(axis821GeometryToken))fail('final metric-control geometry missing · '+axis821GeometryToken);
+for(const axis821GeometrySelector of ['.axis818MetricRecorder{','.axis821MetricControl{','.axis821MetricLabel{','.axis821Stepper{','.axis821Stepper>button{','.axis821Stepper>div{','.axis821Stepper input{','.axis821Presets{','.axis821Rating{','.axis821Toggle{','.axis821Direct{','.axis821NoMetrics{'])if(axis821GeometryExecCss.includes(axis821GeometrySelector))fail('later Executable Object CSS reclaims recorder geometry · '+axis821GeometrySelector);
 
 function moduleRange(text,file,label){
  const marker=`/* ===== ${file} ===== */`;
