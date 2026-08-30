@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+const FILE='scripts/axis-821-recording-property-surface-smoke.mjs';
+const fail=m=>{throw new Error(`[AXIS 8.21 resistance geometry smoke] ${m}`)};
+let s=fs.readFileSync(FILE,'utf8');
+const start="const gearGeometry=await page.locator('[data-axis821-key=\"resistance\"]')";
+const end="\n  assert.deepEqual(errors,[]";
+const a=s.indexOf(start);if(a<0)fail('resistance geometry start missing');if(s.indexOf(start,a+1)>=0)fail('resistance geometry start duplicated');const b=s.indexOf(end,a);if(b<0)fail('resistance geometry end missing');
+const replacement=`const gearGeometry=await page.locator('[data-axis821-key="resistance"]').evaluate(root=>{const cell=root.querySelector('.axis821Stepper>div'),input=root.querySelector('[data-axis818-metric="resistance"]');if(!cell||!input)throw new Error('resistance numeric geometry nodes missing');const c=cell.getBoundingClientRect(),i=input.getBoundingClientRect(),cellStyle=getComputedStyle(cell);return{center:(i.left+i.right)/2,cell:(c.left+c.right)/2,delta:Math.abs((i.left+i.right-c.left-c.right)/2),align:getComputedStyle(input).textAlign,display:cellStyle.display,template:cellStyle.gridTemplateColumns}});assert.ok(gearGeometry.delta<=.5,\`resistance numeric center drift \${JSON.stringify(gearGeometry)}\`);assert.equal(gearGeometry.align,'center','resistance numeric text is not centered');assert.equal(gearGeometry.display,'grid','resistance symmetric value/unit grid missing');assert.ok(gearGeometry.template.split(' ').length>=3,\`resistance symmetric three-track grid missing · \${gearGeometry.template}\`);`;
+s=s.slice(0,a)+replacement+s.slice(b);
+fs.writeFileSync(FILE,s);
+console.log('[AXIS 8.21 resistance geometry smoke] staged · numeric center remains <=0.5px · no invented preset rail requirement');
