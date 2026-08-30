@@ -138,6 +138,18 @@ const legacyV879TimelineWriter="small.textContent=e.kind==='strength'?fmt(e.weig
 const canonicalV879TimelineWriter="small.textContent=window.__AXIS_821_EVENT_PRESENTATION__?.summary?.(e)||''";
 src=convergeOwnedLiteral(src,'v879-runtime.js',legacyV879TimelineWriter,canonicalV879TimelineWriter,'v879 direct Timeline fact writer');
 
+/* Historical convergence may own v874 metadata, but it must never replace the
+ * shared custom-editor API object after later capabilities have extended it. This is
+ * assertion-only: final runtime behavior must already be correct before this seal. */
+{
+ const editor=moduleRange(src,'v874-professional.js','final custom-editor API preservation').text;
+ const preserved="const editorApi=window.__AXIS_CUSTOM_EDITOR__||(window.__AXIS_CUSTOM_EDITOR__={});editorApi.owner='v874';editorApi.snapshot=";
+ if(editor.split(preserved).length-1!==1)fail('final v874 custom-editor owner does not preserve API object identity');
+ if(editor.includes("window.__AXIS_CUSTOM_EDITOR__={owner:'v874'"))fail('final runtime reintroduced destructive custom-editor API replacement');
+ if(editor.split('window.__AXIS_CUSTOM_EDITOR__.metricSchema=').length-1!==1)fail('final runtime custom-editor metricSchema extension missing or duplicated');
+ if(editor.split('window.__AXIS_CUSTOM_EDITOR__.refresh=axis821RefreshCustomEditor').length-1!==1)fail('final runtime custom-editor refresh extension missing or duplicated');
+}
+
 const finalRenderer=moduleFunctionRange(src,'app.js','function eventHtml(e)','final timeline event renderer').text;
 if(!finalRenderer.includes('axis821EventMetricSummary(e)'))fail('final timeline is not Encounter-schema driven');
 if(finalRenderer.includes("e.kind==='strength'")||finalRenderer.includes('e.weight')||finalRenderer.includes('e.reps'))fail('legacy strength/cardio timeline derivation survived canonicalization');
