@@ -76,8 +76,18 @@ const marker="window.__AXIS_821_RECORDING_SURFACE__={version:'8.21',owner:'app.j
  const timed821="if(e.target.closest('#addCustomEq,#v8New,#newCustomEq,[data-edit-eq],[data-axis-create-custom]'))setTimeout(axis818MetricLoad,80);";
  const timedCount=(s.split(timed).length-1)+(s.split(timed821).length-1);if(timedCount!==1)fail('legacy metric-editor timing hook missing or duplicated');
  s=s.replace(s.includes(timed821)?timed821:timed,'');
- s=replaceFunction(s,'function loadEditorState()',`function loadEditorState(){ensureProfessionalSelector();const name=$('#customName')?.value.trim()||'',c=readCore(),eq=editId?(c.profile?.customEq||[]).find(x=>x.id===editId):(c.profile?.customEq||[]).find(x=>x.name===name);detailLocked=!!eq;typeLocked=!!eq;selectedSubtype=eq?.subtype||inferSubtype(name,eq?.type||typeFromHidden());const ds=eq?.detailMuscles?.length?eq.detailMuscles:inferDetails(name);setDetails(ds,false);if(!detailSelected.size){const cores=Array.from(D.querySelectorAll('#customMuscles .active')).map(b=>b.dataset.muscle);setDetails(cores.flatMap(x=>CORE_DEFAULT[x]||[]),false)}renderTypeGrid();axis818MetricLoad()}`,'canonical Object editor completed-mount metric hydration');
+ s=replaceFunction(s,'function loadEditorState()',`let axis821EditorRefreshQueued=false;function axis821RefreshCustomEditor(){if(axis821EditorRefreshQueued)return;axis821EditorRefreshQueued=true;queueMicrotask(()=>{axis821EditorRefreshQueued=false;loadEditorState()})}
+function loadEditorState(){ensureProfessionalSelector();const name=$('#customName')?.value.trim()||'',c=readCore(),eq=editId?(c.profile?.customEq||[]).find(x=>x.id===editId):(c.profile?.customEq||[]).find(x=>x.name===name);detailLocked=!!eq;typeLocked=!!eq;selectedSubtype=eq?.subtype||inferSubtype(name,eq?.type||typeFromHidden());const ds=eq?.detailMuscles?.length?eq.detailMuscles:inferDetails(name);setDetails(ds,false);if(!detailSelected.size){const cores=Array.from(D.querySelectorAll('#customMuscles .active')).map(b=>b.dataset.muscle);setDetails(cores.flatMap(x=>CORE_DEFAULT[x]||[]),false)}renderTypeGrid();axis818MetricLoad()}`,'canonical Object editor completed-mount metric hydration');
+ const loadTimerCount=s.split('setTimeout(loadEditorState,40)').length-1;if(loadTimerCount!==3)fail(`legacy custom-editor 40ms lifecycle hooks expected 3, found ${loadTimerCount}`);
+ s=s.split('setTimeout(loadEditorState,40)').join('axis821RefreshCustomEditor()');
+ const editorApi="window.__AXIS_CUSTOM_EDITOR__.metricSchema=()=>axis818MetricDraft.map(x=>({...x}));";if((s.split(editorApi).length-1)!==1)fail('canonical custom-editor API anchor missing or duplicated');s=s.replace(editorApi,editorApi+"window.__AXIS_CUSTOM_EDITOR__.refresh=axis821RefreshCustomEditor;");
  if((s.split('axis818MetricLoad()').length-1)!==2)fail('metric hydrate must have one declaration and one canonical mount call');
+ syntax(s,FILE);write(FILE,s);
+}
+
+{
+ const FILE='v873-smart-input.js';let s=read(FILE);
+ s=replaceFunction(s,'function axis8124OpenCustomCreate(query)',`function axis8124OpenCustomCreate(query){const q=String(query||'').trim(),existing=axis8124CustomDefinitions().find(x=>axis8124CustomNorm(x.name)===axis8124CustomNorm(q));if(existing){window.__AXIS_PICK_EQUIPMENT__?.(existing.id,true);window.__AXIS_EQUIPMENT_SEARCH_RESET__?.();return}axis8124PendingCreate={query:q};$('#addCustomEq')?.click();const input=$('#customName');if(input){input.value=q;input.focus();try{input.setSelectionRange(q.length,q.length)}catch{}}axis8124MetricPrepare(null);window.__AXIS_CUSTOM_EDITOR__?.refresh?.()}`,'Smart Search direct-create canonical editor handoff');
  syntax(s,FILE);write(FILE,s);
 }
 
@@ -94,8 +104,10 @@ const marker="window.__AXIS_821_RECORDING_SURFACE__={version:'8.21',owner:'app.j
 
 for(const [f,tokens] of [
  ['app.js',['__AXIS_821_METRIC_CONTROLS__',"families:['quantity','time','pace','scale','choice']",'axis821PaceSeconds','axis821MetricFitInput','numberCenterIndependentOfUnit:true','data-axis821-pace-step','ratingDirectAndRail:true']],
- ['v874-professional.js',['axis818MetricLoad','renderTypeGrid();axis818MetricLoad()']],
+ ['v874-professional.js',['axis818MetricLoad','renderTypeGrid();axis818MetricLoad()','axis821RefreshCustomEditor','__AXIS_CUSTOM_EDITOR__.refresh=axis821RefreshCustomEditor']],
+ ['v873-smart-input.js',['axis8124OpenCustomCreate','__AXIS_CUSTOM_EDITOR__?.refresh?.()']],
  ['styles.css',['AXIS 8.21 Metric Control System','.axis821Stepper input{grid-column:2!important','grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)','text-align:center!important','--axis821-preset-count','grid-template-columns:repeat(var(--axis821-preset-count,6)','.axis821Rating{display:grid','.axis821Toggle{display:grid']]
 ]){const s=read(f);for(const t of tokens)if(!s.includes(t))fail(`${f} missing ${t}`)}
-{const v874=read('v874-professional.js');if(v874.includes('setTimeout(axis818MetricLoad,80)'))fail('legacy timed metric-editor hydration still present');if((v874.split('axis818MetricLoad()').length-1)!==2)fail('metric-editor hydrate declaration/canonical mount count drift')}
+{const v874=read('v874-professional.js');if(v874.includes('setTimeout(axis818MetricLoad,80)'))fail('legacy timed metric-editor hydration still present');if(v874.includes('setTimeout(loadEditorState,40)'))fail('legacy 40ms custom-editor lifecycle timing still present');if((v874.split('axis818MetricLoad()').length-1)!==2)fail('metric-editor hydrate declaration/canonical mount count drift');if((v874.split('__AXIS_CUSTOM_EDITOR__.refresh=axis821RefreshCustomEditor').length-1)!==1)fail('canonical custom-editor refresh API missing or duplicated')}
+{const v873=read('v873-smart-input.js'),start=v873.indexOf('function axis8124OpenCustomCreate(query)'),end=start<0?-1:v873.indexOf('\n(function axis8124CustomStyle',start),direct=start>=0&&end>start?v873.slice(start,end):'';if(!direct)fail('canonical direct-create function missing');if(direct.includes('setTimeout('))fail('canonical direct-create still depends on post-open timer');if(!direct.includes('__AXIS_CUSTOM_EDITOR__?.refresh?.()'))fail('canonical direct-create refresh handoff missing');if((v873.split('__AXIS_CUSTOM_EDITOR__?.refresh?.()').length-1)!==1)fail('direct-create canonical refresh handoff duplicated')}
 console.log('[AXIS 8.21 metric control system] PASS · numeric value center independent of unit · direct-create hydrates canonical metric editor · symmetric native Group Plan geometry · specialized quantity/time/pace/scale/choice semantics · no new schema/recorder/storage owner');
