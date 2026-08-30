@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 const FILE='prepare-821-metric-control-system.mjs';
 let s=fs.readFileSync(FILE,'utf8');
-const from="const cores=$$('#customMuscles .active').map(b=>b.dataset.muscle);";
+const from="const cores=$('#customMuscles .active').map(b=>b.dataset.muscle);";
 const to="const cores=Array.from(D.querySelectorAll('#customMuscles .active')).map(b=>b.dataset.muscle);";
 const n=s.split(from).length-1;
 if(n!==1)throw new Error(`canonical mount core collection expected once, found ${n}`);
