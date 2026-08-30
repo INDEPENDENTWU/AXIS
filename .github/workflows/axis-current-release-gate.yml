@@ -75,6 +75,12 @@ jobs:
       - name: 8.21 Flow runtime boundary
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-821-flow-runtime-smoke.mjs
+      - name: 8.21 Recording property surface
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-recording-property-surface-smoke.mjs
+      - name: 8.21 Quick + Photo numeric centering
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
       - name: 8.21 Executable Object system
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-821-executable-object-system-smoke.mjs
@@ -143,6 +149,12 @@ jobs:
       - name: iPhone 8.21 Flow runtime boundary
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-821-flow-runtime-smoke.mjs
+      - name: iPhone 8.21 Recording property surface
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-recording-property-surface-smoke.mjs
+      - name: iPhone 8.21 Quick + Photo numeric centering
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
       - name: iPhone 8.21 Executable Object system
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-821-executable-object-system-smoke.mjs
