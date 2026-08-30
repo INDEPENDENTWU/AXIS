@@ -26,5 +26,17 @@ const next=`/* v874 remains the sole Object schema editor. Metric-schema hydrati
 const n=s.split(old).length-1;
 if(n!==1)throw new Error(`expected old lifecycle block once, found ${n}`);
 s=s.replace(old,next);
+
+const verifierOld=" ['v874-professional.js',['axis818MetricLoad','[data-axis-create-custom]']],";
+const verifierNew=" ['v874-professional.js',['axis818MetricLoad','renderTypeGrid();axis818MetricLoad()']],";
+const vn=s.split(verifierOld).length-1;
+if(vn!==1)throw new Error(`expected old lifecycle verifier once, found ${vn}`);
+s=s.replace(verifierOld,verifierNew);
+
+const logAnchor="console.log('[AXIS 8.21 metric control system] PASS · numeric value center independent of unit · direct-create hydrates canonical metric editor · symmetric native Group Plan geometry · specialized quantity/time/pace/scale/choice semantics · no new schema/recorder/storage owner');";
+const guard=`{const v874=read('v874-professional.js');if(v874.includes('setTimeout(axis818MetricLoad,80)'))fail('legacy timed metric-editor hydration still present');if((v874.split('axis818MetricLoad()').length-1)!==2)fail('metric-editor hydrate declaration/canonical mount count drift')}\n`;
+if((s.split(logAnchor).length-1)!==1)throw new Error('metric control PASS anchor missing');
+s=s.replace(logAnchor,guard+logAnchor);
+
 fs.writeFileSync(FILE,s);
-console.log('[AXIS repair] metric editor hydration moved to canonical completed mount');
+console.log('[AXIS repair] metric editor hydration moved to canonical completed mount; verifier aligned');
