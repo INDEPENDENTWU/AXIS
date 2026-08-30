@@ -50,8 +50,8 @@ const block=[
 s=s.replace(anchor,block+anchor);
 
 once(
- "console.log(`[AXIS 8.21 recording surface ${ENGINE}] PASS · 14-property Object editor · zero selection preserved · no default-time fallback · value-only shared recorder · true numeric optical center · immutable Encounter facts`);",
- "console.log(`[AXIS 8.21 recording surface ${ENGINE}] PASS · 14-property Object editor · zero selection preserved · native Group Plan geometry · quantity/time/pace/scale/choice controls · true numeric optical center independent of unit · immutable Encounter facts`);",
+ "console.log(`[AXIS 8.21 recording surface ${ENGINE}] PASS · exact 14-property Object editor · zero selection preserved · no default-time fallback · value-only shared recorder · true numeric optical center · immutable Encounter facts`);",
+ "console.log(`[AXIS 8.21 recording surface ${ENGINE}] PASS · exact 14-property Object editor · zero selection preserved · native Group Plan geometry · quantity/time/pace/scale/choice controls · true numeric optical center independent of unit · immutable Encounter facts`);",
  'recording control proof copy'
 );
 
