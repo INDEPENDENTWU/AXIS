@@ -22,20 +22,26 @@ jobs:
         run: node scripts/.axis-821-recorder-renderer-owner-retirement-once.mjs
       - name: Validate source contracts and full deterministic release
         run: |
+          node --check prepare-821-metric-control-system.mjs
           node --check prepare-821-executable-object-system.mjs
+          node --check prepare-821-object-capability-convergence.mjs
           node --check postbuild-821-executable-object-presentation-seal.mjs
+          cp prepare-821-metric-control-system.mjs /tmp/prepare-821-metric-control-system.mjs
           cp prepare-821-executable-object-system.mjs /tmp/prepare-821-executable-object-system.mjs
+          cp prepare-821-object-capability-convergence.mjs /tmp/prepare-821-object-capability-convergence.mjs
           cp postbuild-821-executable-object-presentation-seal.mjs /tmp/postbuild-821-executable-object-presentation-seal.mjs
           node build-release.mjs
           git reset --hard HEAD
+          cp /tmp/prepare-821-metric-control-system.mjs prepare-821-metric-control-system.mjs
           cp /tmp/prepare-821-executable-object-system.mjs prepare-821-executable-object-system.mjs
+          cp /tmp/prepare-821-object-capability-convergence.mjs prepare-821-object-capability-convergence.mjs
           cp /tmp/postbuild-821-executable-object-presentation-seal.mjs postbuild-821-executable-object-presentation-seal.mjs
       - name: Commit formal repair and retire one-shot runner
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git rm .github/workflows/axis-821-recorder-renderer-owner-retirement-once.yml scripts/.axis-821-recorder-renderer-owner-retirement-once.mjs
-          git add prepare-821-executable-object-system.mjs postbuild-821-executable-object-presentation-seal.mjs
+          git add prepare-821-metric-control-system.mjs prepare-821-executable-object-system.mjs prepare-821-object-capability-convergence.mjs postbuild-821-executable-object-presentation-seal.mjs
           git diff --cached --check
-          git commit -m "refactor: retire duplicate recorder renderer owner"
+          git commit -m "refactor: converge recorder renderer ownership"
           git push origin HEAD:fix/821-quick-photo-metric-centering
