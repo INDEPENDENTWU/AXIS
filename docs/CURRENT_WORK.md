@@ -24,12 +24,16 @@ Cross-platform foundation remains `axis-native-foundation-0`, native repository 
 
 **AXIS 8.21 — Quick / Photo Recording Numeric Centering**
 
-- active branch: `fix/821-quick-photo-metric-centering`
+- governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
+- governed active branch: `main`
+- bounded repair branch: `fix/821-quick-photo-metric-centering`
 - base main SHA: `577c62c34a78da9b4ed88e92ef7bbe00eadea3c8`
 - public identity change: **none; remains 8.21**
 - intended product behavior change: **presentation geometry only**
 - intended factual/persistence ownership change: **none**
 - recorder/schema/Encounter/Active/Flow ownership change: **none**
+
+The governed project authority remains stable on `main`; this bounded repair branch is only the candidate delivery vehicle and does not replace the post-release governance milestone.
 
 ### Root cause
 
