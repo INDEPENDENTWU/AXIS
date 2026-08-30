@@ -51,6 +51,11 @@ function convergeOwnedLiteral(text,file,legacy,replacement,label){
 }
 
 if(!src.includes('function axis821EventMetricSummary(e)'))fail('schema-aware Encounter summary helper missing from final runtime');
+{
+ const renderer=moduleFunctionRange(src,'app.js','function axis821MetricControl(m,prev)','final metric-control-system recorder renderer').text;
+ for(const token of ['axis821MetricFamily(m)','AXIS821_RUNTIME_CAPABILITIES','data-axis821-family','data-axis821-choice','data-axis821-pace-step','data-axis821-rate','data-axis821-bool'])if(!renderer.includes(token))fail('final recorder renderer lost unified contract · '+token);
+}
+
 
 /* Keep one factual formatter. Later Active modules may repaint presentation, but
  * they do not get their own interpretation of Object kind/schema. Export only a
