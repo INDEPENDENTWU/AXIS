@@ -7,14 +7,14 @@ let s=fs.readFileSync(FILE,'utf8');
 const once=(from,to,label)=>{const n=s.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);s=s.replace(from,to)};
 
 once(
- "await page.waitForFunction(()=>window.__AXIS_OBJECT_TRUTH__?.version==='8.18'&&window.__AXIS_EXECUTABLE_OBJECTS__?.version==='8.20'&&window.__AXIS_821_RECORDING_SURFACE__?.explicitEmptySchema===true,undefined,{timeout:9000});",
- "await page.waitForFunction(()=>window.__AXIS_OBJECT_TRUTH__?.version==='8.18'&&window.__AXIS_EXECUTABLE_OBJECTS__?.version==='8.20'&&window.__AXIS_821_RECORDING_SURFACE__?.explicitEmptySchema===true&&window.__AXIS_821_METRIC_CONTROLS__?.version==='8.21',undefined,{timeout:9000});",
+ "await page.waitForFunction(()=>window.__AXIS_OBJECT_TRUTH__?.version==='8.18'&&window.__AXIS_EXECUTABLE_OBJECTS__?.version==='8.20'&&window.__AXIS_821_RECORDING_SURFACE__?.explicitEmptySchema===true&&window.__AXIS_821_METRIC_CONTROLS__?.numberCenterIndependentOfUnit===true,undefined,{timeout:9000});",
+ "await page.waitForFunction(()=>window.__AXIS_OBJECT_TRUTH__?.version==='8.18'&&window.__AXIS_EXECUTABLE_OBJECTS__?.version==='8.20'&&window.__AXIS_821_RECORDING_SURFACE__?.explicitEmptySchema===true&&window.__AXIS_821_METRIC_CONTROLS__?.version==='8.21'&&window.__AXIS_821_METRIC_CONTROLS__?.numberCenterIndependentOfUnit===true,undefined,{timeout:9000});",
  'metric control system boot wait'
 );
 
 once(
  "assert.equal(surface.schemaEditing,'object-editor-only');assert.equal(surface.recordingSurface,'value-controls-only');assert.equal(surface.presetMetricCount,14);assert.equal(surface.newRecorder,false);assert.equal(surface.newPersistence,false);",
- "assert.equal(surface.schemaEditing,'object-editor-only');assert.equal(surface.recordingSurface,'value-controls-only');assert.equal(surface.presetMetricCount,14);assert.equal(surface.newRecorder,false);assert.equal(surface.newPersistence,false);const controlSystem=await page.evaluate(()=>window.__AXIS_821_METRIC_CONTROLS__);assert.deepEqual(controlSystem.families,['quantity','time','pace','scale','choice']);assert.equal(controlSystem.groupPlanGeometry,true);assert.equal(controlSystem.newSchemaOwner,false);assert.equal(controlSystem.newRecorder,false);assert.equal(controlSystem.newPersistence,false);",
+ "assert.equal(surface.schemaEditing,'object-editor-only');assert.equal(surface.recordingSurface,'value-controls-only');assert.equal(surface.presetMetricCount,14);assert.equal(surface.newRecorder,false);assert.equal(surface.newPersistence,false);const controlSystem=await page.evaluate(()=>window.__AXIS_821_METRIC_CONTROLS__);assert.deepEqual(controlSystem.families,['quantity','time','pace','scale','choice']);assert.equal(controlSystem.groupPlanGeometry,true);assert.equal(controlSystem.numberCenterIndependentOfUnit,true);assert.equal(controlSystem.newSchemaOwner,false);assert.equal(controlSystem.newRecorder,false);assert.equal(controlSystem.newPersistence,false);",
  'metric control ownership assertions'
 );
 
@@ -29,8 +29,8 @@ const block=[
  "  const kinds=await page.locator('#axis818MetricRecorder .axis821MetricControl').evaluateAll(xs=>Object.fromEntries(xs.map(x=>[x.dataset.axis821Key,{kind:x.dataset.axis821Kind,family:x.dataset.axis821Family}])));",
  "  assert.equal(kinds.weight.family,'quantity');assert.equal(kinds.reps.family,'quantity');assert.equal(kinds.hold.family,'time');assert.equal(kinds.pace.family,'pace');assert.equal(kinds.completed.family,'choice');",
  "  assert.equal(kinds.hold.kind,'timer');assert.equal(kinds.pace.kind,'pace');assert.equal(kinds.completed.kind,'toggle');",
- "  const metricGeometry=await page.locator('[data-axis821-key=\"weight\"] .axis821Stepper').evaluate(el=>{const r=el.getBoundingClientRect(),input=el.querySelector('input')?.getBoundingClientRect();return{h:Math.round(r.height),inputH:Math.round(input?.height||0)}});",
- "  assert.ok(metricGeometry.h>=62&&metricGeometry.h<=66,`weight control drifted from Group Plan geometry: ${JSON.stringify(metricGeometry)}`);",
+ "  const metricGeometry=await page.locator('[data-axis821-key=\"weight\"] .axis821Stepper').evaluate(el=>{const r=el.getBoundingClientRect(),cell=el.querySelector(':scope>div')?.getBoundingClientRect(),input=el.querySelector('input')?.getBoundingClientRect();return{h:Math.round(r.height),inputH:Math.round(input?.height||0),center:input?(input.left+input.right)/2:null,cell:centerOrNull(cell),align:getComputedStyle(el.querySelector('input')).textAlign};function centerOrNull(x){return x?(x.left+x.right)/2:null}});",
+ "  assert.ok(metricGeometry.h>=62&&metricGeometry.h<=66,`weight control drifted from Group Plan geometry: ${JSON.stringify(metricGeometry)}`);assert.ok(Math.abs(metricGeometry.center-metricGeometry.cell)<=.5,`weight numeric center drift ${JSON.stringify(metricGeometry)}`);assert.equal(metricGeometry.align,'center');",
  "  await page.locator('[data-axis818-metric=\"weight\"]').fill('42.5');",
  "  await tap(page.locator('[data-axis821-preset=\"reps\"][data-value=\"12\"]'));",
  "  await tap(page.locator('[data-axis821-preset=\"sets\"][data-value=\"4\"]'));",
@@ -42,6 +42,7 @@ const block=[
  "  assert.equal(await page.locator('[data-axis818-metric=\"completed\"]').inputValue(),'0');",
  "  await tap(page.locator('[data-axis821-pace-step=\"pace\"][data-delta=\"-5\"]'));assert.equal(await paceInput.inputValue(),'5:25');",
  "  await tap(page.locator('[data-axis821-pace-step=\"pace\"][data-delta=\"5\"]'));assert.equal(await paceInput.inputValue(),'5:30');",
+ "  const centeredFamilies=await page.locator('#axis818MetricRecorder .axis821MetricControl:not([data-axis821-kind=\"toggle\"])').evaluateAll(xs=>xs.map(x=>{const cell=x.querySelector('.axis821Stepper>div'),input=x.querySelector('[data-axis818-metric]');if(!cell||!input)return null;const c=cell.getBoundingClientRect(),i=input.getBoundingClientRect();return{key:x.dataset.axis821Key,delta:Math.abs((i.left+i.right-c.left-c.right)/2),align:getComputedStyle(input).textAlign}}).filter(Boolean));for(const g of centeredFamilies){assert.ok(g.delta<=.5,`${g.key} numeric center drift ${g.delta}`);assert.equal(g.align,'center',`${g.key} text alignment drift`)}",
  "  await tap(page.locator('#saveScan'));",
  "  await page.waitForFunction(id=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return (c.active?.events||[]).some(e=>e.equipmentId===id)},full.id,{timeout:3500});await page.waitForTimeout(180);",
  "  const fullEvent=await savedEvent(full.id);assert.deepEqual(fullEvent.schema,['weight','reps','sets','hold','distance','pace','incline','completed']);assert.equal(fullEvent.metrics.weight,42.5);assert.equal(fullEvent.metrics.reps,12);assert.equal(fullEvent.metrics.sets,4);assert.equal(fullEvent.metrics.hold,45);assert.equal(fullEvent.metrics.distance,3);assert.equal(fullEvent.metrics.pace,'5:30');assert.equal(fullEvent.metrics.incline,6.5);assert.equal(fullEvent.metrics.completed,false);"
@@ -49,10 +50,10 @@ const block=[
 s=s.replace(anchor,block+anchor);
 
 once(
- "console.log(`[AXIS 8.21 recording surface ${ENGINE}] PASS · 14-property Object editor · zero selection preserved · no default-time fallback · value-only shared recorder · duration/rating controls · immutable Encounter facts`);",
- "console.log(`[AXIS 8.21 recording surface ${ENGINE}] PASS · 14-property Object editor · zero selection preserved · native Group Plan geometry · quantity/time/pace/scale/choice controls · immutable Encounter facts`);",
+ "console.log(`[AXIS 8.21 recording surface ${ENGINE}] PASS · exact 14-property Object editor · zero selection preserved · no default-time fallback · value-only shared recorder · true numeric optical center · immutable Encounter facts`);",
+ "console.log(`[AXIS 8.21 recording surface ${ENGINE}] PASS · exact 14-property Object editor · zero selection preserved · native Group Plan geometry · quantity/time/pace/scale/choice controls · true numeric optical center independent of unit · immutable Encounter facts`);",
  'recording control proof copy'
 );
 
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 metric control smoke compat] PASS · dual-engine recording smoke now covers quantity/time/pace/choice + existing scale semantics');
+console.log('[AXIS 8.21 metric control smoke compat] PASS · dual-engine recording smoke covers quantity/time/pace/choice + scale semantics with numeric-center invariant');

@@ -5,6 +5,16 @@ const fail=m=>{throw new Error(`[AXIS 8.21 final Object presentation] ${m}`)};
 const runtimeFile='axis-core.js',indexFile='index.html',infoFile='axis-build.json';
 for(const f of [runtimeFile,indexFile,infoFile])if(!fs.existsSync(f))fail(`missing ${f}`);
 let src=fs.readFileSync(runtimeFile,'utf8');
+const axis821GeometryHtml=fs.readFileSync(indexFile,'utf8'),axis821GeometryCssHref=(axis821GeometryHtml.match(/href=["']([^"']*axis-style\.css(?:\?[^"']*)?)["']/)||[])[1];
+if(!axis821GeometryCssHref)fail('canonical CSS asset reference missing');
+const axis821GeometryCssFile=axis821GeometryCssHref.split('?')[0].replace(/^\/+/,''),axis821GeometryCssPath=fs.existsSync(axis821GeometryCssFile)?axis821GeometryCssFile:'axis-style.css';
+if(!fs.existsSync(axis821GeometryCssPath))fail('canonical CSS asset missing · '+axis821GeometryCssPath);
+const axis821GeometryFinalCss=fs.readFileSync(axis821GeometryCssPath,'utf8'),axis821GeometryMetricMarker='/* AXIS 8.21 Metric Control System */',axis821GeometryExecMarker='/* AXIS 8.21 Executable Object System */',axis821GeometryMetricAt=axis821GeometryFinalCss.indexOf(axis821GeometryMetricMarker),axis821GeometryExecAt=axis821GeometryFinalCss.indexOf(axis821GeometryExecMarker);
+if(axis821GeometryMetricAt<0)fail('final metric-control CSS owner marker missing');
+if(axis821GeometryExecAt<0||axis821GeometryExecAt<=axis821GeometryMetricAt)fail('final Executable Object CSS marker/order drift');
+const axis821GeometryMetricCss=axis821GeometryFinalCss.slice(axis821GeometryMetricAt,axis821GeometryExecAt),axis821GeometryExecCss=axis821GeometryFinalCss.slice(axis821GeometryExecAt);
+for(const axis821GeometryToken of ['.axis821Stepper>div{height:64px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;','.axis821Stepper input{grid-column:2!important;justify-self:center!important;','text-align:center!important'])if(!axis821GeometryMetricCss.includes(axis821GeometryToken))fail('final metric-control geometry missing · '+axis821GeometryToken);
+for(const axis821GeometrySelector of ['.axis818MetricRecorder{','.axis821MetricControl{','.axis821MetricLabel{','.axis821Stepper{','.axis821Stepper>button{','.axis821Stepper>div{','.axis821Stepper input{','.axis821Presets{','.axis821Rating{','.axis821Toggle{','.axis821Direct{','.axis821NoMetrics{'])if(axis821GeometryExecCss.includes(axis821GeometrySelector))fail('later Executable Object CSS reclaims recorder geometry · '+axis821GeometrySelector);
 
 function moduleRange(text,file,label){
  const marker=`/* ===== ${file} ===== */`;
@@ -41,6 +51,11 @@ function convergeOwnedLiteral(text,file,legacy,replacement,label){
 }
 
 if(!src.includes('function axis821EventMetricSummary(e)'))fail('schema-aware Encounter summary helper missing from final runtime');
+{
+ const renderer=moduleFunctionRange(src,'app.js','function axis821MetricControl(m,prev)','final metric-control-system recorder renderer').text;
+ for(const token of ['axis821MetricFamily(m)','AXIS821_RUNTIME_CAPABILITIES','data-axis821-family','data-axis821-choice','data-axis821-pace-step','data-axis821-rate','data-axis821-bool'])if(!renderer.includes(token))fail('final recorder renderer lost unified contract · '+token);
+}
+
 
 /* Keep one factual formatter. Later Active modules may repaint presentation, but
  * they do not get their own interpretation of Object kind/schema. Export only a
@@ -137,6 +152,18 @@ src=replaceModuleFunction(
 const legacyV879TimelineWriter="small.textContent=e.kind==='strength'?fmt(e.weight)+'kg · '+e.reps+'次 · '+e.sets+'组':e.duration+'分钟 · 强度'+e.intensity";
 const canonicalV879TimelineWriter="small.textContent=window.__AXIS_821_EVENT_PRESENTATION__?.summary?.(e)||''";
 src=convergeOwnedLiteral(src,'v879-runtime.js',legacyV879TimelineWriter,canonicalV879TimelineWriter,'v879 direct Timeline fact writer');
+
+/* Historical convergence may own v874 metadata, but it must never replace the
+ * shared custom-editor API object after later capabilities have extended it. This is
+ * assertion-only: final runtime behavior must already be correct before this seal. */
+{
+ const editor=moduleRange(src,'v874-professional.js','final custom-editor API preservation').text;
+ const preserved="const editorApi=window.__AXIS_CUSTOM_EDITOR__||(window.__AXIS_CUSTOM_EDITOR__={});editorApi.owner='v874';editorApi.snapshot=";
+ if(editor.split(preserved).length-1!==1)fail('final v874 custom-editor owner does not preserve API object identity');
+ if(editor.includes("window.__AXIS_CUSTOM_EDITOR__={owner:'v874'"))fail('final runtime reintroduced destructive custom-editor API replacement');
+ if(editor.split('window.__AXIS_CUSTOM_EDITOR__.metricSchema=').length-1!==1)fail('final runtime custom-editor metricSchema extension missing or duplicated');
+ if(editor.split('window.__AXIS_CUSTOM_EDITOR__.refresh=axis821RefreshCustomEditor').length-1!==1)fail('final runtime custom-editor refresh extension missing or duplicated');
+}
 
 const finalRenderer=moduleFunctionRange(src,'app.js','function eventHtml(e)','final timeline event renderer').text;
 if(!finalRenderer.includes('axis821EventMetricSummary(e)'))fail('final timeline is not Encounter-schema driven');
