@@ -68,6 +68,16 @@ const marker="window.__AXIS_821_RECORDING_SURFACE__={version:'8.21',owner:'app.j
  syntax(s,FILE);write(FILE,s);
 }
 
+/* v874 remains the sole Object schema editor. Every supported create/edit entry
+ * must hydrate that same editor; Smart Search direct-create is not a second owner. */
+{
+ const FILE='v874-professional.js';let s=read(FILE);
+ const from="if(e.target.closest('#addCustomEq,#v8New,#newCustomEq,[data-edit-eq]'))setTimeout(axis818MetricLoad,80);";
+ const to="if(e.target.closest('#addCustomEq,#v8New,#newCustomEq,[data-edit-eq],[data-axis-create-custom]'))setTimeout(axis818MetricLoad,80);";
+ s=once(s,from,to,'direct Object create metric-editor hydration');
+ syntax(s,FILE);write(FILE,s);
+}
+
 {
  const FILE='styles.css';let s=read(FILE),marker='/* AXIS 8.21 Metric Control System */';if(s.includes(marker))fail('metric control CSS duplicated');
  s+=String.raw`
@@ -81,6 +91,7 @@ const marker="window.__AXIS_821_RECORDING_SURFACE__={version:'8.21',owner:'app.j
 
 for(const [f,tokens] of [
  ['app.js',['__AXIS_821_METRIC_CONTROLS__',"families:['quantity','time','pace','scale','choice']",'axis821PaceSeconds','axis821MetricFitInput','numberCenterIndependentOfUnit:true','data-axis821-pace-step','ratingDirectAndRail:true']],
+ ['v874-professional.js',['axis818MetricLoad','[data-axis-create-custom]']],
  ['styles.css',['AXIS 8.21 Metric Control System','.axis821Stepper input{grid-column:2!important','grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)','text-align:center!important','--axis821-preset-count','grid-template-columns:repeat(var(--axis821-preset-count,6)','.axis821Rating{display:grid','.axis821Toggle{display:grid']]
 ]){const s=read(f);for(const t of tokens)if(!s.includes(t))fail(`${f} missing ${t}`)}
-console.log('[AXIS 8.21 metric control system] PASS · numeric value center independent of unit · symmetric native Group Plan geometry · specialized quantity/time/pace/scale/choice semantics · no new schema/recorder/storage owner');
+console.log('[AXIS 8.21 metric control system] PASS · numeric value center independent of unit · direct-create hydrates canonical metric editor · symmetric native Group Plan geometry · specialized quantity/time/pace/scale/choice semantics · no new schema/recorder/storage owner');
