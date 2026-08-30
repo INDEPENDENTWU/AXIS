@@ -74,15 +74,16 @@ try{
  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:2500});
  const pickerState=await page.evaluate(()=>{
   const visible=el=>!!el&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden'&&getComputedStyle(el).display!=='none';
-  const mine=document.querySelector('#axis8124MineRail [data-v8124-pick="axis-821-center-test"]');
+  const mine=document.querySelector('#eqSheet [data-v8124-pick="axis-821-center-test"][data-v8124-kind="mine"]');
   const legacy=document.querySelector('#eqSheet [data-eq="axis-821-center-test"]');
-  const list=document.querySelector('#eqList'),search=document.querySelector('#eqSearch');
-  return{mineCount:document.querySelectorAll('#axis8124MineRail [data-v8124-pick="axis-821-center-test"]').length,mineVisible:visible(mine),legacyCount:document.querySelectorAll('#eqSheet [data-eq="axis-821-center-test"]').length,legacyVisible:visible(legacy),listDisplay:list?getComputedStyle(list).display:null,listAria:list?.getAttribute('aria-hidden')??null,searchValue:search?.value??null};
+  const list=document.querySelector('#eqList'),search=document.querySelector('#eqSearch'),context=document.querySelector('#v8124PickerContext');
+  return{mineCount:document.querySelectorAll('#eqSheet [data-v8124-pick="axis-821-center-test"][data-v8124-kind="mine"]').length,mineVisible:visible(mine),contextVisible:visible(context),legacyCount:document.querySelectorAll('#eqSheet [data-eq="axis-821-center-test"]').length,legacyVisible:visible(legacy),listDisplay:list?getComputedStyle(list).display:null,listAria:list?.getAttribute('aria-hidden')??null,searchValue:search?.value??null};
  });
  console.log(`[AXIS 8.21 metric centering ${ENGINE}] Photo picker state ${JSON.stringify(pickerState)}`);
  assert.equal(pickerState.mineCount,1,'Photo Record visible 我的 custom Object entry missing');
+ assert.equal(pickerState.contextVisible,true,`Photo Record picker context is not visible · ${JSON.stringify(pickerState)}`);
  assert.equal(pickerState.mineVisible,true,`Photo Record 我的 custom Object entry is not visible · ${JSON.stringify(pickerState)}`);
- const photoEq=page.locator('#axis8124MineRail [data-v8124-pick="axis-821-center-test"]');await tap(photoEq);
+ const photoEq=page.locator('#eqSheet [data-v8124-pick="axis-821-center-test"][data-v8124-kind="mine"]');await tap(photoEq);
  await page.waitForFunction(()=>document.querySelector('#equipmentName')?.textContent?.trim()==='数字居中测试'&&document.querySelector('[data-axis818-metric="duration"]')&&document.querySelector('[data-axis818-metric="resistance"]'),undefined,{timeout:3500});
  assert.equal((await page.locator('#scanSheet .sheetHead>b').innerText()).trim(),'拍摄记录','Photo Record review lost capture identity');
  const photoPreset=page.locator('[data-axis821-preset="duration"][data-value="45"]');assert.equal(await photoPreset.count(),1);await tap(photoPreset);await page.waitForFunction(()=>document.querySelector('[data-axis818-metric="duration"]')?.value==='45');await geometry('duration','Photo duration preset 45');
