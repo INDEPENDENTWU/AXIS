@@ -59,6 +59,8 @@ The fit helper continues to resize the input to its real value and now also hand
 
 Metric-schema hydration is now bound to the **completed canonical v874 Object-editor mount**: `loadEditorState()` finishes the existing professional selector/type/muscle composition and then calls the already-existing `axis818MetricLoad()` exactly once. The historical click-selector `80ms` timing hook is retired. Smart Search direct-create, ordinary custom creation and editing an existing Object therefore converge on the same v874 editor lifecycle without a MutationObserver, polling loop, second schema editor or new persistence owner. A full deterministic release build passed with this source-owner convergence before the temporary migration runner removed itself from the branch.
 
+The inherited 8.20.1 physical gate then exposed one more hidden timing assumption in the synchronous mount path: the generated `loadEditorState()` used the single-element `$()` helper and immediately called `.map(...)` for the active-muscle collection. At a legitimate empty mount this can be `null`. The canonical mount now uses `Array.from(D.querySelectorAll('#customMuscles .active'))`, which is intrinsically empty-safe and does not restore the retired timer. A second full deterministic release build passed with that null-safe mount repair, and its temporary one-shot runner removed itself from the branch before final PR validation.
+
 A new physical smoke exercises the **actual user routes**, not a synthetic isolated component:
 
 - Quick Record → saved custom Object → recording property configuration;
@@ -79,7 +81,7 @@ This repair is mergeable only when the exact final PR head proves all of the fol
 5. symmetric/full-width preset rails retain their existing equal-width geometry;
 6. the real Quick Record entry passes the numeric-centering proof in Chromium and iPhone-like WebKit;
 7. the real Photo Record capture → review → Object → property route passes the same proof in Chromium and iPhone-like WebKit and preserves captured Evidence;
-8. Smart Search direct-create, ordinary custom create and edit-existing Object hydrate the same metric editor from canonical v874 mount completion, with no `setTimeout(axis818MetricLoad,80)` lifecycle guess remaining;
+8. Smart Search direct-create, ordinary custom create and edit-existing Object hydrate the same metric editor from canonical v874 mount completion, with no `setTimeout(axis818MetricLoad,80)` lifecycle guess remaining and no null collection assumption in the synchronous mount path;
 9. saved Encounter metric schema and values remain immutable and correct;
 10. Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform and PR Convergence gates pass on the same final head;
 11. fixed Vercel Production runs the explicit 8.21 Flow, recording-property, Quick/Photo centering and executable-object proofs against the exact merged SHA;
