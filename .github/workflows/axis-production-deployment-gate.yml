@@ -13,7 +13,7 @@ jobs:
       github.event.deployment_status.state == 'success' &&
       github.event.deployment.environment == 'Production'
     runs-on: ubuntu-latest
-    timeout-minutes: 32
+    timeout-minutes: 36
     permissions:
       contents: read
     env:
@@ -141,3 +141,7 @@ jobs:
           node scripts/axis-819-object-recording-smoke.mjs
           node scripts/axis-820-executable-object-smoke.mjs
           node scripts/axis-8201-object-reliability-smoke.mjs
+          node scripts/axis-821-flow-runtime-smoke.mjs
+          node scripts/axis-821-recording-property-surface-smoke.mjs
+          node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
+          node scripts/axis-821-executable-object-system-smoke.mjs
