@@ -29,7 +29,7 @@ Cross-platform foundation remains `axis-native-foundation-0`, native repository 
 - bounded repair branch: `fix/821-quick-photo-metric-centering`
 - base main SHA: `577c62c34a78da9b4ed88e92ef7bbe00eadea3c8`
 - public identity change: **none; remains 8.21**
-- intended product behavior change: **presentation geometry only**
+- intended product behavior change: **presentation geometry plus canonical editor mount lifecycle reliability**
 - intended factual/persistence ownership change: **none**
 - recorder/schema/Encounter/Active/Flow ownership change: **none**
 
@@ -43,6 +43,8 @@ The old middle value cell also used a flex row with `justify-content:center` and
 
 A second acceptance defect made this easier to miss: `scripts/axis-821-recording-property-surface-smoke.mjs` existed but was not a formal Current Release step, and the fixed Vercel Production current-release list did not explicitly run the full 8.21 recording-property / executable-object suite.
 
+The new physical route also exposed a real editor-lifecycle defect: the canonical 8.18 metric editor hydrated from a click-triggered `setTimeout(axis818MetricLoad,80)` timing guess, while Smart Search direct-create can reopen/rebuild the canonical custom Object sheet through `#addCustomEq`. The hydrate could therefore occur before the final v874 editor mount and be erased by the subsequent DOM lifecycle. Increasing the smoke timeout would not repair this product race.
+
 ### Repair
 
 The canonical 8.21 metric presentation owner now uses a symmetric three-track middle cell:
@@ -54,6 +56,8 @@ left balance track | numeric input | unit track
 The two outer tracks have equal flexible width. The numeric input occupies the exact middle track and is `text-align:center`; the unit occupies only the right track. Therefore the number's geometric center is independent of the unit width instead of relying on a per-unit or per-digit pixel offset.
 
 The fit helper continues to resize the input to its real value and now also handles pace placeholders and pace-step changes. Quantity, time, pace and rating numeric values inherit the same centered invariant; choice/toggle semantics remain unchanged.
+
+Metric-schema hydration is now bound to the **completed canonical v874 Object-editor mount**: `loadEditorState()` finishes the existing professional selector/type/muscle composition and then calls the already-existing `axis818MetricLoad()` exactly once. The historical click-selector `80ms` timing hook is retired. Smart Search direct-create, ordinary custom creation and editing an existing Object therefore converge on the same v874 editor lifecycle without a MutationObserver, polling loop, second schema editor or new persistence owner. A full deterministic release build passed with this source-owner convergence before the temporary migration runner removed itself from the branch.
 
 A new physical smoke exercises the **actual user routes**, not a synthetic isolated component:
 
@@ -69,19 +73,20 @@ The existing recording-property smoke is corrected to measure the numeric input 
 This repair is mergeable only when the exact final PR head proves all of the following without weakening inherited assertions:
 
 1. deterministic `build-release.mjs` remains AXIS 8.21 and `canonical-single-runtime`;
-2. the numeric input center, **not the value+unit union**, is within `≤ 0.5 CSS px` of the middle value cell center;
+2. the numeric input center, **not the value+unit union**, is within `≤ 0.5 CSS px` of the middle value cell center and the complete `− / value / +` control center;
 3. computed numeric text alignment is centered and remains centered after preset, direct input and step changes;
 4. the unit remains visually adjacent on the right without participating in numeric centering or overlapping the value;
 5. symmetric/full-width preset rails retain their existing equal-width geometry;
 6. the real Quick Record entry passes the numeric-centering proof in Chromium and iPhone-like WebKit;
 7. the real Photo Record capture → review → Object → property route passes the same proof in Chromium and iPhone-like WebKit and preserves captured Evidence;
-8. saved Encounter metric schema and values remain immutable and correct;
-9. Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform and PR Convergence gates pass on the same final head;
-10. fixed Vercel Production runs the explicit 8.21 Flow, recording-property, Quick/Photo centering and executable-object proofs against the exact merged SHA;
-11. EdgeOne Production runs the same recording-property and Quick/Photo proof in both Chromium and iPhone-like WebKit with exact Vercel/artifact parity;
-12. no new recorder, store, schema owner, Encounter writer, Active owner, Flow owner, database or persistence namespace is introduced;
-13. one initial JavaScript request and zero dynamic runtime chunks remain unchanged;
-14. Production runtime errors remain clean after deployment.
+8. Smart Search direct-create, ordinary custom create and edit-existing Object hydrate the same metric editor from canonical v874 mount completion, with no `setTimeout(axis818MetricLoad,80)` lifecycle guess remaining;
+9. saved Encounter metric schema and values remain immutable and correct;
+10. Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform and PR Convergence gates pass on the same final head;
+11. fixed Vercel Production runs the explicit 8.21 Flow, recording-property, Quick/Photo centering and executable-object proofs against the exact merged SHA;
+12. EdgeOne Production runs the same recording-property and Quick/Photo proof in both Chromium and iPhone-like WebKit with exact Vercel/artifact parity;
+13. no new recorder, store, schema owner, Encounter writer, Active owner, Flow owner, database or persistence namespace is introduced;
+14. one initial JavaScript request and zero dynamic runtime chunks remain unchanged;
+15. Production runtime errors remain clean after deployment.
 
 A green test that only proves the combined value+unit group is centered does **not** satisfy this work.
 
@@ -94,5 +99,8 @@ Only after this user-visible recording geometry defect is merged and re-certifie
 3. preserve exact Product/Flow/Recording behavior, historical data readability, Chromium + iPhone-like WebKit physical proof, one factual owner per capability and Production parity throughout.
 
 Do not combine this geometry repair with Node/toolchain work or unrelated architecture cleanup. Do not relax the `≤0.5 CSS px` requirement to make a gate pass; fix the underlying geometry or the test's real-user-path setup instead.
+
+AXIS 8.21 — Flow / Session Blueprint
+product/821-flow-session-blueprint
 
 Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
