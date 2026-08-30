@@ -1,0 +1,36 @@
+name: AXIS 8.21 Recorder Geometry Owner Retirement Once
+on:
+  push:
+    branches: [fix/821-quick-photo-metric-centering]
+    paths:
+      - scripts/.axis-821-recorder-geometry-owner-retirement-once.mjs
+      - .github/workflows/axis-821-recorder-geometry-owner-retirement-once.yml
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/821-quick-photo-metric-centering
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Retire duplicate recorder geometry owner
+        run: node scripts/.axis-821-recorder-geometry-owner-retirement-once.mjs
+      - name: Validate source contracts and full deterministic release
+        run: |
+          node --check prepare-821-executable-object-system.mjs
+          node --check postbuild-821-executable-object-presentation-seal.mjs
+          node build-release.mjs
+      - name: Commit formal repair and retire one-shot runner
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/axis-821-recorder-geometry-owner-retirement-once.yml scripts/.axis-821-recorder-geometry-owner-retirement-once.mjs
+          git add prepare-821-executable-object-system.mjs postbuild-821-executable-object-presentation-seal.mjs
+          git diff --cached --check
+          git commit -m "fix: retire duplicate recorder geometry owner"
+          git push origin HEAD:fix/821-quick-photo-metric-centering
