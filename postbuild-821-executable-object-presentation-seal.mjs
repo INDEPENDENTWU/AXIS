@@ -51,6 +51,14 @@ function convergeOwnedLiteral(text,file,legacy,replacement,label){
 }
 
 if(!src.includes('function axis821EventMetricSummary(e)'))fail('schema-aware Encounter summary helper missing from final runtime');
+if(!src.includes("setPlanMetricOwnership:true"))fail('set-plan recording ownership marker missing from final runtime');
+{
+ const recorder=moduleFunctionRange(src,'app.js','function axis818RenderRecorder()','final set-plan-aware recording surface').text;
+ for(const token of ['axis821RecorderValueSchema(eq,schema)','setPlanOnly','dataset.axis821SetPlanOwned','valueSchema.map'])if(!recorder.includes(token))fail('final recording surface lost set-plan single ownership · '+token);
+ const reader=moduleFunctionRange(src,'app.js','function axis818ReadMetricInputs(schema)','final set-plan-aware immutable metric reader').text;
+ for(const token of ['axis821SetPlanOwnedMetricKey','axis821SetPlanLegacyMetricValue','setPlan'])if(!reader.includes(token))fail('final immutable metric reader lost set-plan fallback · '+token);
+}
+
 {
  const renderer=moduleFunctionRange(src,'app.js','function axis821MetricControl(m,prev)','final metric-control-system recorder renderer').text;
  for(const token of ['axis821MetricFamily(m)','AXIS821_RUNTIME_CAPABILITIES','data-axis821-family','data-axis821-choice','data-axis821-pace-step','data-axis821-rate','data-axis821-bool'])if(!renderer.includes(token))fail('final recorder renderer lost unified contract · '+token);

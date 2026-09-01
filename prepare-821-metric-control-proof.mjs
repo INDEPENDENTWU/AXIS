@@ -27,12 +27,15 @@ for(const token of [
 for(const token of [
  "window.__AXIS_821_METRIC_CONTROLS__?.version==='8.21'",
  "createFromSearch('全属性控件测试')",
- 'weight control drifted from Group Plan geometry',
+ 'hold control drifted from Group Plan geometry',
+ 'set-plan single ownership',
+ 'residual-only shared recorder',
+ 'set-owned metrics leaked into full generic recorder',
  "fullEvent.metrics.pace,'5:30'",
  'quantity/time/pace/scale/choice controls'
 ])if(!smoke.includes(token))fail(`physical metric smoke did not converge · ${token}`);
 const contract=JSON.parse(read('release-contract.json'));if(String(contract.publicVersion)!=='8.20.1'||String(contract.stableBaseVersion)!=='8.20.1')fail('public release identity moved before 8.21 product seal');
-console.log('[AXIS 8.21 metric control proof] PASS · five semantic control families · 64px Group Plan geometry · expanded dual-engine physical assertions · public identity still 8.20.1');
+console.log('[AXIS 8.21 metric control proof] PASS · five semantic control families · single set-plan ownership · residual-only generic recorder · 64px Group Plan geometry · expanded dual-engine physical assertions · public identity still 8.20.1');
 
 await import('./prepare-821-item-unit-flow-convergence-v2.mjs');
 await import('./prepare-821-recording-geometry-diagnostic.mjs');
