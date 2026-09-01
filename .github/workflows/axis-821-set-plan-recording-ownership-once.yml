@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Repair one-shot generator syntax
+      - name: Repair one-shot generator and smoke compatibility
         run: node scripts/.axis-821-set-plan-recording-ownership-fix-generator-once.mjs
       - name: Converge set-plan recording ownership
         run: node scripts/.axis-821-set-plan-recording-ownership-once.mjs
@@ -27,16 +27,19 @@ jobs:
         run: |
           node --check prepare-821-recording-property-surface.mjs
           node --check prepare-821-metric-control-system.mjs
+          node --check prepare-821-metric-control-smoke-compat.mjs
           node --check scripts/axis-821-recording-property-surface-smoke.mjs
           node --check postbuild-821-executable-object-presentation-seal.mjs
           cp prepare-821-recording-property-surface.mjs /tmp/prepare-821-recording-property-surface.mjs
           cp prepare-821-metric-control-system.mjs /tmp/prepare-821-metric-control-system.mjs
+          cp prepare-821-metric-control-smoke-compat.mjs /tmp/prepare-821-metric-control-smoke-compat.mjs
           cp scripts/axis-821-recording-property-surface-smoke.mjs /tmp/axis-821-recording-property-surface-smoke.mjs
           cp postbuild-821-executable-object-presentation-seal.mjs /tmp/postbuild-821-executable-object-presentation-seal.mjs
           node build-release.mjs
           git reset --hard HEAD
           cp /tmp/prepare-821-recording-property-surface.mjs prepare-821-recording-property-surface.mjs
           cp /tmp/prepare-821-metric-control-system.mjs prepare-821-metric-control-system.mjs
+          cp /tmp/prepare-821-metric-control-smoke-compat.mjs prepare-821-metric-control-smoke-compat.mjs
           cp /tmp/axis-821-recording-property-surface-smoke.mjs scripts/axis-821-recording-property-surface-smoke.mjs
           cp /tmp/postbuild-821-executable-object-presentation-seal.mjs postbuild-821-executable-object-presentation-seal.mjs
       - name: Commit formal repair and retire one-shot runner
@@ -44,7 +47,7 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git rm .github/workflows/axis-821-set-plan-recording-ownership-once.yml scripts/.axis-821-set-plan-recording-ownership-once.mjs scripts/.axis-821-set-plan-recording-ownership-fix-generator-once.mjs
-          git add prepare-821-recording-property-surface.mjs prepare-821-metric-control-system.mjs scripts/axis-821-recording-property-surface-smoke.mjs postbuild-821-executable-object-presentation-seal.mjs
+          git add prepare-821-recording-property-surface.mjs prepare-821-metric-control-system.mjs prepare-821-metric-control-smoke-compat.mjs scripts/axis-821-recording-property-surface-smoke.mjs postbuild-821-executable-object-presentation-seal.mjs
           git diff --cached --check
           git commit -m "AXIS 8.21 — converge set-plan recording ownership"
           git push origin HEAD:fix/821-set-plan-recording-ownership
