@@ -15,8 +15,8 @@ fs.writeFileSync(migrationFile,migration);
 const compatFile='prepare-821-metric-control-smoke-compat.mjs';
 let compat=fs.readFileSync(compatFile,'utf8');
 compat=once(compat,
- "assert.equal(surface.presetMetricCount,14);assert.equal(surface.newRecorder,false);",
- "assert.equal(surface.presetMetricCount,14);assert.equal(surface.setPlanMetricOwnership,true);assert.equal(surface.newRecorder,false);",
+ "assert.equal(surface.presetMetricCount,14);assert.equal(surface.newRecorder,false);assert.equal(surface.newPersistence,false);const controlSystem=await page.evaluate(()=>window.__AXIS_821_METRIC_CONTROLS__);",
+ "assert.equal(surface.presetMetricCount,14);assert.equal(surface.setPlanMetricOwnership,true);assert.equal(surface.newRecorder,false);assert.equal(surface.newPersistence,false);const controlSystem=await page.evaluate(()=>window.__AXIS_821_METRIC_CONTROLS__);",
  'surface single-ownership assertion');
 compat=once(compat,
  "  await page.waitForFunction(()=>document.querySelector('[data-axis821-key=\\\"pace\\\"]')&&document.querySelector('[data-axis821-key=\\\"completed\\\"]'),undefined,{timeout:2500});",
