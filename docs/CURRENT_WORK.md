@@ -116,4 +116,4 @@ Future report architecture remains:
 
 `Object Schema → Encounter Facts → Session Facts → Profile / Goal Snapshot → Training Report → PDF / Image projection`
 
-Chat history is supplemental only. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
+Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
