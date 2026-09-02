@@ -34,18 +34,21 @@ for(const id of BUILTINS){
   if(cap.max!=null)assert.equal(portable.max,cap.max,`${id} max drift`);
 }
 
+assert.equal(metricCapability('reps').executionHint,'context','reps is a fact, not a set-execution owner');
+assert.equal(metricCapability('sets').executionHint,'sets','sets remains the explicit Group Plan execution signal');
+
 const allSchema=normalizeMetricSchema({objectId:'all-builtins',metrics:BUILTINS});
 assert.equal(allSchema.metrics.length,14);assert.deepEqual(allSchema.metrics.map(x=>x.id),BUILTINS);
 const empty=resolveMetricSchema({id:'empty',metricSchema:[]});assert.deepEqual(empty.metrics,[]);assert.equal(resolveExecutionMode(empty.metrics),'single');
 
 const inferredCases=[
   [[], 'single'],
-  [['weight'],'single'],[['reps'],'sets'],[['sets'],'sets'],[['weight','reps'],'sets'],
+  [['weight'],'single'],[['reps'],'single'],[['sets'],'sets'],[['weight','reps'],'sets'],
   [['duration'],'timed'],[['distance'],'timed'],[['pace'],'timed'],[['speed'],'timed'],
   [['intensity'],'timed'],[['resistance'],'timed'],[['level'],'timed'],[['incline'],'timed'],
   [['hold'],'hold'],[['rating'],'single'],[['completed'],'complete'],
   [['completed','speed'],'timed'],[['rating','speed'],'timed'],[['hold','speed'],'hold'],
-  [['hold','sets'],'sets'],[['hold','reps'],'sets'],[['sets','speed'],'sets']
+  [['hold','sets'],'sets'],[['hold','reps'],'hold'],[['sets','speed'],'sets'],[['reps','speed'],'timed']
 ];
 for(const [ids,expected] of inferredCases){
   const metrics=ids.map(metricCapability);assert.equal(resolveExecutionMode(metrics),expected,`${ids.join('+')||'empty'} inference`);
@@ -95,4 +98,4 @@ for(const bad of [undefined,NaN,'NaN']){
   const text=formatMetricValue(metricCapability('speed'),bad);assert.equal(text,'');
 }
 
-console.log(`[AXIS 8.21 Object capability matrix] PASS · ${BUILTINS.length} built-ins · ${Object.keys(CUSTOM_METRIC_TYPES).length} custom types · ${subsets.toLocaleString('en-US')} built-in property combinations · deterministic execution · portable pace/choice/empty facts`);
+console.log(`[AXIS 8.21 Object capability matrix] PASS · ${BUILTINS.length} built-ins · ${Object.keys(CUSTOM_METRIC_TYPES).length} custom types · ${subsets.toLocaleString('en-US')} built-in property combinations · fact/execution ownership separated · portable pace/choice/empty facts`);
