@@ -74,3 +74,4 @@ await import('./prepare-821-object-capability-runtime-safety.mjs');
 await import('./prepare-821-executable-object-presentation-seal.mjs');
 await import('./prepare-821-executable-object-system-smoke-compat.mjs');
 await import('./prepare-821-release.mjs');
+await import('./prepare-821-object-metric-overrides.mjs');
