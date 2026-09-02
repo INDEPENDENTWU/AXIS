@@ -42,6 +42,13 @@ const oldCount="['family-count','组数测试',{key:'sets',label:'组数',type:'
 const newCount="['family-count','次数测试',{key:'reps',label:'次数',type:'count',unit:'次',step:1},'stepper']";
 const countHits=current.split(oldCount).length-1;if(countHits!==1)fail(`current count-family ownership assertion expected once, found ${countHits}`);
 current=current.replace(oldCount,newCount);
+
+/* Keep the assertion unchanged, but emit enough physical state to distinguish
+   canonical-picker routing, selected Object identity and recorder rendering. */
+const familyOpen="await page.evaluate(x=>window.__AXIS_QUICK_RECORD__.openFor(x),id);await page.waitForFunction(([n,k])=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#equipmentName')?.textContent?.trim()===n&&document.querySelector(`#axis818MetricRecorder [data-axis821-kind=\"${k}\"]`),[name,kind],{timeout:4000});";
+const familyOpenDiag="await page.evaluate(x=>window.__AXIS_QUICK_RECORD__.openFor(x),id);await page.waitForTimeout(320);const familyRoute=await page.evaluate(([targetName,targetKind])=>({targetName,targetKind,scanShown:document.querySelector('#scanSheet')?.classList.contains('show')||false,quickShown:document.querySelector('#quickRecordSheet')?.classList.contains('show')||false,pickerShown:document.querySelector('#eqSheet')?.classList.contains('show')||false,equipmentName:document.querySelector('#equipmentName')?.textContent?.trim()||'',recorderShown:document.querySelector('#axis818MetricRecorder')?.classList.contains('show')||false,kinds:[...document.querySelectorAll('#axis818MetricRecorder [data-axis821-kind]')].map(x=>x.dataset.axis821Kind),metrics:[...document.querySelectorAll('#axis818MetricRecorder [data-axis818-metric]')].map(x=>x.dataset.axis818Metric)}),[name,kind]);console.log(`[AXIS 8.21 Object system ${ENGINE}] family route ${name} ${JSON.stringify(familyRoute)}`);await page.waitForFunction(([n,k])=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#equipmentName')?.textContent?.trim()===n&&document.querySelector(`#axis818MetricRecorder [data-axis821-kind=\"${k}\"]`),[name,kind],{timeout:4000});";
+const familyHits=current.split(familyOpen).length-1;if(familyHits!==1)fail(`family physical route expected once, found ${familyHits}`);
+current=current.replace(familyOpen,familyOpenDiag);
 fs.writeFileSync(CURRENT_FILE,current);
 
-console.log('[AXIS 8.21 Executable Object smoke compat] PASS · inherited physical editor uses compact property sheet · continuous pace resolves to existing timed Active owner · generic count family avoids set-plan-owned sets');
+console.log('[AXIS 8.21 Executable Object smoke compat] PASS · inherited physical editor uses compact property sheet · continuous pace resolves to existing timed Active owner · generic count family avoids set-plan-owned sets · family route diagnostics enabled');
