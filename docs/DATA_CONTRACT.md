@@ -12,6 +12,8 @@ This contract defines durable, versioned data boundaries shared by current Web A
 - Event envelope: `axis.event.v1`
 - Media manifest: `axis.media.v1`
 - Normalized golden-state fixture input: `axis.normalized-state-fixture.v1`
+- Session Profile snapshot: `axis.profile-snapshot.v1`
+- Session Goal snapshot: `axis.goal-snapshot.v1`
 
 Every persisted/exported cross-platform envelope must declare its schema/version. Unversioned cross-platform payloads are forbidden.
 
@@ -67,6 +69,31 @@ Snapshots are performance/compatibility materializations of journal/domain state
 A snapshot may be rebuilt from authoritative facts where supported. A snapshot is not a second semantic owner.
 
 Golden fixtures that begin from normalized state use `axis.normalized-state-fixture.v1`. IDs, statuses, set counts, session bounds and interval endpoints are strictly typed and validated before semantic reduction; test harnesses may not rely on JavaScript/string coercion that a native Swift decoder would reject.
+
+### Session-time Profile / Goal snapshots
+
+A newly created WorkoutSession may carry additive immutable context captured at its stored Session start time:
+
+- `profileSnapshot.schema = axis.profile-snapshot.v1`;
+- `goalSnapshot.schema = axis.goal-snapshot.v1`.
+
+These snapshots normalize optional current body/training facts and goal targets into portable numeric-or-null fields. `null` means the fact was not supplied at Session start; it is not zero.
+
+Rules:
+
+- capture happens only when a new Session is created through the authoritative Session owner;
+- later Profile/Goal edits do not rewrite an active or archived Session snapshot;
+- legacy Sessions with no snapshot remain snapshot-absent;
+- current Profile values must never be used to backfill historical absence;
+- nickname, custom equipment, visual memory, Object-recording preferences and unrelated settings are not Session Profile/Goal snapshot facts;
+- Encounter records do not receive duplicate Profile copies;
+- Web stores the snapshots inside the existing `axis_v60_state` Session object; this does not create a new persistence adapter;
+- future native/export adapters preserve the schema-tagged snapshots as additive Session context.
+
+Published schemas live at:
+
+- `shared/contracts/axis-profile-snapshot-v1.schema.json`;
+- `shared/contracts/axis-goal-snapshot-v1.schema.json`.
 
 ## Media
 
@@ -128,6 +155,8 @@ A schema-changing release must provide:
 5. rollback/recovery strategy for destructive operations;
 6. compatibility statement for Web ↔ iOS exchange.
 
+Additive optional Session Profile/Goal snapshots use explicit absence as their backward-compatibility representation; old Sessions are not destructively migrated or backfilled.
+
 ## Compatibility matrix
 
 The following paths are first-class compatibility cases:
@@ -138,6 +167,7 @@ The following paths are first-class compatibility cases:
 - iOS export → Web import;
 - history-only equipment identity;
 - missing optional media;
+- missing optional Session Profile/Goal snapshots;
 - offline workout completed before sync becomes available;
 - duplicate/idempotent import or remote write.
 

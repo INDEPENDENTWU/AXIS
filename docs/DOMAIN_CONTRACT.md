@@ -29,6 +29,8 @@ Required semantic fields:
 
 A session is not required to have a cloud account or network connection.
 
+A newly created Session may also carry optional schema-tagged Profile and Goal context captured at the exact stored Session start time. These snapshots are immutable historical context, not alternate Profile owners. Legacy Sessions without snapshots remain valid and must not be backfilled from a later mutable Profile.
+
 ### Activity
 
 One selected equipment/exercise instance inside a workout session.
@@ -89,6 +91,20 @@ Session active duration is the union of all real activity intervals across the s
 
 Session start/end use stored session facts plus activity evidence. Completion must preserve factual start and end when they differ.
 
+### Session Profile / Goal context
+
+When present, `profileSnapshot` and `goalSnapshot` are captured exactly once when the authoritative Session owner creates the Session.
+
+Rules:
+
+- `capturedAt` equals the stored Session start timestamp;
+- later mutable Profile or Goal edits affect future Sessions only;
+- Session completion carries the original snapshots forward unchanged;
+- historical absence is a fact: missing snapshots stay missing;
+- projections may compare a Session snapshot with current Profile context, but they must label those as different time contexts;
+- current Profile data may not be silently substituted for a missing historical snapshot;
+- Encounter, Activity and SetRecord entities do not duplicate these Session-level snapshots.
+
 ### Project gap
 
 `项目间歇` means elapsed time since the latest real activity boundary while no activity is active.
@@ -115,8 +131,9 @@ Completion must:
 1. close/seal any remaining open activity interval according to the real completion boundary;
 2. archive/persist the completed workout through the authoritative persistence owner;
 3. preserve session start/end evidence;
-4. expose completed state to projections;
-5. never allow a UI-only owner and storage-only owner to disagree about whether the workout is complete.
+4. preserve any Session-start Profile/Goal snapshots unchanged;
+5. expose completed state to projections;
+6. never allow a UI-only owner and storage-only owner to disagree about whether the workout is complete.
 
 ## Quick Record semantics
 
@@ -163,6 +180,8 @@ Examples:
 
 No platform may introduce a second authoritative workout store.
 
+Profile/Goal Session snapshots are historical copies created by the Session owner; they do not become editable Profile state and do not create another Profile writer.
+
 ## Projection invariant
 
 UI is a projection of domain facts and context.
@@ -190,6 +209,7 @@ Golden fixtures in `shared/fixtures/` are normative regression examples. A platf
 - DOM text as state truth;
 - view-local copies that can commit workout facts independently;
 - silent schema mutation;
+- current Profile/Goal values silently substituted for absent historical Session context;
 - recommendation state treated as workout history;
 - server response treated as a second live workout database;
 - platform API callbacks directly mutating persistence without the domain transition boundary.
