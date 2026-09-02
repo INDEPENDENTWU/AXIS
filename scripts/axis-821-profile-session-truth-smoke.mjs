@@ -18,6 +18,16 @@ async function setProfile({name,weight,bodyFat,waist,targetWeight,targetBodyFat,
  await page.locator('#profileWaist').fill(String(waist));await page.locator('#profileTargetWeight').fill(String(targetWeight));await page.locator('#profileTargetBodyFat').fill(String(targetBodyFat));await page.locator('#profileTargetWaist').fill(String(targetWaist));
  await tap(page.locator(`#profileFreq [data-value="${freq}"]`));await tap(page.locator(`#profileGoal [data-value="${goal}"]`));await tap(page.locator('#saveProfile'));await page.waitForFunction(()=>!document.querySelector('#axisConfigGate-profile')?.classList.contains('open'),undefined,{timeout:3000});await closeSettings();
 }
+async function startOrdinarySession(){
+ await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick'));
+ await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:3000});
+ await page.locator('#eqSearch').fill('跑步机');
+ await page.waitForFunction(()=>document.querySelector('#v873SmartResults')?.classList.contains('show'),undefined,{timeout:3000});
+ const row=page.locator('#v873SmartResults [data-v8124-pick="treadmill"]').first();assert.equal(await row.count(),1,'current ordinary Quick picker is missing treadmill');await tap(row);
+ await page.waitForFunction(()=>document.querySelector('#axis818MetricRecorder')?.classList.contains('show')&&document.querySelector('#axis818MetricRecorder [data-axis818-metric="duration"]'),undefined,{timeout:3000});
+ await page.locator('#axis818MetricRecorder [data-axis818-metric="duration"]').fill('1');await tap(page.locator('#saveScan'));
+ await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return c.active?.profileSnapshot?.schema==='axis.profile-snapshot.v1'&&c.active?.goalSnapshot?.schema==='axis.goal-snapshot.v1'&&(c.active?.events||[]).some(e=>e.equipmentId==='treadmill')},undefined,{timeout:5000});
+}
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());
  await page.evaluate(()=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,profile:{customEq:[],memories:[],objectMetricOverrides:{treadmill:{version:1,metrics:['duration'],updatedAt:1}}},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}))});
@@ -25,8 +35,8 @@ try{
  console.log(`[AXIS 8.21 Profile Session truth ${ENGINE}] inline Profile UI saves optional current + target facts without disturbing Object preferences`);
  await setProfile({name:'Snapshot User',weight:72.5,bodyFat:18,waist:82,targetWeight:78,targetBodyFat:15,targetWaist:78,freq:3,goal:'muscle'});
  let c=await core();assert.deepEqual(c.profile.objectMetricOverrides.treadmill.metrics,['duration']);assert.equal(c.profile.measurements.waistCm,'82');assert.deepEqual(c.profile.targets,{weightKg:'78',bodyFatPct:'15',waistCm:'78'});
- console.log(`[AXIS 8.21 Profile Session truth ${ENGINE}] normal Session start captures one immutable Profile / Goal context`);
- await tap(page.locator('#startBtn'));await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return c.active?.profileSnapshot?.schema==='axis.profile-snapshot.v1'&&c.active?.goalSnapshot?.schema==='axis.goal-snapshot.v1'},undefined,{timeout:3500});
+ console.log(`[AXIS 8.21 Profile Session truth ${ENGINE}] ordinary Quick-created Session captures one immutable Profile / Goal context`);
+ await startOrdinarySession();
  c=await core();const firstProfile=structuredClone(c.active.profileSnapshot),firstGoal=structuredClone(c.active.goalSnapshot),firstStart=c.active.start;
  assert.equal(firstProfile.capturedAt,firstStart);assert.equal(firstGoal.capturedAt,firstStart);assert.deepEqual(firstProfile.measurements,{heightCm:178,weightKg:72.5,bodyFatPct:18,waistCm:82});assert.deepEqual(firstProfile.training,{years:4,weeklyFrequency:3});assert.equal(firstGoal.kind,'muscle');assert.deepEqual(firstGoal.targets,{weightKg:78,bodyFatPct:15,waistCm:78});assert.equal(Object.prototype.hasOwnProperty.call(firstProfile,'name'),false);assert.equal(Object.prototype.hasOwnProperty.call(firstProfile,'objectMetricOverrides'),false);
  console.log(`[AXIS 8.21 Profile Session truth ${ENGINE}] later Profile edits affect future Sessions only`);
@@ -41,5 +51,5 @@ try{
  assert.equal(await page.evaluate(()=>window.__AXIS_COMPLETE_WORKOUT__?.()),true);await page.waitForFunction(()=>!JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active,undefined,{timeout:3500});
  console.log(`[AXIS 8.21 Profile Session truth ${ENGINE}] legacy Session absence remains absence after reload`);
  await page.evaluate(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');c.flowRun=null;c.sessions.unshift({id:'legacy-no-context',start:1000,end:2000,events:[]});localStorage.setItem('axis_v60_state',JSON.stringify(c))});await page.reload({waitUntil:'domcontentloaded'});await waitBoot();c=await core();const legacy=c.sessions.find(x=>x.id==='legacy-no-context');assert.ok(legacy);assert.equal(Object.prototype.hasOwnProperty.call(legacy,'profileSnapshot'),false);assert.equal(Object.prototype.hasOwnProperty.call(legacy,'goalSnapshot'),false);assert.equal(await page.evaluate(()=>window.__AXIS_821_PROFILE_SESSION_TRUTH__.legacyBackfill),false);assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.21 Profile Session truth ${ENGINE}] PASS · inline Profile accordion · optional waist/targets · exact normal + Flow Session-start snapshots · future-only Profile edits · archived immutability · legacy absence · existing Object preference preserved`);
+ console.log(`[AXIS 8.21 Profile Session truth ${ENGINE}] PASS · inline Profile accordion · optional waist/targets · current ordinary Quick + Flow Session-start snapshots · future-only Profile edits · archived immutability · legacy absence · existing Object preference preserved`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
