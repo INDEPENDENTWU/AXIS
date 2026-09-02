@@ -4,158 +4,109 @@
 
 AXIS **8.21** remains the current public release.
 
-- exact merged `main` baseline: `26cdd0f6a060ec1056f8125c7f712f2e5303d232`
+- exact merged `main` baseline: `74ae516a5a67244b9a65ed22343edb9de42467a4`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- preceding product change: PR **#112**, per-item built-in Object recording metric overrides
-- PR #112 exact tested head: `5f027dad0c260c06337580cc2116f52f6e6d0307`
-- PR #112 is merged and Production-certified on the existing Vercel AXIS project and EdgeOne Production, including exact artifact parity plus Chromium and iPhone-like WebKit product flows
+- preceding product change: PR **#113**, immutable Profile / Goal Session truth
+- PR #113 final tested head: `516c6f66b2890360f5475f842cfe92517d22bb87`
+- PR #113 is merged and Production-certified on the existing Vercel AXIS project and EdgeOne Production, including exact merged-main artifact parity plus Chromium and iPhone-like WebKit product flows
 - architecture: `canonical-single-runtime`
 - one initial JavaScript request / zero dynamic runtime chunks remains required
 - public identity change for this work: **none; remains 8.21**
 
-The merged 8.21 product already has one canonical Object schema/execution boundary, app-owned Session/Encounter persistence in `axis_v60_state`, v61 recording ownership, v82/v87 Active lifecycle, whole-item Flow, immutable Encounter metric/execution snapshots, and per-user Object metric overrides. This work extends Profile context and Session history only; none of those owners may move.
+The merged product already has one canonical Object schema/execution boundary, app-owned Session/Encounter persistence in `axis_v60_state`, v61 recording ownership, v82/v87 Active lifecycle, whole-item Flow, immutable Encounter metric/execution snapshots, per-user Object metric overrides, and immutable Profile/Goal Session-start snapshots. This work changes only current stable metric semantics/presentation for `intensity` plus shared metric-control optical typography. None of those factual owners may move.
 
-Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, and `axis.flow-provenance.v1`.
+Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.object-capabilities.v1`, and `axis.metric-schema.v1`.
 
 ## Active change
 
-**AXIS 8.21 — Profile / Goal Session Truth**
+**AXIS 8.21 — Metric Optical System + Intensity Redesign**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded delivery branch: `feat/821-profile-session-truth`
-- intended pull request: **#113**
-- exact base main SHA: `26cdd0f6a060ec1056f8125c7f712f2e5303d232`
+- bounded delivery branch: `feat/821-metric-optical-system`
+- intended pull request: **#114**
+- exact base main SHA: `74ae516a5a67244b9a65ed22343edb9de42467a4`
 - intended public release change: **none**
-- intended persistence change: additive optional Profile facts and additive immutable Session context inside the existing app-owned `axis_v60_state`
-- new Profile store / Session store / Encounter writer / Active owner / Flow owner / report owner: **none**
+- new storage / Session writer / Encounter writer / Active owner / Flow owner / report owner: **none**
 
-### Why this change comes before the detailed report
+### Product rule
 
-`app.js` already owns the user Profile and currently stores `height`, `weight`, `bodyFat`, `years`, `freq`, and `goal`. AXIS also already has a simple Training Report/JPG projection and a richer Trends layer. The missing truth boundary is historical context: current Profile/Goal values are mutable, while archived Sessions currently do not preserve what those values were when the workout began.
+Metric controls must read as one coherent AXIS visual language rather than a collection of tiny units and suffixes.
 
-A future report must never use today's body or goal values to fabricate what was true for an old workout. Therefore the durable order is:
-
-`Object Schema → Encounter Facts → Session Facts → Profile / Goal Snapshot → Training Report → PDF / Image projection`
-
-This PR implements only the Profile / Goal Snapshot foundation.
-
-### Profile ownership
-
-Existing current facts keep their existing editable owner and storage location:
-
-- `profile.height`
-- `profile.weight`
-- `profile.bodyFat`
-- `profile.years`
-- `profile.freq`
-- `profile.goal`
-
-They are not copied into a second editable `measurements` model.
-
-New facts that previously had no owner are additive and optional:
+Stable `intensity` is not a physical unit and is no longer presented as `x/10`. Its current canonical semantics are:
 
 ```js
-profile.measurements.waistCm
-profile.targets.weightKg
-profile.targets.bodyFatPct
-profile.targets.waistCm
-```
-
-The Profile UI exposes one optional current waist measurement and three optional target values. Empty means unknown / not supplied. Existing Object preferences, custom equipment, memories and other Profile-owned data remain untouched by Profile saves.
-
-### Session-time immutable context
-
-Only a newly created Session receives context snapshots. Both established Session creation paths use the same app-owned constructor boundary:
-
-- ordinary **开始训练**;
-- Flow launch when no Session already exists.
-
-At the exact stored Session start timestamp AXIS writes:
-
-```js
-session.profileSnapshot = {
-  schema: 'axis.profile-snapshot.v1',
-  version: 1,
-  capturedAt: session.start,
-  measurements: {
-    heightCm,
-    weightKg,
-    bodyFatPct,
-    waistCm
-  },
-  training: {
-    years,
-    weeklyFrequency
-  }
-}
-
-session.goalSnapshot = {
-  schema: 'axis.goal-snapshot.v1',
-  version: 1,
-  capturedAt: session.start,
-  kind,
-  targets: {
-    weightKg,
-    bodyFatPct,
-    waistCm
-  }
+{
+  id: 'intensity',
+  type: 'rating',       // existing portable primitive; no schema-version fork
+  unit: '',
+  min: 1,
+  max: 20,
+  step: 1,
+  presets: [4, 8, 12, 16, 20]
 }
 ```
 
-Optional numeric facts normalize to a finite number or `null`. `null` means no fact existed at Session start; it must never be rendered as zero.
+Product semantics call this an ordinal level. The technical primitive remains `rating` because `axis.metric-schema.v1` already represents bounded ordinal scales with `min / max / step`; adding a new primitive would create unnecessary cross-platform schema churn.
 
-Nickname, custom equipment, visual memories, Object recording overrides, media preferences and other unrelated mutable/profile-private state are deliberately excluded from these historical snapshots.
+Generic/custom `rating` is not the same stable property. A user-defined rating may continue to use its own range, including the existing 1–10 custom-rating default.
 
-### Legacy and mutation semantics
+### Historical truth rule
 
-- a Session that already existed without these snapshots remains without them;
-- AXIS does **not** backfill a legacy Session using today's Profile;
-- editing Profile or Goal during an active Session changes only future Sessions;
-- the current Session keeps its Session-start snapshots unchanged;
-- completion archives the same Session object through the existing app completion/storage owner, so snapshots are carried forward without a second completion path;
-- Encounter facts remain independent and are not given Profile copies;
-- Flow continues to own orchestration only; it delegates new Session creation to the same app-owned Session truth boundary.
+This change is current-schema-only.
 
-### Cross-platform contract
+- no stored intensity fact is multiplied, remapped or inferred;
+- an old Encounter whose immutable schema snapshot says `unit: '/10', max: 10` remains exactly that;
+- only a current resolved Object schema with stable key/id `intensity` receives the new 1–20/no-unit semantics;
+- new Encounter snapshots preserve the current resolved 1–20 schema;
+- no history migration, backfill or second metric owner exists.
 
-This work adds portable additive schema identities:
+### Optical metric language
 
-- `axis.profile-snapshot.v1`
-- `axis.goal-snapshot.v1`
+For the canonical 8.21 metric renderer:
 
-They are Session context under `axis.domain.v1` / `axis.data.v1`, not a Web-only UI model. Old Web/iOS-compatible data without snapshots remains valid through explicit absence.
+- the property title row shows the property label, not a duplicate unit;
+- a real unit such as `秒`, `kg`, `次`, `%` appears once beside the main value;
+- stable intensity shows a pure centered number with no `/10`, `分`, `等级` or other suffix;
+- main numeric glyphs use one optical size/weight and tabular numerals;
+- real units remain secondary but legible, not 9.5–11px microtype;
+- preset/level buttons remain legible and share the same typography across Quick/Photo/recording surfaces;
+- stable intensity uses direct levels `4 / 8 / 12 / 16 / 20`, while −/+ still reaches every integer from 1 through 20;
+- the existing canonical metric renderer remains the only renderer owner. This work is a final presentation/schema projection, not a second recorder.
+
+### Runtime and Object-schema convergence
+
+`lib/axis-object-capabilities.mjs` and `lib/axis-metric-schema.mjs` remain canonical portable truth. The final Web projection normalizes only current stable `intensity` after built-in definition + user Object override resolution, so built-in, overridden and custom Objects that use the stable `intensity` key all record the same current semantics.
+
+Other custom rating keys are left untouched.
 
 ## Validation for this work
 
 This work is mergeable only when the exact final PR head proves all of the following without weakening inherited assertions:
 
-1. the complete deterministic AXIS 8.21 `canonical-single-runtime` build remains green;
-2. existing Profile `height / weight / bodyFat / years / freq / goal` remain the only editable owners for those current facts;
-3. Profile adds only optional current `waistCm` plus optional target `weightKg / bodyFatPct / waistCm`;
-4. existing `objectMetricOverrides`, custom equipment, memories and unrelated Profile state survive Profile edits unchanged;
-5. ordinary Session creation snapshots Profile and Goal exactly once at `session.start`;
-6. Flow-created Session creation snapshots through the same app Session owner and the same schemas;
-7. changing Profile/Goal during an active Session cannot mutate that Session's snapshots;
-8. the next Session receives the updated Profile/Goal context;
-9. completion archives the original snapshots unchanged;
-10. a legacy Session without snapshots remains snapshot-absent after load/render/Profile edits; no current-value backfill is allowed;
-11. snapshots exclude nickname, custom equipment, memories, Object metric overrides and unrelated preferences;
-12. no new LocalStorage namespace, IndexedDB, server state, Session writer, Encounter writer, Active writer, Flow writer or report writer exists;
-13. Chromium and iPhone-like WebKit physically prove Profile save → ordinary Session snapshot → mid-Session Profile change → immutable archive → Flow Session new-context snapshot → legacy absence;
-14. Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform, EdgeOne, PR Convergence, Object Metric Override and Profile Session Truth gates are green on the same exact head;
-15. after merge, the exact merged `main` SHA passes the existing AXIS Vercel Production deployment/fixed-alias proof, EdgeOne Production mirror, artifact parity, Chromium + iPhone-like WebKit production product flows, and clean runtime error verification.
+1. `axis.object-capabilities.v1` and `axis.metric-schema.v1` both define current stable intensity as `rating`, unitless, 1–20, step 1;
+2. current runtime projection exposes direct stable-intensity levels `4 / 8 / 12 / 16 / 20`;
+3. stable intensity visibly contains no `/10` suffix and its main number is optically centered;
+4. unit-bearing controls such as `保持时间` render their unit once beside the value and do not repeat it in the title row;
+5. main values, units and presets meet the legibility floor enforced by physical computed-style assertions on 390px mobile viewport;
+6. Quick Record physically saves intensity 20 and the immutable metric schema snapshot records `unit:''`, `min:1`, `max:20`, `step:1`;
+7. an explicit historical `/10`, max-10 intensity schema snapshot remains unchanged by canonical normalization;
+8. generic custom `rating` remains independently configurable and its default 1–10 semantics are not silently converted;
+9. no new LocalStorage namespace, IndexedDB, server state, recorder, persistence writer, Encounter writer or history migration is introduced;
+10. Chromium and iPhone-like WebKit both run the same physical hold + intensity Quick Record flow;
+11. Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform, EdgeOne, PR Convergence, Object Metric Override, Profile Session Truth and Metric Optical System gates are green on the same exact head;
+12. after merge, the exact merged `main` SHA passes the existing AXIS Vercel Production deployment/fixed-alias proof, EdgeOne Production mirror, artifact parity, Chromium + iPhone-like WebKit production product flows, and clean runtime error verification.
 
-A green test that copies current Profile values into old Sessions, keeps two editable owners for weight/body-fat, changes Encounter ownership, or makes the report itself authoritative does **not** satisfy this work.
+A green test that merely hides `/10` while saving max-10 current schema, migrates old records, or creates a second metric renderer does **not** satisfy this work.
 
 ## Next planned stage
 
-Only after this Profile / Goal Session Truth PR is merged and Production-certified:
+Only after this Metric Optical System PR is merged and Production-certified:
 
-1. make Trends/report projections explicitly distinguish Session snapshot context from current Profile context;
-2. add truthful detailed Session facts and report aggregations without changing their owners;
-3. build the detailed Training Report as a read-only projection of Object/Encounter/Session/Profile snapshot truth;
-4. add PDF / image export only after the report truth model is complete;
-5. keep Node/toolchain convergence as a separate infrastructure change.
+1. establish truthful Session factual summary / time truth (total, active, rest, pause/unaccounted) without changing Session ownership;
+2. make historical range aggregation read only canonical Session/Encounter/Profile/Goal snapshot facts;
+3. build the detailed Training Report as a read-only projection with arbitrary start/end date and all recorded metrics;
+4. add professional paginated PDF export with personal-information inclusion controls and page-break protection;
+5. add share-image export only after the report truth model is complete.
 
 Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
