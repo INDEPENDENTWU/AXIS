@@ -5,6 +5,7 @@
 AXIS **8.21** remains the current public release.
 
 - exact merged `main` baseline: `d3545c9e44ddc0a26ba76355831af8181cab6111`
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - preceding product repair: PR **#111**, set-plan / recording single ownership
 - PR #111 exact tested head: `f56348dc08e271f357571fbfbc012210a89a6ee2`
 - PR #111 is merged and Production-certified on Vercel and EdgeOne, including Chromium + iPhone-like WebKit product flows
@@ -21,6 +22,7 @@ Cross-platform foundation remains `axis-native-foundation-0`, native repository 
 **AXIS 8.21 — Per-item Recording Metric Overrides**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
+- governed active branch: `main`
 - bounded delivery branch: `feat/821-object-metric-overrides`
 - pull request: **#112**
 - exact base main SHA: `d3545c9e44ddc0a26ba76355831af8181cab6111`
