@@ -22,7 +22,7 @@ Cross-platform foundation remains `axis-native-foundation-0`, native repository 
 **AXIS 8.21 — Metric Optical System + Intensity Redesign**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
-- governed active branch: main
+- governed active branch: `main`
 - bounded delivery branch: `feat/821-metric-optical-system`
 - intended pull request: **#114**
 - exact base main SHA: `74ae516a5a67244b9a65ed22343edb9de42467a4`
