@@ -29,4 +29,19 @@ once(
 if(!s.includes("paceSaved.mode,'timed'"))fail('current pace execution assertion missing');
 if(!s.includes('#axis821MetricPickerBody'))fail('compact property-sheet physical route missing');
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Executable Object smoke compat] PASS · inherited physical editor uses compact property sheet · continuous pace resolves to existing timed Active owner');
+
+/* The current representative-family smoke must not use `sets` as a generic
+   count control. `sets` selects sets execution and is therefore Group Plan-owned.
+   `reps` alone remains single execution, so it is the correct generic count-family
+   representative while the recording-property smoke separately proves Group Plan
+   ownership for reps/sets inside sets execution. */
+const CURRENT_FILE='scripts/axis-821-executable-object-system-smoke.mjs';
+if(!fs.existsSync(CURRENT_FILE))fail(`missing ${CURRENT_FILE}`);
+let current=fs.readFileSync(CURRENT_FILE,'utf8');
+const oldCount="['family-count','组数测试',{key:'sets',label:'组数',type:'count',unit:'组',step:1},'stepper']";
+const newCount="['family-count','次数测试',{key:'reps',label:'次数',type:'count',unit:'次',step:1},'stepper']";
+const countHits=current.split(oldCount).length-1;if(countHits!==1)fail(`current count-family ownership assertion expected once, found ${countHits}`);
+current=current.replace(oldCount,newCount);
+fs.writeFileSync(CURRENT_FILE,current);
+
+console.log('[AXIS 8.21 Executable Object smoke compat] PASS · inherited physical editor uses compact property sheet · continuous pace resolves to existing timed Active owner · reps-only remains generic single count family while sets stays Group Plan-owned');

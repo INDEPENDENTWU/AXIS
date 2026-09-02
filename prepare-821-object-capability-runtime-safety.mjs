@@ -88,6 +88,18 @@ s=replaceFunction(
   'build-safe metric value formatter'
 );
 
+/* Final runtime projection must obey the capability truth: a fact does not own
+ * an execution mode. `reps` alone remains single; Group Plan begins only when
+ * `sets` exists, weight+reps jointly imply a set structure, or an explicit sets
+ * capability hint is present. */
+const executionSignature='function axis821AutoExecutionMode(eq,schema=axis818SchemaForEq(eq))';
+s=replaceFunction(
+  s,
+  executionSignature,
+  `function axis821AutoExecutionMode(eq,schema=axis818SchemaForEq(eq)){const explicit=axis821ExecutionExplicit(eq);if(explicit)return explicit;const xs=Array.isArray(schema)?schema:[],keys=new Set(xs.map(x=>String(x?.key||x?.id||'')).filter(Boolean)),hints=new Set(xs.map(x=>String(x?.extensions?.axis?.executionHint||AXIS821_RUNTIME_CAPABILITIES[String(x?.key||x?.id||'')]?.executionHint||(({duration:'timed',distance:'timed',pace:'timed',boolean:'complete'})[String(x?.type||'')]||'context'))));if(keys.has('rounds')||hints.has('rounds'))return'rounds';if(keys.has('sets')||(keys.has('weight')&&keys.has('reps'))||hints.has('sets'))return'sets';if(keys.has('hold')||hints.has('hold'))return'hold';if(keys.size===1&&keys.has('completed'))return'complete';if(hints.has('timed'))return'timed';if(xs.length===1&&hints.has('complete'))return'complete';return'single'}`,
+  'fact/execution ownership resolver'
+);
+
 const controlSignature='function axis821MetricControl(m,prev)';
 const control=functionRange(s,controlSignature,'metric-control-system recorder renderer');
 for(const token of ['axis821MetricFamily(m)','AXIS821_RUNTIME_CAPABILITIES',"if(kind==='pace'){",'data-axis821-family','data-axis821-choice','data-axis821-pace-step','data-axis821-rate','data-axis821-bool'])if(!control.text.includes(token))fail('metric-control-system recorder renderer safety contract missing '+token);
@@ -96,15 +108,19 @@ if(control.text.includes('km$/')||control.text.includes('km$'))fail('metric-cont
 /* Final lexical seal. All capability code that consumes private app helpers must
  * be before the proven canonical app close. */
 const owner=appOwnerBoundary(s);
-for(const [needle,label] of [[choiceTo,'choice binding'],[enumSignature,'enum localization'],['function axis821CleanPaceValue(v)','pace helper'],[valueSignature,'metric formatter'],[controlSignature,'metric control']]){
+for(const [needle,label] of [[choiceTo,'choice binding'],[enumSignature,'enum localization'],['function axis821CleanPaceValue(v)','pace helper'],[valueSignature,'metric formatter'],[executionSignature,'execution resolver'],[controlSignature,'metric control']]){
   const at=s.indexOf(needle);
   if(at<0||at<=owner.stateAt||at>=owner.closeAt)fail(`${label} is outside canonical app lexical owner`);
 }
 if(s.includes(choiceFrom))fail('app-private D survived in choice binding');
-for(const signature of [valueSignature,controlSignature]){
+for(const signature of [valueSignature,executionSignature,controlSignature]){
   const text=functionRange(s,signature,signature).text;
   if(text.includes('km$/')||text.includes('km$'))fail(`${signature} still contains compiler-unsafe pace token`);
 }
+const staleRepsOwnership="keys.has('sets')||keys.has('reps')||hints.has('sets')";
+const finalSetBoundary="keys.has('sets')||(keys.has('weight')&&keys.has('reps'))||hints.has('sets')";
+if(s.includes(staleRepsOwnership))fail('runtime still lets reps fact claim sets execution');
+if(!functionRange(s,executionSignature,'execution resolver').text.includes(finalSetBoundary))fail('runtime set execution boundary missing');
 
 /* Audit the complete tail while respecting self-contained later IIFEs that own
  * their own `const D=document`. A D use is legal only when the nearest enclosing
@@ -129,4 +145,24 @@ for(const signature of [valueSignature,controlSignature]){
 
 try{new Function(s)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Object capability runtime safety] PASS · proven 8.18 app boundary reused · choice/localization/pace inside canonical owner · local-D-aware tail audit · hardened isolation safe');
+
+/* The visible Object editor must project the exact same execution boundary as
+ * app runtime so editing a reps-only schema cannot silently turn it into Group
+ * Plan execution before the Object is saved. */
+const EDITOR_FILE='v874-professional.js';
+if(!fs.existsSync(EDITOR_FILE))fail(`missing ${EDITOR_FILE}`);
+let editor=fs.readFileSync(EDITOR_FILE,'utf8');
+const editorExecutionSignature='function axis821EditorAutoMode()';
+editor=replaceFunction(
+  editor,
+  editorExecutionSignature,
+  `function axis821EditorAutoMode(){const xs=axis818MetricDraft||[],keys=new Set(xs.map(x=>String(x?.key||x?.id||'')).filter(Boolean)),hints=new Set(xs.map(x=>String(x?.extensions?.axis?.executionHint||AXIS821_EDITOR_EXECUTION_HINTS[String(x?.key||x?.id||'')]||(({duration:'timed',distance:'timed',pace:'timed',boolean:'complete'})[String(x?.type||'')]||'context'))));if(keys.has('rounds')||hints.has('rounds'))return'rounds';if(keys.has('sets')||(keys.has('weight')&&keys.has('reps'))||hints.has('sets'))return'sets';if(keys.has('hold')||hints.has('hold'))return'hold';if(keys.size===1&&keys.has('completed'))return'complete';if(hints.has('timed'))return'timed';if(xs.length===1&&hints.has('complete'))return'complete';return'single'}`,
+  'editor fact/execution ownership resolver'
+);
+const editorExecution=functionRange(editor,editorExecutionSignature,'editor execution resolver').text;
+if(editor.includes(staleRepsOwnership))fail('editor still lets reps fact claim sets execution');
+if(!editorExecution.includes(finalSetBoundary))fail('editor set execution boundary missing');
+try{new Function(editor)}catch(e){fail(`editor syntax ${e.message}`)}
+fs.writeFileSync(EDITOR_FILE,editor);
+
+console.log('[AXIS 8.21 Object capability runtime safety] PASS · proven 8.18 app boundary reused · capability truth projected into runtime/editor execution ownership · choice/localization/pace inside canonical owner · local-D-aware tail audit · hardened isolation safe');

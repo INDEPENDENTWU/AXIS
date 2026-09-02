@@ -2,115 +2,92 @@
 
 ## Production baseline at start of this work
 
-AXIS **8.21** is the current public release.
+AXIS **8.21** remains the current public release.
 
-- current merged `main` at start: `577c62c34a78da9b4ed88e92ef7bbe00eadea3c8`
-- release PR: **#108**
-- durable product/runtime seal baseline SHA: `8f1f1331e751a7868d390f986d77d5779732ad51`
+- current merged `main` at start: `7098809608523bb3d1809f5dc7799899e047dc74`
+- immediately preceding product repair: PR **#110**, true Quick / Photo metric numeric centering
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - architecture: `canonical-single-runtime`
-- Vercel runtime-seal deployment: `dpl_4ac8LR615ULNWJ45m1kSB7A6q9jX`
-- governance-only Vercel deployment for `577c62c34a78da9b4ed88e92ef7bbe00eadea3c8`: `dpl_89N2ij11BSuUMgZbLiF8iJY3Ek9E` — READY
-- governance-only fixed Vercel Production gate: `33279823205` — success
-- EdgeOne runtime-seal deployment: `dpysj966i0hh`
-- EdgeOne runtime-seal verification run: `33278965885` — success
+- one initial JavaScript request / zero dynamic runtime chunks remains required
+- public identity change for this work: **none; remains 8.21**
 
-The successful Production gate for `577c62c34a78da9b4ed88e92ef7bbe00eadea3c8` proves this new work is **not** waiting on an undeployed build. A real user-visible defect remains in the recording property surface: in Quick Record and Photo Record, a number can appear shifted because the existing geometry centered the combined value + unit group rather than the numeric value itself.
-
-The existing AXIS 8.21 factual model remains authoritative and must not change: explicit Object metric/execution semantics, immutable Encounter snapshots, canonical Quick/Photo recording, existing v82/v87 Active owners, whole-item Flow, existing `axis_v60_state` / `axis_v8_meta` / `axis_v42_media` persistence, and one canonical runtime.
+The merged 8.21 recording-property system already owns true numeric centering, canonical custom-Object metric configuration, Quick / Photo recording, immutable Encounter snapshots, existing v61 strength/set compatibility, existing v82/v87 Active lifecycle, whole-item Flow, and the established `axis_v60_state` / `axis_v8_meta` / `axis_v42_media` stores. This work must preserve those contracts.
 
 Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, and `axis.flow-provenance.v1`.
 
 ## Active change
 
-**AXIS 8.21 — Quick / Photo Recording Numeric Centering**
+**AXIS 8.21 — Set-plan / Recording Single Ownership**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded repair branch: `fix/821-quick-photo-metric-centering`
-- base main SHA: `577c62c34a78da9b4ed88e92ef7bbe00eadea3c8`
-- public identity change: **none; remains 8.21**
-- intended product behavior change: **presentation geometry plus canonical editor mount lifecycle reliability**
+- bounded delivery branch: `fix/821-set-plan-recording-ownership`
+- exact base main SHA: `7098809608523bb3d1809f5dc7799899e047dc74`
 - intended factual/persistence ownership change: **none**
-- recorder/schema/Encounter/Active/Flow ownership change: **none**
+- new recorder/schema/Encounter/Active/Flow owner: **none**
 
-The governed project authority remains stable on `main`; this bounded repair branch is only the candidate delivery vehicle and does not replace the post-release governance milestone.
+### Product defect
 
-### Root cause
+For a custom Object whose execution mode is `sets`, the canonical Group Plan already edits the set-level facts `weight`, `reps`, and `sets`. The generic **本次记录** surface was nevertheless rendering those same three properties again. That produces two editable controls for one recording fact, adds unnecessary vertical complexity, and creates an avoidable possibility that set-plan values and generic values disagree.
 
-The previous 8.21 physical assertion measured the bounding union of the numeric input and its unit. That allows a layout such as `20 分钟` to pass when the combined group is centered even though the number `20` itself is visibly left of the control center.
+This is an ownership defect, not a request to hide controls cosmetically.
 
-The old middle value cell also used a flex row with `justify-content:center` and a right-aligned input. The unit therefore participated in the centering calculation and could push the number away from the true visual center.
+### Canonical behavior
 
-A second acceptance defect made this easier to miss: `scripts/axis-821-recording-property-surface-smoke.mjs` existed but was not a formal Current Release step, and the fixed Vercel Production current-release list did not explicitly run the full 8.21 recording-property / executable-object suite.
+One fact has one editable owner in the current recording context:
 
-The new physical route also exposed a real editor-lifecycle defect: the canonical 8.18 metric editor hydrated from a click-triggered `setTimeout(axis818MetricLoad,80)` timing guess, while Smart Search direct-create can reopen/rebuild the canonical custom Object sheet through `#addCustomEq`. The hydrate could therefore occur before the final v874 editor mount and be erased by the subsequent DOM lifecycle. Increasing the smoke timeout would not repair this product race.
+- when execution mode is `sets`, Group Plan is the only editable owner for `weight`, `reps`, and `sets`;
+- the generic recording-property surface renders only properties not already owned by Group Plan;
+- if the configured schema contains only `weight / reps / sets`, the generic **本次记录** metric section is absent;
+- if the schema also contains residual properties such as intensity, hold, distance, pace, incline, rating, boolean, or another supported custom property, the generic section remains but contains only those residual properties;
+- non-set execution modes keep their existing generic recording controls;
+- the Object's complete `metricSchemaSnapshot` remains immutable Encounter truth even when some values were edited through Group Plan rather than the generic recorder.
 
-### Repair
+### Data integrity
 
-The canonical 8.21 metric presentation owner now uses a symmetric three-track middle cell:
+The existing v61 save capture runs before the canonical app save writer and synchronizes the finalized Group Plan into the established legacy `weight`, active `reps`, and active `sets` values. The 8.21 metric reader therefore reuses those already-authoritative values when a set-owned generic input is intentionally absent. This preserves both legacy Encounter fields and the immutable `metrics.weight / metrics.reps / metrics.sets` map without adding a second writer, store, database, namespace, or migration.
 
-```text
-left balance track | numeric input | unit track
-```
+The recording surface is responsible only for presentation ownership: it derives a residual recording schema from the full Object schema plus the existing `axis821ExecutionForRecording()` result. It does not infer a second execution mode and does not mutate Object defaults.
 
-The two outer tracks have equal flexible width. The numeric input occupies the exact middle track and is `text-align:center`; the unit occupies only the right track. Therefore the number's geometric center is independent of the unit width instead of relying on a per-unit or per-digit pixel offset.
+### Build / proof convergence
 
-The fit helper continues to resize the input to its real value and now also handles pace placeholders and pace-step changes. Quantity, time, pace and rating numeric values inherit the same centered invariant; choice/toggle semantics remain unchanged.
+Historical metric-control compatibility and static proof files previously assumed that a full-schema Object always exposed generic `weight / reps / sets` controls. Those contracts are updated to the current single-ownership semantics instead of forcing the retired duplicate UI back into the product.
 
-Metric-schema hydration is now bound to the **completed canonical v874 Object-editor mount**: `loadEditorState()` finishes the existing professional selector/type/muscle composition and then calls the already-existing `axis818MetricLoad()` exactly once. The historical click-selector `80ms` timing hook is retired. Smart Search direct-create, ordinary custom creation and editing an existing Object therefore converge on the same v874 editor lifecycle without a MutationObserver, polling loop, second schema editor or new persistence owner. A full deterministic release build passed with this source-owner convergence before the temporary migration runner removed itself from the branch.
+The physical recording-property smoke now includes both required set-plan cases:
 
-The inherited 8.20.1 physical gate then exposed one more hidden timing assumption in the synchronous mount path: the generated `loadEditorState()` used the single-element `$()` helper and immediately called `.map(...)` for the active-muscle collection. At a legitimate empty mount this can be `null`. The canonical mount now uses `Array.from(D.querySelectorAll('#customMuscles .active'))`, which is intrinsically empty-safe and does not restore the retired timer. A second full deterministic release build passed with that null-safe mount repair, and its temporary one-shot runner removed itself from the branch before final PR validation.
+1. a `weight / reps / sets` Object proves Group Plan is visible, the generic metric recorder is absent, and saving a changed set plan preserves complete immutable `schema`, `metrics`, and legacy facts;
+2. a `weight / reps / sets / intensity` Object proves Group Plan continues to own the first three facts while the generic recorder contains only `intensity`, and the saved Encounter preserves all four values.
 
-The dual-engine 8.21 surface gate then proved a separate startup race remained at the Smart Search boundary: `axis8124OpenCustomCreate()` can synchronously open the app-owned custom sheet through `#addCustomEq` even when the historical v874 capture listener has not participated in that synthetic click. The fix makes lifecycle ownership explicit instead of timing-dependent. v874 now exposes one existing-owner `window.__AXIS_CUSTOM_EDITOR__.refresh` delegate backed by a microtask-de-duplicated `axis821RefreshCustomEditor()`. The three historical `setTimeout(loadEditorState,40)` hooks are retired in favor of that same refresh path, and Smart Search direct-create explicitly delegates to it after the synchronous sheet open/name handoff. No additional timer, observer, editor, schema owner or persistence owner is introduced. This convergence also passed the complete deterministic 89-step release before its temporary migration runner self-deleted.
+The same existing smoke continues to prove non-set controls, the five semantic metric families, true numeric optical centering, explicit empty schema, immutable Encounter facts, and no new recorder/storage owner.
 
-Exact candidate `6878fd14d01c18fb1ca89cc60733c9169d48b295` then proved one final readiness distinction: `window.__AXIS_821_METRIC_CONTROLS__` is app-owned and can become available before the later v874 custom-editor API is installed. A very fast real user can therefore direct-create while `window.__AXIS_CUSTOM_EDITOR__?.refresh` is still absent; optional delegation correctly does nothing, but the already-open sheet still needs one later owner-side catch-up. The canonical v874 `hook()` now closes that pre-ready half of the handshake: when v874 itself becomes ready, it detects an already-open `#customEqSheet` and schedules the same microtask-de-duplicated `axis821RefreshCustomEditor()`. If v874 was ready first, direct-create still delegates immediately. Both orderings therefore converge to the same v874 `loadEditorState()` / `axis818MetricLoad()` path without adding a timeout, polling loop, MutationObserver, second editor, schema owner or persistence owner. This late-ready convergence passed the complete deterministic 89-step release before its one-shot migration files self-deleted; formal source commit is `39196c01c9bb78857bac11a65fd9a1e97c8a3de4`.
-
-Exact human candidate `8b773873074c9714048a2d3df5679d20e6fb0732` still failed the unchanged 2.5-second physical editor assertion, so the readiness hypothesis is not treated as accepted merely because the source contract and deterministic build passed. The existing recording-property smoke now records a strict failure diagnostic only **after** that original assertion has already timed out: it snapshots custom-sheet/editor/API state, invokes the existing canonical refresh once for diagnosis, snapshots again, logs accumulated page errors, and then rethrows the original timeout. The timeout, pass condition, geometry assertions and user route are unchanged; this diagnostic path cannot convert a failure into a pass. Formal diagnostic commit is `87e6a22eee83e94960126da41ece1cb115bc6a31`.
-
-That strict diagnostic on human candidate `e37fed32a44f60742e968efc32bad7061e963e42` identified the actual remaining owner defect rather than another timing problem: the custom sheet and `#saveCustomEq` were present, `#axis818MetricEditor` existed, `v874Style` was installed and `pageErrors` was empty, but the editor contained **zero** property choices. At the same moment `window.__AXIS_CUSTOM_EDITOR__` contained only `owner` and `snapshot`; `refresh` and `metricSchema` were both `undefined`, and an explicit diagnostic refresh could not run. The historical `prepare-88-convergence.mjs` was the destructive writer: its generated v874 `hook()` assigned a fresh `{owner,snapshot}` object at runtime, silently erasing capabilities added by later 8.21 source. This is a concrete historical-build debt and is now repaired at the historical owner instead of being masked by a newer workaround.
-
-Formal source commit `9fd7f8146f95373480a6129d50793766fae74dec` makes that ownership contract monotonic. `prepare-88-convergence.mjs` now preserves the existing `window.__AXIS_CUSTOM_EDITOR__` object identity and updates only v874-owned `owner` / `snapshot` fields. `prepare-821-metric-control-system.mjs` rejects any return of the destructive replacement pattern, and the final `postbuild-821-executable-object-presentation-seal.mjs` is assertion-only: it requires preserved object identity plus exactly one `metricSchema` and one `refresh` extension in the final canonical v874 runtime and fails the release if any are missing or duplicated. It does not repair runtime behavior after the fact. One-shot run `33301812047` passed source syntax, the complete 89-step deterministic AXIS 8.21 release, final runtime assertions and `git diff --cached --check`, then removed its own workflow/script before committing the three formal files. This establishes the broader governance rule for future work: historical version steps may migrate or assert compatibility, but must not destructively replace a shared runtime capability object extended by newer authoritative source.
-
-A new physical smoke exercises the **actual user routes**, not a synthetic isolated component:
-
-- Quick Record → saved custom Object → recording property configuration;
-- Photo Record → real capture → review → Object selection → recording property configuration;
-- preset changes, direct numeric input and step changes;
-- saved immutable metric facts and captured photo evidence.
-
-The existing recording-property smoke is corrected to measure the numeric input center itself. Current Release and Universal Practice Object gates now run these physical proofs in both Chromium and iPhone-like WebKit. Vercel fixed Production and EdgeOne Production verification are also required to run the 8.21 recording-property, Quick/Photo centering and full executable-object smokes explicitly.
+A complete deterministic `node build-release.mjs` transaction passed before the formal source commit was accepted. Temporary migration scripts/workflows self-deleted and are not part of the intended PR diff.
 
 ## Validation for this work
 
-This repair is mergeable only when the exact final PR head proves all of the following without weakening inherited assertions:
+This work is mergeable only when the exact final PR head proves all of the following without weakening inherited assertions:
 
-1. deterministic `build-release.mjs` remains AXIS 8.21 and `canonical-single-runtime`;
-2. the numeric input center, **not the value+unit union**, is within `≤ 0.5 CSS px` of the middle value cell center and the complete `− / value / +` control center;
-3. computed numeric text alignment is centered and remains centered after preset, direct input and step changes;
-4. the unit remains visually adjacent on the right without participating in numeric centering or overlapping the value;
-5. symmetric/full-width preset rails retain their existing equal-width geometry;
-6. the real Quick Record entry passes the numeric-centering proof in Chromium and iPhone-like WebKit;
-7. the real Photo Record capture → review → Object → property route passes the same proof in Chromium and iPhone-like WebKit and preserves captured Evidence;
-8. Smart Search direct-create, ordinary custom create and edit-existing Object hydrate the same metric editor through canonical v874 `__AXIS_CUSTOM_EDITOR__.refresh` / mount completion in both readiness orders; the shared custom-editor API object retains `owner`, `snapshot`, `metricSchema` and `refresh` without destructive historical replacement; there is no `setTimeout(axis818MetricLoad,80)`, no `setTimeout(loadEditorState,40)` lifecycle guess and no null collection assumption in the synchronous mount path;
-9. saved Encounter metric schema and values remain immutable and correct;
-10. Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform and PR Convergence gates pass on the same final head;
-11. fixed Vercel Production runs the explicit 8.21 Flow, recording-property, Quick/Photo centering and executable-object proofs against the exact merged SHA;
-12. EdgeOne Production runs the same recording-property and Quick/Photo proof in both Chromium and iPhone-like WebKit with exact Vercel/artifact parity;
-13. no new recorder, store, schema owner, Encounter writer, Active owner, Flow owner, database or persistence namespace is introduced;
-14. one initial JavaScript request and zero dynamic runtime chunks remain unchanged;
-15. Production runtime errors remain clean after deployment.
+1. deterministic AXIS 8.21 `canonical-single-runtime` build remains green with the complete existing release graph;
+2. a `sets` Object with only `weight / reps / sets` exposes exactly one editable owner for those facts: Group Plan;
+3. the generic **本次记录** metric surface contains zero duplicate `weight`, `reps`, or `sets` controls in `sets` mode and disappears completely when no residual properties remain;
+4. a `sets` Object with residual properties renders only those residual properties in the generic recorder;
+5. Group Plan edits are reflected in both immutable Encounter `metrics` and established legacy fields after save;
+6. full `metricSchemaSnapshot` and `executionModeSnapshot` remain correct and historical facts are never rewritten;
+7. non-set Objects preserve their existing generic recording controls and the previously sealed `≤ 0.5 CSS px` numeric-centering invariant;
+8. Quick Record and Photo Record keep the same canonical recorder, photo Evidence, preset/direct/step behavior, and localized UI;
+9. Chromium and iPhone-like WebKit physical recording-property / Quick / Photo / executable-Object suites pass on the same exact head;
+10. Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform, Deployment Policy, EdgeOne and PR Convergence gates are green on that same head;
+11. no new recorder, schema owner, Encounter writer, persistence namespace, database, Active owner, Flow owner, polling loop, MutationObserver, or timing workaround is introduced;
+12. after merge, the exact merged SHA passes fixed Vercel Production proof, EdgeOne Chromium + iPhone-like WebKit proof, artifact parity, and Production runtime-error verification.
 
-A green test that only proves the combined value+unit group is centered does **not** satisfy this work.
+A green test that merely hides the duplicate controls while losing `metrics.weight / metrics.reps / metrics.sets` does **not** satisfy this work.
 
 ## Next planned stage
 
-Only after this user-visible recording geometry defect is merged and re-certified on Vercel and EdgeOne Production:
+Only after this bounded product repair is merged and Production-certified:
 
-1. perform the already-identified **separate Node toolchain convergence** from historical `20.18.0` pins to a supported Node 20.19+ baseline, without mixing infrastructure changes into this product repair;
-2. resume the architecture-governance program by auditing the 89 deterministic release steps and retiring behavioral build-time mutation one bounded source-owner slice at a time;
-3. preserve exact Product/Flow/Recording behavior, historical data readability, Chromium + iPhone-like WebKit physical proof, one factual owner per capability and Production parity throughout.
-
-Do not combine this geometry repair with Node/toolchain work or unrelated architecture cleanup. Do not relax the `≤0.5 CSS px` requirement to make a gate pass; fix the underlying geometry or the test's real-user-path setup instead.
+1. keep Node/toolchain convergence as a separate infrastructure PR; do not mix the known historical Node 20.18.0 debt into this product change;
+2. continue the 89-step build-owner audit and retire behavioral prepare/postbuild mutations one bounded source-owner slice at a time;
+3. preserve the one-fact / one-owner rule for every future Object, Recording, Active, Flow and Encounter capability.
 
 AXIS 8.21 — Flow / Session Blueprint
 product/821-flow-session-blueprint
