@@ -31,7 +31,7 @@ Cross-platform foundation remains `axis-native-foundation-0`, native repository 
 
 ### Product rule
 
-A completed Session receives one immutable factual `timeSummary` at the existing canonical Session-completion boundary, before Activity cleanup and before the existing app-owned `save()` persists the completed Session.
+A completed Session receives one immutable factual `timeSummary` at the existing canonical Session-completion boundary, after one exact Session-end timestamp is assigned and before the existing Session append / app-owned `save()` path persists the completed Session.
 
 Canonical schema for new completed Sessions in this work is `axis.session-time.v1`.
 
@@ -58,9 +58,13 @@ This work must prefer missing classification over invented precision.
 
 ### Ownership and persistence
 
-The existing `completeFinish()` remains the sole Session completion owner. This work adds one call inside that owner:
+The existing final generated `completeFinish()` remains the sole Session completion owner. Production inspection confirms that its current canonical path is Session end → Session append → clear Active → app `save()`; although the historical `sealSessionActivities()` helper still exists, the final Production completion path does not call it.
 
-`axis821SealSessionTime(s,t)` → existing `sealSessionActivities(s,t)` → existing Session append/save path.
+This work therefore adds only this bounded sequence inside the final owner:
+
+`exact Session end assignment` → `axis821SealSessionTime(state.active, axis821SessionEnd)` → existing Session append → existing app `save()`.
+
+This PR does **not** restore, call, replace, or rewrite `sealSessionActivities()`. Activity metadata ownership/lifecycle remains exactly where the current 8.21 runtime already owns it.
 
 `session.timeSummary` is therefore an additional immutable Session fact inside the existing `axis_v60_state` persistence graph, not a new store or writer.
 
@@ -76,7 +80,7 @@ This work is mergeable only when the exact final PR head proves all of the follo
 4. a strength Encounter with no real interval or explicit duration contributes zero inferred Active time;
 5. explicit pause evidence overlapping another Object's Active interval is removed from global rest;
 6. ambiguous settled pause duration remains unaccounted rather than being assigned an invented wall-clock interval;
-7. Session completion stores `axis.session-time.v1` before Activity cleanup using the existing app-owned Session save path;
+7. Session completion stores `axis.session-time.v1` after the exact Session end and before the existing canonical Session append / app-owned save path;
 8. immutable Profile/Goal Session-start snapshots survive completion unchanged and later live Profile edits cannot alter them or `timeSummary`;
 9. already-completed historical Sessions receive no time-summary backfill;
 10. no new LocalStorage namespace, IndexedDB, network state, Session writer, Encounter writer, recorder, Active owner, Flow owner, report owner, or public version is introduced;
@@ -84,7 +88,7 @@ This work is mergeable only when the exact final PR head proves all of the follo
 12. all inherited Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform, EdgeOne, PR Convergence, Object Metric Override, Profile Session Truth and Metric Optical System gates remain green on the same exact head;
 13. after merge, the exact merged `main` SHA must pass the existing Vercel Production deployment/fixed-alias proof, EdgeOne Production mirror, exact artifact parity, Chromium + iPhone-like WebKit production flows, and clean runtime error verification.
 
-A green test that merely produces numbers while inferring unknown strength time, counts per-Activity pause overlap as global rest, mutates old Session history, or creates a second Session owner does **not** satisfy this work.
+A green test that merely produces numbers while inferring unknown strength time, counts per-Activity pause overlap as global rest, mutates old Session history, restores a retired Activity-completion path, or creates a second Session owner does **not** satisfy this work.
 
 ## Next planned stage
 
