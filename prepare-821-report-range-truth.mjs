@@ -19,8 +19,11 @@ if(/\bexport\s/.test(browserSource))fail('pure report range export stripping inc
 
 const runtime=`
 /* AXIS 8.21 — read-only historical Report Range Truth. */
+const axis821ReportRangeBuild=(()=>{
 ${browserSource}
-function axis821BuildReportRange(range){return axisReportRangeBuild(state.sessions,range)}
+return axisReportRangeBuild;
+})();
+function axis821BuildReportRange(range){return axis821ReportRangeBuild(state.sessions,range)}
 try{window.__AXIS_821_REPORT_RANGE_TRUTH__={version:'8.21',schema:'axis.report-range.v1',owner:'read-only-report-range-projection',source:'axis_v60_state.sessions',rangeMembership:'session-start-half-open',profileSource:'immutable-session-snapshot-only',goalSource:'immutable-session-snapshot-only',metricSource:'immutable-encounter-facts-only',canonicalTimeOnly:true,liveProfileRead:false,currentObjectDefinitionRead:false,legacyTimeInference:false,legacyMetricPromotion:false,storageWrite:false,reportUIOwner:false,exportOwner:false,build:axis821BuildReportRange}}catch{}
 `;
 if(/state\.profile|localStorage|indexedDB|\bsave\s*\(/.test(runtime))fail('report range runtime crossed read-only ownership boundary');
@@ -32,4 +35,4 @@ s=s.slice(0,closeAt)+runtime+s.slice(closeAt);
 
 for(const token of ['axis.report-range.v1','read-only-report-range-projection','session-start-half-open','immutable-session-snapshot-only','immutable-encounter-facts-only','canonicalTimeOnly:true','liveProfileRead:false','currentObjectDefinitionRead:false','legacyTimeInference:false','legacyMetricPromotion:false','storageWrite:false','reportUIOwner:false','exportOwner:false'])if(!s.includes(token))fail(`Report Range Truth runtime contract missing ${token}`);
 syntax(s,FILE);write(FILE,s);
-console.log('[AXIS 8.21 Report Range Truth] PASS · completed Session range projection · immutable snapshots/Encounter facts · canonical time only · no live Profile/object lookup · no inference/write/UI/export owner');
+console.log('[AXIS 8.21 Report Range Truth] PASS · completed Session range projection · immutable snapshots/Encounter facts · canonical time only · private pure-model scope · no live Profile/object lookup · no inference/write/UI/export owner');
