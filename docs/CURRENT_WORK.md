@@ -16,7 +16,7 @@ AXIS **8.21** remains the current public release.
 
 The merged product already has one canonical Object schema/execution boundary, app-owned Session/Encounter persistence in `axis_v60_state`, v61 recording ownership, v82/v87 Active lifecycle, whole-item Flow, immutable Encounter metric/execution snapshots, per-user Object metric overrides, immutable `profileSnapshot` + `goalSnapshot` Session-start facts, the Metric Optical System, and immutable `axis.session-time.v1` completion facts. None of those factual owners may move.
 
-Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and the existing portable contracts remain authoritative where defined.
+Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.object-capabilities.v1`, and `axis.metric-schema.v1`.
 
 ## Active change
 
