@@ -70,7 +70,8 @@ assert.ok(!pure.includes('axis.object-capabilities.v1#metric:'),'pure truth must
 assert.ok(!/Date\.now\s*\(/.test(pure),'pure truth must not read wall-clock now');
 const runtimeMatch=prepare.match(/const runtime=`([\s\S]*?)`;\nif\(/);assert.ok(runtimeMatch,'prepare runtime template missing');
 for(const forbidden of ['state.profile','localStorage','indexedDB'])assert.ok(!runtimeMatch[1].includes(forbidden),`runtime crossed read-only boundary with ${forbidden}`);
-assert.ok(runtimeMatch[1].includes('axisReportRangeBuild(state.sessions,range)'),'runtime must read only archived state.sessions');
+assert.ok(runtimeMatch[1].includes('const axis821ReportRangeBuild=(()=>{'),'pure model must be isolated inside a private runtime scope');
+assert.ok(runtimeMatch[1].includes('axis821ReportRangeBuild(state.sessions,range)'),'runtime must read only archived state.sessions');
 for(const token of ['reportUIOwner:false','exportOwner:false','build:axis821BuildReportRange'])assert.ok(prepare.includes(token),`prepare contract missing ${token}`);
 assert.ok(chain.includes("await import('./prepare-821-session-time-truth.mjs');\nawait import('./prepare-821-report-range-truth.mjs');"),'Report Range Truth must build after Session Time Truth in canonical chain');
-console.log('[AXIS 8.21 Report Range Truth contract] PASS · completed-only half-open range · immutable Session/Encounter facts · canonical-time-only totals · legacy/custom honesty · deterministic read-only projection');
+console.log('[AXIS 8.21 Report Range Truth contract] PASS · completed-only half-open range · immutable Session/Encounter facts · canonical-time-only totals · legacy/custom honesty · private read-only runtime projection');
