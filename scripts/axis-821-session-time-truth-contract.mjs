@@ -35,6 +35,6 @@ assert.equal(live.activeMs,20000);assert.equal(live.restMs,40000);assert.equal(l
 
 const prepare=fs.readFileSync('prepare-821-session-time-truth.mjs','utf8');
 const chain=fs.readFileSync('prepare-819-postcommit-lifecycle.mjs','utf8');
-for(const token of ['axis821SealSessionTime(s,t)','axis.session-time.v1','explicit-pause-only-no-active-overlap','strengthInference:false','legacyBackfill:false','newPersistence:false','newEncounterWriter:false','newActiveOwner:false','newFlowOwner:false'])assert.ok(prepare.includes(token),`prepare contract missing ${token}`);
+for(const token of ['function axis821SealSessionTime(s,t)','axis821SealSessionTime(state.active,axis821SessionEnd)','state.sessions.unshift(','axis.session-time.v1','explicit-pause-only-no-active-overlap','strengthInference:false','legacyBackfill:false','newPersistence:false','newEncounterWriter:false','newActiveOwner:false','newFlowOwner:false'])assert.ok(prepare.includes(token),`prepare contract missing ${token}`);
 assert.ok(chain.includes("await import('./prepare-821-session-time-truth.mjs');"),'session time prepare is not in canonical release chain');
-console.log('[AXIS 8.21 Session Time Truth contract] PASS · total bounds · real Active union · explicit duration fallback · overlap-safe explicit rest · unaccounted honesty · no strength inference');
+console.log('[AXIS 8.21 Session Time Truth contract] PASS · total bounds · real Active union · explicit duration fallback · overlap-safe explicit rest · final completion owner · unaccounted honesty · no strength inference');
