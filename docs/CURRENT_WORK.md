@@ -4,109 +4,99 @@
 
 AXIS **8.21** remains the current public release.
 
-- exact merged `main` baseline: `74ae516a5a67244b9a65ed22343edb9de42467a4`
+- exact merged `main` baseline: `f01c4f0b333291de5f481a1625f8377588d2b09b`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- preceding product change: PR **#113**, immutable Profile / Goal Session truth
-- PR #113 final tested head: `516c6f66b2890360f5475f842cfe92517d22bb87`
-- PR #113 is merged and Production-certified on the existing Vercel AXIS project and EdgeOne Production, including exact merged-main artifact parity plus Chromium and iPhone-like WebKit product flows
+- preceding product change: PR **#114**, Metric Optical System + stable intensity 1–20 semantics
+- PR #114 final tested head: `1e47fb1d1c498b810f7f7faed517a07c0db68ddd`
+- PR #114 is merged and Production-certified on the existing Vercel AXIS project and EdgeOne Production, including 13/13 merged-main workflows, exact artifact parity, Chromium and iPhone-like WebKit production product flows, fixed public alias verification, and clean Vercel runtime errors
 - architecture: `canonical-single-runtime`
 - one initial JavaScript request / zero dynamic runtime chunks remains required
 - public identity change for this work: **none; remains 8.21**
 
-The merged product already has one canonical Object schema/execution boundary, app-owned Session/Encounter persistence in `axis_v60_state`, v61 recording ownership, v82/v87 Active lifecycle, whole-item Flow, immutable Encounter metric/execution snapshots, per-user Object metric overrides, and immutable Profile/Goal Session-start snapshots. This work changes only current stable metric semantics/presentation for `intensity` plus shared metric-control optical typography. None of those factual owners may move.
+The merged product already has one canonical Object schema/execution boundary, app-owned Session/Encounter persistence in `axis_v60_state`, v61 recording ownership, v82/v87 Active lifecycle, whole-item Flow, immutable Encounter metric/execution snapshots, per-user Object metric overrides, immutable Profile/Goal Session-start snapshots, and the Metric Optical System. None of those factual owners may move.
 
 Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.object-capabilities.v1`, and `axis.metric-schema.v1`.
 
 ## Active change
 
-**AXIS 8.21 — Metric Optical System + Intensity Redesign**
+**AXIS 8.21 — Session Time Truth**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded delivery branch: `feat/821-metric-optical-system`
-- intended pull request: **#114**
-- exact base main SHA: `74ae516a5a67244b9a65ed22343edb9de42467a4`
+- bounded delivery branch: `feat/821-session-time-truth`
+- intended pull request: **#115**
+- exact base main SHA: `f01c4f0b333291de5f481a1625f8377588d2b09b`
 - intended public release change: **none**
-- new storage / Session writer / Encounter writer / Active owner / Flow owner / report owner: **none**
+- new LocalStorage namespace / IndexedDB / Session writer / Encounter writer / recorder / Active owner / Flow owner / report owner: **none**
 
 ### Product rule
 
-Metric controls must read as one coherent AXIS visual language rather than a collection of tiny units and suffixes.
+A completed Session receives one immutable factual `timeSummary` at the existing canonical Session-completion boundary, after one exact Session-end timestamp is assigned and before the existing Session append / app-owned `save()` path persists the completed Session.
 
-Stable `intensity` is not a physical unit and is no longer presented as `x/10`. Its current canonical semantics are:
+Canonical schema for new completed Sessions in this work is `axis.session-time.v1`.
 
-```js
-{
-  id: 'intensity',
-  type: 'rating',       // existing portable primitive; no schema-version fork
-  unit: '',
-  min: 1,
-  max: 20,
-  step: 1,
-  presets: [4, 8, 12, 16, 20]
-}
-```
+The summary distinguishes four facts:
 
-Product semantics call this an ordinal level. The technical primitive remains `rating` because `axis.metric-schema.v1` already represents bounded ordinal scales with `min / max / step`; adding a new primitive would create unnecessary cross-platform schema churn.
+- `totalMs`: exact Session wall-clock bounds (`end - start`);
+- `activeMs`: global union of real Active/Activity intervals, plus an explicit recorded execution duration only when that Encounter has no real Activity interval;
+- `restMs`: only explicit pause evidence that can be placed on the Session timeline, with every overlapping Active interval subtracted globally;
+- `unaccountedMs`: the remainder. It is deliberately not renamed or inferred as rest.
 
-Generic/custom `rating` is not the same stable property. A user-defined rating may continue to use its own range, including the existing 1–10 custom-rating default.
+### Truth and non-inference rules
 
-### Historical truth rule
+This work must prefer missing classification over invented precision.
 
-This change is current-schema-only.
+- strength execution time is never inferred from set count, rep count, a 45-second/set heuristic, recommendation timing, or the inherited `timeModel().gap` estimate;
+- stable `duration` is interpreted as minutes and stable `hold` as seconds only as explicit execution-duration fallback when an Encounter has no real Activity interval;
+- settled per-Activity `restAccumulatedMs` is not blindly summed across Objects because paused Activities can overlap another Object's Active execution;
+- settled rest is classified only when its Activity interval gaps exactly account for the accumulated pause duration within a small clock tolerance; ambiguous settled pause evidence remains unaccounted;
+- a live explicit pause at Session completion may contribute its exact `[restStartedAt, sessionEnd]` interval;
+- global Active union is subtracted from all rest candidates before `restMs` is sealed;
+- historical completed Sessions are not backfilled or migrated;
+- Profile/Goal snapshots from PR #113 remain unchanged and are not reread from live Profile at completion;
+- current Report UI/PDF/image export is outside this PR.
 
-- no stored intensity fact is multiplied, remapped or inferred;
-- an old Encounter whose immutable schema snapshot says `unit: '/10', max: 10` remains exactly that;
-- only a current resolved Object schema with stable key/id `intensity` receives the new 1–20/no-unit semantics;
-- new Encounter snapshots preserve the current resolved 1–20 schema;
-- no history migration, backfill or second metric owner exists.
+### Ownership and persistence
 
-### Optical metric language
+The existing final generated `completeFinish()` remains the sole Session completion owner. Production inspection confirms that its current canonical path is Session end → Session append → clear Active → app `save()`; although the historical `sealSessionActivities()` helper still exists, the final Production completion path does not call it.
 
-For the canonical 8.21 metric renderer:
+This work therefore adds only this bounded sequence inside the final owner:
 
-- the property title row shows the property label, not a duplicate unit;
-- a real unit such as `秒`, `kg`, `次`, `%` appears once beside the main value;
-- stable intensity shows a pure centered number with no `/10`, `分`, `等级` or other suffix;
-- main numeric glyphs use one optical size/weight and tabular numerals;
-- real units remain secondary but legible, not 9.5–11px microtype;
-- preset/level buttons remain legible and share the same typography across Quick/Photo/recording surfaces;
-- stable intensity uses direct levels `4 / 8 / 12 / 16 / 20`, while −/+ still reaches every integer from 1 through 20;
-- the existing canonical metric renderer remains the only renderer owner. This work is a final presentation/schema projection, not a second recorder.
+`exact Session end assignment` → `axis821SealSessionTime(state.active, axis821SessionEnd)` → existing Session append → existing app `save()`.
 
-### Runtime and Object-schema convergence
+This PR does **not** restore, call, replace, or rewrite `sealSessionActivities()`. Activity metadata ownership/lifecycle remains exactly where the current 8.21 runtime already owns it.
 
-`lib/axis-object-capabilities.mjs` and `lib/axis-metric-schema.mjs` remain canonical portable truth. The final Web projection normalizes only current stable `intensity` after built-in definition + user Object override resolution, so built-in, overridden and custom Objects that use the stable `intensity` key all record the same current semantics.
+`session.timeSummary` is therefore an additional immutable Session fact inside the existing `axis_v60_state` persistence graph, not a new store or writer.
 
-Other custom rating keys are left untouched.
+The pure deterministic contract lives in `lib/axis-session-time-truth.mjs`; the browser projection embeds the same pure source into the canonical app lexical owner during the deterministic release build.
 
 ## Validation for this work
 
 This work is mergeable only when the exact final PR head proves all of the following without weakening inherited assertions:
 
-1. `axis.object-capabilities.v1` and `axis.metric-schema.v1` both define current stable intensity as `rating`, unitless, 1–20, step 1;
-2. current runtime projection exposes direct stable-intensity levels `4 / 8 / 12 / 16 / 20`;
-3. stable intensity visibly contains no `/10` suffix and its main number is optically centered;
-4. unit-bearing controls such as `保持时间` render their unit once beside the value and do not repeat it in the title row;
-5. main values, units and presets meet the legibility floor enforced by physical computed-style assertions on 390px mobile viewport;
-6. Quick Record physically saves intensity 20 and the immutable metric schema snapshot records `unit:''`, `min:1`, `max:20`, `step:1`;
-7. an explicit historical `/10`, max-10 intensity schema snapshot remains unchanged by canonical normalization;
-8. generic custom `rating` remains independently configurable and its default 1–10 semantics are not silently converted;
-9. no new LocalStorage namespace, IndexedDB, server state, recorder, persistence writer, Encounter writer or history migration is introduced;
-10. Chromium and iPhone-like WebKit both run the same physical hold + intensity Quick Record flow;
-11. Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform, EdgeOne, PR Convergence, Object Metric Override, Profile Session Truth and Metric Optical System gates are green on the same exact head;
-12. after merge, the exact merged `main` SHA passes the existing AXIS Vercel Production deployment/fixed-alias proof, EdgeOne Production mirror, artifact parity, Chromium + iPhone-like WebKit production product flows, and clean runtime error verification.
+1. pure interval union/subtraction produces deterministic total/active/rest/unaccounted facts;
+2. overlapping Activity intervals are globally unioned and never double-count Active time;
+3. explicit `duration`/`hold` fallback contributes only when no real Activity interval exists for that Encounter;
+4. a strength Encounter with no real interval or explicit duration contributes zero inferred Active time;
+5. explicit pause evidence overlapping another Object's Active interval is removed from global rest;
+6. ambiguous settled pause duration remains unaccounted rather than being assigned an invented wall-clock interval;
+7. Session completion stores `axis.session-time.v1` after the exact Session end and before the existing canonical Session append / app-owned save path;
+8. immutable Profile/Goal Session-start snapshots survive completion unchanged and later live Profile edits cannot alter them or `timeSummary`;
+9. already-completed historical Sessions receive no time-summary backfill;
+10. no new LocalStorage namespace, IndexedDB, network state, Session writer, Encounter writer, recorder, Active owner, Flow owner, report owner, or public version is introduced;
+11. Chromium and iPhone-like WebKit both run the same physical Session-completion truth smoke;
+12. all inherited Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform, EdgeOne, PR Convergence, Object Metric Override, Profile Session Truth and Metric Optical System gates remain green on the same exact head;
+13. after merge, the exact merged `main` SHA must pass the existing Vercel Production deployment/fixed-alias proof, EdgeOne Production mirror, exact artifact parity, Chromium + iPhone-like WebKit production flows, and clean runtime error verification.
 
-A green test that merely hides `/10` while saving max-10 current schema, migrates old records, or creates a second metric renderer does **not** satisfy this work.
+A green test that merely produces numbers while inferring unknown strength time, counts per-Activity pause overlap as global rest, mutates old Session history, restores a retired Activity-completion path, or creates a second Session owner does **not** satisfy this work.
 
 ## Next planned stage
 
-Only after this Metric Optical System PR is merged and Production-certified:
+Only after Session Time Truth is merged and Production-certified:
 
-1. establish truthful Session factual summary / time truth (total, active, rest, pause/unaccounted) without changing Session ownership;
-2. make historical range aggregation read only canonical Session/Encounter/Profile/Goal snapshot facts;
-3. build the detailed Training Report as a read-only projection with arbitrary start/end date and all recorded metrics;
-4. add professional paginated PDF export with personal-information inclusion controls and page-break protection;
-5. add share-image export only after the report truth model is complete.
+1. make historical range aggregation read only canonical Session/Encounter/Profile/Goal/time-summary facts;
+2. build the detailed Training Report as a read-only projection with arbitrary start/end date and all recorded metrics;
+3. add professional paginated PDF export with personal-information inclusion controls and page-break protection;
+4. add share-image / long-image export only after the report truth model is complete.
 
 Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
