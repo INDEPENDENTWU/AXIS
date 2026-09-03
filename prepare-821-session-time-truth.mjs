@@ -15,7 +15,7 @@ function functionRange(src,signature,label){
   for(let i=brace;i<src.length;i++){
     const ch=src[i],next=src[i+1]||'';
     if(line){if(ch==='\n')line=false;continue}
-    if(block){if(ch==='*'&&next==='/'){block=false;i++;continue}
+    if(block){if(ch==='*'&&next==='/'){block=false;i++}continue}
     if(quote){if(escaped){escaped=false;continue}if(ch==='\\'){escaped=true;continue}if(ch===quote)quote='';continue}
     if(ch==='/'&&next==='/'){line=true;i++;continue}
     if(ch==='/'&&next==='*'){block=true;i++;continue}
