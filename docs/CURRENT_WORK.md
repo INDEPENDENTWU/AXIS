@@ -4,99 +4,104 @@
 
 AXIS **8.21** remains the current public release.
 
-- exact merged `main` baseline: `f01c4f0b333291de5f481a1625f8377588d2b09b`
+- exact merged `main` baseline: `143e7d4130017e17d2253d527d41a452267b2b4b`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- preceding product change: PR **#114**, Metric Optical System + stable intensity 1–20 semantics
-- PR #114 final tested head: `1e47fb1d1c498b810f7f7faed517a07c0db68ddd`
-- PR #114 is merged and Production-certified on the existing Vercel AXIS project and EdgeOne Production, including 13/13 merged-main workflows, exact artifact parity, Chromium and iPhone-like WebKit production product flows, fixed public alias verification, and clean Vercel runtime errors
+- preceding product change: PR **#115**, Session Time Truth
+- PR #115 final tested head: `f770a959437605017791b425d2057def0b1ff531`
+- PR #115 merged main SHA: `143e7d4130017e17d2253d527d41a452267b2b4b`
+- PR #115 is merged and Production-certified on the existing Vercel AXIS project and EdgeOne Production: merged-main workflows are green, Vercel exact Production serves the same merged SHA with clean runtime error/fatal logs, EdgeOne exact artifact parity passed, Chromium passed, and the isolated inherited WebKit geometry transient passed unchanged on the allowed rerun before the Production success marker / verification record completed
 - architecture: `canonical-single-runtime`
 - one initial JavaScript request / zero dynamic runtime chunks remains required
 - public identity change for this work: **none; remains 8.21**
 
-The merged product already has one canonical Object schema/execution boundary, app-owned Session/Encounter persistence in `axis_v60_state`, v61 recording ownership, v82/v87 Active lifecycle, whole-item Flow, immutable Encounter metric/execution snapshots, per-user Object metric overrides, immutable Profile/Goal Session-start snapshots, and the Metric Optical System. None of those factual owners may move.
+The merged product already has one canonical Object schema/execution boundary, app-owned Session/Encounter persistence in `axis_v60_state`, v61 recording ownership, v82/v87 Active lifecycle, whole-item Flow, immutable Encounter metric/execution snapshots, per-user Object metric overrides, immutable `profileSnapshot` + `goalSnapshot` Session-start facts, the Metric Optical System, and immutable `axis.session-time.v1` completion facts. None of those factual owners may move.
 
 Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.object-capabilities.v1`, and `axis.metric-schema.v1`.
 
 ## Active change
 
-**AXIS 8.21 — Session Time Truth**
+**AXIS 8.21 — Report Range Truth**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded delivery branch: `feat/821-session-time-truth`
-- intended pull request: **#115**
-- exact base main SHA: `f01c4f0b333291de5f481a1625f8377588d2b09b`
+- bounded delivery branch: `feat/821-report-range-truth`
+- intended pull request: **#116**
+- exact base main SHA: `143e7d4130017e17d2253d527d41a452267b2b4b`
 - intended public release change: **none**
-- new LocalStorage namespace / IndexedDB / Session writer / Encounter writer / recorder / Active owner / Flow owner / report owner: **none**
+- new LocalStorage namespace / IndexedDB / network state / Session writer / Encounter writer / recorder / Active owner / Flow owner: **none**
+- new Report UI / PDF owner / image-export owner: **none**
+- new bounded capability: **one deterministic read-only historical range projection**
 
 ### Product rule
 
-A completed Session receives one immutable factual `timeSummary` at the existing canonical Session-completion boundary, after one exact Session-end timestamp is assigned and before the existing Session append / app-owned `save()` path persists the completed Session.
+`axis.report-range.v1` is a read-only projection over already-completed archived Sessions. It does not create, repair, migrate, infer, or persist facts.
 
-Canonical schema for new completed Sessions in this work is `axis.session-time.v1`.
+Canonical projection line for this work is:
 
-The summary distinguishes four facts:
+`completed Session archive` → immutable `profileSnapshot` / `goalSnapshot` → immutable `timeSummary` → immutable Encounter `schemaSnapshot` / `metrics` / `executionModeSnapshot` → deterministic range facts.
 
-- `totalMs`: exact Session wall-clock bounds (`end - start`);
-- `activeMs`: global union of real Active/Activity intervals, plus an explicit recorded execution duration only when that Encounter has no real Activity interval;
-- `restMs`: only explicit pause evidence that can be placed on the Session timeline, with every overlapping Active interval subtracted globally;
-- `unaccountedMs`: the remainder. It is deliberately not renamed or inferred as rest.
+Range membership is based on Session start time using a half-open interval: `[range.start, range.end)`. Sessions without both finite `start` and finite `end` are not completed and are excluded.
 
 ### Truth and non-inference rules
 
-This work must prefer missing classification over invented precision.
+This work prefers explicit missing coverage over invented historical precision.
 
-- strength execution time is never inferred from set count, rep count, a 45-second/set heuristic, recommendation timing, or the inherited `timeModel().gap` estimate;
-- stable `duration` is interpreted as minutes and stable `hold` as seconds only as explicit execution-duration fallback when an Encounter has no real Activity interval;
-- settled per-Activity `restAccumulatedMs` is not blindly summed across Objects because paused Activities can overlap another Object's Active execution;
-- settled rest is classified only when its Activity interval gaps exactly account for the accumulated pause duration within a small clock tolerance; ambiguous settled pause evidence remains unaccounted;
-- a live explicit pause at Session completion may contribute its exact `[restStartedAt, sessionEnd]` interval;
-- global Active union is subtracted from all rest candidates before `restMs` is sealed;
+- live `state.profile` is never read by the range projection;
+- current Object catalog / current user metric overrides are never consulted to reinterpret an archived Encounter;
+- `profileSnapshot` is accepted only as `axis.profile-snapshot.v1`;
+- `goalSnapshot` is accepted only as `axis.goal-snapshot.v1`;
+- `timeSummary` is aggregated only when it is canonical `axis.session-time.v1`;
+- a Session without canonical time truth contributes zero to canonical time totals and increments missing-time coverage; no `mins()`, set-count, rep-count, recommendation, 45-second heuristic, wall-clock guess, or other legacy timing inference is allowed;
+- Encounter metric observations come only from archived `event.metrics`; root legacy fields such as `weight`, `reps`, `duration`, etc. may be retained as legacy evidence but are never promoted into canonical metrics;
+- archived `schemaSnapshot` keys are preserved exactly;
+- known stable metric keys may be identified only as stable keys; this layer does not invent a portable definition URI, label, or unit that was not immutably captured;
+- custom / unknown metric keys remain `encounter-key-only` with `definitionMissing: true` rather than being resolved against today's Object definition;
+- unsupported future snapshot/time schemas are reported as unsupported/missing canonical coverage rather than silently interpreted;
+- projection output is cloned/detached and does not mutate archived Sessions;
 - historical completed Sessions are not backfilled or migrated;
-- Profile/Goal snapshots from PR #113 remain unchanged and are not reread from live Profile at completion;
-- current Report UI/PDF/image export is outside this PR.
+- Report UI, PDF, image export, coaching, scoring, recommendations, and medical interpretation are outside this PR.
 
-### Ownership and persistence
+### Ownership and runtime placement
 
-The existing final generated `completeFinish()` remains the sole Session completion owner. Production inspection confirms that its current canonical path is Session end → Session append → clear Active → app `save()`; although the historical `sealSessionActivities()` helper still exists, the final Production completion path does not call it.
+The pure deterministic model lives in `lib/axis-report-range-truth.mjs`.
 
-This work therefore adds only this bounded sequence inside the final owner:
+The deterministic build embeds that same pure source into the canonical app lexical runtime through `prepare-821-report-range-truth.mjs`, after `prepare-821-session-time-truth.mjs`.
 
-`exact Session end assignment` → `axis821SealSessionTime(state.active, axis821SessionEnd)` → existing Session append → existing app `save()`.
+The runtime surface is intentionally narrow:
 
-This PR does **not** restore, call, replace, or rewrite `sealSessionActivities()`. Activity metadata ownership/lifecycle remains exactly where the current 8.21 runtime already owns it.
+`window.__AXIS_821_REPORT_RANGE_TRUTH__.build(range)` → reads only canonical `state.sessions` → returns a detached `axis.report-range.v1` bundle.
 
-`session.timeSummary` is therefore an additional immutable Session fact inside the existing `axis_v60_state` persistence graph, not a new store or writer.
-
-The pure deterministic contract lives in `lib/axis-session-time-truth.mjs`; the browser projection embeds the same pure source into the canonical app lexical owner during the deterministic release build.
+This work must not call app `save()`, LocalStorage mutation APIs, IndexedDB, network persistence, Profile writers, Object schema writers, Session/Encounter writers, or any export/UI owner.
 
 ## Validation for this work
 
 This work is mergeable only when the exact final PR head proves all of the following without weakening inherited assertions:
 
-1. pure interval union/subtraction produces deterministic total/active/rest/unaccounted facts;
-2. overlapping Activity intervals are globally unioned and never double-count Active time;
-3. explicit `duration`/`hold` fallback contributes only when no real Activity interval exists for that Encounter;
-4. a strength Encounter with no real interval or explicit duration contributes zero inferred Active time;
-5. explicit pause evidence overlapping another Object's Active interval is removed from global rest;
-6. ambiguous settled pause duration remains unaccounted rather than being assigned an invented wall-clock interval;
-7. Session completion stores `axis.session-time.v1` after the exact Session end and before the existing canonical Session append / app-owned save path;
-8. immutable Profile/Goal Session-start snapshots survive completion unchanged and later live Profile edits cannot alter them or `timeSummary`;
-9. already-completed historical Sessions receive no time-summary backfill;
-10. no new LocalStorage namespace, IndexedDB, network state, Session writer, Encounter writer, recorder, Active owner, Flow owner, report owner, or public version is introduced;
-11. Chromium and iPhone-like WebKit both run the same physical Session-completion truth smoke;
-12. all inherited Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform, EdgeOne, PR Convergence, Object Metric Override, Profile Session Truth and Metric Optical System gates remain green on the same exact head;
-13. after merge, the exact merged `main` SHA must pass the existing Vercel Production deployment/fixed-alias proof, EdgeOne Production mirror, exact artifact parity, Chromium + iPhone-like WebKit production flows, and clean runtime error verification.
+1. `[start,end)` Session-start range membership is deterministic and excludes the end boundary;
+2. Sessions with null/empty/non-finite end are excluded rather than accidentally coercing to timestamp zero;
+3. only completed archived Sessions are projected and output chronology is deterministic ascending order;
+4. `profileSnapshot` and `goalSnapshot` come only from the immutable Session snapshots, never live Profile;
+5. only canonical `axis.session-time.v1` contributes to time totals; missing/unsupported time truth remains missing and is never inferred;
+6. Encounter observations come only from immutable `metrics`; legacy root facts are preserved separately but never promoted;
+7. standard metric keys are not given invented portable definition URIs, while custom/unknown keys explicitly expose missing definition coverage;
+8. later mutation of the input archive cannot mutate a previously returned projection;
+9. changing live Profile / Object preferences while leaving archived Sessions unchanged produces byte-for-byte equivalent semantic projection;
+10. deliberately making the current Object resolver throw does not affect historical range projection;
+11. invoking `build(range)` leaves `axis_v60_state` unchanged;
+12. no new LocalStorage namespace, IndexedDB, network state, writer, recorder, Active owner, Flow owner, Report UI owner, export owner, or public release identity is introduced;
+13. Chromium and iPhone-like WebKit both run the same physical Report Range truth smoke;
+14. all inherited Current Release, Universal Practice Object, Runtime, Runtime Foundation, Deep Compatibility, Repository, Work Continuity, Cross-Platform, EdgeOne, PR Convergence, Object Metric Override, Profile Session Truth, Metric Optical System and Session Time Truth gates remain green on the same exact head;
+15. after merge, the exact merged `main` SHA must pass the existing Vercel Production deployment/fixed-alias proof, EdgeOne Production mirror, exact artifact parity, Chromium + iPhone-like WebKit production flows, and clean runtime error verification.
 
-A green test that merely produces numbers while inferring unknown strength time, counts per-Activity pause overlap as global rest, mutates old Session history, restores a retired Activity-completion path, or creates a second Session owner does **not** satisfy this work.
+A green test that obtains attractive totals by reading today's Profile/Object definitions, coercing an unfinished Session to completed, promoting legacy root fields, inventing custom metric definitions, or estimating missing historical time does **not** satisfy this work.
 
 ## Next planned stage
 
-Only after Session Time Truth is merged and Production-certified:
+Only after Report Range Truth is merged and Production-certified:
 
-1. make historical range aggregation read only canonical Session/Encounter/Profile/Goal/time-summary facts;
-2. build the detailed Training Report as a read-only projection with arbitrary start/end date and all recorded metrics;
-3. add professional paginated PDF export with personal-information inclusion controls and page-break protection;
-4. add share-image / long-image export only after the report truth model is complete.
+1. build the detailed in-app Training Report as a read-only projection over `axis.report-range.v1`, with arbitrary start/end dates and clear coverage/missing-fact treatment;
+2. add professional paginated PDF export from the canonical Report projection, including personal-information inclusion controls and page-break protection;
+3. add share card / long-image export only after the Report UI and PDF factual model are stable;
+4. later add JSON/CSV/native/health projections only as downstream representations, never parallel factual stores.
 
 Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
