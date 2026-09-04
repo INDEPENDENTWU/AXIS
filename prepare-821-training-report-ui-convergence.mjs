@@ -89,6 +89,27 @@ try{window.__AXIS_8710_REPORT_READY__=true;window.__AXIS_8710_REPORT_RETIRED__={
   write(FILE,s);
 }
 
+/* The inherited completion smoke opens Report before creating any completed
+ * Session. Preserve its parent-return/scroll proof, but validate the truthful
+ * empty completed-history projection instead of the retired v8710 card deck. */
+{
+  const FILE='scripts/axis-completion-smoke.mjs';let s=read(FILE);
+  const start=`await page.waitForFunction(()=>document.querySelectorAll('#v8710ReportDeck .v8710Plate').length>=2,{timeout:1500});`;
+  const end=`await page.locator('#reportSheet .axisBack').click();`;
+  const current=`const reportFixture=await page.evaluate(()=>{try{const x=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return{sessions:Array.isArray(x.sessions)?x.sessions.length:0,active:!!x.active}}catch{return{sessions:0,active:false}}});
+assert.equal(reportFixture.sessions,0,'completion smoke fixture unexpectedly contains completed Sessions');
+assert.ok(await page.locator('#reportPreview').isVisible(),'truth-backed empty Report preview is hidden');
+assert.ok(await page.locator('#axis821ReportScope').isVisible(),'truth-backed empty Report scope is hidden');
+assert.equal((await page.locator('#axis821ReportScope').innerText()).trim(),'全部完成记录','empty Settings Report scope is not completed-history truth');
+await page.waitForSelector('#reportPreview .axis821ReportEmpty',{state:'visible',timeout:1500});
+assert.match((await page.locator('#reportPreview .axis821ReportEmpty').innerText()).trim(),/暂无可用训练记录/,'empty completed-history copy is missing');
+assert.equal(await page.locator('#reportPreview .axis821ReportHero').count(),0,'empty completed-history Report fabricated aggregate facts');
+assert.equal(await page.locator('#v8710ReportDeck,#v8710ShareReport,#shareReport,#v877ReportDeck:visible').count(),0,'retired Report owner survived empty-state convergence');
+await page.locator('#reportSheet .axisBack').click();`;
+  s=replaceSpan(s,start,end,current,'completion empty Report + parent-return contract');
+  write(FILE,s);
+}
+
 /* Runtime matrix compatibility now proves the new canonical Report owner rather
  * than requiring the intentionally retired v8710 three-card/JPG projection. */
 {
@@ -114,16 +135,20 @@ const reportOwner=await page.evaluate(()=>window.__AXIS_821_TRAINING_REPORT_UI__
   s=replaceOnce(s,from,`console.log('[AXIS WebKit] current v84 trends + truth-backed canonical report');`,'WebKit Report phase label');
   const start=`await page.waitForFunction(()=>document.querySelector('#v8710ReportDeck')&&document.querySelectorAll('#v8710ReportDeck .v8710Plate').length===3,undefined,{timeout:1200});`;
   const end=`assert.ok(await page.locator('#v8710ShareReport').isVisible(),'WebKit canonical report share owner is missing/hidden');`;
-  const current=`await page.waitForSelector('#reportPreview .axis821ReportHero',{state:'visible',timeout:1200});
+  const current=`const reportFixture=await page.evaluate(()=>{try{const x=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return{sessions:Array.isArray(x.sessions)?x.sessions.length:0,active:!!x.active}}catch{return{sessions:0,active:false}}});
+assert.equal(reportFixture.sessions,0,'WebKit Runtime fixture unexpectedly contains completed Sessions');
+assert.equal(reportFixture.active,true,'WebKit Runtime fixture lost its in-progress Session before Report truth check');
 assert.ok(await page.locator('#reportPreview').isVisible(),'WebKit truth-backed canonical report preview is hidden');
 assert.ok(await page.locator('#axis821ReportScope').isVisible(),'WebKit truth-backed canonical report scope is hidden');
-assert.equal((await page.locator('#axis821ReportScope').innerText()).trim(),'全部完成记录','WebKit Settings report must project all completed Sessions');
-assert.ok((await page.locator('#reportPreview').innerText()).trim().length>0,'WebKit truth-backed canonical report rendered no content');
+assert.equal((await page.locator('#axis821ReportScope').innerText()).trim(),'全部完成记录','WebKit Settings report must project completed Sessions only');
+await page.waitForSelector('#reportPreview .axis821ReportEmpty',{state:'visible',timeout:1200});
+assert.match((await page.locator('#reportPreview .axis821ReportEmpty').innerText()).trim(),/暂无可用训练记录/,'WebKit completed-history empty state is missing');
+assert.equal(await page.locator('#reportPreview .axis821ReportHero').count(),0,'WebKit active Session leaked into completed-history aggregates');
 assert.equal(await page.locator('#v877ReportDeck:visible,#v8710ReportDeck:visible').count(),0,'WebKit retired report presentation owner became visible');
 assert.equal(await page.locator('#v8710ReportDeck,#v8710ShareReport,#shareReport').count(),0,'WebKit retired Report deck/share owner survived canonical convergence');
 const reportOwner=await page.evaluate(()=>window.__AXIS_821_TRAINING_REPORT_UI__);assert.equal(reportOwner?.truthSchema,'axis.report-range.v1');assert.equal(reportOwner?.reportUIOwner,true);assert.equal(reportOwner?.exportOwner,false);assert.equal(reportOwner?.legacyShareExport,false);`;
-  s=replaceSpan(s,start,end,current,'WebKit Runtime canonical Report owner contract');
+  s=replaceSpan(s,start,end,current,'WebKit Runtime completed-history Report contract');
   write(FILE,s);
 }
 
-console.log('[AXIS 8.21 Training Report UI convergence] PASS · truth-backed report is sole visible presentation owner · v8710/v877 report style, observer and share owners retired · Chromium/WebKit runtime contracts target axis.report-range.v1 · no training/storage owner change');
+console.log('[AXIS 8.21 Training Report UI convergence] PASS · truth-backed report is sole visible presentation owner · completed-history empty state excludes Active · v8710/v877 report style, observer and share owners retired · Chromium/WebKit runtime contracts target axis.report-range.v1 · no training/storage owner change');
