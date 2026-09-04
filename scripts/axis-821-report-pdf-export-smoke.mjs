@@ -30,7 +30,8 @@ try{
  await page.waitForFunction(()=>document.querySelectorAll('[data-axis821-report-session]').length===4,undefined,{timeout:1500});
  assert.equal((await page.locator('#axis821ReportScope').innerText()).trim(),'2026-08-03 — 2026-08-06');
  const ids=await page.locator('[data-axis821-report-session]').evaluateAll(xs=>xs.map(x=>x.getAttribute('data-axis821-report-session')));
- assert.deepEqual(ids,['s-3','s-4','s-5','s-6'],'date range is not inclusive-by-day / half-open internally');
+ assert.deepEqual(new Set(ids),new Set(['s-3','s-4','s-5','s-6']),'date range is not inclusive-by-day / half-open internally');
+ assert.deepEqual(ids,['s-6','s-5','s-4','s-3'],'range Report did not preserve canonical newest-first presentation order');
  const rangeText=await page.locator('#reportPreview').innerText();for(const token of ['历史项目 3-1','历史项目 6-6','70.3 kg','70.6 kg'])assert.ok(rangeText.includes(token),`range Report missing ${token}`);for(const token of ['历史项目 2-1','历史项目 7-1','88.8 kg','导出用户'])assert.ok(!rangeText.includes(token),`screen historical Report leaked out-of-range/live export identity ${token}`);
  const overflow=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,box:document.querySelector('#axis821ReportToolbar')?.getBoundingClientRect()}));assert.ok(overflow.sw<=overflow.cw+1,`390px Report toolbar overflows horizontally ${JSON.stringify(overflow)}`);
  await page.locator('#axis821ReportIdentity').check();
