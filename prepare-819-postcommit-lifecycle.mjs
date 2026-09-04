@@ -79,3 +79,4 @@ await import('./prepare-821-profile-session-truth.mjs');
 await import('./prepare-821-metric-optical-system.mjs');
 await import('./prepare-821-session-time-truth.mjs');
 await import('./prepare-821-report-range-truth.mjs');
+await import('./prepare-821-training-report-ui.mjs');

@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+
+const read=f=>fs.readFileSync(f,'utf8');
+const prepare=read('prepare-821-training-report-ui.mjs'),lifecycle=read('prepare-819-postcommit-lifecycle.mjs'),docs=read('docs/CURRENT_WORK.md');
+
+assert.match(prepare,/__AXIS_821_REPORT_RANGE_TRUTH__/,'Report UI must require canonical Report Range Truth');
+assert.match(prepare,/truthSchema:'axis\.report-range\.v1'/);
+assert.match(prepare,/sourceOwner:'__AXIS_821_REPORT_RANGE_TRUTH__'/);
+assert.match(prepare,/reportUIOwner:true/);
+assert.match(prepare,/storageWrite:false/);
+assert.match(prepare,/liveProfileRead:false/);
+assert.match(prepare,/currentObjectDefinitionRead:false/);
+assert.match(prepare,/legacyReportAggregation:false/);
+assert.match(prepare,/exportOwner:false/);
+assert.match(prepare,/legacyShareExport:false/);
+assert.match(prepare,/truth\.build\(\{\}\)/,'global report must call range truth build');
+assert.match(prepare,/truth\.build\(\{start:Number\(route\.start\),end:Number\(route\.start\)\+1\}\)/,'single Session report must route through half-open truth range');
+assert.match(prepare,/state\.sessions\.find/,'Session id/start may be used only as route context');
+assert.doesNotMatch(prepare,/state\.profile/,'Training Report must never read live Profile');
+assert.doesNotMatch(prepare,/eqById\(|eventEq\(|axis818SchemaForEq|objectMetricOverrides/,'Training Report must never resolve current Object definitions');
+assert.doesNotMatch(prepare,/localStorage\.|indexedDB\.|\bsave\(\)/,'Training Report UI must not persist');
+assert.doesNotMatch(prepare,/createElement\(['"]canvas|toBlob\(|navigator\.share|shareBlob\(/,'#117 must not own image/share export');
+assert.match(prepare,/id=\"axis821ReportScope\"/);
+assert.match(prepare,/id=\"reportPreview\"/);
+assert.match(prepare,/legacy Report range\/export controls remain/);
+assert.match(prepare,/async function makeReportImage\(\)\{return null\}/,'legacy image exporter must be inert');
+assert.match(prepare,/reportRange='all'/,'global report entry must be all completed Sessions');
+assert.match(prepare,/当时未记录身体快照/);
+assert.match(prepare,/当时未记录目标快照/);
+assert.match(prepare,/暂无标准时间事实/);
+assert.match(prepare,/定义未保存/);
+assert.match(prepare,/旧格式字段未升级/);
+assert.match(lifecycle,/await import\('\.\/prepare-821-report-range-truth\.mjs'\);\s*await import\('\.\/prepare-821-training-report-ui\.mjs'\);/,'Training Report UI must run immediately after Report Range Truth');
+for(const token of ['exact merged `main` baseline: `baae264fe8328f15817bf889d5ed9502ca97413a`','bounded delivery branch: `feat/821-training-report-ui`','axis.report-range.v1','Chat history is not authoritative project memory','governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`','governed active branch: `main`'])assert.ok(docs.includes(token),`CURRENT_WORK missing ${token}`);
+console.log('[AXIS 8.21 Training Report UI contract] PASS · existing report IA · range truth only · explicit historical coverage · no live Profile/Object lookup · no persistence · no export owner');
