@@ -17,10 +17,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Verify Report PDF Export contract
-        run: node scripts/axis-821-report-pdf-export-contract.mjs
       - name: Build exact candidate
         run: node build-release.mjs
+      - name: Verify Report PDF Export contract
+        run: node scripts/axis-821-report-pdf-export-contract.mjs
 
   chromium:
     runs-on: ubuntu-latest
