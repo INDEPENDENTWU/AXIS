@@ -82,3 +82,4 @@ await import('./prepare-821-report-range-truth.mjs');
 await import('./prepare-821-training-report-ui.mjs');
 await import('./prepare-821-training-report-ui-convergence.mjs');
 await import('./prepare-821-report-pdf-export.mjs');
+await import('./prepare-821-report-pdf-export-scope.mjs');
