@@ -9,6 +9,11 @@ const replaceOnce=(src,from,to,label)=>{
   if(hits!==1)fail(`${label} expected once, found ${hits}`);
   return src.replace(from,to);
 };
+const replaceSpan=(src,start,end,to,label)=>{
+  const a=src.indexOf(start),second=a<0?-1:src.indexOf(start,a+start.length),b=a<0?-1:src.indexOf(end,a+start.length);
+  if(a<0||second>=0||b<0)fail(`${label} boundaries drifted: start=${a} second=${second} end=${b}`);
+  return src.slice(0,a)+to+src.slice(b+end.length);
+};
 
 /*
  * v8710-report.js was the former presentation/export owner. AXIS 8.21 Report
@@ -88,25 +93,17 @@ try{window.__AXIS_8710_REPORT_READY__=true;window.__AXIS_8710_REPORT_RETIRED__={
  * than requiring the intentionally retired v8710 three-card/JPG projection. */
 {
   const FILE='scripts/axis-product-matrix.mjs';let s=read(FILE);
-  const from=`await page.waitForFunction(()=>document.querySelector('#reportSheet')?.classList.contains('show'),undefined,{timeout:1200});\
-await page.waitForFunction(()=>document.querySelector('#v8710ReportDeck')&&document.querySelectorAll('#v8710ReportDeck .v8710Plate').length===3,undefined,{timeout:1200});\
-assert.equal(await page.locator('#reportPreview:visible').count(),0,'retired base report preview became visible');\
-assert.equal(await page.locator('#v877ReportDeck:visible').count(),0,'retired v877 report deck became visible');\
-assert.ok(await page.locator('#v8710ReportDeck').isVisible(),'canonical v8710 report deck did not open visibly');\
-assert.equal(await page.locator('#v8710ReportDeck .v8710Plate').count(),3,'canonical report must render exactly three final cards');\
-assert.ok((await page.locator('#v8710ReportDeck').innerText()).trim().length>0,'canonical v8710 report deck rendered no content');\
-assert.ok(await page.locator('#v8710ShareReport').isVisible(),'canonical report share owner is missing or hidden');\
-assert.equal(await page.locator('#shareReport').count(),0,'retired base report share owner survived canonical report hydration');`;
-  const to=`await page.waitForFunction(()=>document.querySelector('#reportSheet')?.classList.contains('show'),undefined,{timeout:1200});\
-await page.waitForSelector('#reportPreview .axis821ReportHero',{state:'visible',timeout:1200});\
-assert.ok(await page.locator('#reportPreview').isVisible(),'truth-backed canonical report preview is hidden');\
-assert.ok(await page.locator('#axis821ReportScope').isVisible(),'truth-backed canonical report scope is hidden');\
-assert.equal((await page.locator('#axis821ReportScope').innerText()).trim(),'全部完成记录','Settings report must project all completed Sessions');\
-assert.ok((await page.locator('#reportPreview').innerText()).trim().length>0,'truth-backed canonical report rendered no content');\
-assert.equal(await page.locator('#v877ReportDeck:visible,#v8710ReportDeck:visible').count(),0,'retired report presentation owner became visible');\
-assert.equal(await page.locator('#v8710ReportDeck,#v8710ShareReport,#shareReport').count(),0,'retired Report deck/share owner survived canonical convergence');\
+  const start=`await page.waitForFunction(()=>document.querySelector('#v8710ReportDeck')&&document.querySelectorAll('#v8710ReportDeck .v8710Plate').length===3,undefined,{timeout:1200});`;
+  const end=`assert.equal(await page.locator('#shareReport').count(),0,'retired base report share owner survived canonical report hydration');`;
+  const current=`await page.waitForSelector('#reportPreview .axis821ReportHero',{state:'visible',timeout:1200});
+assert.ok(await page.locator('#reportPreview').isVisible(),'truth-backed canonical report preview is hidden');
+assert.ok(await page.locator('#axis821ReportScope').isVisible(),'truth-backed canonical report scope is hidden');
+assert.equal((await page.locator('#axis821ReportScope').innerText()).trim(),'全部完成记录','Settings report must project all completed Sessions');
+assert.ok((await page.locator('#reportPreview').innerText()).trim().length>0,'truth-backed canonical report rendered no content');
+assert.equal(await page.locator('#v877ReportDeck:visible,#v8710ReportDeck:visible').count(),0,'retired report presentation owner became visible');
+assert.equal(await page.locator('#v8710ReportDeck,#v8710ShareReport,#shareReport').count(),0,'retired Report deck/share owner survived canonical convergence');
 const reportOwner=await page.evaluate(()=>window.__AXIS_821_TRAINING_REPORT_UI__);assert.equal(reportOwner?.truthSchema,'axis.report-range.v1');assert.equal(reportOwner?.reportUIOwner,true);assert.equal(reportOwner?.exportOwner,false);assert.equal(reportOwner?.legacyShareExport,false);`;
-  s=replaceOnce(s,from,to,'Chromium Runtime canonical Report owner contract');
+  s=replaceSpan(s,start,end,current,'Chromium Runtime canonical Report owner contract');
   s=s.replace('[AXIS product matrix] PASS · navigation · Settings · Capture default/Scan independence · persistence · recording · active session · history · canonical trends · canonical report','[AXIS product matrix] PASS · navigation · Settings · Capture default/Scan independence · persistence · recording · active session · history · canonical trends · truth-backed canonical report');
   write(FILE,s);
 }
@@ -115,22 +112,17 @@ const reportOwner=await page.evaluate(()=>window.__AXIS_821_TRAINING_REPORT_UI__
   const FILE='scripts/axis-webkit-smoke.mjs';let s=read(FILE);
   const from=`console.log('[AXIS WebKit] current v84 trends + current v8710 report');`;
   s=replaceOnce(s,from,`console.log('[AXIS WebKit] current v84 trends + truth-backed canonical report');`,'WebKit Report phase label');
-  const old=`await page.waitForFunction(()=>document.querySelector('#reportSheet')?.classList.contains('show'),undefined,{timeout:1200});\
-await page.waitForFunction(()=>document.querySelector('#v8710ReportDeck')&&document.querySelectorAll('#v8710ReportDeck .v8710Plate').length===3,undefined,{timeout:1200});\
-assert.equal(await page.locator('#reportPreview:visible,#v877ReportDeck:visible').count(),0,'WebKit retired report surface became visible');\
-assert.ok(await page.locator('#v8710ReportDeck').isVisible(),'WebKit canonical v8710 report deck is hidden');\
-assert.equal(await page.locator('#v8710ReportDeck .v8710Plate').count(),3,'WebKit canonical report does not contain three final cards');\
-assert.ok(await page.locator('#v8710ShareReport').isVisible(),'WebKit canonical report share owner is missing/hidden');`;
-  const current=`await page.waitForFunction(()=>document.querySelector('#reportSheet')?.classList.contains('show'),undefined,{timeout:1200});\
-await page.waitForSelector('#reportPreview .axis821ReportHero',{state:'visible',timeout:1200});\
-assert.ok(await page.locator('#reportPreview').isVisible(),'WebKit truth-backed canonical report preview is hidden');\
-assert.ok(await page.locator('#axis821ReportScope').isVisible(),'WebKit truth-backed canonical report scope is hidden');\
-assert.equal((await page.locator('#axis821ReportScope').innerText()).trim(),'全部完成记录','WebKit Settings report must project all completed Sessions');\
-assert.ok((await page.locator('#reportPreview').innerText()).trim().length>0,'WebKit truth-backed canonical report rendered no content');\
-assert.equal(await page.locator('#v877ReportDeck:visible,#v8710ReportDeck:visible').count(),0,'WebKit retired report presentation owner became visible');\
-assert.equal(await page.locator('#v8710ReportDeck,#v8710ShareReport,#shareReport').count(),0,'WebKit retired Report deck/share owner survived canonical convergence');\
+  const start=`await page.waitForFunction(()=>document.querySelector('#v8710ReportDeck')&&document.querySelectorAll('#v8710ReportDeck .v8710Plate').length===3,undefined,{timeout:1200});`;
+  const end=`assert.ok(await page.locator('#v8710ShareReport').isVisible(),'WebKit canonical report share owner is missing/hidden');`;
+  const current=`await page.waitForSelector('#reportPreview .axis821ReportHero',{state:'visible',timeout:1200});
+assert.ok(await page.locator('#reportPreview').isVisible(),'WebKit truth-backed canonical report preview is hidden');
+assert.ok(await page.locator('#axis821ReportScope').isVisible(),'WebKit truth-backed canonical report scope is hidden');
+assert.equal((await page.locator('#axis821ReportScope').innerText()).trim(),'全部完成记录','WebKit Settings report must project all completed Sessions');
+assert.ok((await page.locator('#reportPreview').innerText()).trim().length>0,'WebKit truth-backed canonical report rendered no content');
+assert.equal(await page.locator('#v877ReportDeck:visible,#v8710ReportDeck:visible').count(),0,'WebKit retired report presentation owner became visible');
+assert.equal(await page.locator('#v8710ReportDeck,#v8710ShareReport,#shareReport').count(),0,'WebKit retired Report deck/share owner survived canonical convergence');
 const reportOwner=await page.evaluate(()=>window.__AXIS_821_TRAINING_REPORT_UI__);assert.equal(reportOwner?.truthSchema,'axis.report-range.v1');assert.equal(reportOwner?.reportUIOwner,true);assert.equal(reportOwner?.exportOwner,false);assert.equal(reportOwner?.legacyShareExport,false);`;
-  s=replaceOnce(s,old,current,'WebKit Runtime canonical Report owner contract');
+  s=replaceSpan(s,start,end,current,'WebKit Runtime canonical Report owner contract');
   write(FILE,s);
 }
 
