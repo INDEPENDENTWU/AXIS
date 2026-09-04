@@ -23,19 +23,19 @@ for(const token of [
   'orphans:3;widows:3'
 ])assert.ok(prepare.includes(token),`missing PDF contract token ${token}`);
 
+const runtimeStart=prepare.indexOf('const runtime=`'),runtimeEnd=prepare.indexOf('`;\n  const closeAt=',runtimeStart);
+assert.ok(runtimeStart>=0&&runtimeEnd>runtimeStart,'runtime template boundary missing');
+const runtime=prepare.slice(runtimeStart,runtimeEnd);
 for(const forbidden of ['html2canvas','jsPDF','pdf-lib','canvas.toDataURL','toBlob(','fetch(','XMLHttpRequest','localStorage.setItem','indexedDB.open']){
-  const runtimeStart=prepare.indexOf('const runtime=`'),runtimeEnd=prepare.indexOf('`;\n  const closeAt=',runtimeStart);
-  assert.ok(runtimeStart>=0&&runtimeEnd>runtimeStart,'runtime template boundary missing');
-  const runtime=prepare.slice(runtimeStart,runtimeEnd);
   assert.equal(runtime.includes(forbidden),false,`PDF runtime contains forbidden owner/token ${forbidden}`);
 }
 
-assert.equal((prepare.match(/state\.profile\|\|\{\}/g)||[]).length,1,'live Profile may be read exactly once for optional export identity only');
-assert.ok(prepare.includes('function axis821ReportExportIdentity(){const p=state.profile||{}'),'live Profile read escaped optional export identity function');
+assert.equal((runtime.match(/state\.profile\|\|\{\}/g)||[]).length,1,'live Profile may be read exactly once inside PDF runtime for optional export identity only');
+assert.ok(runtime.includes('function axis821ReportExportIdentity(){const p=state.profile||{}'),'live Profile read escaped optional export identity function');
 assert.ok(prepare.includes("const bundle=truth.build({start,end})"),'custom range does not route through Report Range Truth');
 assert.ok(prepare.includes("const bundle=truth.build({})"),'all-history truth route disappeared');
 assert.ok(prepare.includes("truth.build({start:Number(route.start),end:Number(route.start)+1})"),'single-Session truth route disappeared');
-assert.equal(prepare.includes('state.sessions.filter('),false,'PDF export introduced parallel Session aggregation');
+assert.equal(runtime.includes('state.sessions.filter('),false,'PDF export introduced parallel Session aggregation');
 
 const convergence="await import('./prepare-821-training-report-ui-convergence.mjs');";
 const pdf="await import('./prepare-821-report-pdf-export.mjs');";
