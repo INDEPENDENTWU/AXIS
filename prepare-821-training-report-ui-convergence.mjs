@@ -78,12 +78,9 @@ try{window.__AXIS_8710_REPORT_READY__=true;window.__AXIS_8710_REPORT_RETIRED__={
  * module hides it. The truth-backed surface itself must be the visible owner. */
 {
   const FILE='scripts/axis-821-training-report-ui-smoke.mjs';let s=read(FILE);
-  const from=` await page.click('#settingsBtn');await page.click('#reportBtn');await page.waitForSelector('#reportSheet.show',{state:'visible'});\
- assert.equal(await page.locator('#axis821ReportScope').textContent(),'全部完成记录');`;
-  const to=` await page.click('#settingsBtn');await page.click('#reportBtn');await page.waitForSelector('#reportSheet.show',{state:'visible'});await page.waitForSelector('#reportPreview .axis821ReportHero',{state:'visible'});\
- assert.ok(await page.locator('#reportPreview').isVisible(),'truth-backed Report preview is not the visible presentation owner');assert.ok(await page.locator('#axis821ReportScope').isVisible(),'truth-backed Report scope is hidden');assert.equal(await page.locator('#v8710ReportDeck,#v8710ShareReport,#v8710ReportStyle').count(),0,'retired v8710 Report owner remounted');assert.equal(await page.locator('#v877ReportDeck:visible').count(),0,'retired v877 Report owner became visible');\
- assert.equal(await page.locator('#axis821ReportScope').textContent(),'全部完成记录');`;
-  s=replaceOnce(s,from,to,'dedicated visible Report owner proof');
+  const open=`await page.click('#settingsBtn');await page.click('#reportBtn');await page.waitForSelector('#reportSheet.show',{state:'visible'});`;
+  const visible=`await page.click('#settingsBtn');await page.click('#reportBtn');await page.waitForSelector('#reportSheet.show',{state:'visible'});await page.waitForSelector('#reportPreview .axis821ReportHero',{state:'visible'});assert.ok(await page.locator('#reportPreview').isVisible(),'truth-backed Report preview is not the visible presentation owner');assert.ok(await page.locator('#axis821ReportScope').isVisible(),'truth-backed Report scope is hidden');assert.equal(await page.locator('#v8710ReportDeck,#v8710ShareReport,#v8710ReportStyle').count(),0,'retired v8710 Report owner remounted');assert.equal(await page.locator('#v877ReportDeck:visible').count(),0,'retired v877 Report owner became visible');`;
+  s=replaceOnce(s,open,visible,'dedicated visible Report owner proof');
   write(FILE,s);
 }
 
