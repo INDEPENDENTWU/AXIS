@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+
+const read=f=>fs.readFileSync(f,'utf8');
+const prepare=read('prepare-821-training-report-pdf.mjs'),lifecycle=read('prepare-819-postcommit-lifecycle.mjs'),docs=read('docs/CURRENT_WORK.md'),reportUiContract=read('scripts/axis-821-training-report-ui-contract.mjs');
+const runtimeMatch=prepare.match(/const runtime=`([\s\S]*?)`;\n\s*const closeAt=/);assert.ok(runtimeMatch,'Training Report PDF runtime template missing');const runtime=runtimeMatch[1];
+
+for(const token of ["truthSchema:'axis.report-range.v1'","sourceOwner:'__AXIS_821_REPORT_RANGE_TRUTH__'","exportOwner:true","transport:'browser-print'","pageSize:'A4'","multiPage:true","pageBreakProtection:true","selectableText:true","storageWrite:false","historicalLiveProfileRead:false","currentObjectDefinitionRead:false","optionalCurrentProfileCover:true","rangeMembership:'session-start-half-open'","imageRasterization:false"])assert.ok(runtime.includes(token),`PDF runtime contract missing ${token}`);
+assert.match(runtime,/axis821ReportTruth\(\)\.build\(\{start:range\.start,end:range\.end\}\)/,'PDF export must call canonical Report Range Truth');
+assert.match(runtime,/window\.open\('','_blank'\)/,'PDF export must open a dedicated printable document');
+assert.match(runtime,/win\.__AXIS_821_PRINT_REQUESTED__=true;win\.print\(\)/,'PDF export must request the browser native print/PDF path');
+assert.match(runtime,/d\.setDate\(d\.getDate\(\)\+1\)/,'selected end date must become an exclusive next-local-midnight bound');
+assert.match(runtime,/axis821PdfParseDay\(endRaw,true\)/,'range end must use the exclusive-day parser');
+assert.equal((runtime.match(/state\.profile/g)||[]).length,1,'current Profile may be read exactly once for the optional export-time cover only');
+assert.match(runtime,/导出时个人档案（当前）/);
+assert.match(runtime,/仅作封面资料/);
+assert.match(runtime,/immutable snapshot/,'current profile cover must explicitly preserve historical snapshot authority');
+assert.match(runtime,/旧格式字段（仅存档，不计入标准指标统计）/,'legacy facts must remain visible but non-promoted');
+assert.match(runtime,/e\.executionModeSnapshot/,'Encounter execution mode snapshot must be exportable');
+assert.match(runtime,/e\.schemaSnapshot/,'Encounter schema snapshot must be exportable');
+assert.match(runtime,/e\.metricFacts/,'Encounter canonical metric facts must be exportable');
+assert.match(runtime,/当时身体状态/);assert.match(runtime,/当时目标/);assert.match(runtime,/时间事实/);assert.match(runtime,/训练记录/);
+for(const forbidden of ['localStorage.','indexedDB.','navigator.share','shareBlob(','toBlob(','createElement(\'canvas','createElement("canvas','eqById(','axis818SchemaForEq','objectMetricOverrides','fetch('])assert.ok(!runtime.includes(forbidden),`PDF runtime crossed factual/export boundary with ${forbidden}`);
+assert.match(prepare,/@page\{size:A4 portrait/,'print document must define A4 pagination');
+assert.match(prepare,/break-inside:avoid/,'print document must protect blocks from bad page breaks');
+assert.match(prepare,/page-break-inside:avoid/,'legacy print engines must receive page-break protection too');
+assert.match(prepare,/break-after:avoid/,'section/session headers must stay with following content');
+assert.match(prepare,/orphans:3;widows:3/,'text blocks must protect orphan/widow lines');
+assert.match(prepare,/id="axis821PdfStart"/);assert.match(prepare,/id="axis821PdfEnd"/);assert.match(prepare,/id="axis821PdfIncludeProfile"/);assert.match(prepare,/id="axis821PdfGenerate"/);
+assert.match(prepare,/文字保持可选取，并按 A4 自动分页/);
+assert.match(lifecycle,/await import\('\.\/prepare-821-training-report-ui-convergence\.mjs'\);\s*await import\('\.\/prepare-821-training-report-pdf\.mjs'\);/,'PDF projection must run after final Training Report UI convergence');
+assert.doesNotMatch(reportUiContract,/exact merged `main` baseline: `baae264fe8328f15817bf889d5ed9502ca97413a`/,'#117 inherited contract must not pin obsolete CURRENT_WORK baseline');
+assert.doesNotMatch(reportUiContract,/bounded delivery branch: `feat\/821-training-report-ui`/,'#117 inherited contract must not pin obsolete active delivery branch');
+for(const token of ['exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`','preceding product change: PR **#117**, Training Report UI','bounded delivery branch: `feat/821-training-report-pdf`','axis.report-range.v1','professional paginated PDF','governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`','governed active branch: `main`','axis-native-foundation-0','INDEPENDENTWU/AXIS-iOS','Chat history is not authoritative project memory'])assert.ok(docs.includes(token),`CURRENT_WORK missing ${token}`);
+console.log('[AXIS 8.21 Training Report PDF contract] PASS · explicit inclusive-date UI to half-open truth range · optional current cover only · native selectable-text A4 pagination · page-break protection · no raster/share/storage/current-object reinterpretation');
