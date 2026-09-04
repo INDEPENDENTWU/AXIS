@@ -24,7 +24,7 @@ Cross-platform foundation remains `axis-native-foundation-0`, native repository 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
 - bounded delivery branch: `feat/821-training-report-pdf`
-- intended pull request: **#118**
+- intended pull request: **#119**
 - exact base main SHA: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
 - intended public release change: **none**
 - new LocalStorage namespace / IndexedDB / Session writer / Encounter writer / recorder / Active owner / Flow owner / Profile owner / historical aggregation owner: **none**
@@ -116,6 +116,6 @@ Only after the professional paginated PDF is merged and Production-certified:
 1. add share card / long-image export as another downstream projection of the same canonical report facts;
 2. preserve PDF/report factual parity and never revive the retired v8710/v877 report aggregator/share owners;
 3. later add JSON/CSV/native/health projections only as downstream representations, never parallel factual stores;
-4. Trends may later distinguish historical Session snapshot context from current Profile, but it must not be mixed into #118.
+4. Trends may later distinguish historical Session snapshot context from current Profile, but it must not be mixed into #119.
 
 Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
