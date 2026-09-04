@@ -26,19 +26,21 @@ try{
  console.log(`[AXIS 8.21 Training Report UI ${ENGINE}] global Report uses all archived completed Sessions and explicit coverage`);
  await page.click('#settingsBtn');await page.click('#reportBtn');await page.waitForSelector('#reportSheet.show',{state:'visible'});
  assert.equal(await page.locator('#axis821ReportScope').textContent(),'全部完成记录');
+ assert.deepEqual(await page.locator('.axis821ReportHero b').allTextContents(),['3','3','4']);
  const globalText=await page.locator('#reportPreview').innerText();
- for(const token of ['3','6','2 / 3 次有标准时间事实','2 / 3 次有身体快照','2 / 3 次有目标快照','1小时 30分','45分','15分','30分','72.5 kg','73 kg','当时未记录身体快照','当时未记录目标快照','暂无标准时间事实','tempoX','定义未保存','旧格式字段未升级'])assert.ok(globalText.includes(token),`global report missing ${token}`);
+ for(const token of ['2 / 3 次有标准时间事实','2 / 3 次有身体快照','2 / 3 次有目标快照','1小时 30分','45分','15分','30分','72.5 kg','73 kg','当时未记录身体快照','当时未记录目标快照','暂无标准时间事实','tempoX','定义未保存','旧格式字段未升级'])assert.ok(globalText.includes(token),`global report missing ${token}`);
  for(const forbidden of ['LIVE-PROFILE-SHOULD-NOT-APPEAR','199 kg','CURRENT-DEFINITION-SHOULD-NOT-APPEAR'])assert.ok(!globalText.includes(forbidden),`live/current data leaked: ${forbidden}`);
  assert.equal(await page.locator('#reportRange').count(),0);assert.equal(await page.locator('#shareReport').count(),0);
+ assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v60_state')),before,'opening global Report must not mutate canonical storage');
  await page.click('#reportSheet [data-close="reportSheet"]');await page.click('#settingsSheet [data-close="settingsSheet"]');
  console.log(`[AXIS 8.21 Training Report UI ${ENGINE}] existing History -> Session detail -> Training Report remains single-session`);
  await page.click('[data-view="historyView"]');await page.click('[data-session="session-a"]');await page.waitForSelector('#detailSheet.show',{state:'visible'});await page.click('#sessionReportBtn');await page.waitForSelector('#reportSheet.show',{state:'visible'});
  const singleText=await page.locator('#reportPreview').innerText();assert.ok(singleText.includes('72.5 kg'));assert.ok(singleText.includes('坐姿腿推'));assert.ok(singleText.includes('1小时'));assert.ok(!singleText.includes('73 kg'));assert.ok(!singleText.includes('自定义节奏'));assert.ok(!singleText.includes('旧记录项目'));
  assert.equal(await page.locator('[data-axis821-report-session]').count(),1);
  console.log(`[AXIS 8.21 Training Report UI ${ENGINE}] later live Profile/Object mutation cannot change historical Report`);
- await page.evaluate(()=>{const x=JSON.parse(localStorage.getItem('axis_v60_state'));x.profile.weight='333';x.profile.name='MUTATED-LIVE';x.profile.customEq=[{id:'custom-x',name:'MUTATED-OBJECT'}];localStorage.setItem('axis_v60_state',JSON.stringify(x));});
+ const mutated=await page.evaluate(()=>{const x=JSON.parse(localStorage.getItem('axis_v60_state'));x.profile.weight='333';x.profile.name='MUTATED-LIVE';x.profile.customEq=[{id:'custom-x',name:'MUTATED-OBJECT'}];const raw=JSON.stringify(x);localStorage.setItem('axis_v60_state',raw);return raw});
  await page.click('#reportSheet [data-close="reportSheet"]');await page.click('#sessionReportBtn');await page.waitForSelector('#reportSheet.show',{state:'visible'});const reopened=await page.locator('#reportPreview').innerText();assert.ok(reopened.includes('72.5 kg'));assert.ok(!reopened.includes('333'));assert.ok(!reopened.includes('MUTATED-LIVE'));assert.ok(!reopened.includes('MUTATED-OBJECT'));
- const afterMutation=await page.evaluate(()=>localStorage.getItem('axis_v60_state'));const parsed=JSON.parse(afterMutation);parsed.profile=state.profile;const normalized=JSON.stringify(parsed);assert.equal(normalized,before,'Report UI itself must not change canonical storage');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v60_state')),mutated,'rerendering historical Report must not write canonical storage');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
  console.log(`[AXIS 8.21 Training Report UI ${ENGINE}] PASS · existing report IA · all + single-session truth projection · canonical time separation · immutable Profile/Goal snapshots · missing coverage · no export/storage owner`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
