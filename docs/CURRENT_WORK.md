@@ -15,7 +15,7 @@ AXIS **8.21** remains the current public Web release.
 
 The merged product already has canonical Session / Encounter truth, immutable Profile / Goal snapshots, session-time truth, `axis.report-range.v1`, the truth-backed Training Report UI, and the downstream browser-print PDF projection. None of those factual owners move in this repair.
 
-Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable domain/data/Flow/Object/metric/report contracts remain unchanged.
+Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.object-capabilities.v1`, `axis.metric-schema.v1`, `axis.session-time.v1`, `axis.profile-snapshot.v1`, `axis.goal-snapshot.v1`, and `axis.report-range.v1`.
 
 ## Active change
 
