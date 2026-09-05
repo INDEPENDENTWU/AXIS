@@ -16,6 +16,7 @@ for(const token of [
  'axis821BaseSchemaForEq(eq)',
  'axis821HasMetricOverrideForRecording(eq.id)',
  "axis821FlowOpenRecorder('current',eq)",
+ "return fn.replace(token,\"  if(axis821HasMetricOverrideForRecording(eq.id))return axis821FlowOpenRecorder('current',eq);\\n\"+token)",
  'explicitOverridePreflight:true',
  'defaultCurrentItemDirectStart:true',
  'newStorage:false',
@@ -24,9 +25,8 @@ for(const token of [
  'newActiveOwner:false'
 ])assert.equal(prepare.includes(token),true,`Flow step recording intent missing ${token}`);
 
-const preflight=prepare.indexOf('axis821HasMetricOverrideForRecording(eq.id)'),direct=prepare.indexOf("const foreign=activeApi?.current?.();if(foreign)return axis821FlowShowSwitch('start'");
-assert.ok(preflight>=0&&direct>preflight,'explicit step override must preflight before the inherited default direct-start branch');
-assert.equal((prepare.match(/axis821FlowOpenRecorder\('current',eq\)/g)||[]).length,1,'Flow current recorder exception must remain one explicit bounded route');
+assert.equal((prepare.match(/axis821FlowOpenRecorder\('current',eq\)/g)||[]).length,2,'Flow current recorder preflight should exist only in the emitted route and its source-owned contract token');
+assert.equal(prepare.includes("const token=\"  const foreign=activeApi?.current?.();if(foreign)return axis821FlowShowSwitch('start',foreign,{id:eq.id,name:eq.name});return axis821FlowStartWholeItem(eq)\""),true,'inherited default whole-item direct-start branch is no longer preserved');
 
 for(const forbidden of [
  'localStorage.setItem(',
