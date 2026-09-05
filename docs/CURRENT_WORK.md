@@ -115,3 +115,61 @@ Only after Flow Step Recording Intent is merged and Production-certified:
 4. keep post-release architecture-governance cleanup separate from new user capability delivery.
 
 Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
+
+## Certified continuation baseline
+
+PR **#123** completed the Flow Step Recording Intent repair and the exact merged `main` SHA `396241c41b2f8eea80d45ca582352ea593c47036` is the certified continuation baseline for the next bounded product change. Release identity remains **AXIS 8.21**, architecture remains `canonical-single-runtime`, and the established Vercel/EdgeOne deployment topology is unchanged.
+
+## Active bounded change — Flow Step Execution Intent
+
+**AXIS 8.21 — Flow Step Execution Intent**
+
+- governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
+- governed active branch: `main`
+- bounded delivery branch: `feat/821-flow-step-execution-intent`
+- exact base main SHA: `396241c41b2f8eea80d45ca582352ea593c47036`
+- intended public release change: **none; remains 8.21**
+- existing schema owner: `axis.flow.v1.step.executionOverride`
+- supported existing execution modes: `single`, `complete`, `timed`, `hold`, `sets`, `rounds`
+- new LocalStorage namespace / IndexedDB / network state / Session writer / Encounter writer / recorder / Active owner / Flow owner / Object owner / Profile owner: **none**
+
+### Product rule
+
+This capability exposes execution intent that `axis.flow.v1` already owns. It does not invent a second execution model. Resolution remains:
+
+`Object execution default → optional Flow-step executionOverride → canonical Encounter executionModeSnapshot → existing v82/v87 Active lifecycle when ongoing → immutable axis.flow-provenance.v1 snapshot`.
+
+A Flow step without `executionOverride` must keep its current behavior. An explicit ongoing override such as `timed` must reach the existing direct current-item Encounter/Active path with the resolved mode. An explicit one-shot override such as `single` or `complete` must use the existing canonical recorder preflight and advance only after the canonical Encounter commit, without manufacturing an Active Activity.
+
+### UX contract
+
+- every Flow editor step adds one compact `进行方式` row next to the existing `记录内容` intent surface;
+- default presentation is `自动 · <resolved mode>` and does not write an override;
+- choosing a mode writes only `step.executionOverride` on that saved Flow step;
+- `跟随项目设置` deletes only `step.executionOverride`;
+- the available choices are the six modes already accepted by `axis.flow.v1`; no new execution enum is created;
+- editing Flow execution intent must not mutate the underlying Object definition or Profile recording preferences;
+- 390px mobile layout must stay horizontally stable in Chromium and iPhone-like WebKit.
+
+### Runtime boundary
+
+- `axis821ExecutionForRecording()` remains the canonical Flow execution resolver;
+- the whole-item direct-start Encounter must snapshot the resolved Flow mode rather than bypassing it with the Object-only resolver;
+- existing `v82` / `v87` remain the only Active truth/action owners;
+- canonical recorder remains the only value-entry surface for an explicit one-shot Flow override and for existing metric-override preflight;
+- canonical app Encounter append remains exactly one owner;
+- one-shot canonical commits advance Flow directly; ongoing commits/starts continue to advance only after the matching existing Active finish event;
+- detour semantics, Session truth, history, reports, media and deployment topology are unchanged.
+
+## Validation for Flow Step Execution Intent
+
+Merge is blocked until the exact final PR head proves:
+
+1. deterministic `node build-release.mjs` passes and release identity stays 8.21;
+2. static contract proves only existing `step.executionOverride` is edited and no owner/storage/API is introduced;
+3. Chromium and iPhone-like WebKit prove an Object whose default is one-shot can be overridden to `timed`, producing an Encounter whose `executionModeSnapshot` and Flow provenance both say `timed` and whose Activity is owned by existing Active truth;
+4. Chromium and iPhone-like WebKit prove an Object whose default is `timed` can be overridden to `single`, opening the canonical recorder, committing one Encounter, creating no Active Activity, and advancing the Flow;
+5. `跟随项目设置` removes only the Flow execution override;
+6. underlying Object execution defaults remain unchanged before/after run and reload;
+7. historical Flow provenance and saved Flow intent remain byte-stable across reload;
+8. inherited Flow Recording, Object, Report, governance, Production and EdgeOne gates remain green on the same exact head and then on exact merged `main`.
