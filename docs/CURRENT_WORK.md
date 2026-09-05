@@ -26,6 +26,13 @@ The following two lines are retained as historical bounded-stage identifiers req
 - exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
 - bounded delivery branch: `feat/821-report-pdf-export`
 
+### Inherited Share Card-stage continuity references
+
+The following two lines are retained as historical bounded-stage identifiers required by the sealed #121 Report Share Card contract; they are **not** the current base or active delivery branch:
+
+- bounded delivery branch: `feat/821-report-share-card`
+- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
+
 The current Production baseline and current bounded branch remain the values stated in the active sections of this document.
 
 ## Active change
@@ -40,11 +47,25 @@ The current Production baseline and current bounded branch remain the values sta
 - new LocalStorage namespace / IndexedDB / network state / Session writer / Encounter writer / recorder / Active owner / Flow owner / Profile owner: **none**
 - new product capability: **edit the recording-content intent of one saved Flow step without changing that Object's global recording preference**
 
+### Post-merge certification repair
+
+PR **#122** merged the bounded Flow Step Recording Intent work to `main` as `e61dd1d62252112d035d9f05034744ac78a74ec1`. Post-merge certification exposed a deterministic handoff defect in both Chromium and iPhone-like WebKit. The saved Flow-step `metricOverride` resolved correctly, but the final Flow Session-coordination architecture starts an ordinary current Flow item directly as a whole-item Active Encounter and intentionally bypasses Quick Record. That meant an **explicit** Flow-step recording override had no value-entry preflight at all. The first repair also exposed a second handoff issue: when a `weight + reps` override does enter Quick Record, v61's classic repeated-set owner and the app value recorder can otherwise consume/filter those fields instead of presenting the exact Flow-owned subset.
+
+The bounded certification-repair branch is `fix/flow-step-recording-handoff`. The repaired boundary is deliberately narrow:
+
+- a Flow step **without** its own `metricOverride` keeps the established whole-item direct-start path unchanged;
+- a Flow step **with an explicit** `metricOverride` uses the already-existing canonical Quick/app recorder as a preflight so the user can enter exactly those requested values before the same canonical Encounter/Active lifecycle continues;
+- this explicit preflight bypasses v61 classic-set presentation and makes the app-owned value recorder render the override schema verbatim;
+- detours remain the existing Quick record-only route;
+- no second recorder, writer, store, Flow owner or Active owner is introduced.
+
+This repair is not certified until the dedicated Chromium/WebKit Flow gate and inherited release/compatibility gates pass on its exact final head and then on merged `main`.
+
 ### Product rule
 
 The capability must expose the already-existing `axis.flow.v1` step-level `metricOverride` intent instead of inventing another schema, recorder or persistence owner.
 
-A Flow step with no override continues to inherit the canonical Object/Profile recording content resolved by the existing Object system. A Flow step with an explicit override changes only the effective fields for that step in that Flow. When the Encounter is created, the existing canonical Encounter schema snapshot and `axis.flow-provenance.v1` snapshot freeze the effective metric ids as historical fact.
+A Flow step with no override continues to inherit the canonical Object/Profile recording content resolved by the existing Object system and keeps the existing direct whole-item Flow start behavior. A Flow step with an explicit override changes only the effective fields for that step in that Flow and therefore gets the bounded canonical recorder preflight needed to collect those values. When the Encounter is created, the existing canonical Encounter schema snapshot and `axis.flow-provenance.v1` snapshot freeze the effective metric ids as historical fact.
 
 ### UX contract
 
@@ -53,7 +74,8 @@ A Flow step with no override continues to inherit the canonical Object/Profile r
 - opening the control exposes only metric choices for that step; selecting/deselecting fields creates or updates the existing `step.metricOverride.metrics` array;
 - an override must retain at least one field; users who do not want a separate Flow-specific setting use `跟随项目设置`;
 - `跟随项目设置` removes only that step's `metricOverride` and does not modify Profile/Object preferences;
-- saved Flow intent survives reload and uses the existing canonical recorder / Active lifecycle for execution;
+- saved Flow intent survives reload;
+- an inherited/default step keeps direct whole-item start, while an explicit Flow-step override opens the existing canonical recorder preflight and then continues through the existing Encounter / Active lifecycle;
 - 390px mobile layout must remain horizontally stable in Chromium and iPhone-like WebKit.
 
 ### Scope boundary
@@ -65,7 +87,7 @@ This work must not change:
 - Object catalog definitions or the existing `state.profile.objectMetricOverrides` preference owner;
 - Quick Record / canonical recorder ownership;
 - Active lifecycle, pause/resume/rest/finish semantics or `axis_v8_meta` ownership;
-- Flow sequencing, cursor advancement, detour semantics or Encounter append cardinality;
+- default whole-item Flow direct-start behavior, Flow sequencing, cursor advancement, detour semantics or Encounter append cardinality;
 - Report truth, PDF, Share Card, media, AI, network, release identity or deployment topology.
 
 No second Flow store, second metric schema, duplicated recording form, new API, or generated-output-only runtime fork is allowed.
@@ -75,10 +97,10 @@ No second Flow store, second metric schema, duplicated recording form, new API, 
 This change is mergeable only when the exact final PR head proves all of the following:
 
 1. deterministic `node build-release.mjs` completes with release identity 8.21 and canonical single-runtime topology unchanged;
-2. a dedicated static contract proves the new surface is only a projection/editor for existing `axis.flow.v1.step.metricOverride` and adds no persistence, recorder, Encounter or Active owner;
+2. a dedicated static contract proves the new surface is only a projection/editor for existing `axis.flow.v1.step.metricOverride`, the explicit current-item recorder route exists exactly once, and no persistence, recorder, Encounter or Active owner is added;
 3. real Chromium and iPhone-like WebKit both edit one Flow step from inherited Object fields to a Flow-specific subset and save/reload that intent;
 4. `跟随项目设置` removes the Flow-only override without writing `state.profile.objectMetricOverrides`;
-5. the existing canonical recorder consumes the Flow-specific metric schema, while the committed Encounter's `metricSchemaSnapshot` and `axis.flow-provenance.v1` snapshot preserve the effective metric ids;
+5. default Flow steps still bypass Quick configuration, while an explicit Flow-step override uses the existing canonical recorder to collect the exact subset; the committed Encounter's `metricSchemaSnapshot` and `axis.flow-provenance.v1` snapshot preserve the effective metric ids;
 6. 390px mobile execution has no horizontal overflow and no page errors;
 7. inherited Flow/Object, compatibility, Report, Work Continuity and repository-governance gates remain green on the same exact PR head;
 8. after merge, the exact merged `main` SHA must reach the existing fixed Vercel AXIS Production project, pass normal Production/public-alias certification, and EdgeOne must mirror the same exact artifact successfully.
