@@ -26,6 +26,13 @@ The following two lines are retained as historical bounded-stage identifiers req
 - exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
 - bounded delivery branch: `feat/821-report-pdf-export`
 
+### Inherited Share Card-stage continuity references
+
+The following two lines are retained as historical bounded-stage identifiers required by the sealed #121 Report Share Card contract; they are **not** the current base or active delivery branch:
+
+- bounded delivery branch: `feat/821-report-share-card`
+- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
+
 The current Production baseline and current bounded branch remain the values stated in the active sections of this document.
 
 ## Active change
