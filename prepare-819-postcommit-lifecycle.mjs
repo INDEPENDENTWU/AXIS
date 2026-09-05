@@ -75,6 +75,7 @@ await import('./prepare-821-executable-object-presentation-seal.mjs');
 await import('./prepare-821-executable-object-system-smoke-compat.mjs');
 await import('./prepare-821-release.mjs');
 await import('./prepare-821-object-metric-overrides.mjs');
+await import('./prepare-821-flow-step-recording-intent.mjs');
 await import('./prepare-821-profile-session-truth.mjs');
 await import('./prepare-821-metric-optical-system.mjs');
 await import('./prepare-821-session-time-truth.mjs');
