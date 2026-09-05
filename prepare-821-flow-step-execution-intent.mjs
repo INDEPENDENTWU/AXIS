@@ -62,8 +62,8 @@ window.__AXIS_821_FLOW_STEP_EXECUTION_INTENT__={version:'8.21',owner:'axis.flow.
  },'explicit one-shot execution canonical recorder preflight');
  s=mutateFunction(s,'function axis821FlowAfterCanonicalCommit(e,intent)',fn=>{
   const token="if(!r||r.status!=='active'||!step||step.objectRef!==(e.equipmentId||e.eq))return false;r.currentEncounterId=e.id;";if((fn.split(token).length-1)!==1)fail('Flow post-commit execution boundary drift');
-  return fn.replace(token,"if(!r||r.status!=='active'||!step||step.objectRef!==(e.equipmentId||e.eq))return false;const execution=String(e.executionModeSnapshot||axis821ExecutionForRecording(e.equipmentId||e.eq));if(!axis821FlowOngoingMode(execution))return axis821FlowAdvanceCompletedCurrent(e,'one-shot-commit');r.currentEncounterId=e.id;")
- },'one-shot Flow execution advances after canonical Encounter commit');
+  return fn.replace(token,"if(!r||r.status!=='active'||!step||step.objectRef!==(e.equipmentId||e.eq))return false;const execution=String(e.executionModeSnapshot||axis821ExecutionForRecording(e.equipmentId||e.eq));if(axis821FlowHasExecutionOverrideForRecording(e.equipmentId||e.eq)&&!axis821FlowOngoingMode(execution))return axis821FlowAdvanceCompletedCurrent(e,'one-shot-commit');r.currentEncounterId=e.id;")
+ },'explicit one-shot Flow execution advances after canonical Encounter commit');
  syntax(s,FILE);write(FILE,s);
 }
 
@@ -73,4 +73,4 @@ window.__AXIS_821_FLOW_STEP_EXECUTION_INTENT__={version:'8.21',owner:'axis.flow.
  write(FILE,s);
 }
 
-console.log('[AXIS 8.21 Flow step execution intent] PASS · existing step.executionOverride only · resolved mode reaches canonical Encounter/Active owners · one-shot override uses canonical recorder · no Object mutation · no new persistence/recorder/Encounter/Active owner');
+console.log('[AXIS 8.21 Flow step execution intent] PASS · existing step.executionOverride only · resolved mode reaches canonical Encounter/Active owners · explicit one-shot override uses canonical recorder/advance · inherited whole-item behavior preserved · no Object mutation · no new persistence/recorder/Encounter/Active owner');
