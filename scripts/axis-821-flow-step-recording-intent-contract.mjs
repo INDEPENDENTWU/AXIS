@@ -25,7 +25,7 @@ for(const token of [
  'newActiveOwner:false'
 ])assert.equal(prepare.includes(token),true,`Flow step recording intent missing ${token}`);
 
-assert.equal((prepare.match(/axis821FlowOpenRecorder\('current',eq\)/g)||[]).length,2,'Flow current recorder preflight should exist only in the emitted route and its source-owned contract token');
+assert.equal((prepare.match(/axis821FlowOpenRecorder\('current',eq\)/g)||[]).length,1,'Flow current recorder exception must remain one explicit bounded emitted route');
 assert.equal(prepare.includes("const token=\"  const foreign=activeApi?.current?.();if(foreign)return axis821FlowShowSwitch('start',foreign,{id:eq.id,name:eq.name});return axis821FlowStartWholeItem(eq)\""),true,'inherited default whole-item direct-start branch is no longer preserved');
 
 for(const forbidden of [
