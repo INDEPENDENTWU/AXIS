@@ -32,7 +32,12 @@ const removeSetsOverride=async()=>{
  await tap(sets);
  assert.ok((await page.locator('.axis821FlowStepIntentSummary b').innerText()).includes('此流程'),'Flow step did not visibly switch to independent recording intent');
 };
-const saveEditor=async()=>{await tap(page.locator('[data-axis-flow-save]'));await page.waitForFunction(()=>!document.querySelector('#axis821FlowSheet')?.classList.contains('show')||document.querySelector('#axis821FlowBody'),undefined,{timeout:2500});};
+const saveEditor=async()=>{
+ await tap(page.locator('[data-axis-flow-save]'));
+ await page.waitForFunction(()=>!document.querySelector('[data-axis-flow-save]'),undefined,{timeout:2500});
+ if(await page.locator('#axis821FlowSheet').evaluate(x=>x.classList.contains('show')))await tap(page.locator('#axis821FlowClose'));
+ await page.waitForFunction(()=>!document.querySelector('#axis821FlowSheet')?.classList.contains('show'),undefined,{timeout:2500});
+};
 
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());
