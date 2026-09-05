@@ -70,7 +70,6 @@ const STEPS=[
   'prepare-8123-final-alignment.mjs',
   'prepare-819-inherited-runtime-repairs.mjs',
   'prepare-819-postcommit-lifecycle.mjs',
-  'prepare-production-muscle-layout-stability.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
