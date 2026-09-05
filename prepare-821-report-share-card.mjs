@@ -53,8 +53,10 @@ $('#axis821ReportShareImage').onclick=axis821ReportShareCard;
 `;
   for(const forbidden of ['state.sessions','state.profile','localStorage.setItem','indexedDB.open','fetch(','XMLHttpRequest'])if(runtime.includes(forbidden))fail(`forbidden Share Card owner/token ${forbidden}`);
   if(!runtime.includes('axis821ReportView()')||!runtime.includes('axis821ReportExportIdentity()')||!runtime.includes("cv.toDataURL('image/png')")||!runtime.includes("projection:'summary-share-card'"))fail('Share Card truth/image contract incomplete');
-  const closeAt=s.lastIndexOf('})();');if(closeAt<0)fail('canonical app close missing');
-  s=s.slice(0,closeAt)+runtime+s.slice(closeAt);
+  const pdfMarker='try{window.__AXIS_821_REPORT_PDF_EXPORT__={',pdfAt=s.indexOf(pdfMarker);if(pdfAt<0)fail('canonical Report PDF marker missing');
+  const insertAt=s.indexOf('\n',pdfAt);if(insertAt<0)fail('canonical Report PDF marker line end missing');
+  s=s.slice(0,insertAt+1)+runtime+s.slice(insertAt+1);
+  if(s.indexOf('function axis821ReportShareCardScope(v){')<s.indexOf('function renderReport()'))fail('Share Card runtime escaped canonical Training Report lexical scope');
   syntax(runtime,'isolated Report Share Card runtime');syntax(s,FILE);write(FILE,s);
 }
 
