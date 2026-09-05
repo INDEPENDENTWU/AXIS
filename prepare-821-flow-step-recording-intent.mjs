@@ -49,6 +49,15 @@ window.__AXIS_821_FLOW_STEP_RECORDING_INTENT__={version:'8.21',owner:'axis.flow.
 `;
  s=s.slice(0,ownerEnd)+block+s.slice(ownerEnd);
  s=mutateFunction(s,'function axis821FlowSurfaceRenderEditor()',fn=>fn.slice(0,-1)+';axis821FlowStepIntentDecorateEditor()}', 'Flow editor recording-intent decoration');
+ s=mutateFunction(s,'function axis821RecorderValueSchema(eq,schema)',()=>`function axis821RecorderValueSchema(eq,schema){const xs=Array.isArray(schema)?schema:[];if(axis821HasMetricOverrideForRecording(eq))return xs;return axis821RecordingExecutionMode(eq)==='sets'?xs.filter(m=>!axis821SetPlanOwnedMetricKey(m?.key||m?.id)):xs}`,'Flow-step override canonical value handoff');
+ syntax(s,FILE);write(FILE,s);
+}
+
+/* A Flow-specific metricOverride must use the app-owned canonical value recorder,
+   not v61's classic repeated-set presentation. Execution ownership is unchanged. */
+{
+ const FILE='v61.js';let s=read(FILE);
+ s=mutateFunction(s,'function axis820ClassicOwner(e,schema=axis820Schema(e))',()=>`function axis820ClassicOwner(e,schema=axis820Schema(e)){if(!schema)return false;if(window.__AXIS_FLOW_RUNTIME__?.hasMetricOverride?.(e?.id))return false;const keys=schema.map(x=>x?.key).filter(k=>k&&k!=='sets');return axis820Mode(e)==='sets'&&keys.length===2&&keys.includes('weight')&&keys.includes('reps')}`,'Flow-step override Quick Record handoff');
  syntax(s,FILE);write(FILE,s);
 }
 
@@ -58,4 +67,4 @@ window.__AXIS_821_FLOW_STEP_RECORDING_INTENT__={version:'8.21',owner:'axis.flow.
  write(FILE,s);
 }
 
-console.log('[AXIS 8.21 Flow step recording intent] PASS · existing step.metricOverride only · Flow editor projection · Object defaults untouched · no new persistence/recorder/Encounter/Active owner');
+console.log('[AXIS 8.21 Flow step recording intent] PASS · existing step.metricOverride only · Flow editor projection · canonical recorder handoff · Object defaults untouched · no new persistence/recorder/Encounter/Active owner');
