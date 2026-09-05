@@ -40,6 +40,12 @@ The current Production baseline and current bounded branch remain the values sta
 - new LocalStorage namespace / IndexedDB / network state / Session writer / Encounter writer / recorder / Active owner / Flow owner / Profile owner: **none**
 - new product capability: **edit the recording-content intent of one saved Flow step without changing that Object's global recording preference**
 
+### Post-merge certification repair
+
+PR **#122** merged the bounded Flow Step Recording Intent work to `main` as `e61dd1d62252112d035d9f05034744ac78a74ec1`. Post-merge certification exposed a deterministic inherited handoff defect in both Chromium and iPhone-like WebKit: the saved Flow-step `metricOverride` resolved correctly, but v61 still classified a `weight + reps` subset as the classic repeated-set presentation and the app-owned value recorder then filtered those same Flow-owned values as set-plan-owned. The result was that the canonical recorder never exposed the requested Flow-step fields.
+
+The bounded certification-repair branch is `fix/flow-step-recording-handoff`. The repair is constrained to the existing recorder handoff: an explicit active Flow-step `metricOverride` must bypass v61 classic-set presentation and the app-owned canonical value recorder must render the override schema verbatim. Execution ownership, Flow persistence, Object/Profile defaults, Active ownership, Encounter append ownership, Report truth and release identity remain unchanged. This repair is not certified until the dedicated Chromium/WebKit Flow gate and inherited release/Production gates pass on its exact final head and then on merged `main`.
+
 ### Product rule
 
 The capability must expose the already-existing `axis.flow.v1` step-level `metricOverride` intent instead of inventing another schema, recorder or persistence owner.
