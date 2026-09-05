@@ -16,6 +16,7 @@ for(const token of [
  'axis821FlowHasExecutionOverrideForRecording',
  'sourceMode=axis821ExecutionForRecording(eq)',
  "axis821FlowOpenRecorder('current',eq)",
+ "axis821FlowHasExecutionOverrideForRecording(e.equipmentId||e.eq)&&!axis821FlowOngoingMode(execution)",
  "axis821FlowAdvanceCompletedCurrent(e,'one-shot-commit')",
  'newStorage:false',
  'newRecorder:false',
@@ -31,4 +32,4 @@ assert.equal(chain.indexOf('prepare-821-flow-step-execution-intent.mjs')<chain.i
 assert.equal(current.includes('feat/821-flow-step-execution-intent'),true,'CURRENT_WORK missing bounded Flow step execution intent branch');
 assert.equal(current.includes('396241c41b2f8eea80d45ca582352ea593c47036'),true,'CURRENT_WORK missing exact certified base main SHA');
 
-console.log('[AXIS 8.21 Flow step execution intent contract] PASS · existing executionOverride only · resolved execution reaches canonical Encounter/Active handoff · one-shot override returns to canonical recorder · no new owner');
+console.log('[AXIS 8.21 Flow step execution intent contract] PASS · existing executionOverride only · resolved execution reaches canonical Encounter/Active handoff · explicit one-shot override returns to canonical recorder/advance · inherited whole-item behavior stays intact · no new owner');
