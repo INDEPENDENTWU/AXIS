@@ -5,6 +5,7 @@
 AXIS **8.21** remains the current public Web release.
 
 - exact merged `main` baseline: `a51c178d63afa7c6184e0e5751875d365cacefb0`
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - merged product change: PR **#118**, truthful custom-range professional paginated Training Report PDF export
 - architecture: `canonical-single-runtime`
 - one initial JavaScript request / zero dynamic runtime chunks remains required
@@ -21,6 +22,7 @@ Cross-platform foundation remains `axis-native-foundation-0`, native repository 
 **AXIS 8.21 — Production muscle-panel layout stability repair**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
+- governed active branch: `main`
 - bounded delivery branch: `fix/production-muscle-layout-stability`
 - pull request: **#120**
 - exact base main SHA: `a51c178d63afa7c6184e0e5751875d365cacefb0`
