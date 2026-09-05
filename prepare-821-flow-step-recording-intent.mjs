@@ -9,7 +9,7 @@ function functionRange(src,signature,label){
  for(let i=brace;i<src.length;i++){
   const ch=src[i],next=src[i+1]||'';
   if(line){if(ch==='\n')line=false;continue}
-  if(block){if(ch==='*'&&next==='/'){block=false;i++}continue}
+  if(block){if(ch==='*'&&next==='/'){block=false;i++;}continue}
   if(quote){if(escaped){escaped=false;continue}if(ch==='\\'){escaped=true;continue}if(ch===quote)quote='';continue}
   if(ch==='/'&&next==='/'){line=true;i++;continue}
   if(ch==='/'&&next==='*'){block=true;i++;continue}
@@ -45,11 +45,16 @@ function axis821FlowStepIntentDecorateEditor(){
 function axis821FlowStepIntentToggleChoice(index,key){const step=axis821FlowDraft?.steps?.[index],eq=axis821FlowStepIntentEq(step);if(!step||!eq)return false;const own=axis821FlowStepIntentKeys(step),base=own||axis821FlowStepIntentDefaultKeys(step),next=[...base],at=next.indexOf(key);if(at>=0){if(next.length<=1){toast?.('至少保留一项；也可以改为跟随项目设置');return false}next.splice(at,1)}else next.push(key);step.metricOverride={metrics:next};axis821FlowStepIntentDecorateEditor();return true}
 function axis821FlowStepIntentFollow(index){const step=axis821FlowDraft?.steps?.[index];if(!step)return false;delete step.metricOverride;axis821FlowStepIntentDecorateEditor();return true}
 D.addEventListener('click',e=>{const toggle=e.target.closest?.('[data-axis-flow-step-intent-toggle]');if(toggle){e.preventDefault();axis821FlowStepIntentOpenIndex=Number(toggle.dataset.axisFlowStepIntentToggle);axis821FlowStepIntentDecorateEditor();return}const choice=e.target.closest?.('[data-axis-flow-step-intent-choice]');if(choice){e.preventDefault();axis821FlowStepIntentToggleChoice(Number(choice.dataset.index),String(choice.dataset.axisFlowStepIntentChoice||''));return}const follow=e.target.closest?.('[data-axis-flow-step-intent-follow]');if(follow){e.preventDefault();axis821FlowStepIntentFollow(Number(follow.dataset.axisFlowStepIntentFollow));return}},true);
-window.__AXIS_821_FLOW_STEP_RECORDING_INTENT__={version:'8.21',owner:'axis.flow.v1.step.metricOverride',surface:'Flow editor',inheritsObjectDefault:true,newStorage:false,newRecorder:false,newEncounterWriter:false,newActiveOwner:false};
+window.__AXIS_821_FLOW_STEP_RECORDING_INTENT__={version:'8.21',owner:'axis.flow.v1.step.metricOverride',surface:'Flow editor',inheritsObjectDefault:true,explicitOverridePreflight:true,defaultCurrentItemDirectStart:true,newStorage:false,newRecorder:false,newEncounterWriter:false,newActiveOwner:false};
 `;
  s=s.slice(0,ownerEnd)+block+s.slice(ownerEnd);
  s=mutateFunction(s,'function axis821FlowSurfaceRenderEditor()',fn=>fn.slice(0,-1)+';axis821FlowStepIntentDecorateEditor()}', 'Flow editor recording-intent decoration');
  s=mutateFunction(s,'function axis821RecorderValueSchema(eq,schema)',()=>`function axis821RecorderValueSchema(eq,schema){const xs=Array.isArray(schema)?schema:[];if(axis821HasMetricOverrideForRecording(eq))return xs;return axis821RecordingExecutionMode(eq)==='sets'?xs.filter(m=>!axis821SetPlanOwnedMetricKey(m?.key||m?.id)):xs}`,'Flow-step override canonical value handoff');
+ s=mutateFunction(s,'function axis821BeginCurrentItem()',fn=>{
+  const token="  const foreign=activeApi?.current?.();if(foreign)return axis821FlowShowSwitch('start',foreign,{id:eq.id,name:eq.name});return axis821FlowStartWholeItem(eq)";
+  if((fn.split(token).length-1)!==1)fail('Flow current direct-start boundary drift');
+  return fn.replace(token,"  if(axis821HasMetricOverrideForRecording(eq.id))return axis821FlowOpenRecorder('current',eq);\n"+token)
+ },'explicit Flow-step recording preflight');
  syntax(s,FILE);write(FILE,s);
 }
 
@@ -67,4 +72,4 @@ window.__AXIS_821_FLOW_STEP_RECORDING_INTENT__={version:'8.21',owner:'axis.flow.
  write(FILE,s);
 }
 
-console.log('[AXIS 8.21 Flow step recording intent] PASS · existing step.metricOverride only · Flow editor projection · canonical recorder handoff · Object defaults untouched · no new persistence/recorder/Encounter/Active owner');
+console.log('[AXIS 8.21 Flow step recording intent] PASS · existing step.metricOverride only · explicit override uses canonical preflight · default Flow item stays direct-start · Object defaults untouched · no new persistence/recorder/Encounter/Active owner');
