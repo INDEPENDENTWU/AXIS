@@ -19,6 +19,15 @@ The merged product already has canonical Session / Encounter truth, immutable Pr
 
 Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.object-capabilities.v1`, `axis.metric-schema.v1`, `axis.session-time.v1`, `axis.profile-snapshot.v1`, `axis.goal-snapshot.v1`, and `axis.report-range.v1`.
 
+### Inherited Report-stage continuity references
+
+The following two lines are retained as historical bounded-stage identifiers required by the sealed #117 Training Report UI contract; they are **not** the current Production baseline or active delivery branch:
+
+- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
+- bounded delivery branch: `feat/821-report-pdf-export`
+
+The current Production baseline and current bounded branch remain the values stated in the active sections of this document.
+
 ## Active change
 
 **AXIS 8.21 — Truth-backed Training Report Share Card**
