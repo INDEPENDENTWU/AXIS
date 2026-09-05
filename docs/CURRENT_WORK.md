@@ -13,6 +13,11 @@ AXIS **8.21** remains the current public Web release.
 - PR #118 reached the fixed Vercel Production identity and the Public Production Alias / legacy 8.12.x deployment gates passed, but `AXIS Production Deployment Gate` run `33894702683` failed in the inherited real-Chromium product-foundation stage
 - the post-merge failure was narrowed to an inherited Training Record presentation defect: `#musclePanel` entered its final `v875Tidy` geometry only after the initially-hidden panel became visible/mutated, so the first metric interaction could cause a one-time height shift
 
+Prior #118 delivery context is retained as historical contract evidence, not as the current branch/base:
+
+- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
+- bounded delivery branch: `feat/821-report-pdf-export`
+
 The merged product already has canonical Session / Encounter truth, immutable Profile / Goal snapshots, session-time truth, `axis.report-range.v1`, the truth-backed Training Report UI, and the downstream browser-print PDF projection. None of those factual owners move in this repair.
 
 Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.object-capabilities.v1`, `axis.metric-schema.v1`, `axis.session-time.v1`, `axis.profile-snapshot.v1`, `axis.goal-snapshot.v1`, and `axis.report-range.v1`.
