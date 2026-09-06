@@ -48,13 +48,15 @@ once(
  'toggle visual label state'
 );
 
-/* A completed set plan has one action in the primary slot: add another set.
-   Hide the now-disabled completion control instead of creating a third visible
-   grid item. The existing #v87Add click owner still performs the mutation. */
+/* A completed set plan has one visible action in the same primary slot: add
+   another set. Keep the clicked completion button mounted and geometrically
+   present behind that action instead of display:none; Chromium otherwise
+   scroll-anchors when its focused control disappears and the whole in-flow
+   stage jumps vertically. v87 remains the only action owner. */
 once(
- "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;add.style.display='block';add.dataset.id=e.id}else",
- "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;pri.style.display='none';add.style.display='block';add.dataset.id=e.id}else",
- 'single visible plan-complete action'
+ "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;add.style.display='block';add.dataset.id=e.id}else{pri.textContent='完成一组';",
+ "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;pri.style.display='block';pri.style.opacity='0';pri.style.pointerEvents='none';add.style.display='block';add.dataset.id=e.id}else{pri.style.opacity='';pri.style.pointerEvents='';pri.textContent='完成一组';",
+ 'single visible focus-stable plan-complete action'
 );
 
 /* Preserve the inherited stable geometry signature. Timed/non-set execution
@@ -134,4 +136,4 @@ clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(axis821FlowSurf
  const n=app.split(volatileTimer).length-1;if(n!==1)fail(`Flow volatile ticker expected once, found ${n}`);app=app.replace(volatileTimer,stableTimer);try{new Function(app)}catch(e){fail(`app Flow tick syntax ${e.message}`)}fs.writeFileSync(APP,app);
 }
 
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest + passive Rest Speak · viewport-safe learning panel + iPhone touch Shadow action · execution-aware set controls · standalone learning lifetime · compact iPhone rail · one visible plan-complete action · stable Flow hold control');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest + passive Rest Speak · viewport-safe learning panel + iPhone touch Shadow action · execution-aware set controls · standalone learning lifetime · compact iPhone rail · one visible focus-stable plan-complete action · stable Flow hold control');
