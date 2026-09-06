@@ -60,12 +60,11 @@ once(
  'standalone learning lifetime'
 );
 
-/* Preserve the class-owned show/hide state. Only width/margin need stronger
-   specificity than inherited legacy Active geometry; putting display:none on
-   the id selector would outrank .show and collapse the stage in WebKit. */
+/* Keep show/hide class ownership intact. Important is used only on the two
+   geometry properties that must supersede the old fixed-card stylesheet. */
 once(
  '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px;',
- '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px;#v87Now.axis821ActiveStage{width:calc(100vw - 44px)!important;margin-left:-22px!important}',
+ '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:calc(100vw - 44px)!important;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px -22px!important;',
  'Home/dock viewport rail alignment'
 );
 
