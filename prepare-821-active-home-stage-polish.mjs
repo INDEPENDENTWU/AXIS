@@ -92,15 +92,18 @@ html body #v87Now.axis821ActiveStage.axis821-state-shift .axis821StageCore{anima
 html body #v87Now.axis821ActiveStage button:active{transform:scale(.988)!important}
 @media(max-width:420px){
   html body #v87Now.axis821ActiveStage{min-height:0!important;margin:8px 0 20px!important;border-radius:18px!important}
-  html body #v87Now.axis821ActiveStage .axis821StageHeader{min-height:50px!important;padding:10px 14px 0!important}
-  html body #v87Now.axis821ActiveStage .axis821StageCore{min-height:148px!important;padding:8px 14px 14px!important}
-  html body #v87Now.axis821ActiveStage .axis821StageControls.v87Actions{padding:0 14px 12px!important;gap:9px!important}
+  html body #v87Now.axis821ActiveStage .axis821StageHeader{min-height:48px!important;padding:8px 14px 0!important}
+  html body #v87Now.axis821ActiveStage .axis821StageCore{min-height:118px!important;padding:5px 14px 8px!important}
+  html body #v87Now.axis821ActiveStage .axis821StageClock{margin-top:7px!important;font-size:clamp(52px,15vw,66px)!important}
+  html body #v87Now.axis821ActiveStage .v87Meta{margin-top:7px!important}
+  html body #v87Now.axis821ActiveStage .axis821StageFact{margin-top:7px!important;padding-top:7px!important}
+  html body #v87Now.axis821ActiveStage .axis821StageControls.v87Actions{padding:0 14px 10px!important;gap:9px!important}
   html body #v87Now.axis821ActiveStage #v87Toggle,
   html body #v87Now.axis821ActiveStage #v87Primary,
   html body #v87Now.axis821ActiveStage #v87Add{height:56px!important;min-height:56px!important}
   html body #v87Now.axis821ActiveStage #v87AdjustBtn{height:40px!important;min-height:40px!important}
-  html body #v87Now.axis821ActiveStage .v87Rest,
-  html body #v87Now.axis821ActiveStage .v87Paused{padding-left:14px!important;padding-right:14px!important}
+  html body #v87Now.axis821ActiveStage .v87Rest{min-height:16px!important;padding:0 14px 7px!important}
+  html body #v87Now.axis821ActiveStage .v87Paused{padding-left:14px!important;padding-right:14px!important;padding-bottom:10px!important}
 }
 @media(prefers-reduced-motion:reduce){
   html body #v87Now.axis821ActiveStage.show,
@@ -113,4 +116,4 @@ html body #v87Now.axis821ActiveStage button:active{transform:scale(.988)!importa
 src=src.replace(tail,css+'\n'+tail);
 try{new Function(src)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,src);
-console.log('[AXIS 8.21 Active Home stage polish] PASS · one flat native Home rail · duplicate legacy hero suppressed · Adjust owns a separate row · bounded compositor-only motion · v87 ownership unchanged');
+console.log('[AXIS 8.21 Active Home stage polish] PASS · one flat native Home rail · duplicate legacy hero suppressed · Adjust owns a separate row · compact mobile dock clearance · bounded compositor-only motion · v87 ownership unchanged');
