@@ -60,15 +60,15 @@ once(
  'standalone learning lifetime'
 );
 
-/* activeHome itself sits 22px inside the established Home/dock rail on each
-   side. Expand the integrated stage by 88px and offset 22px left so the stage
-   lands exactly on the same 22px viewport rail in both 390px and 430px proofs. */
+/* The inherited stylesheet still owns a high-specificity legacy Active width.
+   The integrated stage deliberately supersedes only that geometry: it is pinned
+   to the same 22px viewport rail as the capture dock on every mobile width. */
 once(
  '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px;',
- '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:calc(100% + 88px);max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px -22px;',
- 'Home/dock rail alignment'
+ '#v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:calc(100vw - 44px)!important;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px -22px!important;',
+ 'Home/dock viewport rail alignment'
 );
 
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry contract · execution-aware set controls · standalone learning lifetime · exact Home/dock rail alignment');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry contract · execution-aware set controls · standalone learning lifetime · viewport Home/dock rail seal');
