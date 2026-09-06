@@ -51,8 +51,8 @@ once(
 /* Preserve the inherited stable geometry signature. Timed/non-set execution
    already hides the add-set button through the execution-aware branch above. */
 once(
- "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}$('#v87Rest')",
- "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}add.style.visibility=planDone?'visible':'hidden';$('#v87Rest')",
+ "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}if(typeof renderRestLine==='function')",
+ "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}add.style.visibility=planDone?'visible':'hidden';if(typeof renderRestLine==='function')",
  'stable add-set geometry compatibility'
 );
 
