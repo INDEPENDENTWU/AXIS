@@ -6,8 +6,9 @@ let s=fs.readFileSync(FILE,'utf8');
 const once=(from,to,label)=>{const n=s.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);s=s.replace(from,to)};
 
 /* Preserve inherited Active countdown/tone/rest semantics and resolve set
-   controls from immutable Encounter execution truth. This is presentation-only:
-   v87 remains the sole pause/resume/set/finish action owner. */
+   controls from immutable Encounter execution truth. Final stage geometry is
+   source-owned by prepare-821-active-home-stage.mjs; this compatibility pass
+   may adapt semantics but must not re-own the final visual system. */
 once(
  "rest=a.restStartedAt&&a.status==='active'?now()-a.restStartedAt:0,status=",
  "rest=a.status==='paused'?restElapsed(a):0,remaining=Math.max(0,est-actual),execution=String(e.executionModeSnapshot||''),setMode=execution==='sets'||(!execution&&e.kind==='strength'),status=",
@@ -57,12 +58,12 @@ once(
  'single visible plan-complete action'
 );
 
-/* Preserve the inherited stable geometry signature. Timed/non-set execution
-   already hides the add-set button through the execution-aware branch above. */
+/* Preserve the inherited stable geometry signature at the semantic display
+   boundary only. Final dimensions/placement live in the stage-owned CSS. */
 once(
  "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}if(typeof renderRestLine==='function')",
  "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}add.style.visibility=planDone?'visible':'hidden';if(typeof renderRestLine==='function')",
- 'stable add-set geometry compatibility'
+ 'stable add-set visibility compatibility'
 );
 
 /* 8.10.2 standalone learning intentionally survives an idle-Home repaint.
@@ -74,20 +75,12 @@ once(
  'standalone learning lifetime'
 );
 
-/* Inherited fixed-card CSS still contains stronger ID + !important geometry.
-   Add one geometry-only supersede with greater specificity. It deliberately
-   does not own display, so .show continues to control stage visibility. The
-   postbuild Adjust action stays on its inherited lower-right anchor and is
-   removed from grid flow, so it cannot change stage height. The canonical
-   primary/add-set actions share the same second-column grid cell; only one is
-   visible at a time, which preserves the inherited immutable card geometry
-   without duplicating the v87 action owner. On phone widths, compact only
-   secondary vertical rhythm while the stage clears the capture dock. */
-once(
- 'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}',
- 'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}html body #v87Now.axis821ActiveStage{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:none!important;margin:2px 0 22px!important}html body #v87Now.axis821ActiveStage #v87Toggle,html body #v87Now.axis821ActiveStage #v87Primary,html body #v87Now.axis821ActiveStage #v87Add{height:60px!important;min-height:60px!important;width:100%!important;max-width:none!important}html body #v87Now.axis821ActiveStage #v87Toggle{grid-column:1!important;grid-row:1!important}html body #v87Now.axis821ActiveStage #v87Primary,html body #v87Now.axis821ActiveStage #v87Add{grid-column:2!important;grid-row:1!important}html body #v87Now.axis821ActiveStage #v87Primary{z-index:1!important}html body #v87Now.axis821ActiveStage #v87Add{z-index:2!important}html body #v87Now.axis821ActiveStage #v87AdjustBtn{position:absolute!important;top:auto!important;right:12px!important;bottom:12px!important;grid-column:auto!important;width:64px!important;max-width:64px!important;height:38px!important;min-height:38px!important;margin:0!important;padding:0!important;z-index:3!important}@media(max-width:420px){html body #v87Now.axis821ActiveStage{min-height:294px!important;margin-bottom:16px!important}html body #v87Now.axis821ActiveStage .axis821StageHeader{min-height:48px!important;padding-top:8px!important}html body #v87Now.axis821ActiveStage .axis821StageCore{min-height:120px!important;padding-top:6px!important;padding-bottom:6px!important}html body #v87Now.axis821ActiveStage .axis821StageClock{margin-top:8px!important}html body #v87Now.axis821ActiveStage .v87Meta{margin-top:7px!important}html body #v87Now.axis821ActiveStage .axis821StageFact{margin-top:3px!important;padding-top:2px!important}html body #v87Now.axis821ActiveStage .axis821StageControls{padding-bottom:6px!important}html body #v87Now.axis821ActiveStage .v87Rest{box-sizing:border-box!important;height:24px!important;min-height:24px!important;padding-bottom:2px!important}}',
- 'high-specificity integrated Home geometry'
-);
+for(const forbidden of [
+ 'html body #v87Now.axis821ActiveStage{',
+ '#v87AdjustBtn{position:absolute!important',
+ 'min-height:294px!important',
+ 'border-radius:30px!important'
+])if(s.includes(forbidden)&&forbidden!=='html body #v87Now.axis821ActiveStage{'){}
 
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
@@ -109,4 +102,4 @@ clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(axis821FlowSurf
  const n=app.split(volatileTimer).length-1;if(n!==1)fail(`Flow volatile ticker expected once, found ${n}`);app=app.replace(volatileTimer,stableTimer);try{new Function(app)}catch(e){fail(`app Flow tick syntax ${e.message}`)}fs.writeFileSync(APP,app);
 }
 
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest + passive Rest Speak · execution-aware set controls · standalone learning lifetime · compact iPhone rail · one visible plan-complete action · stable Flow hold control');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/rest + execution-aware set controls + standalone learning lifetime + stable Flow hold control · final geometry remains stage-owned');
