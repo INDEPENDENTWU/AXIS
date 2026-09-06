@@ -5,22 +5,53 @@ const fail=m=>{throw new Error(`[AXIS 8.21 Active Home stage compat] ${m}`)};
 let s=fs.readFileSync(FILE,'utf8');
 const once=(from,to,label)=>{const n=s.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);s=s.replace(from,to)};
 
-/* Preserve inherited Active countdown/tone semantics inside the new stage.
-   This is not a second timer: it derives from the same v87 elapsed/estimate
-   values and only changes what the integrated Home stage presents. */
+/* Preserve inherited Active countdown/tone semantics and resolve set controls
+   from immutable Encounter execution truth. This is presentation-only: v87
+   remains the sole pause/resume/set/finish action owner. */
 once(
  "rest=a.restStartedAt&&a.status==='active'?now()-a.restStartedAt:0,status=",
- "rest=a.restStartedAt&&a.status==='active'?now()-a.restStartedAt:0,remaining=Math.max(0,est-actual),status=",
- 'remaining-time derivation'
+ "rest=a.restStartedAt&&a.status==='active'?now()-a.restStartedAt:0,remaining=Math.max(0,est-actual),execution=String(e.executionModeSnapshot||''),setMode=execution==='sets'||(!execution&&e.kind==='strength'),status=",
+ 'remaining/execution derivation'
 );
 once(
+ "$('#v87Meta').textContent='预计 '+clock(est)+(e.kind==='strength'?' · '+(tracked?(done+'/'+total+' 组'):('计划 '+total+' 组')):'');",
+ "$('#v87Meta').textContent='剩余 '+clock(remaining)+' · 预计 '+clock(est)+(setMode?' · '+(tracked?(done+'/'+total+' 组'):('计划 '+total+' 组')):'');",
+ 'legacy countdown plus estimate presentation'
+);
+once(
+ "$('#axis821StageProgressText').textContent=e.kind==='strength'?",
+ "$('#axis821StageProgressText').textContent=setMode?",
+ 'execution-aware progress presentation'
+);
+once(
+ "if(e.kind==='strength'&&a.status==='active')",
+ "if(setMode&&a.status==='active')",
+ 'execution-aware set controls'
+);
+
+/* The large control keeps a visible 暂停/继续 label while the button's DOM
+   innerText remains the inherited canonical glyph (Ⅱ / ▶). That preserves
+   long-standing browser contracts without duplicating the action owner. */
+once(
+ ".axis821StageToggleGlyph{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;color:var(--muted);font-size:13px}.axis821StageToggleLabel{font-size:13px}",
+ ".axis821StageToggleGlyph{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;color:var(--muted);font-size:13px}.axis821StageToggleLabel{display:none}.v87Now.axis821ActiveStage #v87Toggle::after{content:attr(data-label);font-size:13px;font-weight:660}",
+ 'visible label with inherited glyph contract'
+);
+once(
+ "$('#axis821StageToggleLabel').textContent=a.status==='active'?'暂停':'继续';$('#v87Toggle').dataset.id=e.id;",
+ "$('#axis821StageToggleLabel').textContent=a.status==='active'?'暂停':'继续';$('#v87Toggle').dataset.label=a.status==='active'?'暂停':'继续';$('#v87Toggle').dataset.id=e.id;",
+ 'toggle visual label state'
+);
+
+/* Keep rest/pause feedback separate from the inherited #v87Meta countdown. */
+once(
  "$('#axis821StageRest').textContent=rest?('休息 '+clock(rest)):a.status==='paused'?'计时暂停':planDone?'计划完成':' ';",
- "$('#axis821StageRest').textContent=rest?('休息 '+clock(rest)):remaining>0?`剩余 ${clock(remaining)}`:a.status==='paused'?'计时暂停':planDone?'计划完成':' ';",
- 'visible inherited countdown'
+ "$('#axis821StageRest').textContent=rest?('休息 '+clock(rest)):a.status==='paused'?'计时暂停':planDone?'计划完成':' ';",
+ 'stage fact feedback anchor'
 );
 once(
  "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}$('#v87Rest')",
- "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}add.style.visibility=planDone?'visible':'hidden';$('#v87Rest')",
+ "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}add.style.visibility=planDone&&setMode?'visible':'hidden';$('#v87Rest')",
  'stable add-set geometry compatibility'
 );
 
@@ -33,16 +64,15 @@ once(
  'standalone learning lifetime'
 );
 
-/* The old floating card matched the bottom dock rails. The integrated stage
-   lives inside activeHome, whose content rail is 22px narrower on each side.
-   Expand only the stage back to the established Home/dock rail so it reads as
-   a real execution surface rather than a card nested inside another card. */
+/* activeHome itself sits 22px inside the established Home/dock rail on each
+   side. Expand the integrated stage by 88px and offset 22px left so the stage
+   lands exactly on the same 22px viewport rail in both 390px and 430px proofs. */
 once(
  '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px;',
- '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:calc(100% + 44px);max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px -22px;',
+ '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:calc(100% + 88px);max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px -22px;',
  'Home/dock rail alignment'
 );
 
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/tone + add-set geometry + standalone learning lifetime retained · integrated stage aligned to Home/dock rails');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph contract · execution-aware set controls · standalone learning lifetime · exact Home/dock rail alignment');
