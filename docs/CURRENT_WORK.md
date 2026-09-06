@@ -15,7 +15,7 @@ AXIS **8.21** remains the current public Web release.
 - existing Session/Encounter writer: canonical app owner
 - existing rest truth: the current Activity lifecycle; no new timer or rest store is permitted
 - cross-platform foundation: `axis-native-foundation-0`
-- native repository: `INDEPENDWU/AXIS-iOS`
+- native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`
 
 PR #129 is already merged into this baseline and made ordinary Active a flat, centered, Home-integrated execution stage. This follow-up starts from that certified structure instead of introducing another card, runtime or presentation owner.
