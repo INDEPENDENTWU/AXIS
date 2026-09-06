@@ -14,6 +14,7 @@ A retirement means an old surface, writer, or orchestration path may no longer d
 | 15/20fps or forced-720p recording path | retired | 8.18 sealed 30fps canvas compositor/source-first media contract. |
 | Version-like filenames as current authority | retired governance model | Read machine governance/current contracts instead. |
 | Archived/history content as executable authority | forbidden | Archive/history is provenance-only unless explicitly promoted through a reviewed owner handoff. |
+| `prepare-821-active-home-visual-convergence.mjs` as a late behavioral build owner | retired from build authority | Final Active Home presentation is source-owned by `prepare-821-active-home-stage.mjs` + `styles/axis-821-active-home.css`; semantic compatibility remains in `prepare-821-active-home-stage-compat.mjs`. The historical prepare may remain provenance but must not return to canonical build reachability. |
 
 ## Sealed CI retirements
 
