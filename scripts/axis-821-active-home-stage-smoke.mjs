@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+
+const ENGINE=process.env.AXIS_ENGINE||'chromium',BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core'),launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
+const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true,locale:'zh-CN'}),page=await context.newPage(),errors=[];
+page.on('pageerror',e=>errors.push(String(e?.stack||e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+const json=(r,o)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(o)});for(const [p,o] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(p,r=>json(r,o));
+const tap=async l=>ENGINE==='webkit'?l.tap({timeout:5000}):l.click({timeout:5000});
+const meta=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'));
+try{
+ assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());
+ const now=Date.now();
+ await page.evaluate(t=>{
+  localStorage.clear();
+  const event={id:'stage-e1',equipmentId:'chest',name:'胸推',pattern:'push',kind:'strength',muscles:['胸'],effect:'',time:t-92000,sets:3,metrics:{},metricSchemaSnapshot:[{key:'weight',label:'重量',type:'weight',unit:'kg',step:2.5},{key:'reps',label:'次数',type:'reps',unit:'次',step:1}],metricSchemaVersionSnapshot:'8.21',executionModeSnapshot:'sets'};
+  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:{id:'stage-s1',start:t-92000,events:[event]},flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
+  localStorage.setItem('axis_v8_meta',JSON.stringify({events:{'stage-e1':{activity:{status:'active',startedAt:t-92000,lastResumedAt:t-92000,intervals:[{start:t-92000,end:null}],estimateMs:600000,completedSets:0,setDoneAt:[],restStartedAt:null},sets:[{weight:60,reps:10,state:'assumed',doneAt:null},{weight:60,reps:10,state:'assumed',doneAt:null},{weight:60,reps:10,state:'assumed',doneAt:null}]}},prefs:{}}));
+ },now);
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_ACTIVE_RUNTIME__?.owner==='v87'&&window.__AXIS_821_ACTIVE_HOME_STAGE__?.presentation==='integrated-home-stage',undefined,{timeout:15000});
+ await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show')&&document.querySelector('#v87Now')?.parentElement?.id==='activeHome',undefined,{timeout:5000});
+ console.log(`[AXIS 8.21 Active Home stage ${ENGINE}] integrated large stage geometry`);
+ const geometry=await page.evaluate(()=>{const h=document.querySelector('#v87Now'),b=h.getBoundingClientRect(),toggle=document.querySelector('#v87Toggle').getBoundingClientRect(),primary=document.querySelector('#v87Primary').getBoundingClientRect(),clock=getComputedStyle(document.querySelector('#axis821StageClock'));return{width:b.width,height:b.height,position:getComputedStyle(h).position,toggleH:toggle.height,primaryH:primary.height,clockSize:parseFloat(clock.fontSize),count:document.querySelectorAll('#v87Now').length,parent:h.parentElement?.id,overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,name:document.querySelector('#v87Name')?.textContent,primaryText:document.querySelector('#v87Primary')?.textContent,toggleText:document.querySelector('#axis821StageToggleLabel')?.textContent}});
+ assert.equal(geometry.parent,'activeHome');assert.equal(geometry.position,'relative');assert.equal(geometry.count,1);assert.ok(geometry.width>=350,`stage width ${geometry.width}`);assert.ok(geometry.height>=300,`stage height ${geometry.height}`);assert.ok(geometry.toggleH>=56,`toggle height ${geometry.toggleH}`);assert.ok(geometry.primaryH>=56,`primary height ${geometry.primaryH}`);assert.ok(geometry.clockSize>=50,`clock size ${geometry.clockSize}`);assert.equal(geometry.name,'胸推');assert.equal(geometry.primaryText,'完成一组');assert.equal(geometry.toggleText,'暂停');assert.ok(geometry.overflow<=1,`horizontal overflow ${geometry.overflow}`);
+ console.log(`[AXIS 8.21 Active Home stage ${ENGINE}] large pause/resume delegates to v87 truth`);
+ await tap(page.locator('#v87Toggle'));await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['stage-e1']?.activity?.status==='paused',undefined,{timeout:2500});assert.equal(await page.locator('#axis821StageToggleLabel').innerText(),'继续');assert.equal(await page.locator('#v87Primary').evaluate(x=>getComputedStyle(x).display),'none');
+ await tap(page.locator('#v87Toggle'));await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['stage-e1']?.activity?.status==='active',undefined,{timeout:2500});assert.equal(await page.locator('#axis821StageToggleLabel').innerText(),'暂停');
+ console.log(`[AXIS 8.21 Active Home stage ${ENGINE}] complete-set becomes immediate stage/rest feedback`);
+ await tap(page.locator('#v87Primary'));await page.waitForFunction(()=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['stage-e1']?.activity;return a?.completedSets===1&&Number(a?.restStartedAt)>0},undefined,{timeout:2500});const m=await meta();assert.equal(m.events['stage-e1'].activity.completedSets,1);assert.equal(await page.locator('#v87Now').getAttribute('data-done'),'1');assert.match(await page.locator('#axis821StageProgressText').innerText(),/2 \/ 3|已完成 1\/3/);assert.match(await page.locator('#axis821StageRest').innerText(),/休息/);
+ await page.waitForTimeout(650);const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);assert.ok(overflow<=1,`post-action horizontal overflow ${overflow}`);
+ console.log(`[AXIS 8.21 Active Home stage ${ENGINE}] existing hold-to-finish remains authoritative`);
+ const finish=page.locator('#v87Finish');const box=await finish.boundingBox();assert.ok(box);await finish.dispatchEvent('pointerdown',{pointerId:81,pointerType:'touch',isPrimary:true,clientX:box.x+box.width/2,clientY:box.y+box.height/2,button:0,buttons:1,bubbles:true});await page.waitForTimeout(1700);await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['stage-e1']?.activity?.status==='finished',undefined,{timeout:3000});await page.waitForFunction(()=>!document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:3000});
+ assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
+ console.log(`[AXIS 8.21 Active Home stage ${ENGINE}] PASS · integrated large stage · pause/resume · complete-set/rest feedback · hold finish · no horizontal overflow`);
+}finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
