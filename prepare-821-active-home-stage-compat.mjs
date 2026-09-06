@@ -15,7 +15,7 @@ once(
 );
 once(
  "$('#v87Meta').textContent='预计 '+clock(est)+(e.kind==='strength'?' · '+(tracked?(done+'/'+total+' 组'):('计划 '+total+' 组')):'');",
- "$('#v87Meta').textContent='剩余 '+clock(remaining)+' · 预计 '+clock(est)+(setMode?' · '+(tracked?(done+'/'+total+' 组'):('计划 '+total+' 组')):'');",
+ "$('#v87Meta').textContent=`剩余 ${clock(remaining)} · 预计 ${clock(est)}${setMode?' · '+(tracked?(done+'/'+total+' 组'):('计划 '+total+' 组')):''}`;",
  'legacy countdown plus estimate presentation'
 );
 once(
