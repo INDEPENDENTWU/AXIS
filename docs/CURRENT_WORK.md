@@ -221,3 +221,23 @@ Merge is blocked until the exact final PR head proves:
 6. existing hold-to-finish completes the Activity and dismisses the stage;
 7. the stage has no horizontal overflow at 390px and emits no page errors;
 8. inherited Flow/Object/Report/repository gates remain green so Flow integrated Active remains isolated from the ordinary stage.
+
+## Post-merge certification repair — Active Home Stage WebKit compatibility
+
+PR **#125** merged Active Home Stage to `main` as `9eaf90d0f94023218feb452b085da48c9f027276`. Production and mirror deployment paths accepted that artifact, but exact-main certification correctly remained blocked because inherited iPhone-like WebKit checks exposed two compatibility boundaries. This bounded repair remains part of the same 8.21 architecture and must not create a second runtime or deployment topology.
+
+- bounded delivery branch: `fix/821-active-home-postmerge-compat`
+- exact base main SHA: `9eaf90d0f94023218feb452b085da48c9f027276`
+- repair PR: **#127**
+- intended public release change: **none; remains 8.21**
+- architecture: `canonical-single-runtime`
+- existing Active truth/action owner: `v87` over `axis_v8_meta`
+- new storage / recorder / Encounter writer / Active owner / Flow owner / API / Vercel project / EdgeOne project: **none**
+
+The repair is deliberately narrow:
+
+1. Rest Speak keeps its inherited positioning outside ordinary Active Home, while the integrated `axis821ActiveStage` uses a viewport/safe-area bound so iPhone WebKit can reach the explicit learning controls instead of positioning the panel above the viewport.
+2. The inherited Runtime Foundation Shadow observation uses a real mobile/touch WebKit context and physical tap semantics for the existing `#v87Primary` and `#v87Toggle` controls, matching the already-proven dedicated Active Home WebKit interaction path. Product action ownership and storage mutation remain unchanged.
+3. All #125 stage geometry, countdown, pause-owned rest, execution-aware set controls, hold-to-finish behavior and Flow ticker stabilization remain intact.
+
+This repair is mergeable only after the exact final PR head passes the full inherited matrix including Runtime Foundation and Deep Compatibility. After merge, certification still requires the exact merged `main` SHA to pass the full main matrix, reach the existing Vercel Production project and fixed alias, and mirror as the same exact artifact on the existing EdgeOne project with Chromium and iPhone-like WebKit verification. Only then may that merged SHA replace `c09d22fc992efd4f1f94bc0857c91442a211094f` as the certified continuation baseline.

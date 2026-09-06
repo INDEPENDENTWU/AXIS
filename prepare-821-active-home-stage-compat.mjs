@@ -48,13 +48,15 @@ once(
  'toggle visual label state'
 );
 
-/* A completed set plan has one action in the primary slot: add another set.
-   Hide the now-disabled completion control instead of creating a third visible
-   grid item. The existing #v87Add click owner still performs the mutation. */
+/* A completed set plan has one visible action in the same primary slot: add
+   another set. Keep the clicked completion button mounted and geometrically
+   present behind that action instead of display:none; Chromium otherwise
+   scroll-anchors when its focused control disappears and the whole in-flow
+   stage jumps vertically. v87 remains the only action owner. */
 once(
- "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;add.style.display='block';add.dataset.id=e.id}else",
- "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;pri.style.display='none';add.style.display='block';add.dataset.id=e.id}else",
- 'single visible plan-complete action'
+ "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;add.style.display='block';add.dataset.id=e.id}else{pri.textContent='完成一组';",
+ "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;pri.style.display='block';pri.style.opacity='0';pri.style.pointerEvents='none';add.style.display='block';add.dataset.id=e.id}else{pri.style.opacity='';pri.style.pointerEvents='';pri.textContent='完成一组';",
+ 'single visible focus-stable plan-complete action'
 );
 
 /* Preserve the inherited stable geometry signature. Timed/non-set execution
@@ -72,6 +74,16 @@ once(
  "if(!target||!today||!activeHome||sheet){host.classList.remove('show','axis821-set-bump','axis821-state-shift');D.body.classList.remove('v87-now');return}",
  "if(!target||!today||!activeHome||sheet){const keepStandalone=!sheet&&axis8102PanelSource()==='standalone';if(!keepStandalone)axis891CloseSpeak();host.classList.remove('show','axis821-set-bump','axis821-state-shift');D.body.classList.remove('v87-now');return}",
  'standalone learning lifetime'
+);
+
+/* The inherited Rest Speak panel used the old fixed-card top edge as its
+   bottom anchor. An integrated Home stage can begin high in the viewport, so
+   that calculation pushes the panel above iPhone WebKit. Keep the old anchor
+   everywhere else, but give the integrated stage a viewport/safe-area bound. */
+once(
+ "if(rect){panel.style.bottom=Math.max(12,window.innerHeight-rect.top+8)+'px';panel.style.maxHeight=Math.max(180,Math.floor(rect.top-22))+'px'}",
+ "if(host?.classList.contains('axis821ActiveStage')){panel.style.bottom='calc(84px + env(safe-area-inset-bottom))';panel.style.maxHeight=Math.max(240,Math.floor(window.innerHeight*.68))+'px'}else if(rect){panel.style.bottom=Math.max(12,window.innerHeight-rect.top+8)+'px';panel.style.maxHeight=Math.max(180,Math.floor(rect.top-22))+'px'}",
+ 'viewport-safe integrated learning panel'
 );
 
 /* Inherited fixed-card CSS still contains stronger ID + !important geometry.
@@ -92,6 +104,21 @@ once(
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
 
+/* Runtime Foundation calls this an iPhone WebKit observation, but its inherited
+   harness still used desktop-mouse click semantics. The dedicated Active Home
+   gate already proves the same v87 action with a physical WebKit tap. Converge
+   this inherited Shadow observation to the same mobile/touch input model; this
+   changes only the test harness, never the v87 action or storage owner. */
+{
+ const SHADOW='scripts/axis-813-shadow-browser.mjs';let shadow=fs.readFileSync(SHADOW,'utf8');
+ const oldContext="const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'zh-CN' });\nconst page = await context.newPage();";
+ const newContext="const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'zh-CN', ...(ENGINE === 'webkit' ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}) });\nconst page = await context.newPage();\nconst axis813Action = async (locator) => ENGINE === 'webkit' ? locator.tap({ timeout: 5000 }) : locator.click({ timeout: 5000 });";
+ let n=shadow.split(oldContext).length-1;if(n!==1)fail(`Shadow mobile context expected once, found ${n}`);shadow=shadow.replace(oldContext,newContext);
+ const primary="await page.locator('#v87Primary').click();";n=shadow.split(primary).length-1;if(n!==1)fail(`Shadow primary action expected once, found ${n}`);shadow=shadow.replace(primary,"await axis813Action(page.locator('#v87Primary'));" );
+ const toggle="await page.locator('#v87Toggle').click();";n=shadow.split(toggle).length-1;if(n!==2)fail(`Shadow toggle actions expected twice, found ${n}`);shadow=shadow.replaceAll(toggle,"await axis813Action(page.locator('#v87Toggle'));" );
+ fs.writeFileSync(SHADOW,shadow);
+}
+
 /* Flow's one-second clock must not rebuild the integrated action DOM. Replacing
    the hold button while a finger is down can cancel the proven v87 hold owner,
    and WebKit can observe the same replacement between visible and geometry
@@ -109,4 +136,4 @@ clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(axis821FlowSurf
  const n=app.split(volatileTimer).length-1;if(n!==1)fail(`Flow volatile ticker expected once, found ${n}`);app=app.replace(volatileTimer,stableTimer);try{new Function(app)}catch(e){fail(`app Flow tick syntax ${e.message}`)}fs.writeFileSync(APP,app);
 }
 
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest + passive Rest Speak · execution-aware set controls · standalone learning lifetime · compact iPhone rail · one visible plan-complete action · stable Flow hold control');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest + passive Rest Speak · viewport-safe learning panel + iPhone touch Shadow action · execution-aware set controls · standalone learning lifetime · compact iPhone rail · one visible focus-stable plan-complete action · stable Flow hold control');
