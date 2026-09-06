@@ -3,6 +3,7 @@ import fs from 'node:fs';
 const fail=m=>{throw new Error(`[AXIS 8.21 Active Home stage contract] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const prep=read('prepare-821-active-home-stage.mjs');
+const compat=read('prepare-821-active-home-stage-compat.mjs');
 const v87=read('v87-runtime.js');
 const chain=read('prepare-819-postcommit-lifecycle.mjs');
 const flow=read('prepare-821-flow-session-coordination.mjs');
@@ -31,6 +32,13 @@ for(const token of [
  'axis821StageControls v87Actions',
  "host.classList.add('show');D.body.classList.add('v87-now')}"
 ])if(!prep.includes(token))fail(`prepare missing ${token}`);
+
+for(const token of [
+ 'Rest Speak viewport-safe placement',
+ "panel.style.top=pad+'px'",
+ "panel.style.bottom='auto'",
+ "panel.style.maxHeight=Math.max(180,vh-pad*2)+'px'"
+])if(!compat.includes(token))fail(`compat missing ${token}`);
 
 for(const token of [
  'function toggle(id)',
@@ -73,4 +81,4 @@ for(const token of [
  'exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`'
 ])if(!work.includes(token))fail(`CURRENT_WORK missing ${token}`);
 
-console.log('[AXIS 8.21 Active Home stage contract] PASS · one integrated ordinary-Active Home stage · existing v87 actions + postbuild Adjust hook retained · Flow integrated surface isolated · no new storage/Encounter/Active owner');
+console.log('[AXIS 8.21 Active Home stage contract] PASS · one integrated ordinary-Active Home stage · existing v87 actions + postbuild Adjust hook retained · viewport-safe inherited Rest Speak · Flow integrated surface isolated · no new storage/Encounter/Active owner');
