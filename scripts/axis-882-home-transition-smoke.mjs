@@ -26,14 +26,16 @@ await page.locator('#saveScan').click();
 await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:2500});
 await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='active',undefined,{timeout:1800});
 
-console.log(`[AXIS home transition ${ENGINE}] 8.8.1 active hierarchy owns active training`);
+console.log(`[AXIS home transition ${ENGINE}] integrated Active stage owns visible active training`);
 assert.equal(await page.locator('#axisNowHero').isVisible(),false,'Now hero duplicates the active session/item');
-assert.ok(await page.locator('#activeHome').isVisible(),'8.8.1 active home disappeared');
-assert.ok(await page.locator('#liveTimer').isVisible(),'8.8.1 session timer disappeared');
-assert.ok(await page.locator('#finishHold').isVisible(),'8.8.1 long-press finish disappeared');
-assert.ok(await page.locator('#v87Now').isVisible(),'v87 active item changed');
+assert.ok(await page.locator('#activeHome').isVisible(),'active home disappeared');
+assert.ok(await page.locator('#v87Now').isVisible(),'integrated Active stage disappeared');
+assert.ok(await page.locator('#axis821StageClock').isVisible(),'integrated Active elapsed timer disappeared');
+assert.ok(await page.locator('#v87Finish').isVisible(),'integrated Active long-press finish disappeared');
+assert.equal(await page.locator('#liveTimer').isVisible(),false,'legacy session timer visibly duplicates the integrated Active stage');
+assert.equal(await page.locator('#finishHold').isVisible(),false,'legacy long-press finish visibly duplicates the integrated Active stage');
 const spacing=await page.evaluate(()=>({live:getComputedStyle(document.querySelector('#activeHome>.liveHead')).marginTop,metrics:getComputedStyle(document.querySelector('#activeHome>.metricPair.compact')).marginTop,head:getComputedStyle(document.querySelector('#todayView>.pageHead')).marginBottom}));
-assert.deepEqual(spacing,{live:'6px',metrics:'20px',head:'22px'},`8.8.1 active spacing changed: ${JSON.stringify(spacing)}`);
+assert.deepEqual(spacing,{live:'6px',metrics:'20px',head:'22px'},`inherited active spacing source changed: ${JSON.stringify(spacing)}`);
 
 const id=await page.locator('#v87Finish').getAttribute('data-id');
 assert.ok(id,'active item id missing');
@@ -48,8 +50,8 @@ assert.equal(await page.locator('.axisNowFacts').isVisible(),false,'transition s
 const copy=((await page.locator('#axisNowTitle').innerText())+' '+(await page.locator('#axisNowMeta').innerText())).trim();
 assert.match(copy,/项目间歇|可以开始下一项|间歇过长/);
 assert.doesNotMatch(copy,/正在训练|本次|已记录|长按/,'transition copy duplicates active-session information');
-assert.ok(await page.locator('#liveTimer').isVisible(),'original session timer was replaced by transition surface');
-assert.ok(await page.locator('#finishHold').isVisible(),'original long-press session finish was replaced');
+assert.ok(await page.locator('#liveTimer').isVisible(),'original session timer did not return for inter-item transition');
+assert.ok(await page.locator('#finishHold').isVisible(),'original session finish did not return for inter-item transition');
 
-console.log(`[AXIS home transition ${ENGINE}] PASS · 8.8.1 active hierarchy preserved · compact inter-item transition only`);
+console.log(`[AXIS home transition ${ENGINE}] PASS · integrated Active stage owns active state · compact inter-item transition remains native`);
 await context.close();await browser.close();
