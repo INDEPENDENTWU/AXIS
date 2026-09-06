@@ -75,13 +75,6 @@ once(
  'standalone learning lifetime'
 );
 
-for(const forbidden of [
- 'html body #v87Now.axis821ActiveStage{',
- '#v87AdjustBtn{position:absolute!important',
- 'min-height:294px!important',
- 'border-radius:30px!important'
-])if(s.includes(forbidden)&&forbidden!=='html body #v87Now.axis821ActiveStage{'){}
-
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
 
