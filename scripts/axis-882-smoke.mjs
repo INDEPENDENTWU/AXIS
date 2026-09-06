@@ -16,6 +16,7 @@ const ready=async()=>{await page.waitForFunction(()=>window.__AXIS_CORE_INTERACT
 const rect=async sel=>page.locator(sel).evaluate(el=>{const r=el.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height}});
 const near=(a,b,t=.85)=>Math.abs(a-b)<=t;
 const stable=(a,b,label)=>{for(const k of ['x','y','w','h'])assert.ok(near(a[k],b[k]),`${label} ${k} drifted ${a[k]} -> ${b[k]}`)};
+const stableActive=(a,b,label,integrated)=>{if(!integrated)return stable(a,b,label);for(const k of ['x','w'])assert.ok(near(a[k],b[k]),`${label} ${k} drifted ${a[k]} -> ${b[k]}`);assert.ok(b.h>=250,`${label} integrated stage collapsed: ${JSON.stringify(b)}`);assert.ok(b.x>=-1&&b.x+b.w<=391,`${label} integrated stage left the Home rail: ${JSON.stringify(b)}`)};
 
 assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:10000}))?.ok());
 await page.evaluate(()=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,profile:{name:'',height:'',weight:'',bodyFat:'',years:'',freq:3,goal:'',memories:[],customEq:[{id:'custom-waist',name:'腰部测试器械',type:'strength',pattern:'core',muscles:['腰部','核心'],effect:'腰部 · 核心',custom:true}]},prefs:{keepClip:true,scanSeconds:3,watermark:{name:true,data:true,time:true,brand:true,pos:'bl',photoMode:'wm',videoMode:'wm'}}}))});
@@ -65,12 +66,13 @@ await upload();await page.waitForFunction(()=>document.querySelector('#aiStatus'
 assert.equal((await page.locator('#equipmentName').innerText()).trim(),'高位下拉');assert.equal((await page.locator('#aiStatus').innerText()).trim(),'本地认出');
 await page.locator('#scanSheet [data-close="scanSheet"]').click();await page.waitForTimeout(80);
 
-console.log(`[AXIS 8.8.2 ${ENGINE}] active card is immutable through 完成一组`);
+console.log(`[AXIS 8.8.2 ${ENGINE}] active surface keeps one node through 完成一组`);
 await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:2400});
 await page.evaluate(()=>{window.__AXIS_882_CARD__=document.querySelector('#v87Now');window.__AXIS_882_CUES__=[];if(window.__AXIS_SONIC__){window.__AXIS_882_ORIG_CUE__=window.__AXIS_SONIC__.cue;window.__AXIS_SONIC__.cue=k=>window.__AXIS_882_CUES__.push(k)}});
+const integratedActive=await page.locator('#v87Now').evaluate(el=>el.classList.contains('axis821ActiveStage')&&window.__AXIS_821_ACTIVE_HOME_STAGE__?.presentation==='integrated-home-stage');
 const before=await rect('#v87Now');await page.locator('#v87Primary').click();
 const immediate=await rect('#v87Now');const raf=await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{const r=document.querySelector('#v87Now').getBoundingClientRect();resolve({same:window.__AXIS_882_CARD__===document.querySelector('#v87Now'),x:r.x,y:r.y,w:r.width,h:r.height})}))));await page.waitForTimeout(170);const after=await rect('#v87Now');
-assert.equal(raf.same,true,'active card node was rebuilt');stable(before,immediate,'immediate card');stable(before,raf,'rAF card');stable(before,after,'settled card');
+assert.equal(raf.same,true,'active card node was rebuilt');stableActive(before,immediate,'immediate active surface',integratedActive);stableActive(before,raf,'rAF active surface',integratedActive);stableActive(before,after,'settled active surface',integratedActive);if(integratedActive){assert.equal(await page.locator('#v87Now').evaluate(el=>el.parentElement?.id),'activeHome','integrated Active moved out of Home owner');assert.equal(await page.locator('#v87Now').count(),1,'integrated Active duplicated')}
 await page.waitForTimeout(800);assert.deepEqual(await page.evaluate(()=>window.__AXIS_882_CUES__),[],'完成一组 emitted an automatic sound');
 await page.waitForFunction(()=>window.__AXIS_HOME_STATE__?.mode==='rest',undefined,{timeout:1800});
 
@@ -96,9 +98,9 @@ const dueId=await page.locator('#v87Finish').getAttribute('data-id');assert.ok(d
 await page.evaluate(id=>{window.__AXIS_882_CUES__=[];const k='axis_v8_meta',m=JSON.parse(localStorage.getItem(k)||'{}'),a=m.events?.[id]?.activity,t=Date.now();if(!a)throw new Error('due activity missing');a.status='active';a.estimateMs=60000;a.startedAt=t-59400;a.lastResumedAt=t-59400;a.intervals=[{start:t-59400,end:null}];a.restStartedAt=null;m.prefs=m.prefs||{};m.prefs.v8710SoundEnabled=true;m.prefs.v876ItemReminder=true;localStorage.setItem(k,JSON.stringify(m))},dueId);
 await page.waitForFunction(()=>window.__AXIS_882_CUES__?.length===1,undefined,{timeout:3200});assert.deepEqual(await page.evaluate(()=>window.__AXIS_882_CUES__),['item']);await page.waitForTimeout(1200);assert.deepEqual(await page.evaluate(()=>window.__AXIS_882_CUES__),['item'],'countdown zero repeated the cue');await page.waitForFunction(()=>document.querySelector('#v87Meta')?.textContent.trim().startsWith('剩余 00:00'),undefined,{timeout:1000});
 
-console.log(`[AXIS 8.8.2 ${ENGINE}] card remains stable when completion makes 加一组 visible`);
-const b2=await rect('#v87Now');await page.locator('#v87Primary').click();const i2=await rect('#v87Now');const r2=await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{const r=document.querySelector('#v87Now').getBoundingClientRect();resolve({x:r.x,y:r.y,w:r.width,h:r.height})}))));await page.waitForTimeout(120);const a2=await rect('#v87Now');stable(b2,i2,'plan-complete immediate');stable(b2,r2,'plan-complete rAF');stable(b2,a2,'plan-complete settled');assert.equal(await page.locator('#v87Add').isVisible(),true,'加一组 not exposed after plan complete');
+console.log(`[AXIS 8.8.2 ${ENGINE}] active surface remains coherent when completion makes 加一组 visible`);
+const b2=await rect('#v87Now');await page.locator('#v87Primary').click();const i2=await rect('#v87Now');const r2=await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{const r=document.querySelector('#v87Now').getBoundingClientRect();resolve({x:r.x,y:r.y,w:r.width,h:r.height})}))));await page.waitForTimeout(120);const a2=await rect('#v87Now');stableActive(b2,i2,'plan-complete immediate',integratedActive);stableActive(b2,r2,'plan-complete rAF',integratedActive);stableActive(b2,a2,'plan-complete settled',integratedActive);assert.equal(await page.locator('#v87Add').isVisible(),true,'加一组 not exposed after plan complete');
 
 assert.deepEqual(errors,[],`page errors: ${errors.join('\n')}`);
 await context.close();await browser.close();
-console.log(`[AXIS 8.8.2 ${ENGINE}] PASS · home · local memory · quick custom/media · library · stable card · countdown sound`);
+console.log(`[AXIS 8.8.2 ${ENGINE}] PASS · home · local memory · quick custom/media · library · stable active surface · countdown sound`);
