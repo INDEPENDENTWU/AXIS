@@ -20,8 +20,8 @@ once(
 );
 once(
  "$('#v87Rest').textContent=rest?'组间休息中':",
- "$('#v87Rest').textContent=rest?('休息 '+clock(rest)):",
- 'inherited visible rest copy'
+ "if(typeof renderRestLine==='function')renderRestLine(rest,e,a);else $('#v87Rest').textContent=rest?('休息 '+clock(rest)):",
+ 'inherited passive rest presenter'
 );
 once(
  "$('#axis821StageProgressText').textContent=e.kind==='strength'?",
@@ -69,10 +69,12 @@ once(
    Add one geometry-only supersede with greater specificity. It deliberately
    does not own display, so .show continues to control stage visibility. The
    postbuild Adjust action is kept interactive but removed from grid flow so it
-   cannot change stage height or collide with the capture dock after a repaint. */
+   cannot change stage height or collide with the capture dock after a repaint.
+   On phone widths, compact only vertical rhythm: the clock and 60px primary
+   controls keep their product hierarchy while the stage clears the fixed dock. */
 once(
  'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}',
- 'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}html body #v87Now.axis821ActiveStage{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:none!important;margin:2px 0 22px!important}html body #v87Now.axis821ActiveStage #v87Toggle,html body #v87Now.axis821ActiveStage #v87Primary,html body #v87Now.axis821ActiveStage #v87Add{height:60px!important;min-height:60px!important;width:100%!important;max-width:none!important}html body #v87Now.axis821ActiveStage #v87AdjustBtn{position:absolute!important;top:13px!important;right:118px!important;grid-column:auto!important;width:64px!important;max-width:64px!important;height:38px!important;min-height:38px!important;margin:0!important;padding:0!important;z-index:3!important}',
+ 'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}html body #v87Now.axis821ActiveStage{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:none!important;margin:2px 0 22px!important}html body #v87Now.axis821ActiveStage #v87Toggle,html body #v87Now.axis821ActiveStage #v87Primary,html body #v87Now.axis821ActiveStage #v87Add{height:60px!important;min-height:60px!important;width:100%!important;max-width:none!important}html body #v87Now.axis821ActiveStage #v87AdjustBtn{position:absolute!important;top:13px!important;right:118px!important;grid-column:auto!important;width:64px!important;max-width:64px!important;height:38px!important;min-height:38px!important;margin:0!important;padding:0!important;z-index:3!important}@media(max-width:420px){html body #v87Now.axis821ActiveStage{min-height:302px!important;margin-bottom:12px!important}html body #v87Now.axis821ActiveStage .axis821StageHeader{min-height:48px!important;padding-top:8px!important}html body #v87Now.axis821ActiveStage .axis821StageCore{min-height:136px!important;padding-top:6px!important;padding-bottom:8px!important}html body #v87Now.axis821ActiveStage .axis821StageClock{margin-top:8px!important}html body #v87Now.axis821ActiveStage .v87Meta{margin-top:7px!important}html body #v87Now.axis821ActiveStage .axis821StageFact{margin-top:8px!important;padding-top:6px!important}html body #v87Now.axis821ActiveStage .axis821StageControls{padding-bottom:8px!important}html body #v87Now.axis821ActiveStage .v87Rest{box-sizing:border-box!important;height:32px!important;min-height:32px!important;padding-bottom:6px!important}}',
  'high-specificity integrated Home geometry'
 );
 
@@ -96,4 +98,4 @@ clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(axis821FlowSurf
  const n=app.split(volatileTimer).length-1;if(n!==1)fail(`Flow volatile ticker expected once, found ${n}`);app=app.replace(volatileTimer,stableTimer);try{new Function(app)}catch(e){fail(`app Flow tick syntax ${e.message}`)}fs.writeFileSync(APP,app);
 }
 
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest/copy · execution-aware set controls · standalone learning lifetime · non-layout Adjust · stable Flow hold control');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest + passive Rest Speak · execution-aware set controls · standalone learning lifetime · compact iPhone rail · stable Flow hold control');
