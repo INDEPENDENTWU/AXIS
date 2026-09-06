@@ -43,15 +43,11 @@ once(
  'toggle visual label state'
 );
 
-/* Keep rest/pause feedback separate from the inherited #v87Meta countdown. */
-once(
- "$('#axis821StageRest').textContent=rest?('休息 '+clock(rest)):a.status==='paused'?'计时暂停':planDone?'计划完成':' ';",
- "$('#axis821StageRest').textContent=rest?('休息 '+clock(rest)):a.status==='paused'?'计时暂停':planDone?'计划完成':' ';",
- 'stage fact feedback anchor'
-);
+/* Preserve the inherited stable geometry signature. Timed/non-set execution
+   already hides the add-set button through the execution-aware branch above. */
 once(
  "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}$('#v87Rest')",
- "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}add.style.visibility=planDone&&setMode?'visible':'hidden';$('#v87Rest')",
+ "}else{host.dataset.primary='none';pri.style.display='none';add.style.display='none'}add.style.visibility=planDone?'visible':'hidden';$('#v87Rest')",
  'stable add-set geometry compatibility'
 );
 
@@ -75,4 +71,4 @@ once(
 
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph contract · execution-aware set controls · standalone learning lifetime · exact Home/dock rail alignment');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry contract · execution-aware set controls · standalone learning lifetime · exact Home/dock rail alignment');
