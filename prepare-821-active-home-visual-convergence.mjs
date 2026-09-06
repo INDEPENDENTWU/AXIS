@@ -49,6 +49,7 @@ html body #v87Now.axis821ActiveStage[data-primary="none"] #v87Toggle{grid-column
 html body #v87Now.axis821ActiveStage #v87AdjustBtn{position:static!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;grid-column:1/-1!important;grid-row:2!important;justify-self:end!important;width:auto!important;max-width:none!important;min-width:0!important;height:34px!important;min-height:34px!important;margin:5px 0 10px!important;padding:0 2px 0 12px!important;border:0!important;border-radius:10px!important;background:transparent!important;color:var(--dim)!important;font-size:11px!important;font-weight:600!important;box-shadow:none!important;z-index:auto!important}
 html body #v87Now.axis821ActiveStage #v87AdjustBtn:active{background:var(--s1)!important;color:var(--muted)!important}
 html body #v87Now.axis821ActiveStage .v87Rest{box-sizing:border-box!important;height:auto!important;min-height:0!important;margin:0!important;padding:0 0 12px!important;text-align:left!important;color:var(--dim)!important;font-size:10.5px!important;line-height:1.5!important}
+html body #v87Now.axis821ActiveStage[data-status="paused"] .v87Rest{height:32px!important;min-height:32px!important}
 html body #v87Now.axis821ActiveStage .v87Rest:empty{display:none!important}
 html body #v87Now.axis821ActiveStage .v87Paused{gap:7px!important;padding:0 0 14px!important}
 html body #v87Now.axis821ActiveStage .v87Paused button{height:34px!important;border:1px solid var(--line2)!important;border-radius:11px!important;background:transparent!important}
@@ -64,7 +65,7 @@ once(
 );
 once(
  "$('#axis821StageRest').textContent=rest?('休息 '+clock(rest)):a.status==='paused'?'计时暂停':planDone?'计划完成':' ';",
- "$('#axis821StageRest').textContent=rest?'组间休息':a.status==='paused'?'计时暂停':planDone?'计划完成':' ';",
+ "$('#axis821StageRest').textContent=rest?'':a.status==='paused'?'计时暂停':planDone?'计划完成':' ';",
  'single visible rest clock'
 );
 
