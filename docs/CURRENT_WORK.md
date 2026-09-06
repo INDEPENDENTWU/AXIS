@@ -173,3 +173,51 @@ Merge is blocked until the exact final PR head proves:
 6. underlying Object execution defaults remain unchanged before/after run and reload;
 7. historical Flow provenance and saved Flow intent remain byte-stable across reload;
 8. inherited Flow Recording, Object, Report, governance, Production and EdgeOne gates remain green on the same exact head and then on exact merged `main`.
+
+## Certified continuation baseline — Flow Step Execution Intent
+
+PR **#124** completed Flow Step Execution Intent and the exact merged `main` SHA `c09d22fc992efd4f1f94bc0857c91442a211094f` is the certified continuation baseline for the next bounded product change. Release identity remains **AXIS 8.21**, architecture remains `canonical-single-runtime`, and the established Vercel / EdgeOne exact-artifact deployment topology remains unchanged.
+
+## Active bounded change — Active Home Stage
+
+**AXIS 8.21 — Active Home Stage**
+
+- bounded delivery branch: `feat/821-active-home-stage`
+- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- intended public release change: **none; remains 8.21**
+- existing truth/action owner: `v87` over `axis_v8_meta`
+- new LocalStorage namespace / IndexedDB / network state / Encounter writer / recorder / Active owner / Flow owner: **none**
+
+### Product rule
+
+An ordinary in-progress Object on Home should no longer feel like a small floating utility card. It becomes the primary execution stage of the screen while keeping all state and actions inside the existing `v87` Active lifecycle.
+
+### UX contract
+
+- the current Object is presented as one large integrated Home stage instead of the fixed bottom mini-card;
+- elapsed time is the dominant visual fact, with project name, state, expected duration, set progress and rest state arranged around it;
+- `暂停 / 继续` is a large primary control;
+- for strength/set-based work, `完成一组` is a second large primary control and immediately transitions the stage into visible rest/set-progress feedback;
+- completing a set produces short, bounded motion/haptic feedback instead of decorative continuous animation;
+- paused state visibly calms the stage and stops actual-time accumulation;
+- existing hold-to-finish remains available and remains owned by `v87`;
+- reduced-motion preference disables nonessential stage animation;
+- Flow-integrated Active keeps its existing dedicated Flow surface and continues to suppress the ordinary `#v87Now` stage to avoid duplicate controls;
+- 390px mobile layout must remain horizontally stable in Chromium and iPhone-like WebKit.
+
+### Scope boundary
+
+This work changes presentation and interaction hierarchy only. It must not change Activity truth, pause/resume semantics, completed-set truth, rest timing, finish semantics, Session/Encounter persistence, Flow sequencing, recorder ownership, Report truth, release identity or deployment topology.
+
+### Validation for Active Home Stage
+
+Merge is blocked until the exact final PR head proves:
+
+1. deterministic `node build-release.mjs` passes with AXIS 8.21 and canonical single-runtime topology unchanged;
+2. a static contract proves stage actions still terminate at existing `v87` pause/resume, complete-set, add-set and hold-finish functions with no new persistence/write owner;
+3. Chromium and iPhone-like WebKit render the ordinary Active surface inside `#activeHome` as a large non-fixed stage;
+4. large pause/resume physically changes the existing Activity status and restores it without a second action owner;
+5. `完成一组` increments the existing completed-set truth and immediately surfaces the current rest state;
+6. existing hold-to-finish completes the Activity and dismisses the stage;
+7. the stage has no horizontal overflow at 390px and emits no page errors;
+8. inherited Flow/Object/Report/repository gates remain green so Flow integrated Active remains isolated from the ordinary stage.
