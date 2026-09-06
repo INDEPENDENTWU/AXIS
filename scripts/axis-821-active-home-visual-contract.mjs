@@ -18,10 +18,14 @@ for(const token of [
  'grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important',
  '#v87AdjustBtn{position:static!important',
  'grid-row:2!important',
+ '.axis821StageFinish:active',
+ "'single visible rest clock'",
  "surface:'flat-integrated-home'",
  "clock:'centered'",
  "controls:'balanced-two-column'",
  "adjust:'separate-tertiary-row'",
+ "rest:'single-visible-clock'",
+ "finish:'tactile-brand-hold'",
  "stateOwner:'v87'",
  'newStorage:false',
  'newWriter:false',
@@ -63,4 +67,4 @@ for(const token of [
  'new storage / writer / recorder / Active owner / Flow owner: **none**'
 ])if(!doc.includes(token))fail(`bounded contract document missing ${token}`);
 
-console.log('[AXIS 8.21 Active Home visual contract] PASS · flat section · strict center axis · balanced execution row · isolated Adjust · existing v87 ownership sealed');
+console.log('[AXIS 8.21 Active Home visual contract] PASS · flat section · strict center axis · balanced execution row · branded tactile long-hold · one visible rest clock · isolated Adjust · existing v87 ownership sealed');
