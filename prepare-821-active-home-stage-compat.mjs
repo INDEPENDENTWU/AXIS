@@ -60,15 +60,15 @@ once(
  'standalone learning lifetime'
 );
 
-/* The inherited stylesheet still owns a high-specificity legacy Active width.
-   The integrated stage deliberately supersedes only that geometry: it is pinned
-   to the same 22px viewport rail as the capture dock on every mobile width. */
+/* Preserve the class-owned show/hide state. Only width/margin need stronger
+   specificity than inherited legacy Active geometry; putting display:none on
+   the id selector would outrank .show and collapse the stage in WebKit. */
 once(
  '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px;',
- '#v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:calc(100vw - 44px)!important;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px -22px!important;',
+ '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px;#v87Now.axis821ActiveStage{width:calc(100vw - 44px)!important;margin-left:-22px!important}',
  'Home/dock viewport rail alignment'
 );
 
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry contract · execution-aware set controls · standalone learning lifetime · viewport Home/dock rail seal');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry contract · execution-aware set controls · standalone learning lifetime · visible viewport Home/dock rail seal');
