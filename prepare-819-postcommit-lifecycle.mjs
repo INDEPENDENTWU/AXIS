@@ -79,6 +79,7 @@ await import('./prepare-821-flow-step-recording-intent.mjs');
 await import('./prepare-821-flow-step-execution-intent.mjs');
 await import('./prepare-821-active-home-stage.mjs');
 await import('./prepare-821-active-home-stage-compat.mjs');
+await import('./prepare-821-active-home-webkit-compat.mjs');
 await import('./prepare-821-profile-session-truth.mjs');
 await import('./prepare-821-metric-optical-system.mjs');
 await import('./prepare-821-session-time-truth.mjs');
