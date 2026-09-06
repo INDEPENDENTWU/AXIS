@@ -1,108 +1,104 @@
 # Current Work
 
-## Production baseline at start of this work
+## Current public baseline
 
 AXIS **8.21** remains the current public Web release.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact `main` baseline for this bounded follow-up: `69e1051ed3cd9f79bedd3407fa1637574c39542d`
-- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- public release identity: **unchanged; 8.21**
-- architecture: **unchanged; `canonical-single-runtime`**
+- governed public/base release: **8.21 / 8.21**
+- architecture: **`canonical-single-runtime`**
+- production request topology: **1 initial JS / 0 dynamic JS chunks**
 - fixed public Vercel URL: `https://axis-five-puce.vercel.app`
-- deployment topology: one existing Git-connected AXIS Vercel Project on `main`, with EdgeOne mirroring the exact certified artifact
-- existing Active truth/action owner: `v87` over `axis_v8_meta`
-- existing Session/Encounter writer: canonical app owner
-- existing rest truth: the current Activity lifecycle; no new timer or rest store is permitted
-- cross-platform foundation: `axis-native-foundation-0`
-- native repository: `INDEPENDENTWU/AXIS-iOS`
-- portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`
+- fixed public EdgeOne URL: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
+- exact merged `main` base for this source-convergence slice: `c434a4a78530669d5a47be9799d40f5049b57a2d`
+- current bounded branch: `arch/821-active-home-source-convergence`
+- intended public/product behavior change: **none**
 
-### Inherited bounded-stage continuity references
+PR #130 is merged at `c434a4a78530669d5a47be9799d40f5049b57a2d`. Its repository/browser contracts are the behavioral baseline for this architecture-only follow-up. The exact merged base still requires fixed Vercel Production + exact EdgeOne certification after Vercel's external Hobby build-rate limit clears; this branch must not merge before that base certification succeeds.
 
-These are historical compatibility identifiers required by already-sealed 8.21 contracts. They are **not** the current Production baseline or active delivery branch:
+## Active change
 
-- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
-- bounded delivery branch: `feat/821-report-pdf-export`
-- bounded delivery branch: `feat/821-report-share-card`
-- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
-- bounded Flow step recording intent branch: `feat/821-flow-step-recording-intent`
-- certified Flow step recording intent base: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
-- bounded Flow step execution intent branch: `feat/821-flow-step-execution-intent`
-- certified Flow step execution intent base: `396241c41b2f8eea80d45ca582352ea593c47036`
+**AXIS 8.21 — Active Home Source Convergence**
+
+This is the first bounded source-owner migration under the governed post-release architecture phase. It removes a late behavioral build mutation without changing the proven runtime contract.
+
+Before this slice, ordinary Active Home was assembled by three sequential prepare layers:
+
+1. `prepare-821-active-home-stage.mjs`
+2. `prepare-821-active-home-stage-compat.mjs`
+3. `prepare-821-active-home-visual-convergence.mjs`
+
+After this slice:
+
+1. `prepare-821-active-home-stage.mjs` owns the final presentation and loads its explicit source stylesheet from `styles/axis-821-active-home.css`.
+2. `prepare-821-active-home-stage-compat.mjs` is semantic compatibility only: inherited countdown/rest behavior, execution-aware set controls, visible pause/resume label compatibility, standalone learning lifetime and a read-only Flow ticker.
+3. `prepare-821-active-home-visual-convergence.mjs` remains historical provenance but is unreachable from the canonical release chain.
+
+The runtime capability identity is deliberately stable: `window.__AXIS_821_ACTIVE_HOME_VISUAL__` and `#axis821ActiveStageRefineStyle` remain the same so existing real-browser proofs verify equivalent behavior rather than an implementation rename.
+
+### Product behavior that must remain exact
+
+- ordinary Active is a flat Home-integrated rail rather than a floating card;
+- the execution clock remains strictly centered;
+- pause/resume and the execution-aware primary action remain balanced large controls;
+- `调整` remains a separate tertiary row with no overlap;
+- `按住结束` keeps the existing v87 long-hold action and tactile presentation;
+- paused rest duration is visible in exactly one place through the inherited passive rest presenter;
+- Rest Speak cannot move the Active stage;
+- Flow-integrated Active remains isolated from ordinary `#v87Now`;
+- no transient duplicate action, second timer, or delayed geometry repair is acceptable.
+
+Execution-aware set controls are preserved. `v87` remains the ordinary Active pause/resume/finish and set-action owner; `v82`/`v87` continue the established Active lifecycle. Continuous metric execution remains governed by the existing execution-mode owners; ordinary single/complete behavior remains one-shot outside the already-proven Flow whole-item exception. Automatic sound remains v8710-owned. The inherited 5-second sustained positional shake behavior and the sealed 30fps media path remain outside this slice and unchanged. Chromium and iPhone-like WebKit remain equal release gates.
+
+## Ownership / migration boundary
+
+This slice adds no:
+
+- LocalStorage namespace or IndexedDB database;
+- Session or Encounter writer;
+- recorder or metric fact owner;
+- Active lifecycle/action owner;
+- Flow state owner;
+- timer/rest owner;
+- network/API dependency;
+- historical Session/Encounter rewrite.
+
+The canonical app remains Session/Encounter authority. v61 remains the classic repeated weight/reps writer only when immutable Encounter schema grants that authority. Flow remains orchestration/intent rather than history. Source convergence may shorten the build path; it may not create a parallel implementation while doing so.
+
+Rollback is architectural and bounded: restore the late visual prepare to build reachability and remove the stage-owned source stylesheet handoff. No data rollback or migration is involved.
+
+## Required proof before this branch may merge
+
+The exact PR head must prove all of the following without relaxing existing assertions:
+
+1. `node build-release.mjs` succeeds deterministically with public/base 8.21 and `canonical-single-runtime` unchanged;
+2. static source contract proves final visual CSS/marker ownership has moved into the stage source and the late visual prepare is unreachable;
+3. existing Active Home Stage contract remains green;
+4. real Chromium and iPhone-like WebKit preserve the flat rail, centered clock, balanced controls, tactile hold, isolated Adjust row and single visible rest clock;
+5. inherited pause/resume, set completion, pause-owned rest, long-hold finish, Rest Speak, Flow isolation, Learning lifetime and sound contracts remain green;
+6. Deep Compatibility, Runtime, Current Release, Cross-Platform, Repository Contract and Work Continuity gates remain green on the same exact head;
+7. the exact base `c434a4a78530669d5a47be9799d40f5049b57a2d` is first certified on the existing fixed Vercel Production project and EdgeOne mirror;
+8. after merge, the new merged `main` SHA itself passes fixed Vercel alias parity and the exact-prebuilt EdgeOne Chromium/WebKit mirror chain.
+
+Provider rate limits or hosting configuration are not product defects and must not be bypassed by creating another Vercel project, changing the fixed public URL, publishing EdgeOne independently, or weakening exact-artifact parity.
+
+## Historical continuity references required by sealed 8.21 contracts
+
+These identifiers are compatibility/proof provenance, not current delivery authority:
+
 - bounded delivery branch: `feat/821-active-home-stage`
 - exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
 - bounded Active Home visual-convergence branch: `feat/821-active-home-visual-convergence`
 - exact Active Home visual-convergence base `main` SHA: `9eaf90d0f94023218feb452b085da48c9f027276`
+- PR #127 and source proof SHA `8368` remain historical Active Home continuity evidence where inherited contracts refer to them.
+- PR #129 established the flat, centered Home-integrated stage.
+- PR #130 refined tactile hold/rest presentation and merged as `c434a4a78530669d5a47be9799d40f5049b57a2d`.
 
-PR #129 is already merged into the current baseline and made ordinary Active a flat, centered, Home-integrated execution stage. This follow-up starts from that certified structure instead of introducing another card, runtime or presentation owner.
+## Exit condition / next stage
 
-## Active change
+This slice is complete only when its exact merged `main` artifact is certified on both fixed providers. Only then should the next bounded source-owner audit begin. The next candidate should be selected from the remaining behavioral `prepare-*` / `postbuild-*` mutations by reachability and ownership risk, not by visual novelty.
 
-**AXIS 8.21 — Active Home tactile/rest cleanup**
+The target remains a strangler migration: fewer live mutation layers, clearer source owners, the same user-visible 8.21 product, the same storage/history compatibility and the same canonical runtime topology.
 
-- governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
-- governed active branch: `main`
-- bounded delivery branch: `fix/821-active-home-tactile-rest-cleanup`
-- PR: **#130**
-- exact base `main` SHA: `69e1051ed3cd9f79bedd3407fa1637574c39542d`
-- intended public release change: **none; remains 8.21**
-- product objective: remove the remaining presentation debt visible in real mobile use without changing Active semantics
-- executable refinement owner: `prepare-821-active-home-visual-convergence.mjs`, compiled after the certified Active Home compatibility pass
-- affected proof surfaces: `scripts/axis-821-active-home-visual-contract.mjs`, `scripts/axis-821-active-home-visual-smoke.mjs`, inherited `scripts/axis-821-active-home-stage-smoke.mjs`, `scripts/axis-8103-smoke.mjs`, and `scripts/axis-882-smoke.mjs`
-- stage contract: `docs/ACTIVE_HOME_VISUAL_CONVERGENCE.md`
-
-### User-visible behavior
-
-1. `按住结束` keeps the existing v87 long-hold action but gains a restrained AXIS tactile treatment: branded accent/progress, compact depth, diamond cue, pressed state and focus state.
-2. Paused rest duration is visible in exactly one place. The fact rail no longer paints a second rest clock; the inherited passive `#v87Rest` presenter remains the single visible rest-clock / Rest Speak slot.
-3. Plain paused rest and Rest Speak use the same reserved paused-slot height so enabling Rest Speak cannot move the Active stage.
-4. The flat Home rail, strict centered clock, balanced primary controls and separate `调整` row from PR #129 remain unchanged.
-
-### Ownership and debt audit
-
-This follow-up intentionally adds **no** LocalStorage namespace, IndexedDB database, API, network state, Session writer, Encounter writer, recorder, Active owner, Flow owner, timer owner or rest owner.
-
-The duplicate rest display was presentation debt, not duplicate truth. The fix therefore removes the duplicate projection instead of creating synchronization logic. The long-hold visual refinement delegates to the already-existing v87 gesture/action owner. Flow-integrated Active remains isolated from the ordinary `#v87Now` stage.
-
-Two inherited browser proofs still encoded superseded floating-card geometry: the 8.10.3 proof required `调整` to remain corner-anchored, and the 8.8.2 proof required the entire Active rectangle to keep an absolute Y position across set-state changes. Their behavioral contracts remain valuable, but the geometry assumptions were intentionally replaced by PR #129. This follow-up therefore keeps the same-node, action, sound, reachability and no-overlap assertions while making the inherited proofs aware of the certified integrated Home stage. Historical fallback geometry remains asserted when that integrated stage is absent.
-
-The current compatibility pipeline is still intentionally layered: stage → compatibility → final visual convergence. This follow-up does not broaden scope by deleting historical prepare/postbuild transforms before reachability proof. That larger source-convergence work has its own next stage and exit criteria.
-
-### Migration / rollback boundary
-
-- no data migration;
-- no historical Session/Encounter rewrite;
-- no storage-key change;
-- no deployment-topology change;
-- rollback is limited to the bounded final visual-convergence source and its tests/docs;
-- existing v87 Active semantics remain the rollback-safe authority throughout.
-
-## Validation for this work
-
-Merge is blocked until the exact final PR head proves all of the following:
-
-1. deterministic `node build-release.mjs` succeeds with AXIS 8.21 and canonical single-runtime topology unchanged;
-2. the static Active Home visual contract proves no storage/write/action owner was introduced;
-3. real Chromium and iPhone-like WebKit prove the tactile hold geometry and existing v87 hold semantics;
-4. real paused state exposes exactly one visible `休息 mm:ss` clock;
-5. Rest Speak on/off is geometry-neutral in the integrated Active stage;
-6. inherited Active Home semantic tests still prove pause/resume, set completion, pause-owned rest and hold-to-finish;
-7. Deep Compatibility, Runtime, Flow/Object, Report, Repository Contract and Work Continuity gates remain green on the same exact head;
-8. after merge, the exact merged `main` SHA must reach the existing AXIS Vercel Production project, pass the fixed-public-alias real-browser gate, and EdgeOne must mirror the same exact artifact with Chromium and iPhone-like WebKit verification.
-
-A failure is fixed at its actual owner. Tests, compatibility gates and deployment checks must not be weakened merely to make this PR green.
-
-## Next planned stage
-
-Only after PR #130 is merged and the exact merged `main` artifact is Production-certified on both Vercel and EdgeOne:
-
-1. begin the already-governed **Source Convergence / architecture-debt stage** rather than adding another UI wrapper;
-2. audit the deterministic release pipeline by behavioral owner, starting with the Active/Home family touched by 8.21;
-3. identify compatibility transforms that are now presentation-only or fully superseded, then retire them incrementally only with reachability and dual-engine regression proof;
-4. preserve `canonical-single-runtime`, all current storage/history compatibility, v61 classic-set ownership, v82/v87 Active ownership, canonical Session/Encounter ownership and current public behavior;
-5. reduce source/build indirection without changing the user-visible 8.21 contract unless a separately scoped product change is explicitly approved.
-
-The target is not a rewrite. The target is fewer live mutation layers, clearer final owners, and a release pipeline whose source structure matches the already-proven runtime architecture.
-
-Chat history is not authoritative project memory. Repository governance, exact `main`, deterministic build output and Production evidence remain authoritative.
+Chat history is supplementary. Repository governance, exact source, deterministic build evidence and fixed Production proof remain authoritative.
