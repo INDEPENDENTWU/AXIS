@@ -19,6 +19,11 @@ once(
  'legacy countdown plus estimate presentation'
 );
 once(
+ "$('#v87Rest').textContent=rest?'组间休息中':",
+ "$('#v87Rest').textContent=rest?('休息 '+clock(rest)):",
+ 'inherited visible rest copy'
+);
+once(
  "$('#axis821StageProgressText').textContent=e.kind==='strength'?",
  "$('#axis821StageProgressText').textContent=setMode?",
  'execution-aware progress presentation'
@@ -91,4 +96,4 @@ clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(axis821FlowSurf
  const n=app.split(volatileTimer).length-1;if(n!==1)fail(`Flow volatile ticker expected once, found ${n}`);app=app.replace(volatileTimer,stableTimer);try{new Function(app)}catch(e){fail(`app Flow tick syntax ${e.message}`)}fs.writeFileSync(APP,app);
 }
 
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest · execution-aware set controls · standalone learning lifetime · non-layout Adjust · stable Flow hold control');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest/copy · execution-aware set controls · standalone learning lifetime · non-layout Adjust · stable Flow hold control');
