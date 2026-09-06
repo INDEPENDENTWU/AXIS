@@ -6,6 +6,7 @@ const prep=read('prepare-821-active-home-stage.mjs');
 const v87=read('v87-runtime.js');
 const chain=read('prepare-819-postcommit-lifecycle.mjs');
 const flow=read('prepare-821-flow-session-coordination.mjs');
+const postbuild=read('postbuild-kernel-priority.mjs');
 const work=read('docs/CURRENT_WORK.md');
 
 for(const token of [
@@ -26,7 +27,9 @@ for(const token of [
  'axis821-set-bump',
  'axis821-state-shift',
  '@media(prefers-reduced-motion:reduce)',
- "activeHome.insertBefore(host,activeHome.firstChild)"
+ "activeHome.insertBefore(host,activeHome.firstChild)",
+ 'axis821StageControls v87Actions',
+ "host.classList.add('show');D.body.classList.add('v87-now')}"
 ])if(!prep.includes(token))fail(`prepare missing ${token}`);
 
 for(const token of [
@@ -58,11 +61,16 @@ if(!(e>=0&&s>e&&p>s))fail('Active Home stage build order must follow execution i
 if((chain.match(/prepare-821-active-home-stage\.mjs/g)||[]).length!==1)fail('Active Home stage import duplicated');
 
 if(!flow.includes('body.axis821-flow-integrated-active #v87Now{display:none!important}'))fail('Flow integrated Active must continue suppressing ordinary v87 stage');
-if(!prep.includes('D.body.classList.remove(\'v87-now\')'))fail('legacy fixed-card bottom-padding state not retired by integrated stage');
+if(!prep.includes("D.body.classList.remove('v87-now')"))fail('stage hide path must clear inherited Active body state');
+
+const inheritedTail="host.classList.add('show');D.body.classList.add('v87-now')}";
+if(!postbuild.includes(`const renderTail="${inheritedTail}"`))fail('postbuild canonical Active-adjust render hook changed');
+if((prep.match(/axis821StageControls v87Actions/g)||[]).length!==1)fail('Active-adjust host must remain exactly one stage control rail');
+if(!prep.includes('#v87Now.axis821ActiveStage #v87AdjustBtn'))fail('postbuild one-time Adjust action has no integrated-stage presentation');
 
 for(const token of [
  'bounded delivery branch: `feat/821-active-home-stage`',
  'exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`'
 ])if(!work.includes(token))fail(`CURRENT_WORK missing ${token}`);
 
-console.log('[AXIS 8.21 Active Home stage contract] PASS · one integrated ordinary-Active Home stage · existing v87 actions retained · Flow integrated surface remains isolated · no new storage/Encounter/Active owner');
+console.log('[AXIS 8.21 Active Home stage contract] PASS · one integrated ordinary-Active Home stage · existing v87 actions + postbuild Adjust hook retained · Flow integrated surface isolated · no new storage/Encounter/Active owner');
