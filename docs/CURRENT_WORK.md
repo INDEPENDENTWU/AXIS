@@ -4,220 +4,80 @@
 
 AXIS **8.21** remains the current public Web release.
 
-- exact merged `main` baseline: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
-- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- merged Report work: PR **#118**, truthful custom-range professional paginated Training Report PDF export
-- merged Production repair: PR **#120**, first-edit Training Record muscle-panel geometry stabilization
-- merged Report projection: PR **#121**, truth-backed Training Report Share Card
-- architecture: `canonical-single-runtime`
-- one initial JavaScript request / zero dynamic runtime chunks remains required
-- public identity change for this work: **none; remains 8.21**
-- Vercel Production and fixed public alias serve the certified merged `main` artifact for `b65bce78d48dab162c25c028602e0bbd10ce6d78`
-- the same merged SHA passed the Production Deployment / public alias chain and EdgeOne exact-artifact mirror including Chromium and iPhone-like WebKit verification
+- canonical repository: `INDEPENDENTWU/AXIS`
+- exact `main` baseline for this bounded follow-up: `69e1051ed3cd9f79bedd3407fa1637574c39542d`
+- public release identity: **unchanged; 8.21**
+- architecture: **unchanged; `canonical-single-runtime`**
+- fixed public Vercel URL: `https://axis-five-puce.vercel.app`
+- deployment topology: one existing Git-connected AXIS Vercel Project on `main`, with EdgeOne mirroring the exact certified artifact
+- existing Active truth/action owner: `v87` over `axis_v8_meta`
+- existing Session/Encounter writer: canonical app owner
+- existing rest truth: the current Activity lifecycle; no new timer or rest store is permitted
 
-The merged product already has canonical Session / Encounter truth, `axis.flow.v1`, `axis.flow-provenance.v1`, existing Active lifecycle ownership, user-level Object recording preferences, immutable Profile / Goal snapshots, session-time truth, `axis.report-range.v1`, Training Report UI, native browser-print PDF and downstream PNG Share Card. Those owners remain sealed.
-
-Cross-platform foundation remains `axis-native-foundation-0`, native repository remains `INDEPENDENTWU/AXIS-iOS`, and portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.object-capabilities.v1`, `axis.metric-schema.v1`, `axis.session-time.v1`, `axis.profile-snapshot.v1`, `axis.goal-snapshot.v1`, and `axis.report-range.v1`.
-
-### Inherited Report-stage continuity references
-
-The following two lines are retained as historical bounded-stage identifiers required by the sealed #117 Training Report UI contract; they are **not** the current Production baseline or active delivery branch:
-
-- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
-- bounded delivery branch: `feat/821-report-pdf-export`
-
-### Inherited Share Card-stage continuity references
-
-The following two lines are retained as historical bounded-stage identifiers required by the sealed #121 Report Share Card contract; they are **not** the current base or active delivery branch:
-
-- bounded delivery branch: `feat/821-report-share-card`
-- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
-
-The current Production baseline and current bounded branch remain the values stated in the active sections of this document.
+PR #129 is already merged into this baseline and made ordinary Active a flat, centered, Home-integrated execution stage. This follow-up starts from that certified structure instead of introducing another card, runtime or presentation owner.
 
 ## Active change
 
-**AXIS 8.21 — Flow Step Recording Intent**
+**AXIS 8.21 — Active Home tactile/rest cleanup**
 
-- governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
-- governed active branch: `main`
-- bounded delivery branch: `feat/821-flow-step-recording-intent`
-- exact base main SHA: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
+- bounded delivery branch: `fix/821-active-home-tactile-rest-cleanup`
+- PR: **#130**
+- exact base `main` SHA: `69e1051ed3cd9f79bedd3407fa1637574c39542d`
 - intended public release change: **none; remains 8.21**
-- new LocalStorage namespace / IndexedDB / network state / Session writer / Encounter writer / recorder / Active owner / Flow owner / Profile owner: **none**
-- new product capability: **edit the recording-content intent of one saved Flow step without changing that Object's global recording preference**
+- product objective: remove the remaining presentation debt visible in real mobile use without changing Active semantics
+- executable refinement owner: `prepare-821-active-home-visual-convergence.mjs`, compiled after the certified Active Home compatibility pass
+- affected proof surfaces: `scripts/axis-821-active-home-visual-contract.mjs` and `scripts/axis-821-active-home-visual-smoke.mjs`
+- stage contract: `docs/ACTIVE_HOME_VISUAL_CONVERGENCE.md`
 
-### Post-merge certification repair
+### User-visible behavior
 
-PR **#122** merged the bounded Flow Step Recording Intent work to `main` as `e61dd1d62252112d035d9f05034744ac78a74ec1`. Post-merge certification exposed a deterministic handoff defect in both Chromium and iPhone-like WebKit. The saved Flow-step `metricOverride` resolved correctly, but the final Flow Session-coordination architecture starts an ordinary current Flow item directly as a whole-item Active Encounter and intentionally bypasses Quick Record. That meant an **explicit** Flow-step recording override had no value-entry preflight at all. The first repair also exposed a second handoff issue: when a `weight + reps` override does enter Quick Record, v61's classic repeated-set owner and the app value recorder can otherwise consume/filter those fields instead of presenting the exact Flow-owned subset.
+1. `按住结束` keeps the existing v87 long-hold action but gains a restrained AXIS tactile treatment: branded accent/progress, compact depth, diamond cue, pressed state and focus state.
+2. Paused rest duration is visible in exactly one place. The fact rail no longer paints a second rest clock; the inherited passive `#v87Rest` presenter remains the single visible rest-clock / Rest Speak slot.
+3. Plain paused rest and Rest Speak use the same reserved paused-slot height so enabling Rest Speak cannot move the Active stage.
+4. The flat Home rail, strict centered clock, balanced primary controls and separate `调整` row from PR #129 remain unchanged.
 
-The bounded certification-repair branch is `fix/flow-step-recording-handoff`. The repaired boundary is deliberately narrow:
+### Ownership and debt audit
 
-- a Flow step **without** its own `metricOverride` keeps the established whole-item direct-start path unchanged;
-- a Flow step **with an explicit** `metricOverride` uses the already-existing canonical Quick/app recorder as a preflight so the user can enter exactly those requested values before the same canonical Encounter/Active lifecycle continues;
-- this explicit preflight bypasses v61 classic-set presentation and makes the app-owned value recorder render the override schema verbatim;
-- detours remain the existing Quick record-only route;
-- no second recorder, writer, store, Flow owner or Active owner is introduced.
+This follow-up intentionally adds **no** LocalStorage namespace, IndexedDB database, API, network state, Session writer, Encounter writer, recorder, Active owner, Flow owner, timer owner or rest owner.
 
-This repair is not certified until the dedicated Chromium/WebKit Flow gate and inherited release/compatibility gates pass on its exact final head and then on merged `main`.
+The duplicate rest display was presentation debt, not duplicate truth. The fix therefore removes the duplicate projection instead of creating synchronization logic. The long-hold visual refinement delegates to the already-existing v87 gesture/action owner. Flow-integrated Active remains isolated from the ordinary `#v87Now` stage.
 
-### Product rule
+The current compatibility pipeline is still intentionally layered: stage → compatibility → final visual convergence. This follow-up does not broaden scope by deleting historical prepare/postbuild transforms before reachability proof. That larger source-convergence work has its own next stage and exit criteria.
 
-The capability must expose the already-existing `axis.flow.v1` step-level `metricOverride` intent instead of inventing another schema, recorder or persistence owner.
+### Migration / rollback boundary
 
-A Flow step with no override continues to inherit the canonical Object/Profile recording content resolved by the existing Object system and keeps the existing direct whole-item Flow start behavior. A Flow step with an explicit override changes only the effective fields for that step in that Flow and therefore gets the bounded canonical recorder preflight needed to collect those values. When the Encounter is created, the existing canonical Encounter schema snapshot and `axis.flow-provenance.v1` snapshot freeze the effective metric ids as historical fact.
-
-### UX contract
-
-- every Flow editor step shows a compact `记录内容` row beneath the existing ordered item row;
-- the default state is factual and explicit: `跟随项目` plus the currently resolved recording fields;
-- opening the control exposes only metric choices for that step; selecting/deselecting fields creates or updates the existing `step.metricOverride.metrics` array;
-- an override must retain at least one field; users who do not want a separate Flow-specific setting use `跟随项目设置`;
-- `跟随项目设置` removes only that step's `metricOverride` and does not modify Profile/Object preferences;
-- saved Flow intent survives reload;
-- an inherited/default step keeps direct whole-item start, while an explicit Flow-step override opens the existing canonical recorder preflight and then continues through the existing Encounter / Active lifecycle;
-- 390px mobile layout must remain horizontally stable in Chromium and iPhone-like WebKit.
-
-### Scope boundary
-
-This work must not change:
-
-- Session / Encounter persistence ownership or historical values;
-- the portable `axis.flow.v1` structure beyond using its already-supported `metricOverride` field;
-- Object catalog definitions or the existing `state.profile.objectMetricOverrides` preference owner;
-- Quick Record / canonical recorder ownership;
-- Active lifecycle, pause/resume/rest/finish semantics or `axis_v8_meta` ownership;
-- default whole-item Flow direct-start behavior, Flow sequencing, cursor advancement, detour semantics or Encounter append cardinality;
-- Report truth, PDF, Share Card, media, AI, network, release identity or deployment topology.
-
-No second Flow store, second metric schema, duplicated recording form, new API, or generated-output-only runtime fork is allowed.
+- no data migration;
+- no historical Session/Encounter rewrite;
+- no storage-key change;
+- no deployment-topology change;
+- rollback is limited to the bounded final visual-convergence source and its tests/docs;
+- existing v87 Active semantics remain the rollback-safe authority throughout.
 
 ## Validation for this work
 
-This change is mergeable only when the exact final PR head proves all of the following:
+Merge is blocked until the exact final PR head proves all of the following:
 
-1. deterministic `node build-release.mjs` completes with release identity 8.21 and canonical single-runtime topology unchanged;
-2. a dedicated static contract proves the new surface is only a projection/editor for existing `axis.flow.v1.step.metricOverride`, the explicit current-item recorder route exists exactly once, and no persistence, recorder, Encounter or Active owner is added;
-3. real Chromium and iPhone-like WebKit both edit one Flow step from inherited Object fields to a Flow-specific subset and save/reload that intent;
-4. `跟随项目设置` removes the Flow-only override without writing `state.profile.objectMetricOverrides`;
-5. default Flow steps still bypass Quick configuration, while an explicit Flow-step override uses the existing canonical recorder to collect the exact subset; the committed Encounter's `metricSchemaSnapshot` and `axis.flow-provenance.v1` snapshot preserve the effective metric ids;
-6. 390px mobile execution has no horizontal overflow and no page errors;
-7. inherited Flow/Object, compatibility, Report, Work Continuity and repository-governance gates remain green on the same exact PR head;
-8. after merge, the exact merged `main` SHA must reach the existing fixed Vercel AXIS Production project, pass normal Production/public-alias certification, and EdgeOne must mirror the same exact artifact successfully.
+1. deterministic `node build-release.mjs` succeeds with AXIS 8.21 and canonical single-runtime topology unchanged;
+2. the static Active Home visual contract proves no storage/write/action owner was introduced;
+3. real Chromium and iPhone-like WebKit prove the tactile hold geometry and existing v87 hold semantics;
+4. real paused state exposes exactly one visible `休息 mm:ss` clock;
+5. Rest Speak on/off is geometry-neutral in the integrated Active stage;
+6. inherited Active Home semantic tests still prove pause/resume, set completion, pause-owned rest and hold-to-finish;
+7. Deep Compatibility, Runtime, Flow/Object, Report, Repository Contract and Work Continuity gates remain green on the same exact head;
+8. after merge, the exact merged `main` SHA must reach the existing AXIS Vercel Production project, pass the fixed-public-alias real-browser gate, and EdgeOne must mirror the same exact artifact with Chromium and iPhone-like WebKit verification.
+
+A failure is fixed at its actual owner. Tests, compatibility gates and deployment checks must not be weakened merely to make this PR green.
 
 ## Next planned stage
 
-Only after Flow Step Recording Intent is merged and Production-certified:
+Only after PR #130 is merged and the exact merged `main` artifact is Production-certified on both Vercel and EdgeOne:
 
-1. keep `Object default → optional Profile preference → optional Flow-step metric intent → Encounter snapshot` as the single recording-content resolution chain;
-2. evaluate Flow-step execution-mode override UX only if a real user case requires it; do not expose it merely because the schema technically supports it;
-3. resume broader Flow/Object product work separately from Report representation work;
-4. keep post-release architecture-governance cleanup separate from new user capability delivery.
+1. begin the already-governed **Source Convergence / architecture-debt stage** rather than adding another UI wrapper;
+2. audit the deterministic release pipeline by behavioral owner, starting with the Active/Home family touched by 8.21;
+3. identify compatibility transforms that are now presentation-only or fully superseded, then retire them incrementally only with reachability and dual-engine regression proof;
+4. preserve `canonical-single-runtime`, all current storage/history compatibility, v61 classic-set ownership, v82/v87 Active ownership, canonical Session/Encounter ownership and current public behavior;
+5. reduce source/build indirection without changing the user-visible 8.21 contract unless a separately scoped product change is explicitly approved.
 
-Chat history is not authoritative project memory. GitHub governance, current contracts, exact `main`, deterministic build output and Production evidence are authoritative.
+The target is not a rewrite. The target is fewer live mutation layers, clearer final owners, and a release pipeline whose source structure matches the already-proven runtime architecture.
 
-## Certified continuation baseline
-
-PR **#123** completed the Flow Step Recording Intent repair and the exact merged `main` SHA `396241c41b2f8eea80d45ca582352ea593c47036` is the certified continuation baseline for the next bounded product change. Release identity remains **AXIS 8.21**, architecture remains `canonical-single-runtime`, and the established Vercel/EdgeOne deployment topology is unchanged.
-
-## Active bounded change — Flow Step Execution Intent
-
-**AXIS 8.21 — Flow Step Execution Intent**
-
-- governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
-- governed active branch: `main`
-- bounded delivery branch: `feat/821-flow-step-execution-intent`
-- exact base main SHA: `396241c41b2f8eea80d45ca582352ea593c47036`
-- intended public release change: **none; remains 8.21**
-- existing schema owner: `axis.flow.v1.step.executionOverride`
-- supported existing execution modes: `single`, `complete`, `timed`, `hold`, `sets`, `rounds`
-- new LocalStorage namespace / IndexedDB / network state / Session writer / Encounter writer / recorder / Active owner / Flow owner / Object owner / Profile owner: **none**
-
-### Product rule
-
-This capability exposes execution intent that `axis.flow.v1` already owns. It does not invent a second execution model. Resolution remains:
-
-`Object execution default → optional Flow-step executionOverride → canonical Encounter executionModeSnapshot → existing v82/v87 Active lifecycle when ongoing → immutable axis.flow-provenance.v1 snapshot`.
-
-A Flow step without `executionOverride` must keep its current behavior. An explicit ongoing override such as `timed` must reach the existing direct current-item Encounter/Active path with the resolved mode. An explicit one-shot override such as `single` or `complete` must use the existing canonical recorder preflight and advance only after the canonical Encounter commit, without manufacturing an Active Activity.
-
-### UX contract
-
-- every Flow editor step adds one compact `进行方式` row next to the existing `记录内容` intent surface;
-- default presentation is `自动 · <resolved mode>` and does not write an override;
-- choosing a mode writes only `step.executionOverride` on that saved Flow step;
-- `跟随项目设置` deletes only `step.executionOverride`;
-- the available choices are the six modes already accepted by `axis.flow.v1`; no new execution enum is created;
-- editing Flow execution intent must not mutate the underlying Object definition or Profile recording preferences;
-- 390px mobile layout must stay horizontally stable in Chromium and iPhone-like WebKit.
-
-### Runtime boundary
-
-- `axis821ExecutionForRecording()` remains the canonical Flow execution resolver;
-- the whole-item direct-start Encounter must snapshot the resolved Flow mode rather than bypassing it with the Object-only resolver;
-- existing `v82` / `v87` remain the only Active truth/action owners;
-- canonical recorder remains the only value-entry surface for an explicit one-shot Flow override and for existing metric-override preflight;
-- canonical app Encounter append remains exactly one owner;
-- one-shot canonical commits advance Flow directly; ongoing commits/starts continue to advance only after the matching existing Active finish event;
-- detour semantics, Session truth, history, reports, media and deployment topology are unchanged.
-
-## Validation for Flow Step Execution Intent
-
-Merge is blocked until the exact final PR head proves:
-
-1. deterministic `node build-release.mjs` passes and release identity stays 8.21;
-2. static contract proves only existing `step.executionOverride` is edited and no owner/storage/API is introduced;
-3. Chromium and iPhone-like WebKit prove an Object whose default is one-shot can be overridden to `timed`, producing an Encounter whose `executionModeSnapshot` and Flow provenance both say `timed` and whose Activity is owned by existing Active truth;
-4. Chromium and iPhone-like WebKit prove an Object whose default is `timed` can be overridden to `single`, opening the canonical recorder, committing one Encounter, creating no Active Activity, and advancing the Flow;
-5. `跟随项目设置` removes only the Flow execution override;
-6. underlying Object execution defaults remain unchanged before/after run and reload;
-7. historical Flow provenance and saved Flow intent remain byte-stable across reload;
-8. inherited Flow Recording, Object, Report, governance, Production and EdgeOne gates remain green on the same exact head and then on exact merged `main`.
-
-## Certified continuation baseline — Flow Step Execution Intent
-
-PR **#124** completed Flow Step Execution Intent and the exact merged `main` SHA `c09d22fc992efd4f1f94bc0857c91442a211094f` is the certified continuation baseline for the next bounded product change. Release identity remains **AXIS 8.21**, architecture remains `canonical-single-runtime`, and the established Vercel / EdgeOne exact-artifact deployment topology remains unchanged.
-
-## Active bounded change — Active Home Stage
-
-**AXIS 8.21 — Active Home Stage**
-
-- bounded delivery branch: `feat/821-active-home-stage`
-- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
-- intended public release change: **none; remains 8.21**
-- existing truth/action owner: `v87` over `axis_v8_meta`
-- new LocalStorage namespace / IndexedDB / network state / Encounter writer / recorder / Active owner / Flow owner: **none**
-
-### Product rule
-
-An ordinary in-progress Object on Home should no longer feel like a small floating utility card. It becomes the primary execution stage of the screen while keeping all state and actions inside the existing `v87` Active lifecycle.
-
-### UX contract
-
-- the current Object is presented as one large integrated Home stage instead of the fixed bottom mini-card;
-- elapsed time is the dominant visual fact, with project name, state, expected duration, set progress and rest state arranged around it;
-- `暂停 / 继续` is a large primary control;
-- for strength/set-based work, `完成一组` is a second large primary control and immediately transitions the stage into visible rest/set-progress feedback;
-- completing a set produces short, bounded motion/haptic feedback instead of decorative continuous animation;
-- paused state visibly calms the stage and stops actual-time accumulation;
-- existing hold-to-finish remains available and remains owned by `v87`;
-- reduced-motion preference disables nonessential stage animation;
-- Flow-integrated Active keeps its existing dedicated Flow surface and continues to suppress the ordinary `#v87Now` stage to avoid duplicate controls;
-- 390px mobile layout must remain horizontally stable in Chromium and iPhone-like WebKit.
-
-### Scope boundary
-
-This work changes presentation and interaction hierarchy only. It must not change Activity truth, pause/resume semantics, completed-set truth, rest timing, finish semantics, Session/Encounter persistence, Flow sequencing, recorder ownership, Report truth, release identity or deployment topology.
-
-### Validation for Active Home Stage
-
-Merge is blocked until the exact final PR head proves:
-
-1. deterministic `node build-release.mjs` passes with AXIS 8.21 and canonical single-runtime topology unchanged;
-2. a static contract proves stage actions still terminate at existing `v87` pause/resume, complete-set, add-set and hold-finish functions with no new persistence/write owner;
-3. Chromium and iPhone-like WebKit render the ordinary Active surface inside `#activeHome` as a large non-fixed stage;
-4. large pause/resume physically changes the existing Activity status and restores it without a second action owner;
-5. `完成一组` increments the existing completed-set truth and immediately surfaces the current rest state;
-6. existing hold-to-finish completes the Activity and dismisses the stage;
-7. the stage has no horizontal overflow at 390px and emits no page errors;
-8. inherited Flow/Object/Report/repository gates remain green so Flow integrated Active remains isolated from the ordinary stage.
+Conversation history is supplemental only. Repository governance, exact `main`, deterministic build output and Production evidence remain authoritative.
