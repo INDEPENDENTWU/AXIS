@@ -48,6 +48,15 @@ once(
  'toggle visual label state'
 );
 
+/* A completed set plan has one action in the primary slot: add another set.
+   Hide the now-disabled completion control instead of creating a third visible
+   grid item. The existing #v87Add click owner still performs the mutation. */
+once(
+ "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;add.style.display='block';add.dataset.id=e.id}else",
+ "if(planDone){pri.textContent='计划已完成';pri.classList.add('plan');pri.disabled=true;pri.style.display='none';add.style.display='block';add.dataset.id=e.id}else",
+ 'single visible plan-complete action'
+);
+
 /* Preserve the inherited stable geometry signature. Timed/non-set execution
    already hides the add-set button through the execution-aware branch above. */
 once(
@@ -71,7 +80,7 @@ once(
    postbuild Adjust action stays on its inherited lower-right anchor and is
    removed from grid flow, so it cannot change stage height. The canonical
    primary/add-set actions share the same second-column grid cell; only one is
-   actionable at a time, which preserves the inherited immutable card geometry
+   visible at a time, which preserves the inherited immutable card geometry
    without duplicating the v87 action owner. On phone widths, compact only
    secondary vertical rhythm while the stage clears the capture dock. */
 once(
@@ -100,4 +109,4 @@ clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(axis821FlowSurf
  const n=app.split(volatileTimer).length-1;if(n!==1)fail(`Flow volatile ticker expected once, found ${n}`);app=app.replace(volatileTimer,stableTimer);try{new Function(app)}catch(e){fail(`app Flow tick syntax ${e.message}`)}fs.writeFileSync(APP,app);
 }
 
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest + passive Rest Speak · execution-aware set controls · standalone learning lifetime · compact iPhone rail · stable one-row plan actions · stable Flow hold control');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest + passive Rest Speak · execution-aware set controls · standalone learning lifetime · compact iPhone rail · one visible plan-complete action · stable Flow hold control');
