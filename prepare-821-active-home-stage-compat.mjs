@@ -35,6 +35,19 @@ once(
  'execution-aware set controls'
 );
 
+/* Rest Speak historically positioned its fixed learning panel only above the
+   floating Active card. Integrated Home can place Active much higher on small
+   iPhone viewports, so that assumption can move the panel's real hit targets
+   above the viewport. Keep the inherited panel owner and event route, but make
+   its placement fail-safe: use the available space above Active when it is
+   sufficient, otherwise pin the natural-height scroll panel inside the
+   viewport. This changes no learning, training, timer or persistence owner. */
+once(
+ "if(rect){panel.style.bottom=Math.max(12,window.innerHeight-rect.top+8)+'px';panel.style.maxHeight=Math.max(180,Math.floor(rect.top-22))+'px'}",
+ "if(rect){const vh=Math.max(320,window.innerHeight||0),pad=12,gap=8,above=Math.floor(rect.top-pad-gap);if(above>=180){panel.style.top='auto';panel.style.bottom=Math.max(pad,vh-rect.top+gap)+'px';panel.style.maxHeight=above+'px'}else{panel.style.top=pad+'px';panel.style.bottom='auto';panel.style.maxHeight=Math.max(180,vh-pad*2)+'px'}}",
+ 'Rest Speak viewport-safe placement'
+);
+
 /* The large control keeps a visible 暂停/继续 label while the button's DOM
    innerText remains the inherited canonical glyph (Ⅱ / ▶). That preserves
    long-standing browser contracts without duplicating the action owner. */
@@ -95,4 +108,4 @@ clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(axis821FlowSurf
  const n=app.split(volatileTimer).length-1;if(n!==1)fail(`Flow volatile ticker expected once, found ${n}`);app=app.replace(volatileTimer,stableTimer);try{new Function(app)}catch(e){fail(`app Flow tick syntax ${e.message}`)}fs.writeFileSync(APP,app);
 }
 
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/rest + execution-aware set controls + standalone learning lifetime + stable Flow hold control · final geometry remains stage-owned');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/rest + execution-aware set controls + viewport-safe Rest Speak + standalone learning lifetime + stable Flow hold control · final geometry remains stage-owned');
