@@ -5,13 +5,13 @@ const fail=m=>{throw new Error(`[AXIS 8.21 Active Home stage compat] ${m}`)};
 let s=fs.readFileSync(FILE,'utf8');
 const once=(from,to,label)=>{const n=s.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);s=s.replace(from,to)};
 
-/* Preserve inherited Active countdown/tone semantics and resolve set controls
-   from immutable Encounter execution truth. This is presentation-only: v87
-   remains the sole pause/resume/set/finish action owner. */
+/* Preserve inherited Active countdown/tone/rest semantics and resolve set
+   controls from immutable Encounter execution truth. This is presentation-only:
+   v87 remains the sole pause/resume/set/finish action owner. */
 once(
  "rest=a.restStartedAt&&a.status==='active'?now()-a.restStartedAt:0,status=",
- "rest=a.restStartedAt&&a.status==='active'?now()-a.restStartedAt:0,remaining=Math.max(0,est-actual),execution=String(e.executionModeSnapshot||''),setMode=execution==='sets'||(!execution&&e.kind==='strength'),status=",
- 'remaining/execution derivation'
+ "rest=a.status==='paused'?restElapsed(a):0,remaining=Math.max(0,est-actual),execution=String(e.executionModeSnapshot||''),setMode=execution==='sets'||(!execution&&e.kind==='strength'),status=",
+ 'pause-owned rest / remaining / execution derivation'
 );
 once(
  "$('#v87Meta').textContent='预计 '+clock(est)+(e.kind==='strength'?' · '+(tracked?(done+'/'+total+' 组'):('计划 '+total+' 组')):'');",
@@ -72,4 +72,4 @@ once(
 
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry contract · execution-aware set controls · standalone learning lifetime · high-specificity integrated Home rail');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest · execution-aware set controls · standalone learning lifetime · high-specificity integrated Home rail');
