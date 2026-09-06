@@ -19,6 +19,8 @@ jobs:
           node-version-file: .nvmrc
       - name: Verify Active Home stage contract
         run: node scripts/axis-821-active-home-stage-contract.mjs
+      - name: Verify Active Home polish contract
+        run: node scripts/axis-821-active-home-stage-polish-contract.mjs
       - name: Build exact candidate
         run: node build-release.mjs
 
@@ -45,6 +47,9 @@ jobs:
       - name: Active Home stage browser proof
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-821-active-home-stage-smoke.mjs
+      - name: Active Home polish visual regression proof
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-active-home-stage-polish-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-active-home-stage-chromium.log || true
@@ -70,6 +75,9 @@ jobs:
       - name: iPhone Active Home stage proof
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-821-active-home-stage-smoke.mjs
+      - name: iPhone Active Home polish visual regression proof
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-active-home-stage-polish-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-active-home-stage-webkit.log || true
