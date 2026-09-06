@@ -49,7 +49,7 @@ const soundCopy=(await page.locator('#v8710Audio').innerText()).trim();
 assert.ok(soundCopy.includes('倒计时到点'),'sound UI does not state countdown semantics');
 assert.ok(soundCopy.includes('总锻炼时长提醒'),'sound UI lost total workout duration reminder');
 
-console.log(`[AXIS ${ENGINE}] current item / capture dock / nav share one geometry rhythm`);
+console.log(`[AXIS ${ENGINE}] integrated Active stage / capture dock / nav share one Home rail`);
 await page.locator('#settingsSheet [data-close="settingsSheet"]').click();await page.waitForTimeout(60);
 await page.locator('#quickRecordBtn').click();
 await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show')&&document.querySelector('#v8Recent [data-qid]'),undefined,{timeout:1800});
@@ -60,25 +60,32 @@ await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.cont
 
 const geometry=await page.evaluate(()=>{
   const rect=s=>document.querySelector(s)?.getBoundingClientRect();
-  const card=rect('#v87Now'),scan=rect('#scanBtn'),quick=rect('#quickRecordBtn'),nav=rect('nav.nav');
-  if(!card||!scan||!quick||!nav)return null;
+  const stage=rect('#v87Now'),scan=rect('#scanBtn'),quick=rect('#quickRecordBtn'),nav=rect('nav.nav'),host=document.querySelector('#v87Now');
+  if(!stage||!scan||!quick||!nav||!host)return null;
   const dockTop=Math.min(scan.top,quick.top),dockBottom=Math.max(scan.bottom,quick.bottom),dockLeft=Math.min(scan.left,quick.left),dockRight=Math.max(scan.right,quick.right);
   return{
-    card:{left:card.left,right:card.right,top:card.top,bottom:card.bottom,width:card.width},
+    stage:{left:stage.left,right:stage.right,top:stage.top,bottom:stage.bottom,width:stage.width},
     dock:{left:dockLeft,right:dockRight,top:dockTop,bottom:dockBottom},
     nav:{top:nav.top,bottom:nav.bottom},
-    cardDockGap:dockTop-card.bottom,
+    stageDockGap:dockTop-stage.bottom,
     dockNavGap:nav.top-dockBottom,
-    leftDelta:card.left-dockLeft,
-    rightDelta:card.right-dockRight
+    leftDelta:stage.left-dockLeft,
+    rightDelta:stage.right-dockRight,
+    parent:host.parentElement?.id||'',
+    position:getComputedStyle(host).position,
+    viewportWidth:innerWidth,
+    overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth
   };
 });
-assert.ok(geometry,`bottom-stack geometry unavailable: ${JSON.stringify(geometry)}`);
-assert.ok(Math.abs(geometry.cardDockGap-12)<=1.5,`active-card / dock gap drifted: ${JSON.stringify(geometry)}`);
+assert.ok(geometry,`Home execution geometry unavailable: ${JSON.stringify(geometry)}`);
+assert.equal(geometry.parent,'activeHome','Active stage is not integrated into activeHome');
+assert.equal(geometry.position,'relative','Active stage regressed to a floating/fixed card');
+assert.ok(geometry.stageDockGap>=16,`integrated Active stage overlaps the capture dock: ${JSON.stringify(geometry)}`);
 assert.ok(Math.abs(geometry.dockNavGap-8)<=1.5,`dock / nav gap drifted: ${JSON.stringify(geometry)}`);
-assert.ok(Math.abs(geometry.leftDelta)<=1.5&&Math.abs(geometry.rightDelta)<=1.5,`active card no longer shares dock content edges: ${JSON.stringify(geometry)}`);
-assert.ok(geometry.card.width>=340,'active card became too narrow');
+assert.ok(Math.abs(geometry.leftDelta)<=1.5&&Math.abs(geometry.rightDelta)<=1.5,`Active stage no longer shares the established Home/dock rails: ${JSON.stringify(geometry)}`);
+assert.ok(geometry.stage.width>=geometry.viewportWidth-48,`integrated Active stage became too narrow: ${JSON.stringify(geometry)}`);
+assert.ok(geometry.overflow<=1,`integrated Active stage created horizontal overflow: ${JSON.stringify(geometry)}`);
 
 assert.deepEqual(errors,[],`uncaught page errors:\n${errors.join('\n')}`);
-console.log(`[AXIS ${ENGINE}] PASS · item + total duration sound · four AXIS choices · 12px card/dock · 8px dock/nav · aligned content edges`);
+console.log(`[AXIS ${ENGINE}] PASS · item + total duration sound · four AXIS choices · integrated Active Home rail · 8px dock/nav · no overlap/overflow`);
 await context.close();await browser.close();
