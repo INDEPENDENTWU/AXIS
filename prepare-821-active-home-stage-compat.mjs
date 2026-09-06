@@ -63,13 +63,32 @@ once(
 /* Inherited fixed-card CSS still contains stronger ID + !important geometry.
    Add one geometry-only supersede with greater specificity. It deliberately
    does not own display, so .show continues to control stage visibility. The
-   parent #activeHome already sits on the exact 22px Home/capture-dock rail. */
+   postbuild Adjust action is kept interactive but removed from grid flow so it
+   cannot change stage height or collide with the capture dock after a repaint. */
 once(
  'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}',
- 'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}html body #v87Now.axis821ActiveStage{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:none!important;margin:2px 0 22px!important}html body #v87Now.axis821ActiveStage #v87Toggle,html body #v87Now.axis821ActiveStage #v87Primary,html body #v87Now.axis821ActiveStage #v87Add{height:60px!important;min-height:60px!important;width:100%!important;max-width:none!important}',
+ 'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}html body #v87Now.axis821ActiveStage{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:none!important;margin:2px 0 22px!important}html body #v87Now.axis821ActiveStage #v87Toggle,html body #v87Now.axis821ActiveStage #v87Primary,html body #v87Now.axis821ActiveStage #v87Add{height:60px!important;min-height:60px!important;width:100%!important;max-width:none!important}html body #v87Now.axis821ActiveStage #v87AdjustBtn{position:absolute!important;top:13px!important;right:118px!important;grid-column:auto!important;width:64px!important;max-width:64px!important;height:38px!important;min-height:38px!important;margin:0!important;padding:0!important;z-index:3!important}',
  'high-specificity integrated Home geometry'
 );
 
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest · execution-aware set controls · standalone learning lifetime · high-specificity integrated Home rail');
+
+/* Flow's one-second clock must not rebuild the integrated action DOM. Replacing
+   the hold button while a finger is down can cancel the proven v87 hold owner,
+   and WebKit can observe the same replacement between visible and geometry
+   reads. Keep structural renders event-driven and make the periodic tick a
+   read-only text/progress paint over the already-mounted Flow projection. */
+{
+ const APP='app.js';let app=fs.readFileSync(APP,'utf8');
+ const volatileTimer="clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(()=>{if(D.visibilityState==='visible'&&state.flowRun?.status==='active')axis821FlowSurfaceRenderHome?.()},1000);";
+ const stableTimer=String.raw`function axis821FlowSurfaceTick(){
+  if(D.visibilityState!=='visible'||state.flowRun?.status!=='active')return;const host=$('#axis821FlowHome'),run=state.flowRun;if(!host||host.dataset.state!=='active'){axis821FlowSurfaceRenderHome?.();return}
+  if(!run.currentEncounterId){const gap=host.querySelector('.axis821FlowGap b');if(gap&&run.gapStartedAt)gap.textContent=axis821FlowClock(Math.max(0,Date.now()-run.gapStartedAt));return}
+  const active=axis821FlowCurrentActive();if(!active||!host.querySelector('[data-axis-flow-active-finish]')){axis821FlowSurfaceRenderHome?.();return}const est=Math.max(0,Number(active.estimateMs)||0),status=host.querySelector('.axis821FlowActiveState>b'),axis=host.querySelector('.axis821FlowActiveAxis i');if(status)status.textContent='本项 '+axis821FlowClock(active.elapsedMs)+(est?' / '+axis821FlowApprox(est):'');if(axis)axis.style.width=(est?Math.min(100,active.elapsedMs/est*100):0)+'%';const plan=axis821FlowPlanning(run,active),remain=host.querySelector('.axis821FlowPlan>span:nth-child(2) b');if(remain)remain.textContent=axis821FlowApprox(plan.remaining)
+}
+clearInterval(axis821FlowUiTimer);axis821FlowUiTimer=setInterval(axis821FlowSurfaceTick,1000);`;
+ const n=app.split(volatileTimer).length-1;if(n!==1)fail(`Flow volatile ticker expected once, found ${n}`);app=app.replace(volatileTimer,stableTimer);try{new Function(app)}catch(e){fail(`app Flow tick syntax ${e.message}`)}fs.writeFileSync(APP,app);
+}
+
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry + pause-owned rest · execution-aware set controls · standalone learning lifetime · non-layout Adjust · stable Flow hold control');
