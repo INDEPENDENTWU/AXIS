@@ -27,19 +27,21 @@ try{
   await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_ACTIVE_RUNTIME__?.owner==='v87'&&window.__AXIS_821_ACTIVE_HOME_STAGE__?.presentation==='integrated-home-stage',undefined,{timeout:15000});
   await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show')&&document.querySelector('#v87Now')?.parentElement?.id==='activeHome',undefined,{timeout:5000});
   await page.waitForFunction(()=>document.querySelector('#axis821ActiveStageStyle')?.textContent?.includes('AXIS 8.21 Active Home Stage — flat native rail'),undefined,{timeout:3000});
-  await page.waitForFunction(()=>document.querySelector('#v87AdjustBtn'),undefined,{timeout:15000});
+  await page.waitForFunction(()=>document.querySelector('#v87AdjustBtn')&&document.querySelector('#dock')?.classList.contains('show'),undefined,{timeout:15000});
   await page.waitForTimeout(180);
 
   console.log(`[AXIS 8.21 Active Home polish ${ENGINE}] one flat execution hierarchy`);
   const g=await page.evaluate(()=>{
     const q=s=>document.querySelector(s),rect=s=>q(s)?.getBoundingClientRect().toJSON();
-    const stage=q('#v87Now'),toggle=q('#v87Toggle'),primary=q('#v87Primary'),adjust=q('#v87AdjustBtn'),name=q('#v87Name'),clock=q('#axis821StageClock');
-    const sr=stage.getBoundingClientRect(),nr=name.getBoundingClientRect(),cr=clock.getBoundingClientRect(),cs=getComputedStyle(stage),controls=getComputedStyle(q('.axis821StageControls'));
+    const stage=q('#v87Now'),toggle=q('#v87Toggle'),primary=q('#v87Primary'),adjust=q('#v87AdjustBtn'),name=q('#v87Name'),clock=q('#axis821StageClock'),scan=q('#scanBtn'),quick=q('#quickRecordBtn');
+    const sr=stage.getBoundingClientRect(),nr=name.getBoundingClientRect(),cr=clock.getBoundingClientRect(),scr=scan?.getBoundingClientRect(),qr=quick?.getBoundingClientRect(),cs=getComputedStyle(stage),controls=getComputedStyle(q('.axis821StageControls'));
+    const dockTop=scr&&qr?Math.min(scr.top,qr.top):null,dockLeft=scr&&qr?Math.min(scr.left,qr.left):null,dockRight=scr&&qr?Math.max(scr.right,qr.right):null;
     return {
       viewport:innerWidth,docOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
       stage:sr.toJSON(),toggle:rect('#v87Toggle'),primary:rect('#v87Primary'),adjust:rect('#v87AdjustBtn'),
       finish:rect('#v87Finish'),name:nr.toJSON(),clock:cr.toJSON(),
       stageCenter:sr.left+sr.width/2,nameCenter:nr.left+nr.width/2,clockCenter:cr.left+cr.width/2,
+      stageDockGap:dockTop==null?null:dockTop-sr.bottom,dockLeft,dockRight,
       position:cs.position,background:cs.backgroundColor,shadow:cs.boxShadow,radius:parseFloat(cs.borderRadius),contain:cs.contain,
       controlsDisplay:controls.display,gridColumns:controls.gridTemplateColumns,
       oldHero:getComputedStyle(q('#activeHome>.liveHead')).display,
@@ -68,6 +70,8 @@ try{
   assert.ok(g.adjust.top>=Math.max(g.toggle.bottom,g.primary.bottom)+7,`Adjust row gap is too tight: ${JSON.stringify(g)}`);
   assert.ok(Math.abs(g.adjust.left-g.toggle.left)<=1.5,'Adjust left rail is misaligned');
   assert.ok(Math.abs(g.adjust.right-g.primary.right)<=1.5,'Adjust right rail is misaligned');
+  assert.ok(g.stageDockGap!==null&&g.stageDockGap>=16,`stage does not clear capture dock: ${JSON.stringify(g)}`);
+  assert.ok(Math.abs(g.stage.left-g.dockLeft)<=1.5&&Math.abs(g.stage.right-g.dockRight)<=1.5,`stage/dock rail mismatch: ${JSON.stringify(g)}`);
   assert.ok(g.docOverflow<=1,`horizontal overflow ${g.docOverflow}`);
   assert.ok(!/infinite/i.test(g.styleText),'stage introduced continuous animation');
 
@@ -84,5 +88,5 @@ try{
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['polish-e1']?.activity?.status==='active',undefined,{timeout:3000});
 
   assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
-  console.log(`[AXIS 8.21 Active Home polish ${ENGINE}] PASS · no duplicate hero · native rail alignment · isolated Adjust · reliable primary actions · no overflow`);
+  console.log(`[AXIS 8.21 Active Home polish ${ENGINE}] PASS · no duplicate hero · native rail alignment · isolated Adjust · dock clearance · reliable primary actions · no overflow`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
