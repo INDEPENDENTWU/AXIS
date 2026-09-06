@@ -18,12 +18,18 @@ AXIS **8.21** remains the current public Web release.
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`
 
-### Inherited Report continuity references
+### Inherited bounded-stage continuity references
 
-These are historical compatibility identifiers required by already-sealed Report contracts. They are **not** the current Production baseline or active delivery branch:
+These are historical compatibility identifiers required by already-sealed 8.21 contracts. They are **not** the current Production baseline or active delivery branch:
 
 - exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
 - bounded delivery branch: `feat/821-report-pdf-export`
+- bounded delivery branch: `feat/821-report-share-card`
+- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
+- bounded Flow step recording intent branch: `feat/821-flow-step-recording-intent`
+- certified Flow step recording intent base: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
+- bounded Flow step execution intent branch: `feat/821-flow-step-execution-intent`
+- certified Flow step execution intent base: `396241c41b2f8eea80d45ca582352ea593c47036`
 
 PR #129 is already merged into the current baseline and made ordinary Active a flat, centered, Home-integrated execution stage. This follow-up starts from that certified structure instead of introducing another card, runtime or presentation owner.
 
