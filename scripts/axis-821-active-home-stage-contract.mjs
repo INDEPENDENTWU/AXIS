@@ -3,6 +3,8 @@ import fs from 'node:fs';
 const fail=m=>{throw new Error(`[AXIS 8.21 Active Home stage contract] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const prep=read('prepare-821-active-home-stage.mjs');
+const compat=read('prepare-821-active-home-stage-compat.mjs');
+const webkit=read('prepare-821-active-home-webkit-compat.mjs');
 const v87=read('v87-runtime.js');
 const chain=read('prepare-819-postcommit-lifecycle.mjs');
 const flow=read('prepare-821-flow-session-coordination.mjs');
@@ -51,14 +53,28 @@ for(const forbidden of [
  'state.active.events.push',
  'writeCore(',
  'writeMeta('
-])if(prep.includes(forbidden))fail(`presentation prepare introduced forbidden owner/write token ${forbidden}`);
+]){
+ if(prep.includes(forbidden))fail(`presentation prepare introduced forbidden owner/write token ${forbidden}`);
+ if(webkit.includes(forbidden))fail(`WebKit presentation repair introduced forbidden owner/write token ${forbidden}`);
+}
+
+for(const token of [
+ "host?.classList?.contains('axis821ActiveStage')",
+ "panel.dataset.axis821StageAnchor='safe-viewport'",
+ "Math.max(88,Math.min(112,Math.round(window.innerHeight*.11)))",
+ "Math.max(260,Math.floor(window.innerHeight-bottom-40))",
+ 'inherited learning/action owners unchanged'
+])if(!webkit.includes(token))fail(`WebKit viewport repair missing ${token}`);
 
 const executionImport="await import('./prepare-821-flow-step-execution-intent.mjs');";
 const stageImport="await import('./prepare-821-active-home-stage.mjs');";
+const compatImport="await import('./prepare-821-active-home-stage-compat.mjs');";
+const webkitImport="await import('./prepare-821-active-home-webkit-compat.mjs');";
 const profileImport="await import('./prepare-821-profile-session-truth.mjs');";
-const e=chain.indexOf(executionImport),s=chain.indexOf(stageImport),p=chain.indexOf(profileImport);
-if(!(e>=0&&s>e&&p>s))fail('Active Home stage build order must follow execution intent and precede Profile truth');
+const e=chain.indexOf(executionImport),s=chain.indexOf(stageImport),c=chain.indexOf(compatImport),w=chain.indexOf(webkitImport),p=chain.indexOf(profileImport);
+if(!(e>=0&&s>e&&c>s&&w>c&&p>w))fail('Active Home stage build order must follow execution intent, stage compat, WebKit repair, then Profile truth');
 if((chain.match(/prepare-821-active-home-stage\.mjs/g)||[]).length!==1)fail('Active Home stage import duplicated');
+if((chain.match(/prepare-821-active-home-webkit-compat\.mjs/g)||[]).length!==1)fail('Active Home WebKit repair import duplicated');
 
 if(!flow.includes('body.axis821-flow-integrated-active #v87Now{display:none!important}'))fail('Flow integrated Active must continue suppressing ordinary v87 stage');
 if(!prep.includes("D.body.classList.remove('v87-now')"))fail('stage hide path must clear inherited Active body state');
@@ -73,4 +89,4 @@ for(const token of [
  'exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`'
 ])if(!work.includes(token))fail(`CURRENT_WORK missing ${token}`);
 
-console.log('[AXIS 8.21 Active Home stage contract] PASS · one integrated ordinary-Active Home stage · existing v87 actions + postbuild Adjust hook retained · Flow integrated surface isolated · no new storage/Encounter/Active owner');
+console.log('[AXIS 8.21 Active Home stage contract] PASS · one integrated ordinary-Active Home stage · existing v87 actions + postbuild Adjust hook retained · Flow isolated · iPhone Rest Speak viewport anchor repaired · no new storage/Encounter/Active owner');
