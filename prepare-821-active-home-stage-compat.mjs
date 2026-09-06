@@ -33,6 +33,16 @@ once(
  'standalone learning lifetime'
 );
 
+/* The old floating card matched the bottom dock rails. The integrated stage
+   lives inside activeHome, whose content rail is 22px narrower on each side.
+   Expand only the stage back to the established Home/dock rail so it reads as
+   a real execution surface rather than a card nested inside another card. */
+once(
+ '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px;',
+ '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:calc(100% + 44px);max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px -22px;',
+ 'Home/dock rail alignment'
+);
+
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/tone + add-set geometry + standalone learning lifetime retained inside integrated stage');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/tone + add-set geometry + standalone learning lifetime retained · integrated stage aligned to Home/dock rails');
