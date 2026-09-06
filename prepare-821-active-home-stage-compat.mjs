@@ -24,6 +24,15 @@ once(
  'stable add-set geometry compatibility'
 );
 
+/* 8.10.2 standalone learning intentionally survives an idle-Home repaint.
+   The large stage still hides when there is no Active item, but it must not
+   close an explicitly opened standalone learning panel as a side effect. */
+once(
+ "if(!target||!today||!activeHome||sheet){host.classList.remove('show','axis821-set-bump','axis821-state-shift');D.body.classList.remove('v87-now');return}",
+ "if(!target||!today||!activeHome||sheet){const keepStandalone=!sheet&&axis8102PanelSource()==='standalone';if(!keepStandalone)axis891CloseSpeak();host.classList.remove('show','axis821-set-bump','axis821-state-shift');D.body.classList.remove('v87-now');return}",
+ 'standalone learning lifetime'
+);
+
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited remaining countdown + zero-tone source retained · add-set visibility contract retained inside integrated stage');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/tone + add-set geometry + standalone learning lifetime retained inside integrated stage');
