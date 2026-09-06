@@ -60,14 +60,16 @@ once(
  'standalone learning lifetime'
 );
 
-/* Keep show/hide class ownership intact. Important is used only on the two
-   geometry properties that must supersede the old fixed-card stylesheet. */
+/* Inherited fixed-card CSS still contains stronger ID + !important geometry.
+   Add one geometry-only supersede with greater specificity. It deliberately
+   does not own display, so .show continues to control stage visibility. The
+   parent #activeHome already sits on the exact 22px Home/capture-dock rail. */
 once(
- '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px;',
- '.v87Now.axis821ActiveStage{display:none;position:relative;left:auto;bottom:auto;transform:none;width:calc(100vw - 44px)!important;max-width:none;z-index:auto;min-height:338px;margin:2px 0 22px -22px!important;',
- 'Home/dock viewport rail alignment'
+ 'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}',
+ 'backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate}html body #v87Now.axis821ActiveStage{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:none!important;margin:2px 0 22px!important}html body #v87Now.axis821ActiveStage #v87Toggle,html body #v87Now.axis821ActiveStage #v87Primary,html body #v87Now.axis821ActiveStage #v87Add{height:60px!important;min-height:60px!important;width:100%!important;max-width:none!important}',
+ 'high-specificity integrated Home geometry'
 );
 
 try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
 fs.writeFileSync(FILE,s);
-console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry contract · execution-aware set controls · standalone learning lifetime · visible viewport Home/dock rail seal');
+console.log('[AXIS 8.21 Active Home stage compat] PASS · inherited countdown/glyph/geometry contract · execution-aware set controls · standalone learning lifetime · high-specificity integrated Home rail');
