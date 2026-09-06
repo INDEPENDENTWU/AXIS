@@ -221,3 +221,17 @@ Merge is blocked until the exact final PR head proves:
 6. existing hold-to-finish completes the Activity and dismisses the stage;
 7. the stage has no horizontal overflow at 390px and emits no page errors;
 8. inherited Flow/Object/Report/repository gates remain green so Flow integrated Active remains isolated from the ordinary stage.
+
+## Active bounded repair — Active Home Stage visual/interaction convergence
+
+PR **#125** merged the first integrated Active Home Stage to `main` as `9eaf90d0f94023218feb452b085da48c9f027276`. Manual iPhone verification and exact-main WebKit gates exposed presentation/interaction convergence defects, so that SHA is **not** a certified continuation baseline.
+
+- bounded repair branch: `fix/821-active-home-stage-polish`
+- exact repair base main SHA: `9eaf90d0f94023218feb452b085da48c9f027276`
+- release identity: **unchanged; AXIS 8.21**
+- truth/action owner: **unchanged; v87 over axis_v8_meta**
+- persistence / recorder / Encounter writer / Active owner / Flow owner / network owner: **none added**
+
+The repair is deliberately presentation-only. While the integrated ordinary Active stage is visible, the legacy Home hero and compact summary remain in the DOM for inherited ownership/tests but are not visually duplicated. The stage shares the native Home content rail, removes elevated-card shadowing, keeps name/time rigorously centered, keeps pause and complete-set as stable large primary actions, and gives the inherited one-time `调整` action a dedicated full-width second row so it cannot overlap or steal WebKit hit targets. Motion remains short transform/opacity feedback only, with reduced-motion support and no continuous animation.
+
+Repair certification requires the exact PR head to prove in Chromium and iPhone-like WebKit: no duplicate visible timer/hero, no primary-action overlap, Adjust separated from primary controls, no horizontal overflow, physical complete-set and pause/resume mutations through existing v87 ownership, plus all inherited Runtime/Deep Compatibility/Flow/Object/Report/continuity gates green. After merge, the exact merged `main` must again pass the full exact-main gate set and be served by the existing fixed Vercel and EdgeOne projects without creating new public URLs.
