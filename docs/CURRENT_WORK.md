@@ -30,6 +30,10 @@ These are historical compatibility identifiers required by already-sealed 8.21 c
 - certified Flow step recording intent base: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
 - bounded Flow step execution intent branch: `feat/821-flow-step-execution-intent`
 - certified Flow step execution intent base: `396241c41b2f8eea80d45ca582352ea593c47036`
+- bounded delivery branch: `feat/821-active-home-stage`
+- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- bounded Active Home visual-convergence branch: `feat/821-active-home-visual-convergence`
+- exact Active Home visual-convergence base `main` SHA: `9eaf90d0f94023218feb452b085da48c9f027276`
 
 PR #129 is already merged into the current baseline and made ordinary Active a flat, centered, Home-integrated execution stage. This follow-up starts from that certified structure instead of introducing another card, runtime or presentation owner.
 
@@ -45,7 +49,7 @@ PR #129 is already merged into the current baseline and made ordinary Active a f
 - intended public release change: **none; remains 8.21**
 - product objective: remove the remaining presentation debt visible in real mobile use without changing Active semantics
 - executable refinement owner: `prepare-821-active-home-visual-convergence.mjs`, compiled after the certified Active Home compatibility pass
-- affected proof surfaces: `scripts/axis-821-active-home-visual-contract.mjs` and `scripts/axis-821-active-home-visual-smoke.mjs`
+- affected proof surfaces: `scripts/axis-821-active-home-visual-contract.mjs`, `scripts/axis-821-active-home-visual-smoke.mjs`, inherited `scripts/axis-821-active-home-stage-smoke.mjs`, `scripts/axis-8103-smoke.mjs`, and `scripts/axis-882-smoke.mjs`
 - stage contract: `docs/ACTIVE_HOME_VISUAL_CONVERGENCE.md`
 
 ### User-visible behavior
@@ -60,6 +64,8 @@ PR #129 is already merged into the current baseline and made ordinary Active a f
 This follow-up intentionally adds **no** LocalStorage namespace, IndexedDB database, API, network state, Session writer, Encounter writer, recorder, Active owner, Flow owner, timer owner or rest owner.
 
 The duplicate rest display was presentation debt, not duplicate truth. The fix therefore removes the duplicate projection instead of creating synchronization logic. The long-hold visual refinement delegates to the already-existing v87 gesture/action owner. Flow-integrated Active remains isolated from the ordinary `#v87Now` stage.
+
+Two inherited browser proofs still encoded superseded floating-card geometry: the 8.10.3 proof required `调整` to remain corner-anchored, and the 8.8.2 proof required the entire Active rectangle to keep an absolute Y position across set-state changes. Their behavioral contracts remain valuable, but the geometry assumptions were intentionally replaced by PR #129. This follow-up therefore keeps the same-node, action, sound, reachability and no-overlap assertions while making the inherited proofs aware of the certified integrated Home stage. Historical fallback geometry remains asserted when that integrated stage is absent.
 
 The current compatibility pipeline is still intentionally layered: stage → compatibility → final visual convergence. This follow-up does not broaden scope by deleting historical prepare/postbuild transforms before reachability proof. That larger source-convergence work has its own next stage and exit criteria.
 
