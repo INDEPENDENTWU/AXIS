@@ -89,3 +89,4 @@ await import('./prepare-821-training-report-ui-convergence.mjs');
 await import('./prepare-821-report-pdf-export.mjs');
 await import('./prepare-821-report-pdf-export-scope.mjs');
 await import('./prepare-821-report-share-card.mjs');
+await import('./prepare-821-portable-backup.mjs');
