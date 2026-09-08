@@ -51,8 +51,10 @@ console.log('[AXIS 8.19 post-commit lifecycle] PASS · v61 attach authority seal
    8.21 public identity advances only after all 8.21 product convergence passes.
    Active Home final visual presentation is source-owned by the stage prepare;
    the historical late visual-convergence prepare remains repository provenance
-   but is intentionally unreachable from the canonical build chain. Portable
-   backup remains a separate transport-only transform after report projections. */
+   but is intentionally unreachable from the canonical build chain. Report PDF
+   runtime scope is source-owned directly by its feature prepare; the historical
+   corrective scope prepare is provenance-only. Portable backup remains a
+   separate transport-only transform after report projections. */
 await import('./prepare-819-release.mjs');
 await import('./prepare-820-executable-practice-objects.mjs');
 await import('./prepare-8201-object-reliability.mjs');
@@ -90,6 +92,5 @@ await import('./prepare-821-report-range-truth.mjs');
 await import('./prepare-821-training-report-ui.mjs');
 await import('./prepare-821-training-report-ui-convergence.mjs');
 await import('./prepare-821-report-pdf-export.mjs');
-await import('./prepare-821-report-pdf-export-scope.mjs');
 await import('./prepare-821-report-share-card.mjs');
 await import('./prepare-821-portable-backup.mjs');
