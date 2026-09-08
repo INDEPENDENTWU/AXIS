@@ -15,6 +15,7 @@ A retirement means an old surface, writer, or orchestration path may no longer d
 | Version-like filenames as current authority | retired governance model | Read machine governance/current contracts instead. |
 | Archived/history content as executable authority | forbidden | Archive/history is provenance-only unless explicitly promoted through a reviewed owner handoff. |
 | `prepare-821-active-home-visual-convergence.mjs` as a late behavioral build owner | retired from build authority | Final Active Home presentation is source-owned by `prepare-821-active-home-stage.mjs` + `styles/axis-821-active-home.css`; semantic compatibility remains in `prepare-821-active-home-stage-compat.mjs`. The historical prepare may remain provenance but must not return to canonical build reachability. |
+| `prepare-821-report-pdf-export-scope.mjs` as an immediate corrective runtime relocation | retired from build authority | `prepare-821-report-pdf-export.mjs` now inserts the PDF runtime directly beside the canonical Training Report renderer on the first pass. The historical scope prepare is provenance-only and must not return to canonical build reachability. |
 
 ## Sealed CI retirements
 

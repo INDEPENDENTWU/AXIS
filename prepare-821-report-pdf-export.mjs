@@ -79,8 +79,10 @@ const axis821ReportBaseRender=renderReport;renderReport=function(){axis821Report
 $('#axis821ReportApply').onclick=axis821ReportApplyRange;$('#axis821ReportAll').onclick=axis821ReportAllRange;$('#axis821ReportPdf').onclick=axis821ReportPrintPdf;window.addEventListener('afterprint',axis821ReportCleanupPrint);
 try{window.__AXIS_821_REPORT_PDF_EXPORT__={version:'8.21',truthSchema:'axis.report-range.v1',exportOwner:true,pipeline:'browser-print-pdf',vectorText:true,rasterized:false,storageWrite:false,networkWrite:false,customRange:true,rangeSemantics:'local-day-half-open',personalInfo:'optional-export-time',historicalProfileOwner:'session.profileSnapshot',historicalGoalOwner:'session.goalSnapshot',prepare:axis821ReportPreparePrint,cleanup:axis821ReportCleanupPrint}}catch{}
 `;
-  const closeAt=s.lastIndexOf('})();');if(closeAt<0)fail('canonical app close missing');
-  s=s.slice(0,closeAt)+runtime+s.slice(closeAt);
+  const report=functionRange(s,'function renderReport()','canonical Training Report renderer');
+  s=s.slice(0,report.end)+runtime+s.slice(report.end);
+  if((s.match(/__AXIS_821_REPORT_PDF_EXPORT__/g)||[]).length!==1)fail('final PDF runtime marker count is not one');
+  if(s.indexOf('function axis821ReportInputDate(ms){')<report.end)fail('PDF runtime escaped canonical Report lexical scope');
   for(const forbidden of ['html2canvas','jsPDF','pdf-lib','canvas.toDataURL','localStorage.setItem','indexedDB.open'])if(runtime.includes(forbidden))fail(`forbidden PDF/runtime token ${forbidden}`);
   if(!runtime.includes("window.print()")||!runtime.includes("reportRange='range:'")||!runtime.includes("state.profile||{}"))fail('PDF export/range/optional identity contract incomplete');
   syntax(view+'\n'+runtime,'isolated Report PDF runtime');syntax(s,FILE);write(FILE,s);

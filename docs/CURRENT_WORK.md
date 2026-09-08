@@ -5,7 +5,7 @@
 AXIS **8.21** remains the current public Web release.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact certified `main` baseline for this bounded follow-up: `b349c8b87a0e9b30916ba9959297897260de3882`
+- exact certified `main` baseline for this bounded follow-up: `3877d91cc6f17a3db5add414fed44495c64d3cf4`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - public release identity: **unchanged; 8.21**
 - architecture: **unchanged; `canonical-single-runtime`**
@@ -20,7 +20,7 @@ AXIS **8.21** remains the current public Web release.
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`
 
-PR #130 remains historical product continuity at `c434a4a78530669d5a47be9799d40f5049b57a2d`. PR #132 is merged and Production-certified at `b349c8b87a0e9b30916ba9959297897260de3882`: the fixed Vercel Production deployment is Git-sourced, READY, alias-clean, `/axis-build.json` reports the exact same source SHA with public/base 8.21 and `canonical-single-runtime`, and the exact EdgeOne Production Mirror run completed successfully. This clears the provider gate that previously blocked Source Convergence.
+PR #131 is merged and fully Production-certified at `3877d91cc6f17a3db5add414fed44495c64d3cf4`. The fixed Vercel Production deployment is Git-sourced, READY, alias-clean, and `/axis-build.json` reports the exact same source SHA with public/base 8.21 and `canonical-single-runtime`. The exact EdgeOne Production Mirror also completed package parity plus Chromium and iPhone-like WebKit real-production verification. This is the certified base for the next bounded source-owner migration.
 
 ### Inherited bounded-stage continuity references
 
@@ -41,90 +41,84 @@ These are historical compatibility identifiers required by already-sealed 8.21 c
 - bounded portable-backup branch: `feat/821-portable-backup-origin-migration`
 - portable-backup exact historical base: `c434a4a78530669d5a47be9799d40f5049b57a2d`
 - portable-backup merged/certified main: `b349c8b87a0e9b30916ba9959297897260de3882`
+- completed Active Home source-convergence branch: `arch/821-active-home-source-convergence`
+- completed Active Home source-convergence PR: **#131**
+- Active Home source-convergence certified main: `3877d91cc6f17a3db5add414fed44495c64d3cf4`
 
-PR #129 established the flat, centered, Home-integrated ordinary Active stage. PR #130 retained that structure while refining the tactile hold/rest presentation. PR #132 added the structural-owner portable backup transport without introducing a second factual/runtime owner. This Source Convergence work begins from the exact certified post-#132 main and must preserve all three outcomes.
+PR #129 established the flat, centered, Home-integrated ordinary Active stage. PR #130 refined tactile hold/rest presentation. PR #132 added structural-owner portable backup transport. PR #131 then retired the late Active Home visual prepare from canonical build authority while preserving those product outcomes. All remain release-blocking continuity for this work.
 
 ## Active change
 
-**AXIS 8.21 — Active Home Source Convergence**
+**AXIS 8.21 — Report PDF Scope Source Convergence**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded delivery branch: `arch/821-active-home-source-convergence`
-- PR: **#131**
-- exact certified base `main` SHA: `b349c8b87a0e9b30916ba9959297897260de3882`
-- historical architecture-slice base before PR #132: `c434a4a78530669d5a47be9799d40f5049b57a2d`
+- bounded delivery branch: `arch/821-report-pdf-scope-convergence`
+- PR: **#133**
+- exact certified base `main` SHA: `3877d91cc6f17a3db5add414fed44495c64d3cf4`
 - intended public release change: **none; remains 8.21**
 - intended user-visible behavior change: **none**
-- source-owner objective: remove the late Active Home visual mutation from canonical build reachability and move the already-proven final visual contract into the stage source owner
-- explicit visual source: `styles/axis-821-active-home.css`
-- stable runtime capability identity: `window.__AXIS_821_ACTIVE_HOME_VISUAL__`
-- stable style compatibility identity: `#axis821ActiveStageRefineStyle`
-- source proof: `scripts/axis-821-active-home-visual-contract.mjs`
-- dual-engine behavior proof: `scripts/axis-821-active-home-visual-smoke.mjs` plus inherited `scripts/axis-821-active-home-stage-smoke.mjs`
-- architecture handoff: `docs/ACTIVE_HOME_SOURCE_CONVERGENCE.md`
+- source-owner objective: make `prepare-821-report-pdf-export.mjs` install its runtime at the canonical Training Report lexical owner on the first pass, eliminating the immediately-following corrective scope mutation from canonical build reachability
+- historical corrective prepare: `prepare-821-report-pdf-export-scope.mjs` — **provenance-only** after this slice
+- truth owner: `axis.report-range.v1`
+- export pipeline: existing browser `window.print()` PDF path; vector text / A4 / no raster library
+- downstream order preserved: Report PDF → Report Share Card → Portable Backup
+- source proof: `scripts/axis-821-report-pdf-export-contract.mjs`
 
 ### Source-owner handoff
 
-Before this slice, ordinary Active Home presentation was assembled by three sequential behavioral prepares:
+Before this slice, Report PDF runtime assembly used two sequential behavioral prepares:
 
-1. `prepare-821-active-home-stage.mjs`
-2. `prepare-821-active-home-stage-compat.mjs`
-3. `prepare-821-active-home-visual-convergence.mjs`
+1. `prepare-821-report-pdf-export.mjs` installed the complete PDF capability but appended its runtime at the late app-close boundary.
+2. `prepare-821-report-pdf-export-scope.mjs` immediately removed that same freshly inserted runtime and relocated it beside the canonical `renderReport()` owner.
 
 After this slice:
 
-1. `prepare-821-active-home-stage.mjs` owns the final flat Home rail, centered execution clock, balanced controls, tactile long-hold presentation, separate Adjust row and single-visible-rest projection, using `styles/axis-821-active-home.css` as explicit visual source.
-2. `prepare-821-active-home-stage-compat.mjs` remains only for inherited semantics: pause-owned rest/countdown truth, execution-aware set controls, canonical pause/resume label compatibility, standalone Learning lifetime and the stable read-only Flow ticker.
-3. `prepare-821-active-home-visual-convergence.mjs` remains repository provenance but is not imported by the canonical release chain.
+1. `prepare-821-report-pdf-export.mjs` locates the canonical `renderReport()` declaration itself and inserts the PDF runtime directly after that owner on the first pass.
+2. It fails closed if the final PDF runtime marker is not exactly one or if the helper block escapes the canonical Report scope.
+3. `prepare-821-report-pdf-export-scope.mjs` remains repository provenance but is not imported by the canonical release chain.
 
-Execution-aware set controls are preserved. The runtime marker and style identity remain stable so existing browser proofs validate the same public capability rather than an implementation rename.
+This is an architecture-only convergence: the generated Report PDF behavior, controls, range truth, optional export-time identity, print layout and export semantics are intended to remain byte/semantic-equivalent to the already-certified product contract.
 
 ### User-visible behavior that must remain exact
 
-1. Ordinary Active remains a flat Home-integrated rail, not a floating card.
-2. The execution clock remains strictly centered.
-3. Pause/resume and the execution-aware primary action remain balanced large controls.
-4. `调整` remains a separate tertiary row with no overlap.
-5. `按住结束` keeps the existing v87 long-hold action and tactile presentation.
-6. Paused rest duration is visible in exactly one place through the inherited passive `#v87Rest` presenter; the fact rail may not regain a second rest clock.
-7. Rest Speak on/off remains geometry-neutral.
-8. Flow-integrated Active remains isolated from ordinary `#v87Now`.
-9. No transient duplicate action, second timer, delayed geometry repair or replacement writer is permitted.
-10. `axis.backup.v1` remains reachable after Report Share Card and keeps its structural owner boundary, exact local AXIS storage/media transport, SHA-256 verification and rollback semantics unchanged.
+1. Report still reads historical facts only through `axis.report-range.v1`.
+2. All-history, explicit local-day date range and single-Session routes remain unchanged.
+3. “包含个人信息” remains optional export-time identity only; historical body/goal facts remain Session snapshot-owned.
+4. PDF remains native browser print/PDF with vector text and A4 pagination; no `html2canvas`, `jsPDF`, `pdf-lib` or parallel raster exporter appears.
+5. Report Share Card remains downstream of Report PDF and keeps its existing owner.
+6. `axis.backup.v1` remains downstream and reachable exactly once with its exact local AXIS storage/media transport and rollback contract unchanged.
+7. Active Home source convergence from PR #131 remains intact; no visual/action/storage owner is reopened.
 
 ### Ownership and migration boundary
 
-This source convergence intentionally adds **no** LocalStorage namespace, IndexedDB database, API, network state, Session writer, Encounter writer, recorder, metric fact owner, Active owner, Flow owner, timer owner or rest owner.
+This source convergence creates no LocalStorage namespace, IndexedDB database, Session writer, Encounter writer, Report truth owner, export store, network writer, recorder, Active owner, Flow owner, media owner or second PDF owner.
 
-`v87` remains the ordinary Active pause/resume, set completion, add-set and long-hold finish action owner. `v82`/`v87` remain the established Active lifecycle. The canonical app remains Session/Encounter authority. v61 remains the classic repeated weight/reps writer only when immutable Encounter schema grants that authority. Flow remains intent/orchestration rather than historical truth. Automatic sound remains v8710-owned. Portable Backup remains transport-only and delegates canonical media operations to the existing app-owned media store. The inherited 5-second sustained positional shake behavior and sealed 30fps media path are outside this slice and unchanged.
-
-No data migration, historical Session/Encounter rewrite, storage-key change or deployment-topology change is permitted. Rollback is bounded to restoring the late visual prepare's build reachability and removing the stage-owned visual source handoff; no user-data rollback is involved.
+No data migration, historical fact rewrite, storage-key change, deployment-topology change or product-version change is permitted. Rollback is bounded to restoring `prepare-821-report-pdf-export-scope.mjs` build reachability and the previous late insertion point; no user data is involved.
 
 ## Validation for this work
 
-Merge is blocked until the exact final PR head proves all of the following without weakening existing behavioral assertions:
+Merge is blocked until the exact final PR head proves all of the following without weakening existing assertions:
 
 1. deterministic `node build-release.mjs` succeeds with public/base AXIS 8.21 and `canonical-single-runtime` unchanged;
-2. the static source contract proves the final visual CSS/marker are stage-source-owned and `prepare-821-active-home-visual-convergence.mjs` is unreachable from the canonical release chain;
-3. the inherited Active Home Stage contract remains green;
-4. real Chromium and iPhone-like WebKit preserve the flat rail, centered clock, balanced controls, tactile hold, isolated Adjust row and single visible rest clock;
-5. inherited pause/resume, set completion, pause-owned rest, long-hold finish, Rest Speak, Flow isolation, Learning lifetime and sound contracts remain green;
-6. Portable Backup source/built ownership, Chromium round-trip and iPhone-like WebKit round-trip remain green on the same exact head;
-7. Deep Compatibility, Runtime, Current Release, Cross-Platform, Repository Contract and Work Continuity gates remain green on the same exact head;
-8. after merge, the new merged `main` SHA itself must pass fixed Vercel alias parity and the exact-prebuilt EdgeOne Chromium/WebKit mirror chain.
+2. the Report PDF static contract proves direct source-owned lexical placement, one PDF marker, and `prepare-821-report-pdf-export-scope.mjs` unreachable from canonical lifecycle;
+3. Report PDF Chromium and iPhone-like WebKit smokes remain green with the same range/export behavior;
+4. Training Report UI, Report Range Truth and Report Share Card gates remain green;
+5. Portable Backup source/built ownership plus Chromium/WebKit round-trip remain green;
+6. Active Home, Deep Compatibility, Runtime, Current Release, Cross-Platform, Repository Contract and Work Continuity gates remain green on the same exact head;
+7. after merge, the exact merged `main` SHA itself must pass fixed Vercel alias parity and the exact-prebuilt EdgeOne Chromium/WebKit mirror chain.
 
 A failure is fixed at its actual owner. Tests, timeouts, product semantics and deployment parity must not be weakened merely to make this PR green. Provider limits must never be bypassed by creating another Vercel project, changing the fixed public URL or publishing EdgeOne independently.
 
 ## Next planned stage
 
-Only after PR #131 is merged and the exact merged `main` artifact is Production-certified on both fixed providers:
+Only after PR #133 is merged and the exact merged `main` artifact is Production-certified on both fixed providers:
 
 1. select the next bounded source-owner migration from the remaining behavioral `prepare-*` / `postbuild-*` mutations by reachability and ownership risk;
-2. continue retiring only demonstrably superseded build mutations, one exact owner family at a time;
-3. preserve `canonical-single-runtime`, current storage/history compatibility, `axis.backup.v1`, v61 classic-set ownership, v82/v87 Active ownership, canonical Session/Encounter ownership and current public behavior;
+2. prefer another narrow corrective layer whose replacement owner is already explicit before attempting broader app/index source movement;
+3. preserve `canonical-single-runtime`, storage/history compatibility, `axis.backup.v1`, `axis.report-range.v1`, v61 classic-set ownership, v82/v87 Active ownership and canonical Session/Encounter ownership;
 4. require deterministic build, static reachability proof and equal Chromium/iPhone-like WebKit evidence for every user-visible source-owner handoff;
-5. keep shrinking source/build indirection without a framework rewrite or a second product truth path.
+5. keep shrinking source/build indirection without a framework rewrite or second truth path.
 
 The target remains a strangler migration: fewer live mutation layers, clearer final owners, and source structure that increasingly matches the already-proven runtime architecture.
 
