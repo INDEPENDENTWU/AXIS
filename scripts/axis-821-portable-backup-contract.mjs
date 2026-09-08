@@ -33,6 +33,12 @@ for(const token of [
   "if(state.active)return toast('请先结束当前训练再恢复备份')"
 ]) assert.ok(transform.includes(token),`missing transform contract token: ${token}`);
 
+for(const structuralToken of ['replaceFunctionDeclaration','replaceStatementByPrefix','replaceElementById']){
+  assert.ok(transform.includes(structuralToken),`structural owner convergence missing: ${structuralToken}`);
+}
+assert.ok(!transform.includes('const oldBackup='),'portable backup must not depend on an exact historical backupData body snapshot');
+assert.ok(!transform.includes('legacy backup replacement expected once'),'brittle historical-body matcher must remain retired');
+
 for(const forbidden of ['fetch(', 'XMLHttpRequest', 'WebSocket', 'sendBeacon(', 'indexedDB.open', 'indexedDB.deleteDatabase']){
   assert.ok(!transform.includes(forbidden),`portable backup transport must not introduce ${forbidden}`);
 }
@@ -55,7 +61,10 @@ if(process.env.AXIS_BUILT==='1'){
   const app=read('app.js'),html=read('index.html');
   assert.ok(app.includes("window.__AXIS_PORTABLE_BACKUP__={schema:AXIS_BACKUP_SCHEMA"),'built backup runtime missing');
   assert.ok(app.includes('entries:axisBackupMediaEntries,replaceAll:axisBackupMediaReplaceAll'),'built canonical media transport bridge missing');
-  assert.ok(html.includes('id="restoreBackupBtn"'),'restore action missing from built settings');
+  assert.equal((app.match(/async function backupData\s*\(/g)||[]).length,1,'built artifact must have exactly one backupData owner');
+  assert.ok(!app.includes('AXIS-备份-'),'legacy partial JSON backup implementation must not survive the built artifact');
+  assert.equal((html.match(/id="backupBtn"/g)||[]).length,1,'built settings must expose one backup action');
+  assert.equal((html.match(/id="restoreBackupBtn"/g)||[]).length,1,'built settings must expose one restore action');
   assert.ok(html.includes('id="backupRestoreSheet"'),'restore preview sheet missing');
   assert.ok(html.includes('id="axis821PortableBackupStyle"'),'backup UI style missing');
   const owners=[];
@@ -67,4 +76,4 @@ if(process.env.AXIS_BUILT==='1'){
   assert.deepEqual(owners,[{file:'app.js',hits:1}],`direct media DB owner drift: ${JSON.stringify(owners)}`);
 }
 
-console.log(`[AXIS 8.21 portable backup contract] PASS · schema + local-only transport + SHA-256 + exact AXIS namespace/media snapshot + active block + verified rollback${process.env.AXIS_BUILT==='1'?' + built single media owner':''}`);
+console.log(`[AXIS 8.21 portable backup contract] PASS · structural owner convergence + schema + local-only transport + SHA-256 + exact AXIS namespace/media snapshot + active block + verified rollback${process.env.AXIS_BUILT==='1'?' + built single media/backup owner':''}`);
