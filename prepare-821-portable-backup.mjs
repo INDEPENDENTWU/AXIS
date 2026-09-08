@@ -5,10 +5,45 @@ const fail=m=>{throw new Error(`[AXIS 8.21 portable backup] ${m}`)};
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 const code=s=>s.replace(/\\([`$])/g,'$1');
 
+function findDeclarationEnd(src,start,label){
+ let open=src.indexOf('{',start);if(open<0)fail(`${label} missing body`);
+ let depth=0,quote='',line=false,block=false,escape=false;
+ for(let i=open;i<src.length;i++){
+  const c=src[i],n=src[i+1];
+  if(line){if(c==='\n')line=false;continue}
+  if(block){if(c==='*'&&n==='/'){block=false;i++}continue}
+  if(quote){if(escape){escape=false;continue}if(c==='\\'){escape=true;continue}if(c===quote){quote='';continue}continue}
+  if(c==='/'&&n==='/'){line=true;i++;continue}
+  if(c==='/'&&n==='*'){block=true;i++;continue}
+  if(c==='"'||c==="'"||c==='`'){quote=c;continue}
+  if(c==='{')depth++;
+  else if(c==='}'){depth--;if(depth===0)return i+1}
+ }
+ fail(`${label} unterminated body`)
+}
+function replaceFunctionDeclaration(src,name,to,label){
+ const re=new RegExp(`(?:async\\s+)?function\\s+${name}\\s*\\(`,'g'),hits=[...src.matchAll(re)];
+ if(hits.length!==1)fail(`${label} expected one function owner, found ${hits.length}`);
+ const start=hits[0].index,end=findDeclarationEnd(src,start,label);
+ return src.slice(0,start)+to+src.slice(end)
+}
+function replaceStatementByPrefix(src,prefix,to,label){
+ const hits=[];for(let p=src.indexOf(prefix);p>=0;p=src.indexOf(prefix,p+prefix.length))hits.push(p);
+ if(hits.length!==1)fail(`${label} expected one owner statement, found ${hits.length}`);
+ const start=hits[0],end=src.indexOf(';',start);if(end<0)fail(`${label} missing terminator`);
+ return src.slice(0,start)+to+src.slice(end+1)
+}
+function replaceElementById(src,id,to,label){
+ const marker=`id="${id}"`,hits=[];for(let p=src.indexOf(marker);p>=0;p=src.indexOf(marker,p+marker.length))hits.push(p);
+ if(hits.length!==1)fail(`${label} expected one element, found ${hits.length}`);
+ const at=hits[0],start=src.lastIndexOf('<button',at),end=src.indexOf('</button>',at);
+ if(start<0||end<0)fail(`${label} button boundary missing`);
+ return src.slice(0,start)+to+src.slice(end+'</button>'.length)
+}
+
 let app=fs.readFileSync(APP,'utf8');
 let html=fs.readFileSync(HTML,'utf8');
 
-const mediaBridge="window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia,del:deleteMedia,format:AXIS_MEDIA_FORMAT};";
 const mediaBridgeNext=String.raw`async function axisBackupMediaEntries(){
  const db=await openDb();return new Promise((res,rej)=>{let tx=null,keys=null,vals=null,settled=false;const bad=e=>{if(settled)return;settled=true;try{db.close()}catch{}rej(tx?.error||e?.target?.error||e||new Error('media-backup-read-failed'))};try{tx=db.transaction('media','readonly');const store=tx.objectStore('media'),kr=store.getAllKeys(),vr=store.getAll();kr.onsuccess=()=>{keys=kr.result;if(vals)done()};vr.onsuccess=()=>{vals=vr.result;if(keys)done()};kr.onerror=vr.onerror=bad;tx.onabort=bad;tx.onerror=()=>{};function done(){if(settled)return;settled=true;try{const out=keys.map((key,i)=>({key:String(key),blob:mediaDecodeValue(vals[i])}));db.close();res(out)}catch(e){bad(e)}}}catch(e){bad(e)}})
 }
@@ -17,9 +52,8 @@ async function axisBackupMediaReplaceAll(entries){
  const db=await openDb();return new Promise((res,rej)=>{let tx=null,settled=false;const bad=e=>{if(settled)return;settled=true;try{db.close()}catch{}rej(tx?.error||e?.target?.error||e||new Error('media-backup-write-failed'))};try{tx=db.transaction('media','readwrite');const store=tx.objectStore('media');store.clear();for(const item of prepared)store.put(item.value,item.key);tx.oncomplete=()=>{if(settled)return;settled=true;db.close();res()};tx.onabort=bad;tx.onerror=()=>{}}catch(e){bad(e)}})
 }
 window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia,del:deleteMedia,format:AXIS_MEDIA_FORMAT,entries:axisBackupMediaEntries,replaceAll:axisBackupMediaReplaceAll};`;
-app=once(app,mediaBridge,mediaBridgeNext,'canonical media bridge extension');
+app=replaceStatementByPrefix(app,'window.__AXIS_MEDIA_STORE__=',mediaBridgeNext,'canonical media bridge extension');
 
-const oldBackup=code(String.raw`async function backupData(){const blob=new Blob([JSON.stringify({version:VERSION,exportedAt:new Date().toISOString(),sessions:state.sessions,profile:state.profile,prefs:state.prefs},null,2)],{type:'application/json'});await shareBlob(blob,\`AXIS-备份-\${dlabel(Date.now())}.json\`,'application/json')}`);
 const newBackup=code(String.raw`const AXIS_BACKUP_SCHEMA='axis.backup.v1',AXIS_BACKUP_MIME='application/vnd.axis.backup+json',AXIS_BACKUP_PREFIX='axis_';
 const axisBackupUtf8Bytes=s=>new TextEncoder().encode(String(s)).byteLength;
 function axisBackupCanonical(v){if(Array.isArray(v))return '['+v.map(axisBackupCanonical).join(',')+']';if(v&&typeof v==='object'){return '{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+axisBackupCanonical(v[k])).join(',')+'}'}return JSON.stringify(v)}
@@ -43,15 +77,16 @@ async function axisBackupPickRestore(){if(state.active)return toast('请先结�
 async function axisBackupVerifyCurrent(storage,media){const nowStorage=axisBackupStorageSnapshot();if(axisBackupCanonical(nowStorage)!==axisBackupCanonical(storage))throw new Error('restore-storage-verify-failed');const nowMedia=await axisBackupMediaSnapshot();const compact=x=>(x||[]).map(r=>({key:r.key,type:r.type,size:r.size,encoding:r.encoding,data:r.data}));if(axisBackupCanonical(compact(nowMedia))!==axisBackupCanonical(compact(media)))throw new Error('restore-media-verify-failed')}
 async function axisBackupRestorePending(){if(state.active)return toast('请先结束当前训练再恢复备份');const pending=window.__AXIS_BACKUP_PENDING__;if(!pending?.bundle)return toast('请重新选择备份文件');const store=window.__AXIS_MEDIA_STORE__;if(!store?.replaceAll)return toast('恢复能力尚未就绪');const {storage,media}=pending.verified,beforeStorage=axisBackupStorageSnapshot(),beforeMedia=await axisBackupMediaSnapshot(),incoming=await axisBackupMediaDecode(media),rollbackMedia=await axisBackupMediaDecode(beforeMedia);const btn=$('#backupRestoreConfirm');if(btn){btn.disabled=true;btn.textContent='正在恢复…'}try{await store.replaceAll(incoming);axisBackupStorageReplace(storage);await axisBackupVerifyCurrent(storage,media);window.__AXIS_BACKUP_PENDING__=null;setText('#backupRestoreIntegrity',\`完整恢复 · \${storage.length}/\${storage.length} 数据 · \${media.length}/\${media.length} 媒体\`);if(btn)btn.textContent='恢复完成';toast('完整恢复已验证');setTimeout(()=>location.reload(),850)}catch(e){console.error('[AXIS restore]',e);let rollbackError=null;try{await store.replaceAll(rollbackMedia);axisBackupStorageReplace(beforeStorage);await axisBackupVerifyCurrent(beforeStorage,beforeMedia)}catch(r){rollbackError=r;console.error('[AXIS restore rollback]',r)}if(btn){btn.disabled=false;btn.textContent='确认恢复'}setText('#backupRestoreIntegrity',rollbackError?'恢复失败 · 回滚校验异常':'恢复失败 · 已完整回滚');toast(rollbackError?'恢复失败 · 请保留当前页面':'恢复失败 · 原数据已恢复')}}
 window.__AXIS_PORTABLE_BACKUP__={schema:AXIS_BACKUP_SCHEMA,storagePrefix:AXIS_BACKUP_PREFIX,owner:'transport-only',network:false,create:axisBackupCreateBundle,verify:axisBackupVerifyBundle,restore:async bundle=>{if(state.active)throw new Error('restore-active-session-blocked');const verified=await axisBackupVerifyBundle(bundle);window.__AXIS_BACKUP_PENDING__={bundle,verified};return axisBackupRestorePending()}};`);
-app=once(app,oldBackup,newBackup,'legacy backup replacement');
+app=replaceFunctionDeclaration(app,'backupData',newBackup,'legacy backup owner convergence');
 
-const oldBind="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()};$('#clearVideos').onclick=clearVideos;$('#backupBtn').onclick=backupData;$('#selectAllSessions').onclick=()=>{";
-const newBind="$('#storageBtn').onclick=async()=>{openSheet('storageSheet');await renderStorage()};$('#clearVideos').onclick=clearVideos;$('#backupBtn').onclick=backupData;$('#restoreBackupBtn').onclick=axisBackupPickRestore;$('#backupRestoreConfirm').onclick=axisBackupRestorePending;$('#selectAllSessions').onclick=()=>{";
-app=once(app,oldBind,newBind,'backup/restore bindings');
+const backupBinding="$('#backupBtn').onclick=backupData;";
+app=once(app,backupBinding,backupBinding+"$('#restoreBackupBtn').onclick=axisBackupPickRestore;$('#backupRestoreConfirm').onclick=axisBackupRestorePending;",'backup/restore bindings');
 
-const oldActions='<div class="storageActions"><button id="clearVideos">仅清理视频</button><button id="backupBtn">备份数据</button></div>';
-const newActions='<div class="storageActions"><button id="clearVideos">仅清理视频</button><button id="backupBtn">建立完整 AXIS 备份</button><button id="restoreBackupBtn">从 AXIS 备份恢复</button></div><div class="axisBackupNote">备份包含 AXIS 本机数据与媒体，可用于迁移到另一 AXIS 网域。</div>';
-html=once(html,oldActions,newActions,'storage backup actions');
+const backupActions='<button id="backupBtn">建立完整 AXIS 备份</button><button id="restoreBackupBtn">从 AXIS 备份恢复</button>';
+html=replaceElementById(html,'backupBtn',backupActions,'storage backup actions');
+const storageActionsClose='</div><div class="storageFoot">';
+if(html.includes(storageActionsClose))html=once(html,storageActionsClose,'</div><div class="axisBackupNote">备份包含 AXIS 本机数据与媒体，可用于迁移到另一 AXIS 网域。</div><div class="storageFoot">','storage backup note');
+else html=once(html,'</div></div><div class="sheetWrap" id="reportSheet">','</div><div class="axisBackupNote">备份包含 AXIS 本机数据与媒体，可用于迁移到另一 AXIS 网域。</div></div><div class="sheetWrap" id="reportSheet">','storage backup note fallback');
 
 const restoreSheet=String.raw`<div class="sheetWrap" id="backupRestoreSheet"><div class="sheet axisBackupRestoreSheet">
   <div class="grabber"></div><div class="sheetHead"><b>恢复 AXIS 备份</b><button class="closeBtn" data-close="backupRestoreSheet">×</button></div>
@@ -70,4 +105,4 @@ html=once(html,'</head>',backupStyle+'\n</head>','backup style');
 
 try{new Function(app)}catch(e){fail(`app syntax ${e.message}`)}
 fs.writeFileSync(APP,app);fs.writeFileSync(HTML,html);
-console.log('[AXIS 8.21 portable backup] PASS · exact axis_* localStorage + canonical media bytes · SHA-256 integrity · staged restore · active-session block · verified rollback · Safari file share/download · no network owner');
+console.log('[AXIS 8.21 portable backup] PASS · structural owner convergence · exact axis_* localStorage + canonical media bytes · SHA-256 integrity · staged restore · active-session block · verified rollback · Safari file share/download · no network owner');
