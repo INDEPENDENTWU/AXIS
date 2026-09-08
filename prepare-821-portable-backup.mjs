@@ -33,13 +33,18 @@ function replaceStatementByPrefix(src,prefix,to,label){
  const start=hits[0],end=src.indexOf(';',start);if(end<0)fail(`${label} missing terminator`);
  return src.slice(0,start)+to+src.slice(end+1)
 }
-function replaceElementById(src,id,to,label){
+function findElementById(src,id,label){
  const marker=`id="${id}"`,hits=[];for(let p=src.indexOf(marker);p>=0;p=src.indexOf(marker,p+marker.length))hits.push(p);
  if(hits.length!==1)fail(`${label} expected one element, found ${hits.length}`);
- const at=hits[0],start=src.lastIndexOf('<button',at),end=src.indexOf('</button>',at);
- if(start<0||end<0)fail(`${label} button boundary missing`);
- return src.slice(0,start)+to+src.slice(end+'</button>'.length)
+ const at=hits[0],start=src.lastIndexOf('<',at),openEnd=src.indexOf('>',at);
+ if(start<0||openEnd<0)fail(`${label} opening boundary missing`);
+ const match=/^<([A-Za-z][\w:-]*)\b/.exec(src.slice(start,openEnd+1));if(!match)fail(`${label} tag name missing`);
+ const tag=match[1],closeToken=`</${tag}>`,close=src.indexOf(closeToken,openEnd);
+ if(close<0)fail(`${label} closing boundary missing`);
+ return{start,end:close+closeToken.length,tag}
 }
+function replaceElementById(src,id,to,label){const b=findElementById(src,id,label);return src.slice(0,b.start)+to+src.slice(b.end)}
+function insertAfterElementById(src,id,to,label){const b=findElementById(src,id,label);return src.slice(0,b.end)+to+src.slice(b.end)}
 
 let app=fs.readFileSync(APP,'utf8');
 let html=fs.readFileSync(HTML,'utf8');
@@ -80,13 +85,11 @@ window.__AXIS_PORTABLE_BACKUP__={schema:AXIS_BACKUP_SCHEMA,storagePrefix:AXIS_BA
 app=replaceFunctionDeclaration(app,'backupData',newBackup,'legacy backup owner convergence');
 
 const backupBinding="$('#backupBtn').onclick=backupData;";
-app=once(app,backupBinding,backupBinding+"$('#restoreBackupBtn').onclick=axisBackupPickRestore;$('#backupRestoreConfirm').onclick=axisBackupRestorePending;",'backup/restore bindings');
+app=replaceStatementByPrefix(app,"$('#backupBtn').onclick=",backupBinding+"$('#restoreBackupBtn').onclick=axisBackupPickRestore;$('#backupRestoreConfirm').onclick=axisBackupRestorePending;",'backup/restore bindings');
 
 const backupActions='<button id="backupBtn">建立完整 AXIS 备份</button><button id="restoreBackupBtn">从 AXIS 备份恢复</button>';
 html=replaceElementById(html,'backupBtn',backupActions,'storage backup actions');
-const storageActionsClose='</div><div class="storageFoot">';
-if(html.includes(storageActionsClose))html=once(html,storageActionsClose,'</div><div class="axisBackupNote">备份包含 AXIS 本机数据与媒体，可用于迁移到另一 AXIS 网域。</div><div class="storageFoot">','storage backup note');
-else html=once(html,'</div></div><div class="sheetWrap" id="reportSheet">','</div><div class="axisBackupNote">备份包含 AXIS 本机数据与媒体，可用于迁移到另一 AXIS 网域。</div></div><div class="sheetWrap" id="reportSheet">','storage backup note fallback');
+html=insertAfterElementById(html,'restoreBackupBtn','<div class="axisBackupNote">备份包含 AXIS 本机数据与媒体，可用于迁移到另一 AXIS 网域。</div>','storage backup note');
 
 const restoreSheet=String.raw`<div class="sheetWrap" id="backupRestoreSheet"><div class="sheet axisBackupRestoreSheet">
   <div class="grabber"></div><div class="sheetHead"><b>恢复 AXIS 备份</b><button class="closeBtn" data-close="backupRestoreSheet">×</button></div>
