@@ -62,11 +62,15 @@ const stageImport="await import('./prepare-821-active-home-stage.mjs');";
 const compatImport="await import('./prepare-821-active-home-stage-compat.mjs');";
 const visualImport="await import('./prepare-821-active-home-visual-convergence.mjs');";
 const profileImport="await import('./prepare-821-profile-session-truth.mjs');";
-const a=chain.indexOf(stageImport),b=chain.indexOf(compatImport),d=chain.indexOf(profileImport);
+const shareImport="await import('./prepare-821-report-share-card.mjs');";
+const backupImport="await import('./prepare-821-portable-backup.mjs');";
+const a=chain.indexOf(stageImport),b=chain.indexOf(compatImport),d=chain.indexOf(profileImport),e=chain.indexOf(shareImport),f=chain.indexOf(backupImport);
 if(!(a>=0&&b>a&&d>b))fail('source-owned Active Home stage/compat order must precede downstream Profile truth');
+if(!(e>=0&&f>e))fail('certified portable backup must remain reachable after Report Share Card');
 if(chain.includes(visualImport))fail('retired late visual-convergence prepare remains reachable');
 if((chain.match(/prepare-821-active-home-stage\.mjs/g)||[]).length!==1)fail('Active Home stage import duplicated');
 if((chain.match(/prepare-821-active-home-stage-compat\.mjs/g)||[]).length!==1)fail('Active Home compatibility import duplicated');
+if((chain.match(/prepare-821-portable-backup\.mjs/g)||[]).length!==1)fail('portable backup import duplicated');
 
 for(const token of [
  'function axis821ActiveStageRefineStyle()',
@@ -81,12 +85,14 @@ for(const forbidden of [
 ])if(compat.includes(forbidden))fail(`compatibility pass still owns retired final geometry ${forbidden}`);
 
 for(const token of [
- 'exact base `main` SHA: `c434a4a78530669d5a47be9799d40f5049b57a2d`',
+ 'exact certified base `main` SHA: `b349c8b87a0e9b30916ba9959297897260de3882`',
+ 'historical pre-backup architecture-slice base: `c434a4a78530669d5a47be9799d40f5049b57a2d`',
  'bounded delivery branch: `arch/821-active-home-source-convergence`',
  'styles/axis-821-active-home.css',
  'not imported by the canonical release chain',
  'intended user-visible behavior change: **none**',
- 'v87` remains the only ordinary Active pause/resume'
+ 'v87` remains the only ordinary Active pause/resume',
+ '`axis.backup.v1` contract and Chromium/WebKit round-trip remain green'
 ])if(!doc.includes(token))fail(`source convergence document missing ${token}`);
 
-console.log('[AXIS 8.21 Active Home visual contract] PASS · final visual system is stage-source-owned · historical late visual prepare unreachable · semantic compat preserved · v87 ownership sealed');
+console.log('[AXIS 8.21 Active Home visual contract] PASS · final visual system is stage-source-owned · historical late visual prepare unreachable · portable backup topology preserved · semantic compat preserved · v87 ownership sealed');
