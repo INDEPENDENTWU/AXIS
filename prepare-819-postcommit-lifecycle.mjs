@@ -48,7 +48,11 @@ console.log('[AXIS 8.19 post-commit lifecycle] PASS · v61 attach authority seal
    product contract. 8.20.1 reliability hardening runs before the 8.20 public
    seal. 8.21 then layers Flow runtime, canonical recording properties and the
    user-visible Flow surface without introducing a parallel factual owner. The
-   8.21 public identity advances only after all 8.21 product convergence passes. */
+   8.21 public identity advances only after all 8.21 product convergence passes.
+   Active Home final visual presentation is source-owned by the stage prepare;
+   the historical late visual-convergence prepare remains repository provenance
+   but is intentionally unreachable from the canonical build chain. Portable
+   backup remains a separate transport-only transform after report projections. */
 await import('./prepare-819-release.mjs');
 await import('./prepare-820-executable-practice-objects.mjs');
 await import('./prepare-8201-object-reliability.mjs');
@@ -79,7 +83,6 @@ await import('./prepare-821-flow-step-recording-intent.mjs');
 await import('./prepare-821-flow-step-execution-intent.mjs');
 await import('./prepare-821-active-home-stage.mjs');
 await import('./prepare-821-active-home-stage-compat.mjs');
-await import('./prepare-821-active-home-visual-convergence.mjs');
 await import('./prepare-821-profile-session-truth.mjs');
 await import('./prepare-821-metric-optical-system.mjs');
 await import('./prepare-821-session-time-truth.mjs');

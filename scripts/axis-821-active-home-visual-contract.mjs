@@ -2,24 +2,18 @@ import fs from 'node:fs';
 
 const fail=m=>{throw new Error(`[AXIS 8.21 Active Home visual contract] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
-const refine=read('prepare-821-active-home-visual-convergence.mjs');
+const stage=read('prepare-821-active-home-stage.mjs');
+const css=read('styles/axis-821-active-home.css');
+const legacyRefine=read('prepare-821-active-home-visual-convergence.mjs');
+const compat=read('prepare-821-active-home-stage-compat.mjs');
 const chain=read('prepare-819-postcommit-lifecycle.mjs');
 const v87=read('v87-runtime.js');
-const doc=read('docs/ACTIVE_HOME_VISUAL_CONVERGENCE.md');
+const doc=read('docs/ACTIVE_HOME_SOURCE_CONVERGENCE.md');
 
 for(const token of [
+ "read('styles/axis-821-active-home.css')",
  'function axis821ActiveStageRefineStyle()',
  "st.id='axis821ActiveStageRefineStyle'",
- 'background:transparent!important',
- 'box-shadow:none!important',
- 'border-top:1px solid var(--line2)!important',
- 'border-bottom:1px solid var(--line2)!important',
- 'text-align:center!important',
- 'grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important',
- '#v87AdjustBtn{position:static!important',
- 'grid-row:2!important',
- '.axis821StageFinish:active',
- "'single visible rest clock'",
  "surface:'flat-integrated-home'",
  "clock:'centered'",
  "controls:'balanced-two-column'",
@@ -29,8 +23,21 @@ for(const token of [
  "stateOwner:'v87'",
  'newStorage:false',
  'newWriter:false',
- 'newActionOwner:false'
-])if(!refine.includes(token))fail(`refinement missing ${token}`);
+ 'newActionOwner:false',
+ "$('#axis821StageRest').textContent=rest?'':"
+])if(!stage.includes(token))fail(`stage source missing ${token}`);
+
+for(const token of [
+ 'background:transparent!important',
+ 'box-shadow:none!important',
+ 'border-top:1px solid var(--line2)!important',
+ 'border-bottom:1px solid var(--line2)!important',
+ 'text-align:center!important',
+ 'grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important',
+ '#v87AdjustBtn{position:static!important',
+ 'grid-row:2!important',
+ '.axis821StageFinish:active'
+])if(!css.includes(token))fail(`stage-owned visual CSS missing ${token}`);
 
 for(const forbidden of [
  'localStorage.setItem',
@@ -42,7 +49,7 @@ for(const forbidden of [
  'writeCore(',
  'completedSets=',
  'restStartedAt='
-])if(refine.includes(forbidden))fail(`presentation refinement introduced forbidden owner/write token ${forbidden}`);
+])if(stage.includes(forbidden)||css.includes(forbidden))fail(`stage visual owner introduced forbidden write token ${forbidden}`);
 
 for(const token of [
  'function toggle(id)',
@@ -51,20 +58,41 @@ for(const token of [
  'function beginHold(id,e)'
 ])if(!v87.includes(token))fail(`certified v87 action owner missing ${token}`);
 
-const stage="await import('./prepare-821-active-home-stage.mjs');";
-const compat="await import('./prepare-821-active-home-stage-compat.mjs');";
-const visual="await import('./prepare-821-active-home-visual-convergence.mjs');";
-const profile="await import('./prepare-821-profile-session-truth.mjs');";
-const a=chain.indexOf(stage),b=chain.indexOf(compat),c=chain.indexOf(visual),d=chain.indexOf(profile);
-if(!(a>=0&&b>a&&c>b&&d>c))fail('visual convergence must run after Active Home compatibility and before downstream Profile truth');
-if((chain.match(/prepare-821-active-home-visual-convergence\.mjs/g)||[]).length!==1)fail('visual convergence import duplicated');
+const stageImport="await import('./prepare-821-active-home-stage.mjs');";
+const compatImport="await import('./prepare-821-active-home-stage-compat.mjs');";
+const visualImport="await import('./prepare-821-active-home-visual-convergence.mjs');";
+const profileImport="await import('./prepare-821-profile-session-truth.mjs');";
+const shareImport="await import('./prepare-821-report-share-card.mjs');";
+const backupImport="await import('./prepare-821-portable-backup.mjs');";
+const a=chain.indexOf(stageImport),b=chain.indexOf(compatImport),d=chain.indexOf(profileImport),e=chain.indexOf(shareImport),f=chain.indexOf(backupImport);
+if(!(a>=0&&b>a&&d>b))fail('source-owned Active Home stage/compat order must precede downstream Profile truth');
+if(!(e>=0&&f>e))fail('certified portable backup must remain reachable after Report Share Card');
+if(chain.includes(visualImport))fail('retired late visual-convergence prepare remains reachable');
+if((chain.match(/prepare-821-active-home-stage\.mjs/g)||[]).length!==1)fail('Active Home stage import duplicated');
+if((chain.match(/prepare-821-active-home-stage-compat\.mjs/g)||[]).length!==1)fail('Active Home compatibility import duplicated');
+if((chain.match(/prepare-821-portable-backup\.mjs/g)||[]).length!==1)fail('portable backup import duplicated');
 
 for(const token of [
- 'exact base `main` SHA: `9eaf90d0f94023218feb452b085da48c9f027276`',
- 'bounded delivery branch: `feat/821-active-home-visual-convergence`',
- 'flat Home section',
- '`调整` is a separate tertiary row',
- 'new storage / writer / recorder / Active owner / Flow owner: **none**'
-])if(!doc.includes(token))fail(`bounded contract document missing ${token}`);
+ 'function axis821ActiveStageRefineStyle()',
+ "surface:'flat-integrated-home'",
+ "'single visible rest clock'"
+])if(!legacyRefine.includes(token))fail(`historical visual provenance unexpectedly lost ${token}`);
 
-console.log('[AXIS 8.21 Active Home visual contract] PASS · flat section · strict center axis · balanced execution row · branded tactile long-hold · one visible rest clock · isolated Adjust · existing v87 ownership sealed');
+for(const forbidden of [
+ '#v87AdjustBtn{position:absolute!important',
+ 'min-height:294px!important',
+ 'right:12px!important;bottom:12px!important'
+])if(compat.includes(forbidden))fail(`compatibility pass still owns retired final geometry ${forbidden}`);
+
+for(const token of [
+ 'exact certified base `main` SHA: `b349c8b87a0e9b30916ba9959297897260de3882`',
+ 'historical pre-backup architecture-slice base: `c434a4a78530669d5a47be9799d40f5049b57a2d`',
+ 'bounded delivery branch: `arch/821-active-home-source-convergence`',
+ 'styles/axis-821-active-home.css',
+ 'not imported by the canonical release chain',
+ 'intended user-visible behavior change: **none**',
+ 'v87` remains the only ordinary Active pause/resume',
+ '`axis.backup.v1` contract and Chromium/WebKit round-trip remain green'
+])if(!doc.includes(token))fail(`source convergence document missing ${token}`);
+
+console.log('[AXIS 8.21 Active Home visual contract] PASS · final visual system is stage-source-owned · historical late visual prepare unreachable · portable backup topology preserved · semantic compat preserved · v87 ownership sealed');
