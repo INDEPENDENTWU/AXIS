@@ -5,7 +5,7 @@
 AXIS **8.21** remains the current public Web release.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact `main` baseline for this bounded follow-up: `c434a4a78530669d5a47be9799d40f5049b57a2d`
+- exact certified `main` baseline for this bounded follow-up: `b349c8b87a0e9b30916ba9959297897260de3882`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - public release identity: **unchanged; 8.21**
 - architecture: **unchanged; `canonical-single-runtime`**
@@ -18,9 +18,9 @@ AXIS **8.21** remains the current public Web release.
 - existing rest truth: the current Activity lifecycle; no new timer or rest store is permitted
 - cross-platform foundation: `axis-native-foundation-0`
 - native repository: `INDEPENDENTWU/AXIS-iOS`
-- portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`
+- portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`
 
-PR #130 is merged at `c434a4a78530669d5a47be9799d40f5049b57a2d`. Its repository and dual-engine product contracts are the exact behavioral base for this architecture-only follow-up. The fixed Vercel/EdgeOne certification of that merged base remains an external merge gate while Vercel's Hobby build-rate limit is active; this branch may be proved completely but must not merge before that provider gate clears.
+PR #130 remains historical product continuity at `c434a4a78530669d5a47be9799d40f5049b57a2d`. PR #132 is merged and Production-certified at `b349c8b87a0e9b30916ba9959297897260de3882`: the fixed Vercel Production deployment is Git-sourced, READY, alias-clean, `/axis-build.json` reports the exact same source SHA with public/base 8.21 and `canonical-single-runtime`, and the exact EdgeOne Production Mirror run completed successfully. This clears the provider gate that previously blocked Source Convergence.
 
 ### Inherited bounded-stage continuity references
 
@@ -38,8 +38,11 @@ These are historical compatibility identifiers required by already-sealed 8.21 c
 - exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
 - bounded Active Home visual-convergence branch: `feat/821-active-home-visual-convergence`
 - exact Active Home visual-convergence base `main` SHA: `9eaf90d0f94023218feb452b085da48c9f027276`
+- bounded portable-backup branch: `feat/821-portable-backup-origin-migration`
+- portable-backup exact historical base: `c434a4a78530669d5a47be9799d40f5049b57a2d`
+- portable-backup merged/certified main: `b349c8b87a0e9b30916ba9959297897260de3882`
 
-PR #129 established the flat, centered, Home-integrated ordinary Active stage. PR #130 retained that structure while refining the tactile hold/rest presentation. This source-convergence work starts from those certified semantics rather than adding another UI/runtime owner.
+PR #129 established the flat, centered, Home-integrated ordinary Active stage. PR #130 retained that structure while refining the tactile hold/rest presentation. PR #132 added the structural-owner portable backup transport without introducing a second factual/runtime owner. This Source Convergence work begins from the exact certified post-#132 main and must preserve all three outcomes.
 
 ## Active change
 
@@ -49,7 +52,8 @@ PR #129 established the flat, centered, Home-integrated ordinary Active stage. P
 - governed active branch: `main`
 - bounded delivery branch: `arch/821-active-home-source-convergence`
 - PR: **#131**
-- exact base `main` SHA: `c434a4a78530669d5a47be9799d40f5049b57a2d`
+- exact certified base `main` SHA: `b349c8b87a0e9b30916ba9959297897260de3882`
+- historical architecture-slice base before PR #132: `c434a4a78530669d5a47be9799d40f5049b57a2d`
 - intended public release change: **none; remains 8.21**
 - intended user-visible behavior change: **none**
 - source-owner objective: remove the late Active Home visual mutation from canonical build reachability and move the already-proven final visual contract into the stage source owner
@@ -72,7 +76,7 @@ After this slice:
 
 1. `prepare-821-active-home-stage.mjs` owns the final flat Home rail, centered execution clock, balanced controls, tactile long-hold presentation, separate Adjust row and single-visible-rest projection, using `styles/axis-821-active-home.css` as explicit visual source.
 2. `prepare-821-active-home-stage-compat.mjs` remains only for inherited semantics: pause-owned rest/countdown truth, execution-aware set controls, canonical pause/resume label compatibility, standalone Learning lifetime and the stable read-only Flow ticker.
-3. `prepare-821-active-home-visual-convergence.mjs` remains repository provenance but is unreachable from the canonical release chain.
+3. `prepare-821-active-home-visual-convergence.mjs` remains repository provenance but is not imported by the canonical release chain.
 
 Execution-aware set controls are preserved. The runtime marker and style identity remain stable so existing browser proofs validate the same public capability rather than an implementation rename.
 
@@ -87,12 +91,13 @@ Execution-aware set controls are preserved. The runtime marker and style identit
 7. Rest Speak on/off remains geometry-neutral.
 8. Flow-integrated Active remains isolated from ordinary `#v87Now`.
 9. No transient duplicate action, second timer, delayed geometry repair or replacement writer is permitted.
+10. `axis.backup.v1` remains reachable after Report Share Card and keeps its structural owner boundary, exact local AXIS storage/media transport, SHA-256 verification and rollback semantics unchanged.
 
 ### Ownership and migration boundary
 
 This source convergence intentionally adds **no** LocalStorage namespace, IndexedDB database, API, network state, Session writer, Encounter writer, recorder, metric fact owner, Active owner, Flow owner, timer owner or rest owner.
 
-`v87` remains the ordinary Active pause/resume, set completion, add-set and long-hold finish action owner. `v82`/`v87` remain the established Active lifecycle. The canonical app remains Session/Encounter authority. v61 remains the classic repeated weight/reps writer only when immutable Encounter schema grants that authority. Flow remains intent/orchestration rather than historical truth. Automatic sound remains v8710-owned. The inherited 5-second sustained positional shake behavior and sealed 30fps media path are outside this slice and unchanged.
+`v87` remains the ordinary Active pause/resume, set completion, add-set and long-hold finish action owner. `v82`/`v87` remain the established Active lifecycle. The canonical app remains Session/Encounter authority. v61 remains the classic repeated weight/reps writer only when immutable Encounter schema grants that authority. Flow remains intent/orchestration rather than historical truth. Automatic sound remains v8710-owned. Portable Backup remains transport-only and delegates canonical media operations to the existing app-owned media store. The inherited 5-second sustained positional shake behavior and sealed 30fps media path are outside this slice and unchanged.
 
 No data migration, historical Session/Encounter rewrite, storage-key change or deployment-topology change is permitted. Rollback is bounded to restoring the late visual prepare's build reachability and removing the stage-owned visual source handoff; no user-data rollback is involved.
 
@@ -105,11 +110,11 @@ Merge is blocked until the exact final PR head proves all of the following witho
 3. the inherited Active Home Stage contract remains green;
 4. real Chromium and iPhone-like WebKit preserve the flat rail, centered clock, balanced controls, tactile hold, isolated Adjust row and single visible rest clock;
 5. inherited pause/resume, set completion, pause-owned rest, long-hold finish, Rest Speak, Flow isolation, Learning lifetime and sound contracts remain green;
-6. Deep Compatibility, Runtime, Current Release, Cross-Platform, Repository Contract and Work Continuity gates remain green on the same exact head;
-7. the exact base `c434a4a78530669d5a47be9799d40f5049b57a2d` is first certified on the existing fixed Vercel Production project and exact EdgeOne mirror;
+6. Portable Backup source/built ownership, Chromium round-trip and iPhone-like WebKit round-trip remain green on the same exact head;
+7. Deep Compatibility, Runtime, Current Release, Cross-Platform, Repository Contract and Work Continuity gates remain green on the same exact head;
 8. after merge, the new merged `main` SHA itself must pass fixed Vercel alias parity and the exact-prebuilt EdgeOne Chromium/WebKit mirror chain.
 
-A failure is fixed at its actual owner. Tests, timeouts, product semantics and deployment parity must not be weakened merely to make this PR green. Provider rate limits are hosting-layer gates and must not be bypassed by creating another Vercel project, changing the fixed public URL or publishing EdgeOne independently.
+A failure is fixed at its actual owner. Tests, timeouts, product semantics and deployment parity must not be weakened merely to make this PR green. Provider limits must never be bypassed by creating another Vercel project, changing the fixed public URL or publishing EdgeOne independently.
 
 ## Next planned stage
 
@@ -117,7 +122,7 @@ Only after PR #131 is merged and the exact merged `main` artifact is Production-
 
 1. select the next bounded source-owner migration from the remaining behavioral `prepare-*` / `postbuild-*` mutations by reachability and ownership risk;
 2. continue retiring only demonstrably superseded build mutations, one exact owner family at a time;
-3. preserve `canonical-single-runtime`, current storage/history compatibility, v61 classic-set ownership, v82/v87 Active ownership, canonical Session/Encounter ownership and current public behavior;
+3. preserve `canonical-single-runtime`, current storage/history compatibility, `axis.backup.v1`, v61 classic-set ownership, v82/v87 Active ownership, canonical Session/Encounter ownership and current public behavior;
 4. require deterministic build, static reachability proof and equal Chromium/iPhone-like WebKit evidence for every user-visible source-owner handoff;
 5. keep shrinking source/build indirection without a framework rewrite or a second product truth path.
 
