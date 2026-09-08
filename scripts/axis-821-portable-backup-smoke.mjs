@@ -12,11 +12,13 @@ const seed={
 
 const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true,locale:'zh-CN'});
 await context.addInitScript(s=>{
+  if(sessionStorage.getItem('__axis_portable_seeded')==='1')return;
   localStorage.clear();
   localStorage.setItem('axis_v60_state',JSON.stringify(s.core));
   localStorage.setItem('axis_v8_meta',JSON.stringify(s.meta));
   localStorage.setItem('axis_v89_speak',JSON.stringify(s.learning));
   localStorage.setItem('foreign_keep','must-survive');
+  sessionStorage.setItem('__axis_portable_seeded','1');
 },seed);
 const page=await context.newPage(),errors=[];
 page.on('pageerror',e=>errors.push(String(e?.stack||e)));
@@ -25,6 +27,7 @@ for(const [p,o] of [['**/api/ai-status**',{available:false}],['**/api/owner-conf
 
 try{
   assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());
+  await page.waitForLoadState('load',{timeout:15000});
   await page.waitForFunction(()=>window.__AXIS_PORTABLE_BACKUP__?.schema==='axis.backup.v1'&&window.__AXIS_MEDIA_STORE__?.entries&&window.__AXIS_MEDIA_STORE__?.replaceAll,undefined,{timeout:15000});
   const ui=await page.evaluate(()=>({backup:document.querySelector('#backupBtn')?.textContent.trim(),restore:document.querySelector('#restoreBackupBtn')?.textContent.trim(),sheet:!!document.querySelector('#backupRestoreSheet'),overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,owner:window.__AXIS_PORTABLE_BACKUP__?.owner,network:window.__AXIS_PORTABLE_BACKUP__?.network}));
   assert.equal(ui.backup,'建立完整 AXIS 备份');
@@ -55,9 +58,9 @@ try{
   });
   assert.equal(corrupt.rejected,true);assert.equal(corrupt.after,corrupt.before);assert.equal(corrupt.foreign,'must-survive');
 
+  const reloadAfterRestore=page.waitForEvent('load',{timeout:8000});
   const roundTrip=await page.evaluate(async()=>{
-    const p=window.__AXIS_PORTABLE_BACKUP__,store=window.__AXIS_MEDIA_STORE__,target=window.__AXIS_SMOKE_BUNDLE__,realSetTimeout=window.setTimeout;
-    window.setTimeout=(fn,ms,...args)=>ms===850?0:realSetTimeout(fn,ms,...args);
+    const p=window.__AXIS_PORTABLE_BACKUP__,store=window.__AXIS_MEDIA_STORE__,target=window.__AXIS_SMOKE_BUNDLE__;
     for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k?.startsWith('axis_'))localStorage.removeItem(k)}
     localStorage.setItem('axis_destination_only','remove-me');
     await store.replaceAll([]);
@@ -66,15 +69,24 @@ try{
     const restored=Object.fromEntries(Array.from({length:localStorage.length},(_,i)=>localStorage.key(i)).filter(k=>k?.startsWith('axis_')).sort().map(k=>[k,localStorage.getItem(k)]));
     const media=await store.entries();
     const bytes=[];for(const x of media)bytes.push({key:String(x.key),type:x.blob.type,data:Array.from(new Uint8Array(await x.blob.arrayBuffer()))});
-    window.setTimeout=realSetTimeout;
     return{same:JSON.stringify(restored)===JSON.stringify(storage),destinationGone:localStorage.getItem('axis_destination_only')===null,foreign:localStorage.getItem('foreign_keep'),bytes};
   });
   assert.equal(roundTrip.same,true);assert.equal(roundTrip.destinationGone,true);assert.equal(roundTrip.foreign,'must-survive');
   assert.deepEqual(roundTrip.bytes,[{key:'F-backup-1',type:'image/jpeg',data:[0,1,2,3,254,255,17,33]},{key:'V-backup-1',type:'video/mp4',data:[9,8,7,6,5,4,3,2,1,0]}]);
 
+  await reloadAfterRestore;
+  await page.waitForFunction(()=>window.__AXIS_PORTABLE_BACKUP__?.schema==='axis.backup.v1'&&window.__AXIS_MEDIA_STORE__?.entries,undefined,{timeout:15000});
+  const postReload=await page.evaluate(async()=>{
+    const core=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),media=await window.__AXIS_MEDIA_STORE__.entries(),bytes=[];
+    for(const x of media)bytes.push({key:String(x.key),type:x.blob.type,data:Array.from(new Uint8Array(await x.blob.arrayBuffer()))});
+    return{session:core.sessions?.some(s=>s.id==='backup-s1'),event:core.sessions?.some(s=>s.events?.some(e=>e.id==='backup-e1')),foreign:localStorage.getItem('foreign_keep'),bytes};
+  });
+  assert.equal(postReload.session,true);assert.equal(postReload.event,true);assert.equal(postReload.foreign,'must-survive');
+  assert.deepEqual(postReload.bytes,[{key:'F-backup-1',type:'image/jpeg',data:[0,1,2,3,254,255,17,33]},{key:'V-backup-1',type:'video/mp4',data:[9,8,7,6,5,4,3,2,1,0]}]);
+  await page.evaluate(bundle=>{window.__AXIS_SMOKE_BUNDLE__=bundle},initial);
+
   const rollback=await page.evaluate(async()=>{
-    const p=window.__AXIS_PORTABLE_BACKUP__,store=window.__AXIS_MEDIA_STORE__,target=window.__AXIS_SMOKE_BUNDLE__,realSetTimeout=window.setTimeout;
-    window.setTimeout=(fn,ms,...args)=>ms===850?0:realSetTimeout(fn,ms,...args);
+    const p=window.__AXIS_PORTABLE_BACKUP__,store=window.__AXIS_MEDIA_STORE__,target=window.__AXIS_SMOKE_BUNDLE__;
     localStorage.setItem('axis_v8_meta',JSON.stringify({rollback:'keep-this-exactly'}));
     await store.replaceAll([{key:'F-rollback',blob:new Blob([new Uint8Array([77,66,55,44])],{type:'image/png'})}]);
     const before=await p.create();
@@ -83,7 +95,6 @@ try{
     await p.restore(target);
     Storage.prototype.setItem=originalSet;
     const after=await p.create();
-    window.setTimeout=realSetTimeout;
     return{failed,before:before.webOriginSnapshot,after:after.webOriginSnapshot,foreign:localStorage.getItem('foreign_keep'),status:document.querySelector('#backupRestoreIntegrity')?.textContent};
   });
   assert.equal(rollback.failed,true);assert.deepEqual(rollback.after,rollback.before);assert.equal(rollback.foreign,'must-survive');assert.match(rollback.status,/已完整回滚/);
@@ -97,7 +108,7 @@ try{
   assert.equal(activeBlock.rejected,true);assert.match(activeBlock.message,/restore-active-session-blocked/);assert.equal(activeBlock.after,activeBlock.before);assert.deepEqual(activeBlock.mediaAfter,activeBlock.mediaBefore);
 
   assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
-  console.log(`[AXIS 8.21 portable backup ${ENGINE}] PASS · SHA-256 reject-before-write · exact axis_* + media round trip · foreign storage preserved · injected failure verified rollback · active session blocked`);
+  console.log(`[AXIS 8.21 portable backup ${ENGINE}] PASS · SHA-256 reject-before-write · exact pre-reload axis_* + media round trip · post-reload semantic/media durability · foreign storage preserved · injected failure verified rollback · active session blocked`);
 }finally{
   await context.close().catch(()=>{});await browser.close().catch(()=>{});
 }
