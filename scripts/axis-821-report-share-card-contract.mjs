@@ -34,11 +34,13 @@ assert.ok(runtime.includes("identity=includeIdentity?axis821ReportExportIdentity
 assert.equal(runtime.includes('axis821ReportTruth().build'),false,'Share Card bypassed canonical Training Report projection');
 assert.equal(runtime.includes('reportRange='),false,'Share Card introduced a second range owner');
 
-const pdfScope="await import('./prepare-821-report-pdf-export-scope.mjs');";
+const pdf="await import('./prepare-821-report-pdf-export.mjs');";
+const retiredPdfScope="await import('./prepare-821-report-pdf-export-scope.mjs');";
 const share="await import('./prepare-821-report-share-card.mjs');";
-assert.ok(lifecycle.includes(pdfScope),'Report PDF scope missing from lifecycle');
+assert.ok(lifecycle.includes(pdf),'Report PDF source owner missing from lifecycle');
+assert.equal(lifecycle.includes(retiredPdfScope),false,'retired Report PDF scope prepare regained canonical build reachability');
 assert.ok(lifecycle.includes(share),'Report Share Card prepare missing from lifecycle');
-assert.ok(lifecycle.indexOf(share)>lifecycle.indexOf(pdfScope),'Report Share Card must run after final PDF/Training Report scope');
+assert.ok(lifecycle.indexOf(share)>lifecycle.indexOf(pdf),'Report Share Card must run after source-owned PDF/Training Report runtime');
 
 for(const token of [
   'governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`',
@@ -64,4 +66,4 @@ if(fs.existsSync('app.js')&&fs.existsSync('index.html')&&fs.existsSync('styles.c
   assert.ok(css.includes('AXIS 8.21 Report Share Card'),'built Share Card styles missing');
 }
 
-console.log('[AXIS 8.21 Report Share Card contract] PASS · canonical Report projection · deliberate PNG canvas · optional export identity · no second range/store/network/factual owner');
+console.log('[AXIS 8.21 Report Share Card contract] PASS · canonical Report projection · source-owned PDF scope predecessor · deliberate PNG canvas · optional export identity · no second range/store/network/factual owner');
