@@ -79,6 +79,8 @@ function axis821BeginCurrentItem(){
 function axis821BeginDetour(id){
  axis821FlowState();const r=state.flowRun,step=axis821CurrentStepRaw(),eq=axis821FlowObject(id);if(!r||r.status!=='active'||!step||!eq)return false;axis821FlowRecordingIntent={mode:'detour',flowRef:r.flowRef,stepRef:step.id,objectRef:eq.id};const q=window.__AXIS_QUICK_RECORD__;if(!q?.openFor){axis821FlowRecordingIntent=null;toast?.('记录入口尚未就绪');return false}q.openFor(eq.id);requestAnimationFrame(()=>axis821FlowRecorderContextShow('detour',eq));return true
 }
+D.addEventListener('click',e=>{const sheet=$('#scanSheet');if(e.target.closest?.('[data-close="scanSheet"]')||e.target===sheet){axis821FlowRecordingIntent=null;axis821FlowRecorderContextClear()}},true);
+window.addEventListener('axis:active-finished',e=>axis821FlowOnActiveFinished(e?.detail?.id));
 `;
  s=s.replace(completeAnchor,helpers+completeAnchor);
  s=replaceFunction(s,'function axis821CompleteCurrentItem()',`function axis821CompleteCurrentItem(){return axis821BeginCurrentItem()}`,'direct completion compatibility now begins canonical current record');
@@ -106,13 +108,18 @@ function axis821BeginDetour(id){
  s=replaceFunction(s,'function axis821FlowSurfaceSkip()',`function axis821FlowSurfaceSkip(){const api=axis821FlowSurfaceApi(),run=api?.run?.();if(run?.currentEncounterId){toast('当前项目已经开始，请使用进行中控制完成此项');return false}if(!api?.skip?.())return false;axis821FlowSurfaceRenderHome();return true}`,'skip cannot abandon started Active item');
  s=replaceFunction(s,'function axis821FlowSurfaceAfterEncounter(id)',`function axis821FlowSurfaceAfterEncounter(id){axis821FlowSurfaceRenderHome();return !!id}`,'canonical commit lifecycle owns Flow progression');
 
- const marker="\n;try{window.__AXIS_821_FLOW_ACTIVE_CONVERGENCE__={version:'8.21',owner:'app.js-orchestration',currentRecordOwner:'existing-canonical-recorder',activeOwner:'existing-v82/v87',advanceOn:['one-shot-canonical-commit','matching-active-finish'],detour:'record-only-no-skip-no-active',flowEmbeddedInActiveHome:true,newStorage:false,newPicker:false,newRecorder:false,newActiveOwner:false,newEncounterWriter:false};window.__AXIS_821_ITEM_UNIT_FLOW__=Object.assign({},window.__AXIS_821_ITEM_UNIT_FLOW__||{},{directCurrentCompletion:false,canonicalCurrentRecord:true,activeLifecycleDelegated:true,detourRecordOnly:true})}catch{};\n";
+ const marker="\n;try{window.__AXIS_821_FLOW_ACTIVE_CONVERGENCE__={version:'8.21',owner:'app.js-orchestration',currentRecordOwner:'existing-canonical-recorder',activeOwner:'existing-v82/v87',advanceOn:['one-shot-canonical-commit','matching-active-finish'],detour:'record-only-no-skip-no-active',flowEmbeddedInActiveHome:true,bootScopedListeners:true,newStorage:false,newPicker:false,newRecorder:false,newActiveOwner:false,newEncounterWriter:false};window.__AXIS_821_ITEM_UNIT_FLOW__=Object.assign({},window.__AXIS_821_ITEM_UNIT_FLOW__||{},{directCurrentCompletion:false,canonicalCurrentRecord:true,activeLifecycleDelegated:true,detourRecordOnly:true})}catch{};\n";
  s+=marker;
- const cancel=`\nD.addEventListener('click',e=>{const sheet=$('#scanSheet');if(e.target.closest?.('[data-close="scanSheet"]')||e.target===sheet){axis821FlowRecordingIntent=null;axis821FlowRecorderContextClear()}},true);\nwindow.addEventListener('axis:active-finished',e=>axis821FlowOnActiveFinished(e?.detail?.id));\n`;
- s+=cancel;
 
+ const closeListener="D.addEventListener('click',e=>{const sheet=$('#scanSheet')";
+ const activeListener="window.addEventListener('axis:active-finished',e=>axis821FlowOnActiveFinished";
+ if((s.split(closeListener).length-1)!==1)fail('close listener must exist exactly once');
+ if((s.split(activeListener).length-1)!==1)fail('active-finished listener must exist exactly once');
+ const intentAt=s.indexOf('let axis821FlowRecordingIntent=null;'),clearAt=s.indexOf('function axis821FlowRecorderContextClear()'),finishAt=s.indexOf('function axis821FlowOnActiveFinished(id)'),listenerAt=s.indexOf(closeListener),activeAt=s.indexOf(activeListener),completeAt=s.indexOf(completeAnchor),markerAt=s.indexOf(';try{window.__AXIS_821_FLOW_ACTIVE_CONVERGENCE__=');
+ if(!(intentAt<clearAt&&clearAt<finishAt&&finishAt<listenerAt&&listenerAt<activeAt&&activeAt<completeAt&&completeAt<markerAt))fail('Flow listeners are not source-emitted in private Flow boot scope');
+ for(const privateName of ['axis821FlowRecorderContextClear','axis821FlowOnActiveFinished','axis821FlowRecordingIntent'])if(s.includes(`window.${privateName}=`)||s.includes(`window['${privateName}']`))fail(`private Flow helper exported: ${privateName}`);
  if((s.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append ownership must remain exactly once');
- for(const token of ['beginCurrent:axis821BeginCurrentItem','beginDetour:axis821BeginDetour','currentEncounterId','flowDetour={schema:',"directCurrentCompletion:false","detour:'record-only-no-skip-no-active'"])if(!s.includes(token))fail(`app invariant missing ${token}`);
+ for(const token of ['beginCurrent:axis821BeginCurrentItem','beginDetour:axis821BeginDetour','currentEncounterId','flowDetour={schema:',"directCurrentCompletion:false","detour:'record-only-no-skip-no-active'",'bootScopedListeners:true'])if(!s.includes(token))fail(`app invariant missing ${token}`);
  syntax(s,FILE);write(FILE,s);
 }
 
@@ -147,10 +154,10 @@ function axis821BeginDetour(id){
 }
 
 for(const [f,tokens] of [
- ['app.js',['__AXIS_821_FLOW_ACTIVE_CONVERGENCE__','axis821BeginCurrentItem','axis821BeginDetour','axis821FlowOnActiveFinished','axis821FlowRecordContext','record-only-no-skip-no-active','flowEmbeddedInActiveHome:true']],
+ ['app.js',['__AXIS_821_FLOW_ACTIVE_CONVERGENCE__','axis821BeginCurrentItem','axis821BeginDetour','axis821FlowOnActiveFinished','axis821FlowRecordContext','record-only-no-skip-no-active','flowEmbeddedInActiveHome:true','bootScopedListeners:true']],
  ['v82-runtime.js',["!e?.flowDetour?.recordOnly&&axis8201Ongoing(e)","axis:active-finished"]],
  ['v87-runtime.js',["axis:active-finished"]],
  ['styles.css',['AXIS 8.21 Flow Active Convergence','#activeHome>.axis821FlowHome[data-state="active"]','.axis821FlowRunStatus{min-height:48px','.axis821FlowRecordContext{margin:2px']]
 ]){const x=read(f);for(const t of tokens)if(!x.includes(t))fail(`${f} missing ${t}`)}
 
-console.log('[AXIS 8.21 Flow Active convergence] PASS · Flow embedded into existing Active surface · canonical current recorder · v82/v87 lifecycle finish advances · detour record-only/no-skip/no-Active · one app Encounter append');
+console.log('[AXIS 8.21 Flow Active convergence] PASS · Flow embedded into existing Active surface · source-owned private boot listeners · canonical current recorder · v82/v87 lifecycle finish advances · detour record-only/no-skip/no-Active · one app Encounter append');
