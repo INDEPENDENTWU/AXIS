@@ -64,7 +64,9 @@ for(const token of [
   'axis-native-foundation-0',
   'INDEPENDENTWU/AXIS-iOS',
   'axis.report-range.v1',
-  'AXIS 8.21 — Report PDF Scope Source Convergence',
+  'completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`',
+  'completed Report PDF scope source-convergence PR: **#133**',
+  'Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`',
   'prepare-821-report-pdf-export-scope.mjs',
   'provenance-only'
 ])assert.ok(current.includes(token),`CURRENT_WORK governance token missing ${token}`);
@@ -82,4 +84,4 @@ if(fs.existsSync('app.js')&&fs.existsSync('index.html')&&fs.existsSync('styles.c
   assert.equal(html.includes('id="shareReport"'),false,'legacy share Report owner returned');
 }
 
-console.log('[AXIS 8.21 Report PDF Export contract] PASS · range truth · source-owned Report lexical scope · corrective scope prepare unreachable · optional export identity · vector browser PDF · A4 pagination · no raster/store/network owner');
+console.log('[AXIS 8.21 Report PDF Export contract] PASS · range truth · source-owned Report lexical scope · corrective scope prepare unreachable · completed source-convergence continuity · optional export identity · vector browser PDF · A4 pagination · no raster/store/network owner');
