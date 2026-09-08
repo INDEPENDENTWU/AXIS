@@ -97,6 +97,7 @@ try{
     return{failed,before:before.webOriginSnapshot,after:after.webOriginSnapshot,foreign:localStorage.getItem('foreign_keep'),status:document.querySelector('#backupRestoreIntegrity')?.textContent};
   });
   assert.equal(rollback.failed,true);assert.deepEqual(rollback.after,rollback.before);assert.equal(rollback.foreign,'must-survive');assert.match(rollback.status,/已完整回滚/);
+  assert.deepEqual(errors.splice(0),['[AXIS restore] QuotaExceededError: injected'],'rollback must surface exactly the one intentionally injected write failure and no unrelated browser error');
 
   const activeBlock=await page.evaluate(async()=>{
     document.querySelector('#startBtn')?.click();
