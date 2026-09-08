@@ -5,22 +5,19 @@
 AXIS **8.21** remains the current public Web release.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact `main` baseline for this bounded follow-up: `69e1051ed3cd9f79bedd3407fa1637574c39542d`
+- exact `main` baseline for this bounded stage: `c434a4a78530669d5a47be9799d40f5049b57a2d`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - public release identity: **unchanged; 8.21**
 - architecture: **unchanged; `canonical-single-runtime`**
 - fixed public Vercel URL: `https://axis-five-puce.vercel.app`
 - deployment topology: one existing Git-connected AXIS Vercel Project on `main`, with EdgeOne mirroring the exact certified artifact
-- existing Active truth/action owner: `v87` over `axis_v8_meta`
-- existing Session/Encounter writer: canonical app owner
-- existing rest truth: the current Activity lifecycle; no new timer or rest store is permitted
 - cross-platform foundation: `axis-native-foundation-0`
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`
 
 ### Inherited bounded-stage continuity references
 
-These are historical compatibility identifiers required by already-sealed 8.21 contracts. They are **not** the current Production baseline or active delivery branch:
+These historical compatibility identifiers remain required by already-sealed 8.21 contracts. They are **not** the current Production baseline or active delivery branch:
 
 - exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
 - bounded delivery branch: `feat/821-report-pdf-export`
@@ -35,74 +32,77 @@ These are historical compatibility identifiers required by already-sealed 8.21 c
 - bounded Active Home visual-convergence branch: `feat/821-active-home-visual-convergence`
 - exact Active Home visual-convergence base `main` SHA: `9eaf90d0f94023218feb452b085da48c9f027276`
 
-PR #129 is already merged into the current baseline and made ordinary Active a flat, centered, Home-integrated execution stage. This follow-up starts from that certified structure instead of introducing another card, runtime or presentation owner.
-
 ## Active change
 
-**AXIS 8.21 — Active Home tactile/rest cleanup**
+**AXIS 8.21 — Portable Backup & Origin Migration**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded delivery branch: `fix/821-active-home-tactile-rest-cleanup`
-- PR: **#130**
-- exact base `main` SHA: `69e1051ed3cd9f79bedd3407fa1637574c39542d`
+- bounded delivery branch: `feat/821-portable-backup-origin-migration`
+- PR: **#132**
+- exact base `main` SHA: `c434a4a78530669d5a47be9799d40f5049b57a2d`
 - intended public release change: **none; remains 8.21**
-- product objective: remove the remaining presentation debt visible in real mobile use without changing Active semantics
-- executable refinement owner: `prepare-821-active-home-visual-convergence.mjs`, compiled after the certified Active Home compatibility pass
-- affected proof surfaces: `scripts/axis-821-active-home-visual-contract.mjs`, `scripts/axis-821-active-home-visual-smoke.mjs`, inherited `scripts/axis-821-active-home-stage-smoke.mjs`, `scripts/axis-8103-smoke.mjs`, and `scripts/axis-882-smoke.mjs`
-- stage contract: `docs/ACTIVE_HOME_VISUAL_CONVERGENCE.md`
+- product objective: create a complete local-only AXIS backup that can migrate durable Web data and media between AXIS origins without cloud sync, hidden upload or a second truth owner
+- schema: `axis.backup.v1`
+- transport boundary: exact raw `axis_*` localStorage + exact canonical media bytes/MIME
+- integrity: deterministic SHA-256 before mutation
+- restore: preview → explicit confirmation → staged mutation → exact verification → verified rollback on failure
+- safety: restore blocked while the canonical workout Session is active
+- network ownership: none
 
-### User-visible behavior
+### Architecture / debt discipline
 
-1. `按住结束` keeps the existing v87 long-hold action but gains a restrained AXIS tactile treatment: branded accent/progress, compact depth, diamond cue, pressed state and focus state.
-2. Paused rest duration is visible in exactly one place. The fact rail no longer paints a second rest clock; the inherited passive `#v87Rest` presenter remains the single visible rest-clock / Rest Speak slot.
-3. Plain paused rest and Rest Speak use the same reserved paused-slot height so enabling Rest Speak cannot move the Active stage.
-4. The flat Home rail, strict centered clock, balanced primary controls and separate `调整` row from PR #129 remain unchanged.
+This stage is not allowed to become another patch-on-patch chain.
 
-### Ownership and debt audit
+The first implementation exposed a brittle full-string replacement of the historical `backupData()` function. CI correctly rejected it during the deterministic release build. The implementation was then refactored to **structural owner-boundary convergence**:
 
-This follow-up intentionally adds **no** LocalStorage namespace, IndexedDB database, API, network state, Session writer, Encounter writer, recorder, Active owner, Flow owner, timer owner or rest owner.
+1. the existing backup function owner is located and replaced by declaration boundary, not by an exact historical body snapshot;
+2. the existing canonical media bridge is extended at its single owner statement, without creating another IndexedDB owner;
+3. backup/restore bindings are added at the existing backup binding boundary rather than by rewriting an adjacent block;
+4. Settings UI replacement and migration note insertion are scoped to existing element owner boundaries, without adjacency fallback chains;
+5. the transform fails closed if any expected owner becomes duplicated or unreachable.
 
-The duplicate rest display was presentation debt, not duplicate truth. The fix therefore removes the duplicate projection instead of creating synchronization logic. The long-hold visual refinement delegates to the already-existing v87 gesture/action owner. Flow-integrated Active remains isolated from the ordinary `#v87Now` stage.
+No new LocalStorage namespace, IndexedDB database, Session writer, Encounter writer, recorder, Active owner, Flow owner, timer owner or network synchronization owner is introduced.
 
-Two inherited browser proofs still encoded superseded floating-card geometry: the 8.10.3 proof required `调整` to remain corner-anchored, and the 8.8.2 proof required the entire Active rectangle to keep an absolute Y position across set-state changes. Their behavioral contracts remain valuable, but the geometry assumptions were intentionally replaced by PR #129. This follow-up therefore keeps the same-node, action, sound, reachability and no-overlap assertions while making the inherited proofs aware of the certified integrated Home stage. Historical fallback geometry remains asserted when that integrated stage is absent.
+This does **not** claim that the whole historical repository is already debt-free. The repository still contains inherited prepare/postbuild layers accumulated across earlier releases. Current engineering policy is therefore:
 
-The current compatibility pipeline is still intentionally layered: stage → compatibility → final visual convergence. This follow-up does not broaden scope by deleting historical prepare/postbuild transforms before reachability proof. That larger source-convergence work has its own next stage and exit criteria.
+- add no new duplicate factual/runtime owners;
+- do not stack corrective runtime wrappers on top of one another;
+- make each bounded change converge an existing owner once and fail closed on owner ambiguity;
+- repair failures at the actual owner rather than weakening tests;
+- retire inherited transforms only after reachability/supersession proof and dual-engine regression coverage.
 
-### Migration / rollback boundary
+### Completeness contract
 
-- no data migration;
-- no historical Session/Encounter rewrite;
-- no storage-key change;
-- no deployment-topology change;
-- rollback is limited to the bounded final visual-convergence source and its tests/docs;
-- existing v87 Active semantics remain the rollback-safe authority throughout.
+`axis.backup.v1` is lossless for durable Web stores AXIS owns in this release:
+
+- every `localStorage` key beginning with `axis_`, preserved as its exact raw string;
+- every entry in the canonical AXIS media store, preserved as decoded media bytes plus MIME type.
+
+Excluded by design: service-worker/cache state, transient in-memory UI state, temporary camera streams, Safari browser UI state, unrelated-origin storage and unrelated cookies.
 
 ## Validation for this work
 
 Merge is blocked until the exact final PR head proves all of the following:
 
-1. deterministic `node build-release.mjs` succeeds with AXIS 8.21 and canonical single-runtime topology unchanged;
-2. the static Active Home visual contract proves no storage/write/action owner was introduced;
-3. real Chromium and iPhone-like WebKit prove the tactile hold geometry and existing v87 hold semantics;
-4. real paused state exposes exactly one visible `休息 mm:ss` clock;
-5. Rest Speak on/off is geometry-neutral in the integrated Active stage;
-6. inherited Active Home semantic tests still prove pause/resume, set completion, pause-owned rest and hold-to-finish;
-7. Deep Compatibility, Runtime, Flow/Object, Report, Repository Contract and Work Continuity gates remain green on the same exact head;
-8. after merge, the exact merged `main` SHA must reach the existing AXIS Vercel Production project, pass the fixed-public-alias real-browser gate, and EdgeOne must mirror the same exact artifact with Chromium and iPhone-like WebKit verification.
+1. deterministic `node build-release.mjs` succeeds with canonical single-runtime topology unchanged;
+2. static contract proves `axis.backup.v1`, exact AXIS namespace capture, SHA-256 verification, active-session block, verified rollback and no transport network owner;
+3. the built artifact has one direct canonical media DB owner only;
+4. Chromium proves exact export → destructive mutation → restore round trip;
+5. iPhone-like WebKit proves the same round trip;
+6. corrupted backup integrity is rejected before any mutation;
+7. injected restore failure returns storage/media to the exact pre-restore image;
+8. non-AXIS localStorage survives restore untouched;
+9. inherited Runtime, Active, Flow/Object, Report, Repository, Work Continuity and cross-platform gates remain green on the same exact head.
 
-A failure is fixed at its actual owner. Tests, compatibility gates and deployment checks must not be weakened merely to make this PR green.
+After merge, the exact merged `main` SHA must reach the existing AXIS Vercel Production project and EdgeOne mirror before the release is called complete. `axis.juele.fun` must receive the exact approved main artifact, never a separate China-only fork.
 
 ## Next planned stage
 
-Only after PR #130 is merged and the exact merged `main` artifact is Production-certified on both Vercel and EdgeOne:
+After PR #132 is certified and merged, continue the governed **Source Convergence / architecture-debt stage** rather than expanding the prepare chain.
 
-1. begin the already-governed **Source Convergence / architecture-debt stage** rather than adding another UI wrapper;
-2. audit the deterministic release pipeline by behavioral owner, starting with the Active/Home family touched by 8.21;
-3. identify compatibility transforms that are now presentation-only or fully superseded, then retire them incrementally only with reachability and dual-engine regression proof;
-4. preserve `canonical-single-runtime`, all current storage/history compatibility, v61 classic-set ownership, v82/v87 Active ownership, canonical Session/Encounter ownership and current public behavior;
-5. reduce source/build indirection without changing the user-visible 8.21 contract unless a separately scoped product change is explicitly approved.
+The first bounded audit remains the Active/Home family because it has known layered stage → compatibility → visual-convergence transforms. The backup feature also becomes a candidate for source convergence: once the canonical source owner boundary is stable and regression-proven, transport logic should be moved closer to that source owner and the temporary build integration removed instead of preserved indefinitely.
 
-The target is not a rewrite. The target is fewer live mutation layers, clearer final owners, and a release pipeline whose source structure matches the already-proven runtime architecture.
+The target is not a rewrite. The target is fewer live mutation layers, explicit owners, deterministic builds, and source structure that increasingly matches the already-proven runtime architecture.
 
 Chat history is not authoritative project memory. Repository governance, exact `main`, deterministic build output and Production evidence remain authoritative.

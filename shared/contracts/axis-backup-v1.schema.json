@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.backup.v1",
+  "title": "AXIS Portable Backup v1",
+  "type": "object",
+  "required": ["schema", "exportedAt", "source", "webOriginSnapshot", "manifest", "integrity"],
+  "properties": {
+    "schema": {"const": "axis.backup.v1"},
+    "exportedAt": {"type": "string", "format": "date-time"},
+    "source": {
+      "type": "object",
+      "required": ["platform", "appVersion", "domain", "data", "exchange", "origin"],
+      "properties": {
+        "platform": {"const": "web"},
+        "appVersion": {"type": "string", "minLength": 1},
+        "domain": {"const": "axis.domain.v1"},
+        "data": {"const": "axis.data.v1"},
+        "exchange": {"const": "axis.exchange.v1"},
+        "gitSha": {"type": "string"},
+        "origin": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "webOriginSnapshot": {
+      "type": "object",
+      "required": ["storage", "media"],
+      "properties": {
+        "storage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "value"],
+            "properties": {
+              "key": {"type": "string", "pattern": "^axis_"},
+              "value": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "type", "size", "encoding", "data"],
+            "properties": {
+              "key": {"type": "string", "minLength": 1},
+              "type": {"type": "string", "minLength": 1},
+              "size": {"type": "integer", "minimum": 0},
+              "encoding": {"const": "base64"},
+              "data": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["storageCount", "storageBytes", "mediaCount", "mediaBytes", "sessions", "events"],
+      "properties": {
+        "storageCount": {"type": "integer", "minimum": 0},
+        "storageBytes": {"type": "integer", "minimum": 0},
+        "mediaCount": {"type": "integer", "minimum": 0},
+        "mediaBytes": {"type": "integer", "minimum": 0},
+        "sessions": {"type": "integer", "minimum": 0},
+        "events": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "integrity": {
+      "type": "object",
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": {"const": "SHA-256"},
+        "value": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
