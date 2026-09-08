@@ -51,10 +51,13 @@ console.log('[AXIS 8.19 post-commit lifecycle] PASS · v61 attach authority seal
    8.21 public identity advances only after all 8.21 product convergence passes.
    Active Home final visual presentation is source-owned by the stage prepare;
    the historical late visual-convergence prepare remains repository provenance
-   but is intentionally unreachable from the canonical build chain. Report PDF
-   runtime scope is source-owned directly by its feature prepare; the historical
-   corrective scope prepare is provenance-only. Portable backup remains a
-   separate transport-only transform after report projections. */
+   but is intentionally unreachable from the canonical build chain. Flow Active
+   lifecycle listeners are now emitted directly by the Flow Active convergence
+   owner in their private app scope; its historical corrective boot-scope prepare
+   is provenance-only. Report PDF runtime scope is source-owned directly by its
+   feature prepare; the historical corrective scope prepare is provenance-only.
+   Portable backup remains a separate transport-only transform after report
+   projections. */
 await import('./prepare-819-release.mjs');
 await import('./prepare-820-executable-practice-objects.mjs');
 await import('./prepare-8201-object-reliability.mjs');
@@ -71,7 +74,6 @@ await import('./prepare-821-product-convergence-compat.mjs');
 await import('./prepare-821-product-convergence.mjs');
 await import('./prepare-821-product-convergence-proof.mjs');
 await import('./prepare-821-flow-active-convergence.mjs');
-await import('./prepare-821-flow-active-boot-scope.mjs');
 await import('./prepare-821-flow-session-coordination.mjs');
 await import('./prepare-821-flow-session-coordination-scope.mjs');
 await import('./prepare-821-executable-object-system.mjs');
