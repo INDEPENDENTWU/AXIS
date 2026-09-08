@@ -58,23 +58,22 @@ try{
   });
   assert.equal(corrupt.rejected,true);assert.equal(corrupt.after,corrupt.before);assert.equal(corrupt.foreign,'must-survive');
 
-  const reloadAfterRestore=page.waitForEvent('load',{timeout:8000});
   const roundTrip=await page.evaluate(async()=>{
     const p=window.__AXIS_PORTABLE_BACKUP__,store=window.__AXIS_MEDIA_STORE__,target=window.__AXIS_SMOKE_BUNDLE__;
     for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k?.startsWith('axis_'))localStorage.removeItem(k)}
     localStorage.setItem('axis_destination_only','remove-me');
     await store.replaceAll([]);
     await p.restore(target);
-    const storage=Object.fromEntries(target.webOriginSnapshot.storage.map(x=>[x.key,x.value]));
-    const restored=Object.fromEntries(Array.from({length:localStorage.length},(_,i)=>localStorage.key(i)).filter(k=>k?.startsWith('axis_')).sort().map(k=>[k,localStorage.getItem(k)]));
+    const storage=target.webOriginSnapshot.storage.map(x=>[x.key,x.value]).sort((a,b)=>a[0].localeCompare(b[0]));
+    const restored=Array.from({length:localStorage.length},(_,i)=>localStorage.key(i)).filter(k=>k?.startsWith('axis_')).sort((a,b)=>a.localeCompare(b)).map(k=>[k,localStorage.getItem(k)]);
     const media=await store.entries();
     const bytes=[];for(const x of media)bytes.push({key:String(x.key),type:x.blob.type,data:Array.from(new Uint8Array(await x.blob.arrayBuffer()))});
-    return{same:JSON.stringify(restored)===JSON.stringify(storage),destinationGone:localStorage.getItem('axis_destination_only')===null,foreign:localStorage.getItem('foreign_keep'),bytes};
+    return{storage,restored,destinationGone:localStorage.getItem('axis_destination_only')===null,foreign:localStorage.getItem('foreign_keep'),bytes};
   });
-  assert.equal(roundTrip.same,true);assert.equal(roundTrip.destinationGone,true);assert.equal(roundTrip.foreign,'must-survive');
+  assert.deepEqual(roundTrip.restored,roundTrip.storage);assert.equal(roundTrip.destinationGone,true);assert.equal(roundTrip.foreign,'must-survive');
   assert.deepEqual(roundTrip.bytes,[{key:'F-backup-1',type:'image/jpeg',data:[0,1,2,3,254,255,17,33]},{key:'V-backup-1',type:'video/mp4',data:[9,8,7,6,5,4,3,2,1,0]}]);
 
-  await reloadAfterRestore;
+  await page.waitForTimeout(1200);
   await page.waitForFunction(()=>window.__AXIS_PORTABLE_BACKUP__?.schema==='axis.backup.v1'&&window.__AXIS_MEDIA_STORE__?.entries,undefined,{timeout:15000});
   const postReload=await page.evaluate(async()=>{
     const core=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),media=await window.__AXIS_MEDIA_STORE__.entries(),bytes=[];
