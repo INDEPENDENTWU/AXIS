@@ -59,7 +59,7 @@ The first implementation exposed a brittle full-string replacement of the histor
 1. the existing backup function owner is located and replaced by declaration boundary, not by an exact historical body snapshot;
 2. the existing canonical media bridge is extended at its single owner statement, without creating another IndexedDB owner;
 3. backup/restore bindings are added at the existing backup binding boundary rather than by rewriting an adjacent block;
-4. Settings UI replacement is scoped to the existing `backupBtn` element boundary;
+4. Settings UI replacement and migration note insertion are scoped to existing element owner boundaries, without adjacency fallback chains;
 5. the transform fails closed if any expected owner becomes duplicated or unreachable.
 
 No new LocalStorage namespace, IndexedDB database, Session writer, Encounter writer, recorder, Active owner, Flow owner, timer owner or network synchronization owner is introduced.
@@ -81,7 +81,7 @@ This does **not** claim that the whole historical repository is already debt-fre
 
 Excluded by design: service-worker/cache state, transient in-memory UI state, temporary camera streams, Safari browser UI state, unrelated-origin storage and unrelated cookies.
 
-### Validation for this work
+## Validation for this work
 
 Merge is blocked until the exact final PR head proves all of the following:
 
