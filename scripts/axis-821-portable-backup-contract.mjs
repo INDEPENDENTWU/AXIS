@@ -60,23 +60,20 @@ assert.ok(docs.includes('lossless for the durable Web stores AXIS owns'),'exact 
 assert.ok(docs.includes('staged mutation plus verified rollback'),'rollback semantics missing');
 
 if(process.env.AXIS_BUILT==='1'){
-  const app=read('app.js'),html=read('index.html');
-  assert.ok(app.includes("window.__AXIS_PORTABLE_BACKUP__={schema:AXIS_BACKUP_SCHEMA"),'built backup runtime missing');
-  assert.ok(app.includes('entries:axisBackupMediaEntries,replaceAll:axisBackupMediaReplaceAll'),'built canonical media transport bridge missing');
-  assert.equal((app.match(/async function backupData\s*\(/g)||[]).length,1,'built artifact must have exactly one backupData owner');
-  assert.ok(!app.includes('AXIS-备份-'),'legacy partial JSON backup implementation must not survive the built artifact');
+  const compileInput=read('app.js'),runtime=read('axis-core.js'),html=read('index.html');
+  assert.ok(compileInput.includes("window.__AXIS_PORTABLE_BACKUP__={schema:AXIS_BACKUP_SCHEMA"),'prepared compile input backup runtime missing');
+  assert.ok(runtime.includes("window.__AXIS_PORTABLE_BACKUP__={schema:AXIS_BACKUP_SCHEMA"),'served canonical runtime backup API missing');
+  assert.ok(runtime.includes('entries:axisBackupMediaEntries,replaceAll:axisBackupMediaReplaceAll'),'served canonical media transport bridge missing');
+  assert.equal((runtime.match(/async function backupData\s*\(/g)||[]).length,1,'served runtime must have exactly one backupData owner');
+  assert.equal((runtime.match(/indexedDB\.open\(DB,1\)/g)||[]).length,1,'served runtime must have exactly one direct canonical media DB owner');
+  assert.ok(!runtime.includes('AXIS-备份-'),'legacy partial JSON backup implementation must not survive the served runtime');
+  assert.equal((html.match(/axis-core\.js(?:\?[^"']*)?/g)||[]).length,1,'final document must request one canonical runtime');
+  assert.ok(!/(?:src|href)=["'][^"']*app\.js(?:\?[^"']*)?["']/.test(html),'compile input app.js must never be requested by final document');
   assert.equal((html.match(/id="backupBtn"/g)||[]).length,1,'built settings must expose one backup action');
   assert.equal((html.match(/id="restoreBackupBtn"/g)||[]).length,1,'built settings must expose one restore action');
   assert.equal((html.match(/class="axisBackupNote"/g)||[]).length,1,'built settings must expose one backup migration note');
   assert.ok(html.includes('id="backupRestoreSheet"'),'restore preview sheet missing');
   assert.ok(html.includes('id="axis821PortableBackupStyle"'),'backup UI style missing');
-  const owners=[];
-  for(const ent of fs.readdirSync('.',{withFileTypes:true})){
-    if(!ent.isFile()||!ent.name.endsWith('.js'))continue;
-    const src=read(ent.name),hits=(src.match(/indexedDB\.open\(DB,1\)/g)||[]).length;
-    if(hits)owners.push({file:ent.name,hits});
-  }
-  assert.deepEqual(owners,[{file:'app.js',hits:1}],`direct media DB owner drift: ${JSON.stringify(owners)}`);
 }
 
-console.log(`[AXIS 8.21 portable backup contract] PASS · structural owner convergence + no adjacency fallback + schema + local-only transport + SHA-256 + exact AXIS namespace/media snapshot + active block + verified rollback${process.env.AXIS_BUILT==='1'?' + built single media/backup owner':''}`);
+console.log(`[AXIS 8.21 portable backup contract] PASS · structural owner convergence + no adjacency fallback + schema + local-only transport + SHA-256 + exact AXIS namespace/media snapshot + active block + verified rollback${process.env.AXIS_BUILT==='1'?' + served canonical single-runtime/media/backup owner':''}`);
