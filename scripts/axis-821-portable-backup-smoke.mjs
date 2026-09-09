@@ -86,7 +86,7 @@ try{
 
   const rollback=await page.evaluate(async()=>{
     const p=window.__AXIS_PORTABLE_BACKUP__,store=window.__AXIS_MEDIA_STORE__,target=window.__AXIS_SMOKE_BUNDLE__;
-    localStorage.setItem('axis_v8_meta',JSON.stringify({rollback:'keep-this-exactly'}));
+    localStorage.setItem('axis_test_rollback_sentinel','keep-this-exactly');
     await store.replaceAll([{key:'F-rollback',blob:new Blob([new Uint8Array([77,66,55,44])],{type:'image/png'})}]);
     const before=await p.create();
     const originalSet=Storage.prototype.setItem;let failed=false;
@@ -94,9 +94,9 @@ try{
     await p.restore(target);
     Storage.prototype.setItem=originalSet;
     const after=await p.create();
-    return{failed,before:before.webOriginSnapshot,after:after.webOriginSnapshot,foreign:localStorage.getItem('foreign_keep'),status:document.querySelector('#backupRestoreIntegrity')?.textContent};
+    return{failed,before:before.webOriginSnapshot,after:after.webOriginSnapshot,sentinel:localStorage.getItem('axis_test_rollback_sentinel'),foreign:localStorage.getItem('foreign_keep'),status:document.querySelector('#backupRestoreIntegrity')?.textContent};
   });
-  assert.equal(rollback.failed,true);assert.deepEqual(rollback.after,rollback.before);assert.equal(rollback.foreign,'must-survive');assert.match(rollback.status,/已完整回滚/);
+  assert.equal(rollback.failed,true);assert.deepEqual(rollback.after,rollback.before);assert.equal(rollback.sentinel,'keep-this-exactly');assert.equal(rollback.foreign,'must-survive');assert.match(rollback.status,/已完整回滚/);
   assert.deepEqual(errors.splice(0),['[AXIS restore] QuotaExceededError: injected'],'rollback must surface exactly the one intentionally injected write failure and no unrelated browser error');
 
   const activeBlock=await page.evaluate(async()=>{
