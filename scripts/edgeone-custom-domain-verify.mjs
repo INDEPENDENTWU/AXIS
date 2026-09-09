@@ -17,7 +17,10 @@ try{
   customBase.pathname='/';customBase.search='';customBase.hash='';
   result.baseUrl=customBase.origin;
   let last='custom domain release not visible yet';
-  const maxAttempts=30;
+  // The custom-domain gate runs in parallel with the canonical EdgeOne mirror on main.
+  // Give the provider up to five minutes to publish the exact already-certified artifact;
+  // product/browser assertions remain unchanged and run only after exact parity exists.
+  const maxAttempts=75;
   for(let attempt=1;attempt<=maxAttempts;attempt++){
     result.convergenceAttempts=attempt;
     try{
