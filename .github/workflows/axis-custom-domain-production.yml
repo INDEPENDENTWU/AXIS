@@ -1,0 +1,86 @@
+name: AXIS Custom Domain Production Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: axis-custom-domain-production-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Build exact canonical release
+        run: node build-release.mjs
+      - name: Verify custom-domain gate structure
+        run: |
+          node --check scripts/edgeone-custom-domain-verify.mjs
+          node - <<'NODE'
+          const fs=require('fs');
+          const wf=fs.readFileSync('.github/workflows/axis-custom-domain-production.yml','utf8');
+          for(const token of [
+            'https://axis.juele.fun',
+            'node scripts/edgeone-custom-domain-verify.mjs',
+            'AXIS_URL: https://axis.juele.fun',
+            'AXIS_ENGINE: chromium',
+            'AXIS_ENGINE: webkit'
+          ])if(!wf.includes(token))throw new Error(`custom-domain Production gate missing ${token}`);
+          if((wf.match(/node scripts\/axis-821-portable-backup-smoke\.mjs/g)||[]).length!==2)throw new Error('axis.juele.fun must prove portable backup in both Chromium and iPhone-like WebKit');
+          const verifier=fs.readFileSync('scripts/edgeone-custom-domain-verify.mjs','utf8');
+          for(const token of ['sourceCommit','runtimeHash','hostnameStable','EDGEONE_CUSTOM_DOMAIN_URL'])if(!verifier.includes(token))throw new Error(`custom-domain verifier missing ${token}`);
+          NODE
+
+  live-production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      EDGEONE_CUSTOM_DOMAIN_URL: https://axis.juele.fun
+      VERCEL_GOLDEN_URL: https://axis-five-puce.vercel.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Build exact main artifact
+        run: node build-release.mjs
+      - name: Verify axis.juele.fun exact Production parity
+        run: node scripts/edgeone-custom-domain-verify.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Chromium portable backup on axis.juele.fun
+        env:
+          AXIS_URL: https://axis.juele.fun
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-821-portable-backup-smoke.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: iPhone WebKit portable backup on axis.juele.fun
+        env:
+          AXIS_URL: https://axis.juele.fun
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-821-portable-backup-smoke.mjs
+      - name: Upload custom-domain verification record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axis-custom-domain-production-verification
+          path: /tmp/edgeone-custom-domain-result.json
+          if-no-files-found: ignore
+          retention-days: 3
