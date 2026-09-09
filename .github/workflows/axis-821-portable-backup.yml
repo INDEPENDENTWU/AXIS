@@ -18,16 +18,20 @@ jobs:
         with:
           node-version-file: .nvmrc
       - name: Verify source backup contract
-        run: node scripts/axis-821-portable-backup-contract.mjs
+        run: |
+          node scripts/axis-821-portable-backup-contract.mjs
+          node scripts/axis-821-portable-backup-v2-contract.mjs
       - name: Build exact candidate
         run: node build-release.mjs
       - name: Verify built ownership contract
         env: { AXIS_BUILT: '1' }
-        run: node scripts/axis-821-portable-backup-contract.mjs
+        run: |
+          node scripts/axis-821-portable-backup-contract.mjs
+          node scripts/axis-821-portable-backup-v2-contract.mjs
 
   chromium:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,13 +52,16 @@ jobs:
       - name: Prove portable backup round trip
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-821-portable-backup-smoke.mjs
+      - name: Prove large-media v2 export and restore
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-821-portable-backup-v2-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-portable-backup-chromium.log || true
 
   webkit:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -73,6 +80,9 @@ jobs:
       - name: Prove portable backup round trip
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-821-portable-backup-smoke.mjs
+      - name: Prove large-media v2 export and restore
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-821-portable-backup-v2-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-portable-backup-webkit.log || true
