@@ -17,6 +17,8 @@ AXIS **8.21** remains the current public Web release.
 - existing Session/Encounter writer: canonical app owner
 - existing Active owner: v82/v87 lifecycle; no new Active owner is permitted
 - existing learning accessory store: `axis_v89_speak`; learning remains isolated from training truth
+- cross-platform foundation: `axis-native-foundation-0`
+- native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`; user-facing backup transport may emit `axis.backup.v2` while retaining v1 import/API compatibility
 
 PR #138 is merged at `f1a5dbfb593429859a83fee783610f29396762e9`. That exact merged artifact completed the Learning Settings Entry source convergence, reduced the deterministic top-level release graph from 88 to 87 steps, and was certified through canonical Vercel Production, exact-prebuilt EdgeOne Production, `axis.juele.fun`, Chromium and iPhone-like WebKit without changing public release identity or user-visible behavior.
@@ -38,6 +40,7 @@ The inherited release gates, browser evidence, portable-backup transport, source
 **AXIS 8.21 — Explicit Version Decision Contract**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
+- governed active branch: `main`
 - bounded delivery branch: `arch/821-version-decision-contract`
 - exact certified base `main` SHA: `f1a5dbfb593429859a83fee783610f29396762e9`
 - intended public release change: **none; explicitly confirmed as 8.21**
