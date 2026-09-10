@@ -43,6 +43,12 @@ try{
   assert.deepEqual(coldStart.bulk,{getAll:0,getAllKeys:0},'idle cold start must not bulk-read the media store');
   assert.equal(coldStart.ready,true);assert.ok(coldStart.brief,'storage brief must still render from durable record metadata');
 
+  /* The export proof uses the real visible route. A hidden backup button is not a
+     valid user path: open Settings, enter Data & Storage, then invoke backup. */
+  await page.locator('#settingsBtn').click();
+  await page.locator('#settingsSheet').waitFor({state:'visible',timeout:10000});
+  await page.locator('#storageBtn').click();
+  await page.locator('#storageSheet').waitFor({state:'visible',timeout:15000});
   await page.locator('#backupBtn').click();
   await page.waitForFunction(()=>document.querySelector('#backupBtn')?.textContent.trim()==='保存完整备份'&&window.__AXIS_BACKUP_EXPORT_READY__?.file,undefined,{timeout:45000});
   const exportMeta=await page.evaluate(async()=>{
@@ -79,5 +85,5 @@ try{
   ]);
 
   assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
-  console.log(`[AXIS 8.21 portable backup v2 ${ENGINE}] PASS · 18 MiB cold-start performs zero media getAll/getAllKeys · raw-media export stays in-app until explicit save · no base64 media envelope · per-media SHA-256 reject-before-write · exact v2 restore + foreign storage preservation`);
+  console.log(`[AXIS 8.21 portable backup v2 ${ENGINE}] PASS · 18 MiB cold-start performs zero media getAll/getAllKeys · visible Settings → Data & Storage export path · raw-media export stays in-app until explicit save · no base64 media envelope · per-media SHA-256 reject-before-write · exact v2 restore + foreign storage preservation`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
