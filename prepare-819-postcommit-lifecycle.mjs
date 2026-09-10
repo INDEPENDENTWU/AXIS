@@ -56,8 +56,9 @@ console.log('[AXIS 8.19 post-commit lifecycle] PASS · v61 attach authority seal
    owner in their private app scope; its historical corrective boot-scope prepare
    is provenance-only. Report PDF runtime scope is source-owned directly by its
    feature prepare; the historical corrective scope prepare is provenance-only.
-   Portable backup remains a separate transport-only transform after report
-   projections. */
+   Portable backup remains one transport-only source owner after report
+   projections; v1 compatibility and the preferred v2 user transport are emitted
+   together by that owner. */
 await import('./prepare-819-release.mjs');
 await import('./prepare-820-executable-practice-objects.mjs');
 await import('./prepare-8201-object-reliability.mjs');

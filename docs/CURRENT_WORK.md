@@ -104,6 +104,21 @@ The domain itself stores no canonical AXIS data and owns no training behavior. B
 
 No real user data is moved by CI. After the alias is Production-certified, the operator will export from the existing Vercel-installed AXIS and restore into the Safari-installed `axis.juele.fun` AXIS; the migration is considered complete only after the source and restored record/media counts reconcile.
 
+### Production incident follow-up — iOS large-media export
+
+A real long-lived Vercel-origin Safari dataset exposed a Production-scale failure that the original tiny-media browser fixture did not represent: tapping `建立完整 AXIS 备份` caused the Safari WebContent process to terminate with “A problem repeatedly occurred”. The failure occurred on the read/export path; the current export path contains no storage clear, media replace, or restore mutation.
+
+The bounded follow-up branch is `fix/821-portable-backup-webkit-rollback`, PR **#136**, based on exact main `d3e4cb174a5230cfd216d7881af2f0999640b6c4`. It now carries two related transport-safety corrections without changing AXIS workout/history truth:
+
+1. keep the WebKit rollback proof on a stable AXIS-namespace sentinel rather than malformed live `axis_v8_meta`;
+2. introduce user-facing `axis.backup.v2` binary transport for large-media Safari export while retaining `axis.backup.v1` import/API compatibility.
+
+The v2 user export does not base64-expand all media or stringify all media into one giant JSON object. It hashes media one item at a time, writes a small SHA-256-sealed JSON header followed by raw Blob parts, and requires a fresh second user gesture (`保存完整备份`) before invoking the native share/download path. Media replacement during restore is sequential rather than pre-encoding every incoming Blob into one in-memory array. The canonical app-owned media store remains the persistence owner; no new database, storage namespace, cloud path, Session/Encounter writer, or product truth owner is introduced.
+
+The v2 file remains local-only and uses the same `.axisbackup` extension. Its header records exact raw `axis_*` storage plus media descriptors `{key,type,size,offset,sha256}`; media bytes follow raw, with per-item SHA-256 verification before restore mutation. `axis.backup.v1` remains accepted for compatibility.
+
+Real operator migration remains blocked until the exact #136 head is green, merged, and the resulting exact `main` is certified on canonical Vercel, the fixed EdgeOne mirror, and `axis.juele.fun`. The old Vercel origin must not be deleted or have Safari website data cleared before the migrated copy is reconciled.
+
 ## Validation for this work
 
 Merge is blocked until the exact final PR head proves all of the following without weakening existing assertions:
@@ -113,15 +128,17 @@ Merge is blocked until the exact final PR head proves all of the following witho
 3. all inherited Runtime, Flow, Active Home, Session/Encounter, Object, Report, Portable Backup, Repository, Work Continuity, Deep Compatibility and Current Release gates remain green on the exact same PR head;
 4. no new deployment project, runtime owner, storage key, IndexedDB store, recorder, Session/Encounter writer or network truth owner appears;
 5. after merge, the exact merged `main` SHA must first become the Vercel golden and exact-prebuilt EdgeOne Production mirror, then `axis.juele.fun` must expose that exact same manifest/runtime identity;
-6. the real custom hostname must pass `axis-821-portable-backup-smoke.mjs` in Chromium and iPhone-like WebKit.
+6. the real custom hostname must pass `axis-821-portable-backup-smoke.mjs` in Chromium and iPhone-like WebKit;
+7. the user-facing `axis.backup.v2` path must pass large-media raw-Blob export, per-media corruption rejection, exact restore, and foreign-storage preservation in Chromium and iPhone-like WebKit;
+8. Production `axis.juele.fun` must also run the v2 large-media smoke in both engines before real migration is approved.
 
 A failure is fixed at its actual owner. Product assertions and migration semantics must not be weakened merely to make the custom-domain gate green. Provider propagation is allowed a bounded convergence window because the alias workflow runs in parallel with the canonical EdgeOne mirror; this does not alter any browser/product assertion.
 
 ## Next planned stage
 
-Only after this bounded custom-domain topology slice is merged and the exact merged `main` artifact is certified on Vercel, the fixed EdgeOne project URL and `axis.juele.fun`:
+Only after this bounded custom-domain topology slice and the portable-backup iOS-memory follow-up are merged and the exact merged `main` artifact is certified on Vercel, the fixed EdgeOne project URL and `axis.juele.fun`:
 
-1. perform the operator’s real Vercel-origin → `axis.juele.fun` migration using `axis.backup.v1`;
+1. perform the operator’s real Vercel-origin → `axis.juele.fun` migration using the current `.axisbackup` user export (`axis.backup.v2`, with `axis.backup.v1` import compatibility);
 2. verify source/restore counts, media bytes and integrity before treating the custom-domain installation as the daily-use copy;
 3. keep the old Vercel-origin data intact until the migrated copy is explicitly reconciled;
 4. separately audit the old direct-Git EdgeOne `axisfitness` project before any retirement action; do not delete it merely because the custom alias is working;

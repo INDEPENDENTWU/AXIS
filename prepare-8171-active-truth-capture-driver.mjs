@@ -20,8 +20,21 @@ function replaceRegexCall(label,replacement){
  const end=src.indexOf(');',at);if(end<0)fail(`${label} call end missing`);
  src=src.slice(0,start)+replacement+src.slice(end+2);
 }
+function replaceOnceCall(label,replacement){
+ const marker=`'${label}'`;
+ const at=src.indexOf(marker);if(at<0)fail(`${label} marker missing`);
+ const start=src.lastIndexOf(' s=once(s,',at);if(start<0)fail(`${label} call start missing`);
+ const end=src.indexOf(');',at);if(end<0)fail(`${label} call end missing`);
+ src=src.slice(0,start)+replacement+src.slice(end+2);
+}
 replaceRegexCall('clean camera source'," if(!s.includes('async function frameFromVideo(')||!s.includes('state.frames.push(await frameFromVideo())'))fail('final Capture Field camera frame source missing');");
 replaceRegexCall('clean imported source'," if(!s.includes('async function frameFromFile(')||!s.includes('state.frames.push(await frameFromFile(files[i]))'))fail('final Capture Field imported frame source missing');");
+
+/* Storage accounting is now owned by the canonical media-store source. It is
+ * resource-bounded on boot, cursor-based only on the explicit Storage surface,
+ * and already understands the 8.17.1 S/SV sidecars. Do not rewrite the historical
+ * getAll/getAllKeys implementation back into existence merely to classify SV-. */
+replaceOnceCall('source storage classification'," if(!s.includes('function axisMediaRecordedUsage()')||!s.includes('Number(e.sourcePhotoBytes)')||!s.includes('Number(e.sourceVideoBytes)')||!s.includes('/^(?:V-|SV-)/.test(String(cur.key))'))fail('canonical source-sidecar media accounting missing');");
 
 /* v876's automatic reminder poller is deliberately retired by the established
  * 8.8.2 owner seal; v8710 is the sole automatic sound owner. The new 8.17.1
@@ -106,4 +119,4 @@ try{execFileSync(process.execPath,[TMP],{stdio:'inherit'})}finally{try{fs.unlink
  p=p.replace(old,next);fs.writeFileSync(FILE,p);
 }
 
-console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · helper-independent archive selection · delegated Scan preference owner sealed · v8710 sound ownership preserved');
+console.log('[AXIS 8.17.1 active-truth driver] PASS · final 8.16 frame producers accepted · S/SV persistence authoritative · canonical resource-bounded media accounting retained · helper-independent archive selection · delegated Scan preference owner sealed · v8710 sound ownership preserved');
