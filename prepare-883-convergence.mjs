@@ -14,7 +14,7 @@ for(const FILE of ['v876-runtime.js','v877-runtime.js','v8710-watermark.js']){
   write(FILE,src);
 }
 
-/* Final watermark owner: separate brand header from metadata, wrap long place names, and freeze a per-record location snapshot. */
+/* Final watermark owner: separate brand header from metadata, wrap long place names, freeze a per-record location snapshot, and emit the canonical AXIS brand directly. */
 {
   const FILE='v8710-watermark.js';
   let src=read(FILE);
@@ -29,7 +29,7 @@ for(const FILE of ['v876-runtime.js','v877-runtime.js','v8710-watermark.js']){
     const locationSnapshot={lat:Number(p.geo?.lat)||null,lon:Number(p.geo?.lon)||null,accuracy:Number(p.geo?.acc)||null,place:String(p.place||''),resolvedAt:Date.now(),provider:String(p.source||'resolved'),capturedAt:Number(e.time)||Date.now()};
     try{if(e?.id){const mm=meta();mm.events=mm.events||{};mm.events[e.id]={...(mm.events[e.id]||{}),locationSnapshot};write(META,mm)}}catch{}
     c.save();
-    c.globalAlpha=Math.max(.01,Math.min(1,p.opacity/100));c.fillStyle='#737cff';c.textAlign='center';c.textBaseline='middle';c.font=\`800 \${Math.max(74,Math.round(W*.12))}px -apple-system,BlinkMacSystemFont,Arial\`;c.fillText('A X I S',W/2,H*.48);
+    c.globalAlpha=Math.max(.01,Math.min(1,p.opacity/100));c.fillStyle='#737cff';c.textAlign='center';c.textBaseline='middle';c.font=\`800 \${Math.max(74,Math.round(W*.12))}px -apple-system,BlinkMacSystemFont,Arial\`;c.fillText('AXIS',W/2,H*.48);
     c.globalAlpha=Math.max(.01,Math.min(1,p.opacity/100))*.72;c.fillRect(W*.12,H*.555,W*.76,Math.max(2,Math.round(W*.0025)));
     c.restore();
 
@@ -82,7 +82,9 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot,{once:tru
   if(/Math\.max\(4,Math\.min\((32|48),Number\(p\.v876WmOpacity\)/.test(wm+v876+v877))fail('legacy opacity clamp survived');
   if(!wm.includes('locationSnapshot'))fail('location snapshot missing');
   if(!wm.includes("row.kind==='location'"))fail('location wrap layout missing');
+  if(!wm.includes("c.fillText('AXIS',W/2,H*.48)"))fail('canonical centered AXIS brand missing');
+  if(wm.includes("c.fillText('A X I S',W/2,H*.48)"))fail('legacy spaced AXIS brand survived source owner');
   if(!feature.includes('__AXIS_883_SAFE_ZONE__'))fail('active safe-zone owner missing');
   if(!css.includes('axis883TimelineSafe'))fail('active safe-zone CSS missing');
 }
-console.log('[AXIS 8.8.3 convergence] PASS · watermark separated/wrapped · opacity 1..100 · location snapshot frozen · active timeline dock-aware');
+console.log('[AXIS 8.8.3 convergence] PASS · watermark separated/wrapped · canonical AXIS brand · opacity 1..100 · location snapshot frozen · active timeline dock-aware');
