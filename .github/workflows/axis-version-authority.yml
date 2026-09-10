@@ -1,0 +1,29 @@
+name: AXIS Version Authority
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  version-authority:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.0'
+      - name: Build exact canonical release
+        run: node build-release.mjs
+      - name: Verify explicit version update or confirmation
+        env:
+          AXIS_VERSION_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          AXIS_VERSION_HEAD_SHA: ${{ github.sha }}
+        run: node scripts/axis-version-authority-contract.mjs

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "authority": "governance-audit-only",
+  "sequence": 1,
+  "base_release": "8.21",
+  "release": "8.21",
+  "decision": "confirm",
+  "change_class": "governance",
+  "summary": "Add mandatory version update-or-confirm governance for future version-sensitive AXIS iterations. Product/runtime release remains 8.21."
+}
