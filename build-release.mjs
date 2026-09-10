@@ -45,7 +45,6 @@ const STEPS=[
   'prepare-810-learning-curriculum.mjs',
   'prepare-810-learning-engine.mjs',
   'prepare-810-learning-settings.mjs',
-  'prepare-810-learning-entry-fix.mjs',
   'prepare-8101-home-timer.mjs',
   'prepare-8101-learning-immersion.mjs',
   'prepare-8102-interaction-stability.mjs',
