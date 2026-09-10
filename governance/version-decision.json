@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 1,
+  "sequence": 2,
   "base_release": "8.21",
   "release": "8.21",
   "decision": "confirm",
-  "change_class": "governance",
-  "summary": "Add mandatory version update-or-confirm governance for future version-sensitive AXIS iterations. Product/runtime release remains 8.21."
+  "change_class": "source-owner-convergence",
+  "summary": "Converge the inherited AXIS watermark brand correction into its canonical 8.8.3 source owner without changing public behavior or release identity."
 }

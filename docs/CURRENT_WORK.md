@@ -5,7 +5,7 @@
 AXIS **8.21** remains the current public Web release.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact certified `main` baseline for this bounded governance slice: `f1a5dbfb593429859a83fee783610f29396762e9`
+- exact certified `main` baseline for this bounded source-convergence slice: `bb28d8b8419a6e05c7eb087fe41ac1246272260f`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - public release identity: **unchanged; 8.21**
 - architecture: **unchanged; `canonical-single-runtime`**
@@ -21,7 +21,7 @@ AXIS **8.21** remains the current public Web release.
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`; user-facing backup transport may emit `axis.backup.v2` while retaining v1 import/API compatibility
 
-PR #138 is merged at `f1a5dbfb593429859a83fee783610f29396762e9`. That exact merged artifact completed the Learning Settings Entry source convergence, reduced the deterministic top-level release graph from 88 to 87 steps, and was certified through canonical Vercel Production, exact-prebuilt EdgeOne Production, `axis.juele.fun`, Chromium and iPhone-like WebKit without changing public release identity or user-visible behavior.
+PR #139 merged at `bb28d8b8419a6e05c7eb087fe41ac1246272260f`. That exact merged artifact established mandatory explicit version decisions and was certified through canonical Vercel Production, exact-prebuilt EdgeOne Production, `axis.juele.fun`, Chromium and iPhone-like WebKit. Combined commit status is Vercel success + EdgeOne Production success. The public release correctly remained 8.21 because the change was governance-only.
 
 ### Inherited continuity references
 
@@ -55,61 +55,50 @@ These are historical provenance and compatibility references, not competing Prod
 - portable-backup/cold-start certified main after PR #136: `72503cd9b3f49cdbeb797ec14343791a5a482815`
 - Learning Budget source-convergence PR #137: `d2ccf4977dd5ae551c5575f8c42ca444e93b582a`
 - Learning Settings Entry source-convergence PR #138: `f1a5dbfb593429859a83fee783610f29396762e9`
+- Explicit Version Decision Contract PR #139: `bb28d8b8419a6e05c7eb087fe41ac1246272260f`
 - current public release: **8.21**
 
-The inherited release gates, browser evidence, portable-backup transport, source-owner retirements and factual ownership boundaries remain release-blocking continuity. Nothing in this governance slice may add a runtime owner, storage namespace, alternate release source or deployment project.
+The inherited release gates, browser evidence, portable-backup transport, source-owner retirements and factual ownership boundaries remain release-blocking continuity. Nothing in this source-convergence slice may add a runtime owner, storage namespace, alternate release source or deployment project.
 
 ## Active change
 
-**AXIS 8.21 — Explicit Version Decision Contract**
+**AXIS 8.21 — Watermark Brand Source Convergence**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded delivery branch: `arch/821-version-decision-contract`
-- exact certified base `main` SHA: `f1a5dbfb593429859a83fee783610f29396762e9`
+- bounded delivery branch: `arch/821-watermark-brand-source-convergence`
+- exact certified base `main` SHA: `bb28d8b8419a6e05c7eb087fe41ac1246272260f`
 - intended public release change: **none; explicitly confirmed as 8.21**
 - intended user-visible behavior change: **none**
 - current version decision: `confirm`
-- current decision sequence: `1`
-- current change class: `governance`
+- current decision sequence: `2`
+- current change class: `source-owner-convergence`
 
-This slice establishes a permanent rule for future version-sensitive AXIS iterations: version identity may no longer move silently or remain silently unchanged. Every such iteration must update `governance/version-decision.json` and make one explicit decision.
+The historical `prepare-883-inherited-brand-fix.mjs` exists only because the 8.8.3 convergence owner emitted the spaced center watermark `A X I S` and a later corrective prepare replaced it with the already-shipped canonical `AXIS` mark. This slice moves that proven final brand output into `prepare-883-convergence.mjs` itself and removes the corrective prepare from canonical build reachability.
 
-`decision: "bump"` means the canonical built public release must advance above the base release. The built artifact, `governance/project-state.json`, `docs/CURRENT_RELEASE.md` and the decision record must all agree on the new release.
+This is not a watermark redesign. Opacity, location snapshot, metadata wrapping, final-photo composition, current camera/media ownership and user-visible output must remain identical to the already-certified behavior. The historical fix file remains repository provenance only.
 
-`decision: "confirm"` means the canonical built public release must remain exactly equal to the base release. Confirmation is fail-closed and reserved for the explicit non-product classes `governance`, `source-owner-convergence`, `compatibility`, `infrastructure`, `documentation`, and `tests`. Product behavior, UI, runtime, bug-fix, feature or other unrecognized classes cannot use confirmation to avoid a release bump.
-
-`governance/version-decision.json` is deliberately **governance-audit-only**. It does not become a runtime release authority and cannot override the deterministic build. Its monotonic `sequence` prevents a stale version confirmation from being reused for a later version-sensitive iteration.
-
-The enforcement implementation is `scripts/axis-version-authority-contract.mjs`, exercised by the `AXIS Version Authority` workflow on pull requests and pushes to `main`. The gate builds the exact canonical release, compares the Git base/head diff, validates the fresh decision record, treats product/contract JSON as version-sensitive, compares dotted numeric versions and verifies agreement between the build artifact, project-state release and current-release document.
+The deterministic top-level release graph target is **87 → 86** steps. No other historical fix/refine layer is being combined into this branch.
 
 ## Validation for this work
 
 Merge is blocked until the exact final PR head proves all of the following without weakening inherited checks:
 
-1. `node build-release.mjs` succeeds and the exact canonical artifact remains public release **8.21** for this governance-only slice;
-2. `AXIS Version Authority` succeeds with `base_release=8.21`, `release=8.21`, `decision=confirm`, `sequence=1`, `change_class=governance`;
-3. the version decision is audit-only and no competing runtime release authority is introduced;
-4. any version-sensitive Git diff, including product data and contract JSON, without a fresh `governance/version-decision.json` update fails the version-authority contract;
-5. a stale sequence fails; a contradictory `confirm`/`bump` decision fails; any class outside the explicit non-product confirmation allowlist fails when used with `confirm`;
+1. `node build-release.mjs` succeeds in exactly 86 deterministic top-level steps and still emits public release **8.21**;
+2. `AXIS Version Authority` succeeds with `base_release=8.21`, `release=8.21`, `decision=confirm`, `sequence=2`, `change_class=source-owner-convergence`;
+3. `prepare-883-convergence.mjs` directly emits the canonical centered `AXIS` watermark and rejects the legacy spaced output;
+4. `prepare-883-inherited-brand-fix.mjs` is absent from canonical build reachability and registered as `retired-from-build-authority`;
+5. inherited watermark opacity, location snapshot, metadata layout, media ownership and browser behavior remain unchanged;
 6. all inherited Runtime, Current Release, Deep Compatibility, Flow, Active Home, Session/Encounter, Object, Report, Portable Backup, Repository and Work Continuity gates remain green on the same exact head;
 7. no new storage namespace, IndexedDB database, network writer, Session/Encounter writer, recorder, Active owner, Flow owner or deployment project appears;
-8. after merge, the exact merged `main` SHA must become canonical Vercel Production, then the existing EdgeOne mirror and `axis.juele.fun` must certify the same release identity before this slice is called complete.
+8. after merge, the exact merged `main` SHA must become canonical Vercel Production, then the existing EdgeOne mirror and `axis.juele.fun` must certify the same 8.21 release identity before this slice is called complete.
 
-A failure is fixed at the actual owner. Existing product assertions, browser checks, compatibility requirements and deployment identity checks may not be weakened merely to make the governance change pass.
-
-## Data and migration boundary
-
-This governance slice does **not** alter, clear or migrate user data. The existing complete AXIS backup path remains available as the explicit bridge between origins. No source-convergence or version-governance operation may delete long-lived Vercel-origin data, and this slice adds no data writer or storage owner.
+A failure is fixed at the actual owner. Existing product assertions, browser checks, compatibility requirements and deployment identity checks may not be weakened merely to make the convergence pass.
 
 ## Next planned stage
 
-Only after this exact governance head is green, merged and Production-certified across Vercel, the fixed EdgeOne mirror and `axis.juele.fun`:
+Continued product/runtime/UI refinement remains higher priority than expanding backup/account infrastructure. Existing portable backup compatibility stays protected, but a larger backup/account system is intentionally deferred until the product has gone through further iteration and reached a more stable shape. The durable product-evolution backlog is tracked in GitHub issue #140.
 
-1. every future version-sensitive upgrade/evolution starts by making an explicit version decision rather than assuming a version number;
-2. product-behavior work advances the public version and updates the canonical release surfaces together; non-product work may keep the release only through an explicit fresh confirmation;
-3. continue the deterministic source-owner audit one bounded owner handoff at a time, preserving `canonical-single-runtime` and existing factual ownership;
-4. preserve one AXIS Git history, one canonical release artifact and the existing Vercel → exact EdgeOne/custom-domain Production topology;
-5. keep the Node toolchain upgrade as a separately scoped infrastructure slice with its own explicit version decision.
+The next true user-visible product stage must use a fresh `decision: bump` and advance the public release rather than hiding behavior inside 8.21.
 
 Chat history is not authoritative project memory. Repository governance, exact `main`, deterministic build output and fixed Production evidence remain authoritative project state.
