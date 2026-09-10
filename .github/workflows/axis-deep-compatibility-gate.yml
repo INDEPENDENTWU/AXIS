@@ -28,13 +28,15 @@ jobs:
           for f in \
             prepare-89-detail.mjs prepare-89-vision.mjs prepare-89-catalog.mjs prepare-89-rest-speak.mjs prepare-89-rest-speak-fix.mjs prepare-89-rest-speak-safety.mjs \
             prepare-891-detail.mjs prepare-891-speak-curriculum.mjs prepare-891-speak-panel.mjs prepare-891-speak-ui.mjs \
-            prepare-810-learning-curriculum.mjs prepare-810-learning-engine.mjs prepare-810-learning-budget-fix.mjs prepare-810-learning-settings.mjs \
+            prepare-810-learning-curriculum.mjs prepare-810-learning-engine.mjs prepare-810-learning-settings.mjs \
             prepare-8101-home-timer.mjs prepare-8101-learning-immersion.mjs prepare-8102-release-compat.mjs prepare-8102-interaction-stability.mjs \
             prepare-8103-release-compat.mjs prepare-8103-home-sound.mjs prepare-8103-learning-voice.mjs \
             postbuild-89-contract.mjs postbuild-891-contract.mjs postbuild-810-contract.mjs postbuild-8101-contract.mjs postbuild-8102-contract.mjs postbuild-8103-contract.mjs \
-            scripts/axis-89-smoke.mjs scripts/axis-891-smoke.mjs scripts/axis-810-smoke.mjs scripts/axis-8101-smoke.mjs scripts/axis-8102-smoke.mjs scripts/axis-8103-smoke.mjs; do
+            scripts/axis-810-learning-budget-source-contract.mjs scripts/axis-89-smoke.mjs scripts/axis-891-smoke.mjs scripts/axis-810-smoke.mjs scripts/axis-8101-smoke.mjs scripts/axis-8102-smoke.mjs scripts/axis-8103-smoke.mjs; do
             node --check "$f"
           done
+      - name: Learning budget source-owner contract
+        run: node scripts/axis-810-learning-budget-source-contract.mjs
       - name: Repository contract
         run: node scripts/axis-repository-contract.mjs
 
