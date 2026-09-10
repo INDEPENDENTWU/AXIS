@@ -39,6 +39,12 @@ function readJsonAt(ref, path) {
   }
 }
 
+function projectRelease(state, label) {
+  const value = state?.product?.productionRelease ?? state?.promotion ?? state?.engineering?.baselineRelease;
+  if (typeof value !== 'string') fail(`${label} has no governed product release`);
+  return value;
+}
+
 function parseVersion(value, label) {
   if (typeof value !== 'string' || !/^\d+(?:\.\d+)*$/.test(value)) {
     fail(`${label} must be a dotted numeric version, got ${JSON.stringify(value)}`);
@@ -108,8 +114,17 @@ parseVersion(artifactVersion, `${BUILD_META_PATH}.version`);
 if (decision.release !== artifactVersion) {
   fail(`decision release ${decision.release} does not match built artifact ${artifactVersion}`);
 }
-if (projectState.promotion !== artifactVersion || projectState.baseline !== artifactVersion) {
-  fail(`project-state promotion/baseline must both equal built artifact ${artifactVersion}`);
+const governedRelease = projectRelease(projectState, PROJECT_STATE_PATH);
+if (governedRelease !== artifactVersion) {
+  fail(`project-state product release ${governedRelease} must equal built artifact ${artifactVersion}`);
+}
+for (const [label, value] of [
+  ['engineering.baselineRelease', projectState?.engineering?.baselineRelease],
+  ['engineering.nextProductRelease', projectState?.engineering?.nextProductRelease]
+]) {
+  if (typeof value === 'string' && value !== artifactVersion) {
+    fail(`project-state ${label} ${value} must equal built artifact ${artifactVersion}`);
+  }
 }
 
 const releaseTitle = releaseDoc.match(/^# Current Release — AXIS (\d+(?:\.\d+)*)$/m);
@@ -126,11 +141,9 @@ let changedPaths = [];
 
 if (!isZeroSha(baseSha)) {
   const baseState = readJsonAt(baseSha, PROJECT_STATE_PATH);
-  if (!baseState || typeof baseState.promotion !== 'string') {
-    fail(`cannot resolve base release from ${PROJECT_STATE_PATH} at ${baseSha}`);
-  }
-  baseRelease = baseState.promotion;
-  parseVersion(baseRelease, 'base project-state promotion');
+  if (!baseState) fail(`cannot resolve ${PROJECT_STATE_PATH} at ${baseSha}`);
+  baseRelease = projectRelease(baseState, `base ${PROJECT_STATE_PATH}`);
+  parseVersion(baseRelease, 'base project-state product release');
   baseDecision = readJsonAt(baseSha, DECISION_PATH);
   const diff = git(['diff', '--name-only', `${baseSha}..${headSha}`]);
   changedPaths = diff ? diff.split('\n').filter(Boolean) : [];
