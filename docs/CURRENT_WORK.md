@@ -95,7 +95,7 @@ Merge is blocked until the exact final PR head proves all of the following witho
 
 A failure is fixed at the actual owner. Existing product assertions, browser checks, compatibility requirements and deployment identity checks may not be weakened merely to make the convergence pass.
 
-## Product iteration priority after architecture stabilization
+## Next planned stage
 
 Continued product/runtime/UI refinement remains higher priority than expanding backup/account infrastructure. Existing portable backup compatibility stays protected, but a larger backup/account system is intentionally deferred until the product has gone through further iteration and reached a more stable shape. The durable product-evolution backlog is tracked in GitHub issue #140.
 
