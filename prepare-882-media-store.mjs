@@ -18,6 +18,16 @@ async function putMedia(k,b){const db=await openDb(),value=await mediaEncodeValu
 async function getMedia(k){const db=await openDb();return new Promise((res,rej)=>{let tx=null,q=null,settled=false;const bad=e=>{if(settled)return;settled=true;const raw=q?.error||tx?.error||e?.target?.error||e;try{db.close()}catch{}rej(raw instanceof Error||raw instanceof DOMException?raw:new Error('media-read-failed'))};try{tx=db.transaction('media','readonly');q=tx.objectStore('media').get(k)}catch(e){bad(e);return}q.onsuccess=()=>{if(settled)return;settled=true;db.close();res(mediaDecodeValue(q.result))};q.onerror=bad;tx.onabort=bad;tx.onerror=()=>{}})}
 window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia,del:deleteMedia,format:AXIS_MEDIA_FORMAT};`;
   src=once(src,old,next,'canonical app media store');
+
+  const oldStorage=`async function storageInfo(){let photos=0,videos=0;try{const db=await openDb();const data=await new Promise((res,rej)=>{const tx=db.transaction('media','readonly'),store=tx.objectStore('media'),kr=store.getAllKeys(),vr=store.getAll();let keys,vals;kr.onsuccess=()=>{keys=kr.result;if(vals)done()};vr.onsuccess=()=>{vals=vr.result;if(keys)done()};kr.onerror=vr.onerror=()=>rej(tx.error);function done(){db.close();res({keys,vals})}});data.keys.forEach((k,i)=>{const z=data.vals[i]?.size||0;if(String(k).startsWith('V-'))videos+=z;else photos+=z})}catch{}const raw=localStorage.getItem(KEY)||'',recordBytes=new Blob([raw]).size;return{photos,videos,recordBytes,total:photos+videos+recordBytes}}
+async function updateStorageBrief(){const i=await storageInfo();setText('#storageBrief',fmtBytes(i.total))}`;
+  const nextStorage=`function axisMediaStoredBytes(v){if(v instanceof Blob)return v.size||0;if(v instanceof ArrayBuffer)return v.byteLength||0;if(ArrayBuffer.isView(v))return v.byteLength||0;if(v&&v.__axisMedia===AXIS_MEDIA_FORMAT&&v.bytes){const b=v.bytes;return Number(b.byteLength??b.size??0)||0}return Number(v?.size)||0}
+function axisMediaRecordedUsage(){let photos=0,videos=0;for(const s of (state.active?[state.active]:[]).concat(state.sessions||[]))for(const e of ev(s)){photos+=Number(e.photoBytes)||0;videos+=Number(e.videoBytes)||0}return{photos,videos}}
+async function axisMediaExactUsage(){const db=await openDb();return new Promise((res,rej)=>{let tx=null,req=null,settled=false,photos=0,videos=0;const bad=e=>{if(settled)return;settled=true;try{db.close()}catch{}rej(tx?.error||req?.error||e?.target?.error||e||new Error('media-usage-scan-failed'))};try{tx=db.transaction('media','readonly');req=tx.objectStore('media').openCursor();req.onsuccess=()=>{const cur=req.result;if(!cur){if(settled)return;settled=true;try{db.close()}catch{}res({photos,videos});return}const z=axisMediaStoredBytes(cur.value);if(String(cur.key).startsWith('V-'))videos+=z;else photos+=z;cur.continue()};req.onerror=bad;tx.onabort=bad;tx.onerror=()=>{}}catch(e){bad(e)}})}
+async function storageInfo(exact=false){let media;try{media=exact?await axisMediaExactUsage():axisMediaRecordedUsage()}catch{media=axisMediaRecordedUsage()}const raw=localStorage.getItem(KEY)||'',recordBytes=new Blob([raw]).size,photos=media.photos||0,videos=media.videos||0;return{photos,videos,recordBytes,total:photos+videos+recordBytes}}
+async function updateStorageBrief(){const i=await storageInfo(false);setText('#storageBrief',fmtBytes(i.total))}`;
+  src=once(src,oldStorage,nextStorage,'resource-bounded storage accounting');
+  src=once(src,'async function renderStorage(){const i=await storageInfo();','async function renderStorage(){const i=await storageInfo(true);','exact storage scan only on explicit storage surface');
   write(FILE,src);
 }
 
@@ -63,4 +73,10 @@ if(directOwners.length!==1||directOwners[0].hits!==1)fail(`canonical app media D
 const app=read('app.js');
 if(!app.includes("AXIS_MEDIA_FORMAT='axis-media-arraybuffer-v1'"))fail('arraybuffer media format missing');
 if(!app.includes('window.__AXIS_MEDIA_STORE__={get:getMedia,put:putMedia,del:deleteMedia'))fail('canonical media store bridge missing');
-console.log('[AXIS 8.8.2 media store] PASS · app.js sole IndexedDB media owner · Blob compatibility read · ArrayBuffer structured-clone write · v61/v877/watermark delegate');
+if(!app.includes('axisMediaExactUsage')||!app.includes("openCursor()"))fail('resource-bounded exact media usage scan missing');
+const storageStart=app.indexOf('async function storageInfo('),storageEnd=app.indexOf('async function deleteSessions',storageStart);
+if(storageStart<0||storageEnd<0)fail('storage accounting boundaries missing');
+const storageSlice=app.slice(storageStart,storageEnd);
+if(storageSlice.includes('.getAll(')||storageSlice.includes('.getAllKeys('))fail('storage accounting may not bulk-load the media store');
+if(!app.includes('async function renderStorage(){const i=await storageInfo(true);'))fail('exact media scan must be explicit-storage-surface only');
+console.log('[AXIS 8.8.2 media store] PASS · app.js sole IndexedDB media owner · Blob compatibility read · ArrayBuffer structured-clone write · v61/v877/watermark delegate · boot storage brief metadata-only · exact storage scan cursor-bounded');
