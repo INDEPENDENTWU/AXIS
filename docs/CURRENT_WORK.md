@@ -24,13 +24,40 @@ PR #137 is merged at `d2ccf4977dd5ae551c5575f8c42ca444e93b582a`. That exact merg
 
 ### Inherited bounded-stage continuity references
 
-These identifiers are compatibility/provenance references required by already-sealed contracts. They are not competing Production baselines or active delivery branches:
+These identifiers are compatibility/provenance references required by already-sealed contracts. They are **historical continuity only**: they do not supersede the current bounded delivery branch or current Production baseline below.
 
-- completed Active Home source-convergence PR: **#131**; certified main `3877d91cc6f17a3db5add414fed44495c64d3cf4`
-- completed Report PDF scope source-convergence PR: **#133**; certified main `1d9e08ae40f555151133a9fce4bc343f18359af2`
-- completed Flow Active boot source-convergence PR: **#134**; certified main `1ed1b53e4a1ced7e32c0a91d058bccd6abfcd71c`
-- completed portable-backup WebKit/canonical-source follow-up PR: **#136**; certified main `72503cd9b3f49cdbeb797ec14343791a5a482815`
-- completed Learning Budget source-convergence PR: **#137**; certified main `d2ccf4977dd5ae551c5575f8c42ca444e93b582a`
+- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
+- bounded delivery branch: `feat/821-report-pdf-export`
+- bounded delivery branch: `feat/821-report-share-card`
+- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
+- bounded Flow step recording intent branch: `feat/821-flow-step-recording-intent`
+- certified Flow step recording intent base: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
+- bounded Flow step execution intent branch: `feat/821-flow-step-execution-intent`
+- certified Flow step execution intent base: `396241c41b2f8eea80d45ca582352ea593c47036`
+- bounded delivery branch: `feat/821-active-home-stage`
+- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- bounded Active Home visual-convergence branch: `feat/821-active-home-visual-convergence`
+- exact Active Home visual-convergence base `main` SHA: `9eaf90d0f94023218feb452b085da48c9f027276`
+- bounded portable-backup branch: `feat/821-portable-backup-origin-migration`
+- portable-backup exact historical base: `c434a4a78530669d5a47be9799d40f5049b57a2d`
+- portable-backup merged/certified main: `b349c8b87a0e9b30916ba9959297897260de3882`
+- completed Active Home source-convergence branch: `arch/821-active-home-source-convergence`
+- completed Active Home source-convergence PR: **#131**
+- Active Home source-convergence certified main: `3877d91cc6f17a3db5add414fed44495c64d3cf4`
+- completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
+- completed Report PDF scope source-convergence PR: **#133**
+- Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`
+- completed Flow Active boot source-convergence branch: `arch/821-flow-active-boot-source-convergence`
+- bounded delivery branch: `arch/821-flow-active-boot-source-convergence`
+- completed Flow Active boot source-convergence PR: **#134**
+- Flow Active boot source-convergence certified main: `1ed1b53e4a1ced7e32c0a91d058bccd6abfcd71c`
+- completed portable-backup WebKit/canonical-source follow-up: PR **#136**
+- certified portable-backup/cold-start main: `72503cd9b3f49cdbeb797ec14343791a5a482815`
+- completed Learning Budget source-convergence branch: `arch/821-learning-budget-source-convergence`
+- completed Learning Budget source-convergence PR: **#137**
+- Learning Budget source-convergence certified main: `d2ccf4977dd5ae551c5575f8c42ca444e93b582a`
+
+PR #129 established the flat, centered Home-integrated ordinary Active stage. PR #130 refined tactile hold/rest presentation. PR #132 added structural-owner portable backup transport. PR #131 retired the late Active Home visual prepare from canonical build authority. PR #133 retired the immediate Report PDF corrective scope prepare. PR #134 retired the corrective Flow Active boot-scope prepare. PR #136 converged the large-media backup safety path into the canonical portable-backup owner and removed the late hardening transform from authority. PR #137 converged Learning budget comparisons into the canonical 8.10 Learning engine source owner.
 
 The inherited release gates, browser evidence, portable-backup transport and source-owner retirements remain release-blocking continuity. A source-convergence slice may remove one proven corrective build owner only after the responsibility is emitted directly by the canonical source owner and equivalent static plus Chromium/WebKit proof remains in place.
 
