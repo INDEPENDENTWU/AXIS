@@ -29,7 +29,6 @@ const STEPS=[
   'prepare-882-media-store.mjs',
   'prepare-883-convergence.mjs',
   'prepare-884-field-fix.mjs',
-  'prepare-884-runtime-followup.mjs',
   'prepare-89-detail.mjs',
   'prepare-89-vision.mjs',
   'prepare-89-catalog.mjs',
