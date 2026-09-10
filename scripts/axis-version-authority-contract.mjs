@@ -5,6 +5,14 @@ const DECISION_PATH = 'governance/version-decision.json';
 const PROJECT_STATE_PATH = 'governance/project-state.json';
 const RELEASE_DOC_PATH = 'docs/CURRENT_RELEASE.md';
 const BUILD_META_PATH = 'axis-build.json';
+const CONFIRMATION_CLASSES = new Set([
+  'governance',
+  'source-owner-convergence',
+  'compatibility',
+  'infrastructure',
+  'documentation',
+  'tests'
+]);
 
 function fail(message) {
   console.error(`AXIS version authority: ${message}`);
@@ -75,13 +83,24 @@ function isVersionSensitive(path) {
   if (path.startsWith('scripts/')) return true;
   if (path.startsWith('api/')) return true;
   if (path.startsWith('governance/')) return true;
+  if (path.startsWith('data/')) return true;
+  if (path.startsWith('shared/contracts/')) return true;
   if (path === 'AGENTS.md' || path === 'DEPLOYMENT_POLICY.md') return true;
   if (path === 'docs/CURRENT_RELEASE.md' || path === 'docs/CURRENT_WORK.md') return true;
   if (/^(?:build|prepare|postbuild)-.*\.mjs$/.test(path)) return true;
   if (/^(?:app|server|sw|v\d+)[^/]*\.(?:js|mjs|css|html)$/.test(path)) return true;
   if (/^(?:index\.html|package\.json|package-lock\.json|vercel\.json|edgeone\.json)$/.test(path)) return true;
+  if (/\.json$/.test(path)) return true;
   if (/\.(?:js|mjs|cjs|ts|tsx|jsx|css|html)$/.test(path)) return true;
   return false;
+}
+
+// Keep the contract fail-closed for representative product-data and portable-contract paths.
+for (const example of [
+  'data/rest-speak/example.json',
+  'shared/contracts/axis-flow-v1.schema.json'
+]) {
+  if (!isVersionSensitive(example)) fail(`internal sensitive-path guard rejected ${example}`);
 }
 
 const decision = readJson(DECISION_PATH);
@@ -179,9 +198,9 @@ if (decision.decision === 'bump') {
   if (comparison !== 0) {
     fail(`confirm requires release to remain ${baseRelease}, got ${decision.release}`);
   }
-  const behaviorClasses = new Set(['product', 'evolution', 'feature', 'behavior', 'hotfix']);
-  if (behaviorClasses.has(decision.change_class.trim().toLowerCase())) {
-    fail(`change_class ${decision.change_class} changes product behavior and therefore requires decision "bump"`);
+  const changeClass = decision.change_class.trim().toLowerCase();
+  if (!CONFIRMATION_CLASSES.has(changeClass)) {
+    fail(`change_class ${decision.change_class} is not an allowed non-product confirmation class; use decision "bump" for product/UI/runtime/bug-fix behavior changes`);
   }
 }
 
