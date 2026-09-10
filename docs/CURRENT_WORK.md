@@ -5,29 +5,26 @@
 AXIS **8.21** remains the current public Web release.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact certified `main` baseline for this bounded follow-up: `1ed1b53e4a1ced7e32c0a91d058bccd6abfcd71c`
+- exact certified `main` baseline for this bounded source-convergence slice: `72503cd9b3f49cdbeb797ec14343791a5a482815`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - public release identity: **unchanged; 8.21**
 - architecture: **unchanged; `canonical-single-runtime`**
-- production request topology: **1 initial JS / 0 dynamic JS chunks**
 - fixed public Vercel URL: `https://axis-five-puce.vercel.app`
 - fixed public EdgeOne project URL: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
-- governed mainland-facing custom alias under certification: `https://axis.juele.fun`
-- deployment topology: one existing Git-connected AXIS Vercel Project on `main`, with the existing `axisfitness-mirror` EdgeOne project publishing the exact certified artifact; the custom domain is an alias of that same Production environment, not another AXIS runtime or project
-- existing Active truth/action owner: `v87` over `axis_v8_meta`
+- governed mainland-facing alias: `https://axis.juele.fun`
+- deployment topology: one existing Git-connected AXIS Vercel Project on `main`; the existing `axisfitness-mirror` EdgeOne project publishes the exact Vercel-golden artifact; `axis.juele.fun` is an alias of that same governed Production environment, never another AXIS runtime/project
 - existing Session/Encounter writer: canonical app owner
-- existing rest truth: the current Activity lifecycle; no new timer or rest store is permitted
+- existing Active owner: v82/v87 lifecycle; no new Active owner is permitted
+- existing learning accessory store: `axis_v89_speak`; learning remains isolated from training truth
 - cross-platform foundation: `axis-native-foundation-0`
 - native repository: `INDEPENDENTWU/AXIS-iOS`
-- portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`
+- portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`; user-facing backup transport may emit `axis.backup.v2` while retaining v1 import/API compatibility
 
-PR #134 is merged and fully Production-certified at `1ed1b53e4a1ced7e32c0a91d058bccd6abfcd71c`. Vercel reports success for that exact commit, and the fixed EdgeOne Production mirror completed exact-artifact parity plus Chromium and iPhone-like WebKit real-production verification on the same SHA. This exact SHA is the certified base for the custom-domain topology slice.
-
-The operator has provisioned HTTPS for `axis.juele.fun` on the existing EdgeOne Production environment. A Safari-captured `/axis-build.json` from that hostname already reports public/base 8.21, `canonical-single-runtime`, exact source commit `1ed1b53e4a1ced7e32c0a91d058bccd6abfcd71c`, core `e979aac1d16c`, CSS `de8ee88a73ae`, runtime hash `020fb717fc78`, 1 initial JavaScript request and 0 dynamic JavaScript requests. Repository CI must now turn that point-in-time observation into a durable release-blocking alias contract for future main releases.
+PR #136 is merged at `72503cd9b3f49cdbeb797ec14343791a5a482815` and the exact merged artifact has already passed canonical Vercel Production, exact-prebuilt EdgeOne mirror, `axis.juele.fun` parity, Chromium and iPhone-like WebKit Production verification. Portable backup v2 and the WebKit large-media/cold-start protections are therefore part of the certified starting baseline for this work.
 
 ### Inherited bounded-stage continuity references
 
-These are historical compatibility identifiers required by already-sealed 8.21 contracts. They are **not** competing Production baselines or active delivery branches:
+These identifiers are compatibility/provenance references required by already-sealed contracts. They are not competing Production baselines or active delivery branches:
 
 - exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
 - bounded delivery branch: `feat/821-report-pdf-export`
@@ -54,97 +51,64 @@ These are historical compatibility identifiers required by already-sealed 8.21 c
 - bounded delivery branch: `arch/821-flow-active-boot-source-convergence`
 - completed Flow Active boot source-convergence PR: **#134**
 - Flow Active boot source-convergence certified main: `1ed1b53e4a1ced7e32c0a91d058bccd6abfcd71c`
+- completed portable-backup WebKit/canonical-source follow-up: PR **#136**
+- certified portable-backup/cold-start main: `72503cd9b3f49cdbeb797ec14343791a5a482815`
 
-PR #129 established the flat, centered, Home-integrated ordinary Active stage. PR #130 refined tactile hold/rest presentation. PR #132 added structural-owner portable backup transport. PR #131 retired the late Active Home visual prepare from canonical build authority. PR #133 retired the immediate Report PDF corrective scope prepare from canonical build authority. PR #134 retired the corrective Flow Active boot-scope prepare from canonical build reachability. All remain release-blocking continuity for this work.
-
-### Completed Flow Active source handoff
-
-The completed #134 handoff keeps the previously certified semantics explicit for compatibility contracts:
-
-1. `prepare-821-flow-active-convergence.mjs` emits the scan-sheet close and `axis:active-finished` listeners directly inside the private Flow/app helper scope.
-2. `prepare-821-flow-active-boot-scope.mjs` is provenance-only and is not imported by the canonical release chain.
-3. Flow truth remains app-owned `axis_v60_state.flows` + `flowRun`; orchestration/intent only, never history.
-4. Existing v82/v87 remain the Active lifecycle owners; the canonical app remains the single Encounter writer.
-5. Ordinary `single` / `complete` items remain one-shot; proven whole-item Flow may reuse the existing Active lifecycle; temporary “记录其他” remains record-only and cannot consume the current Flow item.
-6. `state.active.events.push(...)` remains a single canonical app-owned Encounter append.
-7. No new LocalStorage namespace, IndexedDB store, network writer, picker, recorder, Active owner, Session owner, Encounter writer or Flow history store was introduced.
+PR #129 established the flat, centered Home-integrated ordinary Active stage. PR #130 refined tactile hold/rest presentation. PR #132 added structural-owner portable backup transport. PR #131 retired the late Active Home visual prepare from canonical build authority. PR #133 retired the immediate Report PDF corrective scope prepare. PR #134 retired the corrective Flow Active boot-scope prepare. PR #136 converged the large-media backup safety path into the canonical portable-backup owner and removed the late hardening transform from authority.
 
 ## Active change
 
-**AXIS 8.21 — `axis.juele.fun` Governed Production Alias**
+**AXIS 8.21 — Learning Budget Source Convergence**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded delivery branch: `infra/821-axis-juele-production-alias`
-- exact certified base `main` SHA: `1ed1b53e4a1ced7e32c0a91d058bccd6abfcd71c`
+- bounded delivery branch: `arch/821-learning-budget-source-convergence`
+- exact certified base `main` SHA: `72503cd9b3f49cdbeb797ec14343791a5a482815`
 - intended public release change: **none; remains 8.21**
 - intended user-visible behavior change: **none**
-- topology objective: make `https://axis.juele.fun` a durable, release-blocking user-facing alias of the existing `axisfitness-mirror` EdgeOne Production environment
-- deployment owner: unchanged; `.github/workflows/axis-edgeone-production-mirror.yml` continues to publish the exact prebuilt Vercel-golden artifact to `axisfitness-mirror`
-- custom-domain verifier: `scripts/edgeone-custom-domain-verify.mjs`
-- custom-domain gate: `.github/workflows/axis-custom-domain-production.yml`
-- migration contract exercised on the real custom hostname: `axis.backup.v1`
+- original architecture-audit baseline: **89 deterministic release steps**
+- target after this bounded retirement: **88 deterministic release steps**
 
-This slice does **not** create another EdgeOne project, Vercel project, runtime, build owner, storage owner or China-specific product fork. The older direct-Git EdgeOne project named `axisfitness` is not made authoritative by this work; the governed Production path remains the existing exact-artifact `axisfitness-mirror` chain.
+The next explicit corrective layer is `prepare-810-learning-budget-fix.mjs`. It exists only to repair JavaScript operator precedence immediately after `prepare-810-learning-engine.mjs` emits two budget comparisons. The correction belongs to the 8.10 learning engine source itself, not to a later behavioral mutation.
 
-### Custom-domain contract
+This slice therefore moves the already-proven parenthesized daily/session budget comparisons directly into `prepare-810-learning-engine.mjs`, removes `prepare-810-learning-budget-fix.mjs` from canonical `build-release.mjs` reachability, and records that old file as provenance-only. It does not change cadence, targets, phrase selection, exposure counts, review behavior, storage schema, training truth, visible copy, timers, network behavior, or any deployment topology.
 
-After merge, every `main` release must prove the custom hostname has converged to the same already-built artifact before it is accepted as the mainland-facing alias:
+The source-owner contract is `scripts/axis-810-learning-budget-source-contract.mjs`. It seals that:
 
-1. `https://axis.juele.fun` remains HTTPS and does not redirect away from its custom origin.
-2. `/axis-build.json` exactly matches local/main for version, baseVersion, sourceCommit, architecture, core hash, CSS hash, runtime hash and JavaScript request topology.
-3. The root document exposes the current canonical runtime/public-release marker.
-4. The seven existing API surfaces keep status/JSON-shape parity with the Vercel golden; no custom-domain API fork is allowed.
-5. The existing full portable-backup round-trip smoke runs against the real custom hostname in Chromium and iPhone-like WebKit.
-6. Product assertions are unchanged; the custom-domain verifier only waits for provider propagation before product/browser checks begin.
+1. the engine emits the correct parenthesized daily and session exposure-cap comparisons exactly once;
+2. the ambiguous pre-fix expressions cannot return;
+3. the learning engine remains exactly once in the canonical release list;
+4. the retired corrective prepare cannot return to canonical build reachability;
+5. the retirement registry names the learning engine as replacement owner;
+6. no new network/database/Flow-storage owner is introduced.
 
-### Ownership and migration boundary
-
-The domain itself stores no canonical AXIS data and owns no training behavior. Browser-origin isolation remains intentional: data created under a Vercel origin cannot be read automatically by `axis.juele.fun`. `axis.backup.v1` is the explicit local transport bridge, including exact AXIS localStorage plus canonical media bytes, integrity validation, staged restore and verified rollback.
-
-No real user data is moved by CI. After the alias is Production-certified, the operator will export from the existing Vercel-installed AXIS and restore into the Safari-installed `axis.juele.fun` AXIS; the migration is considered complete only after the source and restored record/media counts reconcile.
-
-### Production incident follow-up — iOS large-media export
-
-A real long-lived Vercel-origin Safari dataset exposed a Production-scale failure that the original tiny-media browser fixture did not represent: tapping `建立完整 AXIS 备份` caused the Safari WebContent process to terminate with “A problem repeatedly occurred”. The failure occurred on the read/export path; the current export path contains no storage clear, media replace, or restore mutation.
-
-The bounded follow-up branch is `fix/821-portable-backup-webkit-rollback`, PR **#136**, based on exact main `d3e4cb174a5230cfd216d7881af2f0999640b6c4`. It now carries two related transport-safety corrections without changing AXIS workout/history truth:
-
-1. keep the WebKit rollback proof on a stable AXIS-namespace sentinel rather than malformed live `axis_v8_meta`;
-2. introduce user-facing `axis.backup.v2` binary transport for large-media Safari export while retaining `axis.backup.v1` import/API compatibility.
-
-The v2 user export does not base64-expand all media or stringify all media into one giant JSON object. It hashes media one item at a time, writes a small SHA-256-sealed JSON header followed by raw Blob parts, and requires a fresh second user gesture (`保存完整备份`) before invoking the native share/download path. Media replacement during restore is sequential rather than pre-encoding every incoming Blob into one in-memory array. The canonical app-owned media store remains the persistence owner; no new database, storage namespace, cloud path, Session/Encounter writer, or product truth owner is introduced.
-
-The v2 file remains local-only and uses the same `.axisbackup` extension. Its header records exact raw `axis_*` storage plus media descriptors `{key,type,size,offset,sha256}`; media bytes follow raw, with per-item SHA-256 verification before restore mutation. `axis.backup.v1` remains accepted for compatibility.
-
-Real operator migration remains blocked until the exact #136 head is green, merged, and the resulting exact `main` is certified on canonical Vercel, the fixed EdgeOne mirror, and `axis.juele.fun`. The old Vercel origin must not be deleted or have Safari website data cleared before the migrated copy is reconciled.
+The existing Deep Compatibility gate is reused rather than adding another workflow family. Its static job runs the new source-owner contract, while its existing Chromium and iPhone-like WebKit 8.9→8.10.3 learning smokes remain the behavioral proof.
 
 ## Validation for this work
 
 Merge is blocked until the exact final PR head proves all of the following without weakening existing assertions:
 
 1. deterministic `node build-release.mjs` succeeds with public/base AXIS 8.21 and `canonical-single-runtime` unchanged;
-2. the custom-domain verifier and workflow contract are structurally valid and reference only the existing Vercel golden plus `axis.juele.fun`;
-3. all inherited Runtime, Flow, Active Home, Session/Encounter, Object, Report, Portable Backup, Repository, Work Continuity, Deep Compatibility and Current Release gates remain green on the exact same PR head;
-4. no new deployment project, runtime owner, storage key, IndexedDB store, recorder, Session/Encounter writer or network truth owner appears;
-5. after merge, the exact merged `main` SHA must first become the Vercel golden and exact-prebuilt EdgeOne Production mirror, then `axis.juele.fun` must expose that exact same manifest/runtime identity;
-6. the real custom hostname must pass `axis-821-portable-backup-smoke.mjs` in Chromium and iPhone-like WebKit;
-7. the user-facing `axis.backup.v2` path must pass large-media raw-Blob export, per-media corruption rejection, exact restore, and foreign-storage preservation in Chromium and iPhone-like WebKit;
-8. Production `axis.juele.fun` must also run the v2 large-media smoke in both engines before real migration is approved.
+2. canonical top-level release steps fall from 89 to 88 only because `prepare-810-learning-budget-fix.mjs` loses build authority;
+3. `scripts/axis-810-learning-budget-source-contract.mjs` passes and the retirement registry is consistent;
+4. Deep Compatibility static, Chromium and iPhone-like WebKit jobs pass on the same exact head, including `axis-810-smoke.mjs` and the inherited 8.9→8.10.3 learning path;
+5. all inherited Runtime, Current Release, Flow, Active Home, Session/Encounter, Object, Report, Portable Backup, Repository and Work Continuity gates remain green on that exact head;
+6. no new storage namespace, IndexedDB database, network writer, Session/Encounter writer, recorder, Active owner or Flow owner appears;
+7. after merge, the exact merged `main` SHA must become the Vercel golden, then the existing `axisfitness-mirror` EdgeOne Production deployment must publish the same prebuilt artifact and pass Chromium + iPhone-like WebKit;
+8. `axis.juele.fun` must converge to that same exact manifest/runtime identity and pass its existing real-host Production gate before the slice is called complete across both delivery sides.
 
-A failure is fixed at its actual owner. Product assertions and migration semantics must not be weakened merely to make the custom-domain gate green. Provider propagation is allowed a bounded convergence window because the alias workflow runs in parallel with the canonical EdgeOne mirror; this does not alter any browser/product assertion.
+A failure is fixed at the actual owner. No product assertion, timeout, browser action, historical compatibility requirement or deployment identity check may be weakened simply to make the convergence green.
 
 ## Next planned stage
 
-Only after this bounded custom-domain topology slice and the portable-backup iOS-memory follow-up are merged and the exact merged `main` artifact is certified on Vercel, the fixed EdgeOne project URL and `axis.juele.fun`:
+Only after this exact source-convergence head is green, merged and Production-certified on Vercel, the fixed EdgeOne mirror and `axis.juele.fun`:
 
-1. perform the operator’s real Vercel-origin → `axis.juele.fun` migration using the current `.axisbackup` user export (`axis.backup.v2`, with `axis.backup.v1` import compatibility);
-2. verify source/restore counts, media bytes and integrity before treating the custom-domain installation as the daily-use copy;
-3. keep the old Vercel-origin data intact until the migrated copy is explicitly reconciled;
-4. separately audit the old direct-Git EdgeOne `axisfitness` project before any retirement action; do not delete it merely because the custom alias is working;
-5. resume the bounded 89-step source-owner convergence on the next already-explicit corrective layer;
-6. preserve `canonical-single-runtime`, storage/history compatibility, `axis.backup.v1`, `axis.report-range.v1`, v61 classic-set ownership, v82/v87 Active ownership and canonical Session/Encounter ownership.
+1. continue the original 89-step source-owner audit with the next smallest explicit corrective/refine/follow-up layer, one bounded owner handoff at a time;
+2. keep public release 8.21 and user behavior unchanged unless a separately scoped product change is explicitly approved;
+3. preserve `canonical-single-runtime`, historical Session/Encounter truth, `axis.backup.v1` import/API compatibility, `axis.report-range.v1`, v61 classic-set ownership, v82/v87 Active ownership and canonical Session/Encounter ownership;
+4. keep real Vercel-origin data intact until the operator has restored the saved `.axisbackup` into `axis.juele.fun` and reconciled record/media counts;
+5. handle the Node 20.18.0 → supported Node 20.19+ toolchain upgrade as a separate infrastructure slice, never mixed into source-owner convergence.
 
-The target remains one AXIS product, one canonical Git history and one release artifact delivered through governed endpoints, while the runtime source itself continues its strangler migration toward fewer live mutation layers and clearer final owners.
+The target remains one AXIS product, one Git history, one canonical release artifact and governed parity across Vercel + EdgeOne/custom-domain delivery, while steadily removing late mutation layers from the runtime build.
 
 Chat history is not authoritative project memory. Repository governance, exact `main`, deterministic build output and fixed Production evidence remain authoritative.
