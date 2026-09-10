@@ -17,7 +17,10 @@ for(const token of [
   "window.__AXIS_810_SETTINGS_ENTRY__={owner:'settings-primary-list',surface:'dedicated-config-panel'}"
 ])if(!settings.includes(token))fail(`source-owned final Settings entry token missing: ${token}`);
 
-if(settings.includes('#v89SpeakSettings .v810ConfigEntry'))fail('source still styles the learning entry as an accessory-container child');
+const legacySelector='#v89SpeakSettings .v810ConfigEntry';
+if(count(settings,legacySelector)!==1)fail('accessory-container selector must remain only in the source anti-regression self-guard');
+if(!settings.includes("if(src.includes('#v89SpeakSettings .v810ConfigEntry'))fail('learning schedule entry still inherits accessory container visibility')"))fail('source anti-regression guard for the old accessory selector is missing');
+
 if(count(build,"'prepare-810-learning-settings.mjs'")!==1)fail('learning settings owner must remain exactly once in canonical release steps');
 if(build.includes("'prepare-810-learning-entry-fix.mjs'"))fail('retired learning entry fix returned to canonical build reachability');
 if(!historical.includes("owner:'settings-primary-list'")||!historical.includes('top-level visible Settings row'))fail('historical corrective provenance was unexpectedly rewritten');
