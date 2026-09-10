@@ -4,6 +4,14 @@ The repository is authoritative. Conversation memory is not.
 
 Before deployment work, read `DEPLOYMENT_POLICY.md`.
 
+## Version decision is a hard invariant
+
+- Every future version-sensitive AXIS iteration must explicitly update `governance/version-decision.json`.
+- A product-behavior change must use `decision: "bump"` and advance the dotted numeric public release. Governance, source-owner, compatibility, infrastructure, documentation or test-only work may use `decision: "confirm"` only when the built public release truly stays unchanged.
+- `governance/version-decision.json` is audit/governance evidence only. It must never become a competing runtime version authority; the exact canonical build artifact remains authoritative.
+- The decision sequence must advance exactly once per version-sensitive iteration. Reusing a stale confirmation is forbidden.
+- `AXIS Version Authority` must be green before a version-sensitive PR may be merged. If the built artifact, project-state release, current-release document and explicit decision disagree, stop and fix the release identity instead of bypassing the gate.
+
 ## Deployment is a hard invariant
 
 - One product = one GitHub repo = one canonical Git-connected Vercel Project.
