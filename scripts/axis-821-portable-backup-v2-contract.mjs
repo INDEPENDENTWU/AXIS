@@ -21,13 +21,17 @@ for(const token of [
   "verified.format='v1'",
   "format:'v2'",
   'await txRun(store=>store.clear())',
-  'for(const item of rows){const value=await mediaEncodeValue(item.blob);await txRun(store=>store.put(value,item.key))}'
+  'for(const item of rows){const value=await mediaEncodeValue(item.blob);await txRun(store=>store.put(value,item.key))}',
+  'function replaceObjectAssignment(source,prefix,to,label)',
+  'bodyEnd=findDeclarationEnd(source,start,label)',
+  "if(source[end]!==';')fail(`${label} missing object-assignment terminator`)"
 ]) assert.ok(hardening.includes(token),`missing iOS-memory contract token: ${token}`);
 
 for(const forbidden of [
   'axisBackupB64FromBuffer',
   'JSON.stringify(bundle)',
   'prepared=[]',
+  "source.indexOf(';',start)",
   'fetch(',
   'XMLHttpRequest',
   'WebSocket',
@@ -53,4 +57,4 @@ if(process.env.AXIS_BUILT==='1'){
   assert.equal((runtime.match(/async function axisBackupMediaReplaceAll\s*\(/g)||[]).length,1,'served runtime must expose one media replace transport owner');
 }
 
-console.log(`[AXIS 8.21 portable backup v2 contract] PASS · raw-blob binary export + sequential media writes + fresh-gesture save + v1 compatibility + no new network${process.env.AXIS_BUILT==='1'?' + served runtime':''}`);
+console.log(`[AXIS 8.21 portable backup v2 contract] PASS · raw-blob binary export + sequential media writes + fresh-gesture save + brace-aware object-owner replacement + v1 compatibility + no new network${process.env.AXIS_BUILT==='1'?' + served runtime':''}`);
