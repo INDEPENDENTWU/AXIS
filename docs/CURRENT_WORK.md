@@ -5,7 +5,7 @@
 AXIS **8.21** remains the current public Web release.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact certified `main` baseline for this bounded source-convergence slice: `bb28d8b8419a6e05c7eb087fe41ac1246272260f`
+- exact certified `main` baseline for this bounded source-convergence slice: `3972850bd0fc27779e1f2da223e8c463b1541ea0`
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - public release identity: **unchanged; 8.21**
 - architecture: **unchanged; `canonical-single-runtime`**
@@ -21,7 +21,7 @@ AXIS **8.21** remains the current public Web release.
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`; user-facing backup transport may emit `axis.backup.v2` while retaining v1 import/API compatibility
 
-PR #139 merged at `bb28d8b8419a6e05c7eb087fe41ac1246272260f`. That exact merged artifact established mandatory explicit version decisions and was certified through canonical Vercel Production, exact-prebuilt EdgeOne Production, `axis.juele.fun`, Chromium and iPhone-like WebKit. Combined commit status is Vercel success + EdgeOne Production success. The public release correctly remained 8.21 because the change was governance-only.
+PR #141 merged at `3972850bd0fc27779e1f2da223e8c463b1541ea0`. That exact merged artifact moved the shipped centered `AXIS` watermark into its 8.8.3 source owner, retired the late corrective brand prepare, and reduced the deterministic top-level release graph from 87 to 86 steps. The exact merge completed all push workflows without failure and was certified through canonical Vercel Production, exact-prebuilt EdgeOne Production, `axis.juele.fun`, Chromium and iPhone-like WebKit. Combined commit status is Vercel success + EdgeOne Production success. Public release identity correctly remained 8.21 because the slice was behavior-neutral source convergence.
 
 ### Inherited continuity references
 
@@ -56,42 +56,44 @@ These are historical provenance and compatibility references, not competing Prod
 - Learning Budget source-convergence PR #137: `d2ccf4977dd5ae551c5575f8c42ca444e93b582a`
 - Learning Settings Entry source-convergence PR #138: `f1a5dbfb593429859a83fee783610f29396762e9`
 - Explicit Version Decision Contract PR #139: `bb28d8b8419a6e05c7eb087fe41ac1246272260f`
+- Watermark Brand source-convergence PR #141: `3972850bd0fc27779e1f2da223e8c463b1541ea0`
 - current public release: **8.21**
 
 The inherited release gates, browser evidence, portable-backup transport, source-owner retirements and factual ownership boundaries remain release-blocking continuity. Nothing in this source-convergence slice may add a runtime owner, storage namespace, alternate release source or deployment project.
 
 ## Active change
 
-**AXIS 8.21 — Watermark Brand Source Convergence**
+**AXIS 8.21 — Watermark Four-Switch Source Convergence**
 
 - governed active milestone: `AXIS 8.21 — Post-release Architecture Governance`
 - governed active branch: `main`
-- bounded delivery branch: `arch/821-watermark-brand-source-convergence`
-- exact certified base `main` SHA: `bb28d8b8419a6e05c7eb087fe41ac1246272260f`
+- bounded delivery branch: `arch/821-watermark-switch-source-convergence`
+- exact certified base `main` SHA: `3972850bd0fc27779e1f2da223e8c463b1541ea0`
 - intended public release change: **none; explicitly confirmed as 8.21**
 - intended user-visible behavior change: **none**
 - current version decision: `confirm`
-- current decision sequence: `2`
+- current decision sequence: `3`
 - current change class: `source-owner-convergence`
 
-The historical `prepare-883-inherited-brand-fix.mjs` exists only because the 8.8.3 convergence owner emitted the spaced center watermark `A X I S` and a later corrective prepare replaced it with the already-shipped canonical `AXIS` mark. This slice moves that proven final brand output into `prepare-883-convergence.mjs` itself and removes the corrective prepare from canonical build reachability.
+The historical `prepare-883-watermark-contract-bridge.mjs` performs only a corrective representation rewrite after the 8.8.3 owner: it renames the generated watermark collection from `body` to the established `rows` contract and rewrites the four name/data/location/time conditional pushes plus the geometry iterator. The final `verify-88-watermark.mjs` already treats the four `rows.push` conditions as release-blocking truth.
 
-This is not a watermark redesign. Opacity, location snapshot, metadata wrapping, final-photo composition, current camera/media ownership and user-visible output must remain identical to the already-certified behavior. The historical fix file remains repository provenance only.
+This slice moves that already-certified four-switch output directly into `prepare-883-convergence.mjs` and removes the corrective bridge from canonical build reachability. It does not alter the four persisted switches, visible watermark composition, placement, opacity, place resolution, location snapshots, media ownership, Capture behavior, storage, networking or factual training ownership. The historical bridge remains repository provenance only.
 
-The deterministic top-level release graph target is **87 → 86** steps. No other historical fix/refine layer is being combined into this branch.
+The deterministic top-level release graph target is **86 → 85** steps. No adjacent watermark, media or UI refactor is bundled into this branch.
 
 ## Validation for this work
 
 Merge is blocked until the exact final PR head proves all of the following without weakening inherited checks:
 
-1. `node build-release.mjs` succeeds in exactly 86 deterministic top-level steps and still emits public release **8.21**;
-2. `AXIS Version Authority` succeeds with `base_release=8.21`, `release=8.21`, `decision=confirm`, `sequence=2`, `change_class=source-owner-convergence`;
-3. `prepare-883-convergence.mjs` directly emits the canonical centered `AXIS` watermark and rejects the legacy spaced output;
-4. `prepare-883-inherited-brand-fix.mjs` is absent from canonical build reachability and registered as `retired-from-build-authority`;
-5. inherited watermark opacity, location snapshot, metadata layout, media ownership and browser behavior remain unchanged;
-6. all inherited Runtime, Current Release, Deep Compatibility, Flow, Active Home, Session/Encounter, Object, Report, Portable Backup, Repository and Work Continuity gates remain green on the same exact head;
-7. no new storage namespace, IndexedDB database, network writer, Session/Encounter writer, recorder, Active owner, Flow owner or deployment project appears;
-8. after merge, the exact merged `main` SHA must become canonical Vercel Production, then the existing EdgeOne mirror and `axis.juele.fun` must certify the same 8.21 release identity before this slice is called complete.
+1. `node build-release.mjs` succeeds in exactly 85 deterministic top-level steps and still emits public release **8.21**;
+2. `AXIS Version Authority` succeeds with `base_release=8.21`, `release=8.21`, `decision=confirm`, `sequence=3`, `change_class=source-owner-convergence`;
+3. `prepare-883-convergence.mjs` directly emits all four canonical `rows.push` conditions for name, data, location and time and consumes `rows` in final geometry;
+4. `prepare-883-watermark-contract-bridge.mjs` is absent from canonical build reachability and registered as `retired-from-build-authority` while remaining untouched as historical provenance;
+5. the existing final `verify-88-watermark.mjs` remains unchanged and continues to seal four-switch truth, one preference writer, one precise locate owner and no raw-coordinate presentation;
+6. the existing 8.8.3 source-owner contract proves both the earlier brand-fix retirement and this bridge retirement without creating another CI workflow family;
+7. all inherited Runtime, Current Release, Deep Compatibility, Flow, Active Home, Session/Encounter, Object, Report, Portable Backup, Repository and Work Continuity gates remain green on the same exact head;
+8. no new storage namespace, IndexedDB database, network writer, Session/Encounter writer, recorder, Active owner, Flow owner or deployment project appears;
+9. after merge, the exact merged `main` SHA must become canonical Vercel Production, then the existing EdgeOne mirror and `axis.juele.fun` must certify the same 8.21 release identity in Chromium and iPhone-like WebKit before this slice is called complete.
 
 A failure is fixed at the actual owner. Existing product assertions, browser checks, compatibility requirements and deployment identity checks may not be weakened merely to make the convergence pass.
 
@@ -99,6 +101,6 @@ A failure is fixed at the actual owner. Existing product assertions, browser che
 
 Continued product/runtime/UI refinement remains higher priority than expanding backup/account infrastructure. Existing portable backup compatibility stays protected, but a larger backup/account system is intentionally deferred until the product has gone through further iteration and reached a more stable shape. The durable product-evolution backlog is tracked in GitHub issue #140.
 
-The next true user-visible product stage must use a fresh `decision: bump` and advance the public release rather than hiding behavior inside 8.21.
+After this bridge retirement is fully Production-certified, continue only one bounded source-owner or product slice at a time. Source-only debt may use a fresh version confirmation; the next true user-visible product/runtime/UI behavior stage must use a fresh `decision: bump` and advance the public release rather than hiding behavior inside 8.21.
 
 Chat history is not authoritative project memory. Repository governance, exact `main`, deterministic build output and fixed Production evidence remain authoritative project state.
