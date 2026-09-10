@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 const DECISION_PATH = 'governance/version-decision.json';
 const PROJECT_STATE_PATH = 'governance/project-state.json';
 const RELEASE_DOC_PATH = 'docs/CURRENT_RELEASE.md';
-const BUILD_META_PATH = 'dist/axis-build.json';
+const BUILD_META_PATH = 'axis-build.json';
 
 function fail(message) {
   console.error(`AXIS version authority: ${message}`);
