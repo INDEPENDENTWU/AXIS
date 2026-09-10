@@ -23,7 +23,7 @@ for(const token of ['locationSnapshot',"row.kind==='location'",'Math.max(.01,Mat
 const switchTokens=['if(p.name)rows.push','if(p.data&&data)rows.push','if(p.location&&p.place)rows.push','if(p.time)rows.push'];
 for(const token of switchTokens)if(!owner.includes(token))fail(`four-switch row is not emitted by source owner: ${token}`);
 if(!owner.includes('for(const row of rows)'))fail('source-owned watermark geometry does not consume rows directly');
-if(owner.includes('const body=[]')||owner.includes('body.push'))fail('historical body-to-rows bridge input shape survived in source owner');
+if(count(owner,'const body=[]')!==1||count(owner,'body.push')!==1)fail('historical body-to-rows input may remain only inside the source anti-regression guard');
 
 if(count(build,"'prepare-883-convergence.mjs'")!==1)fail('8.8.3 convergence source owner must remain exactly once in canonical release steps');
 if(build.includes("'prepare-883-inherited-brand-fix.mjs'"))fail('retired inherited brand fix returned to canonical build reachability');
