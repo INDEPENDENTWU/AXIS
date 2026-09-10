@@ -30,10 +30,11 @@ for(const token of [
   'network:false',
   'entries:axisBackupMediaEntries',
   'replaceAll:axisBackupMediaReplaceAll',
+  'keys:axisBackupMediaKeys',
   "if(state.active)return toast('请先结束当前训练再恢复备份')"
 ]) assert.ok(transform.includes(token),`missing transform contract token: ${token}`);
 
-for(const structuralToken of ['replaceFunctionDeclaration','replaceStatementByPrefix','findElementById','replaceElementById','insertAfterElementById']){
+for(const structuralToken of ['replaceFunctionDeclaration','replaceObjectAssignment','findElementById','replaceElementById','insertAfterElementById']){
   assert.ok(transform.includes(structuralToken),`structural owner convergence missing: ${structuralToken}`);
 }
 assert.ok(!transform.includes('const oldBackup='),'portable backup must not depend on an exact historical backupData body snapshot');
@@ -47,12 +48,15 @@ for(const forbidden of ['fetch(', 'XMLHttpRequest', 'WebSocket', 'sendBeacon(', 
 assert.ok(!/localStorage\.clear\s*\(/.test(transform),'restore may not clear unrelated origin storage');
 assert.ok(transform.includes("key.startsWith(AXIS_BACKUP_PREFIX)"),'AXIS namespace filter missing');
 assert.ok(transform.includes("axisBackupCanonical(nowStorage)!==axisBackupCanonical(storage)"),'post-restore raw storage verification missing');
-assert.ok(transform.includes("axisBackupCanonical(compact(nowMedia))!==axisBackupCanonical(compact(media))"),'post-restore media byte verification missing');
-assert.ok(transform.includes("await store.replaceAll(rollbackMedia);axisBackupStorageReplace(beforeStorage);await axisBackupVerifyCurrent(beforeStorage,beforeMedia)"),'verified rollback missing');
+assert.ok(transform.includes("axisBackupCanonical(compact(nowMedia))!==axisBackupCanonical(compact(media))"),'legacy v1 post-restore media byte verification missing');
+assert.ok(transform.includes('beforeMedia=await axisBackupV2CurrentRaw()'),'rollback must snapshot current canonical media before mutation');
+assert.ok(transform.includes('await store.replaceAll(beforeMedia.map(row=>({key:row.key,blob:row.blob})))'),'rollback must restore exact pre-mutation media');
+assert.ok(transform.includes('await axisBackupV2VerifyCurrent(beforeStorage,beforeMedia)'),'rollback must verify restored storage/media');
 
 const importLine="await import('./prepare-821-portable-backup.mjs');";
 assert.equal(lifecycle.split(importLine).length-1,1,'portable backup transform must be imported exactly once');
 assert.ok(lifecycle.indexOf(importLine)>lifecycle.indexOf("await import('./prepare-821-report-share-card.mjs');"),'portable backup must run after current 8.21 presentation transforms');
+assert.ok(!lifecycle.includes('prepare-821-portable-backup-ios-memory.mjs'),'late backup correction must stay retired from canonical reachability');
 
 assert.ok(docs.includes('c434a4a78530669d5a47be9799d40f5049b57a2d'),'bounded base SHA missing from docs');
 assert.ok(docs.includes('feat/821-portable-backup-origin-migration'),'bounded branch missing from docs');
@@ -63,7 +67,7 @@ if(process.env.AXIS_BUILT==='1'){
   const compileInput=read('app.js'),runtime=read('axis-core.js'),html=read('index.html');
   assert.ok(compileInput.includes("window.__AXIS_PORTABLE_BACKUP__={schema:AXIS_BACKUP_SCHEMA"),'prepared compile input backup runtime missing');
   assert.ok(runtime.includes("window.__AXIS_PORTABLE_BACKUP__={schema:AXIS_BACKUP_SCHEMA"),'served canonical runtime backup API missing');
-  assert.ok(runtime.includes('entries:axisBackupMediaEntries,replaceAll:axisBackupMediaReplaceAll'),'served canonical media transport bridge missing');
+  assert.ok(runtime.includes('entries:axisBackupMediaEntries,replaceAll:axisBackupMediaReplaceAll,keys:axisBackupMediaKeys'),'served canonical media transport bridge missing');
   assert.equal((runtime.match(/async function backupData\s*\(/g)||[]).length,1,'served runtime must have exactly one backupData owner');
   assert.equal((runtime.match(/indexedDB\.open\(DB,1\)/g)||[]).length,1,'served runtime must have exactly one direct canonical media DB owner');
   assert.ok(!runtime.includes('AXIS-备份-'),'legacy partial JSON backup implementation must not survive the served runtime');
@@ -76,4 +80,4 @@ if(process.env.AXIS_BUILT==='1'){
   assert.ok(html.includes('id="axis821PortableBackupStyle"'),'backup UI style missing');
 }
 
-console.log(`[AXIS 8.21 portable backup contract] PASS · structural owner convergence + no adjacency fallback + schema + local-only transport + SHA-256 + exact AXIS namespace/media snapshot + active block + verified rollback${process.env.AXIS_BUILT==='1'?' + served canonical single-runtime/media/backup owner':''}`);
+console.log(`[AXIS 8.21 portable backup contract] PASS · one source owner + v1 compatibility + local-only v2-preferred transport + SHA-256 + exact AXIS namespace/media + active block + verified rollback${process.env.AXIS_BUILT==='1'?' + served canonical single-runtime/media/backup owner':''}`);
