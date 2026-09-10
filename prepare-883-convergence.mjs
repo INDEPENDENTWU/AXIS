@@ -14,7 +14,7 @@ for(const FILE of ['v876-runtime.js','v877-runtime.js','v8710-watermark.js']){
   write(FILE,src);
 }
 
-/* Final watermark owner: separate brand header from metadata, wrap long place names, freeze a per-record location snapshot, and emit the canonical AXIS brand directly. */
+/* Final watermark owner: separate brand header from metadata, wrap long place names, freeze a per-record location snapshot, emit the canonical AXIS brand directly, and preserve the four visible watermark switches in the source output. */
 {
   const FILE='v8710-watermark.js';
   let src=read(FILE);
@@ -34,10 +34,10 @@ for(const FILE of ['v876-runtime.js','v877-runtime.js','v8710-watermark.js']){
     c.restore();
 
     const name=L==='en'?englishName(e.name||'TRAINING').toUpperCase():(e.name||'训练'),time=timeText(e.time||Date.now()),data=eventData(e,L);
-    const body=[];if(p.name)body.push({kind:'name',text:name,size:big,weight:680,color:'#fff'});if(p.data&&data)body.push({kind:'data',text:data,size:base,weight:580,color:'rgba(255,255,255,.96)'});if(p.location&&p.place)body.push({kind:'location',text:String(p.place),size:base,weight:540,color:'rgba(255,255,255,.91)'});if(p.time)body.push({kind:'time',text:time,size:base,weight:540,color:'rgba(255,255,255,.84)'});
+    const rows=[];if(p.name)rows.push({kind:'name',text:name,size:big,weight:680,color:'#fff'});if(p.data&&data)rows.push({kind:'data',text:data,size:base,weight:580,color:'rgba(255,255,255,.96)'});if(p.location&&p.place)rows.push({kind:'location',text:String(p.place),size:base,weight:540,color:'rgba(255,255,255,.91)'});if(p.time)rows.push({kind:'time',text:time,size:base,weight:540,color:'rgba(255,255,255,.84)'});
     const boxW=Math.min(Math.round(W*.68),Math.max(Math.round(W*.44),Math.round(W*.58))),innerW=boxW-pd*2,lineH=Math.round(base*1.42),brandGap=Math.max(8,Math.round(base*.42));
     const splitLine=(text,fontSize,weight,maxLines=2)=>{c.font=\`\${weight} \${fontSize}px -apple-system,BlinkMacSystemFont,'PingFang SC',Arial\`;if(c.measureText(text).width<=innerW)return[text];const units=/\s/.test(text)?String(text).split(/\s+/):Array.from(String(text));const out=[];let cur='';for(const u of units){const join=/\s/.test(text)&&cur?cur+' '+u:cur+u;if(c.measureText(join).width<=innerW||!cur)cur=join;else{out.push(cur);cur=u;if(out.length===maxLines-1)break}}if(cur&&out.length<maxLines)out.push(cur);if(out.length===maxLines){let last=out[maxLines-1];while(c.measureText(last+'…').width>innerW&&last.length>1)last=last.slice(0,-1);out[maxLines-1]=last+(last!==text?'…':'')}return out};
-    const painted=[];for(const row of body){const s=fit(c,row.text,innerW,row.size,row.weight,Math.max(13,base-5));const lines=row.kind==='location'?splitLine(row.text,s,row.weight,2):[row.text];painted.push({...row,size:s,lines})}
+    const painted=[];for(const row of rows){const s=fit(c,row.text,innerW,row.size,row.weight,Math.max(13,base-5));const lines=row.kind==='location'?splitLine(row.text,s,row.weight,2):[row.text];painted.push({...row,size:s,lines})}
     const bodyLines=painted.reduce((n,r)=>n+r.lines.length,0),headerH=lineH+brandGap,boxH=Math.ceil(pd*.9+headerH+bodyLines*lineH+pd*.65),[x,y]=panelRect(W,H,p.pos,boxW,boxH,pd),right=p.pos==='tr'||p.pos==='br';
     c.save();c.textAlign=right?'right':'left';c.textBaseline='top';c.shadowColor='rgba(0,0,0,.72)';c.shadowBlur=Math.max(4,W*.004);
     c.fillStyle='rgba(5,7,10,.72)';c.fillRect(x,y,boxW,boxH);c.fillStyle='#737cff';c.fillRect(right?x+boxW-Math.max(3,W*.004):x,y,Math.max(3,W*.004),boxH);
@@ -84,7 +84,9 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot,{once:tru
   if(!wm.includes("row.kind==='location'"))fail('location wrap layout missing');
   if(!wm.includes("c.fillText('AXIS',W/2,H*.48)"))fail('canonical centered AXIS brand missing');
   if(wm.includes("c.fillText('A X I S',W/2,H*.48)"))fail('legacy spaced AXIS brand survived source owner');
+  for(const token of ['if(p.name)rows.push','if(p.data&&data)rows.push','if(p.location&&p.place)rows.push','if(p.time)rows.push'])if(!wm.includes(token))fail(`four-switch source row missing: ${token}`);
+  if(wm.includes('const body=[]')||wm.includes('body.push'))fail('corrective body-to-rows bridge shape survived source owner');
   if(!feature.includes('__AXIS_883_SAFE_ZONE__'))fail('active safe-zone owner missing');
   if(!css.includes('axis883TimelineSafe'))fail('active safe-zone CSS missing');
 }
-console.log('[AXIS 8.8.3 convergence] PASS · watermark separated/wrapped · canonical AXIS brand · opacity 1..100 · location snapshot frozen · active timeline dock-aware');
+console.log('[AXIS 8.8.3 convergence] PASS · watermark separated/wrapped · canonical AXIS brand · four-switch rows source-owned · opacity 1..100 · location snapshot frozen · active timeline dock-aware');
