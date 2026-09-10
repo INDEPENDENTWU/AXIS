@@ -32,11 +32,13 @@ jobs:
             prepare-8101-home-timer.mjs prepare-8101-learning-immersion.mjs prepare-8102-release-compat.mjs prepare-8102-interaction-stability.mjs \
             prepare-8103-release-compat.mjs prepare-8103-home-sound.mjs prepare-8103-learning-voice.mjs \
             postbuild-89-contract.mjs postbuild-891-contract.mjs postbuild-810-contract.mjs postbuild-8101-contract.mjs postbuild-8102-contract.mjs postbuild-8103-contract.mjs \
-            scripts/axis-883-watermark-brand-source-contract.mjs scripts/axis-810-learning-budget-source-contract.mjs scripts/axis-810-learning-entry-source-contract.mjs scripts/axis-89-smoke.mjs scripts/axis-891-smoke.mjs scripts/axis-810-smoke.mjs scripts/axis-8101-smoke.mjs scripts/axis-8102-smoke.mjs scripts/axis-8103-smoke.mjs; do
+            scripts/axis-883-watermark-brand-source-contract.mjs scripts/axis-884-runtime-source-contract.mjs scripts/axis-884-field-smoke.mjs scripts/axis-810-learning-budget-source-contract.mjs scripts/axis-810-learning-entry-source-contract.mjs scripts/axis-89-smoke.mjs scripts/axis-891-smoke.mjs scripts/axis-810-smoke.mjs scripts/axis-8101-smoke.mjs scripts/axis-8102-smoke.mjs scripts/axis-8103-smoke.mjs; do
             node --check "$f"
           done
       - name: Watermark brand source-owner contract
         run: node scripts/axis-883-watermark-brand-source-contract.mjs
+      - name: 8.8.4 runtime source-owner contract
+        run: node scripts/axis-884-runtime-source-contract.mjs
       - name: Learning budget source-owner contract
         run: node scripts/axis-810-learning-budget-source-contract.mjs
       - name: Learning entry source-owner contract
@@ -76,6 +78,9 @@ jobs:
           node scripts/axis-reminder-layout-smoke.mjs
           node scripts/axis-882-home-transition-smoke.mjs
           node scripts/axis-882-completion-camera-smoke.mjs
+      - name: 8.8.4 runtime ownership compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-884-field-smoke.mjs
       - name: 8.9 through 8.10.3 learning, detail, home and voice compatibility
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: |
@@ -143,6 +148,9 @@ jobs:
           node scripts/axis-reminder-layout-smoke.mjs
           node scripts/axis-882-home-transition-smoke.mjs
           node scripts/axis-882-completion-camera-smoke.mjs
+      - name: iPhone 8.8.4 runtime ownership compatibility
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-884-field-smoke.mjs
       - name: iPhone 8.9 through 8.10.3 compatibility
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: |
