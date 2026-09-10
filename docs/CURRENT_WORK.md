@@ -31,6 +31,8 @@ These are historical provenance and compatibility references, not competing Prod
 - portable-backup/cold-start certified main after PR #136: `72503cd9b3f49cdbeb797ec14343791a5a482815`
 - Learning Budget source-convergence PR #137: `d2ccf4977dd5ae551c5575f8c42ca444e93b582a`
 - Learning Settings Entry source-convergence PR #138: `f1a5dbfb593429859a83fee783610f29396762e9`
+- bounded delivery branch: `feat/821-report-share-card`
+- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
 - current public release: **8.21**
 
 The inherited release gates, browser evidence, portable-backup transport, source-owner retirements and factual ownership boundaries remain release-blocking continuity. Nothing in this governance slice may add a runtime owner, storage namespace, alternate release source or deployment project.
@@ -88,4 +90,4 @@ Only after this exact governance head is green, merged and Production-certified 
 4. preserve one AXIS Git history, one canonical release artifact and the existing Vercel → exact EdgeOne/custom-domain Production topology;
 5. keep the Node toolchain upgrade as a separately scoped infrastructure slice with its own explicit version decision.
 
-Repository governance, exact `main`, deterministic build output and fixed Production evidence remain authoritative project state.
+Chat history is not authoritative project memory. Repository governance, exact `main`, deterministic build output and fixed Production evidence remain authoritative project state.
