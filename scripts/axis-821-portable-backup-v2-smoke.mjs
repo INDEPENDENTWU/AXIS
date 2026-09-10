@@ -4,9 +4,16 @@ const ENGINE=process.env.AXIS_ENGINE||'chromium',BASE=process.env.AXIS_URL||'htt
 const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core'),launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
 const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
 const json=(r,o)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(o)});
-const seed={version:60,sessions:[{id:'v2-s1',start:1788950000000,end:1788951800000,events:[{id:'v2-e1',equipmentId:'row',name:'划船',kind:'strength',time:1788950300000,sets:4,reps:10,weight:55}]}],active:null,profile:{name:'Backup V2 Proof',customEq:[],memories:[]},prefs:{scanSeconds:3,keepClip:true}};
+const seed={version:60,sessions:[{id:'v2-s1',start:1788950000000,end:1788951800000,events:[{id:'v2-e1',equipmentId:'row',name:'划船',kind:'strength',time:1788950300000,sets:4,reps:10,weight:55,frameRefs:['F-v2-large-a','F-v2-large-c'],photoBytes:10*1024*1024,clipRef:'V-v2-large-b',clipType:'video/mp4',videoBytes:8*1024*1024}]}],active:null,profile:{name:'Backup V2 Proof',customEq:[],memories:[]},prefs:{scanSeconds:3,keepClip:true}};
 const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true,locale:'zh-CN'});
-await context.addInitScript(s=>{if(sessionStorage.getItem('__axis_v2_seeded')==='1')return;localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify(s));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{}}));localStorage.setItem('foreign_keep','v2-must-survive');sessionStorage.setItem('__axis_v2_seeded','1')},seed);
+await context.addInitScript(s=>{
+  window.__AXIS_MEDIA_BULK_READS__={getAll:0,getAllKeys:0};
+  const p=IDBObjectStore.prototype,ga=p.getAll,gak=p.getAllKeys;
+  p.getAll=function(...args){if(this.name==='media')window.__AXIS_MEDIA_BULK_READS__.getAll++;return ga.apply(this,args)};
+  p.getAllKeys=function(...args){if(this.name==='media')window.__AXIS_MEDIA_BULK_READS__.getAllKeys++;return gak.apply(this,args)};
+  if(sessionStorage.getItem('__axis_v2_seeded')==='1')return;
+  localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify(s));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{}}));localStorage.setItem('foreign_keep','v2-must-survive');sessionStorage.setItem('__axis_v2_seeded','1')
+},seed);
 const page=await context.newPage(),errors=[];
 page.on('pageerror',e=>errors.push(String(e?.stack||e)));
 page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
@@ -24,6 +31,17 @@ try{
   });
   assert.deepEqual(seeded.keys,['F-v2-large-a','F-v2-large-c','V-v2-large-b']);
   assert.equal(seeded.total,18*1024*1024);
+
+  /* Regression for the real Safari incident: a cold idle boot with a substantial
+     media store must not enumerate or materialize the complete IndexedDB media
+     collection merely to paint the Settings storage brief. */
+  assert.ok((await page.reload({waitUntil:'domcontentloaded',timeout:20000}))?.ok());
+  await page.waitForLoadState('load',{timeout:20000});
+  await page.waitForFunction(()=>window.__AXIS_PORTABLE_BACKUP__?.exportSchema==='axis.backup.v2'&&document.querySelector('#backupBtn'),undefined,{timeout:20000});
+  await page.waitForTimeout(600);
+  const coldStart=await page.evaluate(()=>({bulk:{...window.__AXIS_MEDIA_BULK_READS__},brief:document.querySelector('#storageBrief')?.textContent?.trim()||'',title:document.querySelector('#helloTitle')?.textContent?.trim()||'',ready:!!window.__AXIS_MEDIA_STORE__}));
+  assert.deepEqual(coldStart.bulk,{getAll:0,getAllKeys:0},'idle cold start must not bulk-read the media store');
+  assert.equal(coldStart.ready,true);assert.ok(coldStart.brief,'storage brief must still render from durable record metadata');
 
   await page.locator('#backupBtn').click();
   await page.waitForFunction(()=>document.querySelector('#backupBtn')?.textContent.trim()==='保存完整备份'&&window.__AXIS_BACKUP_EXPORT_READY__?.file,undefined,{timeout:45000});
@@ -61,5 +79,5 @@ try{
   ]);
 
   assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
-  console.log(`[AXIS 8.21 portable backup v2 ${ENGINE}] PASS · 18 MiB raw-media user export stays in-app until explicit save · no base64 media envelope · per-media SHA-256 reject-before-write · exact v2 restore + foreign storage preservation`);
+  console.log(`[AXIS 8.21 portable backup v2 ${ENGINE}] PASS · 18 MiB cold-start performs zero media getAll/getAllKeys · raw-media export stays in-app until explicit save · no base64 media envelope · per-media SHA-256 reject-before-write · exact v2 restore + foreign storage preservation`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
