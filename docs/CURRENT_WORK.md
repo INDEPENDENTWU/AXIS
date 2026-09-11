@@ -10,6 +10,7 @@ AXIS **8.22 — Truthful Evolution Replay** is the last fully Production-sealed 
 - runtime seal baseline: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
 - sealed product PR: **#144**
 - architecture: `canonical-single-runtime`
+- cross-platform foundation: `axis-native-foundation-0` (`INDEPENDENTWU/AXIS-iOS`)
 - sealed top-level graph: **85 steps**
 - Vercel Production gate `34612916951` — success
 - Vercel Public Production Alias Gate `34612916591` — success
