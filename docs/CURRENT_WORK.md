@@ -31,6 +31,7 @@ This work is deliberately narrow: reconcile durable governance records to that a
 These entries are historical provenance and compatibility references, not competing Production baselines or active branches. Existing release contracts intentionally use several of these exact identities to prove that later work has not erased earlier certified ownership, browser evidence or source handoffs.
 
 - historical AXIS 8.21 product/runtime seal: `8f1f1331e751a7868d390f986d77d5779732ad51`
+- historical contract continuity — governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
 - bounded delivery branch: `feat/821-report-pdf-export`
 - bounded delivery branch: `feat/821-report-share-card`
@@ -74,6 +75,7 @@ The inherited release gates, browser evidence, portable-backup transport, source
 - governed active branch: `main`
 - governed target branch: `main`
 - bounded delivery branch: `gov/822-production-evidence-reconciliation`
+- pull request: **#145**
 - exact base: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
 - intended user-visible behavior change: **no**
 - version decision: **confirm**
