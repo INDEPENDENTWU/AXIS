@@ -2,15 +2,17 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.21** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
+**Current release: 8.22** · **release candidate; Production certification pending** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
 
 AXIS is a **Personal Evolution Engine**. It records real practice without requiring reality to obey a rigid plan. Objects describe what can be practiced, executable schemas describe what is recorded, Encounters freeze what actually happened, Evidence anchors those facts, Flow describes intended continuity, and Evolution remains a factual read-only projection.
 
-## Production truth
+## Release truth
 
-AXIS **8.21** is the current sealed Web product/runtime release.
+AXIS **8.22 — Truthful Evolution Replay** is the current release candidate. It is **not yet declared Production-sealed**.
 
-- release PR: **#108**
+The last fully sealed product/runtime remains AXIS **8.21**:
+
+- sealed release PR: **#108**
 - sealed runtime baseline SHA: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - Vercel seal deployment: `dpl_4ac8LR615ULNWJ45m1kSB7A6q9jX` — **READY**
 - Vercel Production gate: `33278987731` — **success**
@@ -19,43 +21,44 @@ AXIS **8.21** is the current sealed Web product/runtime release.
 - EdgeOne verification run: `33278965885` — **success**
 - EdgeOne: <https://axisfitness-mirror-9x91gveo.edgeone.cool>
 - architecture: `canonical-single-runtime`
-- deterministic release: **89 top-level build steps**
 - canonical topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
-- Production proof: exact artifact/source parity plus real Chromium and iPhone-like WebKit product/Flow verification
-- post-seal Vercel runtime error query: **no runtime errors found**
 
-The SHA and provider IDs above are the **8.21 runtime seal evidence snapshot**. They are not a claim that every later governance-only deployment must preserve the same Git source SHA; provider gates verify current deployment truth independently.
+Those provider IDs are the **8.21 runtime seal evidence snapshot**. They are deliberately not relabeled as 8.22 evidence. AXIS 8.22 becomes the new sealed runtime baseline only after the exact merged `main` SHA passes fixed Vercel Production, exact-prebuilt EdgeOne Production, and `axis.juele.fun` certification.
 
-See [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) for the sealed record.
+See [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) for the exact candidate/seal distinction.
 
-## What 8.21 seals
+## What 8.22 adds
+
+- **Truthful Evolution Replay** projects one Object's real Encounters in deterministic `time → sessionStart → eventId` order.
+- Replay is **derived and read-only**. It creates no Session, Encounter, media, database, storage namespace, network, AI or scoring owner.
+- A one-Encounter Object explicitly says there is only one real record and **does not fabricate before/after change**.
+- Multi-Encounter Objects can move through the actual chronology with factual time, saved summary and Evidence count.
+- Replay stays inside the existing Evolution Object surface. Selection is transient and never persisted as historical truth.
+- Existing 8.14 Evolution Object and 8.15 Media Evidence ownership remain intact.
+- Chromium and iPhone-like WebKit are both release-blocking; the same Replay proof is also required on EdgeOne and `axis.juele.fun` after merge.
+
+## Inherited 8.21 foundation
 
 - **Universal + Executable Practice Objects** with explicit `metricSchema`, independent execution semantics and immutable Encounter schema/execution snapshots.
 - **Whole-item Flow**: one complete Object is the Flow completion unit; set-level Flow completion authority is retired.
-- **Direct Flow execution**: `开始此项` starts through the existing v82/v87 Active lifecycle instead of opening Quick Record configuration.
-- **Native Active coordination**: Flow pause/resume/hold-finish delegates to the established Active owners; no second Active owner exists.
-- **Detour isolation**: explicit temporary/detour records use canonical Quick Record and never consume or advance the current Flow item.
-- **One-shot compatibility**: ordinary `single/complete` Objects remain one-shot outside Flow; only a proven immutable Flow whole-item may reuse the existing Active lifecycle.
-- **Source-owned localized saved metadata**: user-facing Quick Record saved-item metadata does not expose raw internal `strength/cardio/...` enum IDs.
-- **Metric control convergence**: quantity/time/pace/scale/choice controls share the established recorder/value owners.
-- **Strict geometry**: applicable value + unit optical-center error remains physically asserted at **≤ 0.5 CSS px**, with symmetric/full-width preset rails.
-- **Classic strength compatibility** remains v61-owned only for genuine immutable weight+reps Encounter schemas.
-- Existing user truth remains in the established stores: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`.
-- Capture, source-first media, Evidence, Evolution, Learning, sound and historical compatibility remain inherited and release-blocking.
+- **Direct Flow execution** through the existing v82/v87 Active lifecycle; detours remain canonical Quick Record and do not consume the current Flow item.
+- **One-shot compatibility**: ordinary `single/complete` Objects remain one-shot outside Flow.
+- **Metric-control convergence** with strict applicable optical-center error of **≤ 0.5 CSS px**.
+- Existing user truth remains in `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`.
 
 ## Current engineering state
 
-Active milestone: **AXIS 8.21 — Post-release Architecture Governance**
+Active milestone: **AXIS 8.22 — Truthful Evolution Replay**
 
-Governed active branch: `main`
+Governed target branch: `main`
 
-The public product is sealed at 8.21. Current work is architecture/governance only and must not alter user-visible behavior, factual ownership or persistence semantics.
+Bounded delivery branch: `product/822-truthful-evolution-replay` · PR **#144**.
 
-The next architecture slice audits the **89 deterministic release steps** and moves behavioral `prepare-*` / `postbuild-*` mutation into explicit source owners incrementally. A separate infrastructure-only task will first converge the Node toolchain to a supported Node 20.19+ baseline because current EdgeOne CLI dependencies have moved beyond the repository's historical 20.18.0 pin.
+The release decision is **8.21 → 8.22 / bump / sequence 5 / product-runtime**. This is a real user-visible product stage, not another source-convergence slice disguised as 8.21.
 
-Read [`docs/CURRENT_WORK.md`](docs/CURRENT_WORK.md) before making changes and [`docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md`](docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md) before changing Flow/session semantics.
+Read [`docs/CURRENT_WORK.md`](docs/CURRENT_WORK.md) before making changes and [`docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md`](docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md) before changing inherited Flow/session semantics.
 
-A separate, non-blocking interaction research track — [`Active Action Lens`](docs/ACTIVE_ACTION_LENS_EXPERIMENT.md) — remains presentation-only, must delegate to existing completion/pause/session owners, and is not allowed to create a second training or persistence owner.
+Backup/account expansion remains intentionally deferred until further product/runtime/UI refinement has stabilized the product shape.
 
 ## Product rules
 
@@ -78,12 +81,13 @@ A separate, non-blocking interaction research track — [`Active Action Lens`](d
 Future developers/agents should read, in order:
 
 1. [`governance/project-state.json`](governance/project-state.json)
-2. [`docs/HANDOFF.md`](docs/HANDOFF.md)
-3. [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md)
-4. [`docs/CURRENT_WORK.md`](docs/CURRENT_WORK.md)
-5. current milestone architecture/contract docs
-6. [`governance/owners.json`](governance/owners.json) and [`governance/retirements.json`](governance/retirements.json)
-7. tests/contracts and exact Production evidence before changing ownership or persistence
+2. [`governance/version-decision.json`](governance/version-decision.json)
+3. [`docs/HANDOFF.md`](docs/HANDOFF.md)
+4. [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md)
+5. [`docs/CURRENT_WORK.md`](docs/CURRENT_WORK.md)
+6. current milestone architecture/contract docs
+7. [`governance/owners.json`](governance/owners.json) and [`governance/retirements.json`](governance/retirements.json)
+8. tests/contracts and exact Production evidence before changing ownership or persistence
 
 **Chat history is supplementary context, not authoritative project memory.** If chat and Git/Production disagree, verify reality and repair GitHub truth.
 
@@ -141,7 +145,7 @@ A change is complete only when:
 4. the deterministic artifact is valid;
 5. affected real user paths pass Chromium and WebKit on the same exact candidate;
 6. a Production release is verified against the exact merged SHA before being declared sealed;
-7. governance records the durable runtime seal baseline without pretending a repository document can be self-referentially equal to every later provider deployment.
+7. governance distinguishes a release candidate from the last sealed provider evidence instead of pretending a candidate is already Production.
 
 Quick governance checks:
 
