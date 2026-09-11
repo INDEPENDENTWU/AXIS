@@ -2,30 +2,31 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.22** · **release candidate; Production certification pending** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
+**Current release: 8.22** · **Production-certified** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
 
 AXIS is a **Personal Evolution Engine**. It records real practice without requiring reality to obey a rigid plan. Objects describe what can be practiced, executable schemas describe what is recorded, Encounters freeze what actually happened, Evidence anchors those facts, Flow describes intended continuity, and Evolution remains a factual read-only projection.
 
 ## Release truth
 
-AXIS **8.22 — Truthful Evolution Replay** is the current release candidate. It is **not yet declared Production-sealed**.
+AXIS **8.22 — Truthful Evolution Replay** is the current Production-sealed product/runtime release.
 
-The last fully sealed product/runtime remains AXIS **8.21**:
-
-- sealed release PR: **#108**
-- sealed runtime baseline SHA: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- Vercel seal deployment: `dpl_4ac8LR615ULNWJ45m1kSB7A6q9jX` — **READY**
-- Vercel Production gate: `33278987731` — **success**
+- release PR: **#144**
+- exact Production runtime seal SHA: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
+- Vercel Production gate: `34612916951` — **success**
+- Vercel Public Production Alias Gate: `34612916591` — **success**
 - Vercel: <https://axis-five-puce.vercel.app>
-- EdgeOne seal deployment: `dpysj966i0hh`
-- EdgeOne verification run: `33278965885` — **success**
+- EdgeOne deployment: `dpp90dvhamrl`
+- EdgeOne verification run: `34612882892` — **success**
 - EdgeOne: <https://axisfitness-mirror-9x91gveo.edgeone.cool>
+- custom-domain verification run: `34612882890` — **success**
+- custom domain: <https://axis.juele.fun>
+- final commit status: **Vercel success + EdgeOne Production success**
 - architecture: `canonical-single-runtime`
 - canonical topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
 
-Those provider IDs are the **8.21 runtime seal evidence snapshot**. They are deliberately not relabeled as 8.22 evidence. AXIS 8.22 becomes the new sealed runtime baseline only after the exact merged `main` SHA passes fixed Vercel Production, exact-prebuilt EdgeOne Production, and `axis.juele.fun` certification.
+The current bounded work is governance-only reconciliation of that already-certified evidence. It keeps public release 8.22 and the exact runtime seal above unchanged.
 
-See [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) for the exact candidate/seal distinction.
+See [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) for the exact certification record.
 
 ## What 8.22 adds
 
@@ -35,7 +36,7 @@ See [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) for the exact candidate
 - Multi-Encounter Objects can move through the actual chronology with factual time, saved summary and Evidence count.
 - Replay stays inside the existing Evolution Object surface. Selection is transient and never persisted as historical truth.
 - Existing 8.14 Evolution Object and 8.15 Media Evidence ownership remain intact.
-- Chromium and iPhone-like WebKit are both release-blocking; the same Replay proof is also required on EdgeOne and `axis.juele.fun` after merge.
+- Chromium and iPhone-like WebKit both passed on the exact product release and on the governed Production surfaces.
 
 ## Inherited 8.21 foundation
 
@@ -48,13 +49,13 @@ See [`docs/CURRENT_RELEASE.md`](docs/CURRENT_RELEASE.md) for the exact candidate
 
 ## Current engineering state
 
-Active milestone: **AXIS 8.22 — Truthful Evolution Replay**
+Active milestone: **AXIS 8.22 — Production Evidence Reconciliation**
 
 Governed target branch: `main`
 
-Bounded delivery branch: `product/822-truthful-evolution-replay` · PR **#144**.
+Bounded delivery branch: `gov/822-production-evidence-reconciliation`.
 
-The release decision is **8.21 → 8.22 / bump / sequence 5 / product-runtime**. This is a real user-visible product stage, not another source-convergence slice disguised as 8.21.
+The governance decision is **8.22 → 8.22 / confirm / sequence 6 / governance**. It records the exact 8.22 Production seal without changing runtime behavior, storage, UI, user data or release identity.
 
 Read [`docs/CURRENT_WORK.md`](docs/CURRENT_WORK.md) before making changes and [`docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md`](docs/AXIS_821_FLOW_SESSION_BLUEPRINT.md) before changing inherited Flow/session semantics.
 
@@ -95,9 +96,6 @@ Future developers/agents should read, in order:
 
 ```text
 current source + required compatibility source
-                    |
-                    v
-          deterministic convergence
                     |
                     v
              contract assertions
@@ -145,7 +143,7 @@ A change is complete only when:
 4. the deterministic artifact is valid;
 5. affected real user paths pass Chromium and WebKit on the same exact candidate;
 6. a Production release is verified against the exact merged SHA before being declared sealed;
-7. governance distinguishes a release candidate from the last sealed provider evidence instead of pretending a candidate is already Production.
+7. governance records distinguish product/runtime authority from deployment evidence and from later governance-only bookkeeping.
 
 Quick governance checks:
 
