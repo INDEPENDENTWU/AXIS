@@ -33,7 +33,7 @@ const seed=()=>page.evaluate(async()=>{
 
 try{
  assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());
- await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_822_EVOLUTION_REPLAY__?.selectionEvent==='axis:evolution-replay-selection'&&window.__AXIS_815_MEDIA_EVIDENCE__?.replaySelectionConsumer===true,undefined,{timeout:15000});
+ await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_822_EVOLUTION_REPLAY__?.selectionEvent==='axis:evolution-replay-selection'&&window.__AXIS_822_EVOLUTION_REPLAY__?.selectionTrigger==='explicit-replay-navigation'&&window.__AXIS_815_MEDIA_EVIDENCE__?.replaySelectionConsumer===true,undefined,{timeout:15000});
  assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.23');
  assert.equal(await page.evaluate(()=>window.__AXIS_ARCH__),'canonical-single-runtime');
  await seed();
@@ -43,10 +43,20 @@ try{
  await page.waitForFunction(()=>document.querySelector('#v813Activities .v813Activity[data-v814-key="row"]')&&document.querySelector('#v813Activities .v813Activity[data-v814-key="treadmill"]'),undefined,{timeout:3000});
  const rawBefore=await page.evaluate(()=>localStorage.getItem('axis_v60_state')),metaBefore=await page.evaluate(()=>localStorage.getItem('axis_v8_meta'));armed=true;
  await tap(page.locator('.v813Activity[data-v814-key="row"]'));
- await page.waitForFunction(()=>document.querySelector('#v822Replay')?.textContent.includes('1 / 3')&&document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第1/3次'),undefined,{timeout:3000});
+
+ // Preserve both inherited mount defaults: 8.22 Replay opens at first factual
+ // Encounter while Media Evidence opens at latest visual Encounter. Mounting is
+ // not an implicit selection action and therefore must not alter either owner.
+ await page.waitForFunction(()=>document.querySelector('#v822Replay')?.textContent.includes('1 / 3')&&document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第3/3次'),undefined,{timeout:3000});
+ assert.equal(await page.locator('#v815Evidence').getAttribute('data-axis-replay-evidence-linked'),null,'mount must not fabricate explicit Replay linkage');
+
+ // Explicit Replay navigation, including tapping the already-selected first
+ // node, is the user intent that re-anchors Evidence to the exact Encounter.
+ await tap(page.locator('#v822Replay [data-v822-index="0"]'));
+ await page.waitForFunction(()=>document.querySelector('#v822Replay')?.textContent.includes('1 / 3')&&document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第1/3次'),undefined,{timeout:2200});
  assert.equal(await page.locator('#v815Evidence').getAttribute('data-axis-replay-evidence-linked'),'1');
  assert.equal(await page.locator('#v815Evidence').getAttribute('data-evidence-state'),'selected-with-media');
- assert.equal(await page.locator('#v815Evidence img').count(),1,'first Replay point must show first Encounter evidence');
+ assert.equal(await page.locator('#v815Evidence img').count(),1,'explicit first Replay point must show first Encounter evidence');
 
  await tap(page.locator('#v822Replay [data-v822-step="1"]'));
  await page.waitForFunction(()=>document.querySelector('#v822Replay')?.textContent.includes('2 / 3')&&document.querySelector('#v815Evidence')?.dataset.evidenceState==='selected-without-media',undefined,{timeout:2200});
@@ -64,7 +74,7 @@ try{
  assert.ok((await page.locator('#v822Replay').innerText()).includes('3 / 3'),'manual Evidence inspection must not rewrite Replay chronology');
  assert.equal(await page.locator('#v815Evidence').getAttribute('data-axis-replay-evidence-linked'),null,'manual Evidence inspection must clear Replay linkage');
 
- // Any subsequent Replay choice re-anchors Evidence to the exact chronology point.
+ // Any subsequent explicit Replay choice re-anchors Evidence to exact chronology.
  await tap(page.locator('#v822Replay [data-v822-step="-1"]'));
  await page.waitForFunction(()=>document.querySelector('#v822Replay')?.textContent.includes('2 / 3')&&document.querySelector('#v815Evidence')?.dataset.evidenceState==='selected-without-media',undefined,{timeout:2200});
  assert.equal(await page.locator('#v815Evidence').getAttribute('data-axis-replay-evidence-linked'),'1');
@@ -87,5 +97,5 @@ try{
  assert.equal(apiRequests,0,'wholly no-media Replay triggered API ownership');
 
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.23 Replay Evidence Continuity ${ENGINE}] PASS · exact Encounter evidence alignment · explicit selected no-evidence truth · wholly no-media data-only · manual inspection preserved · read-only/no-network · mobile-safe`);
+ console.log(`[AXIS 8.23 Replay Evidence Continuity ${ENGINE}] PASS · inherited mount defaults preserved · explicit Replay intent anchors exact Encounter Evidence · explicit selected no-evidence truth · wholly no-media data-only · manual inspection preserved · read-only/no-network · mobile-safe`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
