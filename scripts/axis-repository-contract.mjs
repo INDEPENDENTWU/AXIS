@@ -7,6 +7,7 @@ const json=path=>{try{return JSON.parse(read(path))}catch(error){fail(`invalid J
 
 const project=json('governance/project-state.json');
 const CURRENT=String(project?.product?.productionRelease||'');
+const STATUS=String(project?.product?.releaseStatus||'');
 const SEALED=String(project?.product?.lastSealedRelease||project?.production?.sealedRelease||CURRENT);
 const FOUNDATION=String(project?.compatibility?.longLivedFoundation||'');
 const PROD_SHA=String(project?.product?.productionRuntimeSha||'');
@@ -17,10 +18,16 @@ if(!/^[0-9a-f]{40}$/.test(PROD_SHA))fail(`invalid governed Production SHA ${PROD
 if(project?.product?.architecture!=='canonical-single-runtime')fail(`governed architecture is ${project?.product?.architecture}`);
 if(project?.product?.releaseBuildCommand!=='node build-release.mjs')fail(`governed release command is ${project?.product?.releaseBuildCommand}`);
 if(CURRENT==='8.22'){
-  if(project?.product?.releaseStatus!=='candidate')fail('8.22 must remain explicitly candidate until merged-main Production certification');
-  if(SEALED!=='8.21')fail(`8.22 candidate must preserve 8.21 as last sealed release, got ${SEALED}`);
-  if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.22 candidate must declare intended product behavior change');
-  if(project?.engineering?.versionDecision?.decision!=='bump'||project?.engineering?.versionDecision?.sequence!==5)fail('8.22 governed version decision must be bump sequence 5');
+  if(STATUS==='candidate'){
+    if(SEALED!=='8.21')fail(`8.22 candidate must preserve 8.21 as last sealed release, got ${SEALED}`);
+    if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.22 candidate must declare intended product behavior change');
+    if(project?.engineering?.versionDecision?.decision!=='bump'||project?.engineering?.versionDecision?.sequence!==5)fail('8.22 candidate version decision must be bump sequence 5');
+  }else if(STATUS==='production-certified'){
+    if(SEALED!=='8.22')fail(`8.22 Production-certified state must seal 8.22, got ${SEALED}`);
+    if(PROD_SHA!=='abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631')fail(`8.22 Production seal SHA drifted to ${PROD_SHA}`);
+    if(project?.engineering?.intendedProductBehaviorChange!==false)fail('8.22 governance reconciliation must not claim a new product behavior change');
+    if(project?.engineering?.versionDecision?.decision!=='confirm'||project?.engineering?.versionDecision?.sequence!==6||project?.engineering?.versionDecision?.changeClass!=='governance')fail('8.22 Production reconciliation must be confirm sequence 6 governance');
+  }else fail(`unsupported 8.22 releaseStatus ${STATUS||'<empty>'}`);
 }
 
 const required=[
@@ -41,7 +48,7 @@ const readme=read('README.md'),handoff=read('docs/HANDOFF.md'),releaseDoc=read('
 if(!readme.slice(0,1800).includes(`Current release: ${CURRENT}`))fail(`README current release is not ${CURRENT}`);
 for(const [name,text] of [['HANDOFF',handoff],['CURRENT_RELEASE',releaseDoc]]){
   if(!text.includes(`AXIS ${CURRENT}`))fail(`${name} does not identify AXIS ${CURRENT}`);
-  if(!text.includes(PROD_SHA))fail(`${name} does not preserve last sealed Production SHA`);
+  if(!text.includes(PROD_SHA))fail(`${name} does not preserve governed Production SHA`);
 }
 if(!releaseDoc.match(new RegExp(`^# Current Release — AXIS ${CURRENT.replaceAll('.','\\.')}\\s*$`,'m')))fail('CURRENT_RELEASE title does not match governed current release');
 if(CURRENT!==SEALED){
@@ -70,11 +77,13 @@ for(const needle of ['zh-Hans','简体中文','zh-Hant','繁體中文','English'
 const owners=json('governance/owners.json'),retirements=json('governance/retirements.json');
 if(owners?.baselineRelease!==CURRENT||!Array.isArray(owners?.owners)||owners.owners.length<8)fail('owner registry is missing the current critical-owner baseline');
 const allowedRetirementBaselines=new Set([CURRENT,SEALED]);
-if(!allowedRetirementBaselines.has(retirements?.baselineRelease)||!Array.isArray(retirements?.retirements)||retirements.retirements.length<4)fail('retirement registry is missing an accepted current/sealed baseline');
+if(CURRENT==='8.22')allowedRetirementBaselines.add('8.21');
+if(!allowedRetirementBaselines.has(retirements?.baselineRelease)||!Array.isArray(retirements?.retirements)||retirements.retirements.length<4)fail('retirement registry is missing an accepted current/sealed historical baseline');
 for(const id of ['keep-clip-visible-setting','three-mode-default-capture-controller','v876-capture-preference-writer','low-fps-watermark-video-path'])if(!retirements.retirements.some(x=>x.id===id))fail(`retirement guard missing ${id}`);
 if(CURRENT==='8.22'){
   const replay=(owners.owners||[]).find(x=>x.capability==='evolution-replay-822');
-  if(replay?.status!=='derived-read-only-release-candidate'||replay?.storage!=='none')fail('8.22 Evolution Replay owner registry drift');
+  const expectedStatus=STATUS==='candidate'?'derived-read-only-release-candidate':'derived-read-only-production-sealed';
+  if(replay?.status!==expectedStatus||replay?.storage!=='none')fail(`8.22 Evolution Replay owner registry drift; expected ${expectedStatus}`);
 }
 
 const build=read('build-release.mjs');
@@ -140,7 +149,7 @@ if(!steps.length)fail('no deterministic build steps found');
 const duplicateSteps=steps.filter((step,index)=>steps.indexOf(step)!==index);
 if(duplicateSteps.length)fail(`duplicate build steps: ${[...new Set(duplicateSteps)].join(', ')}`);
 for(const step of steps)if(!fs.existsSync(step))fail(`build step does not exist: ${step}`);
-if(CURRENT==='8.22'&&steps.length!==85)fail(`8.22 candidate must have exactly 85 deterministic top-level steps, found ${steps.length}`);
+if(CURRENT==='8.22'&&steps.length!==85)fail(`8.22 must have exactly 85 deterministic top-level steps, found ${steps.length}`);
 
 for(const forbidden of ['docs/history/','archive/'])if(build.includes(forbidden))fail(`release build directly references provenance path ${forbidden}`);
 
@@ -176,4 +185,4 @@ try{
 
 const prepareCount=steps.filter(step=>step.startsWith('prepare-')).length;
 const postbuildCount=steps.filter(step=>step.startsWith('postbuild-')).length;
-console.log(`[AXIS repository contract] PASS · governed current ${CURRENT} / last sealed ${SEALED} @ ${PROD_SHA.slice(0,12)} · inherited runtime foundation ${FOUNDATION} · candidate/seal distinction explicit · ${steps.length} deterministic top-level steps (${prepareCount} prepare / ${postbuildCount} postbuild) · converged Current Release CI preserved · exact locales zh-Hans/zh-Hant/en · themes system/light/dark · Vercel + EdgeOne policies aligned`);
+console.log(`[AXIS repository contract] PASS · governed current ${CURRENT} (${STATUS}) / sealed ${SEALED} @ ${PROD_SHA.slice(0,12)} · inherited runtime foundation ${FOUNDATION} · ${steps.length} deterministic top-level steps (${prepareCount} prepare / ${postbuildCount} postbuild) · converged Current Release CI preserved · exact locales zh-Hans/zh-Hant/en · themes system/light/dark · Vercel + EdgeOne policies aligned`);
