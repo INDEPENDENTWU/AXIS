@@ -145,3 +145,4 @@ jobs:
           node scripts/axis-821-recording-property-surface-smoke.mjs
           node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
           node scripts/axis-821-executable-object-system-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
