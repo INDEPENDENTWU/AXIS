@@ -73,8 +73,8 @@ Existing 8.14 Evolution Object, 8.15 Media Evidence, app/v61/v82/v87 and media o
 - `postbuild-822-evolution-replay-contract.mjs` — artifact/ownership gates
 - `scripts/axis-822-evolution-replay-contract.mjs` — fail-closed source/CI ownership contract
 - `scripts/axis-822-evolution-replay-smoke.mjs` — deterministic factual Replay proof
-- `.github/workflows/axis-822-evolution-replay.yml` — dedicated contract + Chromium + iPhone WebKit gate
-- Current Release, Vercel Production, EdgeOne Production and custom-domain gates extend their current-release proof to Replay
+- the existing **AXIS Current Release Gate** remains the automatic product family and now proves Replay in Chromium + iPhone-like WebKit; no new version-specific workflow family is introduced
+- Vercel Production, EdgeOne Production and custom-domain gates extend their current-release proof to Replay
 
 ## Validation for this work
 
