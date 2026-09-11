@@ -75,6 +75,26 @@ for(const f of inheritedCurrentIdentityFiles){
  write(f,s);
 }
 
+/* 8.10.3 freshness provenance remains 8.18. Its contract has a String(...)
+   public-version assertion that is intentionally outside the generic identity
+   matcher, so advance only the current public/manifest assertions and prove the
+   historical freshness markers survived unchanged. */
+{
+ const f='postbuild-8103-contract.mjs';let s=read(f);
+ const freshnessLiteral="window.__AXIS_8103_FRESHNESS__={version:'8.18',eventDriven:true,polling:false";
+ const releaseMarker="releaseMarker:freshnessCurrent?'8.18':'8.10.3'";
+ if(!s.includes(freshnessLiteral)||!s.includes(releaseMarker))fail('8.10.3 freshness provenance drift');
+ let touched=0;
+ s=s.split('\n').map(line=>{
+  if(!line.includes('contract.publicVersion')&&!line.includes('info.version'))return line;
+  const next=line.replace(/8\.21/g,()=>{touched++;return VERSION});return next;
+ }).join('\n');
+ if(touched<2)fail(`8.10.3 current ${FROM} identity assertions incomplete · ${touched}`);
+ if(!s.includes(freshnessLiteral)||!s.includes(releaseMarker))fail('8.10.3 freshness provenance was relabeled');
+ inheritedIdentityTouches+=touched;
+ write(f,s);
+}
+
 /* 8.21-era files can legitimately contain historical 8.21 capability markers,
    so only explicit public/build assertions advance there. Repository identity-
    provenance is excluded because its transition chain has dedicated logic below. */
