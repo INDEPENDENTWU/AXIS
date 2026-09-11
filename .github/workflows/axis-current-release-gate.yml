@@ -20,10 +20,12 @@ jobs:
           node-version-file: .nvmrc
       - name: Build exact current AXIS candidate
         run: node build-release.mjs
-      - name: Verify unified 8.14 through 8.18 semantic contract
+      - name: Verify unified 8.14 through current semantic contract
         run: node scripts/axis-current-release-contract.mjs
       - name: Verify repository governance contract
         run: node scripts/axis-repository-contract.mjs
+      - name: Verify 8.22 Replay source/CI ownership contract
+        run: node scripts/axis-822-evolution-replay-contract.mjs
       - name: Verify exhaustive Object capability matrix
         run: node scripts/axis-821-object-capability-matrix-contract.mjs
       - name: Prepare Chromium
@@ -101,7 +103,7 @@ jobs:
           node-version-file: .nvmrc
       - name: Build exact current AXIS candidate
         run: node build-release.mjs
-      - name: Verify unified 8.14 through 8.18 semantic contract
+      - name: Verify unified 8.14 through current semantic contract
         run: node scripts/axis-current-release-contract.mjs
       - name: Verify exhaustive Object capability matrix
         run: node scripts/axis-821-object-capability-matrix-contract.mjs
