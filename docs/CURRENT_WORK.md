@@ -40,7 +40,7 @@ These entries are historical provenance and compatibility references, not compet
 - bounded delivery branch: `feat/821-flow-step-execution-intent`
 - exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
 - bounded delivery branch: `feat/821-active-home-stage`
-- exact Active Home base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
 - completed Active Home visual convergence branch: `feat/821-active-home-visual-convergence`
 - Active Home visual convergence certified main: `9eaf90d0f94023218feb452b085da48c9f027276`
 - completed portable backup/origin migration branch: `feat/821-portable-backup-origin-migration`
@@ -70,6 +70,7 @@ The inherited release gates, browser evidence, portable-backup transport, source
 **AXIS 8.22 — Truthful Evolution Replay**
 
 - governed milestone: `AXIS 8.22 — Truthful Evolution Replay`
+- governed active branch: `main`
 - governed target branch: `main`
 - bounded delivery branch: `product/822-truthful-evolution-replay`
 - pull request: **#144**
@@ -147,4 +148,4 @@ After that seal, perform a small governance-only reconciliation if needed to rep
 
 Then continue the durable product backlog one bounded slice at a time, prioritizing Capture friction and real-world runtime adaptation before broad backup/account work. Existing portable backup compatibility remains protected, but a larger backup/account system is intentionally deferred until the product is more stable.
 
-Chat history is supplementary context. Repository governance, exact source, deterministic build output and exact Production evidence are authoritative.
+Chat history is not authoritative project memory. It is supplementary context only. Repository governance, exact source, deterministic build output and exact Production evidence are authoritative.
