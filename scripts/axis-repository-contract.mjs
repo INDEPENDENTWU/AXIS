@@ -75,7 +75,6 @@ for(const id of ['keep-clip-visible-setting','three-mode-default-capture-control
 if(CURRENT==='8.22'){
   const replay=(owners.owners||[]).find(x=>x.capability==='evolution-replay-822');
   if(replay?.status!=='derived-read-only-release-candidate'||replay?.storage!=='none')fail('8.22 Evolution Replay owner registry drift');
-  for(const token of ['no persistence','no network','no AI']){/* semantic checks live in dedicated Replay contract */}
 }
 
 const build=read('build-release.mjs');
@@ -103,7 +102,10 @@ if(CURRENT==='8.22'){
   if(!release822.includes("const FROM='8.21',VERSION='8.22'"))fail('8.22 release transition contract drift');
   for(const token of ["['v822-evolution-replay.js','__AXIS_822_EVOLUTION_REPLAY_READY__']",'no new truth/storage/network/AI owner'])if(!release822.includes(token))fail(`8.22 release owner missing ${token}`);
   if(!build.includes("'postbuild-822-evolution-replay-contract.mjs'"))fail('8.22 postbuild Replay contract is not a deterministic build step');
-  for(const path of ['v822-evolution-replay.js','postbuild-822-evolution-replay-contract.mjs','scripts/axis-822-evolution-replay-contract.mjs','scripts/axis-822-evolution-replay-smoke.mjs','.github/workflows/axis-822-evolution-replay.yml'])if(!fs.existsSync(path))fail(`8.22 Replay release surface missing ${path}`);
+  for(const path of ['v822-evolution-replay.js','postbuild-822-evolution-replay-contract.mjs','scripts/axis-822-evolution-replay-contract.mjs','scripts/axis-822-evolution-replay-smoke.mjs'])if(!fs.existsSync(path))fail(`8.22 Replay release surface missing ${path}`);
+  const currentWorkflow=read('.github/workflows/axis-current-release-gate.yml');
+  if((currentWorkflow.match(/node scripts\/axis-822-evolution-replay-smoke\.mjs/g)||[]).length!==2)fail('8.22 Replay must remain inside the converged Current Release family in both engines');
+  if(fs.existsSync('.github/workflows/axis-822-evolution-replay.yml'))fail('version-specific 8.22 automatic workflow fanout must not return');
 }
 
 const convergenceDriver=read('prepare-8151-regression-seal.mjs');
@@ -172,4 +174,4 @@ try{
 
 const prepareCount=steps.filter(step=>step.startsWith('prepare-')).length;
 const postbuildCount=steps.filter(step=>step.startsWith('postbuild-')).length;
-console.log(`[AXIS repository contract] PASS · governed current ${CURRENT} / last sealed ${SEALED} @ ${PROD_SHA.slice(0,12)} · inherited runtime foundation ${FOUNDATION} · candidate/seal distinction explicit · ${steps.length} deterministic top-level steps (${prepareCount} prepare / ${postbuildCount} postbuild) · exact locales zh-Hans/zh-Hant/en · themes system/light/dark · Vercel + EdgeOne policies aligned`);
+console.log(`[AXIS repository contract] PASS · governed current ${CURRENT} / last sealed ${SEALED} @ ${PROD_SHA.slice(0,12)} · inherited runtime foundation ${FOUNDATION} · candidate/seal distinction explicit · ${steps.length} deterministic top-level steps (${prepareCount} prepare / ${postbuildCount} postbuild) · converged Current Release CI preserved · exact locales zh-Hans/zh-Hant/en · themes system/light/dark · Vercel + EdgeOne policies aligned`);
