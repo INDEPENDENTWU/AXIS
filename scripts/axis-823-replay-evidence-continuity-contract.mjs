@@ -5,6 +5,7 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const replay=read('v822-evolution-replay.js');
 const evidence=read('v815-media-evidence.js');
 const sourceOwner=read('prepare-823-replay-evidence-source.mjs');
+const explicitSelection=read('prepare-823-replay-evidence-explicit-selection.mjs');
 const prepare=read('prepare-823-replay-evidence-continuity.mjs');
 const postbuild=read('postbuild-823-replay-evidence-continuity-contract.mjs');
 const lifecycle=read('prepare-819-postcommit-lifecycle.mjs');
@@ -15,13 +16,15 @@ const edge=read('.github/workflows/axis-edgeone-production-mirror.yml');
 const custom=read('.github/workflows/axis-custom-domain-production.yml');
 
 for(const [label,source] of [['Replay',replay],['Evidence',evidence]])try{new Function(source)}catch(e){fail(`${label} syntax ${e.message}`)}
-for(const needle of ['axis:evolution-replay-selection','selectionEvent:\'axis:evolution-replay-selection\'','eventId:x.eventId','sessionId:x.sessionId','time:Number(x.time)'])if(!replay.includes(needle))fail(`Replay selection contract missing ${needle}`);
+for(const needle of ['axis:evolution-replay-selection','selectionEvent:\'axis:evolution-replay-selection\'','selectionTrigger:\'explicit-replay-navigation\'','renderReplay(key,emitEvidenceSelection=false)','if(emitEvidenceSelection)emitSelection(bundle,x)','renderReplay(currentKey,true)','eventId:x.eventId','sessionId:x.sessionId','time:Number(x.time)'])if(!replay.includes(needle))fail(`Replay selection contract missing ${needle}`);
+for(const needle of ['mount must not emit selection','explicit Replay rail/previous/next action'])if(!explicitSelection.includes(needle))fail(`explicit selection owner missing ${needle}`);
 for(const needle of ['axis:evolution-replay-selection','selectReplayEncounter','selectEncounter:selectReplayEncounter','replaySelectionConsumer:true','linkedEncounter','selected-without-media','这一次没有留下影像证据'])if(!evidence.includes(needle))fail(`Evidence continuity contract missing ${needle}`);
 const noMediaGuard="if(!bundle.visualEncounters.length){revokeUrls();existing?.remove();return bundle}";
 if(!evidence.includes(noMediaGuard)||!sourceOwner.includes(noMediaGuard))fail('wholly no-media Object must remove Evidence and preserve data-only/no-pressure behavior');
 if(evidence.includes('!bundle.visualEncounters.length&&!exactLinked'))fail('Replay linkage must not mount Evidence for a wholly no-media Object');
 for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','fetch(','XMLHttpRequest','WebSocket(','state.sessions.push','state.active.events.push'])if(replay.includes(forbidden)||evidence.includes(forbidden))fail(`read-only source acquired forbidden authority ${forbidden}`);
 if(!sourceOwner.includes('inherited transforms completed first')||!lifecycle.includes("await import('./prepare-823-replay-evidence-source.mjs')"))fail('8.23 late source owner is not reached after inherited Evidence/Replay convergence');
+if(!lifecycle.includes("await import('./prepare-823-replay-evidence-explicit-selection.mjs')"))fail('8.23 explicit selection owner is not reached after the exact handoff source');
 if(!prepare.includes("const FROM='8.22',VERSION='8.23'"))fail('8.23 release transition owner drift');
 if(!lifecycle.includes("await import('./prepare-823-replay-evidence-continuity.mjs')"))fail('8.23 release owner is not reachable after 8.22');
 if(!build.includes("'postbuild-823-replay-evidence-continuity-contract.mjs'"))fail('8.23 postbuild contract is not deterministic build authority');
@@ -33,4 +36,4 @@ if((edge.match(new RegExp(smoke.replaceAll('.','\\.'),'g'))||[]).length!==2)fail
 if((custom.match(new RegExp(smoke.replaceAll('.','\\.'),'g'))||[]).length!==2)fail('axis.juele.fun must run the 8.23 proof in Chromium and iPhone WebKit');
 if(fs.existsSync('.github/workflows/axis-823-replay-evidence-continuity.yml'))fail('version-specific automatic workflow fanout must not be introduced');
 
-console.log('[AXIS 8.23 Replay Evidence Continuity source contract] PASS · exact Replay→Evidence identity handoff · wholly-no-media Evidence removal preserved · v815 remains Evidence owner · dual-engine Current/EdgeOne/custom + Vercel coverage · no new factual/storage/network/AI/media owner');
+console.log('[AXIS 8.23 Replay Evidence Continuity source contract] PASS · inherited mount defaults preserved · explicit Replay navigation owns exact transient handoff · wholly-no-media Evidence removal preserved · v815 remains Evidence owner · dual-engine Current/EdgeOne/custom + Vercel coverage · no new factual/storage/network/AI/media owner');
