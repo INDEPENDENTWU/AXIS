@@ -47,9 +47,37 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 
-/* Historical capability versions stay historical. Only explicit public/build identity
-   assertions advance. Repository identity-provenance is excluded here because its
-   historical transition chain has dedicated 8.20.1/8.21/8.22 mutation logic below. */
+/* Files in this list predate 8.21. Any single-quoted 8.21 literal present after
+   the inherited 8.21 release pass is therefore current-public identity, not a
+   native 8.21 capability marker. Advance those literals wholesale, mirroring
+   the established 8.20.1 -> 8.21 release-owner contract. This matters for
+   inherited semantic switches such as the duration-reminder allowance: they
+   must follow the current release instead of silently falling back to an older
+   behavior contract. */
+const inheritedCurrentIdentityFiles=[
+ 'postbuild-882-contract.mjs','postbuild-810-contract.mjs','postbuild-8101-contract.mjs','postbuild-8102-contract.mjs',
+ 'postbuild-891-contract.mjs','postbuild-811-contract.mjs','postbuild-812-contract.mjs','postbuild-813-live-route.mjs','postbuild-8123-contract.mjs','postbuild-8123-field-polish.mjs','postbuild-8124-contract.mjs',
+ 'postbuild-8131-evolution-contract.mjs','postbuild-814-evolution-contract.mjs','postbuild-815-media-evidence-contract.mjs','postbuild-8151-regression-contract.mjs','postbuild-816-contract.mjs','postbuild-817-contract.mjs','postbuild-8171-source-first-media-contract.mjs',
+ 'scripts/axis-811-experience-smoke.mjs','scripts/axis-882-smoke.mjs','scripts/axis-8102-smoke.mjs','scripts/axis-8103-smoke.mjs','scripts/axis-813-live-route-smoke.mjs','scripts/axis-813-settings-convergence-smoke.mjs',
+ 'scripts/axis-8122-settings-smoke.mjs','scripts/axis-8123-learning-simplify-smoke.mjs','scripts/axis-8123-field-polish-smoke.mjs','scripts/axis-8121-hotfix-smoke.mjs','scripts/axis-8123-equipment-gallery-picker-smoke.mjs',
+ 'scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-polish-smoke.mjs','scripts/axis-8124-custom-equipment-smoke.mjs','scripts/axis-8125-smart-create-polish-smoke.mjs',
+ 'scripts/axis-8131-evolution-smoke.mjs','scripts/axis-814-evolution-object-smoke.mjs','scripts/axis-815-media-evidence-smoke.mjs','scripts/axis-8151-evidence-swap-smoke.mjs','scripts/axis-8151-regression-seal-smoke.mjs',
+ 'scripts/axis-816-capture-evidence-smoke.mjs','scripts/axis-8171-source-first-media-smoke.mjs',
+ 'scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs',
+ 'scripts/axis-current-release-contract.mjs','scripts/axis-runtime-foundation-contract.mjs','scripts/axis-deep-compatibility-contract.mjs'
+];
+let inheritedIdentityTouches=0;
+for(const f of inheritedCurrentIdentityFiles){
+ let s=read(f),n=(s.match(/'8\.21'/g)||[]).length;
+ if(!n)continue;
+ inheritedIdentityTouches+=n;
+ s=s.replaceAll(`'${FROM}'`,`'${VERSION}'`);
+ write(f,s);
+}
+
+/* 8.21-era files can legitimately contain historical 8.21 capability markers,
+   so only explicit public/build assertions advance there. Repository identity-
+   provenance is excluded because its transition chain has dedicated logic below. */
 const identityPairs=[
  ["window.__AXIS_RELEASE__==='8.21'","window.__AXIS_RELEASE__==='8.22'"],
  ["window.__AXIS_RELEASE__),'8.21'","window.__AXIS_RELEASE__),'8.22'"],
@@ -67,7 +95,8 @@ const identityPairs=[
 const candidates=[...fs.readdirSync('.').filter(f=>/^postbuild-.*\.mjs$/.test(f)),...fs.readdirSync('scripts').filter(f=>f.endsWith('.mjs')).map(f=>'scripts/'+f)].filter(f=>f!=='scripts/axis-repository-contract.mjs');
 let identityTouches=0;
 for(const f of candidates){let s=read(f),next=s;for(const [a,b] of identityPairs){const n=next.split(a).length-1;if(n){identityTouches+=n;next=next.replaceAll(a,b)}}if(next!==s)write(f,next)}
-if(identityTouches<12)fail(`public identity convergence suspiciously small: ${identityTouches}`);
+const totalIdentityTouches=inheritedIdentityTouches+identityTouches;
+if(totalIdentityTouches<12)fail(`public identity convergence suspiciously small: inherited ${inheritedIdentityTouches} + explicit ${identityTouches}`);
 
 /* Runtime parity supports the new public artifact while preserving the sealed patch family. */
 {
@@ -92,4 +121,4 @@ if(identityTouches<12)fail(`public identity convergence suspiciously small: ${id
  for(const forbidden of ['axis_replay_state','axis_evolution_replay',"localStorage.setItem('axis_replay",'localStorage.setItem("axis_replay'])if(app.includes(forbidden))fail(`forbidden Replay persistence owner returned ${forbidden}`);
 }
 
-console.log(`[AXIS 8.22 Evolution Replay] PASS · ${FROM} → ${VERSION} · first-class derived Replay · deterministic factual chronology · no new truth/storage/network/AI owner · ${identityTouches} public identity assertion(s) advanced`);
+console.log(`[AXIS 8.22 Evolution Replay] PASS · ${FROM} → ${VERSION} · first-class derived Replay · deterministic factual chronology · no new truth/storage/network/AI owner · ${inheritedIdentityTouches} inherited + ${identityTouches} explicit public identity assertion(s) advanced`);
