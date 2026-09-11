@@ -1,31 +1,32 @@
 # AXIS Engineering Handoff
 
-## Current release candidate and sealed baseline
+## Current Production release
 
-AXIS **8.22 — Truthful Evolution Replay** is the current Web release candidate. It is **not Production-sealed yet**.
+AXIS **8.22 — Truthful Evolution Replay** is the current Production-certified Web release.
 
-Candidate delivery:
+Exact product/runtime seal:
 
 - release PR: **#144**
-- exact certified starting `main`: `a9e747b55eb47c156287c4b4a32fdb6e1ac7446f`
-- bounded branch: `product/822-truthful-evolution-replay`
-- version decision: **8.21 → 8.22 / bump / sequence 5 / product-runtime**
+- exact merged `main` runtime SHA: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
 - architecture: `canonical-single-runtime`
 - deterministic build: `node build-release.mjs`
+- original release decision: **8.21 → 8.22 / bump / sequence 5 / product-runtime**
+- governance evidence reconciliation: **8.22 → 8.22 / confirm / sequence 6 / governance**
 
-The last fully sealed product/runtime remains AXIS **8.21**:
+Production proof for that exact SHA:
 
-- sealed release PR: **#108**
-- sealed runtime baseline SHA: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- Vercel seal deployment: `dpl_4ac8LR615ULNWJ45m1kSB7A6q9jX`
-- Vercel Production gate: `33278987731` — success
-- EdgeOne seal deployment: `dpysj966i0hh`
-- EdgeOne verification run: `33278965885` — success
-- public Vercel: `https://axis-five-puce.vercel.app`
-- public EdgeOne mirror: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
-- governed custom domain: `https://axis.juele.fun`
+- Vercel fixed Production: `https://axis-five-puce.vercel.app`
+- Vercel Production gate: `34612916951` — success
+- Vercel Public Production Alias Gate: `34612916591` — success
+- EdgeOne mirror: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- EdgeOne deployment: `dpp90dvhamrl`
+- EdgeOne verification run: `34612882892` — success
+- EdgeOne verification artifact: `10269466752`
+- custom domain: `https://axis.juele.fun`
+- custom-domain verification run: `34612882890` — success
+- final combined status: Vercel success + EdgeOne Production success
 
-The SHA and provider IDs above are the **8.21 product/runtime seal evidence snapshot**. They must not be relabeled as 8.22 evidence. AXIS 8.22 becomes sealed only when its exact merged `main` SHA passes the existing Vercel, exact-prebuilt EdgeOne and custom-domain certification chain.
+The exact 8.22 runtime seal remains `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`. A later governance-only reconciliation commit records this evidence but does not replace the already-certified product/runtime artifact or become a new runtime owner.
 
 ## Product model to preserve
 
@@ -61,7 +62,7 @@ Runtime truth:
 - no `axis_flow_*` storage namespace
 - no second Session, Encounter, Active, recorder or storage owner
 
-Execution behavior already sealed in 8.21:
+Execution behavior sealed in 8.21 and inherited by 8.22:
 
 - one complete Object is the Flow completion unit
 - `开始此项` bypasses Quick configuration and starts through the existing v82/v87 Active lifecycle
@@ -97,24 +98,15 @@ The inherited 8.21 metric-control system keeps quantity, time, pace, scale and c
 
 ## Current governance state
 
-Active milestone: **AXIS 8.22 — Truthful Evolution Replay**
+Active milestone: **AXIS 8.22 — Production Evidence Reconciliation**
 
 Governed target branch: `main`
 
-Bounded delivery branch: `product/822-truthful-evolution-replay`
+Bounded delivery branch: `gov/822-production-evidence-reconciliation`
 
-PR: **#144**
+This bounded stage changes governance evidence only. It must preserve public release **8.22**, use `decision: confirm`, sequence **6**, class `governance`, and introduce no runtime, storage, UI, data or ownership change.
 
-The candidate is intentionally a true product release. It uses `decision: bump`; it must not be hidden under AXIS 8.21 or mislabeled as source-owner convergence.
-
-The candidate may not be called complete until one exact PR head passes inherited + 8.22 gates, then the exact merged SHA passes:
-
-1. fixed Vercel Production manifest/artifact parity and Chromium current-release proof;
-2. exact-prebuilt EdgeOne Production parity plus Chromium and iPhone-like WebKit Replay proof;
-3. `axis.juele.fun` exact parity plus Chromium and iPhone-like WebKit Replay proof;
-4. final combined commit statuses with no unresolved push-workflow failure.
-
-A follow-up governance-only reconciliation may then replace the provisional 8.21 sealed evidence snapshot with the exact 8.22 Production seal record. Until that happens, repository governance must clearly distinguish **candidate release 8.22** from **last sealed runtime 8.21**.
+The purpose is to replace stale candidate-era bookkeeping with the exact Production seal above. After this reconciliation is itself CI/Production-certified, return immediately to a bounded user-visible product-evolution slice rather than continuing governance cleanup.
 
 ## Data safety
 
@@ -127,7 +119,7 @@ Authoritative stores remain:
 - `axis_v89_speak`
 - `axis_v42_media`
 
-Replay does not migrate, clear, copy or rewrite any of them.
+The 8.22 product release and this governance reconciliation do not migrate, clear, copy or rewrite any of them.
 
 ## Cross-platform foundation
 
@@ -139,7 +131,7 @@ Browser build/postbuild mechanics remain implementation details and must not lea
 
 ## Deferred work
 
-Do not mix the Node/toolchain upgrade, broad backup/account expansion, native/iOS product work, or unrelated architecture convergence into this 8.22 slice. Existing backup compatibility stays protected; larger account/backup design remains intentionally deferred until the product has stabilized further.
+Do not mix the Node/toolchain upgrade, broad backup/account expansion, native/iOS product work, or unrelated architecture convergence into this governance slice. Existing backup compatibility stays protected; larger account/backup design remains intentionally deferred until the product has stabilized further.
 
 ## Resume order for future work
 
