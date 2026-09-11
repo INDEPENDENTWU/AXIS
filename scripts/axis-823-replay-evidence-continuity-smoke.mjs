@@ -16,7 +16,13 @@ let armed=false,apiRequests=0;page.on('request',r=>{if(armed&&/\/api\//.test(new
 const seed=()=>page.evaluate(async()=>{
  const DAY=864e5,latest=new Date();latest.setHours(9,0,0,0);const t3=latest.getTime(),starts=[t3-14*DAY,t3-7*DAY,t3],sessions=[],meta={events:{}};
  const rows=[{w:30,r:10,frames:['F-ROW-FIRST']},{w:32.5,r:10,frames:[]},{w:35,r:12,frames:['F-ROW-LATEST']}];
- starts.forEach((start,i)=>{const eid=`row-${i+1}`;const event={id:eid,time:start+60000,kind:'strength',equipmentId:'row',name:'坐姿划船机',weight:rows[i].w,reps:rows[i].r,sets:3,muscles:['背部'],frameRefs:rows[i].frames};sessions.push({id:`session-${i+1}`,start,end:start+30*60000,events:[event]});meta.events[eid]={activity:{status:'finished',startedAt:start+10000,finishedAt:start+110000,intervals:[{start:start+10000,end:start+110000}]}}});
+ starts.forEach((start,i)=>{
+  const eid=`row-${i+1}`,events=[];
+  events.push({id:eid,time:start+60000,kind:'strength',equipmentId:'row',name:'坐姿划船机',weight:rows[i].w,reps:rows[i].r,sets:3,muscles:['背部'],frameRefs:rows[i].frames});
+  meta.events[eid]={activity:{status:'finished',startedAt:start+10000,finishedAt:start+110000,intervals:[{start:start+10000,end:start+110000}]}};
+  if(i===2){const cid='cardio-no-media';events.push({id:cid,time:start+150000,kind:'cardio',equipmentId:'treadmill',name:'跑步机',duration:20,level:6,muscles:['心肺'],frameRefs:[]});meta.events[cid]={activity:{status:'finished',startedAt:start+120000,finishedAt:start+260000,intervals:[{start:start+120000,end:start+260000}]}}}
+  sessions.push({id:`session-${i+1}`,start,end:start+30*60000,events});
+ });
  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions,active:null,profile:{customEq:[]},prefs:{}}));
  localStorage.setItem('axis_v8_meta',JSON.stringify(meta));
  const store=window.__AXIS_MEDIA_STORE__;if(!store?.put)throw new Error('canonical-media-store-unavailable');
@@ -34,7 +40,7 @@ try{
  await tap(page.locator('nav.nav [data-view="insightsView"]'));
  await page.waitForFunction(()=>document.querySelector('#insightsView')?.classList.contains('active')&&document.querySelectorAll('.v813Node').length>=1,undefined,{timeout:5000});
  await tap(page.locator('.v813Node.selected'));
- await page.waitForFunction(()=>document.querySelector('#v813Activities .v813Activity[data-v814-key="row"]'),undefined,{timeout:3000});
+ await page.waitForFunction(()=>document.querySelector('#v813Activities .v813Activity[data-v814-key="row"]')&&document.querySelector('#v813Activities .v813Activity[data-v814-key="treadmill"]'),undefined,{timeout:3000});
  const rawBefore=await page.evaluate(()=>localStorage.getItem('axis_v60_state')),metaBefore=await page.evaluate(()=>localStorage.getItem('axis_v8_meta'));armed=true;
  await tap(page.locator('.v813Activity[data-v814-key="row"]'));
  await page.waitForFunction(()=>document.querySelector('#v822Replay')?.textContent.includes('1 / 3')&&document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第1/3次'),undefined,{timeout:3000});
@@ -68,6 +74,18 @@ try{
  const geometry=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,inner:innerWidth,root:document.querySelector('#v814Object')?.getBoundingClientRect(),view:document.querySelector('#insightsView')?.getBoundingClientRect()}));
  assert.ok(geometry.scroll<=geometry.inner+1,`8.23 caused horizontal overflow ${geometry.scroll}/${geometry.inner}`);assert.ok(geometry.root&&geometry.view&&geometry.root.width<=geometry.view.width+1,'8.23 escaped Trends geometry');
  await page.emulateMedia({reducedMotion:'reduce'});await tap(page.locator('#v822Replay [data-v822-index="0"]'));await page.waitForFunction(()=>document.querySelector('#v815Evidence .v815Overlay')?.textContent.includes('第1/3次'),undefined,{timeout:1800});
+
+ // A wholly no-media Object remains data-only: Replay may show factual chronology,
+ // but v815 must not mount an empty Evidence/capture-pressure surface.
+ await tap(page.locator('.v813Activity[data-v814-key="treadmill"]'));
+ await page.waitForFunction(()=>document.querySelector('#v822Replay')?.textContent.includes('只有一次真实记录 · 暂无前后对照')&&!document.querySelector('#v815Evidence'),undefined,{timeout:2200});
+ assert.equal(await page.locator('#v815Evidence').count(),0,'wholly no-media Object must not mount Media Evidence');
+ const noMediaText=(await page.locator('#v814Object').innerText()).trim();
+ for(const forbidden of ['请拍摄','添加照片','完善资料','创建作品','发布'])assert.ok(!noMediaText.includes(forbidden),`wholly no-media Object introduced capture pressure: ${forbidden}`);
+ assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v60_state')),rawBefore,'wholly no-media Replay mutated canonical training storage');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('axis_v8_meta')),metaBefore,'wholly no-media Replay mutated canonical metadata storage');
+ assert.equal(apiRequests,0,'wholly no-media Replay triggered API ownership');
+
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.23 Replay Evidence Continuity ${ENGINE}] PASS · exact Encounter evidence alignment · explicit selected no-evidence truth · manual inspection preserved · read-only/no-network · mobile-safe`);
+ console.log(`[AXIS 8.23 Replay Evidence Continuity ${ENGINE}] PASS · exact Encounter evidence alignment · explicit selected no-evidence truth · wholly no-media data-only · manual inspection preserved · read-only/no-network · mobile-safe`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
