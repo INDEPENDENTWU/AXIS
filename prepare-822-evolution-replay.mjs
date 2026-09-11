@@ -44,8 +44,8 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
 }
 
 /* Historical capability versions stay historical. Only explicit public/build identity
-   assertions advance. This includes inherited tests that are executed against the
-   current artifact by later gates. */
+   assertions advance. Repository identity-provenance is excluded here because its
+   historical transition chain has dedicated 8.20.1/8.21/8.22 mutation logic below. */
 const identityPairs=[
  ["window.__AXIS_RELEASE__==='8.21'","window.__AXIS_RELEASE__==='8.22'"],
  ["window.__AXIS_RELEASE__),'8.21'","window.__AXIS_RELEASE__),'8.22'"],
@@ -60,7 +60,7 @@ const identityPairs=[
  ["candidate.version,'8.21'","candidate.version,'8.22'"],
  ["candidate.baseVersion,'8.21'","candidate.baseVersion,'8.22'"]
 ];
-const candidates=[...fs.readdirSync('.').filter(f=>/^postbuild-.*\.mjs$/.test(f)),...fs.readdirSync('scripts').filter(f=>f.endsWith('.mjs')).map(f=>'scripts/'+f)];
+const candidates=[...fs.readdirSync('.').filter(f=>/^postbuild-.*\.mjs$/.test(f)),...fs.readdirSync('scripts').filter(f=>f.endsWith('.mjs')).map(f=>'scripts/'+f)].filter(f=>f!=='scripts/axis-repository-contract.mjs');
 let identityTouches=0;
 for(const f of candidates){let s=read(f),next=s;for(const [a,b] of identityPairs){const n=next.split(a).length-1;if(n){identityTouches+=n;next=next.replaceAll(a,b)}}if(next!==s)write(f,next)}
 if(identityTouches<12)fail(`public identity convergence suspiciously small: ${identityTouches}`);
