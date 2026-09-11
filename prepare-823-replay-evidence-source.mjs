@@ -36,7 +36,8 @@ const regexOnce=(src,re,replacer,label)=>{const flags=re.flags.includes('g')?re.
  s=once(s,"function pickEncounter(bundle){if(!bundle.visualEncounters.length)return null;const exact=bundle.visualEncounters.find(x=>x.index===selectedEncounter);return exact||bundle.latestVisual||bundle.visualEncounters[0]}",linked+"function pickEncounter(bundle){const linked=linkedEncounter(bundle);if(linked)return linked;if(!bundle.visualEncounters.length)return null;const exact=bundle.visualEncounters.find(x=>x.index===selectedEncounter);return exact||bundle.latestVisual||bundle.visualEncounters[0]}",'exact Encounter picker');
 
  /* Preserve stable-swap warm/revoke semantics for media; no-media is an explicit
-    factual stage, never a silent fallback to another Encounter. */
+    factual stage only when this Object has real visual evidence elsewhere. A
+    wholly no-media Object retains the inherited data-only/no-pressure surface. */
  const visual=`async function renderVisual(section,bundle,enc,ref,epoch){
  const stage=$('.v815Stage',section),compareBar=$('.v817CompareBar',section);if(compareBar){compareBar.hidden=true;compareBar.innerHTML=''}if(!stage||epoch!==renderEpoch)return;
  section.dataset.loading='1';
@@ -55,7 +56,8 @@ const regexOnce=(src,re,replacer,label)=>{const flags=re.flags.includes('g')?re.
  const evidence=`async function renderEvidence(key){
  const root=$('#v814Object');if(!root||root.hidden)return null;
  const bundle=resolveBundle(key),priorKey=currentKey,existing=$('#v815Evidence',root);currentKey=key;renderEpoch++;const epoch=renderEpoch,exactLinked=linkedEncounter(bundle);
- if(!bundle||(!bundle.visualEncounters.length&&!exactLinked)){revokeUrls();existing?.remove();return bundle}
+ if(!bundle){revokeUrls();existing?.remove();return bundle}
+ if(!bundle.visualEncounters.length){revokeUrls();existing?.remove();return bundle}
  const signature=bundle.visualEncounters.map(x=>\`\${x.index}:\${x.media.join(',')}\`).join('|')+\`|\${bundle.compareAvailable?'1':'0'}|\${evidenceMeta(bundle)}\`;
  const reuse=!!(existing&&priorKey===key)&&existing.dataset.v815Signature===signature;
  const compareButton=bundle.compareAvailable?\`<button type="button" class="v815CompareToggle" data-v815-compare="1" aria-pressed="\${compareMode?'true':'false'}">对照</button>\`:'';
@@ -84,8 +86,9 @@ const regexOnce=(src,re,replacer,label)=>{const flags=re.flags.includes('g')?re.
  s=once(s,'.v815Missing{display:grid;place-items:center;min-height:172px;color:#646c78;font-size:11px}', '.v815Missing{display:grid;place-items:center;min-height:172px;padding:22px;color:#646c78;font-size:11px;text-align:center}.v815Missing b{display:block;color:#9299a5;font-size:10px;font-weight:620}.v815Missing span{display:block;margin-top:7px;line-height:1.45}', 'truthful no-evidence state styling');
 
  for(const token of ['axis:evolution-replay-selection','selectReplayEncounter','selectEncounter:selectReplayEncounter','replaySelectionConsumer:true','selectionPersistence:false','linkedEncounter','selected-without-media','这一次没有留下影像证据','__AXIS_8171_EVIDENCE_SOURCE__'])if(!s.includes(token))fail(`Evidence continuity missing ${token}`);
+ if(!s.includes("if(!bundle.visualEncounters.length){revokeUrls();existing?.remove();return bundle}"))fail('wholly no-media guard missing from final Evidence owner');
  for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','fetch(','XMLHttpRequest','WebSocket(','state.sessions.push','state.active.events.push'])if(s.includes(forbidden))fail(`Evidence continuity acquired forbidden authority ${forbidden}`);
  try{new Function(s)}catch(e){fail(`Evidence syntax ${e.message}`)};write(EVIDENCE,s);
 }
 
-console.log('[AXIS 8.23 Replay Evidence source] PASS · inherited transforms completed first · exact transient Encounter handoff · truthful selected no-media stage · stable/source-first Evidence preserved · no new writer');
+console.log('[AXIS 8.23 Replay Evidence source] PASS · inherited transforms completed first · exact transient Encounter handoff · truthful selected no-media stage · wholly no-media data-only behavior preserved · stable/source-first Evidence preserved · no new writer');
