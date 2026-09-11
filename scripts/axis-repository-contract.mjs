@@ -123,12 +123,14 @@ if(!post817.includes("await import('./postbuild-8171-source-first-media-contract
 const post8171=read('postbuild-8171-source-first-media-contract.mjs');
 if(!post8171.includes("await import('./postbuild-818-contract.mjs')"))fail('8.18 postbuild contract is not chained from 8.17.1');
 const post818=read('postbuild-818-contract.mjs');
+/* Keep this source contract at the historical pre-8.20.1 shape. The existing
+   8.20.1 and 8.21 release prepares append their built identities sequentially;
+   the 8.22 prepare then appends 8.22. Pre-populating later identities here would
+   break those proven fail-closed transforms. */
 const source818Identity=post818.includes("contract.publicVersion!=='8.18'")&&post818.includes("contract.stableBaseVersion!=='8.18'")&&post818.includes("info.version!=='8.18'")&&post818.includes("info.baseVersion!=='8.18'");
 const built819Identity=post818.includes("contract.publicVersion!=='8.19'")&&post818.includes("contract.stableBaseVersion!=='8.19'")&&post818.includes("info.version!=='8.19'")&&post818.includes("info.baseVersion!=='8.19'");
 const built820Identity=post818.includes("contract.publicVersion!=='8.20'")&&post818.includes("contract.stableBaseVersion!=='8.20'")&&post818.includes("info.version!=='8.20'")&&post818.includes("info.baseVersion!=='8.20'");
-const built8201Identity=post818.includes("contract.publicVersion!=='8.20.1'")&&post818.includes("contract.stableBaseVersion!=='8.20.1'")&&post818.includes("info.version!=='8.20.1'")&&post818.includes("info.baseVersion!=='8.20.1'");
-const built821Identity=post818.includes("contract.publicVersion!=='8.21'")&&post818.includes("contract.stableBaseVersion!=='8.21'")&&post818.includes("info.version!=='8.21'")&&post818.includes("info.baseVersion!=='8.21'");
-if(!source818Identity&&!built819Identity&&!built820Identity&&!built8201Identity&&!built821Identity)fail('8.18 semantic contract has neither sealed source identity nor supported built identity');
+if(!source818Identity&&!built819Identity&&!built820Identity)fail('8.18 semantic contract has neither sealed source identity nor supported built identity');
 for(const marker of ['objectMetricSchema818:true','pwaRouteTruth818:true','capturePreferenceModel818:true','evolutionObjectShelf818:true'])if(!post818.includes(marker))fail(`8.18 semantic contract missing ${marker}`);
 
 const stepBlock=build.match(/const STEPS=\[([\s\S]*?)\n\];/);
