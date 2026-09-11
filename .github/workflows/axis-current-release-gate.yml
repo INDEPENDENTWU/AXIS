@@ -20,10 +20,12 @@ jobs:
           node-version-file: .nvmrc
       - name: Build exact current AXIS candidate
         run: node build-release.mjs
-      - name: Verify unified 8.14 through 8.18 semantic contract
+      - name: Verify unified 8.14 through current semantic contract
         run: node scripts/axis-current-release-contract.mjs
       - name: Verify repository governance contract
         run: node scripts/axis-repository-contract.mjs
+      - name: Verify 8.22 Replay source/CI ownership contract
+        run: node scripts/axis-822-evolution-replay-contract.mjs
       - name: Verify exhaustive Object capability matrix
         run: node scripts/axis-821-object-capability-matrix-contract.mjs
       - name: Prepare Chromium
@@ -84,6 +86,9 @@ jobs:
       - name: 8.21 Executable Object system
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-821-executable-object-system-smoke.mjs
+      - name: 8.22 Truthful Evolution Replay
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-822-evolution-replay-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-chromium.log || true
@@ -98,7 +103,7 @@ jobs:
           node-version-file: .nvmrc
       - name: Build exact current AXIS candidate
         run: node build-release.mjs
-      - name: Verify unified 8.14 through 8.18 semantic contract
+      - name: Verify unified 8.14 through current semantic contract
         run: node scripts/axis-current-release-contract.mjs
       - name: Verify exhaustive Object capability matrix
         run: node scripts/axis-821-object-capability-matrix-contract.mjs
@@ -158,6 +163,9 @@ jobs:
       - name: iPhone 8.21 Executable Object system
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-821-executable-object-system-smoke.mjs
+      - name: iPhone 8.22 Truthful Evolution Replay
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-822-evolution-replay-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-webkit.log || true

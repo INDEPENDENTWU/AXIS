@@ -45,6 +45,7 @@ jobs:
           if((wf.match(/node scripts\/axis-821-recording-property-surface-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.21 recording property surface in both Chromium and iPhone WebKit');
           if((wf.match(/node scripts\/axis-821-quick-photo-metric-centering-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the Quick + Photo numeric centering proof in both Chromium and iPhone WebKit');
           if((wf.match(/node scripts\/axis-821-executable-object-system-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the full 8.21 executable Object proof in both Chromium and iPhone WebKit');
+          if((wf.match(/node scripts\/axis-822-evolution-replay-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.22 Evolution Replay smoke in both Chromium and iPhone WebKit');
           NODE
 
   deploy-production:
@@ -153,6 +154,7 @@ jobs:
           node scripts/axis-821-recording-property-surface-smoke.mjs
           node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
           node scripts/axis-821-executable-object-system-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
@@ -179,6 +181,7 @@ jobs:
           node scripts/axis-821-recording-property-surface-smoke.mjs
           node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
           node scripts/axis-821-executable-object-system-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
       - name: Mark EdgeOne Production success
         env:
           GH_STATUS_TOKEN: ${{ github.token }}

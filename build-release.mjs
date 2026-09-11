@@ -85,6 +85,7 @@ const STEPS=[
   'postbuild-813-live-route.mjs',
   'postbuild-8123-contract.mjs',
   'postbuild-819-upo-seal.mjs',
+  'postbuild-822-evolution-replay-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 
@@ -127,6 +128,7 @@ if(contract.architecture==='canonical-single-runtime'){
   for(const gate of ['liveRoute813','liveRouteSingleOwner813','liveRouteReadOnly813','liveRoutePureRuntime813','liveRouteFallback813','liveRouteNoRecordingOwner813','liveRouteCanonicalSingleRuntime813'])if(manifest.gates?.[gate]!==true)fail(`8.13 Stage 3 gate missing · ${gate}`);
   for(const gate of ['settingsNativeAlignment8123','settingsHelperCopyRetired8123','learningSettingsMethodRetired8123','learningShadowUiRetired8123','learningSimpleAudio8123','learningLocalRecording8123','learningNoUpload8123','learningNoTrainingOwner8123'])if(manifest.gates?.[gate]!==true)fail(`8.12.3 gate missing · ${gate}`);
   if(manifest.gates?.universalPracticeObjectFinalReset819!==true)fail('8.19 final recorder reset gate missing');
+  if(manifest.gates?.evolutionReplay822!==true)fail('8.22 truthful Evolution Replay gate missing');
 }
 console.log(`[AXIS release contract] ${contract.publicVersion} · base ${contract.stableBaseVersion} · ${contract.architecture} · manifest verified`);
 console.log(`[AXIS release] complete · ${STEPS.length} deterministic steps`);

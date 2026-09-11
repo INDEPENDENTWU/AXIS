@@ -1,19 +1,25 @@
 {
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.21",
+    "productionRelease": "8.22",
+    "releaseStatus": "candidate",
+    "lastSealedRelease": "8.21",
     "productionRuntimeSha": "8f1f1331e751a7868d390f986d77d5779732ad51",
     "productionPullRequest": 108,
+    "candidatePullRequest": 144,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
+    "sealedRelease": "8.21",
     "sealedAt": "2026-08-30",
+    "candidateRelease": "8.22",
+    "candidateStatus": "pending-exact-head-and-merged-main-certification",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "Provider IDs and source SHA below are the exact 8.21 product/runtime seal evidence. Later governance-only main deployments may have newer source SHAs without changing the sealed runtime baseline; current provider truth must still be verified externally by deployment gates.",
+    "evidenceSemantics": "Provider IDs and source SHA below remain the last fully sealed AXIS 8.21 product/runtime evidence while AXIS 8.22 is a release candidate. They must not be relabeled as 8.22 evidence. The 8.22 merged SHA becomes the new sealed baseline only after exact Vercel, EdgeOne and custom-domain certification.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
       "deploymentId": "dpl_4ac8LR615ULNWJ45m1kSB7A6q9jX",
@@ -41,20 +47,30 @@
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.21 — Post-release Architecture Governance",
-    "activePhase": "Production sealed — build-owner governance",
+    "activeMilestone": "AXIS 8.22 — Truthful Evolution Replay",
+    "activePhase": "Release candidate — exact-head dual-engine and Production certification",
     "activeBranch": "main",
-    "pullRequest": 108,
-    "pullRequestDraft": false,
-    "baselineRelease": "8.21",
+    "deliveryBranch": "product/822-truthful-evolution-replay",
+    "pullRequest": 144,
+    "pullRequestDraft": true,
+    "baselineRelease": "8.22",
     "baselineRuntimeSha": "8f1f1331e751a7868d390f986d77d5779732ad51",
+    "lastSealedRelease": "8.21",
+    "lastSealedRuntimeSha": "8f1f1331e751a7868d390f986d77d5779732ad51",
     "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
     "phase1ResolverProofSha": "2892d8807e6d2688cb366019d64c6e9b573fcb66",
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed. Current Release Chromium had one inherited Capture async timeout and passed unchanged on exact-head rerun; WebKit passed without retry.",
-    "intendedProductBehaviorChange": false,
-    "nextProductRelease": "8.21",
+    "intendedProductBehaviorChange": true,
+    "nextProductRelease": "8.22",
+    "versionDecision": {
+      "sequence": 5,
+      "baseRelease": "8.21",
+      "release": "8.22",
+      "decision": "bump",
+      "changeClass": "product-runtime"
+    },
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
       "executableObjectRuntime": "window.__AXIS_EXECUTABLE_OBJECTS__",
@@ -66,7 +82,7 @@
       "authoritativeStores": ["axis_v60_state", "axis_v8_meta", "axis_v89_speak", "axis_v42_media"]
     },
     "flow": {
-      "status": "production-sealed",
+      "status": "production-sealed-8.21-inherited",
       "principle": "intent is not history; reality remains authoritative",
       "portableContract": "axis.flow.v1",
       "provenanceContract": "axis.flow-provenance.v1",
@@ -99,6 +115,25 @@
       "provenFlowWholeItemMayUseExistingActive": true,
       "metricOpticalCenterTolerancePx": 0.5
     },
+    "evolutionReplay": {
+      "status": "8.22-release-candidate",
+      "owner": "v822-evolution-replay.js / window.__AXIS_EVOLUTION_REPLAY__",
+      "sourceTruth": "existing Evolution Object Encounter projection",
+      "ordering": "time-session-event",
+      "singleEncounterSemantics": "explicit-no-comparison",
+      "presentation": "in-place-read-only",
+      "selectionPersistence": false,
+      "newStorage": false,
+      "newDatabase": false,
+      "newSessionWriter": false,
+      "newEncounterWriter": false,
+      "newMediaOwner": false,
+      "network": false,
+      "ai": false,
+      "interpretiveScoring": false,
+      "chromiumAndWebKitRequired": true,
+      "productionProofRequired": ["Vercel", "EdgeOne", "axis.juele.fun"]
+    },
     "interactionExperiment": {
       "name": "Active Action Lens",
       "status": "non-blocking-research",
@@ -108,7 +143,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Audit the 89 deterministic release steps by source owner and retire behavioral prepare/postbuild mutation incrementally. Keep public identity 8.21 and product/runtime behavior unchanged unless a separately scoped product change is explicitly approved."
+    "nextSlice": "Finish AXIS 8.22 Truthful Evolution Replay on one exact PR head, then certify the exact merged main artifact on Vercel, EdgeOne and axis.juele.fun before any broader product slice. Backup/account expansion remains deferred."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
@@ -125,7 +160,8 @@
       "Flow definitions/current continuity may extend axis_v60_state only under the established app.js owner; no axis_flow_* namespace or new IndexedDB database is allowed.",
       "Temporary Flow recording context may alter only the current recording handoff, never global Object Truth/history/Evolution projections.",
       "No Flow work may create a second Session, Encounter, Active, recorder or persistence owner.",
-      "Ordinary single/complete Objects remain one-shot; only an immutable proven Flow whole-item may reuse the existing v82/v87 Active lifecycle."
+      "Ordinary single/complete Objects remain one-shot; only an immutable proven Flow whole-item may reuse the existing v82/v87 Active lifecycle.",
+      "Evolution Replay is derived from immutable Encounter truth and may not persist its own timeline, rewrite history, infer scores, or become a media/network/AI owner."
     ]
   },
   "crossPlatform": {
@@ -141,10 +177,11 @@
       {"id": "en", "name": "English", "requireProfessionalTranslation": true}
     ],
     "themes": ["system", "light", "dark"],
-    "status": "production-sealed 8.21; internal enums must never leak into localized visible product copy"
+    "status": "AXIS 8.22 candidate inherits the sealed presentation foundation; internal enums must never leak into localized visible product copy"
   },
   "authorityOrder": [
     "governance/project-state.json",
+    "governance/version-decision.json",
     "docs/HANDOFF.md",
     "docs/CURRENT_RELEASE.md",
     "docs/CURRENT_WORK.md",
@@ -160,14 +197,13 @@
   ],
   "notes": [
     "Chat history is supplementary context, never authoritative project state.",
-    "AXIS 8.21 product/runtime is Production-sealed at 8f1f1331e751a7868d390f986d77d5779732ad51 from PR #108 with exact Vercel/EdgeOne artifact parity, Chromium proof and iPhone-like WebKit proof.",
-    "The Production SHA in this file is the sealed runtime baseline, not a self-referential promise that every later governance-only deployment has the same source commit.",
-    "Vercel seal evidence: deployment dpl_4ac8LR615ULNWJ45m1kSB7A6q9jX, Production gate 33278987731, Public Production Alias Gate 33278987745.",
-    "EdgeOne seal evidence: deployment dpysj966i0hh, verification run 33278965885, exact 8.21 source/manifest parity and dual-engine live flow proof.",
-    "Phase 0 ownership/reuse is sealed at 84310744b528441f3fa8d3feb51e8ed149e02b78.",
-    "Phase 1 axis.flow.v1 resolver foundation is sealed at 2892d8807e6d2688cb366019d64c6e9b573fcb66.",
-    "Phase 1B axis.flow-provenance.v1 is sealed at 289fd1b2cdcbcb4e1cfa56402372b8005daadfa4.",
-    "8.21 whole-item Flow, source-owned Quick saved metadata, native Active coordination and strict metric geometry are Production-sealed without adding a second factual owner.",
+    "AXIS 8.22 is a release candidate from exact certified main a9e747b55eb47c156287c4b4a32fdb6e1ac7446f; it is not Production-sealed yet.",
+    "AXIS 8.21 remains the last fully Production-sealed runtime at 8f1f1331e751a7868d390f986d77d5779732ad51 from PR #108 until exact merged 8.22 certification replaces that evidence.",
+    "The Production SHA in this file is the last sealed runtime baseline, not a claim that the 8.22 candidate is already deployed or certified.",
+    "Vercel 8.21 seal evidence: deployment dpl_4ac8LR615ULNWJ45m1kSB7A6q9jX, Production gate 33278987731, Public Production Alias Gate 33278987745.",
+    "EdgeOne 8.21 seal evidence: deployment dpysj966i0hh, verification run 33278965885, exact source/manifest parity and dual-engine live flow proof.",
+    "8.21 whole-item Flow, source-owned Quick saved metadata, native Active coordination and strict metric geometry remain inherited without owner changes.",
+    "8.22 Truthful Evolution Replay is derived read-only chronology; it adds no persistent factual authority and never interprets one record as change.",
     "Active Action Lens remains optional presentation research and has no permission to own Flow state, completion facts, Active truth or storage."
   ]
 }
