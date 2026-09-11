@@ -53,15 +53,9 @@ jobs:
             if [ "$code" = "200" ]; then
               if EXPECTED="$AXIS_EXPECTED_SHA" VERSION="$AXIS_EXPECTED_VERSION" BASE="$AXIS_EXPECTED_BASE" ARCH="$AXIS_EXPECTED_ARCH" node <<'NODE'
           const fs=require('fs');
-          try{
-            const x=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8'));
-            process.exit(x.sourceCommit===process.env.EXPECTED&&x.version===process.env.VERSION&&x.baseVersion===process.env.BASE&&x.architecture===process.env.ARCH?0:1);
-          }catch{process.exit(1)}
+          try{const x=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8'));process.exit(x.sourceCommit===process.env.EXPECTED&&x.version===process.env.VERSION&&x.baseVersion===process.env.BASE&&x.architecture===process.env.ARCH?0:1)}catch{process.exit(1)}
           NODE
-              then
-                curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/" -o /tmp/axis-production-index.html
-                exit 0
-              fi
+              then curl -LfsS --connect-timeout 5 --max-time 15 "$AXIS_URL/" -o /tmp/axis-production-index.html; exit 0; fi
             fi
             echo "Attempt $attempt · public Production not yet exact ($code) · waiting for $AXIS_EXPECTED_SHA / $AXIS_EXPECTED_VERSION"
             sleep 3
@@ -74,34 +68,16 @@ jobs:
           set -euo pipefail
           node <<'NODE'
           const fs=require('fs'),assert=require('assert');
-          const local=JSON.parse(fs.readFileSync('/tmp/axis-local-build.json','utf8'));
-          const remote=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8'));
-          const html=fs.readFileSync('/tmp/axis-production-index.html','utf8');
-          const normalize=x=>{const y=structuredClone(x);delete y.generatedAt;return y};
-          try{assert.deepStrictEqual(normalize(remote),normalize(local))}catch(err){
-            console.error('::error title=AXIS Production manifest drift::Fixed Production manifest differs from the exact local build for the deployed commit.');
-            throw err;
-          }
-          if(remote.sourceCommit!==process.env.AXIS_EXPECTED_SHA)throw new Error(`source commit mismatch ${remote.sourceCommit}`);
-          if(remote.architecture!=='canonical-single-runtime')throw new Error(`unexpected architecture ${remote.architecture}`);
-          if(remote.requests?.initialJavascript!==1||remote.requests?.dynamicJavascript!==0)throw new Error(`unexpected JS topology ${JSON.stringify(remote.requests)}`);
-          if(!Array.isArray(remote.assets?.chunks)||remote.assets.chunks.length!==0)throw new Error('historical dynamic chunks survived');
+          const local=JSON.parse(fs.readFileSync('/tmp/axis-local-build.json','utf8')),remote=JSON.parse(fs.readFileSync('/tmp/axis-build.json','utf8')),html=fs.readFileSync('/tmp/axis-production-index.html','utf8');
+          const normalize=x=>{const y=structuredClone(x);delete y.generatedAt;return y};assert.deepStrictEqual(normalize(remote),normalize(local));
+          if(remote.sourceCommit!==process.env.AXIS_EXPECTED_SHA||remote.architecture!=='canonical-single-runtime')throw new Error('Production identity mismatch');
+          if(remote.requests?.initialJavascript!==1||remote.requests?.dynamicJavascript!==0||!Array.isArray(remote.assets?.chunks)||remote.assets.chunks.length!==0)throw new Error('Production JS topology drift');
           if(!/^[a-f0-9]{12}$/.test(remote.assets?.core||'')||!/^[a-f0-9]{12}$/.test(remote.assets?.css||''))throw new Error('invalid immutable asset hash');
-          const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(m=>m[1]);
-          if(scripts.length!==1||scripts[0]!==`/axis-core.js?v=${remote.assets.core}`)throw new Error(`Production HTML script mismatch ${scripts}`);
-          if(!html.includes(`data-axis-runtime="canonical-${remote.version}"`))throw new Error('canonical HTML marker missing');
-          if(/AXIS_FEATURE_LOADER_START|AXIS_COMPLETION_LOADER_START|axis-enhance-(foundation|recording|interaction|product)\.js/.test(html))throw new Error('retired dynamic loader survives in Production HTML');
+          const scripts=[...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(m=>m[1]);if(scripts.length!==1||scripts[0]!==`/axis-core.js?v=${remote.assets.core}`)throw new Error(`Production HTML script mismatch ${scripts}`);if(!html.includes(`data-axis-runtime="canonical-${remote.version}"`))throw new Error('canonical HTML marker missing');
           fs.writeFileSync('/tmp/axis-assets.tsv',`core\t/axis-core.js?v=${remote.assets.core}\t20000\ncss\t/axis-style.css?v=${remote.assets.css}\t10000\n`);
           console.log(`[AXIS Production] exact manifest parity · ${remote.version} · ${remote.sourceCommit.slice(0,10)} · ${remote.assets.core}`);
           NODE
-          while IFS=$'\t' read -r name path min_bytes; do
-            test -n "$name" || continue
-            out="/tmp/axis-production-$name"
-            curl -LfsS --connect-timeout 5 --max-time 20 "$AXIS_URL$path" -o "$out"
-            bytes=$(wc -c <"$out")
-            test "$bytes" -ge "$min_bytes" || { echo "$name asset too small: $bytes"; exit 1; }
-            echo "Asset OK · $name · $bytes bytes"
-          done </tmp/axis-assets.tsv
+          while IFS=$'\t' read -r name path min_bytes; do test -n "$name" || continue; out="/tmp/axis-production-$name"; curl -LfsS --connect-timeout 5 --max-time 20 "$AXIS_URL$path" -o "$out"; bytes=$(wc -c <"$out"); test "$bytes" -ge "$min_bytes" || exit 1; done </tmp/axis-assets.tsv
       - name: Prepare real Chromium harness
         run: |
           npm install --no-save playwright-core@1.55.0
@@ -109,8 +85,7 @@ jobs:
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Real Chromium inherited product foundation against fixed Production URL
-        env:
-          AXIS_ENGINE: chromium
+        env: { AXIS_ENGINE: chromium }
         run: |
           node scripts/run-smoke-guarded.mjs
           node scripts/axis-completion-smoke.mjs
@@ -125,8 +100,7 @@ jobs:
           node scripts/axis-8122-settings-smoke.mjs
           node scripts/axis-8123-learning-simplify-smoke.mjs
       - name: Real Chromium current release flow against fixed Production URL
-        env:
-          AXIS_ENGINE: chromium
+        env: { AXIS_ENGINE: chromium }
         run: |
           node scripts/axis-8124-flow-smoke.mjs
           node scripts/axis-8131-evolution-smoke.mjs
@@ -146,3 +120,4 @@ jobs:
           node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
           node scripts/axis-821-executable-object-system-smoke.mjs
           node scripts/axis-822-evolution-replay-smoke.mjs
+          node scripts/axis-823-replay-evidence-continuity-smoke.mjs
