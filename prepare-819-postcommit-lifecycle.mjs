@@ -101,4 +101,5 @@ await import('./prepare-821-report-pdf-export.mjs');
 await import('./prepare-821-report-share-card.mjs');
 await import('./prepare-821-portable-backup.mjs');
 await import('./prepare-822-evolution-replay.mjs');
+await import('./prepare-823-replay-evidence-source.mjs');
 await import('./prepare-823-replay-evidence-continuity.mjs');
