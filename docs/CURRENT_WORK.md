@@ -7,6 +7,7 @@ AXIS **8.21** is the last fully Production-sealed Web runtime. The 8.22 work sta
 - canonical repository: `INDEPENDENTWU/AXIS`
 - exact certified starting `main`: `a9e747b55eb47c156287c4b4a32fdb6e1ac7446f`
 - last sealed product/runtime release: **8.21**
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - last sealed runtime SHA: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - last sealed release PR: **#108**
 - architecture: `canonical-single-runtime`
@@ -15,10 +16,54 @@ AXIS **8.21** is the last fully Production-sealed Web runtime. The 8.22 work sta
 - exact-prebuilt EdgeOne Production: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
 - governed custom domain: `https://axis.juele.fun`
 - authoritative stores preserved: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`
+- existing Session/Encounter writer: canonical app owner
+- existing Active owner: v82/v87 lifecycle; no new Active owner is permitted
+- cross-platform foundation: `axis-native-foundation-0`
+- native repository: `INDEPENDENTWU/AXIS-iOS`
+- portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`; user-facing backup transport may emit `axis.backup.v2` while retaining v1 import/API compatibility
 
 PR #143 completed the bounded 8.8.4 source-owner convergence and reduced the graph from 85 to 84 without changing public behavior. That architecture slice is complete. This work deliberately stops doing endless source convergence and moves into a true product release.
 
 The provider IDs recorded in governance remain **8.21 seal evidence only** until 8.22 is merged and the exact merged artifact passes the complete Production chain. No file in this PR may imply that the candidate is already Production-sealed.
+
+### Inherited continuity references
+
+These entries are historical provenance and compatibility references, not competing Production baselines or active branches. Existing release contracts intentionally use several of these exact identities to prove that a later product release has not erased earlier certified ownership, browser evidence or source handoffs.
+
+- AXIS 8.21 product/runtime seal: `8f1f1331e751a7868d390f986d77d5779732ad51`
+- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
+- bounded delivery branch: `feat/821-report-pdf-export`
+- bounded delivery branch: `feat/821-report-share-card`
+- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
+- bounded delivery branch: `feat/821-flow-step-recording-intent`
+- exact certified historical Flow recording base: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
+- bounded delivery branch: `feat/821-flow-step-execution-intent`
+- exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
+- bounded delivery branch: `feat/821-active-home-stage`
+- exact Active Home base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- completed Active Home visual convergence branch: `feat/821-active-home-visual-convergence`
+- Active Home visual convergence certified main: `9eaf90d0f94023218feb452b085da48c9f027276`
+- completed portable backup/origin migration branch: `feat/821-portable-backup-origin-migration`
+- portable backup/origin migration historical base: `c434a4a78530669d5a47be9799d40f5049b57a2d`
+- portable backup/origin migration continuity: `b349c8b87a0e9b30916ba9959297897260de3882`
+- completed Active Home source-convergence branch: `arch/821-active-home-source-convergence`
+- completed Active Home source-convergence PR: **#131**
+- Active Home source-convergence certified main: `3877d91`
+- completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
+- completed Report PDF scope source-convergence PR: **#133**
+- Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`
+- completed Flow Active boot source-convergence branch: `arch/821-flow-active-boot-source-convergence`
+- completed Flow Active boot source-convergence PR: **#134**
+- Flow Active boot source-convergence certified main: `1ed1b53`
+- portable-backup/cold-start certified main after PR #136: `72503cd9b3f49cdbeb797ec14343791a5a482815`
+- Learning Budget source-convergence PR #137: `d2ccf4977dd5ae551c5575f8c42ca444e93b582a`
+- Learning Settings Entry source-convergence PR #138: `f1a5dbfb593429859a83fee783610f29396762e9`
+- Explicit Version Decision Contract PR #139: `bb28d8b8419a6e05c7eb087fe41ac1246272260f`
+- Watermark Brand source-convergence PR #141: `3972850bd0fc27779e1f2da223e8c463b1541ea0`
+- Watermark Four-Switch source-convergence PR #142: `76e6720118f04fb10c11649692d70d862f58246b`
+- 8.8.4 Runtime Follow-up source-convergence PR #143 exact certified main: `a9e747b55eb47c156287c4b4a32fdb6e1ac7446f`
+
+The inherited release gates, browser evidence, portable-backup transport, source-owner retirements and factual ownership boundaries remain release-blocking continuity. Historical branch names above are retained only so fail-closed contracts can verify provenance; they do not become current delivery branches or runtime owners.
 
 ## Active change
 
