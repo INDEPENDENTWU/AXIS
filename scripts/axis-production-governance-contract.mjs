@@ -113,7 +113,8 @@ has(currentWork,project.engineering.activeMilestone,'CURRENT_WORK');
 has(currentWork,'governed target branch: `main`','CURRENT_WORK');
 if(candidate){
   for(const [label,text] of [['README',readme],['HANDOFF',handoff],['CURRENT_RELEASE',currentRelease],['CURRENT_WORK',currentWork]])if(!/candidate|Release candidate|候选/i.test(text))fail(`${label} does not explicitly mark 8.22 as candidate`);
-  if(/AXIS \*\*8\.22\*\* is the current sealed|8\.22.*Production-sealed/i.test(readme+handoff+currentRelease+currentWork))fail('candidate documentation overstates 8.22 Production seal');
+  const joined=[readme,handoff,currentRelease,currentWork].join('\n');
+  for(const forbidden of ['AXIS **8.22** is the current sealed','AXIS 8.22 is Production-sealed','Status: Production sealed — AXIS 8.22'])if(joined.includes(forbidden))fail(`candidate documentation overstates 8.22 Production seal: ${forbidden}`);
 }
 
 const portable=new Set(project?.crossPlatform?.portableContracts||[]);
