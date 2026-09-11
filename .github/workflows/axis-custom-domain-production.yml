@@ -36,6 +36,7 @@ jobs:
           ])if(!wf.includes(token))throw new Error(`custom-domain Production gate missing ${token}`);
           if((wf.match(/node scripts\/axis-821-portable-backup-smoke\.mjs/g)||[]).length!==2)throw new Error('axis.juele.fun must prove v1 portable backup in both Chromium and iPhone-like WebKit');
           if((wf.match(/node scripts\/axis-821-portable-backup-v2-smoke\.mjs/g)||[]).length!==2)throw new Error('axis.juele.fun must prove large-media v2 portable backup in both Chromium and iPhone-like WebKit');
+          if((wf.match(/node scripts\/axis-822-evolution-replay-smoke\.mjs/g)||[]).length!==2)throw new Error('axis.juele.fun must prove AXIS 8.22 Evolution Replay in both Chromium and iPhone-like WebKit');
           const verifier=fs.readFileSync('scripts/edgeone-custom-domain-verify.mjs','utf8');
           for(const token of ['sourceCommit','runtimeHash','hostnameStable','EDGEONE_CUSTOM_DOMAIN_URL'])if(!verifier.includes(token))throw new Error(`custom-domain verifier missing ${token}`);
           NODE
@@ -63,24 +64,26 @@ jobs:
           CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
-      - name: Chromium portable backup on axis.juele.fun
+      - name: Chromium current AXIS proof on axis.juele.fun
         env:
           AXIS_URL: https://axis.juele.fun
           AXIS_ENGINE: chromium
         run: |
           node scripts/axis-821-portable-backup-smoke.mjs
           node scripts/axis-821-portable-backup-v2-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps webkit
-      - name: iPhone WebKit portable backup on axis.juele.fun
+      - name: iPhone WebKit current AXIS proof on axis.juele.fun
         env:
           AXIS_URL: https://axis.juele.fun
           AXIS_ENGINE: webkit
         run: |
           node scripts/axis-821-portable-backup-smoke.mjs
           node scripts/axis-821-portable-backup-v2-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
       - name: Upload custom-domain verification record
         if: always()
         uses: actions/upload-artifact@v4
