@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 6,
+  "sequence": 7,
   "base_release": "8.22",
-  "release": "8.22",
-  "decision": "confirm",
-  "change_class": "governance",
-  "summary": "Reconcile the exact AXIS 8.22 merged-main Production certification evidence across governance and durable handoff records without changing runtime or product behavior."
+  "release": "8.23",
+  "decision": "bump",
+  "change_class": "product-runtime",
+  "summary": "Advance AXIS to 8.23 for Replay Evidence Continuity: exact Encounter identity aligns existing Media Evidence with Replay selection and explicitly shows selected no-evidence moments without adding storage, network, AI, media or historical truth ownership."
 }
