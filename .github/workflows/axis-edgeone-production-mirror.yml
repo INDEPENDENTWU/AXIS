@@ -39,13 +39,8 @@ jobs:
           if(x.buildCommand!=='node scripts/edgeone-prebuilt-verify.mjs')throw new Error(`EdgeOne must publish verified prebuilt artifact, got ${x.buildCommand}`);
           if(x.outputDirectory!=='.')throw new Error(`unexpected EdgeOne output ${x.outputDirectory}`);
           const wf=fs.readFileSync('.github/workflows/axis-edgeone-production-mirror.yml','utf8');
-          if(!wf.includes('remote.version===local.version')||!wf.includes('remote.baseVersion===local.baseVersion'))throw new Error('EdgeOne Production wait must follow the exact built release identity instead of a hard-coded version');
-          if((wf.match(/node scripts\/axis-8201-object-reliability-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.20.1 reliability smoke in both Chromium and iPhone WebKit');
-          if((wf.match(/node scripts\/axis-821-flow-runtime-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.21 Flow runtime smoke in both Chromium and iPhone WebKit');
-          if((wf.match(/node scripts\/axis-821-recording-property-surface-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.21 recording property surface in both Chromium and iPhone WebKit');
-          if((wf.match(/node scripts\/axis-821-quick-photo-metric-centering-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the Quick + Photo numeric centering proof in both Chromium and iPhone WebKit');
-          if((wf.match(/node scripts\/axis-821-executable-object-system-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the full 8.21 executable Object proof in both Chromium and iPhone WebKit');
-          if((wf.match(/node scripts\/axis-822-evolution-replay-smoke\.mjs/g)||[]).length!==2)throw new Error('EdgeOne Production must run the 8.22 Evolution Replay smoke in both Chromium and iPhone WebKit');
+          if(!wf.includes('remote.version===local.version')||!wf.includes('remote.baseVersion===local.baseVersion'))throw new Error('EdgeOne Production wait must follow exact built identity');
+          for(const [script,label] of [['axis-8201-object-reliability-smoke.mjs','8.20.1 reliability'],['axis-821-flow-runtime-smoke.mjs','8.21 Flow'],['axis-821-recording-property-surface-smoke.mjs','recording property'],['axis-821-quick-photo-metric-centering-smoke.mjs','numeric centering'],['axis-821-executable-object-system-smoke.mjs','executable Object'],['axis-822-evolution-replay-smoke.mjs','8.22 Replay'],['axis-823-replay-evidence-continuity-smoke.mjs','8.23 Replay Evidence Continuity']])if((wf.match(new RegExp(`node scripts/${script.replaceAll('.','\\.')}`,'g'))||[]).length!==2)throw new Error(`EdgeOne Production must run ${label} in Chromium and iPhone WebKit`);
           NODE
 
   deploy-production:
@@ -63,19 +58,15 @@ jobs:
         with:
           node-version: 20.18.0
       - name: Mark EdgeOne Production pending
-        env:
-          GH_STATUS_TOKEN: ${{ github.token }}
+        env: { GH_STATUS_TOKEN: ${{ github.token }} }
         run: |
           node --input-type=module - <<'NODE'
           const target=`${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
           const body={state:'pending',context:'EdgeOne Production',description:'Deploying exact AXIS main to EdgeOne',target_url:target};
-          const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});
-          if(!r.ok)throw new Error(`GitHub pending status ${r.status}: ${await r.text()}`);
-          console.log(`[AXIS EdgeOne status] pending · ${target}`);
+          const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});if(!r.ok)throw new Error(`GitHub pending status ${r.status}: ${await r.text()}`);
           NODE
       - name: Require EdgeOne credential
-        run: |
-          test -n "${EDGEONE_API_TOKEN:-}" || { echo '::error::Repository secret EDGEONE_API_TOKEN is required.'; exit 2; }
+        run: test -n "${EDGEONE_API_TOKEN:-}" || { echo '::error::Repository secret EDGEONE_API_TOKEN is required.'; exit 2; }
       - name: Build exact main artifact
         run: node build-release.mjs
       - name: Verify exact EdgeOne package
@@ -87,28 +78,17 @@ jobs:
           for attempt in $(seq 1 30); do
             code=$(curl -LsS --connect-timeout 5 --max-time 15 -o /tmp/vercel-axis-build.json -w '%{http_code}' "$VERCEL_GOLDEN_URL/axis-build.json" || true)
             if [ "$code" = "200" ] && EXPECTED="$GITHUB_SHA" node <<'NODE'
-          const fs=require('fs');
-          try{
-            const remote=JSON.parse(fs.readFileSync('/tmp/vercel-axis-build.json','utf8'));
-            const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
-            process.exit(remote.sourceCommit===process.env.EXPECTED&&remote.version===local.version&&remote.baseVersion===local.baseVersion?0:1)
-          }catch{process.exit(1)}
+          const fs=require('fs');try{const remote=JSON.parse(fs.readFileSync('/tmp/vercel-axis-build.json','utf8')),local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));process.exit(remote.sourceCommit===process.env.EXPECTED&&remote.version===local.version&&remote.baseVersion===local.baseVersion?0:1)}catch{process.exit(1)}
           NODE
             then exit 0; fi
             release=$(node -p "require('./axis-build.json').version+' / '+require('./axis-build.json').baseVersion")
-            echo "Attempt $attempt · Vercel golden not yet exact $GITHUB_SHA / $release"
-            sleep 4
+            echo "Attempt $attempt · Vercel golden not yet exact $GITHUB_SHA / $release"; sleep 4
           done
-          echo '::error::Vercel golden Production did not converge to the exact main commit and release identity before EdgeOne deploy.'
-          exit 1
+          echo '::error::Vercel golden Production did not converge to exact main before EdgeOne deploy.'; exit 1
       - name: Require Vercel/local canonical artifact parity
         run: |
           node - <<'NODE'
-          const local=require('./axis-build.json'),remote=require('/tmp/vercel-axis-build.json');
-          for(const [k,a,b] of [
-            ['sourceCommit',local.sourceCommit,remote.sourceCommit],['version',local.version,remote.version],['baseVersion',local.baseVersion,remote.baseVersion],['architecture',local.architecture,remote.architecture],['core',local.assets?.core,remote.assets?.core],['css',local.assets?.css,remote.assets?.css],['runtimeHash',local.canonical?.runtimeHash,remote.canonical?.runtimeHash],['initialJavascript',local.requests?.initialJavascript,remote.requests?.initialJavascript],['dynamicJavascript',local.requests?.dynamicJavascript,remote.requests?.dynamicJavascript]
-          ])if(a!==b)throw new Error(`Vercel parity mismatch ${k}: ${a} != ${b}`);
-          console.log('[AXIS EdgeOne parity] exact canonical artifact matches Vercel Production');
+          const local=require('./axis-build.json'),remote=require('/tmp/vercel-axis-build.json');for(const [k,a,b] of [['sourceCommit',local.sourceCommit,remote.sourceCommit],['version',local.version,remote.version],['baseVersion',local.baseVersion,remote.baseVersion],['architecture',local.architecture,remote.architecture],['core',local.assets?.core,remote.assets?.core],['css',local.assets?.css,remote.assets?.css],['runtimeHash',local.canonical?.runtimeHash,remote.canonical?.runtimeHash],['initialJavascript',local.requests?.initialJavascript,remote.requests?.initialJavascript],['dynamicJavascript',local.requests?.dynamicJavascript,remote.requests?.dynamicJavascript]])if(a!==b)throw new Error(`Vercel parity mismatch ${k}: ${a} != ${b}`);console.log('[AXIS EdgeOne parity] exact canonical artifact matches Vercel Production');
           NODE
       - name: Install EdgeOne CLI
         run: npm install -g edgeone
@@ -122,9 +102,7 @@ jobs:
       - name: Resolve EdgeOne runner-visible project URL
         run: |
           node - <<'NODE' >> "$GITHUB_ENV"
-          const x=require('/tmp/edgeone-live-result.json');
-          if(!x.baseUrl)throw new Error('EdgeOne base URL missing');
-          console.log(`EDGEONE_LIVE_URL=${x.baseUrl}`);
+          const x=require('/tmp/edgeone-live-result.json');if(!x.baseUrl)throw new Error('EdgeOne base URL missing');console.log(`EDGEONE_LIVE_URL=${x.baseUrl}`);
           NODE
       - name: Prepare Chromium
         run: |
@@ -133,9 +111,7 @@ jobs:
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Chromium real EdgeOne current release flow
-        env:
-          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
-          AXIS_ENGINE: chromium
+        env: { AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}, AXIS_ENGINE: chromium }
         run: |
           node scripts/axis-8124-flow-smoke.mjs
           node scripts/axis-8131-evolution-smoke.mjs
@@ -155,14 +131,13 @@ jobs:
           node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
           node scripts/axis-821-executable-object-system-smoke.mjs
           node scripts/axis-822-evolution-replay-smoke.mjs
+          node scripts/axis-823-replay-evidence-continuity-smoke.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps webkit
       - name: iPhone WebKit real EdgeOne current release flow
-        env:
-          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
-          AXIS_ENGINE: webkit
+        env: { AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}, AXIS_ENGINE: webkit }
         run: |
           node scripts/axis-8124-flow-smoke.mjs
           node scripts/axis-8131-evolution-smoke.mjs
@@ -182,17 +157,12 @@ jobs:
           node scripts/axis-821-quick-photo-metric-centering-smoke.mjs
           node scripts/axis-821-executable-object-system-smoke.mjs
           node scripts/axis-822-evolution-replay-smoke.mjs
+          node scripts/axis-823-replay-evidence-continuity-smoke.mjs
       - name: Mark EdgeOne Production success
-        env:
-          GH_STATUS_TOKEN: ${{ github.token }}
+        env: { GH_STATUS_TOKEN: ${{ github.token }} }
         run: |
           node --input-type=module - <<'NODE'
-          const x=JSON.parse((await import('node:fs')).readFileSync('/tmp/edgeone-live-result.json','utf8'));
-          if(!x.baseUrl)throw new Error('EdgeOne base URL missing for status');
-          const body={state:'success',context:'EdgeOne Production',description:'Exact AXIS main verified on EdgeOne Production',target_url:x.baseUrl};
-          const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});
-          if(!r.ok)throw new Error(`GitHub success status ${r.status}: ${await r.text()}`);
-          console.log(`[AXIS EdgeOne status] success · ${x.baseUrl}`);
+          const x=JSON.parse((await import('node:fs')).readFileSync('/tmp/edgeone-live-result.json','utf8'));if(!x.baseUrl)throw new Error('EdgeOne base URL missing for status');const body={state:'success',context:'EdgeOne Production',description:'Exact AXIS main verified on EdgeOne Production',target_url:x.baseUrl};const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});if(!r.ok)throw new Error(`GitHub success status ${r.status}: ${await r.text()}`);
           NODE
       - name: Preserve non-secret deployment diagnostics
         if: always()
