@@ -40,7 +40,11 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  const f='postbuild-features-hardened.mjs';let s=read(f);s=once(s,`const TARGET_VERSION='${FROM}';`,`const TARGET_VERSION='${VERSION}';`,'feature manifest version');write(f,s);
 }
 {
- const f='postbuild-88-canonical.mjs';let s=read(f);s=once(s,`const VERSION='${FROM}';`,`const VERSION='${VERSION}';`,'canonical postbuild version');s=once(s,`document.documentElement.dataset.axisCanonical='${FROM}';`,`document.documentElement.dataset.axisCanonical='${VERSION}';`,'canonical dataset version');s=s.replaceAll(`canonical-${FROM}\\">`,`canonical-${VERSION}\\">`);write(f,s);
+ const f='postbuild-88-canonical.mjs';let s=read(f);
+ s=once(s,`const VERSION='${FROM}';`,`const VERSION='${VERSION}';`,'canonical postbuild version');
+ s=once(s,`document.documentElement.dataset.axisCanonical='${FROM}';`,`document.documentElement.dataset.axisCanonical='${VERSION}';`,'canonical dataset version');
+ s=once(s,`data-axis-runtime="canonical-${FROM}"`,`data-axis-runtime="canonical-${VERSION}"`,'canonical HTML marker version');
+ write(f,s);
 }
 
 /* Historical capability versions stay historical. Only explicit public/build identity
