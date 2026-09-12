@@ -51,6 +51,7 @@ Chat history is not authoritative project memory; repository contracts, exact co
 
 The defect was introduced by compact YAML flow mappings around GitHub expression values such as `env: { GH_STATUS_TOKEN: ${{ github.token }} }`. The previously certified EdgeOne workflow used block mappings. The bounded repair restores block-form `env` mappings while preserving all 8.23 exact-artifact, Chromium and iPhone WebKit proofs.
 
+- governed active branch: `main`
 - governed target branch: `main`
 - active repair branch: `infra/823-edgeone-workflow-yaml-fix`
 - exact base: `8e4c906e5cd380b577fa340b4d73d57bc5de9204`
