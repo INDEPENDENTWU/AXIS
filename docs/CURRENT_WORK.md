@@ -1,6 +1,6 @@
 # Current Work
 
-## Last fully sealed Production baseline
+## Production baseline at start of this work
 
 AXIS **8.22 — Truthful Evolution Replay** remains the last fully Production-sealed Web runtime until the current AXIS 8.23 certification chain is complete.
 
@@ -18,7 +18,7 @@ AXIS **8.22 — Truthful Evolution Replay** remains the last fully Production-se
 
 Chat history is not authoritative project memory; repository contracts, exact commits, built artifacts and provider certification are authoritative.
 
-## Merged AXIS 8.23 product candidate
+### Merged AXIS 8.23 product candidate
 
 **AXIS 8.23 — Replay Evidence Continuity** was merged from PR **#146** after its exact PR head passed the product/runtime/version/repository gates.
 
@@ -34,7 +34,7 @@ Chat history is not authoritative project memory; repository contracts, exact co
 - Vercel Production Deployment Gate `34671983407` — **success**
 - Public Production Alias Gate `34671983433` — **success**
 
-### AXIS 8.23 product behavior
+#### AXIS 8.23 product behavior
 
 - v822 Replay emits exact transient Encounter identity only after explicit Replay rail / previous / next navigation.
 - v815 Media Evidence remains the sole Evidence read/presentation owner and resolves that exact Encounter.
@@ -45,9 +45,9 @@ Chat history is not authoritative project memory; repository contracts, exact co
 - inherited Replay/Evidence initial mount choices remain unchanged.
 - no new Session/Encounter/media/storage/network/AI writer or truth store was introduced.
 
-## Active change — EdgeOne workflow certification repair
+## Active change
 
-The 8.23 runtime itself is not being changed. Exact merged main `8e4c906e5cd380b577fa340b4d73d57bc5de9204` reached and passed fixed Vercel Production, but EdgeOne push run `34671967533` failed before creating any jobs. The workflow run started and ended in the same second with `jobs=[]`, so this is a workflow parsing/startup defect rather than a product/runtime failure.
+**EdgeOne workflow certification repair for AXIS 8.23.** The 8.23 runtime itself is not being changed. Exact merged main `8e4c906e5cd380b577fa340b4d73d57bc5de9204` reached and passed fixed Vercel Production, but EdgeOne push run `34671967533` failed before creating any jobs. The workflow run started and ended in the same second with `jobs=[]`, so this is a workflow parsing/startup defect rather than a product/runtime failure.
 
 The defect was introduced by compact YAML flow mappings around GitHub expression values such as `env: { GH_STATUS_TOKEN: ${{ github.token }} }`. The previously certified EdgeOne workflow used block mappings. The bounded repair restores block-form `env` mappings while preserving all 8.23 exact-artifact, Chromium and iPhone WebKit proofs.
 
@@ -66,30 +66,30 @@ The defect was introduced by compact YAML flow mappings around GitHub expression
 
 The repair must not remove any 8.23 EdgeOne requirement: exact Vercel-golden SHA/version/base parity, exact canonical artifact parity, EdgeOne exact-prebuilt deployment, 8.23 Chromium proof, 8.23 iPhone WebKit proof, and final `EdgeOne Production` commit status.
 
-## Durable inherited certification ledger
+### Durable inherited certification ledger
 
 The current infrastructure repair does not supersede inherited product provenance. These entries are retained for fail-closed contracts.
 
-### Cross-platform / native foundation provenance
+#### Cross-platform / native foundation provenance
 
 - `axis-native-foundation-0`
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable domain contract: `axis.domain.v1`
 - portable data contract: `axis.data.v1`
 
-### AXIS 8.21 Flow intent provenance
+#### AXIS 8.21 Flow intent provenance
 
 - bounded delivery branch: `feat/821-flow-step-recording-intent`
 - exact certified base main SHA: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
 - bounded delivery branch: `feat/821-flow-step-execution-intent`
 - exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
 
-### AXIS 8.21 Active Home provenance
+#### AXIS 8.21 Active Home provenance
 
 - bounded delivery branch: `feat/821-active-home-stage`
 - exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
 
-### AXIS 8.21 Report provenance
+#### AXIS 8.21 Report provenance
 
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
@@ -101,7 +101,7 @@ The current infrastructure repair does not supersede inherited product provenanc
 - bounded delivery branch: `feat/821-report-share-card`
 - exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
 
-## Validation for the active repair
+## Validation for this work
 
 Merge is blocked until one exact repair PR head proves all of the following without weakening inherited assertions:
 
