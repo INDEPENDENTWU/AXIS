@@ -29,10 +29,16 @@ if(CURRENT==='8.23'){
   if(CANDIDATE_PR!==146||project?.engineering?.pullRequest!==146||project?.engineering?.pullRequestDraft!==true)fail('8.23 candidate PR state must identify draft PR #146');
   if(project?.engineering?.activeMilestone!=='AXIS 8.23 — Replay Evidence Continuity')fail('8.23 active milestone drift');
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.23 must be governed as intended product behavior change');
-  if(decision?.sequence!==7||decision?.base_release!=='8.22'||decision?.release!=='8.23'||decision?.decision!=='bump'||decision?.change_class!=='product-runtime')fail('8.23 version decision must be 8.22 -> 8.23 / bump / sequence 7 / product-runtime');
+  const productDecision=decision?.sequence===7&&decision?.base_release==='8.22'&&decision?.release==='8.23'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+  const infrastructureRepair=decision?.sequence===8&&decision?.base_release==='8.23'&&decision?.release==='8.23'&&decision?.decision==='confirm'&&decision?.change_class==='infrastructure';
+  if(!productDecision&&!infrastructureRepair)fail('8.23 latest version decision must be the product bump or the bounded sequence-8 infrastructure confirmation');
 }else if(CURRENT==='8.22'&&!candidate){
   if(STATUS!=='production-certified'||SEALED!=='8.22'||RUNTIME_SHA!=='abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631'||SEALED_PR!==144)fail('sealed 8.22 governance drift');
 }
+
+const edgeWorkflow=read('.github/workflows/axis-edgeone-production-mirror.yml');
+if(/^\s*env:\s*\{[^\n]*\$\{\{/m.test(edgeWorkflow))fail('EdgeOne workflow must use block env mappings around GitHub expressions; flow mappings can fail before jobs are created');
+if(CURRENT==='8.23'&&(edgeWorkflow.match(/node scripts\/axis-823-replay-evidence-continuity-smoke\.mjs/g)||[]).length!==2)fail('EdgeOne workflow must preserve the 8.23 smoke in Chromium and iPhone WebKit');
 
 const production=project?.production||{};if(production.evidenceScope!=='product-runtime-seal-snapshot'||production.latestDeploymentIsAuthority!==false)fail('Production evidence authority drift');if(String(production.sealedRelease||SEALED)!==SEALED)fail('Production sealedRelease drift');
 const evidenceSemantics=String(production.evidenceSemantics||'');if(CURRENT==='8.23'&&!evidenceSemantics.includes('last fully sealed AXIS 8.22'))fail('8.23 candidate evidence semantics must preserve the 8.22 seal snapshot');
