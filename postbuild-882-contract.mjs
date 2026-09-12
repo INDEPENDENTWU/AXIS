@@ -16,8 +16,14 @@ if(!html.includes('id="axisNowHero"')||!runtime.includes('function deriveHomeSta
 if(!runtime.includes('function visualSigFromCanvas(')||!runtime.includes('function localVisualDistance(')||!runtime.includes('function memoryGuess(')||!runtime.includes('function learnMemory('))fail('local personal visual memory missing');
 if(!runtime.includes('v882QuickMine')||!runtime.includes('v882QuickMedia')||!runtime.includes('window.__AXIS_CAPTURE__')||!runtime.includes('beginQuickMedia'))fail('quick custom/media contract missing');
 if(!runtime.includes("label:'腰'")||!runtime.includes("['back-extension','45°罗马椅背伸'")||!runtime.includes("['nordic-curl','北欧腿弯举'"))fail('expanded movement / waist anatomy contract missing');
-const forbiddenSonic=sessionDurationExtension?/sets>old\.sets\)cue\('set'\)|status==='finished'.*cue\('item'\)|cue\('rest'\)/:/sets>old\.sets\)cue\('set'\)|status==='finished'.*cue\('item'\)|cue\('rest'\)|cue\('session'\)/;
-if(forbiddenSonic.test(runtime))fail('forbidden non-countdown automatic sonic cue survived');
+/* Canonical AXIS is intentionally a single compact runtime. A cross-runtime
+   `status==='finished'.*cue('item')` regex can span unrelated owners once later
+   presentation source grows. Keep this inherited assertion semantic: reject the
+   actual retired cue kinds everywhere and reject a finish→item cue only within
+   its own bounded statement context. The legitimate countdown item cue remains. */
+const forbiddenLegacyKinds=sessionDurationExtension?/cue\('(set|rest)'\)/:/cue\('(set|rest|session)'\)/;
+const forbiddenManualItemFinish=/status==='finished'[^;]{0,220};?[^;]{0,220}cue\('item'\)/;
+if(forbiddenLegacyKinds.test(runtime)||forbiddenManualItemFinish.test(runtime))fail('forbidden non-countdown automatic sonic cue survived');
 if(sessionDurationExtension&&!runtime.includes("automaticKinds:['item','session']"))fail('8.10.3 duration extension is not owned by canonical v8710');
 if(!runtime.includes("const due=Math.max(60000,Number(a.estimateMs)||0)")||!runtime.includes("elapsed(a)>=due&&!D.querySelector('#v87Hold.show')"))fail('countdown-zero / long-press sound contract missing');
 if(!/async function reminderTick\(\)\s*\{\s*return false\s*\}/.test(runtime))fail('v87 reminderTick is not a no-op in canonical runtime');
