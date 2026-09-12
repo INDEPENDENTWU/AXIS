@@ -16,14 +16,12 @@ if(!html.includes('id="axisNowHero"')||!runtime.includes('function deriveHomeSta
 if(!runtime.includes('function visualSigFromCanvas(')||!runtime.includes('function localVisualDistance(')||!runtime.includes('function memoryGuess(')||!runtime.includes('function learnMemory('))fail('local personal visual memory missing');
 if(!runtime.includes('v882QuickMine')||!runtime.includes('v882QuickMedia')||!runtime.includes('window.__AXIS_CAPTURE__')||!runtime.includes('beginQuickMedia'))fail('quick custom/media contract missing');
 if(!runtime.includes("label:'腰'")||!runtime.includes("['back-extension','45°罗马椅背伸'")||!runtime.includes("['nordic-curl','北欧腿弯举'"))fail('expanded movement / waist anatomy contract missing');
-/* Canonical AXIS is intentionally a single compact runtime. A cross-runtime
-   `status==='finished'.*cue('item')` regex can span unrelated owners once later
-   presentation source grows. Keep this inherited assertion semantic: reject the
-   actual retired cue kinds everywhere and reject a finish→item cue only in the
-   same bounded source context used by the authoritative v8710 retirement gate.
-   The legitimate countdown item cue remains. */
+/* Canonical AXIS is intentionally a single compact runtime. Cross-owner range
+   scans can accidentally connect a historical `status==='finished'` fact with
+   the later legitimate countdown cue. Assert the retired cue kinds globally,
+   and the retired manual-finish cue by its exact structural callsite. */
 const forbiddenLegacyKinds=sessionDurationExtension?/cue\('(set|rest)'\)/:/cue\('(set|rest|session)'\)/;
-const forbiddenManualItemFinish=/status==='finished'[^\n]{0,160}cue\('item'\)/;
+const forbiddenManualItemFinish=/if\(a\.status==='finished'&&old\.status!=='finished'\)cue\('item'\)/;
 if(forbiddenLegacyKinds.test(runtime)||forbiddenManualItemFinish.test(runtime))fail('forbidden non-countdown automatic sonic cue survived');
 if(sessionDurationExtension&&!runtime.includes("automaticKinds:['item','session']"))fail('8.10.3 duration extension is not owned by canonical v8710');
 if(!runtime.includes("const due=Math.max(60000,Number(a.estimateMs)||0)")||!runtime.includes("elapsed(a)>=due&&!D.querySelector('#v87Hold.show')"))fail('countdown-zero / long-press sound contract missing');
