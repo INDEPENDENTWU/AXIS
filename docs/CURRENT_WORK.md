@@ -22,6 +22,7 @@ Chat history is not authoritative project memory; repository contracts, exact co
 
 **AXIS 8.23 — Replay Evidence Continuity** was merged from PR **#146** after its exact PR head passed the product/runtime/version/repository gates.
 
+- bounded product delivery branch: `product/823-replay-evidence-continuity`
 - exact product PR head: `b84b10edc874e0448e717038de74a1b8b5f30a49`
 - exact merged product `main`: `8e4c906e5cd380b577fa340b4d73d57bc5de9204`
 - release transition: **8.22 → 8.23**
@@ -50,7 +51,8 @@ The 8.23 runtime itself is not being changed. Exact merged main `8e4c906e5cd380b
 
 The defect was introduced by compact YAML flow mappings around GitHub expression values such as `env: { GH_STATUS_TOKEN: ${{ github.token }} }`. The previously certified EdgeOne workflow used block mappings. The bounded repair restores block-form `env` mappings while preserving all 8.23 exact-artifact, Chromium and iPhone WebKit proofs.
 
-- active branch: `infra/823-edgeone-workflow-yaml-fix`
+- governed target branch: `main`
+- active repair branch: `infra/823-edgeone-workflow-yaml-fix`
 - exact base: `8e4c906e5cd380b577fa340b4d73d57bc5de9204`
 - public release: **8.23 unchanged**
 - version decision: `confirm`
