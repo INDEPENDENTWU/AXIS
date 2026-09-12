@@ -47,6 +47,28 @@ The product scope is intentionally narrow:
 
 AXIS 8.23 Replay Evidence Continuity is already Production-sealed and is inherited unchanged.
 
+## Inherited fail-closed governance provenance
+
+The current release remains 8.24; the entries below are immutable historical provenance required by inherited contracts. They do not reactivate historical branches or change current authority.
+
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
+- native foundation id: `axis-native-foundation-0`
+- native repository: `INDEPENDENTWU/AXIS-iOS`
+- portable contracts retained: `axis.domain.v1`, `axis.data.v1`, `axis.report-range.v1`
+- bounded delivery branch: `feat/821-active-home-stage`
+- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- bounded Flow step execution intent branch: `feat/821-flow-step-execution-intent`
+- exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
+- bounded Flow step recording intent branch: `feat/821-flow-step-recording-intent`
+- exact certified Flow recording base main SHA: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
+- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
+- bounded delivery branch: `feat/821-report-pdf-export`
+- completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
+- completed Report PDF scope source-convergence PR: **#133**
+- Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`
+- bounded delivery branch: `feat/821-report-share-card`
+- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
+
 ## Validation for this work
 
 Merge is blocked until one exact PR #148 head proves all of the following without weakening inherited assertions:
