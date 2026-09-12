@@ -22,6 +22,7 @@ let sourceOwner='prepare-821-release.mjs',sourceCurrent='8.21',sourceFrom='8.20.
 if(CURRENT==='8.22'){sourceOwner='prepare-822-evolution-replay.mjs';sourceCurrent='8.22';sourceFrom='8.21'}
 if(CURRENT==='8.23'){sourceOwner='prepare-823-replay-evidence-continuity.mjs';sourceCurrent='8.23';sourceFrom='8.22'}
 if(CURRENT==='8.24'){sourceOwner='prepare-824-active-stage-tactile.mjs';sourceCurrent='8.24';sourceFrom='8.23'}
+if(CURRENT==='8.24.1'){sourceOwner='prepare-8241-dock-occlusion.mjs';sourceCurrent='8.24.1';sourceFrom='8.24'}
 const releaseOwner=read(sourceOwner),releaseMatch=releaseOwner.match(/const FROM='([^']+)',VERSION='([^']+)'/);if(!releaseMatch)fail(`${sourceOwner} current release identity missing`);if(releaseMatch[1]!==sourceFrom||releaseMatch[2]!==sourceCurrent)fail(`${sourceOwner} release transition drift ${releaseMatch[1]} -> ${releaseMatch[2]}`);if(CURRENT!==sourceCurrent)fail(`governed current release ${CURRENT} does not match release owner ${sourceCurrent}`);
 
 if(CURRENT==='8.24'){
@@ -32,13 +33,20 @@ if(CURRENT==='8.24'){
   if(project?.engineering?.activeMilestone!=='AXIS 8.24 — Active Stage Tactile Convergence')fail('8.24 active milestone drift');
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.24 must be governed as intended product behavior change');
   if(!(decision?.sequence===9&&decision?.base_release==='8.23'&&decision?.release==='8.24'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('8.24 version decision must be 8.23 → 8.24 / bump / sequence 9 / product-ui');
+}else if(CURRENT==='8.24.1'){
+  if(!candidate||STATUS!=='candidate'||SEALED!=='8.24')fail(`8.24.1 must be candidate over sealed 8.24, got ${STATUS} / ${SEALED}`);
+  if(RUNTIME_SHA!=='321647b9aaca783b7f6ba99ec66616941208c698'||SEALED_PR!==148)fail('8.24.1 candidate lost the exact 8.24 Production seal baseline');
+  if(project?.production?.candidateRelease!=='8.24.1'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.24.1 Production candidate state drift');
+  if(CANDIDATE_PR!==149||project?.engineering?.pullRequest!==149||project?.engineering?.pullRequestDraft!==true)fail('8.24.1 candidate PR state must identify draft PR #149');
+  if(project?.engineering?.activeMilestone!=='AXIS 8.24.1 — Dock Occlusion Hotfix')fail('8.24.1 active milestone drift');
+  if(project?.engineering?.deliveryBranch!=='hotfix/8241-dock-occlusion')fail('8.24.1 delivery branch drift');
+  if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.24.1 must be governed as intended product behavior change');
+  if(!(decision?.sequence===10&&decision?.base_release==='8.24'&&decision?.release==='8.24.1'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('8.24.1 version decision must be 8.24 → 8.24.1 / bump / sequence 10 / product-ui');
 }else if(CURRENT==='8.23'){
-  if(candidate){
-    if(STATUS!=='candidate'||SEALED!=='8.22')fail('8.23 candidate baseline drift');
-  }else if(STATUS!=='production-certified')fail('sealed 8.23 must be production-certified');
+  if(candidate){if(STATUS!=='candidate'||SEALED!=='8.22')fail('8.23 candidate baseline drift')}else if(STATUS!=='production-certified')fail('sealed 8.23 must be production-certified');
 }
 
-const edgeWorkflow=read('.github/workflows/axis-edgeone-production-mirror.yml'),customWorkflow=read('.github/workflows/axis-custom-domain-production.yml'),vercelWorkflow=read('.github/workflows/axis-production-deployment-gate.yml');
+const edgeWorkflow=read('.github/workflows/axis-edgeone-production-mirror.yml'),customWorkflow=read('.github/workflows/axis-custom-domain-production.yml'),vercelWorkflow=read('.github/workflows/axis-production-deployment-gate.yml'),currentWorkflow=read('.github/workflows/axis-current-release-gate.yml');
 if(/^\s*env:\s*\{[^\n]*\$\{\{/m.test(edgeWorkflow))fail('EdgeOne workflow must use block env mappings around GitHub expressions; flow mappings can fail before jobs are created');
 if(CURRENT==='8.24'){
   if(count(edgeWorkflow,'node scripts/axis-823-replay-evidence-continuity-smoke.mjs')!==2)fail('EdgeOne must preserve inherited 8.23 smoke in Chromium and iPhone WebKit');
@@ -46,9 +54,18 @@ if(CURRENT==='8.24'){
   if(count(customWorkflow,'node scripts/axis-824-active-stage-tactile-smoke.mjs')!==2)fail('axis.juele.fun must prove 8.24 in Chromium and iPhone WebKit');
   if(count(vercelWorkflow,'node scripts/axis-824-active-stage-tactile-smoke.mjs')!==1)fail('fixed Vercel Production must prove 8.24 in Chromium');
 }
+if(CURRENT==='8.24.1'){
+  for(const [text,label,want] of [[currentWorkflow,'Current Release',2],[edgeWorkflow,'EdgeOne Production',2],[customWorkflow,'axis.juele.fun',2],[vercelWorkflow,'fixed Vercel Production',1]]){
+    if(count(text,'node scripts/axis-8241-dock-occlusion-smoke.mjs')!==want)fail(`${label} must run 8.24.1 Dock Occlusion smoke ${want} time(s)`);
+  }
+  if(count(currentWorkflow,'node scripts/axis-824-active-stage-tactile-smoke.mjs')!==2)fail('Current Release must preserve inherited 8.24 smoke in both engines');
+  if(count(edgeWorkflow,'node scripts/axis-824-active-stage-tactile-smoke.mjs')!==2)fail('EdgeOne must preserve inherited 8.24 smoke in both engines');
+  if(count(customWorkflow,'node scripts/axis-824-active-stage-tactile-smoke.mjs')!==2)fail('axis.juele.fun must preserve inherited 8.24 smoke in both engines');
+  if(count(vercelWorkflow,'node scripts/axis-824-active-stage-tactile-smoke.mjs')!==1)fail('fixed Vercel Production must preserve inherited 8.24 smoke');
+}
 
 const production=project?.production||{};if(production.evidenceScope!=='product-runtime-seal-snapshot'||production.latestDeploymentIsAuthority!==false)fail('Production evidence authority drift');if(String(production.sealedRelease||SEALED)!==SEALED)fail('Production sealedRelease drift');
-const evidenceSemantics=String(production.evidenceSemantics||'');if(CURRENT==='8.24'&&!evidenceSemantics.includes('last fully sealed AXIS 8.23'))fail('8.24 candidate evidence semantics must preserve the 8.23 seal snapshot');
+const evidenceSemantics=String(production.evidenceSemantics||'');if(CURRENT==='8.24'&&!evidenceSemantics.includes('last fully sealed AXIS 8.23'))fail('8.24 candidate evidence semantics must preserve the 8.23 seal snapshot');if(CURRENT==='8.24.1'&&!evidenceSemantics.includes('last fully sealed AXIS 8.24'))fail('8.24.1 candidate evidence semantics must preserve the 8.24 seal snapshot');
 const vercel=production.vercel||{};if(vercel.sourceSha!==RUNTIME_SHA||vercel.state!=='READY'||vercel.target!=='production')fail('Vercel sealed evidence identity drift');if(!success(vercel.exactManifestParity)||!success(vercel.chromiumProductionFlow))fail('Vercel exact parity / current flow proof is not sealed');
 const edge=production.edgeOne||{};if(edge.sourceSha!==RUNTIME_SHA)fail('EdgeOne sealed source identity drift');for(const key of ['packageContract','deployProduction','boundedFixedDomainConvergence','vercelApiParity','chromiumProductionFlow','webkitProductionFlow'])if(!success(edge[key]))fail(`EdgeOne ${key} evidence is not success`);
 const custom=production.customDomain||{};if(custom.sourceSha!==RUNTIME_SHA||custom.publicUrl!=='https://axis.juele.fun')fail('custom-domain sealed evidence identity drift');for(const key of ['exactParity','chromiumProductionFlow','webkitProductionFlow'])if(!success(custom[key]))fail(`custom domain ${key} evidence is not success`);
@@ -57,6 +74,11 @@ if(CURRENT==='8.24'){
   if(Number(vercel.productionGateRunId)!==34685665958||Number(vercel.publicAliasGateRunId)!==34685665973)fail('8.23 Vercel seal evidence run drift');
   if(edge.deploymentId!=='dp2z63vp6fz9'||Number(edge.verificationRunId)!==34685651257||Number(edge.verificationArtifactId)!==10295824755||edge.verificationArtifactSha256!=='e6bb504fe84003abb183dd46b012f8f71aec732a7123c3b7957bbb53d27eb6c7')fail('8.23 EdgeOne seal evidence drift');
   if(Number(custom.verificationRunId)!==34685651239)fail('8.23 custom-domain seal evidence drift');
+}
+if(CURRENT==='8.24.1'){
+  if(Number(vercel.productionGateRunId)!==34700744685||Number(vercel.publicAliasGateRunId)!==34700744673)fail('8.24 Vercel seal evidence run drift');
+  if(edge.deploymentId!=='dp7e6rlpyczu'||Number(edge.verificationRunId)!==34700727554||Number(edge.verificationArtifactId)!==10300048249||edge.verificationArtifactSha256!=='3dfed99f2e91b59b73f39bdeb29fee72d1b169f34305bd247cbd3faec49c488a')fail('8.24 EdgeOne seal evidence drift');
+  if(Number(custom.verificationRunId)!==34700727551)fail('8.24 custom-domain seal evidence drift');
 }
 
 if(owners?.baselineRelease!==CURRENT)fail('owner registry must describe current release');
@@ -68,12 +90,18 @@ const replay=(owners.owners||[]).find(x=>x.capability==='evolution-replay-822');
 const continuityHandoff=(owners.owners||[]).find(x=>x.capability==='evolution-replay-evidence-continuity-823');if(!['presentation-handoff-production-sealed','presentation-handoff-release-candidate'].includes(continuityHandoff?.status)||continuityHandoff?.storage!=='none')fail('8.23 continuity handoff owner drift');if(!String(continuityHandoff?.notes||'').includes('may not persist selection'))fail('8.23 continuity notes lost transient boundary');
 const e=project?.engineering?.evolutionEvidenceContinuity||{};for(const [key,value] of [['selectionPersistence',false],['newStorage',false],['newDatabase',false],['newSessionWriter',false],['newEncounterWriter',false],['newMediaOwner',false],['network',false],['ai',false],['interpretiveScoring',false]])if(e[key]!==value)fail(`8.23 continuity governance drift ${key}`);if(e.handoffEvent!=='axis:evolution-replay-selection'||e.selectedNoEvidenceSemantics!=='explicit-only-when-object-has-other-evidence')fail('8.23 continuity semantics drift');
 const er=project?.engineering?.evolutionReplay||{};for(const [key,value] of [['newStorage',false],['newDatabase',false],['newSessionWriter',false],['newEncounterWriter',false],['newMediaOwner',false],['network',false],['ai',false],['interpretiveScoring',false]])if(er[key]!==value)fail(`8.22 Replay governance drift ${key}`);
-if(CURRENT==='8.24'){
-  if(continuityHandoff?.status!=='presentation-handoff-production-sealed'||e.status!=='production-sealed-8.23-inherited')fail('8.24 must inherit Production-sealed 8.23 Replay Evidence Continuity');
+if(['8.24','8.24.1'].includes(CURRENT)){
+  if(continuityHandoff?.status!=='presentation-handoff-production-sealed'||e.status!=='production-sealed-8.23-inherited')fail(`${CURRENT} must inherit Production-sealed 8.23 Replay Evidence Continuity`);
   const tactile=(owners.owners||[]).find(x=>x.capability==='active-stage-tactile-824'),t=project?.engineering?.activeStageTactile||{};
-  if(tactile?.status!=='presentation-only-release-candidate'||tactile?.storage!=='none')fail('8.24 tactile owner must remain presentation-only');
+  const tactileStatus=CURRENT==='8.24'?'presentation-only-release-candidate':'presentation-only-production-sealed';
+  if(tactile?.status!==tactileStatus||tactile?.storage!=='none')fail(`${CURRENT} tactile owner state drift`);
   for(const key of ['setProgressSingleTruth','timeMetaNoSetDuplication','tactileFeedback','dockLayerIsolation','reducedMotionSafe'])if(t[key]!==true)fail(`8.24 tactile contract missing ${key}`);
   for(const key of ['newTrainingOwner','newStorage','newEncounterWriter','newActiveOwner','network','ai'])if(t[key]!==false)fail(`8.24 tactile ownership drift ${key}`);
+}
+if(CURRENT==='8.24.1'){
+  const occlusionOwner=(owners.owners||[]).find(x=>x.capability==='active-dock-occlusion-8241'),o=project?.engineering?.activeDockOcclusion||{};
+  if(occlusionOwner?.status!=='presentation-only-release-candidate'||occlusionOwner?.storage!=='none')fail('8.24.1 dock occlusion owner must remain presentation-only release candidate');
+  for(const [key,value] of [['opaqueDock',true],['opaqueOverscan',true],['paintContainment',false],['translucentCurtain',false],['newTrainingOwner',false],['newStorage',false],['newEncounterWriter',false],['newActiveOwner',false],['network',false],['ai',false]])if(o[key]!==value)fail(`8.24.1 dock occlusion governance drift ${key}`);
 }
 
 if(!String(project?.engineering?.flow?.status||'').startsWith('production-sealed')||project?.engineering?.flow?.uiImplemented!==true||project?.engineering?.flow?.completionUnit!=='whole-object-item'||project?.engineering?.flow?.currentItemDirectActive!==true||project?.engineering?.flow?.detourQuickRecordOnly!==true||project?.engineering?.flow?.metricOpticalCenterTolerancePx!==0.5)fail('inherited whole-item Flow governance drift');
@@ -84,4 +112,4 @@ if(candidate){for(const [label,text] of [['README',readme],['HANDOFF',handoff],[
 
 const portable=new Set(project?.crossPlatform?.portableContracts||[]);for(const id of ['axis.domain.v1','axis.data.v1','axis.flow.v1','axis.flow-provenance.v1'])if(!portable.has(id))fail(`portable contract missing · ${id}`);if(project?.crossPlatform?.foundationId!=='axis-native-foundation-0'||project?.crossPlatform?.nativeRepository!=='INDEPENDENTWU/AXIS-iOS')fail('cross-platform foundation governance drift');
 
-console.log(`[AXIS Production governance contract] PASS · current ${CURRENT} (${STATUS}) · sealed ${SEALED} @ ${RUNTIME_SHA.slice(0,12)} / certification PR #${SEALED_PR} · provider seal snapshot coherent · inherited Flow + Replay + 8.23 continuity bounded · 8.24 tactile presentation bounded`);
+console.log(`[AXIS Production governance contract] PASS · current ${CURRENT} (${STATUS}) · sealed ${SEALED} @ ${RUNTIME_SHA.slice(0,12)} / certification PR #${SEALED_PR} · provider seal snapshot coherent · inherited Flow + Replay + 8.23 continuity + 8.24 tactile bounded · 8.24.1 dock occlusion presentation-only`);
