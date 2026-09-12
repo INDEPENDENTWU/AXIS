@@ -128,10 +128,11 @@ const post816=read('postbuild-816-contract.mjs');if(!post816.includes("await imp
 const post817=read('postbuild-817-contract.mjs');if(!post817.includes("await import('./postbuild-8171-source-first-media-contract.mjs')"))fail('8.17.1 postbuild chain drift');
 const post8171=read('postbuild-8171-source-first-media-contract.mjs');if(!post8171.includes("await import('./postbuild-818-contract.mjs')"))fail('8.18 postbuild chain drift');
 const post818=read('postbuild-818-contract.mjs');
-/* Keep this source block at the historical pre-8.20.1 shape. Sequential release
-   owners append built identities in order; pre-populating later identities here
-   breaks those fail-closed transforms. */
-const source818Identity=post818.includes("contract.publicVersion!=='8.18'")&&post818.includes("contract.stableBaseVersion!=='8.18'")&&post818.includes("info.version!=='8.18'")&&post818.includes("info.baseVersion!=='8.18'");
+/* Source accepts the sealed historical 8.18 shape. After deterministic release
+   preparation, the same semantic contract must assert the exact governed current
+   public identity; this keeps build-time verification strict without adding a
+   per-release loophole to the historical capability markers. */
+const source818Identity=(post818.includes("contract.publicVersion!=='8.18'")&&post818.includes("contract.stableBaseVersion!=='8.18'")&&post818.includes("info.version!=='8.18'")&&post818.includes("info.baseVersion!=='8.18'"))||(post818.includes(`contract.publicVersion!=='${CURRENT}'`)&&post818.includes(`contract.stableBaseVersion!=='${CURRENT}'`)&&post818.includes(`info.version!=='${CURRENT}'`)&&post818.includes(`info.baseVersion!=='${CURRENT}'`));
 const built819Identity=post818.includes("contract.publicVersion!=='8.19'")&&post818.includes("contract.stableBaseVersion!=='8.19'")&&post818.includes("info.version!=='8.19'")&&post818.includes("info.baseVersion!=='8.19'");
 const built820Identity=post818.includes("contract.publicVersion!=='8.20'")&&post818.includes("contract.stableBaseVersion!=='8.20'")&&post818.includes("info.version!=='8.20'")&&post818.includes("info.baseVersion!=='8.20'");
 if(!source818Identity&&!built819Identity&&!built820Identity)fail('8.18 semantic contract has neither sealed source identity nor supported built identity');
