@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 7,
-  "base_release": "8.22",
+  "sequence": 8,
+  "base_release": "8.23",
   "release": "8.23",
-  "decision": "bump",
-  "change_class": "product-runtime",
-  "summary": "Advance AXIS to 8.23 for Replay Evidence Continuity: exact Encounter identity aligns existing Media Evidence with Replay selection and explicitly shows selected no-evidence moments without adding storage, network, AI, media or historical truth ownership."
+  "decision": "confirm",
+  "change_class": "infrastructure",
+  "summary": "Keep AXIS 8.23 unchanged while repairing EdgeOne Production workflow YAML parsing so the already-merged runtime can complete exact-artifact EdgeOne and custom-domain certification; no product, runtime, storage, data or ownership behavior changes."
 }
