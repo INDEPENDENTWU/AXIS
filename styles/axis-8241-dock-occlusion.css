@@ -1,0 +1,30 @@
+/* AXIS 8.24.1 — fixed Capture / Quick Record dock occlusion hotfix.
+   The 8.24 intent was correct, but paint containment clipped the negative-top
+   underlay and its transparent gradient still allowed a 1px scrolling separator
+   to remain visible. This patch makes the dock and its overscan curtain truly
+   opaque without changing action, layout, persistence, or recording ownership. */
+html body .captureDock{
+  z-index:46!important;
+  isolation:isolate!important;
+  contain:layout style!important;
+  background:var(--bg)!important;
+}
+html body .captureDock.show:before{
+  content:"";
+  position:absolute;
+  z-index:0!important;
+  pointer-events:none;
+  left:0;
+  right:0;
+  top:-16px!important;
+  bottom:-6px!important;
+  background:var(--bg)!important;
+  background-image:none!important;
+}
+html body .captureDock.v8-dual .scanPrimary,
+html body .captureDock.v8-dual .v8QuickBtn{
+  position:relative!important;
+  z-index:1!important;
+}
+html body .nav{z-index:47!important}
+@media(max-width:420px){html body .captureDock.show:before{top:-16px!important}}
