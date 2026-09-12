@@ -9,6 +9,7 @@ const STABLE_BASE=String(contract.stableBaseVersion||CURRENT_VERSION);
 const sessionDurationExtension=CURRENT_VERSION==='8.10.3';
 const reminderCall=/renderTimeline\(\)\s*;\s*reminderTick\(\)/g;
 const reminderContexts=()=>[...runtime.matchAll(reminderCall)].map((m,i)=>{const at=m.index||0,start=Math.max(0,at-520),end=Math.min(runtime.length,at+520);return `#${i+1} @${at}\n${runtime.slice(start,end)}`});
+const failMatch=(label,m)=>{const i=m.index||0;console.error(`[AXIS inherited 8.8.2 ${label}] ${m[0]} @${i}\n${runtime.slice(Math.max(0,i-260),Math.min(runtime.length,i+340))}`);fail(`${label}: ${m[0]}`)};
 
 if(!CURRENT_VERSION||manifest.version!==CURRENT_VERSION||manifest.baseVersion!==STABLE_BASE)fail(`release identity mismatch ${manifest.version}/${manifest.baseVersion} · contract ${CURRENT_VERSION}/${STABLE_BASE}`);
 if(manifest.architecture!=='canonical-single-runtime')fail(`architecture ${manifest.architecture}`);
@@ -22,7 +23,8 @@ if(!runtime.includes("label:'腰'")||!runtime.includes("['back-extension','45°�
    and the retired manual-finish cue by its exact structural callsite. */
 const forbiddenLegacyKinds=sessionDurationExtension?/cue\('(set|rest)'\)/:/cue\('(set|rest|session)'\)/;
 const forbiddenManualItemFinish=/if\(a\.status==='finished'&&old\.status!=='finished'\)cue\('item'\)/;
-if(forbiddenLegacyKinds.test(runtime)||forbiddenManualItemFinish.test(runtime))fail('forbidden non-countdown automatic sonic cue survived');
+const legacyMatch=forbiddenLegacyKinds.exec(runtime);if(legacyMatch)failMatch('retired sound cue survived',legacyMatch);
+const manualMatch=forbiddenManualItemFinish.exec(runtime);if(manualMatch)failMatch('manual finish item cue survived',manualMatch);
 if(sessionDurationExtension&&!runtime.includes("automaticKinds:['item','session']"))fail('8.10.3 duration extension is not owned by canonical v8710');
 if(!runtime.includes("const due=Math.max(60000,Number(a.estimateMs)||0)")||!runtime.includes("elapsed(a)>=due&&!D.querySelector('#v87Hold.show')"))fail('countdown-zero / long-press sound contract missing');
 if(!/async function reminderTick\(\)\s*\{\s*return false\s*\}/.test(runtime))fail('v87 reminderTick is not a no-op in canonical runtime');
