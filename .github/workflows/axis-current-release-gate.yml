@@ -94,6 +94,12 @@ jobs:
       - name: 8.23 Replay Evidence Continuity
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-823-replay-evidence-continuity-smoke.mjs
+      - name: 8.24 Active Stage Tactile
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-824-active-stage-tactile-smoke.mjs
+      - name: 8.24.1 Dock Occlusion
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-8241-dock-occlusion-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-chromium.log || true
@@ -176,6 +182,12 @@ jobs:
       - name: iPhone 8.23 Replay Evidence Continuity
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-823-replay-evidence-continuity-smoke.mjs
+      - name: iPhone 8.24 Active Stage Tactile
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-824-active-stage-tactile-smoke.mjs
+      - name: iPhone 8.24.1 Dock Occlusion
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-8241-dock-occlusion-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-webkit.log || true
