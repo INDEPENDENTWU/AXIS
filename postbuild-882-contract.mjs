@@ -7,7 +7,7 @@ const runtime=read('axis-core.js'),css=read('axis-style.css'),html=read('index.h
 const CURRENT_VERSION=String(contract.publicVersion||'');
 const STABLE_BASE=String(contract.stableBaseVersion||CURRENT_VERSION);
 const sessionDurationExtension=CURRENT_VERSION==='8.10.3';
-const sessionDurationExtensionCurrent=sessionDurationExtension||CURRENT_VERSION==='8.24';
+const sessionDurationExtensionCurrent=sessionDurationExtension||['8.24','8.24.1'].includes(CURRENT_VERSION);
 const reminderCall=/renderTimeline\(\)\s*;\s*reminderTick\(\)/g;
 const reminderContexts=()=>[...runtime.matchAll(reminderCall)].map((m,i)=>{const at=m.index||0,start=Math.max(0,at-520),end=Math.min(runtime.length,at+520);return `#${i+1} @${at}\n${runtime.slice(start,end)}`});
 
