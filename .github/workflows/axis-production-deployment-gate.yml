@@ -122,3 +122,4 @@ jobs:
           node scripts/axis-822-evolution-replay-smoke.mjs
           node scripts/axis-823-replay-evidence-continuity-smoke.mjs
           node scripts/axis-824-active-stage-tactile-smoke.mjs
+          node scripts/axis-8241-dock-occlusion-smoke.mjs
