@@ -28,7 +28,7 @@ jobs:
           const fs=require('fs');
           const wf=fs.readFileSync('.github/workflows/axis-custom-domain-production.yml','utf8');
           for(const token of ['https://axis.juele.fun','node scripts/edgeone-custom-domain-verify.mjs','AXIS_URL: https://axis.juele.fun','AXIS_ENGINE: chromium','AXIS_ENGINE: webkit'])if(!wf.includes(token))throw new Error(`custom-domain Production gate missing ${token}`);
-          for(const [script,label] of [['axis-821-portable-backup-smoke.mjs','v1 portable backup'],['axis-821-portable-backup-v2-smoke.mjs','v2 portable backup'],['axis-822-evolution-replay-smoke.mjs','8.22 Evolution Replay'],['axis-823-replay-evidence-continuity-smoke.mjs','8.23 Replay Evidence Continuity']])if((wf.match(new RegExp(`node scripts/${script.replaceAll('.','\\.')}`,'g'))||[]).length!==2)throw new Error(`axis.juele.fun must prove ${label} in Chromium and iPhone-like WebKit`);
+          for(const [script,label] of [['axis-821-portable-backup-smoke.mjs','v1 portable backup'],['axis-821-portable-backup-v2-smoke.mjs','v2 portable backup'],['axis-822-evolution-replay-smoke.mjs','8.22 Evolution Replay'],['axis-823-replay-evidence-continuity-smoke.mjs','8.23 Replay Evidence Continuity'],['axis-824-active-stage-tactile-smoke.mjs','8.24 Active Stage Tactile']])if((wf.match(new RegExp(`node scripts/${script.replaceAll('.','\\.')}`,'g'))||[]).length!==2)throw new Error(`axis.juele.fun must prove ${label} in Chromium and iPhone-like WebKit`);
           const verifier=fs.readFileSync('scripts/edgeone-custom-domain-verify.mjs','utf8');for(const token of ['sourceCommit','runtimeHash','hostnameStable','EDGEONE_CUSTOM_DOMAIN_URL'])if(!verifier.includes(token))throw new Error(`custom-domain verifier missing ${token}`);
           NODE
 
@@ -62,6 +62,7 @@ jobs:
           node scripts/axis-821-portable-backup-v2-smoke.mjs
           node scripts/axis-822-evolution-replay-smoke.mjs
           node scripts/axis-823-replay-evidence-continuity-smoke.mjs
+          node scripts/axis-824-active-stage-tactile-smoke.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
@@ -73,6 +74,7 @@ jobs:
           node scripts/axis-821-portable-backup-v2-smoke.mjs
           node scripts/axis-822-evolution-replay-smoke.mjs
           node scripts/axis-823-replay-evidence-continuity-smoke.mjs
+          node scripts/axis-824-active-stage-tactile-smoke.mjs
       - name: Upload custom-domain verification record
         if: always()
         uses: actions/upload-artifact@v4
