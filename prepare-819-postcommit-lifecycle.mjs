@@ -62,7 +62,9 @@ console.log('[AXIS 8.19 post-commit lifecycle] PASS · v61 attach authority seal
    Replay lens after all 8.21 writers and transport owners have finished. AXIS
    8.23 then links explicit Replay navigation to the existing Media Evidence owner
    by exact Encounter identity while preserving each inherited mount default; it
-   adds no factual or persistence owner. */
+   adds no factual or persistence owner. AXIS 8.24 then converges the existing
+   v87 Active presentation, set-progress copy and fixed dock compositing without
+   changing action, Session, Encounter, storage or recorder ownership. */
 await import('./prepare-819-release.mjs');
 await import('./prepare-820-executable-practice-objects.mjs');
 await import('./prepare-8201-object-reliability.mjs');
@@ -105,3 +107,4 @@ await import('./prepare-822-evolution-replay.mjs');
 await import('./prepare-823-replay-evidence-source.mjs');
 await import('./prepare-823-replay-evidence-explicit-selection.mjs');
 await import('./prepare-823-replay-evidence-continuity.mjs');
+await import('./prepare-824-active-stage-tactile.mjs');
