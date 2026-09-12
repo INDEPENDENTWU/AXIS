@@ -1,0 +1,41 @@
+/* AXIS 8.24 — tactile Active stage + dock layering convergence */
+html body #v87Now.axis821ActiveStage{isolation:isolate!important}
+html body #v87Now.axis821ActiveStage .v87Axis{position:relative!important;overflow:hidden!important}
+html body #v87Now.axis821ActiveStage .v87Axis i{position:relative!important;box-shadow:0 0 12px rgba(115,124,255,.2)!important}
+html body #v87Now.axis821ActiveStage .v87Axis i:after{content:"";position:absolute;top:0;bottom:0;width:38px;right:-8px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.52),transparent);transform:skewX(-20deg);animation:axis824RailGlint 2.8s ease-in-out infinite}
+html body #v87Now.axis821ActiveStage .axis821StageStatus i{animation:axis824ActiveBreath 2.2s ease-in-out infinite;box-shadow:0 0 0 0 rgba(115,124,255,.16)!important}
+html body #v87Now.axis821ActiveStage[data-status="paused"] .axis821StageStatus i,html body #v87Now.axis821ActiveStage[data-status="plan-complete"] .axis821StageStatus i{animation:none!important;box-shadow:none!important}
+html body #v87Now.axis821ActiveStage .axis821StageClock{font-feature-settings:"tnum" 1;transform-origin:50% 55%;will-change:transform}
+html body #v87Now.axis821ActiveStage.axis821-set-bump .axis821StageClock{animation:axis824SetPulse .46s cubic-bezier(.2,.86,.24,1)!important}
+html body #v87Now.axis821ActiveStage.axis821-set-bump .axis821StageCore:after{content:"";position:absolute;left:12%;right:12%;bottom:8px;height:1px;background:linear-gradient(90deg,transparent,rgba(142,150,255,.7),transparent);animation:axis824ConfirmLine .55s ease-out both;pointer-events:none}
+html body #v87Now.axis821ActiveStage .axis821StageCore{position:relative!important}
+html body #v87Now.axis821ActiveStage .axis821StageFact{transition:border-color .22s ease,color .22s ease!important}
+html body #v87Now.axis821ActiveStage .axis821StageControls>button{position:relative!important;overflow:hidden!important;transform:translateZ(0);transition:transform .12s cubic-bezier(.2,.8,.2,1),box-shadow .16s ease,background .16s ease,border-color .16s ease,color .16s ease!important;-webkit-tap-highlight-color:transparent!important}
+html body #v87Now.axis821ActiveStage #v87Toggle{box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 5px 14px rgba(0,0,0,.12)!important}
+html body #v87Now.axis821ActiveStage #v87Primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 11px 28px rgba(78,88,226,.22)!important}
+html body #v87Now.axis821ActiveStage #v87Primary:before{content:"";position:absolute;inset:1px 1px auto;height:48%;border-radius:15px 15px 48% 48%;background:linear-gradient(180deg,rgba(255,255,255,.11),transparent);pointer-events:none}
+html body #v87Now.axis821ActiveStage #v87Add{box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important}
+html body #v87Now.axis821ActiveStage #v87Toggle:active,html body #v87Now.axis821ActiveStage #v87Primary:active,html body #v87Now.axis821ActiveStage #v87Add:active{transform:translateY(2px) scale(.976)!important;transition-duration:.055s!important}
+html body #v87Now.axis821ActiveStage #v87Toggle:active{box-shadow:inset 0 2px 8px rgba(0,0,0,.32)!important;background:#0b0d11!important}
+html body #v87Now.axis821ActiveStage #v87Primary:active{box-shadow:inset 0 3px 10px rgba(28,32,120,.28),0 3px 10px rgba(78,88,226,.12)!important;filter:saturate(.96) brightness(.97)}
+html body #v87Now.axis821ActiveStage #v87Add:active{box-shadow:inset 0 2px 8px rgba(0,0,0,.24)!important}
+html body #v87Now.axis821ActiveStage .axis821StageFinish{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 6px 18px rgba(0,0,0,.18)!important}
+html body #v87Now.axis821ActiveStage .axis821StageFinish:active{transform:translateY(2px) scale(.968)!important;box-shadow:inset 0 2px 8px rgba(0,0,0,.3)!important}
+html body #v87Now.axis821ActiveStage #v87AdjustBtn:active{transform:translateY(1px) scale(.985)!important}
+/* The fixed action dock is a separate opaque interaction plane. This prevents
+   scroll-content hairlines from ever painting through/above its buttons. */
+html body .captureDock{z-index:46!important;isolation:isolate!important;contain:layout style paint}
+html body .captureDock.show:before{content:"";position:absolute;z-index:-1;pointer-events:none;left:0;right:0;top:-12px;bottom:-5px;background:linear-gradient(180deg,rgba(8,9,11,0),var(--bg) 15%,var(--bg) 100%)}
+html body .captureDock.v8-dual .scanPrimary,html body .captureDock.v8-dual .v8QuickBtn{position:relative;z-index:1;overflow:hidden;transform:translateZ(0);transition:transform .12s cubic-bezier(.2,.8,.2,1),box-shadow .16s ease,filter .16s ease!important}
+html body .captureDock.v8-dual .scanPrimary{box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 18px 44px rgba(0,0,0,.36)!important}
+html body .captureDock.v8-dual .v8QuickBtn{box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 16px 40px rgba(0,0,0,.3)!important}
+html body .captureDock.v8-dual .scanPrimary:active,html body .captureDock.v8-dual .v8QuickBtn:active{transform:translateY(2px) scale(.978)!important;transition-duration:.055s!important}
+html body .captureDock.v8-dual .scanPrimary:active{box-shadow:inset 0 3px 10px rgba(28,32,120,.3),0 5px 14px rgba(0,0,0,.28)!important;filter:brightness(.97)}
+html body .captureDock.v8-dual .v8QuickBtn:active{box-shadow:inset 0 2px 8px rgba(0,0,0,.32),0 5px 14px rgba(0,0,0,.24)!important}
+html body .nav{z-index:47!important}
+@keyframes axis824ActiveBreath{0%,100%{transform:scale(.94);box-shadow:0 0 0 0 rgba(115,124,255,.14)}50%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(115,124,255,0)}}
+@keyframes axis824RailGlint{0%,58%{opacity:0;transform:translateX(-34px) skewX(-20deg)}72%{opacity:.7}100%{opacity:0;transform:translateX(15px) skewX(-20deg)}}
+@keyframes axis824SetPulse{0%{transform:translateY(0) scale(1)}38%{transform:translateY(1px) scale(.982)}72%{transform:translateY(-1px) scale(1.018)}100%{transform:none}}
+@keyframes axis824ConfirmLine{0%{opacity:0;transform:scaleX(.25)}35%{opacity:.85}100%{opacity:0;transform:scaleX(1)}}
+@media(max-width:420px){html body .captureDock.show:before{top:-10px}}
+@media(prefers-reduced-motion:reduce){html body #v87Now.axis821ActiveStage .v87Axis i:after,html body #v87Now.axis821ActiveStage .axis821StageStatus i,html body #v87Now.axis821ActiveStage.axis821-set-bump .axis821StageClock,html body #v87Now.axis821ActiveStage.axis821-set-bump .axis821StageCore:after{animation:none!important}html body #v87Now.axis821ActiveStage .axis821StageControls>button,html body #v87Now.axis821ActiveStage .axis821StageFinish,html body .captureDock.v8-dual .scanPrimary,html body .captureDock.v8-dual .v8QuickBtn{transition:none!important}}
