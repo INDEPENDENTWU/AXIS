@@ -53,6 +53,28 @@ const regexOnce=(src,re,to,label)=>{const hits=[...src.matchAll(re)].length;if(h
  write(f,s);
 }
 
+/* The pre-8.22 inherited gates carry their current-public allowance as raw
+   single-quoted release literals. 8.23 advanced those gates from 8.22; 8.24
+   must advance the same bounded set, not historical 8.23 capability markers. */
+const inheritedCurrentIdentityFiles=[
+ 'postbuild-882-contract.mjs','postbuild-810-contract.mjs','postbuild-8101-contract.mjs','postbuild-8102-contract.mjs',
+ 'postbuild-891-contract.mjs','postbuild-811-contract.mjs','postbuild-812-contract.mjs','postbuild-813-live-route.mjs','postbuild-8123-contract.mjs','postbuild-8123-field-polish.mjs','postbuild-8124-contract.mjs',
+ 'postbuild-8131-evolution-contract.mjs','postbuild-814-evolution-contract.mjs','postbuild-815-media-evidence-contract.mjs','postbuild-8151-regression-contract.mjs','postbuild-816-contract.mjs','postbuild-817-contract.mjs','postbuild-8171-source-first-media-contract.mjs',
+ 'scripts/axis-811-experience-smoke.mjs','scripts/axis-882-smoke.mjs','scripts/axis-8102-smoke.mjs','scripts/axis-8103-smoke.mjs','scripts/axis-813-live-route-smoke.mjs','scripts/axis-813-settings-convergence-smoke.mjs',
+ 'scripts/axis-8122-settings-smoke.mjs','scripts/axis-8123-learning-simplify-smoke.mjs','scripts/axis-8123-field-polish-smoke.mjs','scripts/axis-8121-hotfix-smoke.mjs','scripts/axis-8123-equipment-gallery-picker-smoke.mjs',
+ 'scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-polish-smoke.mjs','scripts/axis-8124-custom-equipment-smoke.mjs','scripts/axis-8125-smart-create-polish-smoke.mjs',
+ 'scripts/axis-8131-evolution-smoke.mjs','scripts/axis-814-evolution-object-smoke.mjs','scripts/axis-815-media-evidence-smoke.mjs','scripts/axis-8151-evidence-swap-smoke.mjs','scripts/axis-8151-regression-seal-smoke.mjs',
+ 'scripts/axis-816-capture-evidence-smoke.mjs','scripts/axis-8171-source-first-media-smoke.mjs',
+ 'scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs',
+ 'scripts/axis-current-release-contract.mjs','scripts/axis-runtime-foundation-contract.mjs','scripts/axis-deep-compatibility-contract.mjs'
+];
+let inheritedIdentityTouches=0;
+for(const f of inheritedCurrentIdentityFiles){
+ let s=read(f),n=(s.match(/'8\.23'/g)||[]).length;
+ if(!n)continue;
+ inheritedIdentityTouches+=n;s=s.replaceAll(`'${FROM}'`,`'${VERSION}'`);write(f,s);
+}
+
 const identityPairs=[
  [`window.__AXIS_RELEASE__==='${FROM}'`,`window.__AXIS_RELEASE__==='${VERSION}'`],
  [`window.__AXIS_RELEASE__),'${FROM}'`,`window.__AXIS_RELEASE__),'${VERSION}'`],
@@ -70,7 +92,7 @@ const identityPairs=[
 const candidates=[...fs.readdirSync('.').filter(f=>/^postbuild-.*\.mjs$/.test(f)),...fs.readdirSync('scripts').filter(f=>f.endsWith('.mjs')).map(f=>'scripts/'+f)].filter(f=>f!=='scripts/axis-repository-contract.mjs');
 let identityTouches=0;
 for(const f of candidates){let s=read(f),next=s;for(const [a,b] of identityPairs){const n=next.split(a).length-1;if(n){identityTouches+=n;next=next.replaceAll(a,b)}}if(next!==s)write(f,next)}
-if(identityTouches<8)fail(`public identity convergence suspiciously small: ${identityTouches}`);
+if(inheritedIdentityTouches+identityTouches<12)fail(`public identity convergence suspiciously small: inherited ${inheritedIdentityTouches} + explicit ${identityTouches}`);
 
 {
  const f='scripts/axis-813-build-parity.mjs';let s=read(f);
@@ -116,4 +138,4 @@ if(identityTouches<8)fail(`public identity convergence suspiciously small: ${ide
  if(v87.includes("'计划 '+total+' 组'")||v87.includes("'共 '+total+' 组'"))fail('duplicate set-count presentation returned');
 }
 
-console.log(`[AXIS 8.24 Active Stage Tactile] PASS · ${FROM} → ${VERSION} · one set-progress truth · tactile v87 delegation · dock stacking isolated · reduced-motion safe · no new training/storage/Encounter/Active owner · ${identityTouches} public identity assertion(s) advanced`);
+console.log(`[AXIS 8.24 Active Stage Tactile] PASS · ${FROM} → ${VERSION} · one set-progress truth · tactile v87 delegation · dock stacking isolated · reduced-motion safe · no new training/storage/Encounter/Active owner · ${inheritedIdentityTouches} inherited + ${identityTouches} explicit public identity assertion(s) advanced`);
