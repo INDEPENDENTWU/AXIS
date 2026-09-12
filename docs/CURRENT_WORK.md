@@ -2,138 +2,131 @@
 
 ## Production baseline at start of this work
 
-AXIS **8.22 — Truthful Evolution Replay** is Production-certified. This bounded governance reconciliation starts only from the exact merged and fully certified product/runtime seal:
+AXIS **8.22 — Truthful Evolution Replay** is the last fully Production-sealed Web runtime.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact certified starting `main`: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
-- current Production-sealed product/runtime release: **AXIS 8.22**
-- governed durable product/runtime seal baseline: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
-- last sealed runtime SHA: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
-- sealed release PR: **#144**
+- exact certified starting `main`: `cbcecfe9f7bfd18c8f05ced2bd760a60a03b15b5`
+- last sealed product/runtime release: **AXIS 8.22**
+- runtime seal baseline: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
+- sealed product PR: **#144**
 - architecture: `canonical-single-runtime`
-- deterministic top-level graph: **85 steps**
-- fixed Vercel Production: `https://axis-five-puce.vercel.app`
-- exact-prebuilt EdgeOne Production: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- cross-platform foundation: `axis-native-foundation-0` (`INDEPENDENTWU/AXIS-iOS`)
+- shared portable domain contracts: `axis.domain.v1`, `axis.data.v1`
+- sealed top-level graph: **85 steps**
+- Vercel Production gate `34612916951` — success
+- Vercel Public Production Alias Gate `34612916591` — success
+- EdgeOne deployment `dpp90dvhamrl`, run `34612882892` — success
+- `axis.juele.fun` run `34612882890` — success
+- fixed Vercel: `https://axis-five-puce.vercel.app`
+- EdgeOne: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
 - governed custom domain: `https://axis.juele.fun`
-- authoritative stores preserved: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`
-- existing Session/Encounter writer: canonical app owner
-- existing Active owner: v82/v87 lifecycle; no new Active owner is permitted
-- cross-platform foundation: `axis-native-foundation-0`
-- native repository: `INDEPENDENTWU/AXIS-iOS`
-- portable contracts preserved: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`, `axis.backup.v1`; user-facing backup transport may emit `axis.backup.v2` while retaining v1 import/API compatibility
+- protected stores: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`
 
-Exact Production evidence for `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631` is already complete: Vercel Production gate `34612916951`, Public Production Alias Gate `34612916591`, EdgeOne deployment `dpp90dvhamrl` / verification run `34612882892`, and `axis.juele.fun` verification run `34612882890` all succeeded. Final combined commit status is Vercel success + EdgeOne Production success.
-
-This work is deliberately narrow: reconcile durable governance records to that already-certified runtime. It must not change application behavior, build output, storage ownership, user data or deployment topology.
-
-### Inherited continuity references
-
-These entries are historical provenance and compatibility references, not competing Production baselines or active branches. Existing release contracts intentionally use several of these exact identities to prove that later work has not erased earlier certified ownership, browser evidence or source handoffs.
-
-- historical AXIS 8.21 product/runtime seal: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- historical contract continuity — governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
-- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
-- bounded delivery branch: `feat/821-report-pdf-export`
-- bounded delivery branch: `feat/821-report-share-card`
-- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
-- bounded delivery branch: `feat/821-flow-step-recording-intent`
-- exact certified historical Flow recording base: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
-- bounded delivery branch: `feat/821-flow-step-execution-intent`
-- exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
-- bounded delivery branch: `feat/821-active-home-stage`
-- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
-- completed Active Home visual convergence branch: `feat/821-active-home-visual-convergence`
-- Active Home visual convergence certified main: `9eaf90d0f94023218feb452b085da48c9f027276`
-- completed portable backup/origin migration branch: `feat/821-portable-backup-origin-migration`
-- portable backup/origin migration historical base: `c434a4a78530669d5a47be9799d40f5049b57a2d`
-- portable backup/origin migration continuity: `b349c8b87a0e9b30916ba9959297897260de3882`
-- completed Active Home source-convergence branch: `arch/821-active-home-source-convergence`
-- completed Active Home source-convergence PR: **#131**
-- Active Home source-convergence certified main: `3877d91`
-- completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
-- completed Report PDF scope source-convergence PR: **#133**
-- Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`
-- completed Flow Active boot source-convergence branch: `arch/821-flow-active-boot-source-convergence`
-- completed Flow Active boot source-convergence PR: **#134**
-- Flow Active boot source-convergence certified main: `1ed1b53`
-- portable-backup/cold-start certified main after PR #136: `72503cd9b3f49cdbeb797ec14343791a5a482815`
-- Learning Budget source-convergence PR #137: `d2ccf4977dd5ae551c5575f8c42ca444e93b582a`
-- Learning Settings Entry source-convergence PR #138: `f1a5dbfb593429859a83fee783610f29396762e9`
-- Explicit Version Decision Contract PR #139: `bb28d8b8419a6e05c7eb087fe41ac1246272260f`
-- Watermark Brand source-convergence PR #141: `3972850bd0fc27779e1f2da223e8c463b1541ea0`
-- Watermark Four-Switch source-convergence PR #142: `76e6720118f04fb10c11649692d70d862f58246b`
-- 8.8.4 Runtime Follow-up source-convergence PR #143 exact certified main: `a9e747b55eb47c156287c4b4a32fdb6e1ac7446f`
-- AXIS 8.22 Truthful Evolution Replay PR #144 exact Production runtime seal: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
-
-The inherited release gates, browser evidence, portable-backup transport, source-owner retirements and factual ownership boundaries remain release-blocking continuity. Historical branch names above are retained only so fail-closed contracts can verify provenance; they do not become current delivery branches or runtime owners.
+The provider evidence above is the last sealed 8.22 snapshot. AXIS 8.23 must not be described as Production-sealed before exact merged-main certification. Chat history is not authoritative project memory; repository contracts, exact commits, built artifacts and provider certification are authoritative.
 
 ## Active change
 
-**AXIS 8.22 — Production Evidence Reconciliation**
+**AXIS 8.23 — Replay Evidence Continuity**
 
-- governed milestone: `AXIS 8.22 — Production Evidence Reconciliation`
+- governed milestone: `AXIS 8.23 — Replay Evidence Continuity`
 - governed active branch: `main`
 - governed target branch: `main`
-- bounded delivery branch: `gov/822-production-evidence-reconciliation`
-- pull request: **#145**
-- exact base: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
-- intended user-visible behavior change: **no**
-- version decision: **confirm**
-- version decision sequence: **6**
+- bounded delivery branch: `product/823-replay-evidence-continuity`
+- pull request: **#146**
+- exact base: `cbcecfe9f7bfd18c8f05ced2bd760a60a03b15b5`
+- intended user-visible behavior change: **yes**
+- version decision: **bump**
+- sequence: **7**
 - base release: **8.22**
-- release: **8.22**
-- change class: `governance`
-- deterministic top-level graph: **85 → 85**
+- candidate release: **8.23**
+- change class: `product-runtime`
+- deterministic graph target: **85 → 86**; the only new top-level build step is the explicit 8.23 postbuild contract
 
-### Scope
+### Product behavior
 
-This stage replaces stale candidate-era governance bookkeeping with the exact Production seal already proven for AXIS 8.22.
+The live 8.22 implementation lets Replay and Media Evidence maintain separate transient selections. That can leave Replay focused on one Encounter while v815 is showing media from another real date. AXIS 8.23 makes an explicit Replay navigation the transient presentation anchor for existing Media Evidence while preserving inherited mount defaults.
 
-It records:
+- v822 emits `axis:evolution-replay-selection` with exact transient Encounter identity after an explicit Replay rail / previous / next action.
+- v815 remains the Evidence owner and resolves that exact identity.
+- selected Encounter with media → show that Encounter's evidence.
+- selected Encounter with no media, while the Object has media elsewhere → explicit **“这一次没有留下影像证据”** state; no silent fallback to another date.
+- wholly no-media Object → preserve existing data-only/no-capture-pressure state.
+- manual Evidence rail inspection remains valid and does not rewrite Replay chronology.
+- the next explicit Replay navigation re-anchors Evidence.
+- inherited Replay and Evidence initial mount choices remain unchanged until such explicit navigation occurs.
 
-- sealed runtime SHA `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631` and PR #144;
-- Vercel fixed Production proof from runs `34612916951` and `34612916591`;
-- EdgeOne exact-prebuilt deployment `dpp90dvhamrl`, run `34612882892`, verification artifact `10269466752` and its recorded SHA-256;
-- custom-domain exact parity / Chromium / iPhone WebKit proof from run `34612882890`;
-- final combined commit statuses: Vercel success + EdgeOne Production success;
-- Replay owner state as derived read-only and Production-sealed.
+### Ownership boundary
 
-The Vercel provider deployment ID is deliberately not fabricated. The repository records the exact retained certification target URL, source SHA, fixed Production URL and successful Production gates instead.
+AXIS 8.23 is presentation-only coordination between existing read owners. It may not:
 
-### Non-scope
+- create Session/Encounter/media writers;
+- create another Evidence owner;
+- add storage namespaces or databases;
+- persist Replay/Evidence cursor state;
+- call network APIs or AI;
+- rewrite history;
+- fabricate progress, score, ranking, prediction or advice.
 
-This stage may not:
+Existing app/v61/v82/v87, Flow, v814 Evolution Object, v815 Media Evidence and v822 Replay ownership remains intact.
 
-- modify `app.js`, runtime feature code, Replay behavior, Flow, Active, recording, Reports, Capture or media behavior;
-- add/remove a storage namespace or migrate/delete/copy real user data;
-- alter `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak` or `axis_v42_media` ownership;
-- change the public release away from 8.22;
-- change the 85-step deterministic build graph;
-- mix the Node/toolchain migration, native/iOS work, broader backup/account design or another source-convergence slice.
+## Durable inherited certification ledger
+
+The active work section above describes only the current bounded 8.23 slice. The following entries are retained as immutable provenance for inherited fail-closed contracts; they are not active branches and do not supersede the current 8.23 base or release authority.
+
+### Cross-platform / native foundation provenance
+
+- `axis-native-foundation-0`
+- native repository: `INDEPENDENTWU/AXIS-iOS`
+- portable domain contract: `axis.domain.v1`
+- portable data contract: `axis.data.v1`
+- Chat history is not authoritative project memory.
+
+### AXIS 8.21 Flow intent provenance
+
+- bounded delivery branch: `feat/821-flow-step-recording-intent`
+- exact certified base main SHA: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
+- bounded delivery branch: `feat/821-flow-step-execution-intent`
+- exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
+
+### AXIS 8.21 Active Home provenance
+
+- bounded delivery branch: `feat/821-active-home-stage`
+- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+
+### AXIS 8.21 Report provenance
+
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
+- exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
+- truth schema inherited by Report UI/PDF/Share Card: `axis.report-range.v1`
+- bounded delivery branch: `feat/821-report-pdf-export`
+- completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
+- completed Report PDF scope source-convergence PR: **#133**
+- Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`
+- bounded delivery branch: `feat/821-report-share-card`
+- exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
 
 ## Validation for this work
 
 Merge is blocked until one exact PR head proves all of the following without weakening inherited assertions:
 
-1. `node build-release.mjs` still emits public/base release **8.22**, architecture `canonical-single-runtime`, the same 85-step graph, one initial JavaScript request and zero dynamic JavaScript chunks;
-2. AXIS Version Authority proves `8.22 → 8.22`, `decision=confirm`, `sequence=6`, `change_class=governance`;
-3. repository and Production-governance contracts distinguish the already-certified 8.22 runtime seal from this later governance-only commit;
-4. exact provider evidence in governance matches the certified runtime SHA and successful Vercel / EdgeOne / custom-domain runs;
-5. Replay remains derived read-only with no storage/network/AI/Session/Encounter/media authority;
-6. every inherited Runtime, Current Release, Deep Compatibility, Runtime Foundation, UPO/Object, Flow, Active Home, Session/Encounter, Report, Portable Backup, Repository, Work Continuity and Cross-Platform gate remains green;
-7. Chromium and iPhone-like WebKit continue to pass the unchanged 8.22 current-release product proof;
-8. no real user data is migrated, cleared, copied or rewritten;
-9. after merge, the exact governance merged `main` SHA passes the normal Vercel → exact-prebuilt EdgeOne → `axis.juele.fun` deployment/certification chain without changing the governed product/runtime seal identity;
-10. final combined statuses and main-push workflows settle without unresolved failure before this reconciliation is closed.
+1. `node build-release.mjs` emits public/base release **8.23**, `canonical-single-runtime`, one initial JavaScript request and zero dynamic chunks;
+2. AXIS Version Authority proves **8.22 → 8.23 / bump / sequence 7 / product-runtime**;
+3. the canonical graph is exactly **86** top-level deterministic steps;
+4. source/artifact contracts prove v822 emits exact Encounter identity and v815 alone consumes/renders Evidence;
+5. a Replay-selected media Encounter displays that same Encounter's real evidence;
+6. a Replay-selected no-media Encounter never displays another Encounter's media and instead shows the explicit factual no-evidence state;
+7. wholly no-media Objects preserve the inherited no-pressure data-only behavior;
+8. manual Evidence inspection remains independent until the next explicit Replay navigation re-anchors it;
+9. `axis_v60_state` and `axis_v8_meta` remain byte-for-byte unchanged during the interaction; no API request occurs;
+10. Chromium and iPhone-like WebKit both pass mobile geometry and reduced-motion proof on the same exact PR head;
+11. all inherited Runtime, Current Release, Deep Compatibility, Runtime Foundation, Object/UPO, Flow, Active, Session/Encounter, Report, Portable Backup, Repository, Work Continuity and Cross-Platform gates remain green;
+12. after merge, the exact merged `main` SHA passes fixed Vercel Production, exact-prebuilt EdgeOne Chromium/WebKit, and `axis.juele.fun` Chromium/WebKit 8.23 proof;
+13. combined commit statuses and relevant main-push workflows settle with no unresolved failure before 8.23 is called complete.
 
-Failures are fixed at the actual contract/source owner. Product assertions, data-safety boundaries and deployment identity checks may not be weakened merely to make the governance stage pass.
+Failures are fixed at the actual owner. User data, browser assertions and ownership boundaries may not be weakened merely to make the release pass.
 
 ## Next planned stage
 
-After this single governance reconciliation is Production-certified, stop governance cleanup and return to a real bounded product evolution stage.
+Do not start another product, architecture, backup/account, Node/toolchain or native/iOS slice until AXIS 8.23 is Production-certified on the exact merged main artifact.
 
-The next product slice should be selected from the existing durable backlog by inspecting current source/runtime behavior first. Priority remains useful Reveal/Evolution quality, Capture friction and real-world runtime adaptation. A likely direction is an evidence-backed Reveal refinement that makes accumulated factual change more useful without inventing scores or advice, but the exact 8.23 scope must be chosen from the live implementation rather than from a stale design document.
-
-Backup/account expansion remains intentionally deferred. Existing portable backup compatibility remains protected.
-
-Chat history is not authoritative project memory. It is supplementary context only. Repository governance, exact source, deterministic build output and exact Production evidence are authoritative.
+After that, inspect live behavior again and choose the next bounded product improvement from useful Reveal/Evolution quality, Capture friction or real-world runtime adaptation. Existing portable backup compatibility remains protected; broader account/backup work remains deferred.
