@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 8,
+  "sequence": 9,
   "base_release": "8.23",
-  "release": "8.23",
-  "decision": "confirm",
-  "change_class": "infrastructure",
-  "summary": "Keep AXIS 8.23 unchanged while repairing EdgeOne Production workflow YAML parsing so the already-merged runtime can complete exact-artifact EdgeOne and custom-domain certification; no product, runtime, storage, data or ownership behavior changes."
+  "release": "8.24",
+  "decision": "bump",
+  "change_class": "product-ui",
+  "summary": "Advance AXIS to 8.24 for a bounded Active-stage interaction upgrade: one authoritative set-progress presentation, tactile press and motion feedback, and an isolated fixed action dock that prevents scrolling hairlines from painting across capture controls, without changing training, storage, Encounter, recorder or Active ownership."
 }

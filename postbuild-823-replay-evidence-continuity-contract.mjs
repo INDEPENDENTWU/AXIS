@@ -33,3 +33,4 @@ info.axis823={
 };
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 console.log('[AXIS 8.23 Replay Evidence Continuity contract] PASS · exact Encounter handoff · explicit selected no-evidence truth · read-only/no-network/no-new-storage');
+await import('./postbuild-824-active-stage-tactile-contract.mjs');

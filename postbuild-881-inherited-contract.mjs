@@ -7,7 +7,8 @@ const runtime=read('axis-core.js'),html=read('index.html'),manifest=JSON.parse(r
 if(manifest.version!==release.publicVersion||manifest.baseVersion!==release.stableBaseVersion)fail(`current release identity mismatch ${manifest.version}/${manifest.baseVersion}`);
 if(manifest.architecture!=='canonical-single-runtime')fail(`architecture ${manifest.architecture}`);
 if(!runtime.includes('v881WeightChips')||!runtime.includes('v881RepChips'))fail('group-plan presets missing');
-if(!runtime.includes('剩余 ${clock(remaining)}'))fail('active countdown presentation missing');
+const activeCountdown=runtime.includes('剩余 ${clock(remaining)}')||runtime.includes("actual<est?'剩余 '+clock(Math.max(0,est-actual))+' · ':'");
+if(!activeCountdown)fail('active countdown presentation missing');
 if(!runtime.includes('id="v881WmBrand"')||!runtime.includes("fillText('AXIS'"))fail('center AXIS brand missing');
 if(runtime.includes("fillText('A X I S'"))fail('legacy spaced AXIS brand returned');
 if(!html.includes(`canonical-${release.publicVersion}`))fail('current canonical HTML marker missing');

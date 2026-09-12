@@ -2,15 +2,17 @@
 
 ## Production baseline at start of this work
 
-AXIS **8.22 — Truthful Evolution Replay** remains the last fully Production-sealed Web runtime until the current AXIS 8.23 certification chain is complete.
+AXIS **8.23 — Replay Evidence Continuity** is the fully Production-sealed Web runtime inherited by this work.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
-- exact sealed 8.22 `main`: `cbcecfe9f7bfd18c8f05ced2bd760a60a03b15b5`
-- sealed 8.22 runtime product commit: `abba7ed3e66bcfdff7b6ed3142e2a59e8b58d631`
-- sealed product PR: **#144**
+- exact sealed 8.23 `main`: `2418103c786f2d0865aece49d738e9ed9161ef55`
+- product behavior PR: **#146**
+- final certification/infrastructure merge: **#147**
 - architecture: `canonical-single-runtime`
-- cross-platform foundation: `axis-native-foundation-0` (`INDEPENDENTWU/AXIS-iOS`)
-- shared portable domain contracts: `axis.domain.v1`, `axis.data.v1`
+- Vercel Production gate `34685665958` — success
+- Vercel Public Production Alias Gate `34685665973` — success
+- EdgeOne exact-prebuilt deployment `dp2z63vp6fz9`, run `34685651257` — success
+- `axis.juele.fun` run `34685651239` — success
 - fixed Vercel: `https://axis-five-puce.vercel.app`
 - EdgeOne: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
 - governed custom domain: `https://axis.juele.fun`
@@ -18,83 +20,48 @@ AXIS **8.22 — Truthful Evolution Replay** remains the last fully Production-se
 
 Chat history is not authoritative project memory; repository contracts, exact commits, built artifacts and provider certification are authoritative.
 
-### Merged AXIS 8.23 product candidate
-
-**AXIS 8.23 — Replay Evidence Continuity** was merged from PR **#146** after its exact PR head passed the product/runtime/version/repository gates.
-
-- bounded product delivery branch: `product/823-replay-evidence-continuity`
-- exact product PR head: `b84b10edc874e0448e717038de74a1b8b5f30a49`
-- exact merged product `main`: `8e4c906e5cd380b577fa340b4d73d57bc5de9204`
-- release transition: **8.22 → 8.23**
-- decision: `bump`
-- sequence: **7**
-- change class: `product-runtime`
-- deterministic graph: **86** top-level steps
-- Vercel deployment: `dpl_8UywHniBzopD149NHGcudZUyJq7M`
-- Vercel Production Deployment Gate `34671983407` — **success**
-- Public Production Alias Gate `34671983433` — **success**
-
-#### AXIS 8.23 product behavior
-
-- v822 Replay emits exact transient Encounter identity only after explicit Replay rail / previous / next navigation.
-- v815 Media Evidence remains the sole Evidence read/presentation owner and resolves that exact Encounter.
-- selected Encounter with media → show that Encounter's evidence.
-- selected Encounter with no media, while the Object has media elsewhere → explicit **“这一次没有留下影像证据”** state; never silently substitute another date.
-- wholly no-media Object → preserve the inherited data-only/no-capture-pressure state.
-- manual Evidence inspection remains independent until the next explicit Replay navigation re-anchors it.
-- inherited Replay/Evidence initial mount choices remain unchanged.
-- no new Session/Encounter/media/storage/network/AI writer or truth store was introduced.
-
 ## Active change
 
-**EdgeOne workflow certification repair for AXIS 8.23.** The 8.23 runtime itself is not being changed. Exact merged main `8e4c906e5cd380b577fa340b4d73d57bc5de9204` reached and passed fixed Vercel Production, but EdgeOne push run `34671967533` failed before creating any jobs. The workflow run started and ended in the same second with `jobs=[]`, so this is a workflow parsing/startup defect rather than a product/runtime failure.
-
-The defect was introduced by compact YAML flow mappings around GitHub expression values such as `env: { GH_STATUS_TOKEN: ${{ github.token }} }`. The previously certified EdgeOne workflow used block mappings. The bounded repair restores block-form `env` mappings while preserving all 8.23 exact-artifact, Chromium and iPhone WebKit proofs.
+**AXIS 8.24 — Active Stage Tactile Convergence** is the current **Release candidate**, bounded to product/UI presentation and tactile behavior.
 
 - governed active branch: `main`
 - governed target branch: `main`
-- active repair branch: `infra/823-edgeone-workflow-yaml-fix`
-- exact base: `8e4c906e5cd380b577fa340b4d73d57bc5de9204`
-- public release: **8.23 unchanged**
-- version decision: `confirm`
-- sequence: **8**
-- base release: **8.23**
-- release: **8.23**
-- change class: `infrastructure`
-- intended user-visible behavior change: **no**
-- runtime/build product graph change: **none**
-- data/storage/ownership change: **none**
+- delivery branch: `axis-824-active-stage-tactile`
+- release PR: **#148**
+- exact base: `2418103c786f2d0865aece49d738e9ed9161ef55`
+- release transition: **8.23 → 8.24**
+- version decision: `bump`
+- sequence: **9**
+- change class: `product-ui`
+- intended user-visible behavior change: **yes, presentation/tactile only**
 
-The repair must not remove any 8.23 EdgeOne requirement: exact Vercel-golden SHA/version/base parity, exact canonical artifact parity, EdgeOne exact-prebuilt deployment, 8.23 Chromium proof, 8.23 iPhone WebKit proof, and final `EdgeOne Production` commit status.
+The product scope is intentionally narrow:
 
-### Durable inherited certification ledger
+- one strength set-progress truth (`第 n / total 组` → `已完成 n / total 组`);
+- remaining/estimated time no longer duplicates set count;
+- bounded press/rebound/active/completion feedback;
+- fixed Capture / Quick Record dock isolated from scrolling hairlines and separators;
+- reduced-motion safe;
+- v87 remains the existing action boundary;
+- no new training, persistence, Session, Encounter, recorder or Active lifecycle owner.
 
-The current infrastructure repair does not supersede inherited product provenance. These entries are retained for fail-closed contracts.
+AXIS 8.23 Replay Evidence Continuity is already Production-sealed and is inherited unchanged.
 
-#### Cross-platform / native foundation provenance
+## Inherited fail-closed governance provenance
 
-- `axis-native-foundation-0`
-- native repository: `INDEPENDENTWU/AXIS-iOS`
-- portable domain contract: `axis.domain.v1`
-- portable data contract: `axis.data.v1`
-
-#### AXIS 8.21 Flow intent provenance
-
-- bounded delivery branch: `feat/821-flow-step-recording-intent`
-- exact certified base main SHA: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
-- bounded delivery branch: `feat/821-flow-step-execution-intent`
-- exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
-
-#### AXIS 8.21 Active Home provenance
-
-- bounded delivery branch: `feat/821-active-home-stage`
-- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
-
-#### AXIS 8.21 Report provenance
+The current release remains 8.24; the entries below are immutable historical provenance required by inherited contracts. They do not reactivate historical branches or change current authority.
 
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
+- native foundation id: `axis-native-foundation-0`
+- native repository: `INDEPENDENTWU/AXIS-iOS`
+- portable contracts retained: `axis.domain.v1`, `axis.data.v1`, `axis.report-range.v1`
+- bounded delivery branch: `feat/821-active-home-stage`
+- exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- bounded Flow step execution intent branch: `feat/821-flow-step-execution-intent`
+- exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
+- bounded Flow step recording intent branch: `feat/821-flow-step-recording-intent`
+- exact certified Flow recording base main SHA: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
 - exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
-- truth schema inherited by Report UI/PDF/Share Card: `axis.report-range.v1`
 - bounded delivery branch: `feat/821-report-pdf-export`
 - completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
 - completed Report PDF scope source-convergence PR: **#133**
@@ -104,23 +71,22 @@ The current infrastructure repair does not supersede inherited product provenanc
 
 ## Validation for this work
 
-Merge is blocked until one exact repair PR head proves all of the following without weakening inherited assertions:
+Merge is blocked until one exact PR #148 head proves all of the following without weakening inherited assertions:
 
-1. GitHub successfully parses and starts `axis-edgeone-production-mirror.yml`; the PR run must contain a real `package-contract` job rather than fail with zero jobs.
-2. `node build-release.mjs` remains public/base release **8.23**, `canonical-single-runtime`, one initial JavaScript request and zero dynamic chunks.
-3. AXIS Version Authority proves **8.23 → 8.23 / confirm / sequence 8 / infrastructure**.
-4. the canonical product graph remains exactly **86** top-level deterministic steps.
-5. all inherited Runtime, Current Release, Deep Compatibility, Runtime Foundation, Object/UPO, Flow, Active, Session/Encounter, Report, Portable Backup, Repository, Work Continuity and Cross-Platform gates remain green.
-6. no product/runtime/data/storage/ownership files are modified by this repair beyond documentation/governance and the deployment workflow itself.
-7. after merge, the exact new merged `main` SHA reaches fixed Vercel Production and passes exact manifest/current-release Chromium verification.
-8. the same exact artifact then deploys to EdgeOne Production and passes the full current-release suite including 8.23 in Chromium and iPhone WebKit.
-9. `axis.juele.fun` resolves the same exact artifact and passes 8.23 Chromium and iPhone WebKit verification.
-10. combined commit statuses and relevant main-push/deployment-status workflows settle with no unresolved failure before AXIS 8.23 is called Production-sealed.
+1. `node build-release.mjs` produces public/base release **8.24**, `canonical-single-runtime`, one initial JavaScript request and zero dynamic runtime chunks.
+2. AXIS Version Authority proves **8.23 → 8.24 / bump / sequence 9 / product-ui** against the exact 8.23 base.
+3. the canonical product graph remains exactly **86** top-level deterministic steps.
+4. the 8.24 contract proves one set-progress truth, tactile delegation, dock-layer isolation and reduced-motion safety without new factual ownership.
+5. inherited Runtime, Current Release, Deep Compatibility, Runtime Foundation, Object/UPO, Flow, Active, Session/Encounter, Report, Portable Backup, Repository, Work Continuity and Cross-Platform gates remain green.
+6. Production workflow contracts explicitly carry the 8.24 smoke into fixed Vercel Chromium proof and EdgeOne / `axis.juele.fun` Chromium + iPhone-like WebKit proof.
+7. after merge, the exact merged `main` SHA must be the artifact served by fixed Vercel Production.
+8. the same exact canonical artifact must deploy to EdgeOne Production and resolve at `axis.juele.fun`.
+9. Vercel, EdgeOne and custom-domain Production proofs must settle green before 8.24 is called Production-sealed.
 
 Failures are fixed at the actual owner. User data, browser assertions and ownership boundaries may not be weakened merely to make certification pass.
 
 ## Next planned stage
 
-Do not start another product, architecture, backup/account, Node/toolchain or native/iOS slice until AXIS 8.23 is fully Production-certified on the exact final merged main artifact.
+Do not start another product, architecture, backup/account, Node/toolchain or native/iOS slice until AXIS 8.24 is fully Production-certified on the exact final merged main artifact.
 
-After that, inspect live behavior again and choose the next bounded product improvement from Reveal/Evolution quality, Capture friction or real-world runtime adaptation. Existing portable backup compatibility remains protected; broader account/backup work remains deferred.
+After the live 8.24 stage is sealed, inspect real Active behavior again and choose the next bounded improvement from actual product evidence rather than adding speculative surface area.

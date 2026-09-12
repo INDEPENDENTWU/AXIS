@@ -34,6 +34,16 @@ if(CURRENT==='8.23'){
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.23 must declare intended product behavior change');
   if(project?.engineering?.versionDecision?.decision!=='bump'||project?.engineering?.versionDecision?.sequence!==7||project?.engineering?.versionDecision?.changeClass!=='product-runtime')fail('8.23 governed version decision must be bump sequence 7 product-runtime');
 }
+if(CURRENT==='8.24'){
+  if(STATUS!=='candidate')fail(`8.24 must remain candidate until exact merged-main certification, got ${STATUS}`);
+  if(SEALED!=='8.23'||PROD_SHA!=='2418103c786f2d0865aece49d738e9ed9161ef55')fail(`8.24 candidate must preserve exact 8.23 seal, got ${SEALED} @ ${PROD_SHA}`);
+  if(project?.product?.candidatePullRequest!==148)fail('8.24 candidate PR must be #148');
+  if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.24 must declare intended product behavior change');
+  if(project?.engineering?.versionDecision?.decision!=='bump'||project?.engineering?.versionDecision?.sequence!==9||project?.engineering?.versionDecision?.changeClass!=='product-ui')fail('8.24 governed version decision must be bump sequence 9 product-ui');
+  const tactile=project?.engineering?.activeStageTactile;
+  if(tactile?.status!=='8.24-release-candidate'||tactile?.setProgressSingleTruth!==true||tactile?.timeMetaNoSetDuplication!==true||tactile?.tactileFeedback!==true||tactile?.dockLayerIsolation!==true||tactile?.reducedMotionSafe!==true)fail('8.24 Active Stage Tactile governed capability state drift');
+  if(tactile?.newTrainingOwner!==false||tactile?.newStorage!==false||tactile?.newEncounterWriter!==false||tactile?.newActiveOwner!==false)fail('8.24 Active Stage Tactile introduced a forbidden factual owner');
+}
 
 const required=[
   'README.md','CONTRIBUTING.md','SECURITY.md','CODE_OF_CONDUCT.md',
@@ -76,8 +86,15 @@ const owners=json('governance/owners.json'),retirements=json('governance/retirem
 if(owners?.baselineRelease!==CURRENT||!Array.isArray(owners?.owners)||owners.owners.length<8)fail('owner registry is missing the current critical-owner baseline');
 const allowedRetirementBaselines=new Set([CURRENT,SEALED,'8.21']);if(!allowedRetirementBaselines.has(retirements?.baselineRelease)||!Array.isArray(retirements?.retirements)||retirements.retirements.length<4)fail('retirement registry is missing an accepted current/sealed historical baseline');
 for(const id of ['keep-clip-visible-setting','three-mode-default-capture-controller','v876-capture-preference-writer','low-fps-watermark-video-path'])if(!retirements.retirements.some(x=>x.id===id))fail(`retirement guard missing ${id}`);
-if(['8.22','8.23'].includes(CURRENT)){const replay=(owners.owners||[]).find(x=>x.capability==='evolution-replay-822');if(!String(replay?.status||'').includes('derived-read-only')||replay?.storage!=='none')fail('8.22 Evolution Replay owner registry drift')}
-if(CURRENT==='8.23'){const handoff=(owners.owners||[]).find(x=>x.capability==='evolution-replay-evidence-continuity-823');if(handoff?.status!=='presentation-handoff-release-candidate'||handoff?.storage!=='none')fail('8.23 Replay Evidence handoff owner registry drift')}
+if(['8.22','8.23','8.24'].includes(CURRENT)){const replay=(owners.owners||[]).find(x=>x.capability==='evolution-replay-822');if(!String(replay?.status||'').includes('derived-read-only')||replay?.storage!=='none')fail('8.22 Evolution Replay owner registry drift')}
+if(['8.23','8.24'].includes(CURRENT)){
+  const handoff=(owners.owners||[]).find(x=>x.capability==='evolution-replay-evidence-continuity-823');
+  const expectedHandoff=CURRENT==='8.23'?'presentation-handoff-release-candidate':'presentation-handoff-production-sealed';
+  if(handoff?.status!==expectedHandoff||handoff?.storage!=='none')fail(`${CURRENT} Replay Evidence handoff owner registry drift`);
+}
+if(CURRENT==='8.24'){
+  const tactile=(owners.owners||[]).find(x=>x.capability==='active-stage-tactile-824');if(tactile?.status!=='presentation-only-release-candidate'||tactile?.storage!=='none')fail('8.24 Active Stage Tactile owner registry drift');
+}
 
 const build=read('build-release.mjs');
 for(const marker of ['prepare-812-release-compat.mjs','prepare-812-learning-content.mjs','prepare-812-learning-settings.mjs','postbuild-812-contract.mjs'])if(!build.includes(marker))fail(`inherited foundation build marker missing: ${marker}`);
@@ -89,13 +106,18 @@ const release819=read('prepare-819-release.mjs');if(!release819.includes("const 
 const release820=read('prepare-820-release.mjs');if(!release820.includes("const FROM='8.19',VERSION='8.20';"))fail('8.20 release transition drift');
 const release821=read('prepare-821-release.mjs');if(!release821.includes("const FROM='8.20.1',VERSION='8.21';"))fail('8.21 release transition drift');
 const lifecycle=read('prepare-819-postcommit-lifecycle.mjs');
-if(['8.22','8.23'].includes(CURRENT)&&!lifecycle.includes("await import('./prepare-822-evolution-replay.mjs')"))fail('8.22 Replay is not reachable');
-if(CURRENT==='8.23'&&!lifecycle.includes("await import('./prepare-823-replay-evidence-continuity.mjs')"))fail('8.23 Replay Evidence Continuity is not reachable after 8.22');
-if(['8.22','8.23'].includes(CURRENT)){const release822=read('prepare-822-evolution-replay.mjs');if(!release822.includes("const FROM='8.21',VERSION='8.22'"))fail('8.22 release transition drift');if(!build.includes("'postbuild-822-evolution-replay-contract.mjs'"))fail('8.22 postbuild contract is not deterministic build authority')}
-if(CURRENT==='8.23'){
+if(['8.22','8.23','8.24'].includes(CURRENT)&&!lifecycle.includes("await import('./prepare-822-evolution-replay.mjs')"))fail('8.22 Replay is not reachable');
+if(['8.23','8.24'].includes(CURRENT)&&!lifecycle.includes("await import('./prepare-823-replay-evidence-continuity.mjs')"))fail('8.23 Replay Evidence Continuity is not reachable after 8.22');
+if(['8.22','8.23','8.24'].includes(CURRENT)){const release822=read('prepare-822-evolution-replay.mjs');if(!release822.includes("const FROM='8.21',VERSION='8.22'"))fail('8.22 release transition drift');if(!build.includes("'postbuild-822-evolution-replay-contract.mjs'"))fail('8.22 postbuild contract is not deterministic build authority')}
+if(['8.23','8.24'].includes(CURRENT)){
   const release823=read('prepare-823-replay-evidence-continuity.mjs');if(!release823.includes("const FROM='8.22',VERSION='8.23'"))fail('8.23 release transition contract drift');if(!build.includes("'postbuild-823-replay-evidence-continuity-contract.mjs'"))fail('8.23 postbuild contract is not deterministic build authority');
   for(const path of ['docs/823_SCOPE.md','prepare-823-replay-evidence-continuity.mjs','postbuild-823-replay-evidence-continuity-contract.mjs','scripts/axis-823-replay-evidence-continuity-contract.mjs','scripts/axis-823-replay-evidence-continuity-smoke.mjs'])if(!fs.existsSync(path))fail(`8.23 release surface missing ${path}`);
   const currentWorkflow=read('.github/workflows/axis-current-release-gate.yml');if((currentWorkflow.match(/node scripts\/axis-823-replay-evidence-continuity-smoke\.mjs/g)||[]).length!==2)fail('8.23 smoke must remain in the converged Current Release family in both engines');if(fs.existsSync('.github/workflows/axis-823-replay-evidence-continuity.yml'))fail('version-specific 8.23 automatic workflow fanout must not return');
+}
+if(CURRENT==='8.24'){
+  if(!lifecycle.includes("await import('./prepare-824-active-stage-tactile.mjs')"))fail('8.24 Active Stage Tactile prepare is not reachable after inherited 8.23 continuity');
+  const post823=read('postbuild-823-replay-evidence-continuity-contract.mjs');if(!post823.includes("await import('./postbuild-824-active-stage-tactile-contract.mjs')"))fail('8.24 postbuild contract is not chained from the deterministic 8.23 postbuild authority');
+  for(const path of ['prepare-824-active-stage-tactile.mjs','postbuild-824-active-stage-tactile-contract.mjs','scripts/axis-824-active-stage-tactile-smoke.mjs','styles/axis-824-active-stage-tactile.css'])if(!fs.existsSync(path))fail(`8.24 release surface missing ${path}`);
 }
 
 const convergenceDriver=read('prepare-8151-regression-seal.mjs');for(const marker of ["await import('./prepare-816-capture-evidence-convergence.mjs')","await import('./prepare-816-evidence-compat-refine.mjs')","await import('./prepare-817-interaction-convergence-driver.mjs')"])if(!convergenceDriver.includes(marker))fail(`8.16/8.17 convergence chain missing: ${marker}`);
@@ -106,16 +128,17 @@ const post816=read('postbuild-816-contract.mjs');if(!post816.includes("await imp
 const post817=read('postbuild-817-contract.mjs');if(!post817.includes("await import('./postbuild-8171-source-first-media-contract.mjs')"))fail('8.17.1 postbuild chain drift');
 const post8171=read('postbuild-8171-source-first-media-contract.mjs');if(!post8171.includes("await import('./postbuild-818-contract.mjs')"))fail('8.18 postbuild chain drift');
 const post818=read('postbuild-818-contract.mjs');
-/* Keep this source block at the historical pre-8.20.1 shape. Sequential release
-   owners append built identities in order; pre-populating later identities here
-   breaks those fail-closed transforms. */
-const source818Identity=post818.includes("contract.publicVersion!=='8.18'")&&post818.includes("contract.stableBaseVersion!=='8.18'")&&post818.includes("info.version!=='8.18'")&&post818.includes("info.baseVersion!=='8.18'");
+/* Source accepts the sealed historical 8.18 shape. After deterministic release
+   preparation, the same semantic contract must assert the exact governed current
+   public identity; this keeps build-time verification strict without adding a
+   per-release loophole to the historical capability markers. */
+const source818Identity=(post818.includes("contract.publicVersion!=='8.18'")&&post818.includes("contract.stableBaseVersion!=='8.18'")&&post818.includes("info.version!=='8.18'")&&post818.includes("info.baseVersion!=='8.18'"))||(post818.includes(`contract.publicVersion!=='${CURRENT}'`)&&post818.includes(`contract.stableBaseVersion!=='${CURRENT}'`)&&post818.includes(`info.version!=='${CURRENT}'`)&&post818.includes(`info.baseVersion!=='${CURRENT}'`));
 const built819Identity=post818.includes("contract.publicVersion!=='8.19'")&&post818.includes("contract.stableBaseVersion!=='8.19'")&&post818.includes("info.version!=='8.19'")&&post818.includes("info.baseVersion!=='8.19'");
 const built820Identity=post818.includes("contract.publicVersion!=='8.20'")&&post818.includes("contract.stableBaseVersion!=='8.20'")&&post818.includes("info.version!=='8.20'")&&post818.includes("info.baseVersion!=='8.20'");
 if(!source818Identity&&!built819Identity&&!built820Identity)fail('8.18 semantic contract has neither sealed source identity nor supported built identity');
 for(const marker of ['objectMetricSchema818:true','pwaRouteTruth818:true','capturePreferenceModel818:true','evolutionObjectShelf818:true'])if(!post818.includes(marker))fail(`8.18 semantic contract missing ${marker}`);
 
-const stepBlock=build.match(/const STEPS=\[([\s\S]*?)\n\];/);if(!stepBlock)fail('cannot parse deterministic build steps');const steps=[...stepBlock[1].matchAll(/'([^']+\.mjs)'/g)].map(match=>match[1]);if(!steps.length)fail('no deterministic build steps found');const duplicateSteps=steps.filter((step,index)=>steps.indexOf(step)!==index);if(duplicateSteps.length)fail(`duplicate build steps: ${[...new Set(duplicateSteps)].join(', ')}`);for(const step of steps)if(!fs.existsSync(step))fail(`build step does not exist: ${step}`);const expectedSteps=CURRENT==='8.23'?86:85;if(steps.length!==expectedSteps)fail(`${CURRENT} must have exactly ${expectedSteps} deterministic top-level steps, found ${steps.length}`);
+const stepBlock=build.match(/const STEPS=\[([\s\S]*?)\n\];/);if(!stepBlock)fail('cannot parse deterministic build steps');const steps=[...stepBlock[1].matchAll(/'([^']+\.mjs)'/g)].map(match=>match[1]);if(!steps.length)fail('no deterministic build steps found');const duplicateSteps=steps.filter((step,index)=>steps.indexOf(step)!==index);if(duplicateSteps.length)fail(`duplicate build steps: ${[...new Set(duplicateSteps)].join(', ')}`);for(const step of steps)if(!fs.existsSync(step))fail(`build step does not exist: ${step}`);const expectedSteps=['8.23','8.24'].includes(CURRENT)?86:85;if(steps.length!==expectedSteps)fail(`${CURRENT} must have exactly ${expectedSteps} deterministic top-level steps, found ${steps.length}`);
 for(const forbidden of ['docs/history/','archive/'])if(build.includes(forbidden))fail(`release build directly references provenance path ${forbidden}`);
 
 const vercel=json('vercel.json');if(vercel.buildCommand!=='node build-release.mjs')fail(`Vercel buildCommand is ${vercel.buildCommand}`);if(vercel.git?.deploymentEnabled?.['**']!==false||vercel.git?.deploymentEnabled?.main!==true)fail('Vercel deployment policy must be main-only');
