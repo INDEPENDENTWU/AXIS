@@ -113,7 +113,7 @@ if(['8.23','8.24'].includes(CURRENT)){
 }
 if(CURRENT==='8.24'){
   if(!lifecycle.includes("await import('./prepare-824-active-stage-tactile.mjs')"))fail('8.24 Active Stage Tactile prepare is not reachable after inherited 8.23 continuity');
-  if(!build.includes("'postbuild-824-active-stage-tactile-contract.mjs'"))fail('8.24 postbuild contract is not deterministic build authority');
+  const post823=read('postbuild-823-replay-evidence-continuity-contract.mjs');if(!post823.includes("await import('./postbuild-824-active-stage-tactile-contract.mjs')"))fail('8.24 postbuild contract is not chained from the deterministic 8.23 postbuild authority');
   for(const path of ['prepare-824-active-stage-tactile.mjs','postbuild-824-active-stage-tactile-contract.mjs','scripts/axis-824-active-stage-tactile-smoke.mjs','styles/axis-824-active-stage-tactile.css'])if(!fs.existsSync(path))fail(`8.24 release surface missing ${path}`);
 }
 
