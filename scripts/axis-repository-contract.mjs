@@ -87,9 +87,12 @@ if(owners?.baselineRelease!==CURRENT||!Array.isArray(owners?.owners)||owners.own
 const allowedRetirementBaselines=new Set([CURRENT,SEALED,'8.21']);if(!allowedRetirementBaselines.has(retirements?.baselineRelease)||!Array.isArray(retirements?.retirements)||retirements.retirements.length<4)fail('retirement registry is missing an accepted current/sealed historical baseline');
 for(const id of ['keep-clip-visible-setting','three-mode-default-capture-controller','v876-capture-preference-writer','low-fps-watermark-video-path'])if(!retirements.retirements.some(x=>x.id===id))fail(`retirement guard missing ${id}`);
 if(['8.22','8.23','8.24'].includes(CURRENT)){const replay=(owners.owners||[]).find(x=>x.capability==='evolution-replay-822');if(!String(replay?.status||'').includes('derived-read-only')||replay?.storage!=='none')fail('8.22 Evolution Replay owner registry drift')}
-if(CURRENT==='8.23'){const handoff=(owners.owners||[]).find(x=>x.capability==='evolution-replay-evidence-continuity-823');if(handoff?.status!=='presentation-handoff-release-candidate'||handoff?.storage!=='none')fail('8.23 Replay Evidence handoff owner registry drift')}
+if(['8.23','8.24'].includes(CURRENT)){
+  const handoff=(owners.owners||[]).find(x=>x.capability==='evolution-replay-evidence-continuity-823');
+  const expectedHandoff=CURRENT==='8.23'?'presentation-handoff-release-candidate':'presentation-handoff-production-sealed';
+  if(handoff?.status!==expectedHandoff||handoff?.storage!=='none')fail(`${CURRENT} Replay Evidence handoff owner registry drift`);
+}
 if(CURRENT==='8.24'){
-  const handoff=(owners.owners||[]).find(x=>x.capability==='evolution-replay-evidence-continuity-823');if(handoff?.status!=='presentation-handoff-production-sealed'||handoff?.storage!=='none')fail('8.24 inherited Replay Evidence handoff owner registry drift');
   const tactile=(owners.owners||[]).find(x=>x.capability==='active-stage-tactile-824');if(tactile?.status!=='presentation-only-release-candidate'||tactile?.storage!=='none')fail('8.24 Active Stage Tactile owner registry drift');
 }
 
