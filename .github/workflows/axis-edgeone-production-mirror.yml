@@ -58,7 +58,8 @@ jobs:
         with:
           node-version: 20.18.0
       - name: Mark EdgeOne Production pending
-        env: { GH_STATUS_TOKEN: ${{ github.token }} }
+        env:
+          GH_STATUS_TOKEN: ${{ github.token }}
         run: |
           node --input-type=module - <<'NODE'
           const target=`${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
@@ -111,7 +112,9 @@ jobs:
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Chromium real EdgeOne current release flow
-        env: { AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}, AXIS_ENGINE: chromium }
+        env:
+          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
+          AXIS_ENGINE: chromium
         run: |
           node scripts/axis-8124-flow-smoke.mjs
           node scripts/axis-8131-evolution-smoke.mjs
@@ -137,7 +140,9 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps webkit
       - name: iPhone WebKit real EdgeOne current release flow
-        env: { AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}, AXIS_ENGINE: webkit }
+        env:
+          AXIS_URL: ${{ env.EDGEONE_LIVE_URL }}
+          AXIS_ENGINE: webkit
         run: |
           node scripts/axis-8124-flow-smoke.mjs
           node scripts/axis-8131-evolution-smoke.mjs
@@ -159,7 +164,8 @@ jobs:
           node scripts/axis-822-evolution-replay-smoke.mjs
           node scripts/axis-823-replay-evidence-continuity-smoke.mjs
       - name: Mark EdgeOne Production success
-        env: { GH_STATUS_TOKEN: ${{ github.token }} }
+        env:
+          GH_STATUS_TOKEN: ${{ github.token }}
         run: |
           node --input-type=module - <<'NODE'
           const x=JSON.parse((await import('node:fs')).readFileSync('/tmp/edgeone-live-result.json','utf8'));if(!x.baseUrl)throw new Error('EdgeOne base URL missing for status');const body={state:'success',context:'EdgeOne Production',description:'Exact AXIS main verified on EdgeOne Production',target_url:x.baseUrl};const r=await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/statuses/${process.env.GITHUB_SHA}`,{method:'POST',headers:{authorization:`Bearer ${process.env.GH_STATUS_TOKEN}`,accept:'application/vnd.github+json','content-type':'application/json','x-github-api-version':'2022-11-28'},body:JSON.stringify(body)});if(!r.ok)throw new Error(`GitHub success status ${r.status}: ${await r.text()}`);
