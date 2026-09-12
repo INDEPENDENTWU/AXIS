@@ -22,7 +22,7 @@ Chat history is not authoritative project memory; repository contracts, exact co
 
 ## Active change
 
-**AXIS 8.24 — Active Stage Tactile Convergence** is a bounded product/UI release.
+**AXIS 8.24 — Active Stage Tactile Convergence** is the current **Release candidate**, bounded to product/UI presentation and tactile behavior.
 
 - governed active branch: `main`
 - governed target branch: `main`
