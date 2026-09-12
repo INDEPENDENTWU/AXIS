@@ -5,6 +5,7 @@ const fail=m=>{throw new Error(`[AXIS 8.24 Active Stage Tactile] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
+const regexOnce=(src,re,to,label)=>{const hits=[...src.matchAll(re)].length;if(hits!==1)fail(`${label} expected once, found ${hits}`);return src.replace(re,to)};
 
 /*
  * 8.24 is a bounded product/UI release. It does not acquire any training,
@@ -21,8 +22,10 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  const style=`function axis824ActiveStageTactileStyle(){if($('#axis824ActiveStageTactileStyle'))return;const st=D.createElement('style');st.id='axis824ActiveStageTactileStyle';st.textContent=${JSON.stringify(css)};(D.head||D.documentElement).appendChild(st)}\n`;
  s=s.replace(marker,style+marker);
  s=once(s,'ensureUI();axis821ActiveStageStyle();axis821ActiveStageRefineStyle();if(hold&&!force)return;','ensureUI();axis821ActiveStageStyle();axis821ActiveStageRefineStyle();axis824ActiveStageTactileStyle();if(hold&&!force)return;','tactile style mount');
- s=once(s,"$('#v87Meta').textContent='预计 '+clock(est)+(e.kind==='strength'?' · '+(tracked?(done+'/'+total+' 组'):('计划 '+total+' 组')):'');","$('#v87Meta').textContent=(actual<est?'剩余 '+clock(Math.max(0,est-actual))+' · ':'')+'预计 '+clock(est);",'single time-meta truth');
- s=once(s,"$('#axis821StageProgressText').textContent=e.kind==='strength'?(planDone?('已完成 '+done+'/'+total+' 组'):(tracked?('第 '+Math.min(done+1,total)+' / '+total+' 组'):('共 '+total+' 组'))):('预计进度 '+Math.round(pct)+'%');","$('#axis821StageProgressText').textContent=e.kind==='strength'?(planDone?('已完成 '+Math.min(done,total)+' / '+total+' 组'):('第 '+Math.min(done+1,total)+' / '+total+' 组')):('预计进度 '+Math.round(pct)+'%');",'single set-progress truth');
+ /* Later 8.21/8.23 source convergence may alter the exact RHS while retaining
+    these unique presentation sinks. Converge by sink, not by historical RHS. */
+ s=regexOnce(s,/\$\('#v87Meta'\)\.textContent=[^;]+;/g,"$('#v87Meta').textContent=(actual<est?'剩余 '+clock(Math.max(0,est-actual))+' · ':'')+'预计 '+clock(est);",'single time-meta truth');
+ s=regexOnce(s,/\$\('#axis821StageProgressText'\)\.textContent=[^;]+;/g,"$('#axis821StageProgressText').textContent=e.kind==='strength'?(planDone?('已完成 '+Math.min(done,total)+' / '+total+' 组'):('第 '+Math.min(done+1,total)+' / '+total+' 组')):('预计进度 '+Math.round(pct)+'%');",'single set-progress truth');
  for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','state.active.events.push(','writeCore(','writeMeta('])if(style.includes(forbidden))fail(`presentation style introduced forbidden owner token ${forbidden}`);
  try{new Function(s)}catch(e){fail(`v87 syntax ${e.message}`)}
  write(f,s);
