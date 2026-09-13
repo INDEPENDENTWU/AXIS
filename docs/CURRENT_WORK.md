@@ -34,30 +34,38 @@ Chat history is not authoritative project memory; repository contracts, exact co
 - change class: `product-ui`
 - intended user-visible behavior change: **yes, visual defect correction only**
 
-The root cause is bounded and concrete: 8.24 gave `.captureDock` `contain: layout style paint` while its underlay extended above the dock with a negative top offset. Paint containment can clip that overscan. The same underlay used a transparent-to-opaque gradient, leaving a window in which a one-pixel scrolling separator could remain visible. Deleting valid separators would be the wrong owner fix.
+The root cause is bounded and concrete: 8.24 gave `.captureDock` `contain: layout style paint` while its underlay extended above the dock with a negative top offset. Paint containment can clip that overscan. The same underlay used a transparent-to-opaque gradient, leaving a window in which a one-pixel scrolling separator could remain visible. A first patch attempted `contain: layout style`, but Chromium and WebKit both computed that value as `layout paint`, proving that partial containment was still the wrong browser-level fix. Deleting valid separators would also be the wrong owner fix.
 
 8.24.1 therefore:
 
-- removes only `paint` containment from the dock boundary;
+- explicitly retires containment on the fixed dock with `contain: none`, so the overscan can escape the dock box in real engines;
 - makes the fixed dock itself opaque;
 - uses an opaque 16px top / 6px bottom overscan curtain;
 - removes the translucent curtain gradient;
 - leaves Capture / Quick Record controls above the curtain;
-- adds computed-style Chromium + iPhone WebKit proof for opacity, geometry and stacking;
+- adds computed-style Chromium + iPhone WebKit proof requiring the rendered dock containment to be `none`, plus opacity, geometry, stacking and no viewport overflow;
 - preserves every v87 action and all training/storage/Encounter/Active ownership.
 
 AXIS 8.24 Active Stage Tactile and AXIS 8.23 Replay Evidence Continuity remain Production-sealed and are inherited unchanged.
 
 ## Inherited fail-closed governance provenance
 
-The current release candidate is 8.24.1; the entries below are immutable historical provenance required by inherited contracts. They do not reactivate historical branches or change current authority.
+The current release candidate is 8.24.1; the entries below are immutable historical provenance required by inherited contracts. They do not reactivate historical branches, make them current work, or change current authority.
 
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - native foundation id: `axis-native-foundation-0`
 - native repository: `INDEPENDENTWU/AXIS-iOS`
-- portable contracts retained: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`
+- portable contracts retained: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`
 - AXIS 8.24 sealed main: `321647b9aaca783b7f6ba99ec66616941208c698`
 - AXIS 8.23 sealed main: `2418103c786f2d0865aece49d738e9ed9161ef55`
+- AXIS 8.21 Active Home historical bounded delivery branch: `feat/821-active-home-stage`; exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- AXIS 8.21 Flow step recording historical bounded delivery branch: `feat/821-flow-step-recording-intent`; exact certified base main SHA: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
+- AXIS 8.21 Flow step execution historical bounded delivery branch: `feat/821-flow-step-execution-intent`; exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
+- AXIS 8.21 Training Report historical exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`; bounded delivery branch: `feat/821-report-pdf-export`
+- AXIS 8.21 Report Share Card historical bounded delivery branch: `feat/821-report-share-card`; exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
+- completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
+- completed Report PDF scope source-convergence PR: **#133**
+- Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`
 
 ## Validation for this work
 
@@ -66,7 +74,7 @@ Merge is blocked until one exact PR #149 head proves all of the following withou
 1. `node build-release.mjs` produces public/base release **8.24.1**, `canonical-single-runtime`, one initial JavaScript request and zero dynamic runtime chunks.
 2. AXIS Version Authority proves **8.24 → 8.24.1 / bump / sequence 10 / product-ui** against the exact 8.24 base.
 3. the canonical product graph is exactly **87** top-level deterministic steps, with the 8.24.1 prepare after inherited 8.24 construction and before canonical build emission.
-4. the 8.24.1 contract proves opaque dock + opaque overscan, no paint containment and no translucent curtain without new factual ownership.
+4. the 8.24.1 contract proves opaque dock + opaque overscan, rendered `contain: none` and no translucent curtain without new factual ownership.
 5. Chromium and iPhone-like WebKit computed-style smoke proves the actual rendered dock boundary, stacking order and no viewport overflow.
 6. inherited Runtime, Current Release, Deep Compatibility, Runtime Foundation, Object/UPO, Flow, Active, Session/Encounter, Report, Portable Backup, Repository, Work Continuity and Cross-Platform gates remain green.
 7. Production workflow contracts explicitly carry the 8.24.1 smoke into fixed Vercel Chromium proof and EdgeOne / `axis.juele.fun` Chromium + iPhone-like WebKit proof.
