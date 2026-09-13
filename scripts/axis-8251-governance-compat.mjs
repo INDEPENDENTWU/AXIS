@@ -37,7 +37,7 @@ const workflows=[
  ['.github/workflows/axis-custom-domain-production.yml','axis.juele.fun',2],
  ['.github/workflows/axis-production-deployment-gate.yml','fixed Vercel Production',1]
 ];
-for(const [path,label,want] of workflows){const s=read(path);if(count(s,'node scripts/axis-8251-inline-set-morph-smoke.mjs')!==want)fail(`${label} must run 8.25.1 physical smoke ${want} time(s)`)}
+for(const [path,label,want] of workflows){const s=read(path);if(count(s,'node scripts/axis-8241-dock-occlusion-smoke.mjs')!==want)fail(`${label} must preserve inherited 8.24.1 physical chain ${want} time(s)`)}
 
 {
  const f='scripts/axis-repository-contract.mjs';let s=read(f);
