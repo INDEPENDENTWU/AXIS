@@ -5,7 +5,9 @@
    axis8251InlineLand · axis8251SetMoment */
 html body #axis825SetLock{display:none!important}
 html body #v87Now.axis821ActiveStage .axis8251SetMoment{display:none!important}
-html body #v87Now.axis821ActiveStage .axis821StageFact{position:relative!important;min-height:30px!important;overflow:hidden!important;isolation:isolate!important;transition:border-color .2s ease,color .2s ease!important}
+/* Stay inside the pre-existing fact-row geometry. A completion treatment must
+   not make Active taller and steal clearance from the fixed capture dock. */
+html body #v87Now.axis821ActiveStage .axis821StageFact{position:relative!important;min-height:0!important;overflow:hidden!important;isolation:isolate!important;transition:border-color .2s ease,color .2s ease!important}
 html body #v87Now.axis821ActiveStage .axis821StageFact>span{position:relative!important;z-index:1!important;transition:color .18s ease,transform .22s cubic-bezier(.2,.8,.2,1),filter .18s ease!important}
 html body #v87Now.axis821ActiveStage #axis821StageProgressText{padding-left:18px!important;overflow:visible!important;text-overflow:clip!important}
 html body #v87Now.axis821ActiveStage #axis821StageProgressText:before{content:"";position:absolute;left:0;top:50%;width:10px;height:10px;border-radius:50%;border:1px solid rgba(142,150,255,.46);background:rgba(115,124,255,.06);box-shadow:0 0 0 0 rgba(115,124,255,.12);transform:translateY(-50%) scale(.9);transform-origin:50% 50%;transition:background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
