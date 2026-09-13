@@ -55,6 +55,20 @@ if(CURRENT==='8.24.1'){
   if(occlusion?.status!=='8.24.1-release-candidate'||occlusion?.opaqueDock!==true||occlusion?.opaqueOverscan!==true||occlusion?.paintContainment!==false||occlusion?.translucentCurtain!==false)fail('8.24.1 dock occlusion governed capability state drift');
   if(occlusion?.newTrainingOwner!==false||occlusion?.newStorage!==false||occlusion?.newEncounterWriter!==false||occlusion?.newActiveOwner!==false||occlusion?.network!==false||occlusion?.ai!==false)fail('8.24.1 dock occlusion introduced forbidden authority');
 }
+if(CURRENT==='8.25'){
+  if(STATUS!=='candidate')fail(`8.25 must remain candidate until exact merged-main certification, got ${STATUS}`);
+  if(SEALED!=='8.24.1'||PROD_SHA!=='d4b009c327f6fa9c4900eaa41d7195f10f6ed425')fail(`8.25 candidate must preserve exact 8.24.1 seal, got ${SEALED} @ ${PROD_SHA}`);
+  if(project?.product?.productionPullRequest!==149||project?.product?.candidatePullRequest!==150)fail('8.25 must preserve sealed PR #149 and candidate PR #150');
+  if(project?.engineering?.deliveryBranch!=='axis-825-set-lock'||project?.engineering?.pullRequest!==150||project?.engineering?.pullRequestDraft!==true)fail('8.25 delivery identity drift');
+  if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.25 must declare intended product behavior change');
+  if(project?.engineering?.versionDecision?.decision!=='bump'||project?.engineering?.versionDecision?.sequence!==11||project?.engineering?.versionDecision?.baseRelease!=='8.24.1'||project?.engineering?.versionDecision?.release!=='8.25'||project?.engineering?.versionDecision?.changeClass!=='product-ui')fail('8.25 governed version decision must be 8.24.1 -> 8.25 bump sequence 11 product-ui');
+  const tactile=project?.engineering?.activeStageTactile,occlusion=project?.engineering?.activeDockOcclusion,setLock=project?.engineering?.activeSetLock;
+  if(tactile?.status!=='production-sealed-8.24-inherited')fail('8.25 lost Production-sealed 8.24 tactile inheritance');
+  if(occlusion?.status!=='production-sealed-8.24.1-inherited'||occlusion?.opaqueDock!==true||occlusion?.opaqueOverscan!==true||occlusion?.paintContainment!==false)fail('8.25 lost Production-sealed 8.24.1 dock occlusion inheritance');
+  for(const key of ['postFactOnly','largeSetMoment','clampLock','pressureHalo','stageRecoil','collapsesIntoProgress','boundedHaptic','reducedMotionSafe'])if(setLock?.[key]!==true)fail(`8.25 Set Lock governed capability missing ${key}`);
+  if(setLock?.status!=='8.25-release-candidate'||setLock?.pointerEvents!==false)fail('8.25 Set Lock candidate state/pointer boundary drift');
+  for(const key of ['newTrainingOwner','newStorage','newEncounterWriter','newActiveOwner','network','ai'])if(setLock?.[key]!==false)fail(`8.25 Set Lock introduced forbidden authority ${key}`);
+}
 
 const required=[
   'README.md','CONTRIBUTING.md','SECURITY.md','CODE_OF_CONDUCT.md',
@@ -97,8 +111,8 @@ const owners=json('governance/owners.json'),retirements=json('governance/retirem
 if(owners?.baselineRelease!==CURRENT||!Array.isArray(owners?.owners)||owners.owners.length<8)fail('owner registry is missing the current critical-owner baseline');
 const allowedRetirementBaselines=new Set([CURRENT,SEALED,'8.21']);if(!allowedRetirementBaselines.has(retirements?.baselineRelease)||!Array.isArray(retirements?.retirements)||retirements.retirements.length<4)fail('retirement registry is missing an accepted current/sealed historical baseline');
 for(const id of ['keep-clip-visible-setting','three-mode-default-capture-controller','v876-capture-preference-writer','low-fps-watermark-video-path'])if(!retirements.retirements.some(x=>x.id===id))fail(`retirement guard missing ${id}`);
-if(['8.22','8.23','8.24','8.24.1'].includes(CURRENT)){const replay=(owners.owners||[]).find(x=>x.capability==='evolution-replay-822');if(!String(replay?.status||'').includes('derived-read-only')||replay?.storage!=='none')fail('8.22 Evolution Replay owner registry drift')}
-if(['8.23','8.24','8.24.1'].includes(CURRENT)){
+if(['8.22','8.23','8.24','8.24.1','8.25'].includes(CURRENT)){const replay=(owners.owners||[]).find(x=>x.capability==='evolution-replay-822');if(!String(replay?.status||'').includes('derived-read-only')||replay?.storage!=='none')fail('8.22 Evolution Replay owner registry drift')}
+if(['8.23','8.24','8.24.1','8.25'].includes(CURRENT)){
   const handoffOwner=(owners.owners||[]).find(x=>x.capability==='evolution-replay-evidence-continuity-823');
   const expectedHandoff=CURRENT==='8.23'?'presentation-handoff-release-candidate':'presentation-handoff-production-sealed';
   if(handoffOwner?.status!==expectedHandoff||handoffOwner?.storage!=='none')fail(`${CURRENT} Replay Evidence handoff owner registry drift`);
@@ -111,6 +125,12 @@ if(CURRENT==='8.24.1'){
   if(tactile?.status!=='presentation-only-production-sealed'||tactile?.storage!=='none')fail('8.24.1 must inherit Production-sealed 8.24 tactile owner');
   if(occlusion?.status!=='presentation-only-release-candidate'||occlusion?.storage!=='none')fail('8.24.1 dock occlusion owner registry drift');
 }
+if(CURRENT==='8.25'){
+  const tactile=(owners.owners||[]).find(x=>x.capability==='active-stage-tactile-824'),occlusion=(owners.owners||[]).find(x=>x.capability==='active-dock-occlusion-8241'),setLock=(owners.owners||[]).find(x=>x.capability==='active-set-lock-825');
+  if(tactile?.status!=='presentation-only-production-sealed'||tactile?.storage!=='none')fail('8.25 must inherit Production-sealed 8.24 tactile owner');
+  if(occlusion?.status!=='presentation-only-production-sealed'||occlusion?.storage!=='none')fail('8.25 must inherit Production-sealed 8.24.1 dock owner');
+  if(setLock?.status!=='presentation-only-release-candidate'||setLock?.storage!=='none'||!String(setLock?.notes||'').includes('after done > prevDone'))fail('8.25 Set Lock owner registry drift');
+}
 
 const build=read('build-release.mjs');
 for(const marker of ['prepare-812-release-compat.mjs','prepare-812-learning-content.mjs','prepare-812-learning-settings.mjs','postbuild-812-contract.mjs'])if(!build.includes(marker))fail(`inherited foundation build marker missing: ${marker}`);
@@ -122,26 +142,33 @@ const release819=read('prepare-819-release.mjs');if(!release819.includes("const 
 const release820=read('prepare-820-release.mjs');if(!release820.includes("const FROM='8.19',VERSION='8.20';"))fail('8.20 release transition drift');
 const release821=read('prepare-821-release.mjs');if(!release821.includes("const FROM='8.20.1',VERSION='8.21';"))fail('8.21 release transition drift');
 const lifecycle=read('prepare-819-postcommit-lifecycle.mjs');
-if(['8.22','8.23','8.24','8.24.1'].includes(CURRENT)&&!lifecycle.includes("await import('./prepare-822-evolution-replay.mjs')"))fail('8.22 Replay is not reachable');
-if(['8.23','8.24','8.24.1'].includes(CURRENT)&&!lifecycle.includes("await import('./prepare-823-replay-evidence-continuity.mjs')"))fail('8.23 Replay Evidence Continuity is not reachable after 8.22');
-if(['8.22','8.23','8.24','8.24.1'].includes(CURRENT)){const release822=read('prepare-822-evolution-replay.mjs');if(!release822.includes("const FROM='8.21',VERSION='8.22'"))fail('8.22 release transition drift');if(!build.includes("'postbuild-822-evolution-replay-contract.mjs'"))fail('8.22 postbuild contract is not deterministic build authority')}
-if(['8.23','8.24','8.24.1'].includes(CURRENT)){
+if(['8.22','8.23','8.24','8.24.1','8.25'].includes(CURRENT)&&!lifecycle.includes("await import('./prepare-822-evolution-replay.mjs')"))fail('8.22 Replay is not reachable');
+if(['8.23','8.24','8.24.1','8.25'].includes(CURRENT)&&!lifecycle.includes("await import('./prepare-823-replay-evidence-continuity.mjs')"))fail('8.23 Replay Evidence Continuity is not reachable after 8.22');
+if(['8.22','8.23','8.24','8.24.1','8.25'].includes(CURRENT)){const release822=read('prepare-822-evolution-replay.mjs');if(!release822.includes("const FROM='8.21',VERSION='8.22'"))fail('8.22 release transition drift');if(!build.includes("'postbuild-822-evolution-replay-contract.mjs'"))fail('8.22 postbuild contract is not deterministic build authority')}
+if(['8.23','8.24','8.24.1','8.25'].includes(CURRENT)){
   const release823=read('prepare-823-replay-evidence-continuity.mjs');if(!release823.includes("const FROM='8.22',VERSION='8.23'"))fail('8.23 release transition contract drift');if(!build.includes("'postbuild-823-replay-evidence-continuity-contract.mjs'"))fail('8.23 postbuild contract is not deterministic build authority');
   for(const path of ['docs/823_SCOPE.md','prepare-823-replay-evidence-continuity.mjs','postbuild-823-replay-evidence-continuity-contract.mjs','scripts/axis-823-replay-evidence-continuity-contract.mjs','scripts/axis-823-replay-evidence-continuity-smoke.mjs'])if(!fs.existsSync(path))fail(`8.23 release surface missing ${path}`);
   const currentWorkflow=read('.github/workflows/axis-current-release-gate.yml');if((currentWorkflow.match(/node scripts\/axis-823-replay-evidence-continuity-smoke\.mjs/g)||[]).length!==2)fail('8.23 smoke must remain in the converged Current Release family in both engines');if(fs.existsSync('.github/workflows/axis-823-replay-evidence-continuity.yml'))fail('version-specific 8.23 automatic workflow fanout must not return');
 }
-if(['8.24','8.24.1'].includes(CURRENT)){
+if(['8.24','8.24.1','8.25'].includes(CURRENT)){
   if(!lifecycle.includes("await import('./prepare-824-active-stage-tactile.mjs')"))fail('8.24 Active Stage Tactile prepare is not reachable after inherited 8.23 continuity');
   const post823=read('postbuild-823-replay-evidence-continuity-contract.mjs');if(!post823.includes("await import('./postbuild-824-active-stage-tactile-contract.mjs')"))fail('8.24 postbuild contract is not chained from deterministic 8.23 postbuild authority');
   for(const path of ['prepare-824-active-stage-tactile.mjs','postbuild-824-active-stage-tactile-contract.mjs','scripts/axis-824-active-stage-tactile-smoke.mjs','styles/axis-824-active-stage-tactile.css'])if(!fs.existsSync(path))fail(`8.24 release surface missing ${path}`);
 }
-if(CURRENT==='8.24.1'){
+if(['8.24.1','8.25'].includes(CURRENT)){
   if(!build.includes("'prepare-8241-dock-occlusion.mjs'"))fail('8.24.1 dock occlusion prepare is not deterministic build authority');
   const post824=read('postbuild-824-active-stage-tactile-contract.mjs');if(!post824.includes("await import('./postbuild-8241-dock-occlusion-contract.mjs')"))fail('8.24.1 postbuild contract is not chained from 8.24 authority');
   for(const path of ['prepare-8241-dock-occlusion.mjs','postbuild-8241-dock-occlusion-contract.mjs','scripts/axis-8241-dock-occlusion-smoke.mjs','styles/axis-8241-dock-occlusion.css'])if(!fs.existsSync(path))fail(`8.24.1 release surface missing ${path}`);
   const currentWorkflow=read('.github/workflows/axis-current-release-gate.yml');
   if((currentWorkflow.match(/node scripts\/axis-824-active-stage-tactile-smoke\.mjs/g)||[]).length!==2)fail('8.24 smoke must run in both Current Release engines');
   if((currentWorkflow.match(/node scripts\/axis-8241-dock-occlusion-smoke\.mjs/g)||[]).length!==2)fail('8.24.1 dock occlusion smoke must run in both Current Release engines');
+}
+if(CURRENT==='8.25'){
+  const release8241=read('prepare-8241-dock-occlusion.mjs'),post8241=read('postbuild-8241-dock-occlusion-contract.mjs'),smoke8241=read('scripts/axis-8241-dock-occlusion-smoke.mjs');
+  if(!release8241.includes("await import('./prepare-825-set-lock.mjs')"))fail('8.25 Set Lock prepare is not chained after 8.24.1');
+  if(!post8241.includes("await import('./postbuild-825-set-lock-contract.mjs')"))fail('8.25 Set Lock postbuild contract is not chained after 8.24.1');
+  if(!smoke8241.includes("await import('./axis-825-set-lock-smoke.mjs')"))fail('8.25 physical smoke is not chained from inherited 8.24.1 proof');
+  for(const path of ['prepare-825-set-lock.mjs','postbuild-825-set-lock-contract.mjs','scripts/axis-825-set-lock-smoke.mjs','styles/axis-825-set-lock.css'])if(!fs.existsSync(path))fail(`8.25 release surface missing ${path}`);
 }
 
 const convergenceDriver=read('prepare-8151-regression-seal.mjs');for(const marker of ["await import('./prepare-816-capture-evidence-convergence.mjs')","await import('./prepare-816-evidence-compat-refine.mjs')","await import('./prepare-817-interaction-convergence-driver.mjs')"])if(!convergenceDriver.includes(marker))fail(`8.16/8.17 convergence chain missing: ${marker}`);
@@ -158,7 +185,7 @@ const built820Identity=post818.includes("contract.publicVersion!=='8.20'")&&post
 if(!source818Identity&&!built819Identity&&!built820Identity)fail('8.18 semantic contract has neither sealed source identity nor supported built identity');
 for(const marker of ['objectMetricSchema818:true','pwaRouteTruth818:true','capturePreferenceModel818:true','evolutionObjectShelf818:true'])if(!post818.includes(marker))fail(`8.18 semantic contract missing ${marker}`);
 
-const stepBlock=build.match(/const STEPS=\[([\s\S]*?)\n\];/);if(!stepBlock)fail('cannot parse deterministic build steps');const steps=[...stepBlock[1].matchAll(/'([^']+\.mjs)'/g)].map(match=>match[1]);if(!steps.length)fail('no deterministic build steps found');const duplicateSteps=steps.filter((step,index)=>steps.indexOf(step)!==index);if(duplicateSteps.length)fail(`duplicate build steps: ${[...new Set(duplicateSteps)].join(', ')}`);for(const step of steps)if(!fs.existsSync(step))fail(`build step does not exist: ${step}`);const expectedSteps=CURRENT==='8.24.1'?87:['8.23','8.24'].includes(CURRENT)?86:85;if(steps.length!==expectedSteps)fail(`${CURRENT} must have exactly ${expectedSteps} deterministic top-level steps, found ${steps.length}`);
+const stepBlock=build.match(/const STEPS=\[([\s\S]*?)\n\];/);if(!stepBlock)fail('cannot parse deterministic build steps');const steps=[...stepBlock[1].matchAll(/'([^']+\.mjs)'/g)].map(match=>match[1]);if(!steps.length)fail('no deterministic build steps found');const duplicateSteps=steps.filter((step,index)=>steps.indexOf(step)!==index);if(duplicateSteps.length)fail(`duplicate build steps: ${[...new Set(duplicateSteps)].join(', ')}`);for(const step of steps)if(!fs.existsSync(step))fail(`build step does not exist: ${step}`);const expectedSteps=['8.24.1','8.25'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;if(steps.length!==expectedSteps)fail(`${CURRENT} must have exactly ${expectedSteps} deterministic top-level steps, found ${steps.length}`);
 for(const forbidden of ['docs/history/','archive/'])if(build.includes(forbidden))fail(`release build directly references provenance path ${forbidden}`);
 
 const vercel=json('vercel.json');if(vercel.buildCommand!=='node build-release.mjs')fail(`Vercel buildCommand is ${vercel.buildCommand}`);if(vercel.git?.deploymentEnabled?.['**']!==false||vercel.git?.deploymentEnabled?.main!==true)fail('Vercel deployment policy must be main-only');
