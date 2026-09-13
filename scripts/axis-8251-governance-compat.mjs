@@ -13,7 +13,9 @@ if(project?.product?.productionRelease!=='8.25.1'||project?.product?.releaseStat
 if(project?.product?.lastSealedRelease!=='8.25'||project?.product?.productionRuntimeSha!=='e28f0411288e42fc68e70a79a4180a06f7d18ee3')fail('8.25.1 must preserve exact sealed 8.25 main baseline');
 if(project?.product?.productionPullRequest!==150||project?.product?.candidatePullRequest!==151)fail('8.25.1 sealed/candidate PR identity drift');
 if(project?.engineering?.deliveryBranch!=='axis-8251-inline-set-morph'||project?.engineering?.pullRequest!==151||project?.engineering?.pullRequestDraft!==true)fail('8.25.1 delivery identity drift');
-if(!(decision?.sequence===12&&decision?.base_release==='8.25'&&decision?.release==='8.25.1'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('version decision must be 8.25 -> 8.25.1 / bump / sequence 12 / product-ui');
+const decision8251=decision?.sequence===12&&decision?.base_release==='8.25'&&decision?.release==='8.25.1'&&decision?.decision==='bump'&&decision?.change_class==='product-ui';
+const decision826=decision?.sequence===13&&decision?.base_release==='8.25.1'&&decision?.release==='8.26'&&decision?.decision==='bump'&&decision?.change_class==='product-ui';
+if(!(decision8251||decision826))fail('version decision must preserve 8.25 -> 8.25.1 or advance exactly to direct successor 8.25.1 -> 8.26');
 const morph=project?.engineering?.activeInlineSetMorph;
 for(const key of ['postFactOnly','inStageFactRow','stableStageGeometry','nonOverlapping','railConfirmation','buttonReturn','clockSettle','boundedHaptic','reducedMotionSafe'])if(morph?.[key]!==true)fail(`Inline Set Morph governed capability missing ${key}`);
 if(morph?.fullScreenOverlay!==false||morph?.pointerEvents!==false||morph?.status!=='8.25.1-release-candidate')fail('Inline Set Morph overlay/pointer/status boundary drift');
@@ -55,4 +57,4 @@ for(const [path,label,want] of workflows){const s=read(path);if(count(s,'node sc
  write(f,s);
 }
 
-console.log('[AXIS 8.25.1 governance compat] PASS · sealed 8.25 baseline · PR #151 · inherited contracts converged without relaxing existing assertions');
+console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25 baseline · PR #151 · ${decision826?'direct-successor 8.26 governance accepted':'8.25.1 governance current'} · inherited contracts converged without relaxing existing assertions`);
