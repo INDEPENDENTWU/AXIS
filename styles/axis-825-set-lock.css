@@ -1,0 +1,42 @@
+/* AXIS 8.25 — Set Lock.
+   Completion feedback is a presentation consequence of the existing v87
+   completeSet truth boundary. It never owns training state or input. */
+html body #v87Now.axis821ActiveStage #v87Primary{transform-origin:50% 62%;will-change:transform}
+html body #v87Now.axis821ActiveStage #v87Primary:active{transform:translateY(3px) scale(.962)!important;box-shadow:inset 0 5px 14px rgba(24,29,115,.34),0 2px 7px rgba(74,84,215,.10)!important}
+html body #v87Now.axis821ActiveStage.axis825-lock-recoil{animation:axis825StageRecoil .48s cubic-bezier(.2,.82,.24,1)}
+.axis825SetLock{position:fixed;inset:0;z-index:186;display:grid;place-items:center;pointer-events:none;opacity:0;visibility:hidden;overflow:hidden;perspective:760px;--axis825-dx:0px;--axis825-dy:0px}
+.axis825SetLock.show{opacity:1;visibility:visible}
+.axis825SetLockHalo{position:absolute;left:50%;top:50%;width:min(92vw,620px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.32);background:radial-gradient(circle,rgba(128,137,255,.20) 0,rgba(110,120,245,.095) 28%,rgba(80,91,220,.035) 49%,transparent 71%);opacity:0;filter:blur(.2px)}
+.axis825SetLock.show .axis825SetLockHalo{animation:axis825Pressure .72s cubic-bezier(.17,.75,.24,1) both}
+.axis825SetLock.final .axis825SetLockHalo{width:min(104vw,700px)}
+.axis825SetLockMeasure{position:relative;display:flex;align-items:flex-end;justify-content:center;gap:10px;min-width:178px;transform-style:preserve-3d;will-change:transform,opacity;filter:drop-shadow(0 18px 34px rgba(0,0,0,.28))}
+.axis825SetLockNumber{display:block;font-size:clamp(92px,27vw,132px);line-height:.78;font-weight:630;letter-spacing:-.075em;font-variant-numeric:tabular-nums;color:#f7f8ff;text-shadow:0 0 36px rgba(127,136,255,.20);transform-origin:50% 72%}
+.axis825SetLockTotal{display:block;margin:0 0 5px;font-size:21px;line-height:1;font-weight:560;letter-spacing:-.035em;font-variant-numeric:tabular-nums;color:rgba(238,240,255,.48)}
+.axis825SetLock.show .axis825SetLockMeasure{animation:axis825NumberLand .46s cubic-bezier(.16,.9,.2,1) both}
+.axis825SetLockClamp{position:absolute;top:50%;width:42px;height:84px;margin-top:-42px;opacity:0}
+.axis825SetLockClamp:before,.axis825SetLockClamp:after{content:"";position:absolute;width:24px;height:1px;top:0;background:linear-gradient(90deg,transparent,rgba(190,196,255,.9))}
+.axis825SetLockClamp:after{top:auto;bottom:0}
+.axis825SetLockClampL{left:calc(50% - 116px);transform:translateX(-48px)}
+.axis825SetLockClampR{right:calc(50% - 116px);transform:translateX(48px) scaleX(-1)}
+.axis825SetLock.show .axis825SetLockClampL{animation:axis825ClampL .43s cubic-bezier(.12,.86,.18,1) .07s both}
+.axis825SetLock.show .axis825SetLockClampR{animation:axis825ClampR .43s cubic-bezier(.12,.86,.18,1) .07s both}
+.axis825SetLock.collapse .axis825SetLockMeasure{animation:axis825SetToProgress .31s cubic-bezier(.42,0,.2,1) both}
+.axis825SetLock.collapse .axis825SetLockClamp{animation:axis825ClampRelease .22s ease both!important}
+.axis825SetLock.collapse .axis825SetLockHalo{animation:axis825PressureOut .25s ease both}
+@keyframes axis825StageRecoil{0%{transform:none}21%{transform:translateY(1px) scale(.994)}54%{transform:translateY(-1px) scale(1.003)}100%{transform:none}}
+@keyframes axis825Pressure{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}31%{opacity:.9}66%{opacity:.42;transform:translate(-50%,-50%) scale(.96)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.14)}}
+@keyframes axis825PressureOut{from{opacity:.24}to{opacity:0}}
+@keyframes axis825NumberLand{0%{opacity:0;transform:translateY(42px) rotateX(-28deg) scale(.76)}52%{opacity:1;transform:translateY(-4px) rotateX(4deg) scale(1.035)}72%{transform:translateY(1px) rotateX(-1deg) scale(.994)}100%{opacity:1;transform:none}}
+@keyframes axis825ClampL{0%{opacity:0;transform:translateX(-48px)}58%{opacity:.92;transform:translateX(3px)}100%{opacity:.66;transform:none}}
+@keyframes axis825ClampR{0%{opacity:0;transform:translateX(48px) scaleX(-1)}58%{opacity:.92;transform:translateX(-3px) scaleX(-1)}100%{opacity:.66;transform:scaleX(-1)}}
+@keyframes axis825ClampRelease{from{opacity:.6}to{opacity:0}}
+@keyframes axis825SetToProgress{0%{opacity:1;transform:none}22%{transform:scale(1.025)}100%{opacity:0;transform:translate(var(--axis825-dx),var(--axis825-dy)) scale(.18)}}
+@media(max-width:390px){.axis825SetLockNumber{font-size:clamp(88px,29vw,116px)}.axis825SetLockClampL{left:calc(50% - 106px)}.axis825SetLockClampR{right:calc(50% - 106px)}}
+@media(prefers-reduced-motion:reduce){
+ html body #v87Now.axis821ActiveStage.axis825-lock-recoil{animation:none!important}
+ .axis825SetLock.show .axis825SetLockHalo,.axis825SetLock.show .axis825SetLockClamp,.axis825SetLock.collapse .axis825SetLockClamp{animation:none!important;opacity:0!important}
+ .axis825SetLock.show .axis825SetLockMeasure{animation:axis825ReducedLock .26s ease both!important}
+ .axis825SetLock.collapse .axis825SetLockMeasure{animation:axis825ReducedOut .18s ease both!important}
+ @keyframes axis825ReducedLock{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+ @keyframes axis825ReducedOut{from{opacity:1}to{opacity:0}}
+}

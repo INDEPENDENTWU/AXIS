@@ -23,21 +23,7 @@ try{
  const proof=await page.evaluate(()=>{
   const dock=document.querySelector('#dock'),before=getComputedStyle(dock,'::before'),dockStyle=getComputedStyle(dock),primary=document.querySelector('#dock .scanPrimary'),quick=document.querySelector('#dock .v8QuickBtn'),oldStyle=document.querySelector('#axis824ActiveStageTactileStyle'),patchStyle=document.querySelector('#axis8241DockOcclusionStyle');
   const patchAfterOld=!!(oldStyle&&patchStyle&&(oldStyle.compareDocumentPosition(patchStyle)&Node.DOCUMENT_POSITION_FOLLOWING));
-  return{
-   contain:dockStyle.contain,
-   dockBackground:dockStyle.backgroundColor,
-   beforeContent:before.content,
-   beforeZ:before.zIndex,
-   beforeTop:Number.parseFloat(before.top),
-   beforeBottom:Number.parseFloat(before.bottom),
-   beforeBackground:before.backgroundColor,
-   beforeImage:before.backgroundImage,
-   primaryZ:Number.parseInt(getComputedStyle(primary).zIndex)||0,
-   quickZ:Number.parseInt(getComputedStyle(quick).zIndex)||0,
-   patchText:patchStyle?.textContent||'',
-   patchAfterOld,
-   overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth
-  };
+  return{contain:dockStyle.contain,dockBackground:dockStyle.backgroundColor,beforeContent:before.content,beforeZ:before.zIndex,beforeTop:Number.parseFloat(before.top),beforeBottom:Number.parseFloat(before.bottom),beforeBackground:before.backgroundColor,beforeImage:before.backgroundImage,primaryZ:Number.parseInt(getComputedStyle(primary).zIndex)||0,quickZ:Number.parseInt(getComputedStyle(quick).zIndex)||0,patchText:patchStyle?.textContent||'',patchAfterOld,overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};
  });
  assert.equal(String(proof.contain),'none',`fixed dock containment must be fully retired: ${proof.contain}`);
  assert.equal(alpha(proof.dockBackground),1,`dock background must be opaque: ${proof.dockBackground}`);
@@ -56,3 +42,5 @@ try{
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
  console.log(`[AXIS 8.24.1 Dock Occlusion ${ENGINE}] PASS · opaque dock + 16px overscan · containment none · no translucent hairline window`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
+
+await import('./axis-825-set-lock-smoke.mjs');
