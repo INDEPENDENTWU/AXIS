@@ -30,7 +30,7 @@ AXIS **8.24.1 — Dock Occlusion Hotfix** is the last fully Production-sealed ru
 - `axis.juele.fun` verification run `34744342633` — success
 - Chromium and iPhone-like WebKit Production proofs — success
 
-That 8.24.1 SHA is the durable **runtime seal baseline**, not a requirement that the 8.25 candidate share the same SHA. Provider evidence is replaced only after exact 8.25 merged-main certification.
+That 8.24.1 SHA is the durable **runtime seal baseline** and is **not a self-referential requirement** that the 8.25 candidate share the same SHA. Provider evidence is replaced only after exact 8.25 merged-main certification.
 
 ## What 8.25 changes
 
