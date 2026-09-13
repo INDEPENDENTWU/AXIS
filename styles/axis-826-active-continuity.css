@@ -10,9 +10,11 @@ html body #v87Now.axis821ActiveStage .axis826SetCue.final b{font-size:22px}
 html body #v87Now.axis821ActiveStage .axis821StageFact{border-top-color:transparent!important}
 html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-locking{border-top-color:transparent!important}
 
-/* Retire the legacy duplicate live summary once the canonical v87 Active stage
-   is present. The event timeline remains available below the stage. */
-html body #todayView #activeHome>.liveHead,
+/* Retire only the duplicate live summary copy. The unique whole-session end
+   control must remain physically reachable while the canonical v87 stage is
+   present, and the event timeline remains available below it. */
+html body #todayView #activeHome>.liveHead{display:flex!important;align-items:center!important;justify-content:flex-end!important;min-height:62px!important;margin:0 0 10px!important;padding:0!important;border:0!important}
+html body #todayView #activeHome>.liveHead>div{display:none!important}
 html body #todayView #activeHome>.metricPair.compact{display:none!important}
 html body #todayView #activeHome>.section{margin-top:24px!important}
 html body #todayView #activeHome>.section .sectionHead{min-height:26px!important}
