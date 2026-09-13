@@ -24,7 +24,7 @@ if(decision8251){
  if(project?.product?.lastSealedRelease!=='8.25.1'||project?.product?.productionRuntimeSha!=='f4d3d02e1a7b655185806b2dbb3bface804d93cc')fail('8.26 must preserve exact sealed 8.25.1 main baseline');
  if(project?.product?.productionPullRequest!==151||project?.product?.candidatePullRequest!==152)fail('8.26 sealed/candidate PR identity drift');
  if(project?.engineering?.deliveryBranch!=='release/826-active-continuity'||project?.engineering?.pullRequest!==152||project?.engineering?.pullRequestDraft!==true)fail('8.26 delivery identity drift');
- if(owners?.baselineRelease!=='8.26')fail('owner registry baseline must be 8.26');
+ if(!['8.25.1','8.26'].includes(owners?.baselineRelease))fail('8.26 inherited owner registry must be at 8.25.1 transition or 8.26');
 }
 
 const morph=project?.engineering?.activeInlineSetMorph;
@@ -43,6 +43,7 @@ if(decision826){
  for(const key of ['newTrainingOwner','newStorage','newSessionWriter','newEncounterWriter','newRecorderOwner','newActiveOwner','network','ai'])if(continuity?.[key]!==false)fail(`8.26 Active Continuity acquired forbidden authority ${key}`);
  if(continuity?.setCuePointerEvents!==false||continuity?.status!=='8.26-release-candidate')fail('8.26 Active Continuity pointer/status boundary drift');
  if(continuityOwner?.status!=='presentation-and-coordination-release-candidate'||continuityOwner?.storage!=='none')fail('8.26 owner registry drift');
+ if(owners.baselineRelease!=='8.26'){owners.baselineRelease='8.26';write('governance/owners.json',JSON.stringify(owners,null,2)+'\n')}
 }else if(morphOwner?.status!=='presentation-only-release-candidate')fail('8.25.1 Inline Set Morph owner registry drift');
 
 for(const [path,needle] of [
@@ -75,9 +76,9 @@ for(const [path,label,want] of workflows){const s=read(path);if(count(s,'node sc
   const block=`if(CURRENT==='8.26'){\n  if(STATUS!=='candidate'||SEALED!=='8.25.1'||PROD_SHA!=='f4d3d02e1a7b655185806b2dbb3bface804d93cc')fail('8.26 candidate must preserve exact sealed 8.25.1 baseline');\n  if(project?.product?.productionPullRequest!==151||project?.product?.candidatePullRequest!==152)fail('8.26 sealed/candidate PR identity drift');\n  if(project?.engineering?.deliveryBranch!=='release/826-active-continuity'||project?.engineering?.pullRequest!==152||project?.engineering?.pullRequestDraft!==true)fail('8.26 delivery identity drift');\n  if(project?.engineering?.versionDecision?.sequence!==13||project?.engineering?.versionDecision?.baseRelease!=='8.25.1'||project?.engineering?.versionDecision?.release!=='8.26'||project?.engineering?.versionDecision?.decision!=='bump'||project?.engineering?.versionDecision?.changeClass!=='product-ui')fail('8.26 governed version decision drift');\n  const c=project?.engineering?.activeContinuity;for(const key of ['atomicSaveSettlement','ongoingFlowDirectActive','oneShotFlowCanonicalRecorder','foreignActivePausePreserve','kineticSetCue','setCuePostFactOnly','stableStageGeometry','nonOverlapping','reducedMotionSafe','quieterHomeHierarchy'])if(c?.[key]!==true)fail('8.26 capability missing '+key);\n}\n\n`;
   s=replaceOnce(s,'const required=[',block+'const required=[','repository 8.26 governance block');
   const ownerBlock=`if(CURRENT==='8.26'){const morph=(owners.owners||[]).find(x=>x.capability==='active-inline-set-morph-8251'),c=(owners.owners||[]).find(x=>x.capability==='active-continuity-826');if(morph?.status!=='presentation-only-production-sealed'||morph?.storage!=='none')fail('8.26 lost sealed 8.25.1 Inline Set Morph owner');if(c?.status!=='presentation-and-coordination-release-candidate'||c?.storage!=='none')fail('8.26 Active Continuity owner registry drift')}\n`;
-  s=replaceOnce(s,'const build=read(\'build-release.mjs\');',ownerBlock+'const build=read(\'build-release.mjs\');','repository 8.26 owner block');
+  s=replaceOnce(s,"const build=read('build-release.mjs');",ownerBlock+"const build=read('build-release.mjs');",'repository 8.26 owner block');
   const chain=`if(CURRENT==='8.26'){const p=read('prepare-826-active-continuity.mjs'),pb=read('postbuild-826-active-continuity-contract.mjs');if(!p.includes("const FROM='8.25.1',VERSION='8.26'"))fail('8.26 release transition drift');if(!build.includes("'prepare-826-active-continuity.mjs'"))fail('8.26 prepare is not deterministic build authority');for(const path of ['prepare-826-active-continuity.mjs','postbuild-826-active-continuity-contract.mjs','scripts/axis-826-active-continuity-smoke.mjs','styles/axis-826-active-continuity.css'])if(!fs.existsSync(path))fail('8.26 release surface missing '+path);if(!pb.includes('activeContinuity826:true'))fail('8.26 postbuild contract marker missing')}\n\n`;
-  s=replaceOnce(s,'const convergenceDriver=read(\'prepare-8151-regression-seal.mjs\');',chain+'const convergenceDriver=read(\'prepare-8151-regression-seal.mjs\');','repository 8.26 chain block');
+  s=replaceOnce(s,"const convergenceDriver=read('prepare-8151-regression-seal.mjs');",chain+"const convergenceDriver=read('prepare-8151-regression-seal.mjs');",'repository 8.26 chain block');
  }
  write(f,s);
 }
