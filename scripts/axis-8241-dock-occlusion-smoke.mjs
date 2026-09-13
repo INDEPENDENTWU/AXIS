@@ -39,7 +39,7 @@ try{
    overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth
   };
  });
- assert.ok(!String(proof.contain).split(/\s+/).includes('paint'),`paint containment survived: ${proof.contain}`);
+ assert.equal(String(proof.contain),'none',`fixed dock containment must be fully retired: ${proof.contain}`);
  assert.equal(alpha(proof.dockBackground),1,`dock background must be opaque: ${proof.dockBackground}`);
  assert.notEqual(proof.beforeContent,'none','opaque overscan curtain missing');
  assert.equal(String(proof.beforeZ),'0',`overscan z-index must be 0: ${proof.beforeZ}`);
@@ -49,9 +49,10 @@ try{
  assert.equal(proof.beforeImage,'none',`translucent gradient survived: ${proof.beforeImage}`);
  assert.ok(proof.primaryZ>0&&proof.quickZ>0,`controls must remain above occlusion plane: ${proof.primaryZ}/${proof.quickZ}`);
  assert.equal(proof.patchAfterOld,true,'8.24.1 override must mount after 8.24 tactile style');
+ assert.ok(/contain:none!important/.test(proof.patchText),'patch CSS must explicitly retire containment');
  assert.ok(!/contain:[^;}]*paint/.test(proof.patchText),'patch CSS reintroduced paint clipping');
  assert.ok(!/linear-gradient/.test(proof.patchText),'patch CSS reintroduced translucent curtain');
  assert.ok(proof.overflow<=1,`horizontal overflow ${proof.overflow}`);
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.24.1 Dock Occlusion ${ENGINE}] PASS · opaque dock + 16px overscan · no paint clipping · no translucent hairline window`);
+ console.log(`[AXIS 8.24.1 Dock Occlusion ${ENGINE}] PASS · opaque dock + 16px overscan · containment none · no translucent hairline window`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}

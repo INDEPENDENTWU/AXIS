@@ -13,7 +13,8 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  */
 {
  const f='v87-runtime.js';let s=read(f);const css=read('styles/axis-8241-dock-occlusion.css').trim();
- if(!css.includes('contain:layout style!important')||css.includes('contain:layout style paint'))fail('dock must not use paint containment');
+ if(!css.includes('contain:none!important'))fail('fixed dock must fully retire containment so overscan can escape its box');
+ if(/contain:[^;}]*paint/.test(css))fail('dock must not use paint containment');
  if(!css.includes('background:var(--bg)!important')||!css.includes('z-index:0!important')||!css.includes('top:-16px!important'))fail('opaque overscan curtain contract drift');
  if(s.includes('function axis8241DockOcclusionStyle()'))fail('8.24.1 dock style duplicated');
  const marker='function ensureUI()';if(!s.includes(marker))fail('v87 ensureUI anchor missing');
@@ -107,10 +108,11 @@ if(inheritedIdentityTouches+identityTouches<12)fail(`public identity convergence
 /* Fail closed on the exact defect mechanism. */
 {
  const css=read('styles/axis-8241-dock-occlusion.css');
+ if(!/\.captureDock\s*\{[^}]*contain:none!important/s.test(css))fail('fixed dock containment retirement missing');
  if(/contain:[^;}]*paint/.test(css))fail('paint containment would clip dock overscan');
  if(/linear-gradient/.test(css))fail('dock occlusion curtain must not contain a translucent gradient');
  const app=read('app.js');if((app.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append ownership drift');
  const v87=read('v87-runtime.js');for(const action of ['function toggle(id)','function completeSet(id,fromShake=false)','function addSet(id)','function beginHold(id,e)'])if(!v87.includes(action))fail(`v87 action boundary drift ${action}`);
 }
 
-console.log(`[AXIS 8.24.1 Dock Occlusion] PASS · ${FROM} → ${VERSION} · opaque overscan · paint containment retired · v87 actions preserved · ${inheritedIdentityTouches} inherited + ${identityTouches} explicit current identity assertion(s) advanced`);
+console.log(`[AXIS 8.24.1 Dock Occlusion] PASS · ${FROM} → ${VERSION} · opaque overscan · containment fully retired on fixed dock · v87 actions preserved · ${inheritedIdentityTouches} inherited + ${identityTouches} explicit current identity assertion(s) advanced`);

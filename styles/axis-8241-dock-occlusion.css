@@ -2,11 +2,12 @@
    The 8.24 intent was correct, but paint containment clipped the negative-top
    underlay and its transparent gradient still allowed a 1px scrolling separator
    to remain visible. This patch makes the dock and its overscan curtain truly
-   opaque without changing action, layout, persistence, or recording ownership. */
+   opaque and explicitly retires containment on the fixed interaction plane,
+   without changing action, layout, persistence, or recording ownership. */
 html body .captureDock{
   z-index:46!important;
   isolation:isolate!important;
-  contain:layout style!important;
+  contain:none!important;
   background:var(--bg)!important;
 }
 html body .captureDock.show:before{
