@@ -2,45 +2,45 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.25** · **release candidate; Production certification pending** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
+**Current release: 8.25.1** · **release candidate; Production certification pending** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
 
 AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Encounters freeze what actually happened, Evidence anchors those facts, Flow describes intended continuity, and Evolution reveals reality without inventing a second history.
 
 ## Release truth
 
-AXIS **8.25 — Set Lock Interaction** is the current release candidate. It turns a successful `完成一组` action into a large, tactile post-fact moment: the completed set number lands at screen scale, clamp marks converge, a broad pressure halo and stage recoil make the event physically legible, and the number then collapses into the existing set-progress position. It is not Production-sealed until its exact merged `main` SHA completes the Vercel → EdgeOne → `axis.juele.fun` certification chain.
+AXIS **8.25.1 — Inline Set Morph** is the current release candidate. It replaces the 8.25 body-level full-screen Set Lock visual treatment with a stage-native completion moment that stays inside the existing Active fact row. The timer, primary/secondary controls, dock and navigation remain visually unobstructed; the existing stage geometry does not jump. Completion still happens only after the established v87 factual commit, with bounded haptic feedback and reduced-motion support.
 
-The last fully Production-sealed runtime is AXIS **8.24.1 — Dock Occlusion Hotfix** at runtime seal baseline `d4b009c327f6fa9c4900eaa41d7195f10f6ed425`:
+The last fully Production-sealed runtime is AXIS **8.25 — Set Lock Interaction** at runtime seal baseline `e28f0411288e42fc68e70a79a4180a06f7d18ee3`:
 
-- product/release PR: **#149**
-- Vercel Production gate `34744363573` — success
-- Vercel Public Production Alias Gate `34744363564` — success
-- canonical Vercel deployment `dpl_5P7gF35XDzSAkHoLwmpJ3PQJsT2w` — READY / Production / exact main SHA
-- EdgeOne deployment `dpp8w54o5vox`, verification run `34744342607` — success
-- `axis.juele.fun` verification run `34744342633` — success
-- Chromium and iPhone-like WebKit Production proofs — success
+- product/release PR: **#150**
+- Vercel Production gate `34747540811` — success
+- Vercel Public Production Alias Gate `34747540777` — success
+- canonical Vercel deployment `dpl_HjrgujidrdBxDo9n243jnaoi4w5k` — READY / Production / exact main SHA
+- EdgeOne deployment `dplc6t1yw7ho`, verification run `34747525787` — success
+- `axis.juele.fun` verification run `34747525811` — exact parity plus Chromium and iPhone-like WebKit success
+- combined Vercel + EdgeOne Production commit status — success
 
-Those provider records remain the AXIS 8.24.1 seal snapshot while 8.25 is a candidate. They are not 8.25 evidence.
+Those provider records remain the AXIS 8.25 seal snapshot while 8.25.1 is a candidate. They are not 8.25.1 evidence.
 
-## What 8.25 changes
+## What 8.25.1 changes
 
-Set Lock is deliberately not another completion owner. The existing v87 `completeSet()` action still commits `completedSets`, set timestamps and rest truth first. Only when the existing render boundary observes `done > prevDone` does 8.25 present the lock moment. The overlay accepts no pointer input, cannot write state, cannot stack a second factual completion, and has an explicit reduced-motion path.
+The completion interaction is no longer a layer placed over the interface. The existing v87 `completeSet()` action still commits `completedSets`, set timestamps and rest truth first. Only when the existing render boundary observes `done > prevDone` does the fact row temporarily morph from its normal status into a compact centered confirmation such as `01 / 04 · 已完成`, then return to the canonical next progress state.
 
-The visual sequence is short and consequential rather than decorative: stronger physical button travel → large completed-set numeral → side clamps and pressure halo → subtle Active-stage recoil → collapse into the canonical set-progress text. Supported devices receive a bounded two-beat haptic signature, with a slightly heavier final-set pattern. There is no confetti, badge, score or parallel gamification model.
+The motion is distributed across elements that already exist instead of creating another visual plane: the fact row crossfades in place, the progress rail receives a short lock pulse, the primary button settles back from the press, and the clock receives a restrained micro-settle. The completion moment is pointer-inert, remains inside the fact-row bounds, preserves stage height, and has an explicit reduced-motion fade path. Supported devices retain the bounded two-beat haptic signature.
 
-AXIS 8.24 tactile progress convergence and AXIS 8.24.1 fixed-dock occlusion remain inherited and Production-sealed. No Session, Encounter, storage, recorder, media, Active lifecycle, network or AI owner is added.
+AXIS 8.24 tactile progress convergence, AXIS 8.24.1 fixed-dock occlusion and the 8.25 post-fact factual/haptic boundary remain inherited and Production-sealed. The 8.25 full-screen overlay is deliberately superseded. No Session, Encounter, storage, recorder, media, Active lifecycle, network or AI owner is added.
 
 ## Current engineering state
 
-Active milestone: **AXIS 8.25 — Set Lock Interaction**
+Active milestone: **AXIS 8.25.1 — Inline Set Morph**
 
 Governed target branch: `main`
 
-Bounded delivery branch: `axis-825-set-lock` · PR **#150**.
+Bounded delivery branch: `axis-8251-inline-set-morph` · PR **#151**.
 
-Version decision: **8.24.1 → 8.25 / bump / sequence 11 / product-ui**.
+Version decision: **8.25 → 8.25.1 / bump / sequence 12 / product-ui**.
 
-The deterministic release remains `canonical-single-runtime`, one initial JavaScript request and zero dynamic runtime chunks. The exact PR head must pass inherited contracts plus the chained Set Lock physical smoke in Chromium and iPhone-like WebKit before merge; the exact merged main artifact must then pass Vercel, EdgeOne and `axis.juele.fun` Production certification.
+The deterministic release remains `canonical-single-runtime`, one initial JavaScript request and zero dynamic runtime chunks. The exact PR head must prove the inline completion stays inside the existing fact row, does not intersect the clock or either Active control, does not change stage height, and passes Chromium plus iPhone-like WebKit before merge. The exact merged main artifact must then pass Vercel, EdgeOne and `axis.juele.fun` Production certification.
 
 ## Product rules
 

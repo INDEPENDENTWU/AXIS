@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 11,
-  "base_release": "8.24.1",
-  "release": "8.25",
+  "sequence": 12,
+  "base_release": "8.25",
+  "release": "8.25.1",
   "decision": "bump",
   "change_class": "product-ui",
-  "summary": "Advance AXIS to 8.25 for Set Lock: turn successful set completion into a large post-fact lock moment with pressure, clamp, recoil, progress-collapse and bounded haptic feedback while preserving the existing v87 completeSet action and all Session, Encounter, storage, recorder and Active ownership."
+  "summary": "Advance AXIS to 8.25.1 to replace the 8.25 full-screen Set Lock presentation with a stage-native Inline Set Morph that cannot cover the timer or controls, preserves stable Active geometry, keeps post-fact bounded motion and haptic feedback, and leaves the existing v87 completeSet action plus all Session, Encounter, storage, recorder and Active ownership unchanged."
 }

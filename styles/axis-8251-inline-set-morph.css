@@ -1,0 +1,30 @@
+/* AXIS 8.25.1 — Inline Set Morph.
+   Replace the 8.25 full-screen Set Lock overlay with a stage-native,
+   non-occluding completion moment. The factual owner remains v87 completeSet(). */
+html body #axis825SetLock{display:none!important}
+html body #v87Now.axis821ActiveStage .axis821StageFact{min-height:30px!important;overflow:hidden!important;transition:border-color .18s ease,color .18s ease!important}
+html body #v87Now.axis821ActiveStage .axis821StageFact>span{transition:opacity .16s ease,transform .22s cubic-bezier(.2,.8,.2,1),filter .18s ease!important}
+html body #v87Now.axis821ActiveStage .axis8251SetMoment{grid-column:1/-1!important;grid-row:1!important;align-self:center!important;justify-self:stretch!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-width:0!important;height:22px!important;margin:0!important;opacity:0;visibility:hidden;transform:translateY(5px) scale(.985);transform-origin:50% 50%;pointer-events:none;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+html body #v87Now.axis821ActiveStage .axis8251SetMomentMark{width:14px;height:14px;flex:0 0 14px;border-radius:50%;display:grid;place-items:center;background:rgba(115,124,255,.14);box-shadow:inset 0 0 0 1px rgba(142,150,255,.28);transform:scale(.72)}
+html body #v87Now.axis821ActiveStage .axis8251SetMomentMark:before{content:"";width:6px;height:3px;border-left:1.5px solid var(--accent2);border-bottom:1.5px solid var(--accent2);transform:translateY(-1px) rotate(-45deg)}
+html body #v87Now.axis821ActiveStage .axis8251SetMoment b{font-size:15px;line-height:1;font-weight:690;letter-spacing:-.025em;color:#eef0ff}
+html body #v87Now.axis821ActiveStage .axis8251SetMoment small{font-size:10px;line-height:1;font-weight:620;letter-spacing:.01em;color:var(--muted)}
+html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-locking{border-top-color:rgba(115,124,255,.28)!important}
+html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-locking>span{opacity:0!important;visibility:hidden!important;transform:translateY(-3px)!important;filter:blur(.6px)}
+html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-locking .axis8251SetMoment{visibility:visible;animation:axis8251InlineLand .62s cubic-bezier(.16,.9,.2,1) both}
+html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-final .axis8251SetMoment b{color:#fff}
+html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-final .axis8251SetMomentMark{background:rgba(115,124,255,.22);box-shadow:inset 0 0 0 1px rgba(162,169,255,.44),0 0 18px rgba(115,124,255,.12)}
+html body #v87Now.axis821ActiveStage.axis8251-inline-feedback .v87Axis i{animation:axis8251RailLock .54s cubic-bezier(.2,.82,.24,1) both!important}
+html body #v87Now.axis821ActiveStage.axis8251-inline-feedback #v87Primary{animation:axis8251PrimaryReturn .34s cubic-bezier(.2,.82,.24,1)}
+html body #v87Now.axis821ActiveStage.axis8251-inline-feedback .axis821StageClock{animation:axis8251ClockSettle .4s cubic-bezier(.2,.82,.24,1)}
+@keyframes axis8251InlineLand{0%{opacity:0;transform:translateY(5px) scale(.985)}28%{opacity:1;transform:translateY(-1px) scale(1.012)}62%{opacity:1;transform:none}82%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-3px) scale(.99)}}
+@keyframes axis8251RailLock{0%{filter:brightness(1);box-shadow:0 0 12px rgba(115,124,255,.20)}34%{filter:brightness(1.35);box-shadow:0 0 0 1px rgba(151,159,255,.28),0 0 20px rgba(115,124,255,.34)}100%{filter:brightness(1);box-shadow:0 0 12px rgba(115,124,255,.20)}}
+@keyframes axis8251PrimaryReturn{0%{transform:translateY(2px) scale(.968)}58%{transform:translateY(-1px) scale(1.008)}100%{transform:none}}
+@keyframes axis8251ClockSettle{0%{transform:translateY(1px) scale(.994)}56%{transform:translateY(-1px) scale(1.004)}100%{transform:none}}
+@media(max-width:390px){html body #v87Now.axis821ActiveStage .axis8251SetMoment{gap:7px!important}html body #v87Now.axis821ActiveStage .axis8251SetMoment b{font-size:14px}html body #v87Now.axis821ActiveStage .axis8251SetMoment small{font-size:9.5px}}
+@media(prefers-reduced-motion:reduce){
+ html body #v87Now.axis821ActiveStage .axis821StageFact>span{transition:none!important}
+ html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-locking .axis8251SetMoment{animation:axis8251ReducedInline .22s ease both!important}
+ html body #v87Now.axis821ActiveStage.axis8251-inline-feedback .v87Axis i,html body #v87Now.axis821ActiveStage.axis8251-inline-feedback #v87Primary,html body #v87Now.axis821ActiveStage.axis8251-inline-feedback .axis821StageClock{animation:none!important}
+ @keyframes axis8251ReducedInline{0%{opacity:0}25%,78%{opacity:1;transform:none}100%{opacity:0}}
+}
