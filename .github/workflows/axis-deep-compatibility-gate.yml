@@ -43,6 +43,8 @@ jobs:
         run: node scripts/axis-810-learning-budget-source-contract.mjs
       - name: Learning entry source-owner contract
         run: node scripts/axis-810-learning-entry-source-contract.mjs
+      - name: Converge current release governance assertions
+        run: node scripts/axis-8251-governance-compat.mjs
       - name: Repository contract
         run: node scripts/axis-repository-contract.mjs
 
