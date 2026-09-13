@@ -3,43 +3,45 @@
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.24.1",
+    "productionRelease": "8.25",
     "releaseStatus": "candidate",
-    "lastSealedRelease": "8.24",
-    "productionRuntimeSha": "321647b9aaca783b7f6ba99ec66616941208c698",
-    "productionPullRequest": 148,
-    "candidatePullRequest": 149,
+    "lastSealedRelease": "8.24.1",
+    "productionRuntimeSha": "d4b009c327f6fa9c4900eaa41d7195f10f6ed425",
+    "productionPullRequest": 149,
+    "candidatePullRequest": 150,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
-    "sealedRelease": "8.24",
-    "sealedAt": "2026-09-12",
-    "candidateRelease": "8.24.1",
+    "sealedRelease": "8.24.1",
+    "sealedAt": "2026-09-13",
+    "candidateRelease": "8.25",
     "candidateStatus": "pending-exact-head-and-merged-main-certification",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "Provider IDs, source SHA and workflow evidence below remain the last fully sealed AXIS 8.24 product/runtime certification snapshot while AXIS 8.24.1 is a release candidate. They must not be relabeled as 8.24.1 evidence until the exact merged 8.24.1 main artifact completes Vercel, EdgeOne and axis.juele.fun certification.",
+    "evidenceSemantics": "Provider IDs, source SHA and workflow evidence below remain the last fully sealed AXIS 8.24.1 product/runtime certification snapshot while AXIS 8.25 is a release candidate. They must not be relabeled as 8.25 evidence until the exact merged 8.25 main artifact completes Vercel, EdgeOne and axis.juele.fun certification.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
-      "sourceSha": "321647b9aaca783b7f6ba99ec66616941208c698",
+      "deploymentId": "dpl_5P7gF35XDzSAkHoLwmpJ3PQJsT2w",
+      "deploymentUrl": "axis-7ktufo7xj-independentwus-projects.vercel.app",
+      "sourceSha": "d4b009c327f6fa9c4900eaa41d7195f10f6ed425",
       "state": "READY",
       "target": "production",
       "publicUrl": "https://axis-five-puce.vercel.app",
-      "statusTargetUrl": "https://vercel.com/independentwus-projects/axis/BYXew9mxoBEzHLHBQjTmo6XY7Xkz",
-      "productionGateRunId": 34700744685,
-      "publicAliasGateRunId": 34700744673,
+      "productionGateRunId": 34744363573,
+      "publicAliasGateRunId": 34744363564,
       "exactManifestParity": "success",
       "chromiumProductionFlow": "success"
     },
     "edgeOne": {
       "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
+      "projectId": "makers-bxiu1vmyd0ba",
       "policy": "exact-prebuilt-artifact-mirror",
-      "deploymentId": "dp7e6rlpyczu",
-      "verificationRunId": 34700727554,
-      "verificationArtifactId": 10300048249,
-      "verificationArtifactSha256": "3dfed99f2e91b59b73f39bdeb29fee72d1b169f34305bd247cbd3faec49c488a",
-      "sourceSha": "321647b9aaca783b7f6ba99ec66616941208c698",
+      "deploymentId": "dpp8w54o5vox",
+      "verificationRunId": 34744342607,
+      "verificationArtifactId": 10313706251,
+      "verificationArtifactSha256": "935377f26bedd69522c35e2b0886fbc5a6f276348e0f4ab555361540e9c7a8d6",
+      "sourceSha": "d4b009c327f6fa9c4900eaa41d7195f10f6ed425",
       "packageContract": "success",
       "deployProduction": "success",
       "boundedFixedDomainConvergence": "success",
@@ -49,40 +51,40 @@
     },
     "customDomain": {
       "publicUrl": "https://axis.juele.fun",
-      "verificationRunId": 34700727551,
-      "sourceSha": "321647b9aaca783b7f6ba99ec66616941208c698",
+      "verificationRunId": 34744342633,
+      "sourceSha": "d4b009c327f6fa9c4900eaa41d7195f10f6ed425",
       "exactParity": "success",
       "chromiumProductionFlow": "success",
       "webkitProductionFlow": "success"
     },
     "combinedStatus": {
-      "sourceSha": "321647b9aaca783b7f6ba99ec66616941208c698",
+      "sourceSha": "d4b009c327f6fa9c4900eaa41d7195f10f6ed425",
       "vercel": "success",
       "edgeOneProduction": "success"
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.24.1 — Dock Occlusion Hotfix",
+    "activeMilestone": "AXIS 8.25 — Set Lock Interaction",
     "activePhase": "Release candidate — exact-head dual-engine and Production certification",
     "activeBranch": "main",
-    "deliveryBranch": "hotfix/8241-dock-occlusion",
-    "pullRequest": 149,
+    "deliveryBranch": "axis-825-set-lock",
+    "pullRequest": 150,
     "pullRequestDraft": true,
-    "baselineRelease": "8.24.1",
-    "baselineRuntimeSha": "321647b9aaca783b7f6ba99ec66616941208c698",
-    "lastSealedRelease": "8.24",
-    "lastSealedRuntimeSha": "321647b9aaca783b7f6ba99ec66616941208c698",
+    "baselineRelease": "8.25",
+    "baselineRuntimeSha": "d4b009c327f6fa9c4900eaa41d7195f10f6ed425",
+    "lastSealedRelease": "8.24.1",
+    "lastSealedRuntimeSha": "d4b009c327f6fa9c4900eaa41d7195f10f6ed425",
     "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
     "phase1ResolverProofSha": "2892d8807e6d2688cb366019d64c6e9b573fcb66",
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed.",
     "intendedProductBehaviorChange": true,
-    "nextProductRelease": "8.24.1",
+    "nextProductRelease": "8.25",
     "versionDecision": {
-      "sequence": 10,
-      "baseRelease": "8.24",
-      "release": "8.24.1",
+      "sequence": 11,
+      "baseRelease": "8.24.1",
+      "release": "8.25",
       "decision": "bump",
       "changeClass": "product-ui"
     },
@@ -186,7 +188,7 @@
       "productionProofRequired": ["Vercel", "EdgeOne", "axis.juele.fun"]
     },
     "activeDockOcclusion": {
-      "status": "8.24.1-release-candidate",
+      "status": "production-sealed-8.24.1-inherited",
       "presentationOwner": "existing v87 presentation boundary + axis-8241 dock CSS",
       "opaqueDock": true,
       "opaqueOverscan": true,
@@ -200,16 +202,36 @@
       "ai": false,
       "productionProofRequired": ["Vercel", "EdgeOne", "axis.juele.fun"]
     },
+    "activeSetLock": {
+      "status": "8.25-release-candidate",
+      "presentationOwner": "existing v87 post-fact render boundary + axis-825 Set Lock presentation",
+      "postFactOnly": true,
+      "largeSetMoment": true,
+      "clampLock": true,
+      "pressureHalo": true,
+      "stageRecoil": true,
+      "collapsesIntoProgress": true,
+      "boundedHaptic": true,
+      "reducedMotionSafe": true,
+      "pointerEvents": false,
+      "newTrainingOwner": false,
+      "newStorage": false,
+      "newEncounterWriter": false,
+      "newActiveOwner": false,
+      "network": false,
+      "ai": false,
+      "productionProofRequired": ["Vercel", "EdgeOne", "axis.juele.fun"]
+    },
     "interactionExperiment": {
       "name": "Active Action Lens",
-      "status": "non-blocking-research",
+      "status": "superseded-by-set-lock-825",
       "releaseBlocking": false,
       "presentationOnly": true,
       "browserFullscreenApi": false,
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Finish AXIS 8.24.1 Dock Occlusion Hotfix on one exact PR head, then certify the exact merged main artifact on Vercel, EdgeOne and axis.juele.fun before starting another product or architecture slice. Backup/account expansion remains deferred."
+    "nextSlice": "Finish AXIS 8.25 Set Lock on one exact PR head, then certify the exact merged main artifact on Vercel, EdgeOne and axis.juele.fun before starting another product or architecture slice. Backup/account expansion remains deferred."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
@@ -229,8 +251,9 @@
       "Ordinary single/complete Objects remain one-shot; only an immutable proven Flow whole-item may reuse the existing v82/v87 Active lifecycle.",
       "Evolution Replay is derived from immutable Encounter truth and may not persist its own timeline, rewrite history, infer scores, or become a media/network/AI owner.",
       "Replay-to-Evidence continuity may only pass transient Encounter identity to the existing v815 Evidence owner; wholly no-media Objects retain the data-only no-pressure state.",
-      "AXIS 8.24 tactile presentation remains Production-sealed and inherited by 8.24.1; existing v87 actions and factual owners remain authoritative.",
-      "AXIS 8.24.1 may correct only fixed-dock paint/compositing occlusion and may not change training facts, layout ownership, storage, Session, Encounter, recorder or Active lifecycle authority."
+      "AXIS 8.24 tactile presentation remains Production-sealed and inherited; existing v87 actions and factual owners remain authoritative.",
+      "AXIS 8.24.1 fixed-dock occlusion correction is Production-sealed and inherited by 8.25.",
+      "AXIS 8.25 Set Lock may react only after the existing completeSet factual commit; it may not create a second completion action, training fact, storage, Session, Encounter, recorder or Active lifecycle owner."
     ]
   },
   "crossPlatform": {
@@ -246,7 +269,7 @@
       {"id": "en", "name": "English", "requireProfessionalTranslation": true}
     ],
     "themes": ["system", "light", "dark"],
-    "status": "AXIS 8.24.1 candidate inherits the Production-sealed 8.24 presentation foundation; internal enums must never leak into localized visible product copy"
+    "status": "AXIS 8.25 candidate inherits the Production-sealed 8.24.1 presentation foundation; internal enums must never leak into localized visible product copy"
   },
   "authorityOrder": [
     "governance/project-state.json",
@@ -265,12 +288,12 @@
   ],
   "notes": [
     "Chat history is supplementary context, never authoritative project state.",
-    "AXIS 8.24.1 is the current release candidate from Production-sealed AXIS 8.24 exact main 321647b9aaca783b7f6ba99ec66616941208c698; 8.24.1 is not Production-sealed yet.",
-    "AXIS 8.24 product behavior came through PR #148 and exact merged-main certification passed Vercel, EdgeOne and axis.juele.fun on 2026-09-12.",
-    "Vercel 8.24 Production Deployment Gate 34700744685 and Public Production Alias Gate 34700744673 succeeded.",
-    "EdgeOne 8.24 exact-prebuilt Production deployment dp7e6rlpyczu passed run 34700727554; verification artifact 10300048249.",
-    "axis.juele.fun 8.24 exact artifact parity plus Chromium and iPhone WebKit passed run 34700727551.",
+    "AXIS 8.25 is the current release candidate from Production-sealed AXIS 8.24.1 exact main d4b009c327f6fa9c4900eaa41d7195f10f6ed425; 8.25 is not Production-sealed yet.",
+    "AXIS 8.24.1 came through PR #149 and exact merged-main certification passed Vercel, EdgeOne and axis.juele.fun on 2026-09-13.",
+    "Vercel 8.24.1 Production Deployment Gate 34744363573 and Public Production Alias Gate 34744363564 succeeded on canonical deployment dpl_5P7gF35XDzSAkHoLwmpJ3PQJsT2w.",
+    "EdgeOne 8.24.1 exact-prebuilt Production deployment dpp8w54o5vox passed run 34744342607; verification artifact 10313706251.",
+    "axis.juele.fun 8.24.1 exact artifact parity plus Chromium and iPhone WebKit passed run 34744342633.",
     "8.23 Replay Evidence Continuity remains inherited and Production-sealed; v815 remains the sole Evidence read/presentation owner.",
-    "8.24 Active Stage Tactile remains inherited and Production-sealed; 8.24.1 corrects only the fixed dock occlusion defect by retiring paint clipping and a translucent underlay window."
+    "8.24 Active Stage Tactile and 8.24.1 Dock Occlusion remain inherited and Production-sealed; 8.25 adds only post-fact Set Lock presentation over the existing v87 completion truth."
   ]
 }
