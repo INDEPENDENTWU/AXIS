@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
+      - name: Converge exact 8.25.1 governance compatibility
+        run: node scripts/axis-8251-governance-compat.mjs
       - name: Verify repository structure and release handoff
         run: node scripts/axis-repository-contract.mjs
       - name: Verify Production governance truth

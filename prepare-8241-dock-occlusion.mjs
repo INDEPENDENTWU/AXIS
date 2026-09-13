@@ -117,3 +117,4 @@ if(inheritedIdentityTouches+identityTouches<12)fail(`public identity convergence
 
 console.log(`[AXIS 8.24.1 Dock Occlusion] PASS · ${FROM} → ${VERSION} · opaque overscan · containment fully retired on fixed dock · v87 actions preserved · ${inheritedIdentityTouches} inherited + ${identityTouches} explicit current identity assertion(s) advanced`);
 await import('./prepare-825-set-lock.mjs');
+await import('./prepare-8251-inline-set-morph.mjs');

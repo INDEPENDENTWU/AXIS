@@ -5,10 +5,13 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const info=JSON.parse(read('axis-build.json'));
 const runtime=read('axis-core.js');
 const css=read('styles/axis-825-set-lock.css');
-if(info.version!=='8.25'||info.baseVersion!=='8.25')fail(`release identity ${info.version}/${info.baseVersion}`);
+const current=info.version==='8.25'&&info.baseVersion==='8.25',inherited=info.version==='8.25.1'&&info.baseVersion==='8.25.1';
+if(!current&&!inherited)fail(`release identity ${info.version}/${info.baseVersion}`);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
 for(const gate of ['activeStageTactile824','activeStageDockOcclusion8241','activeStageExistingV87Actions8241'])if(info.gates?.[gate]!==true)fail(`inherited gate missing ${gate}`);
-for(const marker of ['axis825SetLockStyle','function axis825SetLock(done,total,final,host)','axis825SetLock(done,total,planDone,host)','axis825NumberLand','axis825SetToProgress','axis825StageRecoil'])if(!runtime.includes(marker)&&!css.includes(marker))fail(`Set Lock marker missing ${marker}`);
+for(const marker of ['axis825SetLockStyle','function axis825SetLock(done,total,final,host)','axis825NumberLand','axis825SetToProgress','axis825StageRecoil'])if(!runtime.includes(marker)&&!css.includes(marker))fail(`Set Lock historical marker missing ${marker}`);
+if(current&&!runtime.includes('axis825SetLock(done,total,planDone,host)'))fail('8.25 active Set Lock trigger missing');
+if(inherited&&runtime.includes('axis825SetLock(done,total,planDone,host)'))fail('8.25 full-screen trigger must be retired in 8.25.1');
 if((runtime.match(/function completeSet\(id,fromShake=false\)/g)||[]).length!==1)fail('completeSet action owner duplicated');
 for(const action of ['function toggle(id)','function completeSet(id,fromShake=false)','function addSet(id)','function beginHold(id,e)'])if(!runtime.includes(action))fail(`existing v87 action owner missing ${action}`);
 if(!runtime.includes('a.completedSets>=total?[10,28,18]:[8,24,14]'))fail('bounded haptic signature missing');
@@ -16,6 +19,7 @@ if(!css.includes('pointer-events:none')||!css.includes('@media(prefers-reduced-m
 for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','state.active.events.push(','writeCore(','writeMeta(','fetch(','XMLHttpRequest','WebSocket('])if(css.includes(forbidden))fail(`Set Lock presentation acquired forbidden authority ${forbidden}`);
 info.gates=info.gates||{};
 Object.assign(info.gates,{activeSetLock825:true,activeSetLockPostFact825:true,activeSetLockProgressCollapse825:true,activeSetLockReducedMotion825:true,activeSetLockExistingV87Owner825:true});
-info.axis825={release:true,scope:'active-set-lock-interaction',presentation:{largeSetMoment:true,clampLock:true,pressureHalo:true,collapsesIntoProgress:true,boundedHaptic:true,reducedMotion:true,pointerEvents:false},ownership:{trainingState:false,sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,persistence:false,network:false,ai:false}};
+info.axis825={release:true,scope:'active-set-lock-interaction',status:inherited?'production-sealed-superseded-presentation':'current',presentation:{largeSetMoment:true,clampLock:true,pressureHalo:true,collapsesIntoProgress:true,boundedHaptic:true,reducedMotion:true,pointerEvents:false,activeFullScreenOverlay:current},ownership:{trainingState:false,sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,persistence:false,network:false,ai:false}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-console.log('[AXIS 8.25 Set Lock contract] PASS · large post-fact lock moment · progress collapse · reduced motion · existing v87 action truth preserved');
+console.log(`[AXIS 8.25 Set Lock contract] PASS · ${inherited?'inherited/superseded presentation':'current presentation'} · factual owner preserved`);
+if(inherited)await import('./postbuild-8251-inline-set-morph-contract.mjs');

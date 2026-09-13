@@ -43,4 +43,4 @@ try{
  console.log(`[AXIS 8.24.1 Dock Occlusion ${ENGINE}] PASS · opaque dock + 16px overscan · containment none · no translucent hairline window`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
 
-await import('./axis-825-set-lock-smoke.mjs');
+await import('./axis-8251-inline-set-morph-smoke.mjs');
