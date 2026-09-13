@@ -20,23 +20,25 @@ try{
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_ACTIVE_RUNTIME__?.owner==='v87',undefined,{timeout:15000});
  assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.25.1');
  await page.waitForFunction(()=>document.querySelector('#v87Now.axis821ActiveStage.show')&&document.querySelector('#axis8251InlineSetMorphStyle'),undefined,{timeout:6000});
- const before=await page.evaluate(()=>{const host=document.querySelector('#v87Now');return{h:host.getBoundingClientRect().height,progress:document.querySelector('#axis821StageProgressText')?.textContent?.trim(),oldDisplay:getComputedStyle(document.querySelector('#axis825SetLock')||document.body).display}});
+ const before=await page.evaluate(()=>{const host=document.querySelector('#v87Now'),progress=document.querySelector('#axis821StageProgressText');return{h:host.getBoundingClientRect().height,progress:progress?.textContent?.trim(),progressRect:progress?.getBoundingClientRect().toJSON?.()||null,oldDisplay:getComputedStyle(document.querySelector('#axis825SetLock')||document.body).display}});
  assert.equal(before.progress,'第 1 / 4 组');
  await page.locator('#v87Primary').click();
  await page.waitForFunction(()=>document.querySelector('.axis821StageFact')?.classList.contains('axis8251-locking'),undefined,{timeout:1500});
  const proof=await page.evaluate(()=>{
-  const host=document.querySelector('#v87Now'),fact=host.querySelector('.axis821StageFact'),moment=fact.querySelector('.axis8251SetMoment'),clock=host.querySelector('.axis821StageClock'),primary=host.querySelector('#v87Primary'),toggle=host.querySelector('#v87Toggle'),old=document.querySelector('#axis825SetLock'),meta=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),rect=e=>{const r=e.getBoundingClientRect();return{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
-  return{hostH:host.getBoundingClientRect().height,momentText:moment?.textContent?.replace(/\s+/g,' ').trim(),moment:rect(moment),fact:rect(fact),clock:rect(clock),primary:rect(primary),toggle:rect(toggle),position:getComputedStyle(moment).position,pointer:getComputedStyle(moment).pointerEvents,oldDisplay:old?getComputedStyle(old).display:'none',completed:meta.events?.['8251-e1']?.activity?.completedSets,style:document.querySelector('#axis8251InlineSetMorphStyle')?.textContent||'',overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};
+  const host=document.querySelector('#v87Now'),fact=host.querySelector('.axis821StageFact'),progress=host.querySelector('#axis821StageProgressText'),moment=fact.querySelector('.axis8251SetMoment'),clock=host.querySelector('.axis821StageClock'),primary=host.querySelector('#v87Primary'),toggle=host.querySelector('#v87Toggle'),old=document.querySelector('#axis825SetLock'),meta=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),rect=e=>{const r=e.getBoundingClientRect();return{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
+  return{hostH:host.getBoundingClientRect().height,progressText:progress?.textContent?.trim(),progress:rect(progress),fact:rect(fact),clock:rect(clock),primary:rect(primary),toggle:rect(toggle),progressDisplay:getComputedStyle(progress).display,progressVisibility:getComputedStyle(progress).visibility,progressOpacity:Number(getComputedStyle(progress).opacity),momentDisplay:moment?getComputedStyle(moment).display:'none',factAnim:getComputedStyle(fact,'::after').animationName,nodeAnim:getComputedStyle(progress,'::before').animationName,oldDisplay:old?getComputedStyle(old).display:'none',completed:meta.events?.['8251-e1']?.activity?.completedSets,style:document.querySelector('#axis8251InlineSetMorphStyle')?.textContent||'',overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth};
  });
  assert.equal(proof.completed,1,'factual completedSets must increment exactly once');
- assert.match(proof.momentText,/01 \/ 04/);assert.match(proof.momentText,/已完成/);
- assert.equal(proof.position,'static','completion moment must remain in normal stage grid');assert.equal(proof.pointer,'none');assert.equal(proof.oldDisplay,'none','legacy full-screen overlay must stay retired');
- assert.ok(proof.moment.top>=proof.fact.top-1&&proof.moment.bottom<=proof.fact.bottom+1,'completion moment must stay inside fact row');
- assert.equal(overlaps(proof.moment,proof.clock),false,'completion moment overlapped clock');assert.equal(overlaps(proof.moment,proof.primary),false,'completion moment overlapped primary control');assert.equal(overlaps(proof.moment,proof.toggle),false,'completion moment overlapped secondary control');
+ assert.equal(proof.progressText,'第 2 / 4 组','next-set truth must remain visible during feedback');
+ assert.notEqual(proof.progressDisplay,'none');assert.notEqual(proof.progressVisibility,'hidden');assert.ok(proof.progressOpacity>.9,'progress truth faded out');
+ assert.equal(proof.momentDisplay,'none','legacy completion replacement layer must stay visually retired');assert.equal(proof.oldDisplay,'none','legacy full-screen overlay must stay retired');
+ assert.ok(proof.progress.top>=proof.fact.top-1&&proof.progress.bottom<=proof.fact.bottom+1,'progress truth left the fact row');
+ assert.equal(overlaps(proof.progress,proof.clock),false,'progress feedback overlapped clock');assert.equal(overlaps(proof.progress,proof.primary),false,'progress feedback overlapped primary control');assert.equal(overlaps(proof.progress,proof.toggle),false,'progress feedback overlapped secondary control');
+ assert.match(proof.factAnim,/axis8251FactSweep/);assert.match(proof.nodeAnim,/axis8251NodeLock/);
  assert.ok(Math.abs(proof.hostH-before.h)<=1.5,`stage geometry jumped ${before.h} -> ${proof.hostH}`);assert.ok(proof.overflow<=1,`horizontal overflow ${proof.overflow}`);
- for(const marker of ['axis8251InlineLand','axis8251RailLock','axis8251PrimaryReturn','prefers-reduced-motion:reduce'])assert.ok(proof.style.includes(marker),`motion marker missing ${marker}`);
- assert.equal((await page.locator('#axis821StageProgressText').textContent())?.trim(),'第 2 / 4 组');
+ for(const marker of ['axis8251ProgressLand','axis8251NodeLock','axis8251FactSweep','axis8251RailLock','axis8251PrimaryReturn','prefers-reduced-motion:reduce'])assert.ok(proof.style.includes(marker),`motion marker missing ${marker}`);
  await page.waitForFunction(()=>!document.querySelector('.axis821StageFact')?.classList.contains('axis8251-locking'),undefined,{timeout:1500});
+ assert.equal((await page.locator('#axis821StageProgressText').textContent())?.trim(),'第 2 / 4 组');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.25.1 Inline Set Morph ${ENGINE}] PASS · in-stage 01 / 04 completion · no timer/control overlap · stable geometry · one factual completion`);
+ console.log(`[AXIS 8.25.1 Inline Set Morph ${ENGINE}] PASS · progress truth never disappears · in-row node/check/sweep feedback · no timer/control overlap · stable geometry · one factual completion`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
