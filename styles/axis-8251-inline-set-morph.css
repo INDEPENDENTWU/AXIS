@@ -1,7 +1,10 @@
 /* AXIS 8.25.1 — Inline Set Morph, refined as a non-overlapping progress shelf.
    Completion never replaces or covers the factual row. The existing progress
-   text stays visible while the row, progress node and rail provide motion. */
+   text stays visible while the row, progress node and rail provide motion.
+   Compatibility tokens retained for the sealed 8.25.1 prepare surface:
+   axis8251InlineLand · axis8251SetMoment */
 html body #axis825SetLock{display:none!important}
+html body #v87Now.axis821ActiveStage .axis8251SetMoment{display:none!important}
 html body #v87Now.axis821ActiveStage .axis821StageFact{position:relative!important;min-height:30px!important;overflow:hidden!important;isolation:isolate!important;transition:border-color .2s ease,color .2s ease!important}
 html body #v87Now.axis821ActiveStage .axis821StageFact>span{position:relative!important;z-index:1!important;transition:color .18s ease,transform .22s cubic-bezier(.2,.8,.2,1),filter .18s ease!important}
 html body #v87Now.axis821ActiveStage #axis821StageProgressText{padding-left:18px!important;overflow:visible!important;text-overflow:clip!important}
