@@ -5,12 +5,13 @@ const fail=m=>{throw new Error(`[AXIS 8.25 Set Lock] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
+const setLockCss=read('styles/axis-825-set-lock.css').trim();
 
 /* Set Lock is presentation after the existing completeSet fact commit. It does
    not create a second tap/action/state owner. The large lock moment is triggered
    by the already-proven render observation done > prevDone. */
 {
- const f='v87-runtime.js';let s=read(f);const css=read('styles/axis-825-set-lock.css').trim();
+ const f='v87-runtime.js';let s=read(f);const css=setLockCss;
  for(const marker of ['axis825NumberLand','axis825SetToProgress','prefers-reduced-motion:reduce','.axis825SetLock{'])if(!css.includes(marker))fail(`Set Lock CSS marker missing ${marker}`);
  if(s.includes('function axis825SetLock(')||s.includes('function axis825SetLockStyle('))fail('Set Lock runtime duplicated');
  const marker='function ensureUI()';if(!s.includes(marker))fail('v87 ensureUI anchor missing');
@@ -59,6 +60,6 @@ if(inheritedIdentityTouches+identityTouches<12)fail(`public identity convergence
 
 /* Presentation-only boundary: exactly one existing factual completion owner. */
 {
- const v87=read('v87-runtime.js');for(const action of ['function completeSet(id,fromShake=false)','function toggle(id)','function addSet(id)','function beginHold(id,e)'])if(!v87.includes(action))fail(`existing v87 action boundary drift ${action}`);if((v87.match(/function completeSet\(id,fromShake=false\)/g)||[]).length!==1)fail('completeSet owner duplicated');if(!v87.includes('axis825SetLock(done,total,planDone,host)'))fail('post-fact Set Lock trigger missing');for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','state.active.events.push(','writeCore(','writeMeta(','fetch(','XMLHttpRequest','WebSocket('])if(css.includes(forbidden))fail(`Set Lock CSS acquired forbidden authority ${forbidden}`);
+ const v87=read('v87-runtime.js');for(const action of ['function completeSet(id,fromShake=false)','function toggle(id)','function addSet(id)','function beginHold(id,e)'])if(!v87.includes(action))fail(`existing v87 action boundary drift ${action}`);if((v87.match(/function completeSet\(id,fromShake=false\)/g)||[]).length!==1)fail('completeSet owner duplicated');if(!v87.includes('axis825SetLock(done,total,planDone,host)'))fail('post-fact Set Lock trigger missing');for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','state.active.events.push(','writeCore(','writeMeta(','fetch(','XMLHttpRequest','WebSocket('])if(setLockCss.includes(forbidden))fail(`Set Lock CSS acquired forbidden authority ${forbidden}`);
 }
 console.log(`[AXIS 8.25 Set Lock] PASS · ${FROM} → ${VERSION} · post-fact large Set Lock · progress collapse · bounded haptic · reduced-motion safe · existing v87 truth owner preserved · ${inheritedIdentityTouches} inherited + ${identityTouches} explicit current identity assertion(s) advanced`);
