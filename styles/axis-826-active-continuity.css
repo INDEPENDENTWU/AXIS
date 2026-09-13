@@ -13,7 +13,7 @@ html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-locking{border-t
 /* Retire only the duplicate live-state label and compact summary. The unique
    whole-session timer and end control remain physically reachable while the
    canonical v87 item stage is present. */
-html body #todayView #activeHome>.liveHead{display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:62px!important;margin:0 0 10px!important;padding:0!important;border:0!important}
+html body #todayView #activeHome>.liveHead{display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:62px!important;margin:6px 0 10px!important;padding:0!important;border:0!important}
 html body #todayView #activeHome>.liveHead>div{display:flex!important;align-items:baseline!important;gap:8px!important;min-width:0!important}
 html body #todayView #activeHome>.liveHead .liveTag{display:none!important}
 html body #todayView #activeHome>.liveHead #liveTimer{display:block!important;font-variant-numeric:tabular-nums!important}
