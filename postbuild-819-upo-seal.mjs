@@ -5,6 +5,8 @@ const FILE='axis-core.js',MANIFEST='axis-build.json';
 const fail=m=>{throw new Error(`[AXIS 8.19 UPO final-runtime seal] ${m}`)};
 if(!fs.existsSync(FILE))fail(`missing ${FILE}`);
 let src=fs.readFileSync(FILE,'utf8');
+const build=fs.existsSync(MANIFEST)?JSON.parse(fs.readFileSync(MANIFEST,'utf8')):{};
+const atomic826=build.version==='8.26';
 
 for(const token of [
   'axis818Eq(state.selectedEq)',
@@ -12,7 +14,6 @@ for(const token of [
   'axis819RecorderSuppressed',
   "$('#reviewStage')?.classList.contains('hidden')",
   "try{closeSheet('scanSheet')}",
-  'finally{try{resetScan()}finally{render()}}',
   "[AXIS 8.19 capture cleanup · reset]",
   'axis819CommittedSchema',
   'e.metricSchemaSnapshot',
@@ -20,6 +21,11 @@ for(const token of [
   'axis819ClassicActivityEncounter',
   'axis819ActivityTarget=arguments[0]'
 ])if(!src.includes(token))fail(`final recorder invariant missing ${token}`);
+const postCommitToken=atomic826?'finally{try{resetScan()}finally{axis826SaveVisualAwait(e.id)}}':'finally{try{resetScan()}finally{render()}}';
+if(!src.includes(postCommitToken))fail(`final recorder post-commit invariant missing ${postCommitToken}`);
+if(atomic826){
+  for(const token of ['function axis826SaveVisualAwait(id)','axis:record-save-settled'])if(!src.includes(token))fail(`8.26 atomic visual settlement missing ${token}`);
+}else if(src.includes('axis826SaveVisualAwait('))fail('8.26 save settlement leaked into an older release');
 if((src.match(/let axis819RecorderSuppressed=true;/g)||[]).length!==1)fail('app-owned recorder lifecycle state must exist exactly once');
 if((src.match(/function saveScan\(/g)||[]).length!==1)fail('canonical saveScan must exist exactly once');
 if((src.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('authoritative Encounter append must exist exactly once');
@@ -66,11 +72,11 @@ if(fs.existsSync(MANIFEST)){
  info.gates.v61EncounterSchemaAuthority819=true;
  info.gates.activeTruthEncounterSchemaAuthority819=true;
  info.axis819=info.axis819||{};
- info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,lifecycleStateOwnedByApp:true,resetEntryOwned:true,postCommitFinally:true,presentationOwner:'app.js',v61AttachUsesImmutableEncounterSchema:true,activeTruthUsesImmutableEncounterSchema:true});
+ info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,lifecycleStateOwnedByApp:true,resetEntryOwned:true,postCommitFinally:true,postCommitPresentation:atomic826?'atomic-save-settlement':'direct-render',presentationOwner:'app.js',v61AttachUsesImmutableEncounterSchema:true,activeTruthUsesImmutableEncounterSchema:true});
  info.axis819.inheritedRuntime=Object.assign({},info.axis819.inheritedRuntime,{evolutionNullContinuityRepaired:true,forbidReturn112:true});
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
-console.log('[AXIS 8.19 UPO final-runtime seal] PASS · reset-entry recorder suppression + durable post-commit reset/render · immutable Encounter-schema v61 + Active Truth authority · inherited Evolution null-continuity repaired · single writers preserved');
+console.log(`[AXIS 8.19 UPO final-runtime seal] PASS · reset-entry recorder suppression + ${atomic826?'8.26 atomic post-commit visual settlement':'durable post-commit reset/render'} · immutable Encounter-schema v61 + Active Truth authority · inherited Evolution null-continuity repaired · single writers preserved`);
 
 /* 8.20.1 supersedes only the classic-only Active lifecycle restriction after all
    8.19 immutable Encounter/v61 authority checks are proven. */
