@@ -1,0 +1,53 @@
+/* AXIS 8.26 — Active Continuity.
+   Presentation only: no training truth, persistence, recorder, Flow or Active
+   ownership is introduced here. */
+html body #v87Now.axis821ActiveStage{position:relative!important}
+html body #v87Now.axis821ActiveStage .axis826SetCue{position:absolute;z-index:4;right:22px;top:78px;display:flex;align-items:baseline;gap:4px;min-width:42px;justify-content:flex-end;opacity:0;pointer-events:none!important;transform:translate3d(0,10px,0) scale(.88);transform-origin:100% 50%;font-variant-numeric:tabular-nums;filter:blur(1.5px);will-change:transform,opacity,filter}
+html body #v87Now.axis821ActiveStage .axis826SetCue b{font-size:24px;line-height:1;font-weight:710;letter-spacing:-.06em;color:#eef0ff;text-shadow:0 0 20px rgba(115,124,255,.24)}
+html body #v87Now.axis821ActiveStage .axis826SetCue small{font-size:9px;line-height:1;color:var(--accent2);font-weight:700;letter-spacing:.08em}
+html body #v87Now.axis821ActiveStage .axis826SetCue.show{animation:axis826SetCue .68s cubic-bezier(.16,.86,.2,1) both}
+html body #v87Now.axis821ActiveStage .axis826SetCue.final b{font-size:22px}
+html body #v87Now.axis821ActiveStage .axis821StageFact{border-top-color:transparent!important}
+html body #v87Now.axis821ActiveStage .axis821StageFact.axis8251-locking{border-top-color:transparent!important}
+
+/* Retire the legacy duplicate live summary once the canonical v87 Active stage
+   is present. The event timeline remains available below the stage. */
+html body #todayView #activeHome>.liveHead,
+html body #todayView #activeHome>.metricPair.compact{display:none!important}
+html body #todayView #activeHome>.section{margin-top:24px!important}
+html body #todayView #activeHome>.section .sectionHead{min-height:26px!important}
+html body #todayView #activeHome>.section .events{margin-top:7px!important}
+html body #todayView #activeHome>.section .event{border-top-color:rgba(255,255,255,.035)!important}
+html body #todayView #activeHome>.section .event:last-child{border-bottom-color:transparent!important}
+
+/* Home hierarchy is carried by spacing, type and one restrained tonal plane,
+   not repeated full-width rules/cards. */
+html body #todayView .axis821FlowHome{border:0!important;box-shadow:none!important;background:transparent!important}
+html body #todayView .axis821FlowHome:before,
+html body #todayView .axis821FlowHome:after{display:none!important}
+html body #todayView .axis821FlowTop,
+html body #todayView .axis821FlowRunLead,
+html body #todayView .axis821FlowPlan,
+html body #todayView .axis821FlowForeign,
+html body #todayView .axis821FlowGap,
+html body #todayView .axis821FlowQueue,
+html body #todayView .axis821FlowTimeline,
+html body #todayView .axis821FlowActiveProjection{border-color:transparent!important;box-shadow:none!important}
+html body #todayView .axis821FlowPlan{background:transparent!important}
+html body #todayView .axis821FlowPlan>span+span{border-left-color:transparent!important}
+html body #todayView .axis821FlowForeign{background:rgba(115,124,255,.045)!important;border-radius:16px!important;padding:12px 13px!important}
+html body #todayView .axis821FlowGap{background:rgba(255,255,255,.018)!important;border-radius:16px!important;padding:12px 13px!important}
+html body #todayView .axis821FlowQueueRow,
+html body #todayView .axis821FlowTimeline>div{border-color:rgba(255,255,255,.03)!important}
+
+/* v61 save feedback must never sit on top of the Capture dock / navigation. */
+html body #v8Pulse{display:none!important}
+html body #v81Undo.axis826Undo{left:auto!important;right:max(16px,calc((100vw - min(100vw,var(--max)))/2 + 16px))!important;top:calc(env(safe-area-inset-top) + 74px)!important;bottom:auto!important;transform:translateY(-8px) scale(.96)!important;padding:8px 9px 8px 11px!important;border-radius:12px!important;background:rgba(19,22,29,.94)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 10px 30px rgba(0,0,0,.24)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+html body #v81Undo.axis826Undo.show{transform:none!important}
+html body #v81Undo.axis826Undo span{font-size:10.5px!important;color:var(--muted)!important}
+html body #v81Undo.axis826Undo button{min-height:28px!important;padding:0 8px!important}
+html body #saveScan.axis826SavePending{opacity:.72!important}
+
+@keyframes axis826SetCue{0%{opacity:0;transform:translate3d(0,10px,0) scale(.88);filter:blur(1.5px)}22%{opacity:1;transform:translate3d(0,-2px,0) scale(1.05);filter:blur(0)}58%{opacity:.96;transform:translate3d(0,-7px,0) scale(1);filter:blur(0)}100%{opacity:0;transform:translate3d(0,-15px,0) scale(.96);filter:blur(.5px)}}
+@media(max-width:380px){html body #v87Now.axis821ActiveStage .axis826SetCue{right:14px;top:76px;transform-origin:100% 50%}html body #v87Now.axis821ActiveStage .axis826SetCue b{font-size:21px}}
+@media(prefers-reduced-motion:reduce){html body #v87Now.axis821ActiveStage .axis826SetCue.show{animation:axis826SetCueReduced .28s ease both!important;filter:none!important}@keyframes axis826SetCueReduced{0%{opacity:0}35%,75%{opacity:1}100%{opacity:0}}}
