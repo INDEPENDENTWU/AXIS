@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 9,
-  "base_release": "8.23",
-  "release": "8.24",
+  "sequence": 10,
+  "base_release": "8.24",
+  "release": "8.24.1",
   "decision": "bump",
   "change_class": "product-ui",
-  "summary": "Advance AXIS to 8.24 for a bounded Active-stage interaction upgrade: one authoritative set-progress presentation, tactile press and motion feedback, and an isolated fixed action dock that prevents scrolling hairlines from painting across capture controls, without changing training, storage, Encounter, recorder or Active ownership."
+  "summary": "Advance AXIS to 8.24.1 to correct the visible fixed-dock hairline defect in the already-shipped 8.24 Active presentation: retire paint clipping and the translucent underlay window, make the dock plus overscan curtain fully opaque, and preserve every existing v87 action, Session, Encounter, storage, recorder and Active owner."
 }

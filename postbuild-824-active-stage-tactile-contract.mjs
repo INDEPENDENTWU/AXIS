@@ -26,3 +26,4 @@ Object.assign(info.gates,{
 info.axis824={release:true,scope:'active-stage-tactile-convergence',presentation:{singleSetProgress:true,timeMetaSetFree:true,tactilePress:true,activeBreath:true,dockOpaquePlane:true,reducedMotion:true},ownership:{trainingState:false,sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,persistence:false,network:false,ai:false}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 console.log('[AXIS 8.24 Active Stage Tactile contract] PASS · tactile Active feedback · one set-progress truth · dock layer isolated · existing v87 authority preserved');
+await import('./postbuild-8241-dock-occlusion-contract.mjs');

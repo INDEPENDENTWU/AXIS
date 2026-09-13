@@ -40,7 +40,7 @@ jobs:
           if(x.outputDirectory!=='.')throw new Error(`unexpected EdgeOne output ${x.outputDirectory}`);
           const wf=fs.readFileSync('.github/workflows/axis-edgeone-production-mirror.yml','utf8');
           if(!wf.includes('remote.version===local.version')||!wf.includes('remote.baseVersion===local.baseVersion'))throw new Error('EdgeOne Production wait must follow exact built identity');
-          for(const [script,label] of [['axis-8201-object-reliability-smoke.mjs','8.20.1 reliability'],['axis-821-flow-runtime-smoke.mjs','8.21 Flow'],['axis-821-recording-property-surface-smoke.mjs','recording property'],['axis-821-quick-photo-metric-centering-smoke.mjs','numeric centering'],['axis-821-executable-object-system-smoke.mjs','executable Object'],['axis-822-evolution-replay-smoke.mjs','8.22 Replay'],['axis-823-replay-evidence-continuity-smoke.mjs','8.23 Replay Evidence Continuity'],['axis-824-active-stage-tactile-smoke.mjs','8.24 Active Stage Tactile']])if((wf.match(new RegExp(`node scripts/${script.replaceAll('.','\\.')}`,'g'))||[]).length!==2)throw new Error(`EdgeOne Production must run ${label} in Chromium and iPhone WebKit`);
+          for(const [script,label] of [['axis-8201-object-reliability-smoke.mjs','8.20.1 reliability'],['axis-821-flow-runtime-smoke.mjs','8.21 Flow'],['axis-821-recording-property-surface-smoke.mjs','recording property'],['axis-821-quick-photo-metric-centering-smoke.mjs','numeric centering'],['axis-821-executable-object-system-smoke.mjs','executable Object'],['axis-822-evolution-replay-smoke.mjs','8.22 Replay'],['axis-823-replay-evidence-continuity-smoke.mjs','8.23 Replay Evidence Continuity'],['axis-824-active-stage-tactile-smoke.mjs','8.24 Active Stage Tactile'],['axis-8241-dock-occlusion-smoke.mjs','8.24.1 Dock Occlusion']])if((wf.match(new RegExp(`node scripts/${script.replaceAll('.','\\.')}`,'g'))||[]).length!==2)throw new Error(`EdgeOne Production must run ${label} in Chromium and iPhone WebKit`);
           NODE
 
   deploy-production:
@@ -136,6 +136,7 @@ jobs:
           node scripts/axis-822-evolution-replay-smoke.mjs
           node scripts/axis-823-replay-evidence-continuity-smoke.mjs
           node scripts/axis-824-active-stage-tactile-smoke.mjs
+          node scripts/axis-8241-dock-occlusion-smoke.mjs
       - name: Prepare iPhone WebKit
         run: |
           npm install --no-save playwright@1.55.0
@@ -165,6 +166,7 @@ jobs:
           node scripts/axis-822-evolution-replay-smoke.mjs
           node scripts/axis-823-replay-evidence-continuity-smoke.mjs
           node scripts/axis-824-active-stage-tactile-smoke.mjs
+          node scripts/axis-8241-dock-occlusion-smoke.mjs
       - name: Mark EdgeOne Production success
         env:
           GH_STATUS_TOKEN: ${{ github.token }}
