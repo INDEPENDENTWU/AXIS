@@ -26,3 +26,4 @@ Object.assign(info.gates,{
 info.axis8241={release:true,scope:'active-dock-occlusion-hotfix',presentation:{opaqueDock:true,opaqueOverscan:true,paintContainment:false,translucentCurtain:false},ownership:{trainingState:false,sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,persistence:false,network:false,ai:false}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 console.log('[AXIS 8.24.1 Dock Occlusion contract] PASS · opaque fixed dock + overscan · no containment clipping · inherited v87 authority preserved');
+await import('./postbuild-825-set-lock-contract.mjs');
