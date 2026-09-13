@@ -18,7 +18,7 @@ AXIS **8.25.1 — Inline Set Morph** is the fully Production-sealed Web runtime 
 - governed custom domain: `https://axis.juele.fun`
 - protected stores: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`
 
-Conversation history is supplemental only. Repository contracts, exact commits, built artifacts and provider certification are authoritative.
+**Chat history is not authoritative project memory.** Conversation history is supplemental only. Repository contracts, exact commits, built artifacts and provider certification are authoritative.
 
 ## Active change
 
