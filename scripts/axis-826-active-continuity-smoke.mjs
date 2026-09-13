@@ -1,0 +1,48 @@
+import assert from 'node:assert/strict';
+
+const ENGINE=process.env.AXIS_ENGINE||'chromium',BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core'),launcher=ENGINE==='webkit'?mod.webkit:mod.chromium;
+const browser=await launcher.launch(ENGINE==='chromium'?{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}:{headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true,locale:'zh-CN'}),page=await context.newPage(),errors=[];
+page.on('pageerror',e=>errors.push(String(e?.stack||e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+const json=(r,o)=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*','cache-control':'no-store'},body:JSON.stringify(o)});for(const [p,o] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(p,r=>json(r,o));
+const overlaps=(a,b)=>a&&b&&Math.max(a.left,b.left)<Math.min(a.right,b.right)&&Math.max(a.top,b.top)<Math.min(a.bottom,b.bottom);
+const boot=async()=>{assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_ACTIVE_RUNTIME__?.owner==='v87'&&window.__AXIS_FLOW_RUNTIME__?.owner==='app.js',undefined,{timeout:15000});assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.26')};
+try{
+ await boot();
+ const t=Date.now();
+ /* Set-feedback + Home hierarchy proof. */
+ await page.evaluate(now=>{
+  localStorage.clear();
+  const event={id:'826-set-e1',equipmentId:'chest',name:'胸推',pattern:'push',kind:'strength',muscles:['胸肌'],effect:'',time:now-9000,sets:4,metrics:{},metricSchemaSnapshot:[{key:'weight',label:'重量',type:'weight',unit:'kg',step:2.5},{key:'reps',label:'次数',type:'reps',unit:'次',step:1}],metricSchemaVersionSnapshot:'8.21',executionModeSnapshot:'sets'};
+  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:{id:'826-s1',start:now-9000,events:[event]},flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
+  localStorage.setItem('axis_v8_meta',JSON.stringify({events:{'826-set-e1':{activity:{status:'active',startedAt:now-9000,lastResumedAt:now-9000,intervals:[{start:now-9000,end:null}],estimateMs:240000,completedSets:0,setDoneAt:[],restStartedAt:null},sets:[0,1,2,3].map(()=>({weight:35,reps:10,state:'assumed',doneAt:null}))}},prefs:{}}));
+ },t);
+ await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__AXIS_RELEASE__==='8.26'&&document.querySelector('#v87Now.axis821ActiveStage.show'),undefined,{timeout:15000});
+ const before=await page.evaluate(()=>{const h=document.querySelector('#v87Now'),dock=document.querySelector('#dock'),r=e=>{const x=e.getBoundingClientRect();return{left:x.left,right:x.right,top:x.top,bottom:x.bottom,width:x.width,height:x.height}};return{stage:r(h),dock:r(dock),legacyLive:getComputedStyle(document.querySelector('#activeHome>.liveHead')).display,legacyMetrics:getComputedStyle(document.querySelector('#activeHome>.metricPair.compact')).display,pulse:getComputedStyle(document.querySelector('#v8Pulse')||document.body).display}});
+ assert.equal(before.legacyLive,'none','legacy live summary must be retired');assert.equal(before.legacyMetrics,'none','legacy compact metrics must be retired');
+ await page.locator('#v87Primary').click();await page.waitForFunction(()=>document.querySelector('.axis826SetCue')?.classList.contains('show'),undefined,{timeout:1500});
+ const setProof=await page.evaluate(()=>{const h=document.querySelector('#v87Now'),cue=h.querySelector('.axis826SetCue'),primary=h.querySelector('#v87Primary'),toggle=h.querySelector('#v87Toggle'),dock=document.querySelector('#dock'),nav=document.querySelector('.nav'),progress=h.querySelector('#axis821StageProgressText'),meta=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),r=e=>{const x=e.getBoundingClientRect();return{left:x.left,right:x.right,top:x.top,bottom:x.bottom,width:x.width,height:x.height}};return{stage:r(h),cue:r(cue),primary:r(primary),toggle:r(toggle),dock:r(dock),nav:r(nav),cueText:cue.querySelector('b')?.textContent,cueUnit:cue.querySelector('small')?.textContent,cuePointer:getComputedStyle(cue).pointerEvents,progress:progress?.textContent?.trim(),completed:meta.events?.['826-set-e1']?.activity?.completedSets,css:document.querySelector('#axis826ActiveContinuityStyle')?.textContent||'',overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth}});
+ assert.equal(setProof.completed,1);assert.equal(setProof.progress,'第 2 / 4 组');assert.equal(setProof.cueText,'+1');assert.equal(setProof.cueUnit,'組');assert.equal(setProof.cuePointer,'none');
+ assert.ok(Math.abs(setProof.stage.height-before.stage.height)<=1.5,`set cue changed stage height ${before.stage.height} -> ${setProof.stage.height}`);assert.equal(overlaps(setProof.cue,setProof.primary),false);assert.equal(overlaps(setProof.cue,setProof.toggle),false);assert.equal(overlaps(setProof.cue,setProof.dock),false);assert.equal(overlaps(setProof.cue,setProof.nav),false);assert.ok(setProof.dock.top-setProof.stage.bottom>=16,`stage/dock clearance ${setProof.dock.top-setProof.stage.bottom}`);assert.ok(setProof.overflow<=1,`horizontal overflow ${setProof.overflow}`);
+ const runtimeSource=await page.evaluate(()=>fetch('/axis-core.js').then(r=>r.text()));assert.match(runtimeSource,/axis826SaveVisualAwait/);assert.match(runtimeSource,/axis:record-save-settled/);assert.match(runtimeSource,/axis826SetCue/);
+ const cssSource=await page.evaluate(()=>fetch('/axis-style.css').then(r=>r.text()));assert.match(cssSource,/#v8Pulse\{display:none!important\}/);assert.match(cssSource,/prefers-reduced-motion:reduce/);
+
+ /* Flow start must become real Active truth, even when another item is active. */
+ await page.evaluate(now=>{
+  localStorage.clear();
+  const foreign={id:'826-foreign',equipmentId:'legpress',name:'坐姿腿推',pattern:'knee',kind:'strength',muscles:['股四头肌'],effect:'',time:now-30000,sets:3,metrics:{},executionModeSnapshot:'sets'};
+  const flow={schema:'axis.flow.v1',id:'826-flow',title:'胸推 → 下拉',steps:[{id:'826-fs1',objectRef:'chest',executionOverride:'sets'},{id:'826-fs2',objectRef:'lat',executionOverride:'sets'}],metadata:{createdAt:now,updatedAt:now}};
+  localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:{id:'826-flow-session',start:now-60000,events:[foreign]},flows:[flow],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
+  localStorage.setItem('axis_v8_meta',JSON.stringify({events:{'826-foreign':{activity:{status:'active',startedAt:now-30000,lastResumedAt:now-30000,intervals:[{start:now-30000,end:null}],estimateMs:300000,completedSets:0,setDoneAt:[],restStartedAt:null},sets:[0,1,2].map(()=>({weight:40,reps:10,state:'assumed',doneAt:null}))}},prefs:{}}));
+ },Date.now());
+ await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__AXIS_RELEASE__==='8.26'&&document.querySelector('[data-axis-flow-start="826-flow"]'),undefined,{timeout:15000});
+ await page.locator('[data-axis-flow-start="826-flow"]').click();await page.waitForFunction(()=>document.querySelector('[data-axis-flow-record]'),undefined,{timeout:3000});
+ await page.locator('[data-axis-flow-record]').click();await page.waitForFunction(()=>document.querySelector('#axis821FlowSwitchSheet.show [data-axis-flow-switch-confirm]'),undefined,{timeout:3000});
+ await page.locator('[data-axis-flow-switch-confirm]').click();
+ await page.waitForFunction(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),id=c.flowRun?.currentEncounterId;return !!id&&m.events?.[id]?.activity?.status==='active'&&m.events?.['826-foreign']?.activity?.status==='paused'},undefined,{timeout:4000});
+ const flowProof=await page.evaluate(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),id=c.flowRun?.currentEncounterId,flow=document.querySelector('#axis821FlowHome');return{eventCount:c.active?.events?.length||0,currentEncounterId:id,currentStatus:m.events?.[id]?.activity?.status,foreignStatus:m.events?.['826-foreign']?.activity?.status,flowRef:c.flowRun?.flowRef,stepRef:c.flowRun?.currentStepRef,substate:flow?.dataset.substate,activeName:window.__AXIS_ACTIVE_RUNTIME__?.current?.()?.name||''}});
+ assert.equal(flowProof.eventCount,2,'Flow start must append one and only one Encounter');assert.ok(flowProof.currentEncounterId);assert.equal(flowProof.currentStatus,'active');assert.equal(flowProof.foreignStatus,'paused');assert.equal(flowProof.flowRef,'826-flow');assert.match(String(flowProof.substate||''),/active|linked|executing/);assert.match(flowProof.activeName,/胸推/);
+ assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
+ console.log(`[AXIS 8.26 Active Continuity ${ENGINE}] PASS · +1 set cue · stable geometry · duplicate Home summary retired · Flow current becomes v82/v87 Active truth · foreign activity paused/preserved · atomic save settlement source present`);
+}finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
