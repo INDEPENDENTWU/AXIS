@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 10,
-  "base_release": "8.24",
-  "release": "8.24.1",
+  "sequence": 11,
+  "base_release": "8.24.1",
+  "release": "8.25",
   "decision": "bump",
   "change_class": "product-ui",
-  "summary": "Advance AXIS to 8.24.1 to correct the visible fixed-dock hairline defect in the already-shipped 8.24 Active presentation: retire paint clipping and the translucent underlay window, make the dock plus overscan curtain fully opaque, and preserve every existing v87 action, Session, Encounter, storage, recorder and Active owner."
+  "summary": "Advance AXIS to 8.25 for Set Lock: turn successful set completion into a large post-fact lock moment with pressure, clamp, recoil, progress-collapse and bounded haptic feedback while preserving the existing v87 completeSet action and all Session, Encounter, storage, recorder and Active ownership."
 }
