@@ -65,13 +65,15 @@ for(const [path,label,want] of workflows){const s=read(path);if(count(s,'node sc
 
 {
  const f='scripts/axis-repository-contract.mjs';let s=read(f);
+ const oldSteps="const expectedSteps=['8.24.1','8.25'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;";
+ const nextSteps=decision826?"const expectedSteps=CURRENT==='8.26'?88:['8.24.1','8.25','8.25.1'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;":"const expectedSteps=['8.24.1','8.25','8.25.1'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;";
+ s=replaceOnce(s,oldSteps,nextSteps,'repository deterministic step family');
  for(const [from,to,label] of [
   ["['8.22','8.23','8.24','8.24.1','8.25']",decision826?"['8.22','8.23','8.24','8.24.1','8.25','8.25.1','8.26']":"['8.22','8.23','8.24','8.24.1','8.25','8.25.1']",'repository inherited replay family'],
   ["['8.23','8.24','8.24.1','8.25']",decision826?"['8.23','8.24','8.24.1','8.25','8.25.1','8.26']":"['8.23','8.24','8.24.1','8.25','8.25.1']",'repository inherited continuity family'],
   ["['8.24','8.24.1','8.25']",decision826?"['8.24','8.24.1','8.25','8.25.1','8.26']":"['8.24','8.24.1','8.25','8.25.1']",'repository inherited tactile family'],
   ["['8.24.1','8.25']",decision826?"['8.24.1','8.25','8.25.1','8.26']":"['8.24.1','8.25','8.25.1']",'repository inherited dock family']
  ])s=replaceAllExact(s,from,to,label);
- s=replaceOnce(s,"const expectedSteps=['8.24.1','8.25'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;",decision826?"const expectedSteps=CURRENT==='8.26'?88:['8.24.1','8.25','8.25.1'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;":"const expectedSteps=['8.24.1','8.25','8.25.1'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;",'repository deterministic step family');
  if(decision826){
   const block=`if(CURRENT==='8.26'){\n  if(STATUS!=='candidate'||SEALED!=='8.25.1'||PROD_SHA!=='f4d3d02e1a7b655185806b2dbb3bface804d93cc')fail('8.26 candidate must preserve exact sealed 8.25.1 baseline');\n  if(project?.product?.productionPullRequest!==151||project?.product?.candidatePullRequest!==152)fail('8.26 sealed/candidate PR identity drift');\n  if(project?.engineering?.deliveryBranch!=='release/826-active-continuity'||project?.engineering?.pullRequest!==152||project?.engineering?.pullRequestDraft!==true)fail('8.26 delivery identity drift');\n  if(project?.engineering?.versionDecision?.sequence!==13||project?.engineering?.versionDecision?.baseRelease!=='8.25.1'||project?.engineering?.versionDecision?.release!=='8.26'||project?.engineering?.versionDecision?.decision!=='bump'||project?.engineering?.versionDecision?.changeClass!=='product-ui')fail('8.26 governed version decision drift');\n  const c=project?.engineering?.activeContinuity;for(const key of ['atomicSaveSettlement','ongoingFlowDirectActive','oneShotFlowCanonicalRecorder','foreignActivePausePreserve','kineticSetCue','setCuePostFactOnly','stableStageGeometry','nonOverlapping','reducedMotionSafe','quieterHomeHierarchy'])if(c?.[key]!==true)fail('8.26 capability missing '+key);\n}\n\n`;
   s=replaceOnce(s,'const required=[',block+'const required=[','repository 8.26 governance block');
