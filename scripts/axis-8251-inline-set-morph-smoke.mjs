@@ -18,7 +18,8 @@ try{
  },t);
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_ACTIVE_RUNTIME__?.owner==='v87',undefined,{timeout:15000});
- assert.equal(await page.evaluate(()=>window.__AXIS_RELEASE__),'8.25.1');
+ const release=await page.evaluate(()=>window.__AXIS_RELEASE__);
+ assert.ok(['8.25.1','8.26'].includes(release),`Inline Set Morph proof supports sealed 8.25.1 and direct successor 8.26, got ${release}`);
  await page.waitForFunction(()=>document.querySelector('#v87Now.axis821ActiveStage.show')&&document.querySelector('#axis8251InlineSetMorphStyle'),undefined,{timeout:6000});
  const before=await page.evaluate(()=>{const host=document.querySelector('#v87Now'),progress=document.querySelector('#axis821StageProgressText');return{h:host.getBoundingClientRect().height,progress:progress?.textContent?.trim(),progressRect:progress?.getBoundingClientRect().toJSON?.()||null,oldDisplay:getComputedStyle(document.querySelector('#axis825SetLock')||document.body).display}});
  assert.equal(before.progress,'第 1 / 4 组');
@@ -42,5 +43,5 @@ try{
  await page.waitForFunction(()=>!document.querySelector('.axis821StageFact')?.classList.contains('axis8251-locking'),undefined,{timeout:1500});
  assert.equal((await page.locator('#axis821StageProgressText').textContent())?.trim(),'第 2 / 4 组');
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.25.1 Inline Set Morph ${ENGINE}] PASS · progress truth never disappears · in-row node/check/sweep feedback · no timer/control overlap · >=16px dock clearance · stable geometry · one factual completion`);
+ console.log(`[AXIS 8.25.1 Inline Set Morph inherited by ${release} ${ENGINE}] PASS · progress truth never disappears · in-row node/check/sweep feedback · no timer/control overlap · >=16px dock clearance · stable geometry · one factual completion`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
