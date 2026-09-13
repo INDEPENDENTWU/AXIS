@@ -19,6 +19,8 @@ AXIS **8.26 — Active Continuity** is the current Web release candidate. It con
 
 AXIS **8.25.1 — Inline Set Morph** remains the Production baseline until 8.26 completes merged-main certification.
 
+The exact AXIS 8.25.1 evidence below is the **runtime seal baseline** for this candidate. It is **not a self-referential requirement**: AXIS 8.26 is evaluated against the prior sealed runtime until a new exact merged-main Production seal is created.
+
 - sealed `main`: `f4d3d02e1a7b655185806b2dbb3bface804d93cc`
 - release PR: **#151**
 - Vercel deployment: `dpl_DUuJiQoy8VnxRwcQLoGqCDckj1UX` — READY / Production / exact source SHA
@@ -44,7 +46,7 @@ The Production-sealed 8.25.1 inline set-progress morph remains the factual prese
 
 ### Quieter Home hierarchy
 
-Duplicate Active summary and compact metric surfaces are removed from the visible composition. Repeated full-width dividers are reduced; hierarchy is carried by spacing, typography and subtle tonal grouping. No information needed to operate the current item or Flow is removed.
+Duplicate Active summary and compact metric surfaces are removed from the visible composition, but the unique whole-session end control remains physically reachable. Repeated full-width dividers are reduced; hierarchy is carried by spacing, typography and subtle tonal grouping. No information or control needed to operate the current item, end the Session or continue Flow is removed.
 
 ## Ownership boundary
 
@@ -52,7 +54,7 @@ Duplicate Active summary and compact metric surfaces are removed from the visibl
 
 ## Release-blocking proof
 
-The exact PR #152 head must pass Version Authority, Repository/Production governance, Work Continuity, Current Release Chromium + iPhone-like WebKit, Deep Compatibility and all inherited product gates. Physical proof must cover: no intermediate save flash; ongoing Flow direct Active; one-shot Flow canonical recorder; foreign Active pause/preserve; one factual set increment; safe non-overlapping kinetic cue; stable Active geometry; reduced motion; no viewport overflow; and unchanged single-owner facts.
+The exact PR #152 head must pass Version Authority, Repository/Production governance, Work Continuity, Current Release Chromium + iPhone-like WebKit, Deep Compatibility and all inherited product gates. Physical proof must cover: no intermediate save flash; ongoing Flow direct Active; one-shot Flow canonical recorder; foreign Active pause/preserve; one factual set increment; safe non-overlapping kinetic cue; stable Active geometry; reduced motion; whole-session end control reachability; no viewport overflow; and unchanged single-owner facts.
 
 After merge, the exact merged SHA must be the Vercel Production artifact, then the same exact prebuilt artifact must pass EdgeOne and `axis.juele.fun` parity plus Chromium/WebKit Production proof. 8.26 is not called Production-sealed before that chain settles green.
 
