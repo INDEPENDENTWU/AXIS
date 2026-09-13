@@ -1,0 +1,27 @@
+import fs from 'node:fs';
+
+const fail=m=>{throw new Error(`[AXIS 8.26 Active Continuity contract] ${m}`)};
+const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
+const info=JSON.parse(read('axis-build.json'));
+const runtime=read('axis-core.js');
+const css=read('styles/axis-826-active-continuity.css');
+if(info.version!=='8.26'||info.baseVersion!=='8.26')fail(`release identity ${info.version}/${info.baseVersion}`);
+if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
+for(const gate of ['activeStageTactile824','activeStageDockOcclusion8241','activeInlineSetMorph8251'])if(info.gates?.[gate]!==true)fail(`inherited gate missing ${gate}`);
+for(const marker of ['axis826SaveVisualAwait','axis:record-save-settled','axis826SetCue','axis826SavePending','axis826Undo'])if(!runtime.includes(marker)&&!css.includes(marker))fail(`8.26 marker missing ${marker}`);
+if(!runtime.includes("if(!axis821FlowOngoingMode(mode))return axis821FlowOpenRecorder('current',eq)"))fail('one-shot Flow recorder boundary missing');
+if(!runtime.includes("return axis821FlowStartWholeItem(eq)"))fail('ongoing Flow direct-start boundary missing');
+if(!runtime.includes("axis821FlowShowSwitch('start',foreign"))fail('foreign Active pause/preserve switch missing');
+if((runtime.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append owner duplicated');
+if((runtime.match(/function completeSet\(id,fromShake=false\)/g)||[]).length!==1)fail('completeSet owner duplicated');
+for(const action of ['function toggle(id)','function completeSet(id,fromShake=false)','function addSet(id)','function beginHold(id,e)'])if(!runtime.includes(action))fail(`existing v87 action owner missing ${action}`);
+if(!runtime.includes("cue.querySelector('b').textContent=final?String(done):'+1'"))fail('kinetic +1 set cue missing');
+if(!css.includes('pointer-events:none!important')||!css.includes('@media(prefers-reduced-motion:reduce)'))fail('cue non-interactive/reduced-motion boundary missing');
+if(!css.includes('#v8Pulse{display:none!important}'))fail('legacy saving pill is not retired');
+if(!css.includes('#activeHome>.liveHead')||!css.includes('#activeHome>.metricPair.compact'))fail('legacy duplicate Home summary retirement missing');
+for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','state.active.events.push(','writeCore(','writeMeta(','fetch(','XMLHttpRequest','WebSocket('])if(css.includes(forbidden))fail(`presentation CSS acquired forbidden authority ${forbidden}`);
+info.gates=info.gates||{};
+Object.assign(info.gates,{activeContinuity826:true,atomicRecordVisualSettlement826:true,flowOngoingDirectStart826:true,flowForeignPausePreserve826:true,activeSetKineticCue826:true,homeHierarchyIntegrated826:true,legacySavingPillRetired826:true,existingTruthOwnersPreserved826:true});
+info.axis826={release:true,scope:'active-continuity',save:{singleVisualSettlement:true,legacySavingPill:false},flow:{ongoingDirectStart:true,oneShotRecorder:true,foreignPausePreserve:true},setFeedback:{inlineMorphInherited:true,kineticCue:true,pointerEvents:false,reducedMotion:true},home:{legacyLiveSummary:false,legacyCompactMetrics:false,flowRulesReduced:true},ownership:{sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,newPersistence:false,network:false,ai:false}};
+fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
+console.log('[AXIS 8.26 Active Continuity contract] PASS · save settles once · Flow ongoing start is executable · +1 cue non-interactive · Home duplicate summary retired · canonical owners preserved');
