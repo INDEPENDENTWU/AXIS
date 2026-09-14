@@ -65,6 +65,12 @@ try{
 
  console.log(`[AXIS 8.21 Flow step intent ${ENGINE}] restore independent intent and prove canonical recorder + Encounter snapshot consume it`);
  await openEditor();await removeSetsOverride();await saveEditor();
+ // AXIS 8.26 intentionally sends ongoing modes straight into existing Active.
+ // Keep this recording-intent proof isolated by making only this Flow step an
+ // explicit one-shot. The canonical Flow writer persists that bounded override;
+ // Object/Profile defaults remain untouched and the recorder remains the owner.
+ await page.evaluate(id=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),flow=c.flows?.find(x=>x.id===id);if(!flow)throw new Error('Flow missing before one-shot compatibility proof');flow.steps[0].executionOverride='single';window.__AXIS_FLOW_RUNTIME__.saveFlow(flow);window.__AXIS_821_FLOW_SURFACE__.render()},FLOW.id);
+ saved=await flowSaved();assert.equal(saved.steps[0].executionOverride,'single','current one-shot compatibility setup did not persist through canonical Flow writer');
  await tap(page.locator(`#axis821FlowHome [data-axis-flow-start="${FLOW.id}"]`));
  await page.waitForFunction(id=>window.__AXIS_FLOW_RUNTIME__?.current?.()?.objectRef===id,OBJECT.id,{timeout:3000});
  await tap(page.locator('#axis821FlowHome [data-axis-flow-record]'));
@@ -78,5 +84,5 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});await waitCore();c=await core();const again=c.active?.events?.find(e=>e.id===event.id);assert.equal(JSON.stringify(again?.flowProvenance),frozen,'reload changed historical Flow provenance');assert.equal(JSON.stringify(c.flows.find(x=>x.id===FLOW.id)),savedFlow,'reload changed saved Flow step intent');
  const overflow=await page.evaluate(()=>Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)-innerWidth);assert.ok(overflow<=1,`390px horizontal overflow ${overflow}px`);
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.21 Flow step intent ${ENGINE}] PASS · Flow editor independent metric intent · follow/reset · canonical recorder consumption · immutable Encounter provenance · no Profile contamination`);
+ console.log(`[AXIS 8.21 Flow step intent ${ENGINE}] PASS · Flow editor independent metric intent · follow/reset · current one-shot recorder consumption · immutable Encounter provenance · no Profile contamination`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}

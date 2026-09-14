@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 12,
-  "base_release": "8.25",
-  "release": "8.25.1",
+  "sequence": 13,
+  "base_release": "8.25.1",
+  "release": "8.26",
   "decision": "bump",
   "change_class": "product-ui",
-  "summary": "Advance AXIS to 8.25.1 to replace the 8.25 full-screen Set Lock presentation with a stage-native Inline Set Morph that cannot cover the timer or controls, preserves stable Active geometry, keeps post-fact bounded motion and haptic feedback, and leaves the existing v87 completeSet action plus all Session, Encounter, storage, recorder and Active ownership unchanged."
+  "summary": "Advance AXIS to 8.26 to make record-save presentation atomic, make ongoing Flow items enter the existing v82/v87 Active lifecycle immediately (with foreign Active pause/preserve coordination), add a bounded non-interactive kinetic set-completion numeral, and simplify duplicate Home surfaces and separators while preserving the single Session/Encounter/recorder/Active/storage ownership model."
 }

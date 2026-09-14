@@ -2,85 +2,80 @@
 
 ## Current release candidate and sealed baseline
 
-AXIS **8.25.1 — Inline Set Morph** is the current Web release candidate. It is **not Production-sealed yet**.
+AXIS **8.26 — Active Continuity** is the current Web release candidate. It is **not Production-sealed yet**.
 
 Candidate delivery:
 
-- release PR: **#151**
-- exact sealed starting `main`: `e28f0411288e42fc68e70a79a4180a06f7d18ee3`
-- bounded branch: `axis-8251-inline-set-morph`
-- version decision: **8.25 → 8.25.1 / bump / sequence 12 / product-ui**
+- release PR: **#152**
+- exact sealed starting `main`: `f4d3d02e1a7b655185806b2dbb3bface804d93cc`
+- bounded branch: `release/826-active-continuity`
+- version decision: **8.25.1 → 8.26 / bump / sequence 13 / product-ui**
 - architecture: `canonical-single-runtime`
 - deterministic build: `node build-release.mjs`
-- candidate graph: **87 deterministic top-level steps**; Inline Set Morph is chained after 8.25 inside the existing late 8.24.1 step, not a new release topology
+- candidate graph: **88 deterministic top-level steps**
 
-The last fully Production-sealed product/runtime is AXIS **8.25 — Set Lock Interaction**:
+The last fully Production-sealed product/runtime is AXIS **8.25.1 — Inline Set Morph**:
 
-- release PR: **#150**
-- runtime seal baseline SHA: `e28f0411288e42fc68e70a79a4180a06f7d18ee3`
-- canonical Vercel deployment `dpl_HjrgujidrdBxDo9n243jnaoi4w5k` — READY / Production / exact main SHA
-- Vercel Production gate `34747540811` — success
-- Vercel Public Production Alias Gate `34747540777` — success
-- EdgeOne deployment `dplc6t1yw7ho`, run `34747525787` — success
-- governed custom-domain run `34747525811` — exact parity plus Chromium and iPhone-like WebKit success
-- combined Vercel + EdgeOne Production commit status — success
+- release PR: **#151**
+- runtime seal baseline SHA: `f4d3d02e1a7b655185806b2dbb3bface804d93cc`
+- canonical Vercel deployment `dpl_DUuJiQoy8VnxRwcQLoGqCDckj1UX` — READY / Production / exact main SHA
+- Current Release Gate `34761564240` — Chromium + iPhone-like WebKit success
+- Deep Compatibility Gate `34761564210` — success
+- EdgeOne Production run `34761564206` — exact-prebuilt deploy + parity + Chromium/WebKit success
+- governed custom-domain run `34761564467` — exact parity + Chromium/WebKit success
+- combined Vercel + EdgeOne Production status — success
 
-The 8.25 SHA and provider records are the current **runtime seal baseline** and are not a self-referential requirement for the 8.25.1 candidate. They must not be relabeled as 8.25.1 evidence.
+Those provider records are the 8.25.1 runtime seal snapshot and must not be relabeled as 8.26 evidence.
 
 ## Product model to preserve
 
 Reality is authoritative. Objects describe reusable semantics; Encounters freeze actual facts; Flow describes intent only; Evidence is anchored to real Encounters; Evolution is derived read-only Reveal.
 
-Authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`. No 8.25.1 work may migrate, clear, duplicate or rewrite them.
+Authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`. No 8.26 work may migrate, clear, duplicate or rewrite them.
 
-## AXIS 8.25.1 Inline Set Morph
+## AXIS 8.26 Active Continuity
 
-The 8.25 completion boundary is factually correct, but its body-level fixed overlay competes with the Active interface and can visually cover information the user still needs. 8.25.1 corrects the presentation architecture rather than adding another layer.
+This release is a bounded response to four real iPhone field failures/quality gaps.
 
-The bounded interaction is:
+### 1. Atomic save presentation
 
-- the existing v87 `completeSet()` remains the only set-completion action and writes its existing facts first;
-- the established Active render boundary observes `done > prevDone`; only there does Inline Set Morph begin;
-- the existing `.axis821StageFact` row stays at the same height and temporarily becomes the completion surface;
-- its normal facts crossfade out while a compact `01 / 04 · 已完成` status lands in the same grid row;
-- the existing progress rail receives a short lock pulse, the primary button settles from its press, and the clock receives a very small micro-settle;
-- the fact row then returns to the canonical next progress state without changing stage height or introducing a second visual plane;
-- final-set completion uses `本動作完成` in the same bounded row;
-- the existing bounded two-beat haptic patterns remain on supported devices;
-- the old `#axis825SetLock` body-level overlay is explicitly hidden and its active trigger is retired;
-- `prefers-reduced-motion` uses a short in-place fade only.
+The established Encounter writer remains authoritative. After commit, the recorder may reset, but Home must not paint the short-lived state before v82 has decided whether canonical Active truth exists. 8.26 therefore waits for the existing v82 admission settlement signal and performs one Home render into the truthful next state; a bounded timeout is fail-safe only. Saving feedback stays local to the save button and undo feedback remains dock-safe. The old floating saving pill may not return.
 
-The completion moment may not use fixed/absolute positioning, independent z-index takeover, fullscreen interception, confetti, badge, synthetic score or a second completion button.
+### 2. Flow start that actually executes
 
-Ownership remains bounded: no new Session/Encounter/media writer, persistence namespace, database, network owner, AI owner, Active lifecycle owner, recorder or historical rewrite. Inline Set Morph must never call a training-state writer.
+`開始此項` now follows execution semantics instead of silently appearing inert. Ongoing modes (`sets`, `rounds`, `timed`, `hold`) enter the existing v82/v87 Active lifecycle immediately. One-shot modes (`single`, `complete`) remain canonical-recorder-owned because recording is their completion fact. If a foreign Active item exists, the existing switch path pauses/preserves it before starting the Flow item. Flow still owns intent only and may not become a second Active or Encounter writer.
 
-## Inherited product/runtime foundation
+### 3. Bounded kinetic set cue
 
-- `app.js` remains canonical Session / Encounter / recorder owner.
+The 8.25.1 inline set-progress morph remains Production-sealed factual presentation. After a real `completeSet()` commit, 8.26 may add one small `+1 組` kinetic numeral at the safe edge of the existing Active stage. It is non-layout, pointer-inert, reduced-motion-safe and must not intersect the clock, primary/secondary controls, Capture dock or bottom navigation. It cannot replace the canonical `第 n / total 組` truth or create another completion action.
+
+### 4. Quieter Home hierarchy
+
+Duplicate Active summary/compact metric surfaces and redundant full-width separators are retired. The same operational information remains available, but hierarchy is carried by typography, spacing and subtle tonal grouping rather than repeated cards and rules.
+
+## Inherited ownership
+
+- `app.js` remains canonical Session / Encounter / app-state owner.
 - v61 remains classic repeated weight+reps set writer when immutable schema permits.
 - v82/v87 remain Active lifecycle/action owners.
-- 8.21 whole-item Flow remains intent/orchestration only.
-- 8.22 Replay remains Production-sealed derived chronology.
-- 8.23 Replay → Media Evidence continuity is Production-sealed and inherited unchanged.
-- 8.24 Active Stage Tactile is Production-sealed and inherited.
-- 8.24.1 Dock Occlusion is Production-sealed and inherited; fixed dock containment must remain `none` at computed style and its occlusion curtain opaque.
-- 8.25 Set Lock factual timing and haptic boundary are Production-sealed; only its full-screen visual treatment is superseded.
-- v815 remains the existing Media Evidence read/presentation owner.
-- ordinary `single/complete` Objects remain one-shot outside a proven Flow whole-item.
-- applicable numeric optical-center tolerance remains ≤ 0.5 CSS px.
+- Flow remains intent/orchestration only.
+- 8.22 Replay, 8.23 Replay→Evidence, 8.24 Active Stage Tactile, 8.24.1 Dock Occlusion and 8.25.1 Inline Set Morph remain Production-sealed and inherited.
+- v815 remains Media Evidence read/presentation owner.
+- no new persistence namespace, database, network owner, AI owner, recorder, Session writer, Encounter writer or historical rewrite is allowed.
 
 ## Certification rule
 
-One exact PR #151 head must pass all inherited contracts plus the AXIS 8.25.1 Inline Set Morph physical smoke in Chromium and iPhone-like WebKit. Physical proof must verify the completion moment stays inside the fact-row bounds, does not intersect the timer or either Active control, keeps stage geometry stable, advances the canonical set truth exactly once and has no horizontal overflow.
+One exact PR #152 head must pass all inherited contracts plus 8.26 physical proof in Chromium and iPhone-like WebKit. The release-blocking proof must verify:
 
-After merge, the exact merged `main` SHA must pass:
+1. no committed-but-not-yet-Active save flash;
+2. ongoing Flow item starts exactly one existing Active while one-shot Flow stays canonical-recorder-owned;
+3. foreign Active pause/preserve works without losing its progress;
+4. set completion increments truth once and the kinetic cue remains non-overlapping, pointer-inert, reduced-motion-safe and geometry-neutral;
+5. Home hierarchy simplification does not remove required actions or truth;
+6. deterministic build remains 88 steps / one initial JS / zero dynamic runtime chunks;
+7. Version Authority, Repository/Production governance, Work Continuity, Current Release, Deep Compatibility and inherited gates all settle green.
 
-1. fixed Vercel Production exact manifest/artifact parity and Chromium current-release flow including Inline Set Morph;
-2. exact-prebuilt EdgeOne Production parity plus Chromium and iPhone-like WebKit current-release flow including Inline Set Morph;
-3. `https://axis.juele.fun` exact parity plus Chromium and iPhone-like WebKit Inline Set Morph proof;
-4. final combined Vercel + EdgeOne Production success with no unresolved main-push failure.
-
-Only then may AXIS 8.25.1 be described as Production-sealed.
+After merge, the exact merged `main` SHA must pass fixed Vercel Production, exact-prebuilt EdgeOne Production and `https://axis.juele.fun` parity plus Chromium/WebKit Production proof. Only then may AXIS 8.26 be described as Production-sealed.
 
 Backup/account expansion, Node/toolchain migration and unrelated native/iOS work remain deferred from this bounded stage.
 

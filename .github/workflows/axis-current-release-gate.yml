@@ -100,6 +100,9 @@ jobs:
       - name: 8.24.1 Dock Occlusion
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
         run: node scripts/axis-8241-dock-occlusion-smoke.mjs
+      - name: 8.26 Active Continuity
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: chromium }
+        run: node scripts/axis-826-active-continuity-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-chromium.log || true
@@ -188,6 +191,9 @@ jobs:
       - name: iPhone 8.24.1 Dock Occlusion
         env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
         run: node scripts/axis-8241-dock-occlusion-smoke.mjs
+      - name: iPhone 8.26 Active Continuity
+        env: { AXIS_URL: http://127.0.0.1:4173, AXIS_ENGINE: webkit }
+        run: node scripts/axis-826-active-continuity-smoke.mjs
       - name: Print server log on failure
         if: failure()
         run: cat /tmp/axis-current-webkit.log || true
