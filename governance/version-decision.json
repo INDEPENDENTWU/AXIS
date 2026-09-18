@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 13,
-  "base_release": "8.25.1",
-  "release": "8.26",
+  "sequence": 14,
+  "base_release": "8.26",
+  "release": "8.26.1",
   "decision": "bump",
-  "change_class": "product-ui",
-  "summary": "Advance AXIS to 8.26 to make record-save presentation atomic, make ongoing Flow items enter the existing v82/v87 Active lifecycle immediately (with foreign Active pause/preserve coordination), add a bounded non-interactive kinetic set-completion numeral, and simplify duplicate Home surfaces and separators while preserving the single Session/Encounter/recorder/Active/storage ownership model."
+  "change_class": "bug-fix",
+  "summary": "Advance AXIS from the fully certified 8.26 baseline to 8.26.1 for a bounded Active pause/rest presentation correction: restore breathing room above the existing rest state, make the existing rest label and timer clearly legible as one restrained status surface, preserve reduced-motion behavior, and keep the existing v87 pause/resume, Session, Encounter, Active, recorder and persistence ownership unchanged."
 }
