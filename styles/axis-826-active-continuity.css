@@ -52,6 +52,13 @@ html body #v81Undo.axis826Undo span{font-size:10.5px!important;color:var(--muted
 html body #v81Undo.axis826Undo button{min-height:28px!important;padding:0 8px!important}
 html body #saveScan.axis826SavePending{opacity:.72!important}
 
+/* Active pause stays owned by v87; 8.26.1 only gives the existing rest state
+   enough separation and presence to read as a deliberate mode change. */
+html body #v87Now.axis821ActiveStage .v87-restline{margin-top:12px!important;margin-left:auto!important;margin-right:auto!important;width:max-content;max-width:calc(100% - 28px);min-height:34px;display:flex!important;align-items:center;justify-content:center;gap:8px;padding:0 11px!important;border-radius:999px;background:rgba(115,124,255,.07);box-shadow:inset 0 0 0 1px rgba(145,153,255,.15);font-variant-numeric:tabular-nums;animation:axis826RestStateIn .24s cubic-bezier(.2,.8,.2,1) both}
+html body #v87Now.axis821ActiveStage .v87-restline small{margin:0!important;font-size:10px!important;line-height:1!important;font-weight:780!important;letter-spacing:.12em!important;color:var(--accent2)!important;opacity:.9}
+html body #v87Now.axis821ActiveStage .v87-restline strong{font-size:21px!important;line-height:1!important;font-weight:820!important;letter-spacing:-.025em;color:#eef0ff}
+
 @keyframes axis826SetCue{0%{opacity:0;transform:translate3d(-50%,10px,0) scale(.88);filter:blur(1.5px)}22%{opacity:1;transform:translate3d(-50%,-2px,0) scale(1.05);filter:blur(0)}58%{opacity:.96;transform:translate3d(-50%,-7px,0) scale(1);filter:blur(0)}100%{opacity:0;transform:translate3d(-50%,-15px,0) scale(.96);filter:blur(.5px)}}
-@media(max-width:380px){html body #v87Now.axis821ActiveStage .axis826SetCue{left:50%;right:auto;top:11px;transform-origin:50% 50%}html body #v87Now.axis821ActiveStage .axis826SetCue b{font-size:21px}}
-@media(prefers-reduced-motion:reduce){html body #v87Now.axis821ActiveStage .axis826SetCue.show{animation:axis826SetCueReduced .28s ease both!important;filter:none!important}@keyframes axis826SetCueReduced{0%{opacity:0}35%,75%{opacity:1}100%{opacity:0}}}
+@keyframes axis826RestStateIn{0%{opacity:.62;transform:translateY(-2px) scale(.985)}100%{opacity:1;transform:none}}
+@media(max-width:380px){html body #v87Now.axis821ActiveStage .axis826SetCue{left:50%;right:auto;top:11px;transform-origin:50% 50%}html body #v87Now.axis821ActiveStage .axis826SetCue b{font-size:21px}html body #v87Now.axis821ActiveStage .v87-restline{max-width:calc(100% - 20px);min-height:32px;padding:0 10px!important}html body #v87Now.axis821ActiveStage .v87-restline strong{font-size:20px!important}}
+@media(prefers-reduced-motion:reduce){html body #v87Now.axis821ActiveStage .axis826SetCue.show{animation:axis826SetCueReduced .28s ease both!important;filter:none!important}html body #v87Now.axis821ActiveStage .v87-restline{animation:none!important}@keyframes axis826SetCueReduced{0%{opacity:0}35%,75%{opacity:1}100%{opacity:0}}}
