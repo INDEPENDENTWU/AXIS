@@ -67,6 +67,7 @@ const STEPS=[
   'prepare-819-postcommit-lifecycle.mjs',
   'prepare-8241-dock-occlusion.mjs',
   'prepare-826-active-continuity.mjs',
+  'prepare-8261-active-rest-state.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
