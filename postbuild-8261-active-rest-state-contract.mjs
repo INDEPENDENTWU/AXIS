@@ -13,7 +13,8 @@ for(const owner of ['function toggle(id)','function completeSet(id,fromShake=fal
 if((runtime.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append owner duplicated');
 for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','state.active.events.push(','writeCore(','writeMeta(','fetch(','XMLHttpRequest','WebSocket('])if(css.includes(forbidden))fail(`presentation CSS acquired forbidden authority ${forbidden}`);
 info.gates=info.gates||{};
-Object.assign(info.gates,{activeRestStateHierarchy8261:true,activeRestStatePresentationOnly8261:true,activeRestStateReducedMotion8261:true});
+Object.assign(info.gates,{activeRestState8261:true,activeRestStateHierarchy8261:true,activeRestStatePresentationOnly8261:true,activeRestStateReducedMotion8261:true});
 info.axis8261={release:true,scope:'active-rest-state-corrective',presentation:{restSpacing:true,restStatusPill:true,reducedMotion:true},ownership:{sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,newPersistence:false,network:false,ai:false}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
+await import('./scripts/axis-8261-governance-compat.mjs');
 console.log('[AXIS 8.26.1 Active Rest State contract] PASS · rest mode is legible · v87 truth ownership preserved · no persistence/network authority added');
