@@ -1,0 +1,19 @@
+import fs from 'node:fs';
+
+const fail=m=>{throw new Error(`[AXIS 8.26.1 Active Rest State contract] ${m}`)};
+const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
+const info=JSON.parse(read('axis-build.json'));
+const runtime=read('axis-core.js');
+const css=read('styles/axis-826-active-continuity.css');
+if(info.version!=='8.26.1'||info.baseVersion!=='8.26.1')fail(`release identity ${info.version}/${info.baseVersion}`);
+if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
+for(const gate of ['activeContinuity826','atomicRecordVisualSettlement826','flowOngoingDirectStart826','existingTruthOwnersPreserved826'])if(info.gates?.[gate]!==true)fail(`inherited 8.26 gate missing ${gate}`);
+for(const marker of ['.v87-restline{margin-top:12px!important','background:rgba(115,124,255,.07)','axis826RestStateIn','.v87-restline{animation:none!important}'])if(!css.includes(marker))fail(`rest-state marker missing ${marker}`);
+for(const owner of ['function toggle(id)','function completeSet(id,fromShake=false)','function addSet(id)','function beginHold(id,e)'])if(!runtime.includes(owner))fail(`existing v87 owner missing ${owner}`);
+if((runtime.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append owner duplicated');
+for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','state.active.events.push(','writeCore(','writeMeta(','fetch(','XMLHttpRequest','WebSocket('])if(css.includes(forbidden))fail(`presentation CSS acquired forbidden authority ${forbidden}`);
+info.gates=info.gates||{};
+Object.assign(info.gates,{activeRestStateHierarchy8261:true,activeRestStatePresentationOnly8261:true,activeRestStateReducedMotion8261:true});
+info.axis8261={release:true,scope:'active-rest-state-corrective',presentation:{restSpacing:true,restStatusPill:true,reducedMotion:true},ownership:{sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,newPersistence:false,network:false,ai:false}};
+fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
+console.log('[AXIS 8.26.1 Active Rest State contract] PASS · rest mode is legible · v87 truth ownership preserved · no persistence/network authority added');
