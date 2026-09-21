@@ -29,7 +29,7 @@ AXIS **8.26 — Active Continuity** is the exact Production-sealed baseline for 
 - EdgeOne Production run `34805575432` — success
 - `axis.juele.fun` Production run `34805575434` — success
 
-Those records are the AXIS 8.26 seal snapshot. They remain historical evidence while 8.26.1 is a candidate.
+Those records are the AXIS 8.26 runtime seal baseline and durable provider-certification snapshot for 8.26.1. This is **not a self-referential requirement**: while 8.26.1 remains a candidate, its release documents must point back to the exact already-sealed 8.26 runtime rather than claiming that the candidate has certified itself. After merge, the new exact `main` SHA must earn a new Production seal through the governed provider chain.
 
 ## What 8.26.1 changes
 
