@@ -76,6 +76,16 @@ for(const f of candidates){let s=read(f),next=s;for(const [a,b] of pairs){const 
  const f='governance/owners.json',x=JSON.parse(read(f));x.baselineRelease=VERSION;write(f,JSON.stringify(x,null,2)+'\n');
 }
 
+/* v8710 has owned the explicit workout-duration threshold since 8.10.3. The
+   inherited 8.8.2 sound guard tracks that owner by current release identity;
+   advance only that existing exception to 8.26.1. set/item/rest cues remain
+   forbidden and this patch creates no sound owner or trigger. */
+{
+ const f='postbuild-882-contract.mjs';let s=read(f);
+ s=once(s,"const sessionDurationExtensionCurrent=sessionDurationExtension||['8.24','8.26'].includes(CURRENT_VERSION);","const sessionDurationExtensionCurrent=sessionDurationExtension||['8.24','8.26','8.26.1'].includes(CURRENT_VERSION);",'inherited v8710 duration-sound owner');
+ write(f,s);
+}
+
 /* Extend only the inheritance edges needed for the patch release. */
 {
  const f='postbuild-825-set-lock-contract.mjs';let s=read(f);
