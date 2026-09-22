@@ -57,7 +57,10 @@ The corrective candidate is 8.26.1. Historical release facts below remain immuta
 - AXIS 8.24 sealed main: `321647b9aaca783b7f6ba99ec66616941208c698`
 - AXIS 8.23 sealed main: `2418103c786f2d0865aece49d738e9ed9161ef55`
 - AXIS 8.21 Flow step execution-intent provenance: bounded branch `feat/821-flow-step-execution-intent`, exact certified base `396241c41b2f8eea80d45ca582352ea593c47036`; historical only, not an active branch or owner.
+- AXIS 8.21 Flow step recording-intent provenance: bounded branch `feat/821-flow-step-recording-intent`, exact certified base `b65bce78d48dab162c25c028602e0bbd10ce6d78`; historical only, not an active branch or owner.
 - AXIS 8.21 Active Home stage provenance — bounded delivery branch: `feat/821-active-home-stage`; exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`; historical only, not an active branch or owner.
+- AXIS 8.21 Training Report provenance — exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`; bounded delivery branch: `feat/821-report-pdf-export`; historical only, no current report or export authority.
+- AXIS 8.21 Share Card provenance — bounded delivery branch: `feat/821-report-share-card`; exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`; historical only, no current export authority.
 - completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`; completed Report PDF scope source-convergence PR: **#133**; Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`; historical only, no current build authority.
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - native foundation id: `axis-native-foundation-0`
