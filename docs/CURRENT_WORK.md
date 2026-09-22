@@ -58,6 +58,7 @@ The corrective candidate is 8.26.1. Historical release facts below remain immuta
 - AXIS 8.23 sealed main: `2418103c786f2d0865aece49d738e9ed9161ef55`
 - AXIS 8.21 Flow step execution-intent provenance: bounded branch `feat/821-flow-step-execution-intent`, exact certified base `396241c41b2f8eea80d45ca582352ea593c47036`; historical only, not an active branch or owner.
 - AXIS 8.21 Active Home stage provenance — bounded delivery branch: `feat/821-active-home-stage`; exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`; historical only, not an active branch or owner.
+- completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`; completed Report PDF scope source-convergence PR: **#133**; Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`; historical only, no current build authority.
 - governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - native foundation id: `axis-native-foundation-0`
 - native repository: `INDEPENDENTWU/AXIS-iOS`
