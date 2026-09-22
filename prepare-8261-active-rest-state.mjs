@@ -77,12 +77,19 @@ for(const f of candidates){let s=read(f),next=s;for(const [a,b] of pairs){const 
 }
 
 /* v8710 has owned the explicit workout-duration threshold since 8.10.3. The
-   inherited 8.8.2 sound guard tracks that owner by current release identity;
-   advance only that existing exception to 8.26.1. set/item/rest cues remain
-   forbidden and this patch creates no sound owner or trigger. */
+   inherited 8.8.2 sound guard is advanced to the current patch without assuming
+   which historical release identities earlier prepare stages have already
+   converged. This changes only the guard's accepted current identity; set/item/
+   rest cues remain forbidden and no runtime sound owner or trigger is added. */
 {
  const f='postbuild-882-contract.mjs';let s=read(f);
- s=once(s,"const sessionDurationExtensionCurrent=sessionDurationExtension||['8.24','8.26'].includes(CURRENT_VERSION);","const sessionDurationExtensionCurrent=sessionDurationExtension||['8.24','8.26','8.26.1'].includes(CURRENT_VERSION);",'inherited v8710 duration-sound owner');
+ const re=/const sessionDurationExtensionCurrent=sessionDurationExtension\|\|\[([^\]]*)\]\.includes\(CURRENT_VERSION\);/;
+ const m=s.match(re);if(!m)fail('inherited v8710 duration-sound guard shape drift');
+ if(!m[1].includes(`'${VERSION}'`)){
+  const members=m[1].trim(),next=`const sessionDurationExtensionCurrent=sessionDurationExtension||[${members}${members?',':''}'${VERSION}'].includes(CURRENT_VERSION);`;
+  s=s.replace(re,next);
+ }
+ if(!s.includes(`'${VERSION}'`))fail('inherited v8710 duration-sound current identity missing');
  write(f,s);
 }
 
