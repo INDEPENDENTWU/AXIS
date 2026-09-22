@@ -36,8 +36,18 @@ for(const [f,a,b,label] of [
  write(f,s);
 }
 
-/* Advance inherited current-release assertions without rewriting historical
-   capability names, prepare layers, or descriptive release evidence. */
+/* Preserve the inherited current-release contract family exactly as 8.26 did.
+   These files contain assertions whose literal current identity must advance as
+   one unit; historical capability contracts outside this allow-list stay fixed. */
+const inheritedCurrentIdentityFiles=[
+ 'postbuild-882-contract.mjs','postbuild-810-contract.mjs','postbuild-8101-contract.mjs','postbuild-8102-contract.mjs','postbuild-8103-contract.mjs','postbuild-891-contract.mjs','postbuild-811-contract.mjs','postbuild-812-contract.mjs','postbuild-813-live-route.mjs','postbuild-8123-contract.mjs','postbuild-8123-field-polish.mjs','postbuild-8124-contract.mjs','postbuild-8131-evolution-contract.mjs','postbuild-814-evolution-contract.mjs','postbuild-815-media-evidence-contract.mjs','postbuild-8151-regression-contract.mjs','postbuild-816-contract.mjs','postbuild-817-contract.mjs','postbuild-8171-source-first-media-contract.mjs',
+ 'scripts/axis-811-experience-smoke.mjs','scripts/axis-882-smoke.mjs','scripts/axis-8102-smoke.mjs','scripts/axis-8103-smoke.mjs','scripts/axis-813-live-route-smoke.mjs','scripts/axis-813-settings-convergence-smoke.mjs','scripts/axis-8122-settings-smoke.mjs','scripts/axis-8123-learning-simplify-smoke.mjs','scripts/axis-8123-field-polish-smoke.mjs','scripts/axis-8121-hotfix-smoke.mjs','scripts/axis-8123-equipment-gallery-picker-smoke.mjs','scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-polish-smoke.mjs','scripts/axis-8124-custom-equipment-smoke.mjs','scripts/axis-8125-smart-create-polish-smoke.mjs','scripts/axis-8131-evolution-smoke.mjs','scripts/axis-814-evolution-object-smoke.mjs','scripts/axis-815-media-evidence-smoke.mjs','scripts/axis-8151-evidence-swap-smoke.mjs','scripts/axis-8151-regression-seal-smoke.mjs','scripts/axis-816-capture-evidence-smoke.mjs','scripts/axis-8171-source-first-media-smoke.mjs','scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs','scripts/axis-current-release-contract.mjs','scripts/axis-runtime-foundation-contract.mjs','scripts/axis-deep-compatibility-contract.mjs'
+];
+let inheritedTouches=0;
+for(const f of inheritedCurrentIdentityFiles){let s=read(f),n=(s.match(/'8\.26'/g)||[]).length;if(!n)continue;inheritedTouches+=n;s=s.replaceAll(`'${FROM}'`,`'${VERSION}'`);write(f,s)}
+
+/* Advance the remaining structured current-release assertions without rewriting
+   historical capability names, prepare layers, or descriptive release evidence. */
 const pairs=[
  [`window.__AXIS_RELEASE__==='${FROM}'`,`window.__AXIS_RELEASE__==='${VERSION}'`],
  [`window.__AXIS_RELEASE__),'${FROM}'`,`window.__AXIS_RELEASE__),'${VERSION}'`],
@@ -76,21 +86,12 @@ for(const f of candidates){let s=read(f),next=s;for(const [a,b] of pairs){const 
  const f='governance/owners.json',x=JSON.parse(read(f));x.baselineRelease=VERSION;write(f,JSON.stringify(x,null,2)+'\n');
 }
 
-/* v8710 has owned the explicit workout-duration threshold since 8.10.3. The
-   inherited 8.8.2 sound guard is advanced to the current patch without assuming
-   which historical release identities earlier prepare stages have already
-   converged. This changes only the guard's accepted current identity; set/item/
-   rest cues remain forbidden and no runtime sound owner or trigger is added. */
+/* v8710 has owned the explicit workout-duration threshold since 8.10.3. This
+   guard only verifies the already-converged current identity and never changes
+   runtime sound ownership or adds a cue. */
 {
- const f='postbuild-882-contract.mjs';let s=read(f);
- const re=/const sessionDurationExtensionCurrent=sessionDurationExtension\|\|\[([^\]]*)\]\.includes\(CURRENT_VERSION\);/;
- const m=s.match(re);if(!m)fail('inherited v8710 duration-sound guard shape drift');
- if(!m[1].includes(`'${VERSION}'`)){
-  const members=m[1].trim(),next=`const sessionDurationExtensionCurrent=sessionDurationExtension||[${members}${members?',':''}'${VERSION}'].includes(CURRENT_VERSION);`;
-  s=s.replace(re,next);
- }
+ const f='postbuild-882-contract.mjs';const s=read(f);
  if(!s.includes(`'${VERSION}'`))fail('inherited v8710 duration-sound current identity missing');
- write(f,s);
 }
 
 /* Extend only the inheritance edges needed for the patch release. */
@@ -108,5 +109,5 @@ for(const f of candidates){let s=read(f),next=s;for(const [a,b] of pairs){const 
  if(!s.includes("postbuild-8261-active-rest-state-contract.mjs"))s+="\nif(inherited)await import('./postbuild-8261-active-rest-state-contract.mjs');\n";
  write(f,s);
 }
-if(identityTouches<8)fail(`public identity convergence suspiciously small: ${identityTouches}`);
-console.log(`[AXIS 8.26.1 Active Rest State] PASS · ${FROM} → ${VERSION} · presentation-only pause hierarchy · ${identityTouches} current identity assertion(s) advanced`);
+if(inheritedTouches+identityTouches<12)fail(`public identity convergence suspiciously small: ${inheritedTouches}+${identityTouches}`);
+console.log(`[AXIS 8.26.1 Active Rest State] PASS · ${FROM} → ${VERSION} · presentation-only pause hierarchy · ${inheritedTouches+identityTouches} current identity assertion(s) advanced`);
