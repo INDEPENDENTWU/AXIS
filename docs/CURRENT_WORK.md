@@ -56,7 +56,7 @@ After merge, the **exact merged main SHA** must independently complete fixed Ver
 
 ## Inherited fail-closed provenance
 
-Historical release facts remain immutable provenance and do not reactivate older branches or owners.
+Historical release facts remain immutable provenance and do not reactivate older branches or owners. The following Report-era markers are retained verbatim because inherited source contracts still use them as compatibility sentinels; they do not describe the current 8.26.2 delivery branch.
 
 - AXIS 8.26.1 sealed main product/runtime: `d187123dfdb2c0de0e5d202cf62bd6672586a8e7`; PR **#153**
 - AXIS 8.26 sealed main: `11e50c75efa032e7759f8047ef46d233c335bb66`; PR **#152**
@@ -65,6 +65,9 @@ Historical release facts remain immutable provenance and do not reactivate older
 - AXIS 8.24.1 sealed main: `d4b009c327f6fa9c4900eaa41d7195f10f6ed425`
 - AXIS 8.24 sealed main: `321647b9aaca783b7f6ba99ec66616941208c698`
 - AXIS 8.23 sealed main: `2418103c786f2d0865aece49d738e9ed9161ef55`
+- historical Report baseline sentinel — exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
+- historical Report delivery sentinel — bounded delivery branch: `feat/821-report-pdf-export`
+- historical Report governance sentinel — governed active branch: `main`
 - historical bounded Flow step execution-intent branch: `feat/821-flow-step-execution-intent`; exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
 - completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
 - completed Report PDF scope source-convergence PR: **#133**
