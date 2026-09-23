@@ -1,58 +1,80 @@
 # Current Release — AXIS 8.26.1
 
-**Status: corrective release candidate — Production certification pending**
+**Status: Production-certified — AXIS 8.26.1 Active Rest State**
 
-AXIS **8.26.1 — Active Rest State** is a bounded corrective release over the fully Production-sealed AXIS 8.26 runtime. It changes only how the existing v87 paused/rest state is presented: more breathing room above the rest indicator, a clearer grouped `休息 + 計時` state, restrained tonal separation, and reduced-motion-safe entry motion.
+AXIS **8.26.1 — Active Rest State** is the current Production-sealed Web release. The exact product/runtime authority is the merged `main` commit from release PR **#153**:
 
-## Exact candidate identity
+`d187123dfdb2c0de0e5d202cf62bd6672586a8e7`
 
+## Exact release identity
+
+- release: **AXIS 8.26.1 — Active Rest State**
 - release PR: **#153**
-- delivery branch: `fix/8261-active-rest-state`
-- exact sealed starting `main`: `11e50c75efa032e7759f8047ef46d233c335bb66`
-- version decision: **8.26 → 8.26.1 / bump / sequence 14 / bug-fix**
+- exact Production runtime seal SHA: `d187123dfdb2c0de0e5d202cf62bd6672586a8e7`
 - architecture: `canonical-single-runtime`
 - deterministic build: `node build-release.mjs`
-- candidate graph: **89 deterministic top-level steps**
-- topology target: **1 initial JavaScript request / 0 dynamic runtime chunks**
+- deterministic graph: **89 top-level steps**
+- canonical topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
+- product version decision: **8.26 → 8.26.1 / bump / sequence 14 / bug-fix**
+- Production-evidence reconciliation decision: **8.26.1 → 8.26.1 / confirm / sequence 15 / governance**
 
-## Last sealed runtime baseline
+The governance reconciliation that records this evidence is not a new product/runtime release. `productionRuntimeSha` remains the exact user-visible runtime SHA above and `latestDeploymentIsAuthority` remains false.
 
-AXIS **8.26 — Active Continuity** is the exact Production-sealed baseline for this candidate.
+## Production certification evidence
 
-- sealed `main`: `11e50c75efa032e7759f8047ef46d233c335bb66`
-- release PR: **#152**
-- Vercel deployment: `dpl_Ap3Mx4GXLSWmR4oMBUCBe2dvCH9M` — READY / Production / exact source SHA
-- Current Release Gate `34805575373` — success
-- Deep Compatibility Gate `34805575408` — success
-- Vercel Production Deployment Gate `34805721177` — success
-- Vercel Public Production Alias Gate `34805721197` — success
-- EdgeOne Production run `34805575432` — success
-- `axis.juele.fun` Production run `34805575434` — success
+### Vercel golden Production
 
-Those records are the AXIS 8.26 runtime seal baseline and durable provider-certification snapshot for 8.26.1. This is **not a self-referential requirement**: while 8.26.1 remains a candidate, its release documents must point back to the exact already-sealed 8.26 runtime rather than claiming that the candidate has certified itself. After merge, the new exact `main` SHA must earn a new Production seal through the governed provider chain.
+- fixed Production URL: `https://axis-five-puce.vercel.app`
+- deployment: `dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9`
+- source/runtime SHA: `d187123dfdb2c0de0e5d202cf62bd6672586a8e7`
+- state: **READY / production**
+- Current Release Gate `35873718900` — **success**
+- Deep Compatibility Gate `35873718880` — **success**
+- Production Deployment Gate `35873771687` — **success**
+- Public Production Alias Gate `35873771699` — **success**
+- exact manifest / immutable asset parity: **success**
+- current-release Chromium proof: **success**
+- iPhone-like WebKit release compatibility proof: **success**
+
+### EdgeOne exact-prebuilt mirror
+
+- Production URL: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- project: `axisfitness-mirror` / `makers-bxiu1vmyd0ba`
+- deployment: `dpgow7txb8og`
+- verification run `35873718809` — **success**
+- verification artifact `10756197062`
+- artifact SHA-256: `04d6923b737ac5b4a1ed584b7e552534aac93bd9b5d01aa87f237a2bb392fbac`
+- exact Vercel-golden artifact / API parity: **success**
+- Chromium current-release flow: **success**
+- iPhone-like WebKit current-release flow: **success**
+
+### Governed custom domain
+
+- URL: `https://axis.juele.fun`
+- verification run `35873719011` — **success**
+- verification artifact `10757291650`
+- artifact SHA-256: `fb6fc74ccb26ec8961f8180c459365d1e6b917f3e664be578755373662bf3fb5`
+- exact artifact parity: **success**
+- Chromium current-release flow: **success**
+- iPhone-like WebKit current-release flow: **success**
+
+### Final provider status
+
+For exact runtime SHA `d187123dfdb2c0de0e5d202cf62bd6672586a8e7`:
+
+- Vercel: **success**
+- EdgeOne Production: **success**
+- governed custom domain: **success**
+- unresolved release-blocking runtime certification failure: **none**
 
 ## What 8.26.1 changes
 
-The paused/rest state previously sat too close to the upper boundary and read like loose text rather than a distinct execution state. 8.26.1 keeps the same v87 pause/resume truth and timer, but presents the rest line as one restrained state capsule with explicit vertical breathing room and low-density accent treatment.
+The existing v87 paused/rest state has deliberate upper breathing room and presents `休息 + 計時` as one restrained execution state rather than loose text. The treatment remains non-interactive, bounded and reduced-motion-safe.
 
-This patch does **not** change pause/resume semantics, elapsed/rest timing, set completion, Flow, Session, Encounter, recorder, persistence, media, network or AI ownership. It does not add another Active owner.
+This release does **not** change pause/resume semantics, rest-time calculation, set completion, Flow, Session, Encounter, recorder, persistence, media, network or AI ownership. It does not add another Active owner.
 
 ## Inherited 8.26 behavior
 
-AXIS 8.26 remains authoritative for atomic record-save settlement, ongoing Flow direct Active admission, one-shot recorder ownership, foreign Active pause/preserve coordination, the post-fact kinetic set cue and the quieter Home hierarchy. AXIS 8.26.1 inherits all of those behaviors unchanged.
+AXIS 8.26 remains inherited and authoritative for atomic record-save settlement, ongoing Flow direct Active admission, one-shot canonical recorder ownership, foreign Active pause/preserve coordination, the post-fact kinetic set cue and the quieter Home hierarchy.
 
-## Release-blocking proof
-
-The exact PR #153 head must prove:
-
-1. deterministic build identity is 8.26.1 with 89 top-level steps and canonical single-runtime topology;
-2. the rest state is visibly separated from the upper edge and reads as one grouped state;
-3. pause/resume and timer truth remain v87-owned and unchanged;
-4. no horizontal overflow or Active-stage geometry regression is introduced;
-5. reduced-motion disables the rest-state translation animation;
-6. inherited 8.26 Active Continuity smoke remains green in Chromium and iPhone-like WebKit;
-7. Version Authority, Repository/Production governance, Work Continuity, Current Release and Deep Compatibility gates all pass on one exact PR head.
-
-After merge, the exact merged SHA must pass the existing Vercel → EdgeOne → `axis.juele.fun` Production chain before 8.26.1 is called Production-sealed.
-
-Protected stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`.
+Protected stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`. No user data migration, deletion or rewrite is part of this Production-evidence reconciliation.
