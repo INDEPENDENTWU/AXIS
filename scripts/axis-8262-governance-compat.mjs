@@ -2,7 +2,9 @@ import fs from 'node:fs';
 
 const fail=m=>{throw new Error(`[AXIS 8.26.2 governance compat] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
+const write=(f,s)=>fs.writeFileSync(f,s);
 const json=f=>{try{return JSON.parse(read(f))}catch(e){fail(`invalid ${f}: ${e.message}`)}};
+const replaceOnce=(s,from,to,label)=>{if(s.includes(to))return s;const n=s.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return s.replace(from,to)};
 const SEALED_SHA='d187123dfdb2c0de0e5d202cf62bd6672586a8e7';
 const project=json('governance/project-state.json'),decision=json('governance/version-decision.json'),owners=json('governance/owners.json');
 if(project?.product?.productionRelease!=='8.26.2'||project?.product?.releaseStatus!=='candidate')fail('8.26.2 must remain candidate before exact merged-main certification');
@@ -27,4 +29,40 @@ if(!css.includes('#v87Now.axis821ActiveStage .v87Rest{margin-top:12px!important'
 if(!prepare.includes("const FROM='8.26.1',VERSION='8.26.2'"))fail('8.26.2 release transition drift');
 if(!build.includes("'prepare-8262-active-rest-selector.mjs'"))fail('8.26.2 prepare is not deterministic build authority');
 if(!post.includes('activeRestSelectorBinding8262:true'))fail('8.26.2 postbuild gate marker missing');
+if(!read('.github/workflows/axis-8262-selector-binding-gate.yml').includes('axis-8262-active-rest-selector-smoke.mjs'))fail('8.26.2 dual-engine physical gate missing');
+
+/* Repository and Production contracts are intentionally source-stable across
+   sealed releases; candidate governance converges their current-release view
+   in the CI/build workspace before those contracts execute. */
+{
+ const f='scripts/axis-repository-contract.mjs';let s=read(f);
+ const old="const expectedSteps=['8.24.1','8.25'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;";
+ const next="const expectedSteps=CURRENT==='8.26.2'?90:CURRENT==='8.26.1'?89:CURRENT==='8.26'?88:['8.24.1','8.25','8.25.1'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;";
+ s=replaceOnce(s,old,next,'repository deterministic step family');
+ for(const [from,to] of [
+  ["['8.22','8.23','8.24','8.24.1','8.25']","['8.22','8.23','8.24','8.24.1','8.25','8.25.1','8.26','8.26.1','8.26.2']"],
+  ["['8.23','8.24','8.24.1','8.25']","['8.23','8.24','8.24.1','8.25','8.25.1','8.26','8.26.1','8.26.2']"],
+  ["['8.24','8.24.1','8.25']","['8.24','8.24.1','8.25','8.25.1','8.26','8.26.1','8.26.2']"],
+  ["['8.24.1','8.25']","['8.24.1','8.25','8.25.1','8.26','8.26.1','8.26.2']"]
+ ])if(s.includes(from))s=s.replaceAll(from,to);
+ write(f,s);
+}
+{
+ const f='scripts/axis-production-governance-contract.mjs';let s=read(f);
+ const map="if(CURRENT==='8.25'){sourceOwner='prepare-825-set-lock.mjs';sourceCurrent='8.25';sourceFrom='8.24.1'}";
+ const mapNext=map+"\nif(CURRENT==='8.25.1'){sourceOwner='prepare-8251-inline-set-morph.mjs';sourceCurrent='8.25.1';sourceFrom='8.25'}\nif(CURRENT==='8.26'){sourceOwner='prepare-826-active-continuity.mjs';sourceCurrent='8.26';sourceFrom='8.25.1'}\nif(CURRENT==='8.26.1'){sourceOwner='prepare-8261-active-rest-state.mjs';sourceCurrent='8.26.1';sourceFrom='8.26'}\nif(CURRENT==='8.26.2'){sourceOwner='prepare-8262-active-rest-selector.mjs';sourceCurrent='8.26.2';sourceFrom='8.26.1'}";
+ s=replaceOnce(s,map,mapNext,'Production release owner map');
+ const pivot="}else if(CURRENT==='8.23'){";
+ const block=`}else if(CURRENT==='8.26.2'){
+  if(!candidate||STATUS!=='candidate'||SEALED!=='8.26.1')fail('8.26.2 must be candidate over sealed 8.26.1');
+  if(RUNTIME_SHA!=='${SEALED_SHA}'||SEALED_PR!==153)fail('8.26.2 candidate lost exact 8.26.1 seal baseline');
+  if(project?.production?.candidateRelease!=='8.26.2'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.26.2 Production candidate state drift');
+  if(CANDIDATE_PR!==155||project?.engineering?.pullRequest!==155||project?.engineering?.pullRequestDraft!==true)fail('8.26.2 candidate PR state must identify draft PR #155');
+  if(project?.engineering?.activeMilestone!=='AXIS 8.26.2 — Active Rest Selector Binding'||project?.engineering?.deliveryBranch!=='fix/8262-active-rest-selector')fail('8.26.2 milestone/delivery identity drift');
+  if(!(decision?.sequence===18&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.2'&&decision?.decision==='bump'&&decision?.change_class==='bug-fix'))fail('8.26.2 version decision drift');
+  const b=project?.engineering?.activeRestSelector;if(b?.status!=='8.26.2-release-candidate'||b?.canonicalSelector!=='.v87Rest'||b?.selectorBound!==true)fail('8.26.2 selector capability governance drift');
+${pivot}`;
+ s=replaceOnce(s,pivot,block,'8.26.2 Production candidate block');
+ write(f,s);
+}
 console.log('[AXIS 8.26.2 governance compat] PASS · exact PR #155 candidate · sealed 8.26.1 provider evidence preserved · canonical v87Rest presentation-only boundary');
