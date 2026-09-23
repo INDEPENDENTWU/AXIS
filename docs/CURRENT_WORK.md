@@ -1,16 +1,18 @@
 # Current Work
 
-## Production baseline
+## Production baseline at start of this work
 
 AXIS **8.26.1 — Active Rest State** remains the fully Production-sealed Web runtime while **AXIS 8.26.2 — Active Rest Selector Binding** is the current Release candidate.
 
 - canonical repository: `INDEPENDENTWU/AXIS`
 - exact sealed product/runtime SHA: `d187123dfdb2c0de0e5d202cf62bd6672586a8e7`
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - sealed release PR: **#153**
 - current candidate PR: **#155**
 - bounded delivery branch: `fix/8262-active-rest-selector`
-- governed active branch: `main`
+- governed target branch: `main`
 - architecture: `canonical-single-runtime`
+- deterministic candidate build graph: **90** top-level steps
 - Vercel sealed deployment: `dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9` — READY / Production / exact 8.26.1 product/runtime SHA
 - sealed Current Release Gate `35873718900` — success
 - sealed Deep Compatibility Gate `35873718880` — success
@@ -25,7 +27,7 @@ AXIS **8.26.1 — Active Rest State** remains the fully Production-sealed Web ru
 
 **Chat history is not authoritative project memory.** Repository contracts, exact commits, built artifacts and provider certification are authoritative.
 
-## Active milestone
+## Active change
 
 **AXIS 8.26.2 — Active Rest Selector Binding** · Release candidate · PR **#155**.
 
@@ -36,11 +38,21 @@ The bounded real-use UX audit across Active / Flow / Evolution found one concret
 The 8.26.2 scope is deliberately narrow:
 
 1. **Bind the existing presentation to reality.** The rest-state treatment targets the canonical `.v87Rest` node.
-2. **Prove it physically.** Chromium and iPhone-like WebKit must verify the actual computed spacing, pill/tonal grouping, transition and reduced-motion behavior on that node.
-3. **Preserve truth ownership.** Existing v87 pause/resume and timer behavior remain authoritative; the physical proof pauses/resumes the item and confirms the same `axis_v8_meta` owner changes state.
-4. **No scope expansion.** No Session, Encounter, Flow, recorder, set-completion, storage, media, network, AI or architecture owner is introduced.
+2. **Preserve truth ownership.** Existing v87 pause/resume and timer behavior remain authoritative. No second Active, Session, Encounter, Flow, recorder or persistence owner is introduced.
+3. **Keep the release corrective.** No set-completion, media, network, AI or architecture behavior is expanded.
+4. **Preserve the sealed baseline until certification.** The 8.26.1 runtime SHA and provider evidence stay authoritative until the exact merged 8.26.2 artifact completes Production certification.
 
-AXIS 8.26.1 remains the sealed baseline until the exact PR #155 head passes the full PR gate family and the exact merged main artifact completes Vercel → EdgeOne → `axis.juele.fun` certification.
+## Validation for this work
+
+The exact PR #155 head must pass the governed repository/version/deep/current-release gate family before merge. Physical proof must run against the actual canonical `.v87Rest` node in Chromium and iPhone-like WebKit and verify:
+
+- the intended spacing, grouped tonal surface, transition and responsive geometry are actually applied;
+- `prefers-reduced-motion` disables the rest-state transition;
+- the obsolete `.v87-restline` node is not required in the live DOM;
+- pausing and resuming still mutate the existing `axis_v8_meta` activity truth through the established v87 owner;
+- no horizontal overflow, duplicate action surface or new persistence/factual ownership is introduced.
+
+After merge, the **exact merged main SHA** must independently complete fixed Vercel Production → exact-prebuilt EdgeOne Production → `axis.juele.fun` parity, with the governed Production browser proofs. Code existence, Preview deployment or a later unrelated deployment is not sufficient.
 
 ## Inherited fail-closed provenance
 
@@ -61,6 +73,8 @@ Historical release facts remain immutable provenance and do not reactivate older
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts retained: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`
 
-## Completion condition
+## Next planned stage
 
-Do not call 8.26.2 complete because code exists. Completion requires one exact candidate head, green repository/version/deep/current-release/selector gates, merge to `main`, fixed Vercel Production from that exact merged SHA, exact-prebuilt EdgeOne parity, `axis.juele.fun` parity, and Chromium + iPhone-like WebKit physical proof on Production. Only then may governance be sealed and the next product slice begin.
+Finish **AXIS 8.26.2 — Active Rest Selector Binding** completely before opening another product slice: one exact green candidate head → ready PR #155 → merge to `main` → exact merged-main Vercel Production → exact-prebuilt EdgeOne Production → `axis.juele.fun` parity → Chromium/iPhone-like WebKit Production proof → governance seal.
+
+Do **not** start another architecture branch, parallel factual owner or unrelated product expansion while this corrective release is unresolved.
