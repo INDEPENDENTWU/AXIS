@@ -68,6 +68,7 @@ const STEPS=[
   'prepare-8241-dock-occlusion.mjs',
   'prepare-826-active-continuity.mjs',
   'prepare-8261-active-rest-state.mjs',
+  'prepare-8262-active-rest-selector.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
