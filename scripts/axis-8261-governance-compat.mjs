@@ -26,4 +26,5 @@ const continuityOwner=owners.owners?.find(x=>x.capability==='active-continuity-8
 if(continuityOwner?.status!=='presentation-and-coordination-production-sealed'||continuityOwner?.storage!=='none')fail('8.26 sealed owner registry drift');
 if(restOwner?.status!=='presentation-only-production-sealed'||restOwner?.storage!=='none')fail('8.26.1 sealed rest owner registry drift');
 for(const path of ['prepare-826-active-continuity.mjs','postbuild-826-active-continuity-contract.mjs','scripts/axis-826-active-continuity-smoke.mjs','styles/axis-826-active-continuity.css','prepare-8261-active-rest-state.mjs','postbuild-8261-active-rest-state-contract.mjs','prepare-8262-active-rest-selector.mjs','postbuild-8262-active-rest-selector-contract.mjs'])if(!fs.existsSync(path))fail(`release surface missing ${path}`);
+if(candidate8262)await import('./axis-8262-governance-compat.mjs');
 console.log(`[AXIS 8.26.1 governance compat] PASS · exact 8.26.1 sealed baseline preserved inside ${candidate8262?'8.26.2 candidate':'sealed source'} · owner baseline ${ownerBaseline}`);
