@@ -6,6 +6,7 @@ AXIS **8.26.1 — Active Rest State** is the fully Production-sealed Web runtime
 
 - canonical repository: `INDEPENDENTWU/AXIS`
 - exact sealed product/runtime SHA: `d187123dfdb2c0de0e5d202cf62bd6672586a8e7`
+- governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`
 - release PR: **#153**
 - completed delivery branch: `fix/8261-active-rest-state`
 - governed active branch: `main`
@@ -58,6 +59,9 @@ Historical release facts remain immutable provenance and do not reactivate older
 - AXIS 8.24 sealed main: `321647b9aaca783b7f6ba99ec66616941208c698`
 - AXIS 8.23 sealed main: `2418103c786f2d0865aece49d738e9ed9161ef55`
 - historical bounded Flow step execution-intent branch: `feat/821-flow-step-execution-intent`; exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
+- completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`
+- completed Report PDF scope source-convergence PR: **#133**
+- Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`
 - native foundation id: `axis-native-foundation-0`
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts retained: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`

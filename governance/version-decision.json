@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 16,
+  "sequence": 17,
   "base_release": "8.26.1",
   "release": "8.26.1",
   "decision": "confirm",
   "change_class": "governance",
-  "summary": "Confirm AXIS 8.26.1 at the same product version while restoring immutable AXIS 8.21 Flow execution provenance required by the historical fail-closed contract. No runtime behavior, build topology, storage, factual owner or sealed product/runtime SHA changes."
+  "summary": "Confirm AXIS 8.26.1 at the same product version while restoring immutable AXIS 8.21 Report PDF source-convergence provenance required by the historical fail-closed contract. No runtime behavior, build topology, storage, factual owner or sealed product/runtime SHA changes."
 }
