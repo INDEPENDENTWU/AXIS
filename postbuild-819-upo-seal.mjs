@@ -6,7 +6,7 @@ const fail=m=>{throw new Error(`[AXIS 8.19 UPO final-runtime seal] ${m}`)};
 if(!fs.existsSync(FILE))fail(`missing ${FILE}`);
 let src=fs.readFileSync(FILE,'utf8');
 const build=fs.existsSync(MANIFEST)?JSON.parse(fs.readFileSync(MANIFEST,'utf8')):{};
-const atomic826=['8.26','8.26.1'].includes(build.version);
+const atomic826=['8.26','8.26.1','8.26.2'].includes(build.version);
 
 for(const token of [
   'axis818Eq(state.selectedEq)',
