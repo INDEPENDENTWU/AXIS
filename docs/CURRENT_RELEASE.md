@@ -24,6 +24,8 @@ It does **not** change pause/resume semantics, elapsed/rest timing, set completi
 
 ## Sealed baseline certification
 
+The certification model always keeps an exact **runtime seal baseline** separate from later candidate/governance activity. The candidate version is **not a self-referential requirement** for inherited sealed evidence: provider evidence remains attached to the exact already-certified runtime until the new merged-main artifact earns its own certification.
+
 Until the exact 8.26.2 merged-main artifact completes certification, all provider evidence below remains explicitly **8.26.1** evidence:
 
 - Vercel deployment: `dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9` — READY / Production / exact sealed source SHA
