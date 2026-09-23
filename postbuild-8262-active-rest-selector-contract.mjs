@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+
+const fail=m=>{throw new Error(`[AXIS 8.26.2 Active Rest Selector contract] ${m}`)};
+const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
+const info=JSON.parse(read('axis-build.json'));
+const runtime=read('axis-core.js');
+const css=read('styles/axis-826-active-continuity.css');
+if(info.version!=='8.26.2'||info.baseVersion!=='8.26.2')fail(`release identity ${info.version}/${info.baseVersion}`);
+if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
+for(const gate of ['activeContinuity826','activeRestState8261','existingTruthOwnersPreserved826'])if(info.gates?.[gate]!==true)fail(`inherited gate missing ${gate}`);
+if(!runtime.includes('class="v87Rest" id="v87Rest"'))fail('canonical Active rest node is not v87Rest');
+for(const marker of ['#v87Now.axis821ActiveStage .v87Rest{margin-top:12px!important','background:rgba(115,124,255,.07)','axis826RestStateIn','#v87Now.axis821ActiveStage .v87Rest{animation:none!important}'])if(!css.includes(marker))fail(`live selector marker missing ${marker}`);
+for(const owner of ['function toggle(id)','function completeSet(id,fromShake=false)','function addSet(id)','function beginHold(id,e)'])if(!runtime.includes(owner))fail(`existing v87 owner missing ${owner}`);
+if((runtime.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append owner duplicated');
+for(const forbidden of ['localStorage.setItem','sessionStorage.setItem','indexedDB.open','state.active.events.push(','writeCore(','writeMeta(','fetch(','XMLHttpRequest','WebSocket('])if(css.includes(forbidden))fail(`presentation CSS acquired forbidden authority ${forbidden}`);
+info.gates=info.gates||{};
+Object.assign(info.gates,{activeRestSelectorBinding8262:true,activeRestCanonicalNode8262:true,activeRestPresentationOnly8262:true,activeRestReducedMotion8262:true});
+info.axis8262={release:true,scope:'active-rest-selector-binding',finding:'8.26.1 presentation selector did not match canonical v87Rest node',presentation:{canonicalSelector:'.v87Rest',restSpacing:true,restStatusPill:true,reducedMotion:true},ownership:{sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,newPersistence:false,network:false,ai:false}};
+fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
+await import('./scripts/axis-8262-governance-compat.mjs');
+console.log('[AXIS 8.26.2 Active Rest Selector contract] PASS · canonical .v87Rest binding is live · inherited Active truth preserved · no factual authority added');
