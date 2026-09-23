@@ -10,8 +10,8 @@ const replaceAllExact=(s,from,to,label)=>{if(s.includes(to)&&!s.includes(from))r
 
 const SEALED_SHA='d187123dfdb2c0de0e5d202cf62bd6672586a8e7';
 const project=json('governance/project-state.json'),decision=json('governance/version-decision.json'),owners=json('governance/owners.json');
-const exactConfirmation=decision?.sequence===15&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.1'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-if(!exactConfirmation)fail('current version authority must be 8.26.1 -> 8.26.1 / confirm / sequence 15 / governance');
+const exactConfirmation=Number.isInteger(decision?.sequence)&&decision.sequence>=15&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.1'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
+if(!exactConfirmation)fail('current version authority must be a sequenced 8.26.1 -> 8.26.1 / confirm / governance decision');
 const productDecision=project?.engineering?.versionDecision;
 if(!(productDecision?.sequence===14&&productDecision?.baseRelease==='8.26'&&productDecision?.release==='8.26.1'&&productDecision?.decision==='bump'&&productDecision?.changeClass==='bug-fix'))fail('sealed product version provenance must remain 8.26 -> 8.26.1 / bump / sequence 14 / bug-fix');
 if(project?.product?.productionRelease!=='8.26.1'||project?.product?.releaseStatus!=='production-certified')fail('8.26.1 sealed project state drift');
@@ -91,7 +91,7 @@ for(const [path,label,want] of workflows){const s=read(path);if(count(s,'node sc
   if(project?.production?.candidateRelease!=='8.26.1'||project?.production?.candidateStatus!=='production-sealed')fail('8.26.1 Production status drift');
   if(CANDIDATE_PR!==153||project?.engineering?.pullRequest!==153||project?.engineering?.pullRequestDraft!==false)fail('8.26.1 completed PR identity drift');
   if(project?.engineering?.activeMilestone!=='AXIS 8.26.1 — Active Rest State'||project?.engineering?.deliveryBranch!=='fix/8261-active-rest-state')fail('8.26.1 milestone/delivery identity drift');
-  if(!(decision?.sequence===15&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.1'&&decision?.decision==='confirm'&&decision?.change_class==='governance'))fail('8.26.1 same-version governance confirmation drift');
+  if(!(Number.isInteger(decision?.sequence)&&decision.sequence>=15&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.1'&&decision?.decision==='confirm'&&decision?.change_class==='governance'))fail('8.26.1 sequenced same-version governance confirmation drift');
   const productDecision=project?.engineering?.versionDecision;if(!(productDecision?.sequence===14&&productDecision?.baseRelease==='8.26'&&productDecision?.release==='8.26.1'&&productDecision?.decision==='bump'&&productDecision?.changeClass==='bug-fix'))fail('8.26.1 product version provenance drift');
   if(!String(project?.production?.evidenceSemantics||'').includes('fully sealed AXIS 8.26.1'))fail('8.26.1 sealed evidence semantics drift');
   const p=project?.production||{};if(p.vercel?.deploymentId!=='dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9'||Number(p.vercel?.currentReleaseGateRunId)!==35873718900||Number(p.vercel?.deepCompatibilityGateRunId)!==35873718880||Number(p.vercel?.productionGateRunId)!==35873771687||Number(p.vercel?.publicAliasGateRunId)!==35873771699)fail('8.26.1 Vercel seal evidence drift');if(Number(p.edgeOne?.verificationRunId)!==35873718809||Number(p.customDomain?.verificationRunId)!==35873719011)fail('8.26.1 EdgeOne/custom-domain seal evidence drift');
@@ -103,4 +103,4 @@ for(const [path,label,want] of workflows){const s=read(path);if(count(s,'node sc
  write(f,s);
 }
 
-console.log('[AXIS 8.26.1 governance compat] PASS · exact d187123 Product/runtime seal · sequence 15 same-version governance confirmation · Vercel / EdgeOne / axis.juele.fun certification recorded · ownership assertions remain fail-closed');
+console.log(`[AXIS 8.26.1 governance compat] PASS · exact d187123 Product/runtime seal · same-version governance confirmation sequence ${decision.sequence} · Vercel / EdgeOne / axis.juele.fun certification recorded · ownership assertions remain fail-closed`);

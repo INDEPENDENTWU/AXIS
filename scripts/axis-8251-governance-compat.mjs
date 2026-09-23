@@ -20,13 +20,13 @@ const decision=json('governance/version-decision.json');
 const owners=json('governance/owners.json');
 
 const current8261Confirmation=
-  decision?.sequence===15&&
+  Number.isInteger(decision?.sequence)&&decision.sequence>=15&&
   decision?.base_release==='8.26.1'&&
   decision?.release==='8.26.1'&&
   decision?.decision==='confirm'&&
   decision?.change_class==='governance';
 
-if(!current8261Confirmation)fail('current governance must be exact same-version 8.26.1 confirmation / sequence 15 / governance');
+if(!current8261Confirmation)fail('current governance must be a sequenced same-version 8.26.1 confirmation / governance');
 const productDecision=project?.engineering?.versionDecision;
 if(!(productDecision?.sequence===14&&productDecision?.baseRelease==='8.26'&&productDecision?.release==='8.26.1'&&productDecision?.decision==='bump'&&productDecision?.changeClass==='bug-fix'))fail('sealed 8.26 -> 8.26.1 product version decision provenance drift');
 if(project?.product?.productionRelease!=='8.26.1'||project?.product?.releaseStatus!=='production-certified')fail('sealed 8.26.1 project state drift');
@@ -71,4 +71,4 @@ for(const path of [
   'scripts/axis-8261-governance-compat.mjs'
 ])if(!fs.existsSync(path))fail(`inherited/current release surface missing ${path}`);
 
-console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside exact Production-sealed 8.26.1 ${ownerBaseline==='8.25.1'?'build replay':'source governance'} · sequence 15 same-version governance confirmation accepted`);
+console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside exact Production-sealed 8.26.1 ${ownerBaseline==='8.25.1'?'build replay':'source governance'} · same-version governance confirmation sequence ${decision.sequence} accepted`);

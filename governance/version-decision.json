@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 15,
+  "sequence": 16,
   "base_release": "8.26.1",
   "release": "8.26.1",
   "decision": "confirm",
   "change_class": "governance",
-  "summary": "Confirm AXIS 8.26.1 at the same product version after recording its completed Production certification evidence. This governance-only reconciliation preserves the sequence 14 product decision that introduced 8.26.1 from 8.26, changes no runtime behavior, build topology, storage or factual owner, and keeps d187123dfdb2c0de0e5d202cf62bd6672586a8e7 as the exact sealed product/runtime authority."
+  "summary": "Confirm AXIS 8.26.1 at the same product version while restoring immutable AXIS 8.21 Flow execution provenance required by the historical fail-closed contract. No runtime behavior, build topology, storage, factual owner or sealed product/runtime SHA changes."
 }

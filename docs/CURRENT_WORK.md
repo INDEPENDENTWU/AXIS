@@ -29,7 +29,7 @@ AXIS **8.26.1 — Active Rest State** is the fully Production-sealed Web runtime
 
 **AXIS 8.26.1 — Active Rest State** is complete and Production-sealed.
 
-Version decision: **8.26 → 8.26.1 / bump / sequence 14 / bug-fix**.
+Product version decision: **8.26 → 8.26.1 / bump / sequence 14 / bug-fix**. Post-certification repository evidence uses same-version governance confirmations; these confirmations never replace the sequence 14 product decision or the sealed product/runtime SHA.
 
 This slice corrected one observed Active-state presentation problem without creating another truth owner:
 
@@ -57,6 +57,7 @@ Historical release facts remain immutable provenance and do not reactivate older
 - AXIS 8.24.1 sealed main: `d4b009c327f6fa9c4900eaa41d7195f10f6ed425`
 - AXIS 8.24 sealed main: `321647b9aaca783b7f6ba99ec66616941208c698`
 - AXIS 8.23 sealed main: `2418103c786f2d0865aece49d738e9ed9161ef55`
+- historical bounded Flow step execution-intent branch: `feat/821-flow-step-execution-intent`; exact certified historical Flow execution base: `396241c41b2f8eea80d45ca582352ea593c47036`
 - native foundation id: `axis-native-foundation-0`
 - native repository: `INDEPENDENTWU/AXIS-iOS`
 - portable contracts retained: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`
