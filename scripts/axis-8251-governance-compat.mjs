@@ -10,9 +10,13 @@ const json=f=>{try{return JSON.parse(read(f))}catch(e){fail(`invalid ${f}: ${e.m
  * AXIS 8.25.1 is already Production-sealed. During a current 8.26.1 build this
  * script is reached from prepare-8251-inline-set-morph.mjs before the 8.26 and
  * 8.26.1 prepare layers run. It must therefore prove the inherited 8.25.1
- * boundary and then stop. It must not rewrite current repository/production
- * governance: the exact current release is converged and verified later by
- * scripts/axis-8261-governance-compat.mjs from the 8.26.1 postbuild contract.
+ * boundary and then stop. Deep Compatibility also runs this guard directly
+ * against repository source, where the governed owner registry is already at
+ * 8.26.1. Both states are exact and intentional: 8.25.1 is the transient replay
+ * baseline; 8.26.1 is the current source baseline. Neither path may rewrite
+ * current repository/production governance: the exact current release is
+ * converged and verified later by scripts/axis-8261-governance-compat.mjs from
+ * the 8.26.1 postbuild contract.
  */
 const project=json('governance/project-state.json');
 const decision=json('governance/version-decision.json');
@@ -30,9 +34,15 @@ if(project?.product?.productionRelease!=='8.26.1'||project?.product?.releaseStat
 if(project?.product?.lastSealedRelease!=='8.26'||project?.product?.productionRuntimeSha!=='11e50c75efa032e7759f8047ef46d233c335bb66')fail('8.26.1 must preserve exact sealed 8.26 baseline');
 if(project?.product?.productionPullRequest!==152||project?.product?.candidatePullRequest!==153)fail('8.26/8.26.1 PR identity drift');
 
-/* prepare-8251 has just replayed its historical layer, so its temporary owner
- * baseline must be 8.25.1 at this exact point in the deterministic build. */
-if(owners?.baselineRelease!=='8.25.1')fail(`8.25.1 replay owner baseline drift ${owners?.baselineRelease}`);
+const ownerBaseline=owners?.baselineRelease;
+if(ownerBaseline!=='8.25.1'&&ownerBaseline!=='8.26.1')fail(`8.25.1 replay/current owner baseline drift ${ownerBaseline}`);
+if(ownerBaseline==='8.26.1'){
+  const continuityOwner=owners.owners?.find(x=>x.capability==='active-continuity-826');
+  const restOwner=owners.owners?.find(x=>x.capability==='active-rest-state-8261');
+  if(continuityOwner?.status!=='presentation-and-coordination-production-sealed'||continuityOwner?.storage!=='none')fail('8.26 current source lost sealed Active Continuity owner');
+  if(restOwner?.status!=='presentation-only-release-candidate'||restOwner?.storage!=='none')fail('8.26.1 current source rest owner drift');
+}
+
 const morph=project?.engineering?.activeInlineSetMorph;
 for(const key of ['postFactOnly','inStageFactRow','stableStageGeometry','nonOverlapping','railConfirmation','buttonReturn','clockSettle','boundedHaptic','reducedMotionSafe'])if(morph?.[key]!==true)fail(`Inline Set Morph sealed capability missing ${key}`);
 if(morph?.status!=='production-sealed-8.25.1-inherited'||morph?.fullScreenOverlay!==false||morph?.pointerEvents!==false)fail('8.25.1 sealed presentation boundary drift');
@@ -62,4 +72,4 @@ for(const path of [
   'scripts/axis-8261-governance-compat.mjs'
 ])if(!fs.existsSync(path))fail(`inherited/current release surface missing ${path}`);
 
-console.log('[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary replayed inside exact 8.26.1 build · current governance intentionally delegated to 8.26.1 guard');
+console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside exact 8.26.1 ${ownerBaseline==='8.25.1'?'build replay':'source governance'} · current governance intentionally delegated to 8.26.1 guard`);
