@@ -5,6 +5,7 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const write=(f,s)=>fs.writeFileSync(f,s);
 const json=f=>{try{return JSON.parse(read(f))}catch(e){fail(`invalid ${f}: ${e.message}`)}};
 const replaceOnce=(s,from,to,label)=>{if(s.includes(to))return s;const n=s.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return s.replace(from,to)};
+const count=(s,n)=>s.split(n).length-1;
 const SEALED_SHA='d187123dfdb2c0de0e5d202cf62bd6672586a8e7';
 const project=json('governance/project-state.json'),decision=json('governance/version-decision.json'),owners=json('governance/owners.json');
 if(project?.product?.productionRelease!=='8.26.2'||project?.product?.releaseStatus!=='candidate')fail('8.26.2 must remain candidate before exact merged-main certification');
@@ -29,7 +30,13 @@ if(!css.includes('#v87Now.axis821ActiveStage .v87Rest{margin-top:12px!important'
 if(!prepare.includes("const FROM='8.26.1',VERSION='8.26.2'"))fail('8.26.2 release transition drift');
 if(!build.includes("'prepare-8262-active-rest-selector.mjs'"))fail('8.26.2 prepare is not deterministic build authority');
 if(!post.includes('activeRestSelectorBinding8262:true'))fail('8.26.2 postbuild gate marker missing');
-if(!read('.github/workflows/axis-8262-selector-binding-gate.yml').includes('axis-8262-active-rest-selector-smoke.mjs'))fail('8.26.2 dual-engine physical gate missing');
+const selectorSmoke='node scripts/axis-8262-active-rest-selector-smoke.mjs';
+for(const [path,want,label] of [
+  ['.github/workflows/axis-current-release-gate.yml',2,'Current Release'],
+  ['.github/workflows/axis-edgeone-production-mirror.yml',2,'EdgeOne Production'],
+  ['.github/workflows/axis-custom-domain-production.yml',2,'axis.juele.fun'],
+  ['.github/workflows/axis-production-deployment-gate.yml',1,'fixed Vercel Production']
+])if(count(read(path),selectorSmoke)!==want)fail(`${label} must run 8.26.2 selector proof ${want} time(s)`);
 
 /* Repository and Production contracts are intentionally source-stable across
    sealed releases; candidate governance converges their current-release view
@@ -65,4 +72,4 @@ ${pivot}`;
  s=replaceOnce(s,pivot,block,'8.26.2 Production candidate block');
  write(f,s);
 }
-console.log('[AXIS 8.26.2 governance compat] PASS · exact PR #155 candidate · sealed 8.26.1 provider evidence preserved · canonical v87Rest presentation-only boundary');
+console.log('[AXIS 8.26.2 governance compat] PASS · exact PR #155 candidate · sealed 8.26.1 provider evidence preserved · selector proof integrated into governed release/Production gates');
