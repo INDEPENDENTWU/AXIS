@@ -19,7 +19,7 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_ACTIVE_RUNTIME__?.owner==='v87',undefined,{timeout:15000});
  const release=await page.evaluate(()=>window.__AXIS_RELEASE__);
- assert.ok(['8.25.1','8.26'].includes(release),`Inline Set Morph proof supports sealed 8.25.1 and direct successor 8.26, got ${release}`);
+ assert.ok(['8.25.1','8.26','8.26.1'].includes(release),`Inline Set Morph proof supports sealed 8.25.1 and inherited successors 8.26/8.26.1, got ${release}`);
  await page.waitForFunction(()=>document.querySelector('#v87Now.axis821ActiveStage.show')&&document.querySelector('#axis8251InlineSetMorphStyle'),undefined,{timeout:6000});
  const before=await page.evaluate(()=>{const host=document.querySelector('#v87Now'),progress=document.querySelector('#axis821StageProgressText');return{h:host.getBoundingClientRect().height,progress:progress?.textContent?.trim(),progressRect:progress?.getBoundingClientRect().toJSON?.()||null,oldDisplay:getComputedStyle(document.querySelector('#axis825SetLock')||document.body).display}});
  assert.equal(before.progress,'第 1 / 4 组');

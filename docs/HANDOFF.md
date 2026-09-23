@@ -2,81 +2,70 @@
 
 ## Current release candidate and sealed baseline
 
-AXIS **8.26 — Active Continuity** is the current Web release candidate. It is **not Production-sealed yet**.
+AXIS **8.26.1 — Active Rest State** is the current bounded corrective Web release candidate. AXIS **8.26 — Active Continuity** is the fully Production-sealed baseline.
 
 Candidate delivery:
 
-- release PR: **#152**
-- exact sealed starting `main`: `f4d3d02e1a7b655185806b2dbb3bface804d93cc`
-- bounded branch: `release/826-active-continuity`
-- version decision: **8.25.1 → 8.26 / bump / sequence 13 / product-ui**
+- release PR: **#153**
+- exact sealed starting `main`: `11e50c75efa032e7759f8047ef46d233c335bb66`
+- bounded branch: `fix/8261-active-rest-state`
+- version decision: **8.26 → 8.26.1 / bump / sequence 14 / bug-fix**
 - architecture: `canonical-single-runtime`
 - deterministic build: `node build-release.mjs`
-- candidate graph: **88 deterministic top-level steps**
+- candidate graph: **89 deterministic top-level steps**
 
-The last fully Production-sealed product/runtime is AXIS **8.25.1 — Inline Set Morph**:
+The exact AXIS 8.26 Production seal inherited by this candidate is:
 
-- release PR: **#151**
-- runtime seal baseline SHA: `f4d3d02e1a7b655185806b2dbb3bface804d93cc`
-- canonical Vercel deployment `dpl_DUuJiQoy8VnxRwcQLoGqCDckj1UX` — READY / Production / exact main SHA
-- Current Release Gate `34761564240` — Chromium + iPhone-like WebKit success
-- Deep Compatibility Gate `34761564210` — success
-- EdgeOne Production run `34761564206` — exact-prebuilt deploy + parity + Chromium/WebKit success
-- governed custom-domain run `34761564467` — exact parity + Chromium/WebKit success
-- combined Vercel + EdgeOne Production status — success
+- release PR: **#152**
+- runtime seal baseline SHA: `11e50c75efa032e7759f8047ef46d233c335bb66`
+- canonical Vercel deployment `dpl_Ap3Mx4GXLSWmR4oMBUCBe2dvCH9M` — READY / Production / exact main SHA
+- Current Release Gate `34805575373` — success
+- Deep Compatibility Gate `34805575408` — success
+- Vercel Production Deployment Gate `34805721177` — success
+- Vercel Public Production Alias Gate `34805721197` — success
+- EdgeOne Production run `34805575432` — success
+- governed custom-domain run `34805575434` — success
 
-Those provider records are the 8.25.1 runtime seal snapshot and must not be relabeled as 8.26 evidence.
+Those provider records are the 8.26 runtime seal snapshot and must not be relabeled as 8.26.1 evidence.
 
 ## Product model to preserve
 
 Reality is authoritative. Objects describe reusable semantics; Encounters freeze actual facts; Flow describes intent only; Evidence is anchored to real Encounters; Evolution is derived read-only Reveal.
 
-Authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`. No 8.26 work may migrate, clear, duplicate or rewrite them.
+Authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`. No 8.26.1 work may migrate, clear, duplicate or rewrite them.
 
-## AXIS 8.26 Active Continuity
+## AXIS 8.26.1 Active Rest State
 
-This release is a bounded response to four real iPhone field failures/quality gaps.
+This corrective release addresses one real Active-state presentation defect: the paused/rest state sits too close to the upper boundary and reads as loose text instead of a deliberate execution state.
 
-### 1. Atomic save presentation
+### Presentation correction
 
-The established Encounter writer remains authoritative. After commit, the recorder may reset, but Home must not paint the short-lived state before v82 has decided whether canonical Active truth exists. 8.26 therefore waits for the existing v82 admission settlement signal and performs one Home render into the truthful next state; a bounded timeout is fail-safe only. Saving feedback stays local to the save button and undo feedback remains dock-safe. The old floating saving pill may not return.
+The existing v87 paused/rest line receives deliberate upper breathing room and becomes one restrained `休息 + 計時` state capsule with low-density accent tone. It stays within the current Active stage and does not create another card, modal, overlay or action surface.
 
-### 2. Flow start that actually executes
+A short entry transition is allowed only as bounded presentation feedback. Under `prefers-reduced-motion`, the translation animation is disabled.
 
-`開始此項` now follows execution semantics instead of silently appearing inert. Ongoing modes (`sets`, `rounds`, `timed`, `hold`) enter the existing v82/v87 Active lifecycle immediately. One-shot modes (`single`, `complete`) remain canonical-recorder-owned because recording is their completion fact. If a foreign Active item exists, the existing switch path pauses/preserves it before starting the Flow item. Flow still owns intent only and may not become a second Active or Encounter writer.
+### Truth boundary
 
-### 3. Bounded kinetic set cue
+The existing v87 pause/resume state and timer remain authoritative. 8.26.1 does not change how pause starts, how resume works, how rest time is calculated, how sets complete, how Flow advances, or how Session/Encounter facts are stored.
 
-The 8.25.1 inline set-progress morph remains Production-sealed factual presentation. After a real `completeSet()` commit, 8.26 may add one small `+1 組` kinetic numeral at the safe edge of the existing Active stage. It is non-layout, pointer-inert, reduced-motion-safe and must not intersect the clock, primary/secondary controls, Capture dock or bottom navigation. It cannot replace the canonical `第 n / total 組` truth or create another completion action.
+No new persistence namespace, database, Session writer, Encounter writer, recorder, Active owner, network owner or AI owner is introduced.
 
-### 4. Quieter Home hierarchy
+## Inherited 8.26 behavior
 
-Duplicate Active summary/compact metric surfaces and redundant full-width separators are retired. The same operational information remains available, but hierarchy is carried by typography, spacing and subtle tonal grouping rather than repeated cards and rules.
-
-## Inherited ownership
-
-- `app.js` remains canonical Session / Encounter / app-state owner.
-- v61 remains classic repeated weight+reps set writer when immutable schema permits.
-- v82/v87 remain Active lifecycle/action owners.
-- Flow remains intent/orchestration only.
-- 8.22 Replay, 8.23 Replay→Evidence, 8.24 Active Stage Tactile, 8.24.1 Dock Occlusion and 8.25.1 Inline Set Morph remain Production-sealed and inherited.
-- v815 remains Media Evidence read/presentation owner.
-- no new persistence namespace, database, network owner, AI owner, recorder, Session writer, Encounter writer or historical rewrite is allowed.
+AXIS 8.26 is Production-sealed and remains authoritative for atomic save settlement, ongoing Flow direct Active admission, one-shot canonical recorder semantics, foreign Active pause/preserve coordination, the post-fact kinetic set cue and the quieter Home hierarchy. AXIS 8.26.1 inherits these capabilities without re-owning them.
 
 ## Certification rule
 
-One exact PR #152 head must pass all inherited contracts plus 8.26 physical proof in Chromium and iPhone-like WebKit. The release-blocking proof must verify:
+One exact PR #153 head must pass all inherited contracts plus the 8.26.1 physical proof in Chromium and iPhone-like WebKit. The release-blocking proof must verify:
 
-1. no committed-but-not-yet-Active save flash;
-2. ongoing Flow item starts exactly one existing Active while one-shot Flow stays canonical-recorder-owned;
-3. foreign Active pause/preserve works without losing its progress;
-4. set completion increments truth once and the kinetic cue remains non-overlapping, pointer-inert, reduced-motion-safe and geometry-neutral;
-5. Home hierarchy simplification does not remove required actions or truth;
-6. deterministic build remains 88 steps / one initial JS / zero dynamic runtime chunks;
+1. deterministic build identity is 8.26.1 with 89 top-level steps, one initial JS and zero dynamic runtime chunks;
+2. pause reaches the established rest state and the rest line has deliberate upper clearance and grouped visual hierarchy;
+3. pause/resume and timer truth remain unchanged and v87-owned;
+4. no viewport overflow, unsafe control overlap or Active-stage geometry regression is introduced;
+5. reduced-motion disables the rest-state translation animation;
+6. inherited 8.26 Active Continuity physical proof remains green;
 7. Version Authority, Repository/Production governance, Work Continuity, Current Release, Deep Compatibility and inherited gates all settle green.
 
-After merge, the exact merged `main` SHA must pass fixed Vercel Production, exact-prebuilt EdgeOne Production and `https://axis.juele.fun` parity plus Chromium/WebKit Production proof. Only then may AXIS 8.26 be described as Production-sealed.
+After merge, the exact merged `main` SHA must pass fixed Vercel Production, exact-prebuilt EdgeOne Production and `https://axis.juele.fun` parity/behavior proof. Only then may AXIS 8.26.1 be described as Production-sealed.
 
 Backup/account expansion, Node/toolchain migration and unrelated native/iOS work remain deferred from this bounded stage.
-
-Authoritative resume order: `governance/project-state.json` → `governance/version-decision.json` → this handoff → `docs/CURRENT_RELEASE.md` → `docs/CURRENT_WORK.md` → owners/contracts/tests → exact Production evidence.
