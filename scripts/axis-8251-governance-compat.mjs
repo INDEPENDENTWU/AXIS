@@ -19,14 +19,16 @@ const project=json('governance/project-state.json');
 const decision=json('governance/version-decision.json');
 const owners=json('governance/owners.json');
 
-const current8261=
-  decision?.sequence===14&&
-  decision?.base_release==='8.26'&&
+const current8261Confirmation=
+  decision?.sequence===15&&
+  decision?.base_release==='8.26.1'&&
   decision?.release==='8.26.1'&&
-  decision?.decision==='bump'&&
-  decision?.change_class==='bug-fix';
+  decision?.decision==='confirm'&&
+  decision?.change_class==='governance';
 
-if(!current8261)fail('current release must be exact governed successor 8.26 -> 8.26.1');
+if(!current8261Confirmation)fail('current governance must be exact same-version 8.26.1 confirmation / sequence 15 / governance');
+const productDecision=project?.engineering?.versionDecision;
+if(!(productDecision?.sequence===14&&productDecision?.baseRelease==='8.26'&&productDecision?.release==='8.26.1'&&productDecision?.decision==='bump'&&productDecision?.changeClass==='bug-fix'))fail('sealed 8.26 -> 8.26.1 product version decision provenance drift');
 if(project?.product?.productionRelease!=='8.26.1'||project?.product?.releaseStatus!=='production-certified')fail('sealed 8.26.1 project state drift');
 if(project?.product?.lastSealedRelease!=='8.26.1'||project?.product?.productionRuntimeSha!=='d187123dfdb2c0de0e5d202cf62bd6672586a8e7')fail('8.26.1 exact Production seal drift');
 if(project?.product?.productionPullRequest!==153||project?.product?.candidatePullRequest!==153)fail('8.26.1 PR identity drift');
@@ -69,4 +71,4 @@ for(const path of [
   'scripts/axis-8261-governance-compat.mjs'
 ])if(!fs.existsSync(path))fail(`inherited/current release surface missing ${path}`);
 
-console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside exact Production-sealed 8.26.1 ${ownerBaseline==='8.25.1'?'build replay':'source governance'} · current governance delegated to 8.26.1 guard`);
+console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside exact Production-sealed 8.26.1 ${ownerBaseline==='8.25.1'?'build replay':'source governance'} · sequence 15 same-version governance confirmation accepted`);
