@@ -56,7 +56,7 @@ After merge, the **exact merged main SHA** must independently complete fixed Ver
 
 ## Inherited fail-closed provenance
 
-Historical release facts remain immutable provenance and do not reactivate older branches or owners. The following Report-era markers are retained verbatim because inherited source contracts still use them as compatibility sentinels; they do not describe the current 8.26.2 delivery branch.
+Historical release facts remain immutable provenance and do not reactivate older branches or owners. The following Report-era and Active/Flow sentinels are retained verbatim because inherited source contracts still use them as compatibility sentinels; they do not describe the current 8.26.2 delivery branch.
 
 - AXIS 8.26.1 sealed main product/runtime: `d187123dfdb2c0de0e5d202cf62bd6672586a8e7`; PR **#153**
 - AXIS 8.26 sealed main: `11e50c75efa032e7759f8047ef46d233c335bb66`; PR **#152**
@@ -65,6 +65,9 @@ Historical release facts remain immutable provenance and do not reactivate older
 - AXIS 8.24.1 sealed main: `d4b009c327f6fa9c4900eaa41d7195f10f6ed425`
 - AXIS 8.24 sealed main: `321647b9aaca783b7f6ba99ec66616941208c698`
 - AXIS 8.23 sealed main: `2418103c786f2d0865aece49d738e9ed9161ef55`
+- historical Active Home stage sentinel — bounded delivery branch: `feat/821-active-home-stage`; exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`
+- historical Flow step recording intent sentinel — bounded delivery branch: `feat/821-flow-step-recording-intent`; exact certified base main SHA: `b65bce78d48dab162c25c028602e0bbd10ce6d78`
+- historical Report Share Card sentinel — bounded delivery branch: `feat/821-report-share-card`; exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`
 - historical Report baseline sentinel — exact merged `main` baseline: `b6b236f8c7096f8dc93c2fba94e08d618c611d01`
 - historical Report delivery sentinel — bounded delivery branch: `feat/821-report-pdf-export`
 - historical Report governance sentinel — governed active branch: `main`
