@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 18,
-  "base_release": "8.26.1",
+  "sequence": 19,
+  "base_release": "8.26.2",
   "release": "8.26.2",
-  "decision": "bump",
-  "change_class": "bug-fix",
-  "summary": "AXIS 8.26.2 binds the already-designed Active rest-state presentation to the canonical v87Rest node after the real-use audit found the 8.26.1 selector did not match the shipped Active Home markup. Pause/resume truth, timers, Session/Encounter, Flow, recorder, storage, network and AI ownership remain unchanged."
+  "decision": "confirm",
+  "change_class": "governance",
+  "summary": "Confirm AXIS 8.26.2 at the same product version after exact merged-main Vercel, EdgeOne and axis.juele.fun Production certification. This reconciliation records the sealed runtime SHA and provider evidence only; it does not change runtime behavior, storage, ownership, build topology or product semantics."
 }
