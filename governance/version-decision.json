@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 17,
+  "sequence": 18,
   "base_release": "8.26.1",
-  "release": "8.26.1",
-  "decision": "confirm",
-  "change_class": "governance",
-  "summary": "Confirm AXIS 8.26.1 at the same product version while restoring immutable AXIS 8.21 Report PDF source-convergence provenance required by the historical fail-closed contract. No runtime behavior, build topology, storage, factual owner or sealed product/runtime SHA changes."
+  "release": "8.26.2",
+  "decision": "bump",
+  "change_class": "bug-fix",
+  "summary": "AXIS 8.26.2 binds the already-designed Active rest-state presentation to the canonical v87Rest node after the real-use audit found the 8.26.1 selector did not match the shipped Active Home markup. Pause/resume truth, timers, Session/Encounter, Flow, recorder, storage, network and AI ownership remain unchanged."
 }
