@@ -4,33 +4,33 @@
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
     "productionRelease": "8.26.2",
-    "releaseStatus": "candidate",
-    "lastSealedRelease": "8.26.1",
-    "productionRuntimeSha": "d187123dfdb2c0de0e5d202cf62bd6672586a8e7",
-    "productionPullRequest": 153,
+    "releaseStatus": "production-certified",
+    "lastSealedRelease": "8.26.2",
+    "productionRuntimeSha": "7662d857fd5d442e3a7f775a430f0d4d8479bece",
+    "productionPullRequest": 155,
     "candidatePullRequest": 155,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
-    "sealedRelease": "8.26.1",
-    "sealedAt": "2026-09-23",
+    "sealedRelease": "8.26.2",
+    "sealedAt": "2026-09-24",
     "candidateRelease": "8.26.2",
-    "candidateStatus": "pending-exact-head-and-merged-main-certification",
+    "candidateStatus": "production-sealed",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "Provider IDs, source SHA and workflow evidence below remain the fully sealed AXIS 8.26.1 product/runtime certification snapshot for exact merged main d187123dfdb2c0de0e5d202cf62bd6672586a8e7 while AXIS 8.26.2 is a bounded corrective candidate. They must not be relabeled as 8.26.2 evidence until the exact merged 8.26.2 main artifact completes Vercel, EdgeOne and axis.juele.fun certification.",
+    "evidenceSemantics": "Provider IDs, source SHA and workflow evidence below are the fully sealed AXIS 8.26.2 product/runtime certification snapshot for exact merged main 7662d857fd5d442e3a7f775a430f0d4d8479bece. Later governance-only commits or provider redeploys do not replace this product-runtime seal unless a new governed product release earns a new exact certification chain.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
-      "deploymentId": "dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9",
-      "sourceSha": "d187123dfdb2c0de0e5d202cf62bd6672586a8e7",
+      "deploymentId": "dpl_FM52hUPwo7Nf3CThK2n145QLP3Zq",
+      "sourceSha": "7662d857fd5d442e3a7f775a430f0d4d8479bece",
       "state": "READY",
       "target": "production",
       "publicUrl": "https://axis-five-puce.vercel.app",
-      "currentReleaseGateRunId": 35873718900,
-      "deepCompatibilityGateRunId": 35873718880,
-      "productionGateRunId": 35873771687,
-      "publicAliasGateRunId": 35873771699,
+      "currentReleaseGateRunId": 35963269939,
+      "deepCompatibilityGateRunId": 35963269792,
+      "productionGateRunId": 35963296512,
+      "publicAliasGateRunId": 35963296503,
       "exactManifestParity": "success",
       "chromiumProductionFlow": "success",
       "webkitCurrentReleaseFlow": "success"
@@ -39,8 +39,8 @@
       "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
       "projectId": "makers-bxiu1vmyd0ba",
       "policy": "exact-prebuilt-artifact-mirror",
-      "verificationRunId": 35873718809,
-      "sourceSha": "d187123dfdb2c0de0e5d202cf62bd6672586a8e7",
+      "verificationRunId": 35963269663,
+      "sourceSha": "7662d857fd5d442e3a7f775a430f0d4d8479bece",
       "packageContract": "success",
       "deployProduction": "success",
       "boundedFixedDomainConvergence": "success",
@@ -50,29 +50,29 @@
     },
     "customDomain": {
       "publicUrl": "https://axis.juele.fun",
-      "verificationRunId": 35873719011,
-      "sourceSha": "d187123dfdb2c0de0e5d202cf62bd6672586a8e7",
+      "verificationRunId": 35963269856,
+      "sourceSha": "7662d857fd5d442e3a7f775a430f0d4d8479bece",
       "exactParity": "success",
       "chromiumProductionFlow": "success",
       "webkitProductionFlow": "success"
     },
     "combinedStatus": {
-      "sourceSha": "d187123dfdb2c0de0e5d202cf62bd6672586a8e7",
+      "sourceSha": "7662d857fd5d442e3a7f775a430f0d4d8479bece",
       "vercel": "success",
       "edgeOneProduction": "success"
     }
   },
   "engineering": {
     "activeMilestone": "AXIS 8.26.2 — Active Rest Selector Binding",
-    "activePhase": "Corrective release candidate — bind the existing rest-state presentation to the canonical v87Rest node without changing Active truth",
+    "activePhase": "Production-sealed corrective release — canonical v87Rest presentation binding certified without changing Active truth",
     "activeBranch": "main",
     "deliveryBranch": "fix/8262-active-rest-selector",
     "pullRequest": 155,
-    "pullRequestDraft": true,
+    "pullRequestDraft": false,
     "baselineRelease": "8.26.2",
-    "baselineRuntimeSha": "d187123dfdb2c0de0e5d202cf62bd6672586a8e7",
-    "lastSealedRelease": "8.26.1",
-    "lastSealedRuntimeSha": "d187123dfdb2c0de0e5d202cf62bd6672586a8e7",
+    "baselineRuntimeSha": "7662d857fd5d442e3a7f775a430f0d4d8479bece",
+    "lastSealedRelease": "8.26.2",
+    "lastSealedRuntimeSha": "7662d857fd5d442e3a7f775a430f0d4d8479bece",
     "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
     "phase1ResolverProofSha": "2892d8807e6d2688cb366019d64c6e9b573fcb66",
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
@@ -291,8 +291,8 @@
       "productionProofRequired": ["Vercel", "EdgeOne", "axis.juele.fun"]
     },
     "activeRestSelector": {
-      "status": "8.26.2-release-candidate",
-      "presentationOwner": "existing v87Rest node + axis-826 presentation CSS",
+      "status": "production-sealed-8.26.2",
+      "presentationOwner": "canonical v87Rest node + final axis821 Active-stage presentation owner",
       "auditFinding": "8.26.1 rest presentation targeted non-existent v87-restline instead of canonical v87Rest",
       "canonicalSelector": ".v87Rest",
       "selectorBound": true,
@@ -320,7 +320,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Finish AXIS 8.26.2 Active Rest Selector Binding on exact PR #155 head, prove the canonical v87Rest node receives the intended rest-state presentation in Chromium and iPhone WebKit without changing v87 truth, then certify the exact merged main artifact on Vercel, EdgeOne and axis.juele.fun before beginning another product slice."
+    "nextSlice": "Run one bounded real-use UX audit across sealed AXIS 8.26.2 Active, Flow and Evolution; select only the single highest-value concrete user problem that survives the audit before governing another product version."
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
@@ -345,8 +345,8 @@
       "AXIS 8.25 Set Lock fact boundary and haptic signature remain Production-sealed; its full-screen presentation remains superseded.",
       "AXIS 8.25.1 Inline Set Morph is Production-sealed and remains the factual set-completion presentation boundary.",
       "AXIS 8.26 Active Continuity is Production-sealed and preserves one Session/Encounter/Active/recorder ownership model.",
-      "AXIS 8.26.1 Active Rest State is Production-sealed and inherited; it changes paused/rest presentation only and does not change pause/resume semantics, timers, history, persistence, Flow or factual owners.",
-      "AXIS 8.26.2 may only correct the selector binding from the non-existent v87-restline target to the canonical v87Rest node; it may not alter pause/resume, timers, actions or factual ownership."
+      "AXIS 8.26.1 Active Rest State remains Production-sealed historical provenance and does not change pause/resume semantics, timers, history, persistence, Flow or factual owners.",
+      "AXIS 8.26.2 Active Rest Selector Binding is Production-sealed; it presents existing v87 pause/rest truth through canonical v87Rest and the final Active-stage presentation owner without altering actions or factual ownership."
     ]
   },
   "crossPlatform": {
@@ -362,7 +362,7 @@
       {"id": "en", "name": "English", "requireProfessionalTranslation": true}
     ],
     "themes": ["system", "light", "dark"],
-    "status": "AXIS 8.26.2 is a bounded corrective candidate over Production-sealed 8.26.1; it changes only the live selector binding for existing rest-state presentation and changes no localization/theme authority."
+    "status": "AXIS 8.26.2 is Production-sealed; it changes only the canonical rest-state selector/final presentation binding and changes no localization/theme authority."
   },
   "authorityOrder": [
     "governance/project-state.json",
@@ -381,12 +381,12 @@
   ],
   "notes": [
     "Chat history is supplementary context, never authoritative project state.",
-    "AXIS 8.26.1 remains Production-sealed at exact merged main d187123dfdb2c0de0e5d202cf62bd6672586a8e7; PR #153 remains the current product/runtime merge authority until 8.26.2 completes exact certification.",
-    "Vercel Production deployment dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9 remains the sealed 8.26.1 provider snapshot while 8.26.2 is candidate.",
-    "Current Release run 35873718900, Deep Compatibility run 35873718880, Vercel Production gate 35873771687 and public alias gate 35873771699 remain the exact 8.26.1 certification evidence.",
-    "EdgeOne exact-prebuilt Production verification run 35873718809 and axis.juele.fun Production run 35873719011 remain the sealed 8.26.1 evidence.",
-    "The real-use audit found the 8.26.1 rest-state CSS targeted v87-restline while the canonical Active stage renders v87Rest; 8.26.2 corrects that presentation binding only.",
-    "8.23 Replay Evidence Continuity, 8.24 Active Stage Tactile, 8.24.1 Dock Occlusion, 8.25.1 Inline Set Morph, 8.26 Active Continuity and 8.26.1 Active Rest State remain inherited and Production-sealed.",
-    "Later governance-only commits do not replace product.productionRuntimeSha d187123dfdb2c0de0e5d202cf62bd6672586a8e7; latestDeploymentIsAuthority remains false."
+    "AXIS 8.26.2 is Production-sealed at exact merged main 7662d857fd5d442e3a7f775a430f0d4d8479bece from PR #155.",
+    "Vercel Production deployment dpl_FM52hUPwo7Nf3CThK2n145QLP3Zq is the sealed 8.26.2 provider snapshot for the exact product/runtime SHA.",
+    "Current Release run 35963269939, Deep Compatibility run 35963269792, Vercel Production gate 35963296512 and public alias gate 35963296503 are the exact 8.26.2 certification evidence.",
+    "EdgeOne exact-prebuilt Production verification run 35963269663 and axis.juele.fun Production run 35963269856 are the sealed 8.26.2 evidence with Chromium and iPhone-like WebKit success.",
+    "The real-use audit found the 8.26.1 rest-state CSS targeted v87-restline while the canonical Active stage renders v87Rest; 8.26.2 corrected the binding and sealed it at the final Active-stage presentation owner.",
+    "8.23 Replay Evidence Continuity, 8.24 Active Stage Tactile, 8.24.1 Dock Occlusion, 8.25.1 Inline Set Morph, 8.26 Active Continuity and 8.26.1 Active Rest State remain inherited and Production-sealed provenance.",
+    "Later governance-only commits do not replace product.productionRuntimeSha 7662d857fd5d442e3a7f775a430f0d4d8479bece; latestDeploymentIsAuthority remains false."
   ]
 }
