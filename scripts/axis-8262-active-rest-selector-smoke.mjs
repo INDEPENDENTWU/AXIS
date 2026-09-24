@@ -19,28 +19,49 @@ try{
  },t);
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_RELEASE__==='8.26.2'&&window.__AXIS_CORE_INTERACTIVE__===true&&document.querySelector('#v87Now.axis821ActiveStage.show .v87Rest'),undefined,{timeout:15000});
- assert.equal(await page.locator('#v87Now.axis821ActiveStage .v87-restline').count(),0,'non-existent historical rest node unexpectedly entered DOM');
+ assert.equal(await page.locator('#v87Now.axis821ActiveStage .v87-restline').count(),0,'historical rest node unexpectedly entered DOM');
 
- /* The current canonical contract is pause-owned rest truth: set completion does not invent rest. */
+ /* Running has one Active status and no rest component, including no blank pill. */
+ const running=await page.evaluate(()=>{const host=document.querySelector('#v87Now.axis821ActiveStage'),rest=host?.querySelector('.v87Rest'),state=host?.querySelector('.v87State'),s=rest?getComputedStyle(rest):null,ss=state?getComputedStyle(state):null;return{status:host?.dataset.status||'',restText:rest?.textContent?.trim()||'',restDisplay:s?.display||'',restWidth:rest?.getBoundingClientRect().width||0,restHeight:rest?.getBoundingClientRect().height||0,restBackground:s?.backgroundColor||'',restShadow:s?.boxShadow||'',stateText:state?.textContent?.trim()||'',stateDisplay:ss?.display||'',overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth}});
+ assert.equal(running.status,'active');
+ assert.equal(running.restDisplay,'none','running must not render a rest component');
+ assert.ok(running.restWidth<=0.5&&running.restHeight<=0.5,`running rest placeholder still occupies geometry ${running.restWidth}x${running.restHeight}`);
+ assert.notEqual(running.stateDisplay,'none','running Active state disappeared');
+ assert.ok(running.stateText.length>0,'running Active state is empty');
+ assert.ok(running.overflow<=1,`running horizontal overflow ${running.overflow}`);
+
+ /* Pausing reuses the existing v87 timer truth as one restrained Active state line. */
  await tap(page.locator('#v87Toggle'));
  await page.waitForFunction(()=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['8262-rest-e1']?.activity;return a?.status==='paused'&&Number(a?.restStartedAt)>0},undefined,{timeout:2500});
  await page.waitForFunction(()=>/休息\s*\d+:\d{2}/.test(document.querySelector('#v87Now .v87Rest')?.textContent||''),undefined,{timeout:2500});
- const live=await page.evaluate(()=>{const x=document.querySelector('#v87Now.axis821ActiveStage .v87Rest'),s=getComputedStyle(x),host=document.querySelector('#v87Now'),a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['8262-rest-e1']?.activity;return{text:x?.textContent?.trim()||'',display:s.display,marginTop:parseFloat(s.marginTop),minHeight:parseFloat(s.minHeight),radius:parseFloat(s.borderRadius),background:s.backgroundColor,boxShadow:s.boxShadow,animationName:s.animationName,pointer:s.pointerEvents,status:host?.dataset.status||'',truthStatus:a?.status||'',restStartedAt:Number(a?.restStartedAt)||0,overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth}});
- assert.match(live.text,/休息\s*\d+:\d{2}/,'canonical v87Rest did not render the pause-owned rest timer');
- assert.equal(live.display,'flex','canonical v87Rest did not receive the intended grouped presentation');
- assert.ok(live.marginTop>=11,`rest spacing not applied: ${live.marginTop}`);assert.ok(live.minHeight>=33,`rest min-height not applied: ${live.minHeight}`);assert.ok(live.radius>=16,`rest pill radius not applied: ${live.radius}`);
- assert.notEqual(live.background,'rgba(0, 0, 0, 0)','rest tonal background is transparent');assert.notEqual(live.boxShadow,'none','rest tonal boundary missing');assert.equal(live.animationName,'axis826RestStateIn','rest transition is not bound to canonical node');assert.equal(live.status,'paused');assert.equal(live.truthStatus,'paused');assert.ok(live.restStartedAt>0);assert.ok(live.overflow<=1,`horizontal overflow ${live.overflow}`);
+ const paused=await page.evaluate(()=>{const host=document.querySelector('#v87Now.axis821ActiveStage'),rest=host?.querySelector('.v87Rest'),state=host?.querySelector('.v87State'),s=getComputedStyle(rest),ss=getComputedStyle(state),a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['8262-rest-e1']?.activity;return{text:rest?.textContent?.trim()||'',display:s.display,minHeight:parseFloat(s.minHeight)||0,radius:parseFloat(s.borderRadius)||0,background:s.backgroundColor,boxShadow:s.boxShadow,animationName:s.animationName,pointer:s.pointerEvents,stateDisplay:ss.display,status:host?.dataset.status||'',truthStatus:a?.status||'',restStartedAt:Number(a?.restStartedAt)||0,overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth}});
+ assert.match(paused.text,/休息\s*\d+:\d{2}/,'pause-owned rest timer did not remain factual');
+ assert.equal(paused.display,'block','rest state must read as a plain state line');
+ assert.ok(paused.minHeight<=1,`rest state retained pill min-height ${paused.minHeight}`);
+ assert.ok(paused.radius<=1,`rest state retained pill radius ${paused.radius}`);
+ assert.equal(paused.background,'rgba(0, 0, 0, 0)','rest state retained a tonal pill background');
+ assert.equal(paused.boxShadow,'none','rest state retained a pill boundary');
+ assert.equal(paused.animationName,'none','rest state retained component-entry motion');
+ assert.equal(paused.pointer,'none','rest state unexpectedly became interactive');
+ assert.equal(paused.stateDisplay,'none','paused state is duplicated by a second status label');
+ assert.equal(paused.status,'paused');assert.equal(paused.truthStatus,'paused');assert.ok(paused.restStartedAt>0);
+ assert.ok(paused.overflow<=1,`paused horizontal overflow ${paused.overflow}`);
 
- /* Presentation binding must not take ownership of pause/resume truth. */
+ /* Resume returns to one Running state with zero residual rest geometry. */
  await tap(page.locator('#v87Toggle'));
  await page.waitForFunction(()=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['8262-rest-e1']?.activity;return a?.status==='active'&&!a?.restStartedAt&&Number(a?.restAccumulatedMs)>0},undefined,{timeout:2500});
- const resumed=await page.evaluate(()=>{const a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['8262-rest-e1']?.activity;return{status:a?.status,restStartedAt:a?.restStartedAt||null,restAccumulatedMs:Number(a?.restAccumulatedMs)||0,host:document.querySelector('#v87Now')?.dataset.status}});
+ const resumed=await page.evaluate(()=>{const host=document.querySelector('#v87Now.axis821ActiveStage'),rest=host?.querySelector('.v87Rest'),s=getComputedStyle(rest),a=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}').events?.['8262-rest-e1']?.activity;return{status:a?.status,restStartedAt:a?.restStartedAt||null,restAccumulatedMs:Number(a?.restAccumulatedMs)||0,host:host?.dataset.status,display:s.display,width:rest?.getBoundingClientRect().width||0,height:rest?.getBoundingClientRect().height||0}});
  assert.equal(resumed.status,'active');assert.equal(resumed.restStartedAt,null);assert.ok(resumed.restAccumulatedMs>0);assert.equal(resumed.host,'active');
+ assert.equal(resumed.display,'none');assert.ok(resumed.width<=0.5&&resumed.height<=0.5,'rest geometry survived resume');
 
- await page.emulateMedia({reducedMotion:'reduce'});await page.waitForTimeout(50);
- const reduced=await page.evaluate(()=>{const x=document.querySelector('#v87Now.axis821ActiveStage .v87Rest'),s=getComputedStyle(x);return{animationName:s.animationName,pointer:s.pointerEvents,display:s.display}});
- assert.equal(reduced.animationName,'none','reduced-motion did not disable rest transition');assert.equal(reduced.pointer,'auto','rest status text unexpectedly became an action');assert.equal(reduced.display,'flex');
- const source=await page.evaluate(()=>fetch('/axis-style.css').then(r=>r.text()));assert.match(source,/#v87Now\.axis821ActiveStage \.v87Rest\{margin-top:12px!important/);assert.match(source,/\.v87Rest\{animation:none!important/);
+ await page.emulateMedia({reducedMotion:'reduce'});await tap(page.locator('#v87Toggle'));
+ await page.waitForFunction(()=>document.querySelector('#v87Now.axis821ActiveStage')?.dataset.status==='paused',undefined,{timeout:2500});
+ const reduced=await page.evaluate(()=>{const x=document.querySelector('#v87Now.axis821ActiveStage .v87Rest'),s=getComputedStyle(x);return{animationName:s.animationName,transition:s.transitionDuration,pointer:s.pointerEvents,display:s.display}});
+ assert.equal(reduced.animationName,'none');assert.ok(reduced.transition==='0s'||reduced.transition.split(',').every(x=>x.trim()==='0s'),'reduced-motion rest transition survived');assert.equal(reduced.pointer,'none');assert.equal(reduced.display,'block');
+ const source=await page.evaluate(()=>fetch('/axis-style.css').then(r=>r.text()));
+ assert.match(source,/\[data-status="active"\] \.v87Rest\{display:none!important/);
+ assert.match(source,/\[data-status="paused"\] \.axis821StageStatus \.v87State\{display:none!important/);
+ assert.match(source,/\[data-status="paused"\] \.v87Rest\{box-sizing:border-box!important;display:block!important/);
  assert.deepEqual(errors,[],`page errors:\n${errors.join('\n')}`);
- console.log(`[AXIS 8.26.2 Active Rest Selector ${ENGINE}] PASS · canonical v87Rest receives spacing/pill/motion · pause-owned rest truth preserved · no historical DOM node · reduced-motion safe`);
+ console.log(`[AXIS 8.26.2 Active Rest Convergence ${ENGINE}] PASS · running has zero rest component · paused rest is one factual non-interactive state line · existing v87 timer truth preserved · reduced-motion safe`);
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
