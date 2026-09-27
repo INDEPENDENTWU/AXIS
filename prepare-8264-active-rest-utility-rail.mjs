@@ -6,11 +6,6 @@ const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(
 const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 
-/*
- * Real-device correction over merged-but-unsealed 8.26.3.
- * Rest remains v87-owned factual presentation. 8.26.4 only gives the existing
- * rest node and existing Adjust action one disciplined secondary utility row.
- */
 const utilityCss=`
 /* AXIS 8.26.4 — Active Rest Utility Rail. */
 html body #v87Now.axis821ActiveStage .axis821StageControls{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:auto 32px!important;align-items:center!important;column-gap:10px!important;row-gap:7px!important;padding:0 0 10px!important}
@@ -28,8 +23,7 @@ html body #v87Now.axis821ActiveStage[data-status="active"] .axis821StageControls
 @media(prefers-reduced-motion:reduce){html body #v87Now.axis821ActiveStage .axis821StageControls>.v87Rest,html body #v87Now.axis821ActiveStage #v87AdjustBtn{animation:none!important;transition:none!important}}
 `;
 
-/* Move the established v87Rest node into the already-existing action grid.
-   It remains the same node/id and keeps the same Rest Speak hooks. */
+/* Same canonical node, moved into the existing controls grid. */
 {
  const f='v87-runtime.js';let s=read(f);
  const oldMarkup='<button class="v87Add" id="v87Add">＋ 一组</button></div><span class="v87Rest" id="v87Rest"></span><div class="v87Paused" id="v87Paused">';
@@ -46,15 +40,15 @@ html body #v87Now.axis821ActiveStage[data-status="active"] .axis821StageControls
  write(f,s);
 }
 
-/* Advance the current physical proof without changing workflow topology. */
+/* Advance the existing dual-engine proof; no new workflow family. */
 {
  const f='scripts/axis-8262-active-rest-selector-smoke.mjs';let s=read(f);
  s=once(s,"window.__AXIS_RELEASE__==='8.26.3'","window.__AXIS_RELEASE__==='8.26.4'",'rest smoke current release');
  const pausedEnd="assert.ok(paused.overflow<=1);";
- const utilityProof=`\n const utility=await page.evaluate(()=>{const controls=document.querySelector('#v87Now .axis821StageControls'),rest=controls?.querySelector(':scope > #v87Rest'),adjust=controls?.querySelector(':scope > #v87AdjustBtn'),rr=rest?.getBoundingClientRect(),ar=adjust?.getBoundingClientRect(),rs=rest?getComputedStyle(rest):null,as=adjust?getComputedStyle(adjust):null;return{restParent:rest?.parentElement?.className||'',adjustParent:adjust?.parentElement?.className||'',restTop:rr?.top||0,adjustTop:ar?.top||0,restMid:rr?rr.top+rr.height/2:0,adjustMid:ar?ar.top+ar.height/2:0,restRight:rr?.right||0,adjustLeft:ar?.left||0,restFont:parseFloat(rs?.fontSize||'0'),restWeight:Number(rs?.fontWeight)||0,restRadius:parseFloat(rs?.borderRadius||'0'),restShadow:rs?.boxShadow||'',adjustRadius:parseFloat(as?.borderRadius||'0'),adjustBackground:as?.backgroundColor||''}});\n assert.ok(utility.restParent.includes('axis821StageControls')&&utility.adjustParent.includes('axis821StageControls'),'rest and Adjust must share the existing utility grid');assert.ok(Math.abs(utility.restMid-utility.adjustMid)<=1.5,\`rest/Adjust baseline drift ${utility.restMid} vs ${utility.adjustMid}\`);assert.ok(utility.restRight<=utility.adjustLeft+1,'rest must remain left of Adjust');assert.ok(utility.restFont>=12&&utility.restWeight>=600,'rest status lacks deliberate secondary emphasis');assert.ok(utility.restRadius<=1&&utility.adjustRadius<=1,'utility rail must not become pills');assert.equal(utility.restShadow,'none');\n`;
+ const utilityProof=`\n const utility=await page.evaluate(()=>{const controls=document.querySelector('#v87Now .axis821StageControls'),rest=controls?.querySelector(':scope > #v87Rest'),adjust=controls?.querySelector(':scope > #v87AdjustBtn'),rr=rest?.getBoundingClientRect(),ar=adjust?.getBoundingClientRect(),rs=rest?getComputedStyle(rest):null,as=adjust?getComputedStyle(adjust):null;return{restParent:rest?.parentElement?.className||'',adjustParent:adjust?.parentElement?.className||'',restMid:rr?rr.top+rr.height/2:0,adjustMid:ar?ar.top+ar.height/2:0,restRight:rr?.right||0,adjustLeft:ar?.left||0,restFont:parseFloat(rs?.fontSize||'0'),restWeight:Number(rs?.fontWeight)||0,restRadius:parseFloat(rs?.borderRadius||'0'),restShadow:rs?.boxShadow||'',adjustRadius:parseFloat(as?.borderRadius||'0')}});\n assert.ok(utility.restParent.includes('axis821StageControls')&&utility.adjustParent.includes('axis821StageControls'),'rest and Adjust must share the existing utility grid');assert.ok(Math.abs(utility.restMid-utility.adjustMid)<=1.5,'rest/Adjust baseline drift '+utility.restMid+' vs '+utility.adjustMid);assert.ok(utility.restRight<=utility.adjustLeft+1,'rest must remain left of Adjust');assert.ok(utility.restFont>=12&&utility.restWeight>=600,'rest status lacks deliberate secondary emphasis');assert.ok(utility.restRadius<=1&&utility.adjustRadius<=1,'utility rail must not become pills');assert.equal(utility.restShadow,'none');\n`;
  s=once(s,pausedEnd,pausedEnd+utilityProof,'paused rest/Adjust alignment proof');
  const reducedMarker="await page.emulateMedia({reducedMotion:'no-preference'});";
- const completedProof=`\n\n /* Plan-complete must never leave a rest badge, frame or geometric residue. */\n await page.evaluate(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),e=c.active?.events?.find(x=>x.id==='8263-rest-e1'),a=m.events?.['8263-rest-e1']?.activity;if(!e||!a)throw new Error('8.26.4 plan-complete seed missing');a.status='active';a.completedSets=4;a.planCompletedAt=Date.now();a.restStartedAt=Date.now();a.lastResumedAt=Date.now()-1000;a.intervals=a.intervals||[];if(!a.intervals.at(-1)||a.intervals.at(-1).end)a.intervals.push({start:Date.now()-1000,end:null});localStorage.setItem('axis_v60_state',JSON.stringify(c));localStorage.setItem('axis_v8_meta',JSON.stringify(m))});\n await page.reload({waitUntil:'domcontentloaded'});await waitRelease();await page.waitForFunction(()=>document.querySelector('#v87Now.axis821ActiveStage')?.dataset.status==='plan-complete',undefined,{timeout:5000});\n const completed=await page.evaluate(()=>{const host=document.querySelector('#v87Now.axis821ActiveStage'),rest=host?.querySelector('#v87Rest'),s=rest?getComputedStyle(rest):null,r=rest?.getBoundingClientRect();return{status:host?.dataset.status||'',display:s?.display||'',width:r?.width||0,height:r?.height||0,radius:parseFloat(s?.borderRadius||'0'),background:s?.backgroundColor||'',shadow:s?.boxShadow||''}});\n assert.equal(completed.status,'plan-complete');assert.equal(completed.display,'none');assert.ok(completed.width<=0.5&&completed.height<=0.5,\`plan-complete rest residue ${completed.width}x${completed.height}\`);assert.ok(completed.radius<=1);assert.equal(completed.shadow,'none');\n`;
+ const completedProof=`\n\n /* Plan-complete must never leave a rest badge, frame or geometric residue. */\n await page.evaluate(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}'),e=c.active?.events?.find(x=>x.id==='8263-rest-e1'),a=m.events?.['8263-rest-e1']?.activity;if(!e||!a)throw new Error('8.26.4 plan-complete seed missing');a.status='active';a.completedSets=4;a.planCompletedAt=Date.now();a.restStartedAt=Date.now();a.lastResumedAt=Date.now()-1000;a.intervals=a.intervals||[];if(!a.intervals.at(-1)||a.intervals.at(-1).end)a.intervals.push({start:Date.now()-1000,end:null});localStorage.setItem('axis_v60_state',JSON.stringify(c));localStorage.setItem('axis_v8_meta',JSON.stringify(m))});\n await page.reload({waitUntil:'domcontentloaded'});await waitRelease();await page.waitForFunction(()=>document.querySelector('#v87Now.axis821ActiveStage')?.dataset.status==='plan-complete',undefined,{timeout:5000});\n const completed=await page.evaluate(()=>{const host=document.querySelector('#v87Now.axis821ActiveStage'),rest=host?.querySelector('#v87Rest'),s=rest?getComputedStyle(rest):null,r=rest?.getBoundingClientRect();return{status:host?.dataset.status||'',display:s?.display||'',width:r?.width||0,height:r?.height||0,radius:parseFloat(s?.borderRadius||'0'),shadow:s?.boxShadow||''}});\n assert.equal(completed.status,'plan-complete');assert.equal(completed.display,'none');assert.ok(completed.width<=0.5&&completed.height<=0.5,'plan-complete rest residue '+completed.width+'x'+completed.height);assert.ok(completed.radius<=1);assert.equal(completed.shadow,'none');\n`;
  s=once(s,reducedMarker,reducedMarker+completedProof,'plan-complete zero-rest proof');
  const sourceEnd="assert.match(source,/height:32px!important/);";
  const finalProof=`\n const utilityStyle=await page.evaluate(()=>document.querySelector('#axis8264ActiveRestUtilityStyle')?.textContent||'');assert.match(utilityStyle,/axis821StageControls>\\.v87Rest\\{grid-column:1!important;grid-row:2!important/);assert.match(utilityStyle,/data-status=\\"plan-complete\\"/);assert.match(utilityStyle,/#v87AdjustBtn\\{grid-column:2!important;grid-row:2!important/);`;
@@ -127,7 +121,6 @@ for(const f of candidates){let s=read(f),next=s;for(const [a,b] of pairs){const 
  const f='governance/owners.json',x=JSON.parse(read(f));x.baselineRelease=VERSION;write(f,JSON.stringify(x,null,2)+'\n');
 }
 
-/* Extend historical presentation inheritance without changing factual owners. */
 {
  const f='postbuild-825-set-lock-contract.mjs';let s=read(f);if(!s.includes(`'${VERSION}'`))s=s.replace("'8.26.3'].includes(info.version)","'8.26.3','8.26.4'].includes(info.version)");write(f,s);
 }
