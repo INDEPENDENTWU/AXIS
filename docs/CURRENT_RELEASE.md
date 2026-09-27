@@ -27,6 +27,8 @@ Inherited Rest Speak keeps the same 32px utility geometry and its established ex
 
 ## Sealed baseline certification
 
+The exact AXIS 8.26.1 product/runtime evidence below remains the **runtime seal baseline** while 8.26.4 is a candidate. Candidate identity is **not a self-referential requirement** for inherited provider evidence: only a newly certified exact merged-main artifact can replace that durable baseline.
+
 Until the exact 8.26.4 merged-main artifact completes certification, provider evidence remains explicitly attached to the exact fully certified AXIS 8.26.1 runtime:
 
 - Vercel deployment: `dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9` — READY / Production
