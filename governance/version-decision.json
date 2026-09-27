@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 19,
-  "base_release": "8.26.2",
-  "release": "8.26.3",
+  "sequence": 20,
+  "base_release": "8.26.3",
+  "release": "8.26.4",
   "decision": "bump",
   "change_class": "bug-fix",
-  "summary": "AXIS 8.26.3 converges the Active paused/rest presentation after the merged-but-unsealed 8.26.2 selector correction exposed a real Rest Speak geometry regression. Running keeps zero rest geometry; paused state and Rest Speak share one fixed 32px rail while existing v87 pause/timer truth and the inherited Rest Speak action remain authoritative."
+  "summary": "AXIS 8.26.4 corrects the remaining real-device Active rest presentation defect after merged-but-unsealed 8.26.3: paused rest and the existing Adjust action now share one aligned secondary utility row, while plan-complete removes rest geometry entirely. Existing v87 pause/timer truth, Rest Speak actions, training facts and persistence ownership remain unchanged."
 }
