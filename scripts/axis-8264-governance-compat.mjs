@@ -31,7 +31,7 @@ if(convOwner?.status!=='presentation-only-merged-unsealed-inherited'||convOwner?
 if(railOwner?.status!=='presentation-only-release-candidate'||railOwner?.storage!=='none'||!String(railOwner?.owner||'').includes('v87Rest'))fail('8.26.4 utility rail owner drift');
 
 const prepare=read('prepare-8264-active-rest-utility-rail.mjs'),post=read('postbuild-8264-active-rest-utility-rail-contract.mjs'),build=read('build-release.mjs');
-for(const token of ['pausedRestAndAdjustSameRow','data-status="plan-complete"','font-size:12.5px!important','axis8264ActiveRestUtilityStyle'])if(!prepare.includes(token))fail(`8.26.4 source proof missing ${token}`);
+for(const token of ['rest/Adjust baseline drift','data-status="plan-complete"','font-size:12.5px!important','axis8264ActiveRestUtilityStyle'])if(!prepare.includes(token))fail(`8.26.4 source proof missing ${token}`);
 if(!prepare.includes("const FROM='8.26.3',VERSION='8.26.4'"))fail('8.26.4 release transition drift');
 if(!build.includes("'prepare-8264-active-rest-utility-rail.mjs'"))fail('8.26.4 prepare is not deterministic build authority');
 if(!post.includes('activeRestUtilityRail8264:true'))fail('8.26.4 postbuild gate marker missing');
@@ -43,7 +43,6 @@ for(const [path,want,label] of [
  ['.github/workflows/axis-production-deployment-gate.yml',1,'fixed Vercel Production']
 ])if(count(read(path),selectorSmoke)!==want)fail(`${label} must run Active Rest utility proof ${want} time(s)`);
 
-/* Keep the source-stable repository contract fail-closed for the new step. */
 {
  const f='scripts/axis-repository-contract.mjs';let s=read(f);
  const old="const expectedSteps=['8.24.1','8.25'].includes(CURRENT)?87:['8.23','8.24'].includes(CURRENT)?86:85;";
@@ -58,7 +57,6 @@ for(const [path,want,label] of [
  write(f,s);
 }
 
-/* Production contract learns the exact new candidate without stealing the seal. */
 {
  const f='scripts/axis-production-governance-contract.mjs';let s=read(f);
  const map="if(CURRENT==='8.25'){sourceOwner='prepare-825-set-lock.mjs';sourceCurrent='8.25';sourceFrom='8.24.1'}";
