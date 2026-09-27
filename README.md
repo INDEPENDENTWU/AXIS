@@ -2,15 +2,15 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.26.2** · **Release candidate** · last sealed **8.26.1** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
+**Current release: 8.26.3** · **Release candidate** · last sealed **8.26.1** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
 
 AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Encounters freeze what actually happened, Evidence anchors those facts, Flow describes intended continuity, and Evolution reveals reality without inventing a second history.
 
 ## Release truth
 
-AXIS **8.26.2 — Active Rest Selector Binding** is a bounded corrective candidate on PR **#155**. The real-use audit found that AXIS 8.26.1 authored its rest-state presentation against `.v87-restline`, while the canonical integrated Active stage actually renders the existing v87-owned node as `.v87Rest`. The intended spacing, tonal grouping and reduced-motion treatment therefore did not bind to the shipped node.
+AXIS **8.26.3 — Active Rest Convergence** is the bounded corrective candidate on PR **#156**. AXIS 8.26.2 was merged to `main` at `7662d857fd5d442e3a7f775a430f0d4d8479bece`, but remained unsealed after physical compatibility exposed a real Rest Speak geometry regression. 8.26.3 keeps the selector correction and closes that regression without changing training truth.
 
-AXIS **8.26.1** remains the exact Production-sealed baseline at product/runtime merge `d187123dfdb2c0de0e5d202cf62bd6672586a8e7` from PR **#153** until the exact 8.26.2 merged-main artifact completes the full certification chain.
+AXIS **8.26.1** remains the exact Production-sealed baseline at product/runtime merge `d187123dfdb2c0de0e5d202cf62bd6672586a8e7` from PR **#153** until the exact 8.26.3 merged-main artifact completes the full certification chain.
 
 Sealed 8.26.1 Production evidence remains:
 
@@ -24,25 +24,25 @@ Sealed 8.26.1 Production evidence remains:
 
 `latestDeploymentIsAuthority` remains false: candidate builds, governance-only commits or provider redeploys do not replace the sealed product/runtime SHA above.
 
-## What 8.26.2 changes
+## What 8.26.3 changes
 
-The existing 8.26.1 rest presentation is now bound to the canonical `.v87Rest` node that the Active Home stage actually renders. The same intended breathing room, restrained pill/tonal grouping and reduced-motion behavior can therefore become physically visible in the product.
+Running Active has no visible or geometric rest placeholder. Paused Active reuses the existing v87-owned factual `休息 mm:ss` truth as one restrained, transparent **32px** state rail. The duplicate paused label remains hidden; there is no pill background, border, shadow or component-entry animation.
 
-The patch does **not** change pause/resume semantics, rest-time calculation, set completion, Flow, Session, Encounter, recorder, storage, media, network or AI ownership. It does not create another Active owner or interactive surface.
+Inherited Rest Speak reuses that same 32px rail. Turning Rest Speak on or off must not move the Active card. The ordinary paused rail remains non-interactive, while `.v87Rest.v89Speak` preserves the already-existing explicit Rest Speak action rather than creating a new action owner.
 
-AXIS 8.26.1 remains inherited as the sealed rest-state presentation boundary, while AXIS 8.26 remains inherited unchanged for atomic record-save settlement, ongoing Flow direct Active admission, one-shot canonical recorder semantics, foreign Active pause/preserve coordination, post-fact set feedback and the quieter Home hierarchy.
+The patch does **not** change pause/resume semantics, rest-time calculation, set completion, Flow, Session, Encounter, recorder, storage, media, network or AI ownership.
 
 ## Current engineering state
 
-Active milestone: **AXIS 8.26.2 — Active Rest Selector Binding**
+Active milestone: **AXIS 8.26.3 — Active Rest Convergence**
 
 Governed target branch: `main`
 
-Bounded delivery branch: `fix/8262-active-rest-selector` · PR **#155**.
+Bounded delivery branch: `fix/8262-rest-convergence` · PR **#156**.
 
-Version decision: **8.26.1 → 8.26.2 / bump / sequence 18 / bug-fix**.
+Version decision: **8.26.2 → 8.26.3 / bump / sequence 19 / bug-fix**.
 
-The deterministic release remains `canonical-single-runtime`, one initial JavaScript request and zero dynamic runtime chunks. No new factual owner or architecture branch is introduced; this release closes the concrete selector defect found by the bounded Active / Flow / Evolution real-use audit before another product slice begins.
+The deterministic release remains `canonical-single-runtime`, one initial JavaScript request and zero dynamic runtime chunks. The merged-but-unsealed 8.26.2 selector correction remains historical provenance; 8.26.3 is the release candidate that must earn exact-head and post-merge Production certification.
 
 ## Product rules
 

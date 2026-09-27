@@ -69,6 +69,7 @@ const STEPS=[
   'prepare-826-active-continuity.mjs',
   'prepare-8261-active-rest-state.mjs',
   'prepare-8262-active-rest-selector.mjs',
+  'prepare-8263-active-rest-convergence.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',

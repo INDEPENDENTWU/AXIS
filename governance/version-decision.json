@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 18,
-  "base_release": "8.26.1",
-  "release": "8.26.2",
+  "sequence": 19,
+  "base_release": "8.26.2",
+  "release": "8.26.3",
   "decision": "bump",
   "change_class": "bug-fix",
-  "summary": "AXIS 8.26.2 binds the already-designed Active rest-state presentation to the canonical v87Rest node after the real-use audit found the 8.26.1 selector did not match the shipped Active Home markup. Pause/resume truth, timers, Session/Encounter, Flow, recorder, storage, network and AI ownership remain unchanged."
+  "summary": "AXIS 8.26.3 converges the Active paused/rest presentation after the merged-but-unsealed 8.26.2 selector correction exposed a real Rest Speak geometry regression. Running keeps zero rest geometry; paused state and Rest Speak share one fixed 32px rail while existing v87 pause/timer truth and the inherited Rest Speak action remain authoritative."
 }
