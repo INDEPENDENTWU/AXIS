@@ -30,7 +30,7 @@ The existing 8.9 Rest Speak geometry assertion is not to be weakened. The 8.16 C
 
 The sealed 8.26.1 runtime SHA and provider evidence remain unchanged until this candidate completes post-merge certification. AXIS 8.26.2 remains merged-but-unsealed provenance for the canonical `.v87Rest` selector correction. AXIS 8.26, 8.25.1, 8.24.1, 8.24, 8.23 and the established v87 / Rest Speak owners remain inherited; no second factual or interactive writer is introduced.
 
-Cross-platform continuity also remains unchanged: foundation `axis-native-foundation-0`, native repository `INDEPENDENTWU/AXIS-iOS`, portable contracts `axis.domain.v1` and `axis.data.v1`. Chat history is not authoritative project memory; repository governance remains authoritative.
+Cross-platform continuity also remains unchanged: foundation `axis-native-foundation-0`, native repository `INDEPENDENTWU/AXIS-iOS`, portable contracts `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, and `axis.report-range.v1`. Chat history is not authoritative project memory; repository governance remains authoritative.
 
 ## Next planned stage
 
