@@ -12,7 +12,8 @@ for(const gate of ['activeContinuity826','activeRestState8261','activeRestSelect
 for(const marker of [
   'id="v87Add">＋ 一组</button><span class="v87Rest" id="v87Rest"></span></div><div class="v87Paused"',
   'axis8264ActiveRestUtilityStyle',
-  "$('#v87Rest').textContent=planDone?'':rest?"
+  "$('#v87Rest').textContent=planDone?'':rest?",
+  "style.setProperty('display',status==='paused'?'flex':'none','important')"
 ])if(!runtime.includes(marker))fail(`runtime utility-rail marker missing ${marker}`);
 if(!prepare.includes("await import('./prepare-8264-active-rest-utility-rail-core.mjs')"))fail('8.26.4 driver does not delegate to bounded core implementation');
 const cssMatch=core.match(/const utilityCss=`([\s\S]*?)`;\n/);if(!cssMatch)fail('utility CSS source boundary missing');
@@ -36,4 +37,4 @@ Object.assign(info.gates,{activeRestUtilityRail8264:true,activeRestAdjustAlignme
 info.axis8264={release:true,scope:'active-rest-utility-rail',base:'8.26.3-merged-unsealed',presentation:{canonicalSelector:'.v87Rest',restInsideExistingActionGrid:true,pausedRestAndAdjustSameRow:true,pausedRailHeightPx:32,pausedPill:false,pausedTextPresence:'strong-secondary',planCompleteRestGeometry:'zero',restSpeakSharedRail:true,reducedMotion:true},ownership:{v87PauseTimerPreserved:true,activeAdjustExistingActionPreserved:true,restSpeakExistingActionPreserved:true,sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,newPersistence:false,network:false,ai:false}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 await import('./scripts/axis-8264-governance-compat.mjs');
-console.log('[AXIS 8.26.4 Active Rest Utility Rail contract] PASS · rest + Adjust share one aligned row · plan-complete rest residue zero · canonical v87 truth/actions preserved');
+console.log('[AXIS 8.26.4 Active Rest Utility Rail contract] PASS · rest + Adjust share one aligned row · running/plan-complete visibility fail-closed · canonical v87 truth/actions preserved');
