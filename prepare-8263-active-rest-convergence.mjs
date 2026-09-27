@@ -7,7 +7,7 @@ const write=(f,s)=>fs.writeFileSync(f,s);
 const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(`${label} expected once, found ${n}`);return src.replace(from,to)};
 
 /* 8.26.3 is a presentation convergence over merged-but-unsealed 8.26.2.
-   Existing v87 pause/timer truth and inherited Rest Speak behavior stay owners. */
+   Existing v87 pause/timer truth and inherited Rest Speak/learning actions stay owners. */
 const css=read('styles/axis-826-active-continuity.css');
 const finalStage=read('styles/axis-821-active-home.css');
 const runtime=read('v87-runtime.js');
@@ -16,6 +16,7 @@ for(const token of [
   '[data-status="paused"] .v87Rest{box-sizing:border-box!important;display:flex!important',
   'height:32px!important;min-height:32px!important;max-height:32px!important',
   '.v87Rest.v89Speak{display:flex!important',
+  '.v87Rest.v810SpeakPrompt{pointer-events:auto!important',
   'pointer-events:auto!important'
 ])if(!css.includes(token)&&!finalStage.includes(token))fail(`rest convergence CSS contract drift ${token}`);
 if(!runtime.includes('class="v87Rest" id="v87Rest"'))fail('canonical v87Rest node missing from Active runtime');
@@ -114,4 +115,4 @@ for(const f of candidates){let s=read(f),next=s;for(const [a,b] of pairs){const 
 }
 
 if(inheritedTouches+identityTouches<12)fail(`public identity convergence suspiciously small: ${inheritedTouches}+${identityTouches}`);
-console.log(`[AXIS 8.26.3 Active Rest Convergence] PASS · ${FROM} → ${VERSION} · zero running rest geometry · fixed 32px paused/Rest Speak rail · existing truth/action owners preserved · ${inheritedTouches+identityTouches} current identity assertion(s) advanced`);
+console.log(`[AXIS 8.26.3 Active Rest Convergence] PASS · ${FROM} → ${VERSION} · zero running rest geometry · fixed 32px paused/Rest Speak rail · inherited rest-slot actions preserved · ${inheritedTouches+identityTouches} current identity assertion(s) advanced`);

@@ -42,16 +42,10 @@ assert.equal(lifecycle.includes(retiredPdfScope),false,'retired Report PDF scope
 assert.ok(lifecycle.includes(share),'Report Share Card prepare missing from lifecycle');
 assert.ok(lifecycle.indexOf(share)>lifecycle.indexOf(pdf),'Report Share Card must run after source-owned PDF/Training Report runtime');
 
-for(const token of [
-  'governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`',
-  'governed active branch: `main`',
-  'bounded delivery branch: `feat/821-report-share-card`',
-  'exact base main SHA: `fce02e0238186c0a9df77f447bb979a1429c4c4f`',
-  'Chat history is not authoritative project memory',
-  'axis-native-foundation-0',
-  'INDEPENDENTWU/AXIS-iOS',
-  'axis.report-range.v1'
-])assert.ok(current.includes(token),`CURRENT_WORK Share Card governance token missing ${token}`);
+for(const token of ['Chat history is not authoritative project memory','axis-native-foundation-0','INDEPENDENTWU/AXIS-iOS','axis.report-range.v1'])assert.ok(current.includes(token),`CURRENT_WORK Share Card governance token missing ${token}`);
+assert.match(current,/^Bounded delivery branch: `[^`]+` · PR \*\*#\d+\*\*\./m,'CURRENT_WORK missing current bounded delivery branch');
+assert.match(current,/^Version decision: \*\*.+\*\*\./m,'CURRENT_WORK missing current version decision');
+assert.match(current,/Production-sealed/,'CURRENT_WORK missing current sealed baseline');
 
 if(fs.existsSync('app.js')&&fs.existsSync('index.html')&&fs.existsSync('styles.css')){
   const app=read('app.js'),html=read('index.html'),css=read('styles.css');
@@ -66,4 +60,4 @@ if(fs.existsSync('app.js')&&fs.existsSync('index.html')&&fs.existsSync('styles.c
   assert.ok(css.includes('AXIS 8.21 Report Share Card'),'built Share Card styles missing');
 }
 
-console.log('[AXIS 8.21 Report Share Card contract] PASS · canonical Report projection · source-owned PDF scope predecessor · deliberate PNG canvas · optional export identity · no second range/store/network/factual owner');
+console.log('[AXIS 8.21 Report Share Card contract] PASS · canonical Report projection · source-owned PDF scope predecessor · deliberate PNG canvas · optional export identity · current continuity metadata · no second range/store/network/factual owner');
