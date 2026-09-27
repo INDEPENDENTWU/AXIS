@@ -10,7 +10,7 @@ AXIS **8.26.2** was merged to `main` at `7662d857fd5d442e3a7f775a430f0d4d8479bec
 
 Active milestone: **AXIS 8.26.3 — Active Rest Convergence**.
 
-Governed target branch: `main`.
+governed target branch: `main`.
 
 Bounded delivery branch: `fix/8262-rest-convergence` · PR **#156**.
 
