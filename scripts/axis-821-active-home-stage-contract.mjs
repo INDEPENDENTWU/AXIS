@@ -76,9 +76,8 @@ if(!postbuild.includes(`const renderTail="${inheritedTail}"`))fail('postbuild ca
 if((prep.match(/axis821StageControls v87Actions/g)||[]).length!==1)fail('Active-adjust host must remain exactly one stage control rail');
 if(!prep.includes('#v87Now.axis821ActiveStage #v87AdjustBtn'))fail('postbuild one-time Adjust action has no integrated-stage presentation');
 
-for(const token of [
- 'bounded delivery branch: `feat/821-active-home-stage`',
- 'exact base main SHA: `c09d22fc992efd4f1f94bc0857c91442a211094f`'
-])if(!work.includes(token))fail(`CURRENT_WORK missing ${token}`);
+if(!/^Bounded delivery branch: `[^`]+` · PR \*\*#\d+\*\*\./m.test(work))fail('CURRENT_WORK missing current bounded delivery branch');
+if(!/^Version decision: \*\*.+\*\*\./m.test(work))fail('CURRENT_WORK missing current version decision');
+if(!work.includes('repository governance remains authoritative'))fail('CURRENT_WORK lost repository authority');
 
-console.log('[AXIS 8.21 Active Home stage contract] PASS · one integrated ordinary-Active Home stage · existing v87 actions + postbuild Adjust hook retained · viewport-safe inherited Rest Speak · Flow integrated surface isolated · no new storage/Encounter/Active owner');
+console.log('[AXIS 8.21 Active Home stage contract] PASS · one integrated ordinary-Active Home stage · existing v87 actions + postbuild Adjust hook retained · viewport-safe inherited Rest Speak · Flow integrated surface isolated · current continuity metadata present · no new storage/Encounter/Active owner');

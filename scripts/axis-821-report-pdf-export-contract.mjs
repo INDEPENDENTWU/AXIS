@@ -6,6 +6,8 @@ const prepare=read('prepare-821-report-pdf-export.mjs');
 const legacyScope=read('prepare-821-report-pdf-export-scope.mjs');
 const lifecycle=read('prepare-819-postcommit-lifecycle.mjs');
 const current=read('docs/CURRENT_WORK.md');
+const release=read('docs/CURRENT_RELEASE.md');
+const project=JSON.parse(read('governance/project-state.json'));
 const retirements=JSON.parse(read('governance/retirements.json'));
 
 for(const token of [
@@ -58,17 +60,19 @@ assert.ok(lifecycle.indexOf(share)>lifecycle.indexOf(pdf),'Report Share Card ord
 assert.ok(lifecycle.indexOf(backup)>lifecycle.indexOf(share),'Portable Backup order changed');
 for(const token of ['generated PDF runtime block missing','PDF runtime marker missing','one PDF runtime moved into canonical Training Report lexical scope'])assert.ok(legacyScope.includes(token),`historical scope provenance drifted: ${token}`);
 
+/* CURRENT_WORK is a moving successor handoff, not a museum of obsolete branch/SHA
+   literals. Prove current continuity here; historical PDF convergence is guarded by
+   the retired-source registry below and the still-present source owner itself. */
 for(const token of [
-  'governed durable product/runtime seal baseline: `8f1f1331e751a7868d390f986d77d5779732ad51`',
-  'governed active branch: `main`',
+  'governed target branch: `main`',
   'Chat history is not authoritative project memory',
   'axis-native-foundation-0',
   'INDEPENDENTWU/AXIS-iOS',
-  'axis.report-range.v1',
-  'completed Report PDF scope source-convergence branch: `arch/821-report-pdf-scope-convergence`',
-  'completed Report PDF scope source-convergence PR: **#133**',
-  'Report PDF scope source-convergence certified main: `1d9e08ae40f555151133a9fce4bc343f18359af2`'
+  'axis.report-range.v1'
 ])assert.ok(current.includes(token),`CURRENT_WORK governance token missing ${token}`);
+assert.ok(/AXIS \*\*8\.26\.3/.test(current)||current.includes('AXIS 8.26.3'),'CURRENT_WORK does not identify the governed current successor');
+assert.equal(project?.engineering?.baselineRelease,'8.26.3','project-state current release drifted from PDF continuity context');
+assert.ok(release.includes('last Production-sealed release: **AXIS 8.26.1**'),'current release lost explicit sealed baseline while successor is candidate');
 
 const pdfRetirement=retirements.retirements?.find(row=>row.id==='report-pdf-corrective-scope-prepare-821');
 assert.ok(pdfRetirement,'Report PDF corrective-scope retirement registry entry missing');
@@ -93,4 +97,4 @@ if(fs.existsSync('app.js')&&fs.existsSync('index.html')&&fs.existsSync('styles.c
   assert.equal(html.includes('id="shareReport"'),false,'legacy share Report owner returned');
 }
 
-console.log('[AXIS 8.21 Report PDF Export contract] PASS · range truth · source-owned Report lexical scope · corrective scope prepare unreachable · completed source-convergence continuity + retirement registry · optional export identity · vector browser PDF · A4 pagination · no raster/store/network owner');
+console.log('[AXIS 8.21 Report PDF Export contract] PASS · range truth · source-owned Report lexical scope · corrective scope prepare unreachable · successor-aware continuity + retirement registry · optional export identity · vector browser PDF · A4 pagination · no raster/store/network owner');

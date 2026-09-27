@@ -6,12 +6,14 @@ const info=JSON.parse(read('axis-build.json'));
 const runtime=read('axis-core.js');
 const css=read('styles/axis-826-active-continuity.css');
 const current=info.version==='8.26.1'&&info.baseVersion==='8.26.1';
-const inherited=info.version==='8.26.2'&&info.baseVersion==='8.26.2';
+const inherited8262=info.version==='8.26.2'&&info.baseVersion==='8.26.2';
+const inherited8263=info.version==='8.26.3'&&info.baseVersion==='8.26.3';
+const inherited=inherited8262||inherited8263;
 if(!current&&!inherited)fail(`release identity ${info.version}/${info.baseVersion}`);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
 for(const gate of ['activeContinuity826','atomicRecordVisualSettlement826','flowOngoingDirectStart826','existingTruthOwnersPreserved826'])if(info.gates?.[gate]!==true)fail(`inherited 8.26 gate missing ${gate}`);
 /* Preserve the historical 8.26.1 sentinels as immutable provenance. 8.26.2
-   separately proves that the live selector is the canonical .v87Rest node. */
+   and 8.26.3 separately prove the live canonical .v87Rest presentation. */
 for(const marker of ['.v87-restline{margin-top:12px!important','background:rgba(115,124,255,.07)','axis826RestStateIn','.v87-restline{animation:none!important}'])if(!css.includes(marker))fail(`rest-state historical marker missing ${marker}`);
 for(const owner of ['function toggle(id)','function completeSet(id,fromShake=false)','function addSet(id)','function beginHold(id,e)'])if(!runtime.includes(owner))fail(`existing v87 owner missing ${owner}`);
 if((runtime.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append owner duplicated');
@@ -22,4 +24,5 @@ info.axis8261={release:true,scope:'active-rest-state-corrective',presentation:{r
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 if(inherited)await import('./postbuild-8262-active-rest-selector-contract.mjs');
 else await import('./scripts/axis-8261-governance-compat.mjs');
-console.log(`[AXIS 8.26.1 Active Rest State contract] PASS · ${inherited?'inherited by 8.26.2':'current'} · v87 truth ownership preserved · no persistence/network authority added`);
+const mode=inherited8263?'inherited by 8.26.3':inherited8262?'inherited by 8.26.2':'current';
+console.log(`[AXIS 8.26.1 Active Rest State contract] PASS · ${mode} · v87 truth ownership preserved · no persistence/network authority added`);

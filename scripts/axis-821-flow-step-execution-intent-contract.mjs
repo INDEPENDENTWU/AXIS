@@ -32,8 +32,9 @@ for(const forbidden of ['localStorage.setItem(','indexedDB.open(','fetch(','XMLH
 assert.equal(chain.includes("await import('./prepare-821-flow-step-execution-intent.mjs');"),true,'Flow step execution intent is not in canonical build chain');
 assert.equal(chain.indexOf('prepare-821-flow-step-execution-intent.mjs')>chain.indexOf('prepare-821-flow-step-recording-intent.mjs'),true,'execution intent must compose after recording intent');
 assert.equal(chain.indexOf('prepare-821-flow-step-execution-intent.mjs')<chain.indexOf('prepare-821-profile-session-truth.mjs'),true,'execution intent escaped bounded 8.21 Flow stage');
-assert.equal(current.includes('feat/821-flow-step-execution-intent'),true,'CURRENT_WORK missing bounded Flow step execution intent branch');
-assert.equal(current.includes('396241c41b2f8eea80d45ca582352ea593c47036'),true,'CURRENT_WORK missing exact certified historical Flow execution base');
+assert.match(current,/^Bounded delivery branch: `[^`]+` · PR \*\*#\d+\*\*\./m,'CURRENT_WORK missing current bounded delivery branch');
+assert.match(current,/^Version decision: \*\*.+\*\*\./m,'CURRENT_WORK missing current version decision');
+assert.ok(current.includes('repository governance remains authoritative'),'CURRENT_WORK lost repository authority');
 
 // The Flow Active behavior owner must now emit its private lifecycle listeners in
 // the correct lexical scope on first pass. The old corrective prepare remains
@@ -74,4 +75,4 @@ for(const token of [
 assert.equal(smoke.includes("await tap(page.locator('#v87Primary'))"),false,'Flow proof regressed to hidden duplicate v87 primary control');
 assert.equal(smoke.includes("await tap(page.locator('#v87Toggle'))"),false,'Flow proof regressed to hidden duplicate v87 toggle control');
 
-console.log('[AXIS 8.21 Flow step execution intent contract] PASS · existing executionOverride only · Flow Active boot listeners source-owned in private app scope · retired corrective prepare unreachable · canonical whole-item proof retained · no new owner');
+console.log('[AXIS 8.21 Flow step execution intent contract] PASS · existing executionOverride only · Flow Active boot listeners source-owned in private app scope · retired corrective prepare unreachable · canonical whole-item proof retained · current continuity metadata · no new owner');

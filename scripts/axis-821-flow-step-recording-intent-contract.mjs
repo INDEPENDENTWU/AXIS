@@ -42,7 +42,8 @@ for(const forbidden of [
 assert.equal(chain.includes("await import('./prepare-821-flow-step-recording-intent.mjs');"),true,'Flow step recording intent is not in canonical build chain');
 assert.equal(chain.indexOf('prepare-821-flow-step-recording-intent.mjs')>chain.indexOf('prepare-821-object-metric-overrides.mjs'),true,'Flow step intent must inherit Object/Profile recording defaults rather than precede them');
 assert.equal(chain.indexOf('prepare-821-flow-step-recording-intent.mjs')<chain.indexOf('prepare-821-profile-session-truth.mjs'),true,'Flow step intent escaped its bounded 8.21 presentation stage');
-assert.equal(current.includes('feat/821-flow-step-recording-intent'),true,'CURRENT_WORK missing bounded Flow step recording intent branch');
-assert.equal(current.includes('b65bce78d48dab162c25c028602e0bbd10ce6d78'),true,'CURRENT_WORK missing exact certified base main SHA');
+assert.match(current,/^Bounded delivery branch: `[^`]+` · PR \*\*#\d+\*\*\./m,'CURRENT_WORK missing current bounded delivery branch');
+assert.match(current,/^Version decision: \*\*.+\*\*\./m,'CURRENT_WORK missing current version decision');
+assert.ok(current.includes('repository governance remains authoritative'),'CURRENT_WORK lost repository authority');
 
-console.log('[AXIS 8.21 Flow step recording intent contract] PASS · explicit override alone uses existing canonical recorder preflight · default Flow item remains direct-start · axis.flow.v1 owner only · no new persistence/recorder/Encounter/Active owner');
+console.log('[AXIS 8.21 Flow step recording intent contract] PASS · explicit override alone uses existing canonical recorder preflight · default Flow item remains direct-start · axis.flow.v1 owner only · current continuity metadata · no new persistence/recorder/Encounter/Active owner');

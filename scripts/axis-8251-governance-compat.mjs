@@ -7,11 +7,13 @@ const SEALED_SHA='d187123dfdb2c0de0e5d202cf62bd6672586a8e7';
 const project=json('governance/project-state.json'),decision=json('governance/version-decision.json'),owners=json('governance/owners.json');
 const sealed8261=project?.product?.productionRelease==='8.26.1'&&project?.product?.releaseStatus==='production-certified'&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.1'&&decision?.decision==='confirm'&&decision?.change_class==='governance'&&Number.isInteger(decision?.sequence)&&decision.sequence>=15;
 const candidate8262=project?.product?.productionRelease==='8.26.2'&&project?.product?.releaseStatus==='candidate'&&project?.product?.candidatePullRequest===155&&decision?.sequence===18&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.2'&&decision?.decision==='bump'&&decision?.change_class==='bug-fix';
-if(!sealed8261&&!candidate8262)fail('current governance must be sealed 8.26.1 confirmation or exact 8.26.2 PR #155 bug-fix candidate');
+const candidate8263=project?.product?.productionRelease==='8.26.3'&&project?.product?.releaseStatus==='candidate'&&project?.product?.candidatePullRequest===156&&decision?.sequence===19&&decision?.base_release==='8.26.2'&&decision?.release==='8.26.3'&&decision?.decision==='bump'&&decision?.change_class==='bug-fix';
+if(!sealed8261&&!candidate8262&&!candidate8263)fail('current governance must be sealed 8.26.1 confirmation, exact 8.26.2 PR #155 bug-fix candidate, or exact 8.26.3 PR #156 bug-fix candidate');
 if(project?.product?.lastSealedRelease!=='8.26.1'||project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==153)fail('8.26.1 exact Production baseline drift');
 if(candidate8262){const v=project?.engineering?.versionDecision;if(v?.sequence!==18||v?.baseRelease!=='8.26.1'||v?.release!=='8.26.2'||v?.decision!=='bump'||v?.changeClass!=='bug-fix')fail('8.26.2 product version provenance drift')}
+if(candidate8263){const v=project?.engineering?.versionDecision;if(v?.sequence!==19||v?.baseRelease!=='8.26.2'||v?.release!=='8.26.3'||v?.decision!=='bump'||v?.changeClass!=='bug-fix')fail('8.26.3 product version provenance drift')}
 const ownerBaseline=owners?.baselineRelease;
-if(!['8.25.1','8.26.1','8.26.2'].includes(ownerBaseline))fail(`8.25.1 replay/current owner baseline drift ${ownerBaseline}`);
+if(!['8.25.1','8.26.1','8.26.2','8.26.3'].includes(ownerBaseline))fail(`8.25.1 replay/current owner baseline drift ${ownerBaseline}`);
 const morph=project?.engineering?.activeInlineSetMorph;
 for(const key of ['postFactOnly','inStageFactRow','stableStageGeometry','nonOverlapping','railConfirmation','buttonReturn','clockSettle','boundedHaptic','reducedMotionSafe'])if(morph?.[key]!==true)fail(`Inline Set Morph sealed capability missing ${key}`);
 if(morph?.status!=='production-sealed-8.25.1-inherited'||morph?.fullScreenOverlay!==false||morph?.pointerEvents!==false)fail('8.25.1 sealed presentation boundary drift');
@@ -25,4 +27,6 @@ if(ownerBaseline!=='8.25.1'){
  if(rest?.status!=='presentation-only-production-sealed'||rest?.storage!=='none')fail('sealed 8.26.1 rest owner drift');
 }
 for(const path of ['prepare-8251-inline-set-morph.mjs','postbuild-8251-inline-set-morph-contract.mjs','styles/axis-8251-inline-set-morph.css','prepare-826-active-continuity.mjs','postbuild-826-active-continuity-contract.mjs','styles/axis-826-active-continuity.css','prepare-8261-active-rest-state.mjs','postbuild-8261-active-rest-state-contract.mjs','prepare-8262-active-rest-selector.mjs','postbuild-8262-active-rest-selector-contract.mjs'])if(!fs.existsSync(path))fail(`inherited/current release surface missing ${path}`);
-console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside ${candidate8262?'8.26.2 candidate':'sealed 8.26.1'} · owner replay ${ownerBaseline}`);
+if(candidate8263)for(const path of ['prepare-8263-active-rest-convergence.mjs','postbuild-8263-active-rest-convergence-contract.mjs','scripts/axis-8263-governance-compat.mjs'])if(!fs.existsSync(path))fail(`8.26.3 release surface missing ${path}`);
+const mode=candidate8263?'8.26.3 candidate':candidate8262?'8.26.2 candidate':'sealed 8.26.1';
+console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside ${mode} · owner replay ${ownerBaseline}`);
