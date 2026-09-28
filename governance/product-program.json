@@ -1,0 +1,195 @@
+{
+  "schema": "axis.product-program.v1",
+  "updatedAt": "2026-09-28",
+  "authority": "repository-governed-product-program",
+  "northStar": {
+    "name": "AXIS Performance OS",
+    "category": "human-performance execution and evidence infrastructure",
+    "coreChain": [
+      "intent",
+      "execution",
+      "encounter",
+      "evidence",
+      "evolution"
+    ],
+    "productContract": "Turn protocols into executable activity, preserve what actually happened, attach evidence to factual encounters, and support evidence-bounded adaptation without allowing AI to become the truth owner."
+  },
+  "nonNegotiables": [
+    "reality-is-authoritative",
+    "local-first-critical-path",
+    "one-action-one-owner",
+    "evidence-before-interpretation",
+    "ai-handles-ambiguity-not-authority",
+    "quiet-interface",
+    "geometry-is-product-state",
+    "fail-open-optional-capabilities",
+    "deterministic-release",
+    "cross-engine-critical-path-proof",
+    "compatibility-preserves-user-history"
+  ],
+  "productLayers": [
+    "object",
+    "protocol-flow",
+    "runtime",
+    "encounter-evidence",
+    "evolution"
+  ],
+  "platformLayers": [
+    "intelligence",
+    "sync-identity",
+    "workspace",
+    "api-sdk"
+  ],
+  "currentProgramStage": "01-release-integrity-and-program-foundation",
+  "stages": [
+    {
+      "id": "01-release-integrity-and-program-foundation",
+      "status": "active",
+      "goal": "Establish a trustworthy baseline, converge product truth, remove documentation drift, and prevent new work from building on an unresolved release state.",
+      "exit": [
+        "current merged runtime status is factually recorded",
+        "production certification failures are understood or explicitly held",
+        "product north star and capability manifest are repository-authoritative",
+        "long-range stages and boundaries are recorded",
+        "no new feature work bypasses the program contracts"
+      ]
+    },
+    {
+      "id": "02-capability-and-source-convergence",
+      "status": "planned",
+      "goal": "Move from version-shaped source history toward capability-shaped ownership and tests without rewriting the product.",
+      "exit": [
+        "critical capabilities have current owners",
+        "version-specific compatibility layers have a retirement map",
+        "tests are increasingly capability-oriented",
+        "release truth has one clear repository path"
+      ]
+    },
+    {
+      "id": "03-semantic-design-system",
+      "status": "planned",
+      "goal": "Make visible state, interaction geometry, typography, motion, localization and accessibility deterministic product contracts rather than incidental CSS behavior.",
+      "exit": [
+        "semantic components exist for primary action, secondary state, metrics, evidence and review surfaces",
+        "critical state transitions have geometry tolerances",
+        "empty or hidden states create zero unintended geometry",
+        "reduced motion and mobile WebKit remain first-class"
+      ]
+    },
+    {
+      "id": "04-platform-neutral-domain-runtime",
+      "status": "planned",
+      "goal": "Extract deterministic domain decisions from DOM, browser storage and deployment-specific code using strangler migration.",
+      "exit": [
+        "events-reducer-state-projection decisions can run without a browser",
+        "current browser owners remain compatible during migration",
+        "runtime fixtures cover continuation and remaining-route decisions"
+      ]
+    },
+    {
+      "id": "05-event-journal-and-provenance",
+      "status": "planned",
+      "goal": "Create append-only factual lineage for execution and evidence while retaining compatibility snapshots until replay is proven.",
+      "exit": [
+        "new runtime actions have stable event identities",
+        "encounters can be reconstructed deterministically",
+        "evidence source and provenance are explicit",
+        "migration does not invalidate existing history"
+      ]
+    },
+    {
+      "id": "06-protocol-runtime",
+      "status": "planned",
+      "goal": "Evolve Flow into a protocol runtime that can express intended execution, constraints, bounded substitutions and completion rules.",
+      "exit": [
+        "protocol intent remains separate from performed reality",
+        "runtime can adapt route to explicit constraints",
+        "temporary overrides carry provenance",
+        "protocol definitions are portable and testable"
+      ]
+    },
+    {
+      "id": "07-evidence-and-evolution-graph",
+      "status": "planned",
+      "goal": "Unify encounter chronology, evidence, observations and outcomes into a trustworthy longitudinal performance graph.",
+      "exit": [
+        "evidence never impersonates another encounter",
+        "observed and inferred data remain distinct",
+        "evolution views derive from factual lineage",
+        "no opaque progress score becomes truth"
+      ]
+    },
+    {
+      "id": "08-sync-identity-and-portability",
+      "status": "planned",
+      "goal": "Productize identity and durable local-first synchronization without making the network the live workout owner.",
+      "exit": [
+        "account is optional for core execution",
+        "sync is idempotent and conflict-bounded",
+        "export and deletion lifecycle are explicit",
+        "platform adapters share domain contracts"
+      ]
+    },
+    {
+      "id": "09-workspace-and-enterprise-foundation",
+      "status": "planned",
+      "goal": "Add a separate organization workspace for coaches and performance organizations without polluting the participant execution shell.",
+      "exit": [
+        "organization and tenancy model exists",
+        "roles and permissions are explicit",
+        "protocol assignment and review workflows exist",
+        "audit events are durable",
+        "participant app remains quiet and execution-first"
+      ]
+    },
+    {
+      "id": "10-bounded-intelligence",
+      "status": "planned",
+      "goal": "Add AI recommendations as auditable proposals over factual state, never as silent truth writers.",
+      "exit": [
+        "observed inferred recommended and decided layers are separate",
+        "recommendations record input fingerprint model reason confidence and decision",
+        "human acceptance is required for authoritative protocol changes",
+        "AI failure preserves a usable deterministic path"
+      ]
+    },
+    {
+      "id": "11-api-sdk-and-open-source-runtime",
+      "status": "planned",
+      "goal": "Turn Object, Protocol, Runtime, Encounter and Evidence contracts into a documented integration surface that third parties can execute and extend.",
+      "exit": [
+        "stable schemas are versioned independently from UI releases",
+        "reference SDK can define and execute protocol objects",
+        "integration tests prove deterministic behavior",
+        "open-source boundaries do not expose secrets or enterprise-only data"
+      ]
+    },
+    {
+      "id": "12-pilots-security-compliance-and-scale",
+      "status": "planned",
+      "goal": "Validate real organizational value before broad scaling, then harden security, integrations and operations from observed needs.",
+      "exit": [
+        "real pilot organizations complete protocol-to-review workflows",
+        "time saved data completeness and execution variance can be measured",
+        "security and retention controls match deployment needs",
+        "integration priorities are driven by pilot evidence rather than feature speculation"
+      ]
+    }
+  ],
+  "commercialSequence": [
+    "coach-studio",
+    "performance-organization",
+    "runtime-sdk-api",
+    "enterprise-platform"
+  ],
+  "explicitNonGoals": [
+    "generic-ai-chatbot",
+    "social-feed",
+    "xp-streak-gamification",
+    "opaque-recovery-score-as-truth",
+    "mandatory-cloud-workout-client",
+    "medical-diagnosis",
+    "dashboard-proliferation-without-execution-value",
+    "simultaneous-multi-platform-rewrite"
+  ]
+}
