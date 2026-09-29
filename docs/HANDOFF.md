@@ -2,15 +2,15 @@
 
 ## Current release state
 
-AXIS **8.26.4 — Active Rest Utility Rail** is the current Release candidate. AXIS **8.26.1 — Active Rest State** remains fully Production-sealed until an exact later merged-main artifact completes the certification chain.
+AXIS **8.26.5 — Recording Review Geometry Stability** is the current Release candidate. AXIS **8.26.1 — Active Rest State** remains fully Production-sealed until an exact later merged-main artifact completes the certification chain.
 
-AXIS **8.26.3** is merged-but-unsealed provenance at `ed418938c07383745d5485c2a46d37d20bfbebc7`. Real-device review after that merge exposed the remaining presentation defect now bounded by 8.26.4.
+AXIS **8.26.4** merged to `main` at `61ff52383eb8103cb3aeca985bfb9b1c50b04a23` from PR **#157**, but fixed Vercel Production run **36333871883** failed the inherited Chromium product-foundation geometry assertion. Before the first weight edit `#axisSetControls` was at y=602; after that edit it moved to y=579.25, a **−22.75px** shift. The before/after Review snapshot showed the cause directly: `#v82Estimate` was absent before the edit and then inserted as a 54px row with 8px top margin.
 
 Candidate identity:
 
-- candidate PR: **#157**
-- bounded delivery branch: `fix/8264-active-rest-utility-rail`
-- version decision: **8.26.3 → 8.26.4 / bump / sequence 20 / bug-fix**
+- candidate PR: **#158**
+- bounded delivery branch: `fix/8265-recording-review-geometry`
+- version decision: **8.26.4 → 8.26.5 / bump / sequence 21 / bug-fix**
 - architecture: `canonical-single-runtime`
 - deterministic build: `node build-release.mjs`
 
@@ -27,7 +27,7 @@ Sealed baseline identity:
 - EdgeOne Production run `35873718809` — exact-prebuilt deploy + Vercel parity + Chromium/WebKit success
 - governed custom-domain run `35873719011` — exact parity + Chromium/WebKit success
 
-The sealed SHA above remains product/runtime authority while 8.26.4 is candidate. `latestDeploymentIsAuthority` remains false.
+The sealed SHA above remains product/runtime authority while 8.26.5 is candidate. `latestDeploymentIsAuthority` remains false.
 
 ## Product model to preserve
 
@@ -35,29 +35,24 @@ Reality is authoritative. Objects describe reusable semantics; Encounters freeze
 
 Authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`. This corrective release does not migrate, clear, duplicate or rewrite them.
 
-## AXIS 8.26.4 Active Rest Utility Rail
+## AXIS 8.26.5 Recording Review Geometry Stability
 
-8.26.3 successfully removed running rest geometry and stabilized the paused/Rest Speak height, but real-device review exposed two remaining composition errors:
+8.26.4 itself passed its exact-head Active Rest candidate gates. The post-merge Production failure was an inherited Review-composition race: v82 owned the estimate control but created the control lazily. A user could therefore reach editable set controls before the estimate row existed; the first metric edit caused a DOM mutation, v82 then inserted the estimate row, and the bottom-anchored sheet shifted already-interactive controls.
 
-1. `plan-complete` could fall through to historical `.v87Rest` pill styling and leave an empty framed/oval residue.
-2. Paused `休息 mm:ss` rendered below the existing `调整` action rather than sharing a disciplined secondary row, making the Active composition visually loose and under-designed.
-
-8.26.4 fixes these at the existing presentation boundary. The canonical `#v87Rest` node is moved into the existing `.axis821StageControls` grid. During pause, rest sits left and the existing Adjust action sits right on one 32px row. The rest text is more legible and deliberate, but remains transparent and frameless. `plan-complete` hides the rest node with zero geometry.
+8.26.5 removes the race rather than weakening the test. The Review shell owns the structural slot, while v82 remains the only estimate presentation/action owner. `renderEstimateControl()` now binds and updates the existing slot instead of inserting one. The structural CSS matches the existing 54px + 8px geometry from the first interactive frame.
 
 ### Truth and action boundary
 
-Existing v87 pause/resume state and timer remain authoritative. Existing `#v87AdjustBtn` remains the only adjustment action. Normal paused rest remains pointer-inert. Existing Rest Speak / learning prompt classes keep their already-established explicit interactions inside the same 32px slot.
-
-8.26.4 does not change how pause starts, how resume works, how rest time is calculated, how sets complete, how Flow advances, or how Session/Encounter facts are stored. No new persistence namespace, database, Session writer, Encounter writer, recorder, Active owner, network owner or AI owner is introduced.
+The estimate row is presentation and planning context only. Existing metric controls remain the factual recording path; v82 keeps the existing estimate-sheet action. There is no new Session, Encounter, Flow, Active, recorder, persistence, network or AI writer.
 
 ### Required proof
 
-PR #157 must pass Version Authority with the exact **8.26.3 → 8.26.4 / sequence 20** decision, Work Continuity with this handoff/current-work state, and all inherited repository/runtime contracts.
+PR #158 must pass Version Authority with the exact **8.26.4 → 8.26.5 / sequence 21** decision, Work Continuity, repository/runtime contracts, and inherited release gates.
 
-Chromium and iPhone-like WebKit must physically prove same-row rest/Adjust alignment, zero running geometry, zero plan-complete rest geometry, transparent/no-pill paused treatment, reduced-motion safety, existing pause/resume truth, and stable Rest Speak interaction/geometry.
+The existing Active Rest physical path chains a dedicated 8.26.5 Review geometry smoke in both Chromium and iPhone-like WebKit. It must prove the estimate row exists before editability, the first weight edit changes the fact exactly once, both estimate/control DOM identities survive, and all x/y/width/height deltas stay within **0.5px**.
 
 After PR validation, only the exact merged `main` artifact may become release authority, and only after fixed Vercel Production, exact-prebuilt EdgeOne Production and `axis.juele.fun` parity/behavior checks all pass.
 
 ## Next engineering rule
 
-Do not create another parallel Active owner or decorative rest component. Complete 8.26.4 as the single corrective presentation candidate, certify it, and only then select the next bounded real-use problem.
+Do not add another corrective UI layer after this seal. Once 8.26.5 is Production-certified, move into the planned product-convergence program: capability-oriented architecture and semantic UI around **Intent → Execution → Evidence → Evolution**, then Domain Runtime, provenance, Workspace/enterprise foundations, bounded intelligence and SDK work in governed stages.

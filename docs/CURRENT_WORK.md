@@ -2,52 +2,44 @@
 
 ## Production baseline at start of this work
 
-AXIS **8.26.1 — Active Rest State** remains the last fully Production-sealed release at exact product/runtime SHA `d187123dfdb2c0de0e5d202cf62bd6672586a8e7` from PR **#153**. Its fixed Vercel, EdgeOne and `axis.juele.fun` certification evidence remains authoritative while the current corrective candidate is unresolved.
+AXIS **8.26.1 — Active Rest State** remains the last fully Production-sealed release at exact product/runtime SHA `d187123dfdb2c0de0e5d202cf62bd6672586a8e7` from PR **#153**. Its fixed Vercel, EdgeOne and `axis.juele.fun` certification evidence remains authoritative until a later exact merged-main artifact earns a complete Production seal.
 
-AXIS **8.26.3 — Active Rest Convergence** merged to `main` at `ed418938c07383745d5485c2a46d37d20bfbebc7` from PR **#156**, but real-device review found a remaining presentation defect before Production sealing. It is merged provenance, not a replacement for the sealed 8.26.1 runtime.
+AXIS **8.26.4 — Active Rest Utility Rail** merged to `main` at `61ff52383eb8103cb3aeca985bfb9b1c50b04a23` from PR **#157** after exact-head Chromium and iPhone-like WebKit validation. Post-merge provider verification then exposed a separate inherited Review geometry defect in fixed Vercel Production run **36333871883**: the first weight edit caused `#v82Estimate` to be inserted late, increasing Review content height and moving `#axisSetControls` upward by **22.75px**. 8.26.4 therefore remains merged-but-unsealed provenance rather than Production authority.
 
 ## Active change
 
-Active milestone: **AXIS 8.26.4 — Active Rest Utility Rail**.
+Active milestone: **AXIS 8.26.5 — Recording Review Geometry Stability**.
 
 governed target branch: `main`.
 
-Bounded delivery branch: `fix/8264-active-rest-utility-rail` · PR **#157**.
+Bounded delivery branch: `fix/8265-recording-review-geometry` · PR **#158**.
 
-Version decision: **8.26.3 → 8.26.4 / bump / sequence 20 / bug-fix**.
+Version decision: **8.26.4 → 8.26.5 / bump / sequence 21 / bug-fix**.
 
 The correction is intentionally narrow:
 
-- Running Active keeps zero `.v87Rest` layout geometry.
-- Paused Active uses the same canonical v87-owned `休息 mm:ss` truth, but the node now lives inside the existing `.axis821StageControls` grid.
-- Paused rest is the left item and the existing `调整` action is the right item on one fixed **32px** secondary utility row.
-- Rest status is visually present enough to read immediately, but remains transparent and frameless: no pill, border, radius, shadow or decorative container.
-- `plan-complete` forces the rest node to zero geometry, eliminating the real-device empty oval/frame residue.
-- Rest Speak and the inherited learning prompt reuse the same 32px slot and preserve their existing explicit actions.
+- The existing `#v82Estimate` row is structural in the Review shell before Review becomes interactive.
+- Its established v82 owner binds and updates that row; v82 may no longer insert the row after a metric interaction.
+- The row preserves its existing 54px height + 8px top spacing from the first interactive frame, so the first weight/reps edit cannot change Review composition.
+- The existing `#axisSetControls` identity and x/y/width/height must remain stable within **0.5px** across the first metric edit.
+- The estimate row itself must retain DOM identity and geometry across that edit.
+- AXIS 8.26.4 Active Rest Utility Rail behavior remains inherited unchanged.
 
-Session, Encounter, Flow, recorder, set completion, pause/resume truth, rest-time calculation, storage, media, network and AI ownership remain unchanged.
+Training facts, metric values, recorder ownership, Session, Encounter, Flow, Active state, persistence, media, network and AI ownership remain unchanged.
 
 ## Validation for this work
 
-The exact PR #157 head must pass repository/version/work-continuity contracts plus the full Current Release and Deep Compatibility families. Chromium and iPhone-like WebKit must prove:
+The exact PR #158 head must pass Repository, Version Authority and Work Continuity contracts plus the full inherited Current Release / Deep Compatibility families. The existing Active Rest selector physical proof chains the new 8.26.5 Review geometry smoke so the already-required Chromium and iPhone-like WebKit paths prove:
 
-- rest and Adjust are direct children of the existing utility grid;
-- paused rest and Adjust share the same vertical center within 1.5px;
-- paused rest stays left of Adjust, has deliberate secondary typography, and has no pill/frame/shadow;
-- running rest geometry is zero;
-- `plan-complete` rest geometry is zero;
-- pause → resume truth remains v87-owned;
-- reduced motion remains safe;
-- Rest Speak on/off keeps the existing geometry tolerance and explicit interaction.
+- `#v82Estimate` exists at full structural height before recording controls are first editable;
+- first weight edit changes the factual value exactly once;
+- `#axisSetControls` is not rebuilt and its x/y/width/height each remain within 0.5px;
+- `#v82Estimate` is not rebuilt and its x/y/width/height each remain within 0.5px;
+- no uncaught browser error is introduced;
+- inherited 8.26.4 running / paused / plan-complete Rest geometry remains green.
 
-The existing 8.9 Rest Speak and 8.10 learning-prompt behavior assertions are not to be weakened. No new workflow family is required: the existing Active Rest physical proof is advanced by the deterministic 8.26.4 build step.
-
-## Inherited fail-closed provenance
-
-AXIS 8.26.3 remains merged-but-unsealed presentation provenance. AXIS 8.26.2 remains merged-but-unsealed selector-binding provenance. AXIS 8.26.1 remains the Production-sealed rest-state baseline. AXIS 8.26, 8.25.1, 8.24.1, 8.24 and 8.23 remain inherited without a new factual owner.
-
-Cross-platform continuity also remains unchanged: foundation `axis-native-foundation-0`, native repository `INDEPENDENTWU/AXIS-iOS`, portable contracts `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, and `axis.report-range.v1`. Chat history is not authoritative project memory; repository governance remains authoritative.
+The 22.75px Production failure is a real product regression and the existing strict geometry assertion is not relaxed.
 
 ## Next planned stage
 
-After exact-head CI is green, merge PR #157 to `main` with the validated head SHA. Then certify that exact merged-main artifact through fixed Vercel Production, exact-prebuilt EdgeOne Production and `https://axis.juele.fun`, including Chromium and iPhone-like WebKit physical proofs. Only after those exact checks succeed may governance mark AXIS 8.26.4 Production-sealed and begin another product slice.
+After exact-head CI is green, merge PR #158 to `main` with the validated head SHA. Then certify that exact merged-main artifact through fixed Vercel Production, exact-prebuilt EdgeOne Production and `https://axis.juele.fun`, including Chromium and iPhone-like WebKit physical proofs. Only when all provider and physical gates are green may governance mark **AXIS 8.26.5 Production-sealed**. After that seal, begin the broader product-convergence roadmap around **Intent → Execution → Evidence → Evolution** rather than adding another corrective UI slice.
