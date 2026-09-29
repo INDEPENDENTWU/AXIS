@@ -1,0 +1,45 @@
+import fs from 'node:fs';
+
+const read=f=>fs.readFileSync(f,'utf8');
+const write=(f,s)=>fs.writeFileSync(f,s);
+const decision=JSON.parse(read('governance/version-decision.json'));
+if(decision?.release!=='8.26.5'||decision?.base_release!=='8.26.4'||decision?.sequence!==21)return;
+
+const SEALED='8.26.1',SEALED_SHA='d187123dfdb2c0de0e5d202cf62bd6672586a8e7',PR=158,FROM='8.26.4',VERSION='8.26.5';
+const p='governance/project-state.json',project=JSON.parse(read(p));
+if(!['8.26.4','8.26.5'].includes(project?.product?.productionRelease))throw new Error(`[AXIS 8.26.5 governance source] unexpected source release ${project?.product?.productionRelease}`);
+project.product.productionRelease=VERSION;
+project.product.releaseStatus='candidate';
+project.product.candidatePullRequest=PR;
+project.product.lastSealedRelease=SEALED;
+project.product.productionRuntimeSha=SEALED_SHA;
+project.product.productionPullRequest=153;
+project.production.sealedRelease=SEALED;
+project.production.candidateRelease=VERSION;
+project.production.candidateStatus='pending-exact-head-and-merged-main-certification';
+project.production.evidenceSemantics=`Provider IDs and source SHA below remain the fully sealed AXIS ${SEALED} certification snapshot at ${SEALED_SHA}. AXIS 8.26.4 merged at 61ff52383eb8103cb3aeca985bfb9b1c50b04a23 but failed fixed Vercel Production Chromium run 36333871883 because v82Estimate appeared after the first metric interaction and shifted Review controls by 22.75px. AXIS 8.26.5 is the bounded geometry correction and may replace the seal only after exact merged-main Vercel, EdgeOne and axis.juele.fun certification.`;
+project.engineering.activeMilestone='AXIS 8.26.5 — Recording Review Geometry Stability';
+project.engineering.activePhase='Corrective release candidate — structural v82 estimate slot before Review interaction';
+project.engineering.activeBranch='main';
+project.engineering.deliveryBranch='fix/8265-recording-review-geometry';
+project.engineering.pullRequest=PR;
+project.engineering.pullRequestDraft=false;
+project.engineering.baselineRelease=VERSION;
+project.engineering.nextProductRelease=VERSION;
+project.engineering.versionDecision={sequence:21,baseRelease:FROM,release:VERSION,decision:'bump',changeClass:'bug-fix'};
+if(project.engineering.activeRestUtilityRail)project.engineering.activeRestUtilityRail.status='8.26.4-merged-unsealed-inherited';
+project.engineering.recordingReviewGeometry={status:'8.26.5-release-candidate',baseRelease:FROM,productionFinding:{gateRunId:36333871883,engine:'chromium',failure:'weight step shifted control geometry',deltaYPx:-22.75,rootCause:'v82Estimate inserted after first metric interaction'},structuralEstimateSlot:true,estimateOwner:'v82',reviewGeometryStableBeforeInteraction:true,metricControlTolerancePx:0.5,newTrainingOwner:false,newStorage:false,newSessionWriter:false,newEncounterWriter:false,newRecorderOwner:false,newActiveOwner:false,network:false,ai:false,productionProofRequired:['Vercel','EdgeOne','axis.juele.fun']};
+project.engineering.nextSlice='Finish AXIS 8.26.5 on exact PR #158 head, prove immutable Review geometry in Chromium and iPhone-like WebKit, then certify exact merged-main Vercel, EdgeOne and axis.juele.fun before the broader Performance OS roadmap.';
+if(project.presentationFoundation)project.presentationFoundation.status='AXIS 8.26.5 is a bounded corrective candidate over merged-but-unsealed 8.26.4 and last sealed 8.26.1; it makes the existing estimate row structural before Review interaction without changing localization/theme authority.';
+write(p,JSON.stringify(project,null,2)+'\n');
+
+const op='governance/owners.json',owners=JSON.parse(read(op));
+owners.baselineRelease=VERSION;
+const rail=owners.owners?.find(o=>o.capability==='active-rest-utility-rail-8264');
+if(rail)rail.status='presentation-only-merged-unsealed-inherited';
+if(!owners.owners.some(o=>o.capability==='recording-review-geometry-8265'))owners.owners.push({capability:'recording-review-geometry-8265',status:'presentation-only-release-candidate',owner:'canonical Review shell + existing v82 estimate presentation owner',storage:'none',delegatesTo:'existing recording controls and v82 estimate sheet action',notes:'AXIS 8.26.5 reserves the existing estimate row before Review becomes interactive so metric edits cannot move recording geometry. It adds no factual, persistence, recorder, Active, network or AI authority.'});
+const rule='AXIS 8.26.5 may only stabilize Review geometry by making the existing v82 estimate row structural before interaction; it may not change metric facts, recorder ownership, Session/Encounter/Active truth, persistence, network or AI authority.';
+owners.rules=Array.isArray(owners.rules)?owners.rules:[];
+if(!owners.rules.includes(rule))owners.rules.push(rule);
+write(op,JSON.stringify(owners,null,2)+'\n');
+console.log('[AXIS 8.26.5 governance source] PASS · candidate governance converged before inherited contracts');
