@@ -30,6 +30,8 @@ The physical contract remains strict: the first weight edit must preserve the DO
 
 The exact AXIS 8.26.1 product/runtime evidence remains the runtime seal baseline while 8.26.5 is a candidate. AXIS 8.26.4 is merged-but-unsealed provenance because its fixed Vercel Production Chromium foundation proof failed after deployment. Candidate builds may not relabel provider evidence.
 
+Candidate identity is **not a self-referential requirement** for inherited provider evidence. Durable sealed evidence stays attached to the exact previously certified runtime until a later exact merged-main artifact completes every required provider and physical-browser gate.
+
 Sealed 8.26.1 evidence remains:
 
 - Vercel deployment `dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9` — READY / Production
