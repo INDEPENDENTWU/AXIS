@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const read=f=>fs.readFileSync(f,'utf8');
 const write=(f,s)=>fs.writeFileSync(f,s);
 const decision=JSON.parse(read('governance/version-decision.json'));
-if(decision?.release!=='8.26.5'||decision?.base_release!=='8.26.4'||decision?.sequence!==21)return;
+if(decision?.release!=='8.26.5'||decision?.base_release!=='8.26.4'||decision?.sequence!==21)throw new Error(`[AXIS 8.26.5 governance source] unexpected version decision ${decision?.base_release} -> ${decision?.release} / ${decision?.sequence}`);
 
 const SEALED='8.26.1',SEALED_SHA='d187123dfdb2c0de0e5d202cf62bd6672586a8e7',PR=158,FROM='8.26.4',VERSION='8.26.5';
 const p='governance/project-state.json',project=JSON.parse(read(p));
