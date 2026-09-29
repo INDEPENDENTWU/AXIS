@@ -30,7 +30,8 @@ const once=(src,from,to,label)=>{const n=src.split(from).length-1;if(n!==1)fail(
  write(f,s);
 }
 {
- const f='v82.js';let s=read(f);
+ const f='v82-runtime.js';let s=read(f);
+ s=once(s,"function scanEstimateHost(){return $('#reviewStage:not(.hidden)')&&$('#saveScan')}","function scanEstimateHost(){return $('#reviewStage')&&$('#saveScan')}",'estimate host must exist before Review becomes interactive');
  const old="const save=$('#saveScan');if(!save||!scanEstimateHost())return;let b=$('#v82Estimate');if(!b){b=D.createElement('button');b.id='v82Estimate';b.className='v82Estimate';save.insertAdjacentElement('beforebegin',b);b.onclick=openEstimateSheet}";
  const next="const save=$('#saveScan');if(!save||!scanEstimateHost())return;const b=$('#v82Estimate');if(!b)return;if(!b.dataset.v8265){b.dataset.v8265='1';b.onclick=openEstimateSheet}";
  s=once(s,old,next,'estimate owner must bind structural slot, never insert late');
