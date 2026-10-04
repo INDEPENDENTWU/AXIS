@@ -37,8 +37,12 @@ function git(args, allowFailure = false) {
   }
 }
 
+function readTextAt(ref, path) {
+  return git(['show', `${ref}:${path}`], true);
+}
+
 function readJsonAt(ref, path) {
-  const raw = git(['show', `${ref}:${path}`], true);
+  const raw = readTextAt(ref, path);
   if (raw === null) return null;
   try {
     return JSON.parse(raw);
@@ -95,7 +99,6 @@ function isVersionSensitive(path) {
   return false;
 }
 
-// Keep the contract fail-closed for representative product-data and portable-contract paths.
 for (const example of [
   'data/rest-speak/example.json',
   'shared/contracts/axis-flow-v1.schema.json'
@@ -157,15 +160,33 @@ const headSha = process.env.AXIS_VERSION_HEAD_SHA || 'HEAD';
 let baseRelease = decision.base_release;
 let baseDecision = null;
 let changedPaths = [];
+let sealReconciliation = false;
 
 if (!isZeroSha(baseSha)) {
   const baseState = readJsonAt(baseSha, PROJECT_STATE_PATH);
   if (!baseState) fail(`cannot resolve ${PROJECT_STATE_PATH} at ${baseSha}`);
-  baseRelease = projectRelease(baseState, `base ${PROJECT_STATE_PATH}`);
-  parseVersion(baseRelease, 'base project-state product release');
+  const rawBaseRelease = projectRelease(baseState, `base ${PROJECT_STATE_PATH}`);
+  parseVersion(rawBaseRelease, 'base project-state product release');
+  baseRelease = rawBaseRelease;
   baseDecision = readJsonAt(baseSha, DECISION_PATH);
+  const baseReleaseDoc = readTextAt(baseSha, RELEASE_DOC_PATH);
+  const baseReleaseTitle = baseReleaseDoc?.match(/^# Current Release — AXIS (\d+(?:\.\d+)*)$/m)?.[1] ?? null;
   const diff = git(['diff', '--name-only', `${baseSha}..${headSha}`]);
   changedPaths = diff ? diff.split('\n').filter(Boolean) : [];
+
+  sealReconciliation =
+    decision.decision === 'confirm' &&
+    decision.change_class.trim().toLowerCase() === 'governance' &&
+    baseDecision?.decision === 'bump' &&
+    baseDecision?.release === artifactVersion &&
+    baseReleaseTitle === artifactVersion &&
+    decision.base_release === artifactVersion &&
+    decision.release === artifactVersion &&
+    rawBaseRelease !== artifactVersion;
+
+  if (sealReconciliation) {
+    baseRelease = artifactVersion;
+  }
 
   if (decision.base_release !== baseRelease) {
     fail(`decision base_release ${decision.base_release} must equal base branch release ${baseRelease}`);
@@ -211,7 +232,7 @@ if (artifactVersion === baseRelease && decision.decision !== 'confirm') {
   fail(`built release stayed ${artifactVersion}; decision must explicitly be "confirm"`);
 }
 
-console.log(`AXIS version authority OK: ${baseRelease} -> ${artifactVersion} (${decision.decision}, sequence ${decision.sequence}, ${decision.change_class})`);
+console.log(`AXIS version authority OK: ${baseRelease} -> ${artifactVersion} (${decision.decision}, sequence ${decision.sequence}, ${decision.change_class})${sealReconciliation?' · bounded seal reconciliation':''}`);
 if (changedPaths.length) {
   console.log(`Checked ${changedPaths.length} changed path(s); ${changedPaths.filter(isVersionSensitive).length} version-sensitive.`);
 }
