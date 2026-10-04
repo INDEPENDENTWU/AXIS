@@ -28,7 +28,9 @@ for(const marker of ['AXIS 8.27 — Reality Route','[data-axis-flow-defer]','[da
 for(const forbidden of ['window.','document.','localStorage','indexedDB','fetch(','XMLHttpRequest','WebSocket','navigator.'])if(core.includes(forbidden))fail('pure core contains platform dependency '+forbidden);
 
 if((runtime.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('Encounter append ownership changed');
-for(const forbidden of ['axis_route_','axis_reality_route_','indexedDB.open'])if(runtime.includes(forbidden))fail('new persistence namespace/owner detected '+forbidden);
+for(const forbidden of ['axis_route_','axis_reality_route_'])if(runtime.includes(forbidden))fail('new persistence namespace detected '+forbidden);
+const inheritedMediaDbOwners=(runtime.match(/indexedDB\.open\(DB,1\)/g)||[]).length;
+if(inheritedMediaDbOwners!==1)fail('existing media IndexedDB ownership drifted · '+inheritedMediaDbOwners);
 
 info.gates=info.gates||{};
 Object.assign(info.gates,{
