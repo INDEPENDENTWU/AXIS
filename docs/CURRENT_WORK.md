@@ -1,5 +1,8 @@
 # AXIS Current Work
 
+Governed active milestone: `AXIS 8.26.5 — Recording Review Geometry Stability`.
+Governed target branch: `main`.
+
 ## Production baseline at start of this work
 
 AXIS **8.26.5 — Recording Review Geometry Stability** is the exact Production-sealed baseline for this governance closeout.
