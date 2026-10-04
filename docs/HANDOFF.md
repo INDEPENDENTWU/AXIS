@@ -1,5 +1,7 @@
 # AXIS Engineering Handoff
 
+Governed milestone: `AXIS 8.26.5 — Recording Review Geometry Stability`.
+
 ## Current release state
 
 AXIS **8.26.5 — Recording Review Geometry Stability** is Production-sealed.
