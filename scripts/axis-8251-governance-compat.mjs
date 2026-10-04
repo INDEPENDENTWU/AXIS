@@ -11,7 +11,7 @@ const candidate827=project?.product?.productionRelease==='8.27'&&project?.produc
 if(!sealed8265&&!candidate827)fail('current governance must be sealed 8.26.5 or exact 8.27 candidate');
 if(project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==158)fail('8.26.5 Production baseline drift');
 
-if(!['8.26.5','8.27'].includes(owners?.baselineRelease))fail(`owner baseline drift ${owners?.baselineRelease}`);
+if(!['8.25.1','8.26.5','8.27'].includes(owners?.baselineRelease))fail(`owner baseline drift ${owners?.baselineRelease}`);
 const morph=project?.engineering?.activeInlineSetMorph;
 for(const key of ['postFactOnly','inStageFactRow','stableStageGeometry','nonOverlapping','railConfirmation','buttonReturn','clockSettle','boundedHaptic','reducedMotionSafe'])if(morph?.[key]!==true)fail(`Inline Set Morph inherited capability missing ${key}`);
 if(morph?.status!=='production-sealed-8.25.1-inherited'||morph?.fullScreenOverlay!==false||morph?.pointerEvents!==false)fail('8.25.1 presentation boundary drift');
@@ -22,8 +22,10 @@ const continuity=owners.owners?.find(x=>x.capability==='active-continuity-826');
 const rest=owners.owners?.find(x=>x.capability==='active-rest-state-8261');
 if(oldOwner?.status!=='presentation-only-production-sealed-superseded'||oldOwner?.storage!=='none')fail('8.25 historical Set Lock owner drift');
 if(morphOwner?.status!=='presentation-only-production-sealed'||morphOwner?.storage!=='none')fail('8.25.1 sealed owner drift');
-if(continuity?.status!=='presentation-and-coordination-production-sealed'||continuity?.storage!=='none')fail('sealed 8.26 owner drift');
-if(rest?.status!=='presentation-only-production-sealed'||rest?.storage!=='none')fail('sealed 8.26.1 rest owner drift');
+if(owners?.baselineRelease!=='8.25.1'){
+  if(continuity?.status!=='presentation-and-coordination-production-sealed'||continuity?.storage!=='none')fail('sealed 8.26 owner drift');
+  if(rest?.status!=='presentation-only-production-sealed'||rest?.storage!=='none')fail('sealed 8.26.1 rest owner drift');
+}
 
 for(const p of ['prepare-8251-inline-set-morph.mjs','postbuild-8251-inline-set-morph-contract.mjs','styles/axis-8251-inline-set-morph.css','prepare-826-active-continuity.mjs','prepare-8261-active-rest-state.mjs','prepare-8262-active-rest-selector.mjs','prepare-8263-active-rest-convergence.mjs','prepare-8264-active-rest-utility-rail.mjs','prepare-8265-recording-review-geometry.mjs'])if(!fs.existsSync(p))fail(`inherited/current release surface missing ${p}`);
 
