@@ -1,7 +1,7 @@
 # AXIS Current Work
 
 Governed active milestone: `AXIS 8.26.5 — Recording Review Geometry Stability`.
-Governed target branch: `main`.
+governed target branch: `main`.
 
 Bounded delivery branch: `fix/8265-recording-review-geometry` · PR **#158**.
 Version decision: **8.26.5 → 8.26.5 / confirm / sequence 22 / governance**.
