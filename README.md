@@ -2,15 +2,15 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.26.4** · **Release candidate** · last sealed **8.26.1** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
+**Current release: 8.26.5** · **Release candidate** · last sealed **8.26.1** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
 
 AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Encounters freeze what actually happened, Evidence anchors those facts, Flow describes intended continuity, and Evolution reveals reality without inventing a second history.
 
 ## Release truth
 
-AXIS **8.26.4 — Active Rest Utility Rail** is the current bounded corrective candidate on PR **#157**, branch `fix/8264-active-rest-utility-rail`.
+AXIS **8.26.5 — Recording Review Geometry Stability** is the current bounded corrective candidate on PR **#158**, branch `fix/8265-recording-review-geometry`.
 
-AXIS **8.26.3** was merged to `main` at `ed418938c07383745d5485c2a46d37d20bfbebc7`, but real-device review exposed two remaining presentation defects: plan-complete could leave a rest-shaped visual residue, and paused `休息 mm:ss` sat on a separate vertical row from the existing `调整` action. 8.26.4 corrects those two presentation defects without changing training truth.
+AXIS **8.26.4** merged to `main` at `61ff52383eb8103cb3aeca985bfb9b1c50b04a23` from PR **#157**, but fixed Vercel Production run **36333871883** exposed a real inherited Review geometry regression: the first weight edit caused the lazily inserted `#v82Estimate` row to move existing recording controls upward by **22.75px**. 8.26.4 therefore remains merged-but-unsealed provenance.
 
 AXIS **8.26.1** remains the exact Production-sealed baseline at product/runtime merge `d187123dfdb2c0de0e5d202cf62bd6672586a8e7` from PR **#153** until an exact later merged-main artifact completes the full certification chain. `latestDeploymentIsAuthority` remains false.
 
@@ -24,23 +24,23 @@ Sealed 8.26.1 Production evidence remains:
 - EdgeOne Production run `35873718809` — exact-prebuilt deployment, Vercel parity, Chromium + iPhone-like WebKit success
 - `axis.juele.fun` Production run `35873719011` — exact parity, Chromium + iPhone-like WebKit success
 
-## What 8.26.4 changes
+## What 8.26.5 changes
 
-Paused Active keeps the existing canonical `#v87Rest` factual timer but places it inside the already-existing `.axis821StageControls` utility grid. The rest state sits on the **left** and the existing `调整` action sits on the **right**, on one fixed 32px secondary row. The rest text has deliberate secondary emphasis but no pill, border, frame, shadow or decorative container.
+The existing `#v82Estimate` row is now structural in the Review shell before Review becomes interactive. v82 still owns its value and existing estimate-sheet action, but it no longer inserts the row after the first metric edit. The first editable frame therefore has the same 54px + 8px estimate geometry as every later frame.
 
-Running Active continues to have zero rest geometry. `plan-complete` now also has zero rest geometry, so no empty oval, badge or residual frame can survive after the planned sets are complete. Inherited Rest Speak keeps the same 32px geometry and its existing explicit interaction.
+The strict physical contract remains unchanged: first metric interaction must preserve both `#axisSetControls` and `#v82Estimate` DOM identity and geometry within **0.5px**. No tolerance is widened.
 
-The patch does **not** change pause/resume semantics, rest-time calculation, set completion, Flow, Session, Encounter, recorder, storage, media, network or AI ownership.
+The patch does **not** change metric truth, recorder semantics, Session, Encounter, Flow, Active, persistence, media, network or AI ownership. AXIS 8.26.4 Active Rest Utility Rail is inherited unchanged.
 
 ## Current engineering state
 
-Active milestone: **AXIS 8.26.4 — Active Rest Utility Rail**
+Active milestone: **AXIS 8.26.5 — Recording Review Geometry Stability**
 
 Governed target branch: `main`
 
-Bounded delivery branch: `fix/8264-active-rest-utility-rail` · PR **#157**.
+Bounded delivery branch: `fix/8265-recording-review-geometry` · PR **#158**.
 
-Version decision: **8.26.3 → 8.26.4 / bump / sequence 20 / bug-fix**.
+Version decision: **8.26.4 → 8.26.5 / bump / sequence 21 / bug-fix**.
 
 The deterministic release remains `canonical-single-runtime`, one initial JavaScript request and zero dynamic runtime chunks.
 

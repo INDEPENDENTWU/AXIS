@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 20,
-  "base_release": "8.26.3",
-  "release": "8.26.4",
+  "sequence": 21,
+  "base_release": "8.26.4",
+  "release": "8.26.5",
   "decision": "bump",
   "change_class": "bug-fix",
-  "summary": "AXIS 8.26.4 corrects the remaining real-device Active rest presentation defect after merged-but-unsealed 8.26.3: paused rest and the existing Adjust action now share one aligned secondary utility row, while plan-complete removes rest geometry entirely. Existing v87 pause/timer truth, Rest Speak actions, training facts and persistence ownership remain unchanged."
+  "summary": "AXIS 8.26.5 corrects the fixed-Production Review geometry regression exposed after merged 8.26.4: the existing v82 estimate row becomes structural before Review is interactive, so the first metric edit cannot shift recording controls. Existing recording facts, v82 estimate action, Session, Encounter, Active, persistence, network and AI ownership remain unchanged."
 }
