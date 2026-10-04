@@ -31,10 +31,24 @@
     "flowOverrideNoObjectMutation": true,
     "flowResolverPure": true,
     "flowNoSecondTrainingStore": true,
-    "flowProvenanceSnapshotImmutable": true
+    "flowProvenanceSnapshotImmutable": true,
+    "realityRoutePure": true,
+    "realityRouteIntentImmutable": true,
+    "realityRouteEncounterImmutable": true,
+    "realityRouteTemporaryConstraintsInFlowRun": true,
+    "realityRouteNoSecondTrainingStore": true
   },
   "platforms": {
-    "web": {"productionOwner": "INDEPENDENTWU/AXIS", "releaseIndependent": true},
-    "ios": {"targetRepository": "INDEPENDENTWU/AXIS-iOS", "nativeUI": true, "releaseIndependent": true}
-  }
+    "web": {
+      "productionOwner": "INDEPENDENTWU/AXIS",
+      "releaseIndependent": true
+    },
+    "ios": {
+      "targetRepository": "INDEPENDENTWU/AXIS-iOS",
+      "nativeUI": true,
+      "releaseIndependent": true
+    }
+  },
+  "realityRoute": "axis.reality-route.v1",
+  "executionConstraints": "axis.execution-constraints.v1"
 }
