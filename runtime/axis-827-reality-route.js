@@ -174,6 +174,7 @@ axis821SkipFlow=axis827SkipFlow;
 axis821AdvanceFlow=axis827AdvanceFlow;
 axis821FlowAdvanceCompletedCurrent=axis827AdvanceCompletedCurrent;
 axis821FlowSurfaceRenderHome=axis827FlowSurfaceRenderHome;
+if(window.__AXIS_821_FLOW_SURFACE__)window.__AXIS_821_FLOW_SURFACE__.render=axis827FlowSurfaceRenderHome;
 
 if(window.__AXIS_FLOW_RUNTIME__){
   window.__AXIS_FLOW_RUNTIME__.launch=axis827LaunchFlow;
