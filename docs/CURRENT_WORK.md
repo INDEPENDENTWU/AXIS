@@ -53,7 +53,7 @@ The 8.27 stage is complete only when:
 
 Foundation remains `axis-native-foundation-0` in native repository `INDEPENDENTWU/AXIS-iOS`.
 
-Portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, and `axis.report-range.v1`. Reality Route is intentionally platform-neutral and must stay free of DOM, localStorage, WebKit, provider, network, and AI dependencies.
+Portable contracts include `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.reality-route.v1`, `axis.execution-constraints.v1`, and `axis.report-range.v1`. Reality Route is intentionally platform-neutral and must stay free of DOM, localStorage, WebKit, provider, network, and AI dependencies.
 
 ## Next planned stage
 
