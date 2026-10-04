@@ -439,7 +439,35 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Begin AXIS 8.27 Reality Route: introduce a pure continuation projection over Flow intent + actual Encounters + temporary execution constraints, then expose the smallest Active interaction that can defer an unavailable item without mutating Flow or historical truth."
+    "nextSlice": "Begin AXIS 8.27 Reality Route: introduce a pure continuation projection over Flow intent + actual Encounters + temporary execution constraints, then expose the smallest Active interaction that can defer an unavailable item without mutating Flow or historical truth.",
+    "recordingReviewGeometry": {
+      "status": "production-sealed-8.26.5",
+      "baseRelease": "8.26.4",
+      "productionFinding": {
+        "gateRunId": 36333871883,
+        "engine": "chromium",
+        "failure": "weight step shifted control geometry",
+        "deltaYPx": -22.75,
+        "rootCause": "v82Estimate inserted after first metric interaction"
+      },
+      "structuralEstimateSlot": true,
+      "estimateOwner": "v82",
+      "reviewGeometryStableBeforeInteraction": true,
+      "metricControlTolerancePx": 0.5,
+      "newTrainingOwner": false,
+      "newStorage": false,
+      "newSessionWriter": false,
+      "newEncounterWriter": false,
+      "newRecorderOwner": false,
+      "newActiveOwner": false,
+      "network": false,
+      "ai": false,
+      "productionProofRequired": [
+        "Vercel",
+        "EdgeOne",
+        "axis.juele.fun"
+      ]
+    }
   },
   "compatibility": {
     "longLivedFoundation": "8.12",
