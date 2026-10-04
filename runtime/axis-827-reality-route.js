@@ -146,7 +146,7 @@ function axis827FlowSurfaceRenderHome(){
     host.innerHTML='<div class="axis821FlowTop"><span>流程'+(position?' · '+position:'')+'</span><button data-axis-flow-open>全部</button></div>'+
       '<div class="axis821FlowRunLead"><small>'+(executing?'当前项目 · 进行中':currentDeferred?'稍后项目 · 回到这里':'当前项目')+'</small><b>'+esc(axis821FlowSurfaceName(ctx.objectRef))+'</b><span>'+(next?'接下来 · '+esc(next):'最后一项')+(deferred&&!currentDeferred?' · 稍后 '+deferred+' 项':'')+'</span></div>'+
       (executing?'<div class="axis821FlowRunStatus"><i></i><span><b>此项已开始</b><small>时间、暂停、休息与完成继续使用原有进行中控制。</small></span></div>':'<button class="axis821FlowRunPrimary" data-axis-flow-record>'+(currentDeferred?'开始稍后项':'开始此项')+'</button>')+
-      '<div class="axis821FlowRunSecondary '+(executing?'executing':'')+'">'+(!executing&&!currentDeferred?'<button data-axis-flow-defer>稍后</button>':'')+'<button data-axis-flow-other>临时记录其他</button><button data-axis-flow-finish>结束流程</button></div>';
+      '<div class="axis821FlowRunSecondary '+(executing?'executing':'')+'">'+(!executing&&!currentDeferred?'<button data-axis-flow-defer>稍后</button>':'')+(!executing?'<button data-axis-flow-skip>跳过</button>':'')+'<button data-axis-flow-other>临时记录其他</button><button data-axis-flow-finish>结束流程</button></div>';
     return;
   }
   if(run&&run.status==='complete'){
