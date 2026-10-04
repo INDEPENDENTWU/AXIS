@@ -8,7 +8,7 @@ AXIS **8.26.4 — Active Rest Utility Rail** merged to `main` at `61ff52383eb810
 
 ## Active change
 
-Active milestone: **AXIS 8.26.5 — Recording Review Geometry Stability**.
+Active milestone: **AXIS 8.26.5 — Recording Review Geometry Stability** · **Release candidate**.
 
 governed target branch: `main`.
 
