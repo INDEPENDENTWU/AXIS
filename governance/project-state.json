@@ -540,7 +540,9 @@
       "axis.data.v1",
       "axis.flow.v1",
       "axis.flow-provenance.v1",
-      "axis.report-range.v1"
+      "axis.report-range.v1",
+      "axis.reality-route.v1",
+      "axis.execution-constraints.v1"
     ],
     "rule": "Shared product/data semantics are portable; Web implementation accidents are not domain contracts."
   },
