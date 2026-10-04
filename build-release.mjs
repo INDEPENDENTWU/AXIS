@@ -72,6 +72,7 @@ const STEPS=[
   'prepare-8263-active-rest-convergence.mjs',
   'prepare-8264-active-rest-utility-rail.mjs',
   'prepare-8265-recording-review-geometry.mjs',
+  'prepare-827-reality-route.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
