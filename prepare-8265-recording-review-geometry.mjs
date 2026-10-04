@@ -104,6 +104,11 @@ for(const f of candidates){let s=read(f),next=s;for(const [a,b] of pairs){const 
  const f='scripts/axis-8251-inline-set-morph-smoke.mjs';let s=read(f);if(!s.includes(`'${VERSION}'`))s=s.replace("'8.26.3','8.26.4']","'8.26.3','8.26.4','8.26.5']");write(f,s);
 }
 {
+ const f='scripts/axis-826-active-continuity-smoke.mjs';let s=read(f),n=0;
+ for(const [a,b] of [[`window.__AXIS_RELEASE__==='${FROM}'`,`window.__AXIS_RELEASE__==='${VERSION}'`],[`window.__AXIS_RELEASE__),'${FROM}'`,`window.__AXIS_RELEASE__),'${VERSION}'`]]){const c=s.split(a).length-1;if(c){n+=c;s=s.replaceAll(a,b)}}
+ if(n<2)fail(`8.26 Active Continuity smoke current identity drift ${n}`);write(f,s);identityTouches+=n;
+}
+{
  const f='postbuild-825-set-lock-contract.mjs';let s=read(f);if(!s.includes(`'${VERSION}'`))s=s.replace("'8.26.3','8.26.4'].includes(info.version)","'8.26.3','8.26.4','8.26.5'].includes(info.version)");write(f,s);
 }
 for(const f of ['postbuild-8251-inline-set-morph-contract.mjs','postbuild-826-active-continuity-contract.mjs']){
