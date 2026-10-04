@@ -77,9 +77,10 @@ function axis827ResolvedCurrent(){
 function axis827LaunchFlow(id){
   const flow=axis821FlowById(id);
   if(!flow)return null;
-  const startedAt=Date.now(),steps=axis821FlowClone(flow.steps);
-  if(!state.active)state.active={id:uid('S'),start:startedAt,events:[]};
-  state.flowRun={schema:'axis.flow-run.v1',id:uid('FR'),flowRef:flow.id,startedAt:startedAt,status:'active',cursor:0,steps:steps,consumedStepRefs:[],skippedStepRefs:[],lastEncounterId:null,currentEncounterId:null,currentStepRef:null,itemStartedAt:startedAt,temporaryConstraints:{schema:'axis.execution-constraints.v1',deferredStepRefs:[]}};
+  const startedAt=Date.now(),steps=axis821FlowClone(flow.steps).map(x=>({...x,expectedDurationMs:axis821FlowExpectedForObject(x.objectRef)}));
+  for(let i=0;i<steps.length;i++)steps[i].expectedGapAfterMs=i<steps.length-1?axis821FlowSuggestedGap(steps[i].objectRef,steps[i+1].objectRef):0;
+  if(!state.active)state.active=typeof axis821CreateSessionWithTruth==='function'?axis821CreateSessionWithTruth(startedAt):{id:uid('S'),start:startedAt,events:[]};
+  state.flowRun={schema:'axis.flow-run.v1',id:uid('FR'),flowRef:flow.id,startedAt:startedAt,status:'active',cursor:0,steps:steps,expectedTotalMs:axis821FlowExpectedTotal(steps),consumedStepRefs:[],skippedStepRefs:[],lastEncounterId:null,currentEncounterId:null,currentStepRef:null,itemStartedAt:null,lastCompletedAt:null,lastCompletedStepRef:null,suggestedGapMs:null,gapStartedAt:null,temporaryConstraints:{schema:'axis.execution-constraints.v1',deferredStepRefs:[]}};
   axis827SyncRealityRoute();
   save();
   try{render()}catch{}
