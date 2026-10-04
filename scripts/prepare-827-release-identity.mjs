@@ -25,6 +25,20 @@ for(const row of [
   write(f,s);
 }
 
+const inheritedCurrentIdentityFiles=[
+  'postbuild-882-contract.mjs','postbuild-810-contract.mjs','postbuild-8101-contract.mjs','postbuild-8102-contract.mjs','postbuild-8103-contract.mjs','postbuild-891-contract.mjs','postbuild-811-contract.mjs','postbuild-812-contract.mjs','postbuild-813-live-route.mjs','postbuild-8123-contract.mjs','postbuild-8123-field-polish.mjs','postbuild-8124-contract.mjs','postbuild-8131-evolution-contract.mjs','postbuild-814-evolution-contract.mjs','postbuild-815-media-evidence-contract.mjs','postbuild-8151-regression-contract.mjs','postbuild-816-contract.mjs','postbuild-817-contract.mjs','postbuild-8171-source-first-media-contract.mjs',
+  'scripts/axis-811-experience-smoke.mjs','scripts/axis-882-smoke.mjs','scripts/axis-8102-smoke.mjs','scripts/axis-8103-smoke.mjs','scripts/axis-813-live-route-smoke.mjs','scripts/axis-813-settings-convergence-smoke.mjs','scripts/axis-8122-settings-smoke.mjs','scripts/axis-8123-learning-simplify-smoke.mjs','scripts/axis-8123-field-polish-smoke.mjs','scripts/axis-8121-hotfix-smoke.mjs','scripts/axis-8123-equipment-gallery-picker-smoke.mjs','scripts/axis-8124-flow-smoke.mjs','scripts/axis-8124-catalog-polish-smoke.mjs','scripts/axis-8124-custom-equipment-smoke.mjs','scripts/axis-8125-smart-create-polish-smoke.mjs','scripts/axis-8131-evolution-smoke.mjs','scripts/axis-814-evolution-object-smoke.mjs','scripts/axis-815-media-evidence-smoke.mjs','scripts/axis-8151-evidence-swap-smoke.mjs','scripts/axis-816-capture-evidence-smoke.mjs','scripts/axis-8171-source-first-media-smoke.mjs','scripts/prepare-release-test-contract.mjs','scripts/prepare-810-test-flow.mjs','scripts/prepare-8101-test-flow.mjs','prepare-8123-ci-stability.mjs','scripts/edgeone-prebuilt-verify.mjs','scripts/axis-current-release-contract.mjs','scripts/axis-runtime-foundation-contract.mjs','scripts/axis-deep-compatibility-contract.mjs'
+];
+let inheritedIdentityTouches=0;
+for(const file of inheritedCurrentIdentityFiles){
+  let s=read(file);
+  const n=(s.match(/'8\.26\.5'/g)||[]).length;
+  if(!n)continue;
+  inheritedIdentityTouches+=n;
+  s=s.replaceAll("'8.26.5'","'8.27'");
+  write(file,s);
+}
+
 const pairs=[
   ["window.__AXIS_RELEASE__==='"+FROM+"'","window.__AXIS_RELEASE__==='"+VERSION+"'"],
   ["window.__AXIS_RELEASE__),'"+FROM+"'","window.__AXIS_RELEASE__),'"+VERSION+"'"],
@@ -119,5 +133,5 @@ for(const row of [
 
 await import('./axis-827-governance-compat.mjs');
 
-if(touches<10)fail('public identity convergence suspiciously small: '+touches);
-console.log('[AXIS 8.27 release identity] PASS · '+FROM+' -> '+VERSION+' · '+touches+' current identity assertion(s) advanced');
+if(inheritedIdentityTouches+touches<12)fail('public identity convergence suspiciously small: inherited '+inheritedIdentityTouches+' + explicit '+touches);
+console.log('[AXIS 8.27 release identity] PASS · '+FROM+' -> '+VERSION+' · '+inheritedIdentityTouches+' inherited + '+touches+' explicit identity assertion(s) advanced');
