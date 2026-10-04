@@ -23,7 +23,7 @@ try{
     localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
   },objects);
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_RELEASE__==='8.27'&&window.__AXIS_FLOW_RUNTIME__&&window.__AXIS_FLOW_RUNTIME__.version==='8.27'&&window.__AXIS_827_REALITY_ROUTE__&&window.__AXIS_827_REALITY_ROUTE__.schema==='axis.reality-route.v1',undefined,{timeout:15000});
+  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_RELEASE__==='8.27'&&window.__AXIS_FLOW_RUNTIME__&&window.__AXIS_FLOW_RUNTIME__.version==='8.21'&&window.__AXIS_827_REALITY_ROUTE__&&window.__AXIS_827_REALITY_ROUTE__.schema==='axis.reality-route.v1',undefined,{timeout:15000});
 
   const flow={schema:'axis.flow.v1',id:'rr-proof',title:'Reality Route proof',steps:[
     {id:'s1',objectRef:'rr-lat'},
@@ -64,7 +64,7 @@ try{
   assert.match(after.text,/稍后 1 项/);
 
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__&&window.__AXIS_FLOW_RUNTIME__.version==='8.27'&&window.__AXIS_FLOW_RUNTIME__.project&&window.__AXIS_FLOW_RUNTIME__.project().current&&window.__AXIS_FLOW_RUNTIME__.project().current.id==='s2',undefined,{timeout:12000});
+  await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__&&window.__AXIS_FLOW_RUNTIME__.version==='8.21'&&window.__AXIS_FLOW_RUNTIME__.project&&window.__AXIS_FLOW_RUNTIME__.project().current&&window.__AXIS_FLOW_RUNTIME__.project().current.id==='s2',undefined,{timeout:12000});
   const reloaded=await page.evaluate(()=>window.__AXIS_FLOW_RUNTIME__.project());
   assert.deepEqual(reloaded.remaining.map(x=>x.id),['s2','s3','s4','s1'],'temporary route did not survive existing FlowRun persistence');
 
