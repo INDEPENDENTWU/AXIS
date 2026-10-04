@@ -3,38 +3,44 @@ import fs from 'node:fs';
 const fail=m=>{throw new Error(`[AXIS 8.25.1 governance compat] ${m}`)};
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const json=f=>{try{return JSON.parse(read(f))}catch(e){fail(`invalid ${f}: ${e.message}`)}};
+
 const sourceDecision=json('governance/version-decision.json');
 if(sourceDecision?.release==='8.26.5')await import('./axis-8265-governance-source-convergence.mjs');
-const SEALED_SHA='d187123dfdb2c0de0e5d202cf62bd6672586a8e7';
+
 const project=json('governance/project-state.json'),decision=json('governance/version-decision.json'),owners=json('governance/owners.json');
-const sealed8261=project?.product?.productionRelease==='8.26.1'&&project?.product?.releaseStatus==='production-certified'&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.1'&&decision?.decision==='confirm'&&decision?.change_class==='governance'&&Number.isInteger(decision?.sequence)&&decision.sequence>=15;
-const candidate8262=project?.product?.productionRelease==='8.26.2'&&project?.product?.releaseStatus==='candidate'&&project?.product?.candidatePullRequest===155&&decision?.sequence===18&&decision?.base_release==='8.26.1'&&decision?.release==='8.26.2'&&decision?.decision==='bump'&&decision?.change_class==='bug-fix';
-const candidate8263=project?.product?.productionRelease==='8.26.3'&&project?.product?.releaseStatus==='candidate'&&project?.product?.candidatePullRequest===156&&decision?.sequence===19&&decision?.base_release==='8.26.2'&&decision?.release==='8.26.3'&&decision?.decision==='bump'&&decision?.change_class==='bug-fix';
-const candidate8264=project?.product?.productionRelease==='8.26.4'&&project?.product?.releaseStatus==='candidate'&&project?.product?.candidatePullRequest===157&&decision?.sequence===20&&decision?.base_release==='8.26.3'&&decision?.release==='8.26.4'&&decision?.decision==='bump'&&decision?.change_class==='bug-fix';
-const candidate8265=project?.product?.productionRelease==='8.26.5'&&project?.product?.releaseStatus==='candidate'&&project?.product?.candidatePullRequest===158&&decision?.sequence===21&&decision?.base_release==='8.26.4'&&decision?.release==='8.26.5'&&decision?.decision==='bump'&&decision?.change_class==='bug-fix';
-if(!sealed8261&&!candidate8262&&!candidate8263&&!candidate8264&&!candidate8265)fail('current governance must be sealed 8.26.1 confirmation or exact 8.26.2/8.26.3/8.26.4/8.26.5 bug-fix candidate');
-if(project?.product?.lastSealedRelease!=='8.26.1'||project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==153)fail('8.26.1 exact Production baseline drift');
-if(candidate8262){const v=project?.engineering?.versionDecision;if(v?.sequence!==18||v?.baseRelease!=='8.26.1'||v?.release!=='8.26.2'||v?.decision!=='bump'||v?.changeClass!=='bug-fix')fail('8.26.2 product version provenance drift')}
-if(candidate8263){const v=project?.engineering?.versionDecision;if(v?.sequence!==19||v?.baseRelease!=='8.26.2'||v?.release!=='8.26.3'||v?.decision!=='bump'||v?.changeClass!=='bug-fix')fail('8.26.3 product version provenance drift')}
-if(candidate8264){const v=project?.engineering?.versionDecision;if(v?.sequence!==20||v?.baseRelease!=='8.26.3'||v?.release!=='8.26.4'||v?.decision!=='bump'||v?.changeClass!=='bug-fix')fail('8.26.4 product version provenance drift')}
-if(candidate8265){const v=project?.engineering?.versionDecision;if(v?.sequence!==21||v?.baseRelease!=='8.26.4'||v?.release!=='8.26.5'||v?.decision!=='bump'||v?.changeClass!=='bug-fix')fail('8.26.5 product version provenance drift')}
+const SEALED_SHA='5bf575730c5c8de542c603d40b0f8b780204a342';
+
+if(project?.product?.productionRelease!=='8.26.5'||project?.product?.releaseStatus!=='production-certified')fail('current governance must be exact Production-sealed 8.26.5');
+if(project?.product?.lastSealedRelease!=='8.26.5'||project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==158)fail('8.26.5 Production baseline drift');
+if(decision?.sequence!==22||decision?.base_release!=='8.26.5'||decision?.release!=='8.26.5'||decision?.decision!=='confirm'||decision?.change_class!=='governance')fail('8.26.5 closeout decision drift');
+
 const ownerBaseline=owners?.baselineRelease;
-if(!['8.25.1','8.26.1','8.26.2','8.26.3','8.26.4','8.26.5'].includes(ownerBaseline))fail(`8.25.1 replay/current owner baseline drift ${ownerBaseline}`);
+if(ownerBaseline!=='8.26.5')fail(`8.25.1 replay/current owner baseline drift ${ownerBaseline}`);
+
 const morph=project?.engineering?.activeInlineSetMorph;
 for(const key of ['postFactOnly','inStageFactRow','stableStageGeometry','nonOverlapping','railConfirmation','buttonReturn','clockSettle','boundedHaptic','reducedMotionSafe'])if(morph?.[key]!==true)fail(`Inline Set Morph sealed capability missing ${key}`);
 if(morph?.status!=='production-sealed-8.25.1-inherited'||morph?.fullScreenOverlay!==false||morph?.pointerEvents!==false)fail('8.25.1 sealed presentation boundary drift');
 for(const key of ['newTrainingOwner','newStorage','newEncounterWriter','newActiveOwner','network','ai'])if(morph?.[key]!==false)fail(`Inline Set Morph acquired forbidden authority ${key}`);
-const oldOwner=owners.owners?.find(x=>x.capability==='active-set-lock-825'),morphOwner=owners.owners?.find(x=>x.capability==='active-inline-set-morph-8251');
+
+const oldOwner=owners.owners?.find(x=>x.capability==='active-set-lock-825');
+const morphOwner=owners.owners?.find(x=>x.capability==='active-inline-set-morph-8251');
+const continuity=owners.owners?.find(x=>x.capability==='active-continuity-826');
+const rest=owners.owners?.find(x=>x.capability==='active-rest-state-8261');
 if(oldOwner?.status!=='presentation-only-production-sealed-superseded'||oldOwner?.storage!=='none')fail('8.25 historical Set Lock owner drift');
 if(morphOwner?.status!=='presentation-only-production-sealed'||morphOwner?.storage!=='none')fail('8.25.1 sealed owner drift');
-if(ownerBaseline!=='8.25.1'){
- const continuity=owners.owners?.find(x=>x.capability==='active-continuity-826'),rest=owners.owners?.find(x=>x.capability==='active-rest-state-8261');
- if(continuity?.status!=='presentation-and-coordination-production-sealed'||continuity?.storage!=='none')fail('sealed 8.26 owner drift');
- if(rest?.status!=='presentation-only-production-sealed'||rest?.storage!=='none')fail('sealed 8.26.1 rest owner drift');
-}
-for(const path of ['prepare-8251-inline-set-morph.mjs','postbuild-8251-inline-set-morph-contract.mjs','styles/axis-8251-inline-set-morph.css','prepare-826-active-continuity.mjs','postbuild-826-active-continuity-contract.mjs','styles/axis-826-active-continuity.css','prepare-8261-active-rest-state.mjs','postbuild-8261-active-rest-state-contract.mjs','prepare-8262-active-rest-selector.mjs','postbuild-8262-active-rest-selector-contract.mjs'])if(!fs.existsSync(path))fail(`inherited/current release surface missing ${path}`);
-if(candidate8263||candidate8264||candidate8265)for(const path of ['prepare-8263-active-rest-convergence.mjs','postbuild-8263-active-rest-convergence-contract.mjs','scripts/axis-8263-governance-compat.mjs'])if(!fs.existsSync(path))fail(`8.26.3 release surface missing ${path}`);
-if(candidate8264||candidate8265)for(const path of ['prepare-8264-active-rest-utility-rail.mjs','postbuild-8264-active-rest-utility-rail-contract.mjs','scripts/axis-8264-governance-compat.mjs'])if(!fs.existsSync(path))fail(`8.26.4 release surface missing ${path}`);
-if(candidate8265)for(const path of ['prepare-8265-recording-review-geometry.mjs','postbuild-8265-recording-review-geometry-contract.mjs','scripts/axis-8265-governance-compat.mjs','scripts/axis-8265-recording-review-geometry-smoke.mjs'])if(!fs.existsSync(path))fail(`8.26.5 release surface missing ${path}`);
-const mode=candidate8265?'8.26.5 candidate':candidate8264?'8.26.4 candidate':candidate8263?'8.26.3 candidate':candidate8262?'8.26.2 candidate':'sealed 8.26.1';
-console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside ${mode} · owner replay ${ownerBaseline}`);
+if(continuity?.status!=='presentation-and-coordination-production-sealed'||continuity?.storage!=='none')fail('sealed 8.26 owner drift');
+if(rest?.status!=='presentation-only-production-sealed'||rest?.storage!=='none')fail('sealed 8.26.1 rest owner drift');
+
+for(const path of [
+  'prepare-8251-inline-set-morph.mjs',
+  'postbuild-8251-inline-set-morph-contract.mjs',
+  'styles/axis-8251-inline-set-morph.css',
+  'prepare-826-active-continuity.mjs',
+  'prepare-8261-active-rest-state.mjs',
+  'prepare-8262-active-rest-selector.mjs',
+  'prepare-8263-active-rest-convergence.mjs',
+  'prepare-8264-active-rest-utility-rail.mjs',
+  'prepare-8265-recording-review-geometry.mjs'
+])if(!fs.existsSync(path))fail(`inherited/current release surface missing ${path}`);
+
+console.log('[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside exact Production-sealed 8.26.5');

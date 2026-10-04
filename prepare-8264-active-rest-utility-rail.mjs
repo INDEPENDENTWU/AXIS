@@ -49,7 +49,7 @@ await import('./prepare-8264-active-rest-utility-rail-core.mjs');
  const f='scripts/axis-821-report-pdf-export-contract.mjs';let s=read(f);
  const old="assert.ok(/AXIS \\*\\*8\\.26\\.3/.test(current)||current.includes('AXIS 8.26.3'),'CURRENT_WORK does not identify the governed current successor');\nassert.equal(project?.engineering?.baselineRelease,'8.26.3','project-state current release drifted from PDF continuity context');";
  const next="const governedCurrent=String(project?.engineering?.baselineRelease||project?.product?.productionRelease||'');\nassert.equal(governedCurrent,String(project?.product?.productionRelease||''),'project-state current release fields disagree in PDF continuity context');\nassert.ok(current.includes(`AXIS **${governedCurrent}`)||current.includes(`AXIS ${governedCurrent}`),'CURRENT_WORK does not identify the governed current successor');";
- s=once(s,old,next,'Report PDF moving successor continuity');
+ if(!s.includes("const governedRelease=String(project?.product?.productionRelease"))s=once(s,old,next,'Report PDF moving successor continuity');
  write(f,s);
 }
 

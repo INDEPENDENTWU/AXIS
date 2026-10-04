@@ -1,37 +1,244 @@
 {
   "schemaVersion": 4,
-  "baselineRelease": "8.26.4",
+  "baselineRelease": "8.26.5",
   "owners": [
-    {"capability":"training-state","status":"authoritative","owner":"app.js","storage":"axis_v60_state","notes":"Base local session/profile/preferences/Object state and canonical Encounter/session persistence. AXIS 8.21 stores Flow intent fields inside this same owner/store; AXIS 8.26.4 does not change this authority."},
-    {"capability":"object-truth-and-metric-schema","status":"authoritative","owner":"app.js state + existing v874-professional.js editor","storage":"axis_v60_state.profile.customEq","resolver":"window.__AXIS_OBJECT_TRUTH__","notes":"The visible custom Object editor extends the existing Object state. Metric-schema helpers resolve semantics but do not own persistence. Temporary Flow recording context never mutates this truth."},
-    {"capability":"executable-object-resolution","status":"derived-runtime-bridge","owner":"window.__AXIS_EXECUTABLE_OBJECTS__","storage":"none","delegatesTo":"existing app.js recorder/Encounter owners and v61 classic path","notes":"Resolves established Object execution semantics. It is not a store, recorder, Active owner or Encounter writer."},
-    {"capability":"strength-set-recording","status":"authoritative","owner":"v61.js","storage":"axis_v8_meta","notes":"High-frequency classic weight+reps set facts only when immutable Encounter schema grants classic ownership. Flow may select/delegate but never duplicates set rows."},
-    {"capability":"active-lifecycle","status":"authoritative-existing-owners","owner":"existing v82/v87 lifecycle + presentation","storage":"existing activity metadata in axis_v8_meta","notes":"Execution semantics govern lifecycle/presentation. sets/rounds/timed/hold are ongoing. Ordinary single/complete remain one-shot. AXIS 8.26 routes ongoing Flow items into these existing owners; 8.26.1 through 8.26.4 change rest presentation only."},
-    {"capability":"media-capture-and-persistence","status":"authoritative","owner":"app.js","storage":"axis_v42_media","notes":"Single camera/MediaRecorder/media persistence ownership; S/SV clean sources and F/V canonical derivatives share the existing store."},
-    {"capability":"media-source-resolution","status":"derived-read-only","owner":"window.__AXIS_MEDIA_SOURCE__ via app.js","storage":"axis_v42_media","notes":"Source-first resolver with canonical fallback; never a second persistence owner."},
-    {"capability":"automatic-sound","status":"authoritative","owner":"established v8710 automatic sound owner","notes":"Retired historical reminder loops may not return or become a second writer."},
-    {"capability":"watermark-compositor","status":"authoritative","owner":"v8710-watermark.js","notes":"Shared source-first watermark painter; video derivative uses the sealed 30fps compositor contract."},
-    {"capability":"active-focus-presentation","status":"presentation-only","owner":"8.18 Focus layer","delegatesTo":"existing v87 completion/action owner","notes":"Focus never becomes a second training/completion writer."},
-    {"capability":"evolution-library","status":"derived-read-only","owner":"Evolution Library projection","notes":"Derived from real Encounters; no second database, persistence schema or synthetic score authority."},
-    {"capability":"media-evidence-815","status":"derived-read-only","owner":"v815-media-evidence.js / window.__AXIS_MEDIA_EVIDENCE__","storage":"axis_v42_media read-only bridge","delegatesTo":"existing v814 Evolution Object projection + established app media store","notes":"Media Evidence remains the single evidence presentation/read owner. Replay may request an exact Encounter selection, but v815 alone resolves and renders the evidence; it never writes media or training history."},
-    {"capability":"evolution-replay-822","status":"derived-read-only-production-sealed","owner":"v822-evolution-replay.js / window.__AXIS_EVOLUTION_REPLAY__","storage":"none","delegatesTo":"existing v814 Evolution Object Encounter projection and v815 Media Evidence","notes":"AXIS 8.22 Production-sealed Replay projects deterministic time-session-event chronology in place. Selection is transient. It may not write Session/Encounter/media/storage, call network/AI, infer scores, or interpret a single Encounter as change."},
-    {"capability":"evolution-replay-evidence-continuity-823","status":"presentation-handoff-production-sealed","owner":"v822 axis:evolution-replay-selection -> v815 Media Evidence consumer","storage":"none","delegatesTo":"Production-sealed v822 Replay chronology and existing v815 Media Evidence owner","notes":"AXIS 8.23 continuity passes exact transient Encounter identity from Replay to the existing Evidence owner, may not persist selection, and remains inherited unchanged."},
-    {"capability":"language-learning-state","status":"authoritative-within-isolated-domain","owner":"Language Studio runtime","storage":"axis_v89_speak","notes":"Learning state is isolated from training ownership."},
-    {"capability":"legacy-capture-preference-bridge","status":"compatibility-only","owner":"v876 compatibility bridge","delegatesTo":"app-owned current Capture preference state","notes":"May delegate for compatibility; must not become current visible or persistence authority."},
-    {"capability":"flow-step-resolution-821","status":"derived-read-only","owner":"lib/axis-flow.mjs","contract":"axis.flow.v1","storage":"none","delegatesTo":"canonical Object truth and app-owned Flow runtime boundary","notes":"Normalizes portable Flow intent and resolves effective step metric/execution semantics. It cannot write persistence or create Session/Encounter/Active facts."},
-    {"capability":"flow-encounter-provenance-821","status":"derived-read-only","owner":"lib/axis-flow.mjs#createFlowEncounterProvenance","contract":"axis.flow-provenance.v1","storage":"none","delegatesTo":"existing app.js Encounter writer","notes":"Builds detached immutable Flow/step context semantics. This helper is not an Encounter writer and does not replace immutable Encounter authority."},
-    {"capability":"flow-orchestration-821","status":"app-owned-intent-production-sealed","owner":"app.js / window.__AXIS_FLOW_RUNTIME__","storage":"axis_v60_state.flows + axis_v60_state.flowRun","newPersistenceOwner":false,"delegatesTo":"canonical Object selection + existing app.js recorder/Encounter writer + existing v82/v87 Active lifecycle + existing session owner + v61 classic set owner","notes":"Flow owns intended continuity only. AXIS 8.26 clarifies admission: ongoing modes enter existing Active immediately; one-shot modes stay canonical-recorder-owned. Flow never owns training facts."},
-    {"capability":"metric-control-presentation-821","status":"presentation-and-input-delegation","owner":"existing 8.21 metric-control system inside canonical app runtime","storage":"none","delegatesTo":"existing canonical recorder/value owners","notes":"Quantity/time/pace/scale/choice controls share the established recording owner. Presentation is not a second metric fact owner."},
-    {"capability":"active-stage-tactile-824","status":"presentation-only-production-sealed","owner":"existing v87 presentation/action boundary","storage":"none","delegatesTo":"existing v87 toggle/completeSet/addSet/hold actions","notes":"AXIS 8.24 tactile semantics remain inherited without ownership change."},
-    {"capability":"active-dock-occlusion-8241","status":"presentation-only-production-sealed","owner":"existing v87 presentation boundary + axis-8241 dock CSS","storage":"none","delegatesTo":"existing v87 Capture / Quick Record controls","notes":"AXIS 8.24.1 fixed-dock compositing remains inherited unchanged."},
-    {"capability":"active-set-lock-825","status":"presentation-only-production-sealed-superseded","owner":"axis-825 historical Set Lock presentation at existing v87 post-fact render boundary","storage":"none","delegatesTo":"existing v87 completeSet fact/action owner and axis821StageProgressText presentation","notes":"AXIS 8.25 factual boundary and bounded haptic behavior remain inherited; its body-level overlay stays superseded."},
-    {"capability":"active-inline-set-morph-8251","status":"presentation-only-production-sealed","owner":"axis-8251 inline fact-row presentation at existing v87 post-fact render boundary","storage":"none","delegatesTo":"existing v87 completeSet fact/action owner and existing Active fact/progress presentation","notes":"AXIS 8.25.1 is Production-sealed. Completion remains inside the existing Active fact row, pointer-inert and reduced-motion-safe, with no factual or lifecycle authority."},
-    {"capability":"active-continuity-826","status":"presentation-and-coordination-production-sealed","owner":"existing app.js save boundary + existing v82/v87 lifecycle/presentation with axis-826 presentation CSS","storage":"none","delegatesTo":"app.js Encounter writer, v82 Active admission, v87 completeSet/actions and existing Flow switch coordination","notes":"AXIS 8.26 is Production-sealed. It coordinates post-commit presentation and Flow admission through existing owners and adds no Session/Encounter/Active/recorder/storage/network/AI authority."},
-    {"capability":"active-rest-state-8261","status":"presentation-only-production-sealed","owner":"existing v87 paused-state presentation + axis-826 presentation CSS","storage":"none","delegatesTo":"existing v87 pause/resume and timer truth","notes":"AXIS 8.26.1 is Production-sealed and inherited. Its intended rest presentation remains presentation-only and cannot write pause/resume state, timers, Session, Encounter, Flow, storage, network or AI truth."},
-    {"capability":"active-rest-selector-8262","status":"presentation-only-merged-unsealed-inherited","owner":"canonical v87Rest node + axis-826 presentation CSS","storage":"none","delegatesTo":"existing v87 pause/resume and timer truth","notes":"AXIS 8.26.2 merged the live selector correction from v87-restline to canonical v87Rest but never became the Production seal."},
-    {"capability":"active-rest-convergence-8263","status":"presentation-only-merged-unsealed-inherited","owner":"canonical v87Rest node + existing axis-826/axis-821 presentation boundary","storage":"none","delegatesTo":"existing v87 pause/resume and timer truth + inherited Rest Speak explicit action","notes":"AXIS 8.26.3 merged zero running rest geometry and the stable 32px paused/Rest Speak rail, but real-device review found the remaining plan-complete residue and vertical separation from Adjust. It remains inherited merged provenance, not the Production seal."},
-    {"capability":"active-rest-utility-rail-8264","status":"presentation-only-release-candidate","owner":"canonical v87Rest node + existing axis821StageControls grid + existing axis-826/axis-821 presentation boundary","storage":"none","delegatesTo":"existing v87 pause/resume and timer truth + existing v87AdjustBtn action + inherited Rest Speak explicit action","notes":"AXIS 8.26.4 places the existing rest node in the existing secondary controls grid: paused rest sits left and Adjust sits right on one 32px row; plan-complete has zero rest geometry. No factual, lifecycle, persistence, network or AI authority is added."},
-    {"capability":"active-action-lens","status":"superseded-research-only","owner":"not implemented as an action owner","storage":"none","delegatesTo":"AXIS 8.25.1/8.26/8.26.1/8.26.2/8.26.3/8.26.4 stage-native presentation","notes":"Earlier interaction research remains superseded and may not become an independent completion/action surface."}
+    {
+      "capability": "training-state",
+      "status": "authoritative",
+      "owner": "app.js",
+      "storage": "axis_v60_state",
+      "notes": "Base local session/profile/preferences/Object state and canonical Encounter/session persistence. AXIS 8.21 stores Flow intent fields inside this same owner/store; AXIS 8.26.4 does not change this authority."
+    },
+    {
+      "capability": "object-truth-and-metric-schema",
+      "status": "authoritative",
+      "owner": "app.js state + existing v874-professional.js editor",
+      "storage": "axis_v60_state.profile.customEq",
+      "resolver": "window.__AXIS_OBJECT_TRUTH__",
+      "notes": "The visible custom Object editor extends the existing Object state. Metric-schema helpers resolve semantics but do not own persistence. Temporary Flow recording context never mutates this truth."
+    },
+    {
+      "capability": "executable-object-resolution",
+      "status": "derived-runtime-bridge",
+      "owner": "window.__AXIS_EXECUTABLE_OBJECTS__",
+      "storage": "none",
+      "delegatesTo": "existing app.js recorder/Encounter owners and v61 classic path",
+      "notes": "Resolves established Object execution semantics. It is not a store, recorder, Active owner or Encounter writer."
+    },
+    {
+      "capability": "strength-set-recording",
+      "status": "authoritative",
+      "owner": "v61.js",
+      "storage": "axis_v8_meta",
+      "notes": "High-frequency classic weight+reps set facts only when immutable Encounter schema grants classic ownership. Flow may select/delegate but never duplicates set rows."
+    },
+    {
+      "capability": "active-lifecycle",
+      "status": "authoritative-existing-owners",
+      "owner": "existing v82/v87 lifecycle + presentation",
+      "storage": "existing activity metadata in axis_v8_meta",
+      "notes": "Execution semantics govern lifecycle/presentation. sets/rounds/timed/hold are ongoing. Ordinary single/complete remain one-shot. AXIS 8.26 routes ongoing Flow items into these existing owners; 8.26.1 through 8.26.4 change rest presentation only."
+    },
+    {
+      "capability": "media-capture-and-persistence",
+      "status": "authoritative",
+      "owner": "app.js",
+      "storage": "axis_v42_media",
+      "notes": "Single camera/MediaRecorder/media persistence ownership; S/SV clean sources and F/V canonical derivatives share the existing store."
+    },
+    {
+      "capability": "media-source-resolution",
+      "status": "derived-read-only",
+      "owner": "window.__AXIS_MEDIA_SOURCE__ via app.js",
+      "storage": "axis_v42_media",
+      "notes": "Source-first resolver with canonical fallback; never a second persistence owner."
+    },
+    {
+      "capability": "automatic-sound",
+      "status": "authoritative",
+      "owner": "established v8710 automatic sound owner",
+      "notes": "Retired historical reminder loops may not return or become a second writer."
+    },
+    {
+      "capability": "watermark-compositor",
+      "status": "authoritative",
+      "owner": "v8710-watermark.js",
+      "notes": "Shared source-first watermark painter; video derivative uses the sealed 30fps compositor contract."
+    },
+    {
+      "capability": "active-focus-presentation",
+      "status": "presentation-only",
+      "owner": "8.18 Focus layer",
+      "delegatesTo": "existing v87 completion/action owner",
+      "notes": "Focus never becomes a second training/completion writer."
+    },
+    {
+      "capability": "evolution-library",
+      "status": "derived-read-only",
+      "owner": "Evolution Library projection",
+      "notes": "Derived from real Encounters; no second database, persistence schema or synthetic score authority."
+    },
+    {
+      "capability": "media-evidence-815",
+      "status": "derived-read-only",
+      "owner": "v815-media-evidence.js / window.__AXIS_MEDIA_EVIDENCE__",
+      "storage": "axis_v42_media read-only bridge",
+      "delegatesTo": "existing v814 Evolution Object projection + established app media store",
+      "notes": "Media Evidence remains the single evidence presentation/read owner. Replay may request an exact Encounter selection, but v815 alone resolves and renders the evidence; it never writes media or training history."
+    },
+    {
+      "capability": "evolution-replay-822",
+      "status": "derived-read-only-production-sealed",
+      "owner": "v822-evolution-replay.js / window.__AXIS_EVOLUTION_REPLAY__",
+      "storage": "none",
+      "delegatesTo": "existing v814 Evolution Object Encounter projection and v815 Media Evidence",
+      "notes": "AXIS 8.22 Production-sealed Replay projects deterministic time-session-event chronology in place. Selection is transient. It may not write Session/Encounter/media/storage, call network/AI, infer scores, or interpret a single Encounter as change."
+    },
+    {
+      "capability": "evolution-replay-evidence-continuity-823",
+      "status": "presentation-handoff-production-sealed",
+      "owner": "v822 axis:evolution-replay-selection -> v815 Media Evidence consumer",
+      "storage": "none",
+      "delegatesTo": "Production-sealed v822 Replay chronology and existing v815 Media Evidence owner",
+      "notes": "AXIS 8.23 continuity passes exact transient Encounter identity from Replay to the existing Evidence owner, may not persist selection, and remains inherited unchanged."
+    },
+    {
+      "capability": "language-learning-state",
+      "status": "authoritative-within-isolated-domain",
+      "owner": "Language Studio runtime",
+      "storage": "axis_v89_speak",
+      "notes": "Learning state is isolated from training ownership."
+    },
+    {
+      "capability": "legacy-capture-preference-bridge",
+      "status": "compatibility-only",
+      "owner": "v876 compatibility bridge",
+      "delegatesTo": "app-owned current Capture preference state",
+      "notes": "May delegate for compatibility; must not become current visible or persistence authority."
+    },
+    {
+      "capability": "flow-step-resolution-821",
+      "status": "derived-read-only",
+      "owner": "lib/axis-flow.mjs",
+      "contract": "axis.flow.v1",
+      "storage": "none",
+      "delegatesTo": "canonical Object truth and app-owned Flow runtime boundary",
+      "notes": "Normalizes portable Flow intent and resolves effective step metric/execution semantics. It cannot write persistence or create Session/Encounter/Active facts."
+    },
+    {
+      "capability": "flow-encounter-provenance-821",
+      "status": "derived-read-only",
+      "owner": "lib/axis-flow.mjs#createFlowEncounterProvenance",
+      "contract": "axis.flow-provenance.v1",
+      "storage": "none",
+      "delegatesTo": "existing app.js Encounter writer",
+      "notes": "Builds detached immutable Flow/step context semantics. This helper is not an Encounter writer and does not replace immutable Encounter authority."
+    },
+    {
+      "capability": "flow-orchestration-821",
+      "status": "app-owned-intent-production-sealed",
+      "owner": "app.js / window.__AXIS_FLOW_RUNTIME__",
+      "storage": "axis_v60_state.flows + axis_v60_state.flowRun",
+      "newPersistenceOwner": false,
+      "delegatesTo": "canonical Object selection + existing app.js recorder/Encounter writer + existing v82/v87 Active lifecycle + existing session owner + v61 classic set owner",
+      "notes": "Flow owns intended continuity only. AXIS 8.26 clarifies admission: ongoing modes enter existing Active immediately; one-shot modes stay canonical-recorder-owned. Flow never owns training facts."
+    },
+    {
+      "capability": "metric-control-presentation-821",
+      "status": "presentation-and-input-delegation",
+      "owner": "existing 8.21 metric-control system inside canonical app runtime",
+      "storage": "none",
+      "delegatesTo": "existing canonical recorder/value owners",
+      "notes": "Quantity/time/pace/scale/choice controls share the established recording owner. Presentation is not a second metric fact owner."
+    },
+    {
+      "capability": "active-stage-tactile-824",
+      "status": "presentation-only-production-sealed",
+      "owner": "existing v87 presentation/action boundary",
+      "storage": "none",
+      "delegatesTo": "existing v87 toggle/completeSet/addSet/hold actions",
+      "notes": "AXIS 8.24 tactile semantics remain inherited without ownership change."
+    },
+    {
+      "capability": "active-dock-occlusion-8241",
+      "status": "presentation-only-production-sealed",
+      "owner": "existing v87 presentation boundary + axis-8241 dock CSS",
+      "storage": "none",
+      "delegatesTo": "existing v87 Capture / Quick Record controls",
+      "notes": "AXIS 8.24.1 fixed-dock compositing remains inherited unchanged."
+    },
+    {
+      "capability": "active-set-lock-825",
+      "status": "presentation-only-production-sealed-superseded",
+      "owner": "axis-825 historical Set Lock presentation at existing v87 post-fact render boundary",
+      "storage": "none",
+      "delegatesTo": "existing v87 completeSet fact/action owner and axis821StageProgressText presentation",
+      "notes": "AXIS 8.25 factual boundary and bounded haptic behavior remain inherited; its body-level overlay stays superseded."
+    },
+    {
+      "capability": "active-inline-set-morph-8251",
+      "status": "presentation-only-production-sealed",
+      "owner": "axis-8251 inline fact-row presentation at existing v87 post-fact render boundary",
+      "storage": "none",
+      "delegatesTo": "existing v87 completeSet fact/action owner and existing Active fact/progress presentation",
+      "notes": "AXIS 8.25.1 is Production-sealed. Completion remains inside the existing Active fact row, pointer-inert and reduced-motion-safe, with no factual or lifecycle authority."
+    },
+    {
+      "capability": "active-continuity-826",
+      "status": "presentation-and-coordination-production-sealed",
+      "owner": "existing app.js save boundary + existing v82/v87 lifecycle/presentation with axis-826 presentation CSS",
+      "storage": "none",
+      "delegatesTo": "app.js Encounter writer, v82 Active admission, v87 completeSet/actions and existing Flow switch coordination",
+      "notes": "AXIS 8.26 is Production-sealed. It coordinates post-commit presentation and Flow admission through existing owners and adds no Session/Encounter/Active/recorder/storage/network/AI authority."
+    },
+    {
+      "capability": "active-rest-state-8261",
+      "status": "presentation-only-production-sealed",
+      "owner": "existing v87 paused-state presentation + axis-826 presentation CSS",
+      "storage": "none",
+      "delegatesTo": "existing v87 pause/resume and timer truth",
+      "notes": "AXIS 8.26.1 is Production-sealed and inherited. Its intended rest presentation remains presentation-only and cannot write pause/resume state, timers, Session, Encounter, Flow, storage, network or AI truth."
+    },
+    {
+      "capability": "active-rest-selector-8262",
+      "status": "presentation-only-merged-unsealed-inherited",
+      "owner": "canonical v87Rest node + axis-826 presentation CSS",
+      "storage": "none",
+      "delegatesTo": "existing v87 pause/resume and timer truth",
+      "notes": "AXIS 8.26.2 merged the live selector correction from v87-restline to canonical v87Rest but never became the Production seal."
+    },
+    {
+      "capability": "active-rest-convergence-8263",
+      "status": "presentation-only-merged-unsealed-inherited",
+      "owner": "canonical v87Rest node + existing axis-826/axis-821 presentation boundary",
+      "storage": "none",
+      "delegatesTo": "existing v87 pause/resume and timer truth + inherited Rest Speak explicit action",
+      "notes": "AXIS 8.26.3 merged zero running rest geometry and the stable 32px paused/Rest Speak rail, but real-device review found the remaining plan-complete residue and vertical separation from Adjust. It remains inherited merged provenance, not the Production seal."
+    },
+    {
+      "capability": "active-rest-utility-rail-8264",
+      "status": "presentation-only-merged-unsealed-inherited",
+      "owner": "canonical v87Rest node + existing axis821StageControls grid + existing axis-826/axis-821 presentation boundary",
+      "storage": "none",
+      "delegatesTo": "existing v87 pause/resume and timer truth + existing v87AdjustBtn action + inherited Rest Speak explicit action",
+      "notes": "AXIS 8.26.4 places the existing rest node in the existing secondary controls grid: paused rest sits left and Adjust sits right on one 32px row; plan-complete has zero rest geometry. No factual, lifecycle, persistence, network or AI authority is added."
+    },
+    {
+      "capability": "active-action-lens",
+      "status": "superseded-research-only",
+      "owner": "not implemented as an action owner",
+      "storage": "none",
+      "delegatesTo": "AXIS 8.25.1/8.26/8.26.1/8.26.2/8.26.3/8.26.4 stage-native presentation",
+      "notes": "Earlier interaction research remains superseded and may not become an independent completion/action surface."
+    },
+    {
+      "capability": "recording-review-geometry-8265",
+      "status": "presentation-only-production-sealed",
+      "owner": "canonical Review shell + existing v82 estimate presentation owner",
+      "storage": "none",
+      "delegatesTo": "existing recording controls and v82 estimate sheet action",
+      "notes": "AXIS 8.26.5 is Production-sealed. The canonical Review shell reserves the existing estimate row before Review becomes interactive; v82 remains the only estimate presentation/action owner. No factual, persistence, recorder, Active, network or AI authority is added."
+    }
   ],
   "rules": [
     "One semantic action has one interactive writer.",

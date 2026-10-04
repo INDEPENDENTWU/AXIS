@@ -1,49 +1,82 @@
 # AXIS Current Work
 
-## Production baseline at start of this work
-
-AXIS **8.26.1 — Active Rest State** remains the last fully Production-sealed release at exact product/runtime SHA `d187123dfdb2c0de0e5d202cf62bd6672586a8e7` from PR **#153**. Its fixed Vercel, EdgeOne and `axis.juele.fun` certification evidence remains authoritative until a later exact merged-main artifact earns a complete Production seal.
-
-AXIS **8.26.4 — Active Rest Utility Rail** merged to `main` at `61ff52383eb8103cb3aeca985bfb9b1c50b04a23` from PR **#157** after exact-head Chromium and iPhone-like WebKit validation. Post-merge provider verification then exposed a separate inherited Review geometry defect in fixed Vercel Production run **36333871883**: the first weight edit caused `#v82Estimate` to be inserted late, increasing Review content height and moving `#axisSetControls` upward by **22.75px**. 8.26.4 therefore remains merged-but-unsealed provenance rather than Production authority.
-
-## Active change
-
-Active milestone: **AXIS 8.26.5 — Recording Review Geometry Stability** · **Release candidate**.
-
+Governed active milestone: `AXIS 8.26.5 — Recording Review Geometry Stability`.
 governed target branch: `main`.
 
 Bounded delivery branch: `fix/8265-recording-review-geometry` · PR **#158**.
+Version decision: **8.26.5 → 8.26.5 / confirm / sequence 22 / governance**.
+Repository governance remains authoritative; repository governance remains authoritative over conversation history.
 
-Version decision: **8.26.4 → 8.26.5 / bump / sequence 21 / bug-fix**.
+## Production baseline at start of this work
 
-The correction is intentionally narrow:
+AXIS **8.26.5 — Recording Review Geometry Stability** is the exact Production-sealed baseline for this governance closeout.
 
-- The existing `#v82Estimate` row is structural in the Review shell before Review becomes interactive.
-- Its established v82 owner binds and updates that row; v82 may no longer insert the row after a metric interaction.
-- The row preserves its existing 54px height + 8px top spacing from the first interactive frame, so the first weight/reps edit cannot change Review composition.
-- The existing `#axisSetControls` identity and x/y/width/height must remain stable within **0.5px** across the first metric edit.
-- The estimate row itself must retain DOM identity and geometry across that edit.
-- AXIS 8.26.4 Active Rest Utility Rail behavior remains inherited unchanged.
+- canonical repository: `INDEPENDENTWU/AXIS`
+- exact sealed product/runtime SHA: `5bf575730c5c8de542c603d40b0f8b780204a342`
+- release PR: **#158**
+- completed delivery branch: `fix/8265-recording-review-geometry`
+- architecture: `canonical-single-runtime`
+- Vercel deployment: `dpl_D4FC1ro8RZV6hGu1Kqm9LrJcqMRn` — READY / Production
+- Current Release Gate: `37187139856` — success
+- Deep Compatibility Gate: `37187139889` — success
+- Vercel Production Deployment Gate: `37187159342` — success
+- Vercel Public Production Alias Gate: `37187159392` — success
+- EdgeOne Production run: `37187139894` — success
+- `axis.juele.fun` Production run: `37187139864` — success
+- protected stores: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`
 
-Training facts, metric values, recorder ownership, Session, Encounter, Flow, Active state, persistence, media, network and AI ownership remain unchanged.
+Chat history is not authoritative project memory. Conversation history is supplemental only. Repository governance, exact commits, built artifacts and provider certification are authoritative.
+
+## Active change
+
+**AXIS 8.26.5 Production Seal Closeout** is governance-only.
+
+This work reconciles repository truth to the already-certified Production artifact. It does not change browser runtime behavior, training facts, storage, build topology or user-facing interaction.
+
+The closeout records:
+
+1. the exact merged product/runtime SHA from PR #158;
+2. exact Vercel, EdgeOne and custom-domain provider evidence;
+3. 28 / 28 successful post-merge/deployment workflows;
+4. `recording-review-geometry-8265` as Production-sealed presentation ownership;
+5. 8.26.2 through 8.26.4 as merged-but-unsealed provenance;
+6. a governance-only version confirmation: **8.26.5 → 8.26.5 / confirm / sequence 22 / governance**.
+
+The sealed product behavior remains unchanged: the Review estimate row exists structurally before interaction, v82 remains the estimate presentation/action owner, and the first metric interaction preserves both estimate/control identity and geometry within 0.5px.
 
 ## Validation for this work
 
-The exact PR #158 head must pass Repository, Version Authority and Work Continuity contracts plus the full inherited Current Release / Deep Compatibility families. The existing Active Rest selector physical proof chains the new 8.26.5 Review geometry smoke so the already-required Chromium and iPhone-like WebKit paths prove:
+The closeout is complete only when one exact governance PR head proves all of the following:
 
-- `#v82Estimate` exists at full structural height before recording controls are first editable;
-- first weight edit changes the factual value exactly once;
-- `#axisSetControls` is not rebuilt and its x/y/width/height each remain within 0.5px;
-- `#v82Estimate` is not rebuilt and its x/y/width/height each remain within 0.5px;
-- no uncaught browser error is introduced;
-- inherited 8.26.4 running / paused / plan-complete Rest geometry remains green.
+- `node build-release.mjs` still emits AXIS 8.26.5 with canonical single-runtime topology;
+- Version Authority accepts sequence 22 as a governance-only confirmation over the 8.26.5 base;
+- repository and Production governance contracts treat 8.26.5 as exact Production-sealed truth;
+- exact sealed SHA remains `5bf575730c5c8de542c603d40b0f8b780204a342`;
+- provider evidence remains attached to that exact product/runtime SHA rather than the governance commit;
+- ownership and compatibility boundaries are unchanged;
+- no generated runtime output or product behavior changes relative to the sealed artifact.
 
-The 22.75px Production failure is a real product regression and the existing strict geometry assertion is not relaxed.
+After merge, this governance commit is not a new product-runtime authority and must not trigger another product release number.
 
 ## Inherited platform continuity
 
-Cross-platform continuity remains unchanged: foundation `axis-native-foundation-0`, native repository `INDEPENDENTWU/AXIS-iOS`, portable contracts `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, and `axis.report-range.v1`. Chat history is not authoritative project memory; repository governance remains authoritative.
+Cross-platform continuity remains unchanged: foundation `axis-native-foundation-0`, native repository `INDEPENDENTWU/AXIS-iOS`, portable contracts `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, and `axis.report-range.v1`.
+
+Flow remains intent, Encounter remains reality, Evidence remains anchored to real Encounters, and Evolution remains derived/read-only.
 
 ## Next planned stage
 
-After exact-head CI is green, merge PR #158 to `main` with the validated head SHA. Then certify that exact merged-main artifact through fixed Vercel Production, exact-prebuilt EdgeOne Production and `https://axis.juele.fun`, including Chromium and iPhone-like WebKit physical proofs. Only when all provider and physical gates are green may governance mark **AXIS 8.26.5 Production-sealed**. After that seal, begin the broader product-convergence roadmap around **Intent → Execution → Evidence → Evolution** rather than adding another corrective UI slice.
+After this governance closeout merges, begin **AXIS 8.27 — Reality Route** from the resulting `main`.
+
+The first 8.27 slice is deliberately narrow:
+
+- add a pure, platform-neutral continuation projection over Flow intent + actual execution + temporary constraints;
+- support deterministic **defer current item** semantics for an unavailable Flow item;
+- leave the reusable Flow definition unchanged;
+- leave historical Encounter truth unchanged;
+- recompute current/next/remaining/deferred route deterministically;
+- expose one restrained in-session action rather than another management screen;
+- introduce no new Session, Encounter, Active, recorder, persistence, media, network or AI owner;
+- require exact Chromium + iPhone-like WebKit proof before merge and exact Vercel + EdgeOne + `axis.juele.fun` Production certification after merge.
+
+This begins the broader **Intent → Execution → Evidence → Evolution** product-convergence program.
