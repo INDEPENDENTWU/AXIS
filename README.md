@@ -2,47 +2,58 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.26.5** · **Release candidate** · last sealed **8.26.1** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
+**Current release: 8.26.5** · **Production-sealed** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md) · [Product](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md)
 
-AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Encounters freeze what actually happened, Evidence anchors those facts, Flow describes intended continuity, and Evolution reveals reality without inventing a second history.
+AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Flow describes intended continuity, Encounters freeze what actually happened, Evidence anchors those facts, and Evolution reveals reality without inventing a second history.
 
 ## Release truth
 
-AXIS **8.26.5 — Recording Review Geometry Stability** is the current bounded corrective candidate on PR **#158**, branch `fix/8265-recording-review-geometry`.
+AXIS **8.26.5 — Recording Review Geometry Stability** is Production-sealed at exact product/runtime merge:
 
-AXIS **8.26.4** merged to `main` at `61ff52383eb8103cb3aeca985bfb9b1c50b04a23` from PR **#157**, but fixed Vercel Production run **36333871883** exposed a real inherited Review geometry regression: the first weight edit caused the lazily inserted `#v82Estimate` row to move existing recording controls upward by **22.75px**. 8.26.4 therefore remains merged-but-unsealed provenance.
+```text
+5bf575730c5c8de542c603d40b0f8b780204a342
+```
 
-AXIS **8.26.1** remains the exact Production-sealed baseline at product/runtime merge `d187123dfdb2c0de0e5d202cf62bd6672586a8e7` from PR **#153** until an exact later merged-main artifact completes the full certification chain. `latestDeploymentIsAuthority` remains false.
+Release PR: **#158**.
 
-Sealed 8.26.1 Production evidence remains:
+Exact Production evidence:
 
-- Vercel deployment `dpl_CAsYMm12YjN9etr8YV7CrQG5QGV9` — READY / Production / exact sealed product-runtime SHA
-- Current Release Gate `35873718900` — success
-- Deep Compatibility Gate `35873718880` — success
-- Vercel Production Deployment Gate `35873771687` — success
-- Vercel Public Production Alias Gate `35873771699` — success
-- EdgeOne Production run `35873718809` — exact-prebuilt deployment, Vercel parity, Chromium + iPhone-like WebKit success
-- `axis.juele.fun` Production run `35873719011` — exact parity, Chromium + iPhone-like WebKit success
+- Vercel deployment `dpl_D4FC1ro8RZV6hGu1Kqm9LrJcqMRn` — READY / Production / exact sealed SHA
+- Current Release Gate `37187139856` — success
+- Deep Compatibility Gate `37187139889` — success
+- Vercel Production Deployment Gate `37187159342` — success
+- Vercel Public Production Alias Gate `37187159392` — success
+- EdgeOne Production run `37187139894` — exact-prebuilt deployment, Vercel parity, Chromium + iPhone-like WebKit success
+- `axis.juele.fun` Production run `37187139864` — exact parity, Chromium + iPhone-like WebKit success
 
-## What 8.26.5 changes
+All **28 / 28** post-merge/deployment workflow runs for the exact merged SHA completed successfully.
 
-The existing `#v82Estimate` row is now structural in the Review shell before Review becomes interactive. v82 still owns its value and existing estimate-sheet action, but it no longer inserts the row after the first metric edit. The first editable frame therefore has the same 54px + 8px estimate geometry as every later frame.
+`latestDeploymentIsAuthority` remains false: later governance-only commits or provider redeploys do not replace the exact product/runtime seal above.
 
-The strict physical contract remains unchanged: first metric interaction must preserve both `#axisSetControls` and `#v82Estimate` DOM identity and geometry within **0.5px**. No tolerance is widened.
+## What 8.26.5 sealed
 
-The patch does **not** change metric truth, recorder semantics, Session, Encounter, Flow, Active, persistence, media, network or AI ownership. AXIS 8.26.4 Active Rest Utility Rail is inherited unchanged.
+The existing `#v82Estimate` row is structural before Review becomes interactive. Its established v82 owner binds and updates the existing row instead of inserting it after the first metric edit.
 
-## Current engineering state
+The physical contract remains strict:
 
-Active milestone: **AXIS 8.26.5 — Recording Review Geometry Stability**
+- `#axisSetControls` retains DOM identity and geometry within **0.5px** through the first metric edit;
+- `#v82Estimate` retains DOM identity and geometry within **0.5px**;
+- factual metric ownership is unchanged;
+- Session, Encounter, Flow, Active, persistence, media, network and AI ownership are unchanged.
 
-Governed target branch: `main`
+AXIS 8.26.4 Active Rest Utility Rail behavior is inherited by the sealed 8.26.5 artifact. 8.26.2 through 8.26.4 remain merged-but-unsealed provenance, not independent Production seals.
 
-Bounded delivery branch: `fix/8265-recording-review-geometry` · PR **#158**.
+## Next product stage
 
-Version decision: **8.26.4 → 8.26.5 / bump / sequence 21 / bug-fix**.
+The corrective 8.26.x line is closed.
 
-The deterministic release remains `canonical-single-runtime`, one initial JavaScript request and zero dynamic runtime chunks.
+The next bounded product stage is **AXIS 8.27 — Reality Route**, the first productized Domain Runtime slice under:
+
+```text
+Intent → Execution → Evidence → Evolution
+```
+
+8.27 will make current-session continuation follow reality without mutating reusable Flow intent or historical Encounter truth. The first capability is deterministic deferral/reprojection of an unavailable Flow item, with no new Session, Encounter, Active, recorder, persistence, network or AI owner.
 
 ## Product rules
 
