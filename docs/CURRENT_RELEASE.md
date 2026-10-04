@@ -1,53 +1,54 @@
-# Current Release — AXIS 8.26.5
+# Current Release — AXIS 8.27
 
-**Status: Production-sealed**
+**Status: Release candidate**
 
-AXIS **8.26.5 — Recording Review Geometry Stability** is the current Production-sealed Web release.
+AXIS **8.27 — Reality Route** is the current governed product-runtime candidate.
 
-## Exact sealed identity
+## Candidate identity
 
-- release PR: **#158**
-- completed delivery branch: `fix/8265-recording-review-geometry`
-- exact product/runtime merge: `5bf575730c5c8de542c603d40b0f8b780204a342`
-- product version decision: **8.26.4 → 8.26.5 / bump / sequence 21 / bug-fix**
-- governance closeout decision: **8.26.5 → 8.26.5 / confirm / sequence 22 / governance**
+- candidate PR: **#160**
+- delivery branch: `feature/827-reality-route`
+- base release: **8.26.5**
+- version decision: **8.26.5 → 8.27 / bump / sequence 23 / product-runtime**
 - architecture: `canonical-single-runtime`
 - deterministic build: `node build-release.mjs`
-- topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
+- intended topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
 
-## Production certification
+## Last Production-sealed baseline
 
-The exact merged product/runtime SHA earned the complete governed Production chain:
+The last Production-sealed release remains **AXIS 8.26.5**, release PR **#158**, exact product/runtime SHA:
 
-- Vercel deployment `dpl_D4FC1ro8RZV6hGu1Kqm9LrJcqMRn` — READY / Production / exact source SHA
-- Current Release Gate `37187139856` — success
-- Deep Compatibility Gate `37187139889` — success
-- Vercel Production Deployment Gate `37187159342` — success
-- Vercel Public Production Alias Gate `37187159392` — success
-- EdgeOne Production run `37187139894` — exact-prebuilt deploy, Vercel parity, Chromium + iPhone-like WebKit success
-- EdgeOne deployment `dp7q7u41l4c8`
-- `axis.juele.fun` Production run `37187139864` — exact parity, Chromium + iPhone-like WebKit success
+```text
+5bf575730c5c8de542c603d40b0f8b780204a342
+```
 
-All **28 / 28** post-merge/deployment workflow runs associated with the exact merged SHA completed successfully.
+Its certified evidence remains the authority while 8.27 is a candidate:
 
-runtime seal baseline: the exact merged SHA above is the durable AXIS 8.26.5 product/runtime seal snapshot. This is not a self-referential requirement: the governance closeout records certification already earned by that exact product/runtime artifact. Later governance-only commits or provider redeploys are not release authority unless a new governed product release earns a new exact certification chain.
+- Current Release Gate `37187139856`
+- Deep Compatibility Gate `37187139889`
+- Vercel Production Gate `37187159342`
+- Public Production Alias Gate `37187159392`
+- EdgeOne Production run `37187139894`
+- `axis.juele.fun` Production run `37187139864`
 
-## What 8.26.5 changes
+runtime seal baseline: the exact 8.26.5 SHA above remains the durable Production runtime authority while 8.27 is unsealed. This is not a self-referential requirement: 8.27 can replace it only after the candidate exact head is green, the exact merged-main product artifact is known, and that artifact completes the governed Production certification chain.
 
-The existing `#v82Estimate` row is structural in the Review shell from the first interactive frame. The existing v82 owner binds, updates and opens its existing estimate sheet, but no longer creates the row after a metric edit.
+## 8.27 behavior
 
-The physical contract remains strict: the first metric interaction must preserve DOM identity and x/y/width/height of both `#axisSetControls` and `#v82Estimate` within **0.5px**.
+Reality Route introduces a pure platform-neutral continuation projection:
 
-8.26.5 does **not** change metric truth, recorder semantics, Session, Encounter, Flow, Active state, persistence, media, network or AI ownership.
+```text
+Flow intent
++ actual execution / Encounter evidence
++ temporary run constraints
+        ↓
+current / next / remaining / deferred / dropped / reasonCodes
+```
 
-## Inherited provenance
+The first temporary constraint is **defer current item**. A current item that has not started can be placed after the immediate remaining route. The reusable Flow definition is unchanged. Existing Encounters are unchanged. Once a current item has entered the existing Active lifecycle, it cannot be deferred.
 
-AXIS 8.26.4 Active Rest Utility Rail behavior is inherited by this sealed artifact. AXIS 8.26.2, 8.26.3 and 8.26.4 remain merged-but-unsealed provenance rather than independent Production seals.
+Temporary route state is stored only inside the established `axis_v60_state.flowRun.temporaryConstraints` boundary. No `axis_route_*` storage, second Session/Encounter writer, second recorder, second Active owner, network dependency, or AI authority is introduced.
 
-Protected stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`.
+## Completion condition
 
-## Next stage
-
-The 8.26.x corrective line is closed. The next bounded product stage is **AXIS 8.27 — Reality Route**, the first productized Domain Runtime slice under **Intent → Execution → Evidence → Evolution**.
-
-8.27 must preserve reusable Flow intent and immutable Encounter truth while deriving the current continuation route from actual execution plus temporary constraints. Its first user-visible operation is deterministic deferral of an unavailable current Flow item without rewriting the Flow definition or historical facts.
+8.27 is not Production-sealed until one exact PR #160 head passes the relevant contract and physical Chromium/WebKit gates, merges exactly, and the exact merged-main artifact passes Vercel, EdgeOne, and `axis.juele.fun` Production certification.
