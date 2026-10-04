@@ -70,9 +70,18 @@ for(const token of [
   'INDEPENDENTWU/AXIS-iOS',
   'axis.report-range.v1'
 ])assert.ok(current.includes(token),`CURRENT_WORK governance token missing ${token}`);
-assert.ok(/AXIS \*\*8\.26\.3/.test(current)||current.includes('AXIS 8.26.3'),'CURRENT_WORK does not identify the governed current successor');
-assert.equal(project?.engineering?.baselineRelease,'8.26.3','project-state current release drifted from PDF continuity context');
-assert.ok(release.includes('last Production-sealed release: **AXIS 8.26.1**'),'current release lost explicit sealed baseline while successor is candidate');
+const governedRelease=String(project?.product?.productionRelease||project?.engineering?.baselineRelease||'');
+const sealedRelease=String(project?.product?.lastSealedRelease||project?.production?.sealedRelease||'');
+assert.ok(governedRelease&&current.includes(governedRelease),'CURRENT_WORK does not identify the governed current successor');
+assert.equal(project?.engineering?.baselineRelease,governedRelease,'project-state current release drifted from PDF continuity context');
+if(project?.product?.releaseStatus==='candidate'){
+  assert.ok(sealedRelease&&release.includes(sealedRelease),'candidate current release lost explicit sealed baseline');
+}else{
+  assert.equal(project?.product?.releaseStatus,'production-certified','current release has unsupported governed status');
+  assert.equal(sealedRelease,governedRelease,'Production-certified release must seal the governed current release');
+  assert.ok(/Production-sealed|Production-certified|production-certified/.test(release),'current release does not identify its Production seal');
+  assert.ok(release.includes(String(project?.product?.productionRuntimeSha||'')),'current release lost exact Production runtime SHA');
+}
 
 const pdfRetirement=retirements.retirements?.find(row=>row.id==='report-pdf-corrective-scope-prepare-821');
 assert.ok(pdfRetirement,'Report PDF corrective-scope retirement registry entry missing');
