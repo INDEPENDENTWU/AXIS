@@ -95,6 +95,12 @@ const candidates=[...fs.readdirSync('.').filter(f=>/^postbuild-.*\.mjs$/.test(f)
 for(const f of candidates){let s=read(f),next=s;for(const [a,b] of pairs){const n=next.split(a).length-1;if(n){identityTouches+=n;next=next.replaceAll(a,b)}}if(next!==s)write(f,next)}
 
 {
+ const f='scripts/axis-813-build-parity.mjs';let s=read(f);if(!s.includes(`'${VERSION}'`))s=s.replace("'8.26.2','8.26.3','8.26.4'];","'8.26.2','8.26.3','8.26.4','8.26.5'];");write(f,s);
+}
+{
+ const f='scripts/axis-821-item-unit-flow-smoke.mjs';let s=read(f);if(!s.includes(`'${VERSION}'`))s=s.replace("'8.26.4'].includes(release)","'8.26.4','8.26.5'].includes(release)");write(f,s);
+}
+{
  const f='postbuild-825-set-lock-contract.mjs';let s=read(f);if(!s.includes(`'${VERSION}'`))s=s.replace("'8.26.3','8.26.4'].includes(info.version)","'8.26.3','8.26.4','8.26.5'].includes(info.version)");write(f,s);
 }
 for(const f of ['postbuild-8251-inline-set-morph-contract.mjs','postbuild-826-active-continuity-contract.mjs']){

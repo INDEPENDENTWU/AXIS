@@ -40,6 +40,10 @@ The exact PR #158 head must pass Repository, Version Authority and Work Continui
 
 The 22.75px Production failure is a real product regression and the existing strict geometry assertion is not relaxed.
 
+## Inherited platform continuity
+
+Cross-platform continuity remains unchanged: foundation `axis-native-foundation-0`, native repository `INDEPENDENTWU/AXIS-iOS`, portable contracts `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, and `axis.report-range.v1`. Chat history is not authoritative project memory; repository governance remains authoritative.
+
 ## Next planned stage
 
 After exact-head CI is green, merge PR #158 to `main` with the validated head SHA. Then certify that exact merged-main artifact through fixed Vercel Production, exact-prebuilt EdgeOne Production and `https://axis.juele.fun`, including Chromium and iPhone-like WebKit physical proofs. Only when all provider and physical gates are green may governance mark **AXIS 8.26.5 Production-sealed**. After that seal, begin the broader product-convergence roadmap around **Intent → Execution → Evidence → Evolution** rather than adding another corrective UI slice.
