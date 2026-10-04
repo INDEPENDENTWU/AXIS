@@ -70,7 +70,7 @@
     "activeBranch": "main",
     "deliveryBranch": "feature/827-reality-route",
     "pullRequest": 160,
-    "pullRequestDraft": true,
+    "pullRequestDraft": false,
     "baselineRelease": "8.27",
     "baselineRuntimeSha": "5bf575730c5c8de542c603d40b0f8b780204a342",
     "lastSealedRelease": "8.26.5",
