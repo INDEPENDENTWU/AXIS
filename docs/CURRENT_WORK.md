@@ -25,7 +25,7 @@ AXIS **8.26.5 — Recording Review Geometry Stability** is the exact Production-
 - `axis.juele.fun` Production run: `37187139864` — success
 - protected stores: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`
 
-Conversation history is supplemental only. Repository governance, exact commits, built artifacts and provider certification are authoritative.
+Chat history is not authoritative project memory. Conversation history is supplemental only. Repository governance, exact commits, built artifacts and provider certification are authoritative.
 
 ## Active change
 
