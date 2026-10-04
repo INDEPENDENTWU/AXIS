@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "baselineRelease": "8.26.5",
+  "baselineRelease": "8.27",
   "owners": [
     {
       "capability": "training-state",
@@ -238,6 +238,15 @@
       "storage": "none",
       "delegatesTo": "existing recording controls and v82 estimate sheet action",
       "notes": "AXIS 8.26.5 is Production-sealed. The canonical Review shell reserves the existing estimate row before Review becomes interactive; v82 remains the only estimate presentation/action owner. No factual, persistence, recorder, Active, network or AI authority is added."
+    },
+    {
+      "capability": "flow-reality-route-827",
+      "status": "derived-runtime-release-candidate",
+      "owner": "lib/axis-reality-route.mjs + existing app.js Flow orchestration bridge",
+      "contract": "axis.reality-route.v1",
+      "storage": "axis_v60_state.flowRun.temporaryConstraints",
+      "delegatesTo": "existing app-owned FlowRun + existing Session/Encounter/Active/recorder owners",
+      "notes": "Projects current, next, remaining and deferred route state from the active FlowRun and execution facts. Only temporary deferredStepRefs may persist inside the existing flowRun owner. Reusable Flow definitions and historical Encounters remain immutable; no new storage namespace, writer, network or AI authority."
     }
   ],
   "rules": [
@@ -258,6 +267,7 @@
     "AXIS 8.26.1 Active Rest State remains Production-sealed and presentation-only.",
     "AXIS 8.26.2 and 8.26.3 remain merged-but-unsealed rest-presentation provenance and cannot replace the Production seal.",
     "AXIS 8.26.4 may only align the canonical v87Rest presentation with the existing Adjust utility row and remove plan-complete residue; it may not acquire pause/resume, timer, Session, Encounter, Flow, persistence, network or AI authority.",
-    "Changing an owner requires explicit handoff, regression proof, and retirement of the previous writer."
+    "Changing an owner requires explicit handoff, regression proof, and retirement of the previous writer.",
+    "AXIS 8.27 Reality Route is derived execution projection only. Deferring a not-yet-started current step may update axis_v60_state.flowRun.temporaryConstraints.deferredStepRefs, but cannot mutate Flow definitions, consume a step, create an Encounter, or defer an already-active item."
   ]
 }
