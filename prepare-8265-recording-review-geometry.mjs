@@ -165,5 +165,10 @@ for(const f of ['postbuild-8251-inline-set-morph-contract.mjs','postbuild-826-ac
  write(f,JSON.stringify(x,null,2)+'\n');
 }
 
+const closeoutDecision=JSON.parse(read('governance/version-decision.json'));
+if(closeoutDecision?.sequence===22&&closeoutDecision?.base_release==='8.26.5'&&closeoutDecision?.release==='8.26.5'&&closeoutDecision?.decision==='confirm'&&closeoutDecision?.change_class==='governance'){
+  await import('./scripts/axis-8265-governance-source-convergence.mjs');
+}
+
 if(identityTouches<12)fail(`public identity convergence suspiciously small: ${identityTouches}`);
 console.log(`[AXIS 8.26.5 Recording Review Geometry] PASS · ${FROM} → ${VERSION} · estimate slot structural before interaction · 22.75px late-insertion defect removed · existing v82/recording truth owners preserved · ${identityTouches} current identity assertion(s) advanced`);
