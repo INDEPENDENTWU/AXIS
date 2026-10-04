@@ -4,11 +4,15 @@ const fail=m=>{throw new Error('[AXIS 8.27 runtime integration] '+m)};
 const read=f=>{if(!fs.existsSync(f))fail('missing '+f);return fs.readFileSync(f,'utf8')};
 const write=(f,s)=>fs.writeFileSync(f,s);
 const syntax=(s,f)=>{try{new Function(s)}catch(e){fail(f+' syntax '+e.message)}};
-const insertInsideApp=(s,payload,label)=>{
-  const marker='\n})();';
-  const at=s.lastIndexOf(marker);
-  if(at<0)fail(label+' canonical app closure missing');
-  return s.slice(0,at)+payload+s.slice(at);
+const insertBeforeFlowRuntime=(s,payload,label)=>{
+  const marker='window.__AXIS_FLOW_RUNTIME__={';
+  const n=s.split(marker).length-1;if(n!==1)fail(label+' Flow runtime anchor expected once, found '+n);
+  const at=s.indexOf(marker);return s.slice(0,at)+payload+s.slice(at);
+};
+const insertAfterFlowRuntime=(s,payload,label)=>{
+  const re=/window\.__AXIS_FLOW_RUNTIME__=\{[^\n]*\};/;
+  const hit=s.match(re)?.[0];if(!hit)fail(label+' Flow runtime export missing');
+  return s.replace(hit,hit+payload);
 };
 
 {
@@ -18,10 +22,10 @@ const insertInsideApp=(s,payload,label)=>{
     let core=read('lib/axis-reality-route.mjs');
     core=core.replaceAll('export const ','const ').replaceAll('export function ','function ');
     const wrapped='\nconst axis827Core=(()=>{\n'+core+'\nreturn {projectRealityRoute,deferRealityRouteCurrent,normalizeExecutionConstraints,REALITY_ROUTE_SCHEMA_ID,REALITY_ROUTE_VERSION,EXECUTION_CONSTRAINT_SCHEMA_ID};\n})();\n';
-    s=insertInsideApp(s,wrapped,'Reality Route pure core');
+    s=insertBeforeFlowRuntime(s,wrapped,'Reality Route pure core');
   }
   const bridge=read('runtime/axis-827-reality-route.js');
-  if(!s.includes('__AXIS_827_REALITY_ROUTE__'))s=insertInsideApp(s,'\n'+bridge+'\n','Reality Route browser bridge');
+  if(!s.includes('__AXIS_827_REALITY_ROUTE__'))s=insertAfterFlowRuntime(s,'\n'+bridge+'\n','Reality Route browser bridge');
   for(const token of ['axis827Core.projectRealityRoute','axis827DeferCurrent','temporaryConstraints','data-axis-flow-defer','__AXIS_827_REALITY_ROUTE__']){
     if(!s.includes(token))fail('app runtime missing '+token);
   }
