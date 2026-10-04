@@ -5,7 +5,7 @@ function axis827RealityProjection(){
   axis821FlowState();
   const r=state.flowRun;
   if(!r||!Array.isArray(r.steps))return null;
-  return projectRealityRoute({flowRef:r.flowRef,steps:r.steps,run:r,encounters:allEvents()});
+  return axis827Core.projectRealityRoute({flowRef:r.flowRef,steps:r.steps,run:r,encounters:allEvents()});
 }
 function axis827SyncRealityRoute(){
   const r=state.flowRun,p=axis827RealityProjection();
@@ -26,7 +26,7 @@ function axis827DeferCurrent(){
   axis821FlowState();
   const r=state.flowRun,p=axis827RealityProjection();
   if(!r||!p)return false;
-  const result=deferRealityRouteCurrent({run:r,projection:p});
+  const result=axis827Core.deferRealityRouteCurrent({run:r,projection:p});
   if(!result.changed){
     if(result.reason==='active-item-cannot-defer')toast&&toast('当前项目已经开始');
     else if(result.reason==='already-deferred')toast&&toast('这一项已经稍后');
