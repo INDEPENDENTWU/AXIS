@@ -3,6 +3,10 @@
 Governed active milestone: `AXIS 8.26.5 — Recording Review Geometry Stability`.
 Governed target branch: `main`.
 
+Bounded delivery branch: `fix/8265-recording-review-geometry` · PR **#158**.
+Version decision: **8.26.5 → 8.26.5 / confirm / sequence 22 / governance**.
+Repository governance remains authoritative; repository governance remains authoritative over conversation history.
+
 ## Production baseline at start of this work
 
 AXIS **8.26.5 — Recording Review Geometry Stability** is the exact Production-sealed baseline for this governance closeout.
