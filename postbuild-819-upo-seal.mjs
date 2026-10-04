@@ -74,7 +74,7 @@ if(fs.existsSync(MANIFEST)){
  info.gates.v61EncounterSchemaAuthority819=true;
  info.gates.activeTruthEncounterSchemaAuthority819=true;
  info.axis819=info.axis819||{};
- info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,lifecycleStateOwnedByApp:true,resetEntryOwned:true,postCommitFinally:true,postCommitPresentation:atomic826?'atomic-save-settlement':'direct-render',presentationOwner:'app.js',v61AttachUsesImmutableEncounterSchema:true,activeTruthUsesImmutableEncounterSchema:true,postCommitCapabilityDetected:true});
+ info.axis819.recording=Object.assign({},info.axis819.recording,{finalRuntimeResetSealed:true,lifecycleStateOwnedByApp:true,resetEntryOwned:true,postCommitFinally:true,postCommitPresentation:atomicPostCommit?'atomic-save-settlement':'direct-render',presentationOwner:'app.js',v61AttachUsesImmutableEncounterSchema:true,activeTruthUsesImmutableEncounterSchema:true,postCommitCapabilityDetected:true});
  info.axis819.inheritedRuntime=Object.assign({},info.axis819.inheritedRuntime,{evolutionNullContinuityRepaired:true,forbidReturn112:true});
  fs.writeFileSync(MANIFEST,JSON.stringify(info,null,2)+'\n');
 }
