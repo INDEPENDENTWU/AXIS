@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.execution-constraints.v1",
+  "title": "AXIS Execution Constraints v1",
+  "type": "object",
+  "required": ["schema", "deferredStepRefs"],
+  "properties": {
+    "schema": {"const": "axis.execution-constraints.v1"},
+    "deferredStepRefs": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false
+}
