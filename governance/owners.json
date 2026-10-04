@@ -230,6 +230,14 @@
       "storage": "none",
       "delegatesTo": "AXIS 8.25.1/8.26/8.26.1/8.26.2/8.26.3/8.26.4 stage-native presentation",
       "notes": "Earlier interaction research remains superseded and may not become an independent completion/action surface."
+    },
+    {
+      "capability": "recording-review-geometry-8265",
+      "status": "presentation-only-production-sealed",
+      "owner": "canonical Review shell + existing v82 estimate presentation owner",
+      "storage": "none",
+      "delegatesTo": "existing recording controls and v82 estimate sheet action",
+      "notes": "AXIS 8.26.5 is Production-sealed. The canonical Review shell reserves the existing estimate row before Review becomes interactive; v82 remains the only estimate presentation/action owner. No factual, persistence, recorder, Active, network or AI authority is added."
     }
   ],
   "rules": [
