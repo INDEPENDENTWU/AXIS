@@ -30,7 +30,7 @@ The exact merged product/runtime SHA earned the complete governed Production cha
 
 All **28 / 28** post-merge/deployment workflow runs associated with the exact merged SHA completed successfully.
 
-Runtime seal baseline: the exact merged SHA above is the durable AXIS 8.26.5 product/runtime seal snapshot. This is not a self-referential requirement: the governance closeout records certification already earned by that exact product/runtime artifact. Later governance-only commits or provider redeploys are not release authority unless a new governed product release earns a new exact certification chain.
+runtime seal baseline: the exact merged SHA above is the durable AXIS 8.26.5 product/runtime seal snapshot. This is not a self-referential requirement: the governance closeout records certification already earned by that exact product/runtime artifact. Later governance-only commits or provider redeploys are not release authority unless a new governed product release earns a new exact certification chain.
 
 ## What 8.26.5 changes
 
