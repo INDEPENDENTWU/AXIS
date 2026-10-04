@@ -199,7 +199,6 @@ axis821FlowSurfaceRenderHome=axis827FlowSurfaceRenderHome;
 if(window.__AXIS_821_FLOW_SURFACE__)window.__AXIS_821_FLOW_SURFACE__.render=axis827FlowSurfaceRenderHome;
 
 if(window.__AXIS_FLOW_RUNTIME__){
-  window.__AXIS_FLOW_RUNTIME__.version='8.27';
   window.__AXIS_FLOW_RUNTIME__.launch=axis827LaunchFlow;
   window.__AXIS_FLOW_RUNTIME__.current=function(){return axis821FlowClone(axis827ResolvedCurrent())};
   window.__AXIS_FLOW_RUNTIME__.project=function(){return axis821FlowClone(axis827RealityProjection())};
