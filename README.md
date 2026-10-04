@@ -6,6 +6,8 @@ Local-first practice software built around what actually happened.
 
 AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Flow describes intended continuity, Encounters freeze what actually happened, Evidence anchors those facts, and Evolution reveals reality without inventing a second history.
 
+Governed release: `AXIS 8.26.5`.
+
 ## Release truth
 
 AXIS **8.26.5 — Recording Review Geometry Stability** is Production-sealed at exact product/runtime merge:
