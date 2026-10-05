@@ -105,8 +105,10 @@ if(CURRENT==='8.25'){
 }
 
 if(CURRENT==='8.27'){
+  const releaseIdentity=read('scripts/prepare-827-release-identity.mjs');
+  if(!releaseIdentity.includes("await import('./axis-827-reality-route-smoke.mjs')"))fail('8.27 Reality Route smoke chain is not installed by release identity convergence');
   for(const [text,label,want] of [[currentWorkflow,'Current Release',2],[edgeWorkflow,'EdgeOne Production',2],[customWorkflow,'axis.juele.fun',2],[vercelWorkflow,'fixed Vercel Production',1]]){
-    if(count(text,'node scripts/axis-827-reality-route-smoke.mjs')!==want)fail(`${label} must run AXIS 8.27 Reality Route smoke ${want} time(s)`);
+    if(count(text,'node scripts/axis-8262-active-rest-selector-smoke.mjs')<want)fail(`${label} lost the inherited physical chain that reaches AXIS 8.27 Reality Route smoke ${want} time(s)`);
   }
 }
 
