@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 22,
+  "sequence": 23,
   "base_release": "8.26.5",
-  "release": "8.26.5",
-  "decision": "confirm",
-  "change_class": "governance",
-  "summary": "Record the exact AXIS 8.26.5 merged-main Production seal after successful Current Release, Deep Compatibility, fixed Vercel, EdgeOne and axis.juele.fun certification. Runtime behavior and public release identity remain unchanged."
+  "release": "8.27",
+  "decision": "bump",
+  "change_class": "product-runtime",
+  "summary": "Introduce AXIS 8.27 Reality Route: a pure continuation projection over Flow intent, execution facts and temporary constraints, with a bounded defer-current-item interaction that preserves Flow and Encounter truth."
 }

@@ -3,23 +3,23 @@
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.26.5",
-    "releaseStatus": "production-certified",
+    "productionRelease": "8.27",
+    "releaseStatus": "candidate",
     "lastSealedRelease": "8.26.5",
     "productionRuntimeSha": "5bf575730c5c8de542c603d40b0f8b780204a342",
     "productionPullRequest": 158,
-    "candidatePullRequest": 158,
+    "candidatePullRequest": 160,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
     "sealedRelease": "8.26.5",
     "sealedAt": "2026-10-04",
-    "candidateRelease": "8.26.5",
-    "candidateStatus": "production-sealed",
+    "candidateRelease": "8.27",
+    "candidateStatus": "pending-exact-head-and-merged-main-certification",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "Provider IDs, source SHA and workflow evidence below are the fully sealed AXIS 8.26.5 product/runtime certification snapshot for exact merged main 5bf575730c5c8de542c603d40b0f8b780204a342 from PR #158. The exact artifact passed Current Release, Deep Compatibility, fixed Vercel Production, Public Production Alias, exact-prebuilt EdgeOne Production and axis.juele.fun parity/physical-browser verification. Later governance-only commits or provider redeploys do not replace this product/runtime authority.",
+    "evidenceSemantics": "Provider IDs and source SHA below remain the fully sealed AXIS 8.26.5 certification snapshot at 5bf575730c5c8de542c603d40b0f8b780204a342. AXIS 8.27 Reality Route is a product-runtime candidate and may replace the seal only after one exact PR head is green, merged main is exact, and Vercel, EdgeOne and axis.juele.fun certification all succeed.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
       "deploymentId": "dpl_D4FC1ro8RZV6hGu1Kqm9LrJcqMRn",
@@ -65,13 +65,13 @@
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.26.5 — Recording Review Geometry Stability",
-    "activePhase": "Production-sealed — exact merged-main artifact certified; governance closeout complete and ready to hand off to AXIS 8.27 Reality Route",
+    "activeMilestone": "AXIS 8.27 — Reality Route",
+    "activePhase": "Product runtime candidate — deterministic reality-driven continuation with temporary defer semantics",
     "activeBranch": "main",
-    "deliveryBranch": "fix/8265-recording-review-geometry",
-    "pullRequest": 158,
+    "deliveryBranch": "feature/827-reality-route",
+    "pullRequest": 160,
     "pullRequestDraft": false,
-    "baselineRelease": "8.26.5",
+    "baselineRelease": "8.27",
     "baselineRuntimeSha": "5bf575730c5c8de542c603d40b0f8b780204a342",
     "lastSealedRelease": "8.26.5",
     "lastSealedRuntimeSha": "5bf575730c5c8de542c603d40b0f8b780204a342",
@@ -80,14 +80,14 @@
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed.",
-    "intendedProductBehaviorChange": false,
-    "nextProductRelease": "8.26.5",
+    "intendedProductBehaviorChange": true,
+    "nextProductRelease": "8.27",
     "versionDecision": {
-      "sequence": 22,
+      "sequence": 23,
       "baseRelease": "8.26.5",
-      "release": "8.26.5",
-      "decision": "confirm",
-      "changeClass": "governance"
+      "release": "8.27",
+      "decision": "bump",
+      "changeClass": "product-runtime"
     },
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
@@ -439,9 +439,9 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Begin AXIS 8.27 Reality Route: introduce a pure continuation projection over Flow intent + actual Encounters + temporary execution constraints, then expose the smallest Active interaction that can defer an unavailable item without mutating Flow or historical truth.",
+    "nextSlice": "Finish AXIS 8.27 Reality Route on exact PR #160 head, prove pure route projection plus Chromium/iPhone-like WebKit defer behavior, merge exact green head, then certify exact merged-main Vercel, EdgeOne and axis.juele.fun.",
     "recordingReviewGeometry": {
-      "status": "production-sealed-8.26.5",
+      "status": "production-sealed-8.26.5-inherited",
       "baseRelease": "8.26.4",
       "productionFinding": {
         "gateRunId": 36333871883,
@@ -462,6 +462,34 @@
       "newActiveOwner": false,
       "network": false,
       "ai": false,
+      "productionProofRequired": [
+        "Vercel",
+        "EdgeOne",
+        "axis.juele.fun"
+      ]
+    },
+    "realityRoute": {
+      "status": "8.27-release-candidate",
+      "principle": "reality drives continuation; reusable intent and historical facts remain immutable",
+      "pureOwner": "lib/axis-reality-route.mjs",
+      "projectionSchema": "axis.reality-route.v1",
+      "temporaryConstraintSchema": "axis.execution-constraints.v1",
+      "stateContainer": "axis_v60_state.flowRun",
+      "persistedField": "temporaryConstraints.deferredStepRefs",
+      "newStorageNamespace": false,
+      "flowDefinitionMutation": false,
+      "historicalEncounterRewrite": false,
+      "manualDetourConsumesFlowStep": false,
+      "activeItemDeferrable": false,
+      "deferredItemsReturnAfterImmediateRoute": true,
+      "reasonCodes": true,
+      "newSessionWriter": false,
+      "newEncounterWriter": false,
+      "newRecorderOwner": false,
+      "newActiveOwner": false,
+      "network": false,
+      "ai": false,
+      "chromiumAndWebKitRequired": true,
       "productionProofRequired": [
         "Vercel",
         "EdgeOne",
@@ -500,7 +528,8 @@
       "AXIS 8.26.1 Active Rest State is Production-sealed and inherited; it changes paused/rest presentation only and does not change pause/resume semantics, timers, history, persistence, Flow or factual owners.",
       "AXIS 8.26.2 and AXIS 8.26.3 are merged-but-unsealed rest-presentation provenance and may not be treated as the Production seal.",
       "AXIS 8.26.4 may only move canonical v87Rest into the existing Active controls grid, align it with the existing Adjust action, and remove plan-complete rest geometry; it may not alter pause/resume, timers, actions, Session, Encounter, Flow, persistence, network or AI authority.",
-      "AXIS 8.26.5 is Production-sealed and may only stabilize Review geometry by making the existing v82 estimate row structural before interaction; it does not change metric facts, recorder ownership, Session/Encounter/Active truth, persistence, network or AI authority."
+      "AXIS 8.26.5 is Production-sealed and may only stabilize Review geometry by making the existing v82 estimate row structural before interaction; it does not change metric facts, recorder ownership, Session/Encounter/Active truth, persistence, network or AI authority.",
+      "AXIS 8.27 Reality Route may persist only temporary execution constraints inside the existing axis_v60_state.flowRun owner; it may not reorder reusable Flow intent, fabricate or rewrite Encounters, create a second Active/recorder owner, or require network/AI."
     ]
   },
   "crossPlatform": {
@@ -511,7 +540,9 @@
       "axis.data.v1",
       "axis.flow.v1",
       "axis.flow-provenance.v1",
-      "axis.report-range.v1"
+      "axis.report-range.v1",
+      "axis.reality-route.v1",
+      "axis.execution-constraints.v1"
     ],
     "rule": "Shared product/data semantics are portable; Web implementation accidents are not domain contracts."
   },
@@ -566,6 +597,7 @@
     "AXIS 8.26.2 and AXIS 8.26.3 remain merged-but-unsealed provenance only.",
     "8.23 Replay Evidence Continuity, 8.24 Active Stage Tactile, 8.24.1 Dock Occlusion, 8.25.1 Inline Set Morph, 8.26 Active Continuity and 8.26.1 Active Rest State remain inherited.",
     "Later governance-only commits do not replace product.productionRuntimeSha 5bf575730c5c8de542c603d40b0f8b780204a342; latestDeploymentIsAuthority remains false.",
-    "The next product stage is AXIS 8.27 Reality Route under Intent → Execution → Evidence → Evolution."
+    "The next product stage is AXIS 8.27 Reality Route under Intent → Execution → Evidence → Evolution.",
+    "AXIS 8.27 Reality Route begins the Intent → Execution → Evidence → Evolution convergence line from the exact sealed 8.26.5 runtime baseline."
   ]
 }

@@ -4,7 +4,7 @@ const fail=m=>{throw new Error(`[AXIS 8.26.5 Recording Review Geometry contract]
 const read=f=>{if(!fs.existsSync(f))fail(`missing ${f}`);return fs.readFileSync(f,'utf8')};
 const info=JSON.parse(read('axis-build.json'));
 const runtime=read('axis-core.js'),css=read('axis-style.css'),html=read('index.html'),prepare=read('prepare-8265-recording-review-geometry.mjs');
-if(info.version!=='8.26.5'||info.baseVersion!=='8.26.5')fail(`release identity ${info.version}/${info.baseVersion}`);
+const current=info.version==='8.26.5'&&info.baseVersion==='8.26.5',inherited=info.version==='8.27'&&info.baseVersion==='8.27';if(!current&&!inherited)fail(`release identity ${info.version}/${info.baseVersion}`);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
 for(const gate of ['activeContinuity826','activeRestState8261','activeRestSelectorBinding8262','activeRestConvergence8263','activeRestUtilityRail8264','activeRestAdjustAlignment8264','activeRestPlanCompleteZeroGeometry8264'])if(info.gates?.[gate]!==true)fail(`inherited gate missing ${gate}`);
 if(!html.includes('class="v82Estimate" id="v82Estimate"')||!html.includes('<span>预计时长</span>'))fail('structural estimate row missing from canonical Review shell');
@@ -20,5 +20,6 @@ info.gates=info.gates||{};
 Object.assign(info.gates,{recordingReviewGeometry8265:true,recordingEstimateStructuralSlot8265:true,recordingEstimatePreInteractiveBinding8265:true,recordingEstimateNoLateInsertion8265:true,recordingGeometryStrictTolerance8265:true,recordingExistingOwnersPreserved8265:true});
 info.axis8265={release:true,scope:'recording-review-geometry-stability',base:'8.26.4-merged-unsealed',productionFinding:{gateRunId:36333871883,deltaYPx:-22.75},presentation:{estimateStructuralFromFirstReviewFrame:true,estimatePreInteractiveBinding:true,estimateHeightPx:54,estimateTopMarginPx:8,lateInsertion:false},ownership:{v82EstimateOwnerPreserved:true,recordingOwnerPreserved:true,sessionWriter:false,encounterWriter:false,activeOwner:false,recorder:false,newPersistence:false,network:false,ai:false}};
 fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
-await import('./scripts/axis-8265-governance-compat.mjs');
+if(current)await import('./scripts/axis-8265-governance-compat.mjs');
+if(inherited)await import('./postbuild-827-reality-route-contract.mjs');
 console.log('[AXIS 8.26.5 Recording Review Geometry contract] PASS · structural estimate row · pre-interactive v82 binding · no late insertion · strict recording geometry preserved · existing owners unchanged');

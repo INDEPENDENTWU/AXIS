@@ -1,0 +1,12 @@
+/* AXIS 8.27 — Reality Route */
+.axis821FlowHome[data-state="active"] [data-axis-flow-defer]{
+  color:var(--accent2)!important;
+  font-weight:650!important;
+}
+.axis821FlowHome[data-substate="deferred-return"] .axis821FlowRunLead>small{
+  color:var(--accent2)!important;
+}
+.axis821FlowHome[data-substate="deferred-return"] .axis821FlowRunPrimary{
+  background:rgba(115,124,255,.12)!important;
+  color:var(--accent2)!important;
+}

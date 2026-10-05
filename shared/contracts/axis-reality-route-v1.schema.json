@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.reality-route.v1",
+  "title": "AXIS Reality Route v1",
+  "type": "object",
+  "required": ["schema", "runtimeVersion", "flowRef", "status", "current", "next", "remaining", "deferred", "dropped", "completedStepRefs", "observedEncounterStepRefs", "completedWithoutEncounter", "constraints", "currentDeferred", "counts", "reasonCodes"],
+  "properties": {
+    "schema": {"const": "axis.reality-route.v1"},
+    "runtimeVersion": {"const": "8.27"},
+    "flowRef": {"type": "string", "minLength": 1},
+    "status": {"enum": ["active", "complete"]},
+    "current": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/step"}]},
+    "next": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/step"}]},
+    "remaining": {"type": "array", "items": {"$ref": "#/$defs/step"}},
+    "deferred": {"type": "array", "items": {"$ref": "#/$defs/step"}},
+    "dropped": {"type": "array", "items": {"$ref": "#/$defs/step"}},
+    "completedStepRefs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "observedEncounterStepRefs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "completedWithoutEncounter": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "constraints": {"$ref": "./axis-execution-constraints-v1.schema.json"},
+    "currentDeferred": {"type": "boolean"},
+    "counts": {
+      "type": "object",
+      "required": ["total", "completed", "dropped", "deferred", "remaining"],
+      "properties": {
+        "total": {"type": "integer", "minimum": 0},
+        "completed": {"type": "integer", "minimum": 0},
+        "dropped": {"type": "integer", "minimum": 0},
+        "deferred": {"type": "integer", "minimum": 0},
+        "remaining": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "reasonCodes": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  },
+  "$defs": {
+    "step": {
+      "type": "object",
+      "required": ["id", "objectRef"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "objectRef": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
