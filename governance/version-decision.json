@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 23,
-  "base_release": "8.26.5",
+  "sequence": 24,
+  "base_release": "8.27",
   "release": "8.27",
-  "decision": "bump",
-  "change_class": "product-runtime",
-  "summary": "Introduce AXIS 8.27 Reality Route: a pure continuation projection over Flow intent, execution facts and temporary constraints, with a bounded defer-current-item interaction that preserves Flow and Encounter truth."
+  "decision": "confirm",
+  "change_class": "governance",
+  "summary": "Record the exact AXIS 8.27 Reality Route Production certification at merged-main SHA d6044f0b30a92c007dd2fbab5792c2aa62dfd485 without changing product/runtime behavior."
 }
