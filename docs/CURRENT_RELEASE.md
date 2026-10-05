@@ -1,54 +1,68 @@
 # Current Release — AXIS 8.27
 
-**Status: Release candidate**
+**Status: Production-sealed**
 
-AXIS **8.27 — Reality Route** is the current governed product-runtime candidate.
+AXIS **8.27 — Reality Route** is the current Production-sealed product/runtime release.
 
-## Candidate identity
+## Exact release identity
 
-- candidate PR: **#160**
-- delivery branch: `feature/827-reality-route`
-- base release: **8.26.5**
-- version decision: **8.26.5 → 8.27 / bump / sequence 23 / product-runtime**
+- release PR: **#160**
+- exact green PR head: `f79a25f10ac723ac7f6775a8b5c817b8fd884767`
+- exact merged-main product/runtime SHA:
+
+```text
+d6044f0b30a92c007dd2fbab5792c2aa62dfd485
+```
+
+- product version decision: **8.26.5 → 8.27 / bump / sequence 23 / product-runtime**
+- seal reconciliation decision: **8.27 → 8.27 / confirm / sequence 24 / governance**
 - architecture: `canonical-single-runtime`
 - deterministic build: `node build-release.mjs`
-- intended topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
+- topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
 
-## Last Production-sealed baseline
+## Production certification
 
-The last Production-sealed release remains **AXIS 8.26.5**, release PR **#158**, exact product/runtime SHA:
+The exact merged-main runtime above is the authority. Later governance-only commits or provider redeploys do not replace it.
+
+- exact PR #160 head: **30 / 30 workflow runs success**
+- exact merged-main/deployment certification: **29 / 29 workflow runs success**
+- Current Release Gate: `37333415838`
+- Deep Compatibility Gate: `37333415780`
+- Vercel Production Gate: `37333475667`
+- Public Production Alias Gate: `37333475632`
+- Vercel deployment: `dpl_5dNTyZpuRcqV8vDGRvYi9GC8KGYm`
+- Vercel public alias: `https://axis-five-puce.vercel.app`
+- EdgeOne Production run: `37333415798`
+- EdgeOne deployment: `dpmrug23mtim`
+- EdgeOne public URL: `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- `axis.juele.fun` Production run: `37333415692`
+
+Vercel served exact **8.27 / d6044f0b30a92c007dd2fbab5792c2aa62dfd485** manifest parity. EdgeOne published the exact prebuilt Vercel-parity artifact and passed Chromium plus iPhone-like WebKit. `axis.juele.fun` converged to the same exact runtime and passed Chromium plus iPhone-like WebKit with seven API contracts matching Vercel.
+
+## Reality Route
+
+Reality Route is the first productized continuation layer under:
 
 ```text
-5bf575730c5c8de542c603d40b0f8b780204a342
+Intent → Execution → Evidence → Evolution
 ```
 
-Its certified evidence remains the authority while 8.27 is a candidate:
+It derives continuation from reusable Flow intent, actual execution facts, and temporary run constraints.
 
-- Current Release Gate `37187139856`
-- Deep Compatibility Gate `37187139889`
-- Vercel Production Gate `37187159342`
-- Public Production Alias Gate `37187159392`
-- EdgeOne Production run `37187139894`
-- `axis.juele.fun` Production run `37187139864`
-
-runtime seal baseline: the exact 8.26.5 SHA above remains the durable Production runtime authority while 8.27 is unsealed. This is not a self-referential requirement: 8.27 can replace it only after the candidate exact head is green, the exact merged-main product artifact is known, and that artifact completes the governed Production certification chain.
-
-## 8.27 behavior
-
-Reality Route introduces a pure platform-neutral continuation projection:
+The first user-facing constraint is **稍后**. A current item that has not started can be temporarily deferred for this run. The immediate route continues, and the deferred item returns after the immediate route.
 
 ```text
-Flow intent
-+ actual execution / Encounter evidence
-+ temporary run constraints
-        ↓
-current / next / remaining / deferred / dropped / reasonCodes
+Intent:  下拉 → 划船 → 肩推
+Reality: 下拉暂时不可用
+Route:   划船 → 肩推 → 下拉
 ```
 
-The first temporary constraint is **defer current item**. A current item that has not started can be placed after the immediate remaining route. The reusable Flow definition is unchanged. Existing Encounters are unchanged. Once a current item has entered the existing Active lifecycle, it cannot be deferred.
+The saved Flow is not reordered or rewritten. Historical Encounters are not rewritten. A manual detour cannot fabricate Flow progression. Once an item enters the existing Active lifecycle, it is authoritative and cannot be deferred.
 
-Temporary route state is stored only inside the established `axis_v60_state.flowRun.temporaryConstraints` boundary. No `axis_route_*` storage, second Session/Encounter writer, second recorder, second Active owner, network dependency, or AI authority is introduced.
+Temporary route state lives only at `axis_v60_state.flowRun.temporaryConstraints`. There is no new storage namespace, Session writer, Encounter writer, recorder, Active owner, network dependency, or AI authority.
 
-## Completion condition
+Portable contracts include `axis.reality-route.v1` and `axis.execution-constraints.v1`.
 
-8.27 is not Production-sealed until one exact PR #160 head passes the relevant contract and physical Chromium/WebKit gates, merges exactly, and the exact merged-main artifact passes Vercel, EdgeOne, and `axis.juele.fun` Production certification.
+## Next bounded work
+
+8.27 is closed. Any next product slice requires a fresh version decision. The natural continuation is richer temporary execution constraints while preserving the same pure Reality Route boundary and factual ownership model.
