@@ -5,7 +5,8 @@ const read=f=>{if(!fs.existsSync(f))fail('missing '+f);return fs.readFileSync(f,
 const info=JSON.parse(read('axis-build.json'));
 const runtime=read('axis-core.js'),css=read('axis-style.css'),core=read('lib/axis-reality-route.mjs');
 
-if(info.version!=='8.27'||info.baseVersion!=='8.27')fail('release identity '+info.version+'/'+info.baseVersion);
+const inherited828=info.version==='8.28'&&info.baseVersion==='8.28';
+if(!(info.version==='8.27'&&info.baseVersion==='8.27')&&!inherited828)fail('release identity '+info.version+'/'+info.baseVersion);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
 
 for(const gate of ['activeContinuity826','activeRestState8261','activeRestSelectorBinding8262','activeRestConvergence8263','activeRestUtilityRail8264','recordingReviewGeometry8265'])if(info.gates?.[gate]!==true)fail('inherited gate missing '+gate);
@@ -54,4 +55,5 @@ fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 await import('./scripts/axis-827-reality-route-contract.mjs');
 await import('./scripts/axis-827-governance-compat.mjs');
 
-console.log('[AXIS 8.27 Reality Route contract] PASS · pure projection · bounded temporary defer · existing factual owners preserved · canonical single runtime unchanged');
+console.log('[AXIS 8.27 Reality Route contract] PASS · pure projection · bounded temporary defer · existing factual owners preserved · canonical single runtime unchanged'+(inherited828?' · inherited by 8.28':''));
+if(inherited828)await import('./postbuild-828-practice-loop-contract.mjs');
