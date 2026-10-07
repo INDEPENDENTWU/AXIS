@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.practice-loop.v1",
+  "title": "AXIS Practice Loop Projection v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "runtimeVersion",
+    "phase",
+    "status",
+    "current",
+    "next",
+    "progress",
+    "action",
+    "continuity",
+    "reasonCodes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "axis.practice-loop.v1"
+    },
+    "runtimeVersion": {
+      "const": "8.28"
+    },
+    "phase": {
+      "enum": [
+        "idle",
+        "ready",
+        "between-items",
+        "executing",
+        "paused",
+        "recovering",
+        "settling",
+        "complete"
+      ]
+    },
+    "status": {
+      "enum": [
+        "idle",
+        "active",
+        "complete"
+      ]
+    },
+    "flowRef": {
+      "type": "string"
+    },
+    "runRef": {
+      "type": "string"
+    },
+    "sessionRef": {
+      "type": "string"
+    },
+    "current": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "next": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "active": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "progress": {
+      "type": "object"
+    },
+    "action": {
+      "type": "object"
+    },
+    "continuity": {
+      "type": "object"
+    },
+    "reasonCodes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}
