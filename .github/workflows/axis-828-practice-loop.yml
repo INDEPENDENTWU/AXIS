@@ -1,0 +1,84 @@
+name: AXIS 8.28 Practice Loop Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Verify pure Practice Loop contract
+        run: node scripts/axis-828-practice-loop-contract.mjs
+      - name: Build exact AXIS candidate
+        run: node build-release.mjs
+      - name: Verify built Practice Loop contract
+        run: node postbuild-828-practice-loop-contract.mjs
+
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS candidate
+        run: node build-release.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve exact candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-828-chromium.log 2>&1 &
+          sleep 1
+      - name: Chromium Practice Loop proof
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+          AXIS_SKIP_828_PRACTICE_LOOP: "1"
+        run: node scripts/axis-828-practice-loop-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-828-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact AXIS candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve exact candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-828-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone WebKit Practice Loop proof
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+          AXIS_SKIP_828_PRACTICE_LOOP: "1"
+        run: node scripts/axis-828-practice-loop-smoke.mjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/axis-828-webkit.log || true
