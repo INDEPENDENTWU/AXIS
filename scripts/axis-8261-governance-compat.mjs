@@ -49,6 +49,11 @@ if(sealed827){
   if(production.vercel?.deploymentId!=='dpl_5dNTyZpuRcqV8vDGRvYi9GC8KGYm'||production.vercel?.sourceSha!==RUNTIME_827)fail('8.27 Vercel seal drift');
   if(Number(production.edgeOne?.verificationRunId)!==37333415798||production.edgeOne?.sourceSha!==RUNTIME_827)fail('8.27 EdgeOne seal drift');
   if(Number(production.customDomain?.verificationRunId)!==37333415692||production.customDomain?.sourceSha!==RUNTIME_827)fail('8.27 custom-domain seal drift');
+}else if(downstream828){
+  if(production.sealedRelease!=='8.27'||production.candidateRelease!=='8.28'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.28 successor production state drift');
+  if(production.vercel?.deploymentId!=='dpl_5dNTyZpuRcqV8vDGRvYi9GC8KGYm'||production.vercel?.sourceSha!==RUNTIME_827)fail('8.28 successor lost 8.27 Vercel seal');
+  if(Number(production.edgeOne?.verificationRunId)!==37333415798||production.edgeOne?.sourceSha!==RUNTIME_827)fail('8.28 successor lost 8.27 EdgeOne seal');
+  if(Number(production.customDomain?.verificationRunId)!==37333415692||production.customDomain?.sourceSha!==RUNTIME_827)fail('8.28 successor lost 8.27 custom-domain seal');
 }else{
   if(production.sealedRelease!=='8.26.5')fail('sealed release baseline drift');
   if(production.vercel?.deploymentId!=='dpl_D4FC1ro8RZV6hGu1Kqm9LrJcqMRn'||production.vercel?.sourceSha!==SEALED_SHA)fail('8.26.5 Vercel seal drift');
