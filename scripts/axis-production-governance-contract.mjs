@@ -61,6 +61,15 @@ if(CURRENT==='8.24'){
   if(project?.engineering?.deliveryBranch!=='axis-825-set-lock')fail('8.25 delivery branch drift');
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.25 must be governed as intended product behavior change');
   if(!(decision?.sequence===11&&decision?.base_release==='8.24.1'&&decision?.release==='8.25'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('8.25 version decision must be 8.24.1 → 8.25 / bump / sequence 11 / product-ui');
+}else if(CURRENT==='8.28'){
+  if(!candidate||STATUS!=='candidate'||SEALED!=='8.27')fail('8.28 must be candidate over sealed 8.27');
+  if(RUNTIME_SHA!=='d6044f0b30a92c007dd2fbab5792c2aa62dfd485'||SEALED_PR!==160)fail('8.28 candidate lost exact 8.27 seal baseline');
+  if(project?.production?.candidateRelease!=='8.28'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.28 Production candidate state drift');
+  if(CANDIDATE_PR!==162||project?.engineering?.pullRequest!==162)fail('8.28 candidate PR must be #162');
+  if(project?.engineering?.activeMilestone!=='AXIS 8.28 — Practice Loop Convergence'||project?.engineering?.deliveryBranch!=='feature/828-practice-loop-convergence')fail('8.28 milestone/delivery identity drift');
+  if(!(decision?.sequence===25&&decision?.base_release==='8.27'&&decision?.release==='8.28'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.28 version decision drift');
+  const l=project?.engineering?.practiceLoop;
+  if(l?.status!=='8.28-release-candidate'||l?.projectionSchema!=='axis.practice-loop.v1'||l?.reloadSafe!==true||l?.promptOnRestore!==false)fail('8.28 Practice Loop governance drift');
 }else if(CURRENT==='8.27'){
   const sealed827=STATUS==='production-certified'&&SEALED==='8.27'&&RUNTIME_SHA==='d6044f0b30a92c007dd2fbab5792c2aa62dfd485'&&SEALED_PR===160;
   const candidate827=STATUS==='candidate'&&SEALED==='8.26.5'&&RUNTIME_SHA==='5bf575730c5c8de542c603d40b0f8b780204a342'&&SEALED_PR===158;
