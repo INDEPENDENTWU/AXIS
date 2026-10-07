@@ -1,0 +1,12 @@
+/* AXIS 8.28 — Practice Loop Convergence */
+.axis821FlowHome[data-state="active"] .axis828LoopStatus{
+  min-height:42px;margin:10px 0 2px;padding:10px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)
+}
+.axis828LoopStatus span{min-width:0;color:var(--dim);font-size:10.5px;line-height:1.35}
+.axis828LoopStatus b{max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px;font-weight:620}
+.axis821FlowHome[data-loop-phase="executing"] .axis828LoopStatus span,.axis821FlowHome[data-loop-phase="paused"] .axis828LoopStatus span{color:var(--muted)}
+.axis821FlowHome[data-loop-phase="recovering"] .axis828LoopStatus{opacity:.78}
+.axis821FlowHome[data-loop-phase="complete"] .axis828LoopStatus b{display:none}
+@media(max-width:420px){.axis821FlowHome[data-state="active"] .axis828LoopStatus{min-height:40px;margin-top:8px}}
+@media(prefers-reduced-motion:reduce){.axis828LoopStatus{transition:none!important}}
