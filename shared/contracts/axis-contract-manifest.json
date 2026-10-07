@@ -36,7 +36,10 @@
     "realityRouteIntentImmutable": true,
     "realityRouteEncounterImmutable": true,
     "realityRouteTemporaryConstraintsInFlowRun": true,
-    "realityRouteNoSecondTrainingStore": true
+    "realityRouteNoSecondTrainingStore": true,
+    "practiceLoopPure": true,
+    "practiceLoopResumeSafe": true,
+    "practiceLoopNoSecondTrainingStore": true
   },
   "platforms": {
     "web": {
@@ -50,5 +53,6 @@
     }
   },
   "realityRoute": "axis.reality-route.v1",
-  "executionConstraints": "axis.execution-constraints.v1"
+  "executionConstraints": "axis.execution-constraints.v1",
+  "practiceLoop": "axis.practice-loop.v1"
 }
