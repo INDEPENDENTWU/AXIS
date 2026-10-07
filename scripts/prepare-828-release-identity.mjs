@@ -103,6 +103,14 @@ for(const [f,a,b] of [
   write(f,s);
 }
 
+{
+  const f='postbuild-8265-recording-review-geometry-contract.mjs';let source=read(f);
+  const from="inherited=info.version==='8.27'&&info.baseVersion==='8.27'";
+  const to="inherited=['8.27','8.28'].includes(info.version)&&info.baseVersion===info.version";
+  if(source.includes(from))source=source.replace(from,to);
+  if(!source.includes("'8.28'].includes(info.version)"))fail('recording geometry inheritance 8.28 missing');
+  write(f,source);
+}
 await import('./prepare-828-governance-state.mjs');
 await import('./axis-828-governance-compat.mjs');
 if(inheritedIdentityTouches+touches<10)fail('public identity convergence suspiciously small: '+(inheritedIdentityTouches+touches));
