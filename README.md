@@ -2,17 +2,17 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.27** · **Release candidate** · last Production-sealed: **AXIS 8.26.5** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md)
+**Current release: 8.27** · **Production-sealed** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md)
 
 AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Flow describes intended continuity, Encounters freeze what actually happened, Evidence anchors those facts, and Evolution reveals reality without inventing a second history.
 
-The exact Production runtime seal remains:
+Exact Production product/runtime SHA:
 
 ```text
-5bf575730c5c8de542c603d40b0f8b780204a342
+d6044f0b30a92c007dd2fbab5792c2aa62dfd485
 ```
 
-That SHA is AXIS 8.26.5 from PR #158. The current bounded candidate is **AXIS 8.27 — Reality Route**, PR **#160**, delivery branch `feature/827-reality-route`.
+Release PR: **#160**.
 
 ## AXIS 8.27 — Reality Route
 
@@ -22,9 +22,9 @@ That SHA is AXIS 8.26.5 from PR #158. The current bounded candidate is **AXIS 8.
 Intent → Execution → Evidence → Evolution
 ```
 
-Reality Route derives the current continuation from reusable Flow intent, actual execution facts, and temporary real-world constraints. Its first visible action is **稍后**: a not-yet-started current Flow item can move to the end of the immediate route for this run without rewriting the saved Flow or fabricating an Encounter.
+Reality Route derives the current continuation from reusable Flow intent, actual execution facts, and temporary real-world constraints.
 
-Example:
+Its first visible action is **稍后**: a not-yet-started current Flow item can move behind the immediate route for this run without rewriting the saved Flow or fabricating an Encounter.
 
 ```text
 Intent:   下拉 → 划船 → 肩推
@@ -32,7 +32,9 @@ Reality:  下拉暂时不可用
 Route:    划船 → 肩推 → 下拉
 ```
 
-The constraint lives only in the existing `axis_v60_state.flowRun` owner. There is no new storage namespace, Session writer, Encounter writer, recorder, Active owner, network dependency, or AI authority.
+The temporary constraint lives only in the existing `axis_v60_state.flowRun` owner. There is no new storage namespace, Session writer, Encounter writer, recorder, Active owner, network dependency, or AI authority.
+
+The exact merged-main runtime is certified on Vercel, EdgeOne, and `axis.juele.fun`, with Chromium and iPhone-like WebKit production proof across the provider chain.
 
 ## Product rules
 

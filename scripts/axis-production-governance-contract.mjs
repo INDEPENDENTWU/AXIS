@@ -24,6 +24,14 @@ if(CURRENT==='8.23'){sourceOwner='prepare-823-replay-evidence-continuity.mjs';so
 if(CURRENT==='8.24'){sourceOwner='prepare-824-active-stage-tactile.mjs';sourceCurrent='8.24';sourceFrom='8.23'}
 if(CURRENT==='8.24.1'){sourceOwner='prepare-8241-dock-occlusion.mjs';sourceCurrent='8.24.1';sourceFrom='8.24'}
 if(CURRENT==='8.25'){sourceOwner='prepare-825-set-lock.mjs';sourceCurrent='8.25';sourceFrom='8.24.1'}
+if(CURRENT==='8.25.1'){sourceOwner='prepare-8251-inline-set-morph.mjs';sourceCurrent='8.25.1';sourceFrom='8.25'}
+if(CURRENT==='8.26'){sourceOwner='prepare-826-active-continuity.mjs';sourceCurrent='8.26';sourceFrom='8.25.1'}
+if(CURRENT==='8.26.1'){sourceOwner='prepare-8261-active-rest-state.mjs';sourceCurrent='8.26.1';sourceFrom='8.26'}
+if(CURRENT==='8.26.2'){sourceOwner='prepare-8262-active-rest-selector.mjs';sourceCurrent='8.26.2';sourceFrom='8.26.1'}
+if(CURRENT==='8.26.3'){sourceOwner='prepare-8263-active-rest-convergence.mjs';sourceCurrent='8.26.3';sourceFrom='8.26.2'}
+if(CURRENT==='8.26.4'){sourceOwner='prepare-8264-active-rest-utility-rail.mjs';sourceCurrent='8.26.4';sourceFrom='8.26.3'}
+if(CURRENT==='8.26.5'){sourceOwner='prepare-8265-recording-review-geometry.mjs';sourceCurrent='8.26.5';sourceFrom='8.26.4'}
+if(CURRENT==='8.27'){sourceOwner='prepare-827-reality-route.mjs';sourceCurrent='8.27';sourceFrom='8.26.5'}
 const releaseOwner=read(sourceOwner),releaseMatch=releaseOwner.match(/const FROM='([^']+)',VERSION='([^']+)'/);if(!releaseMatch)fail(`${sourceOwner} current release identity missing`);if(releaseMatch[1]!==sourceFrom||releaseMatch[2]!==sourceCurrent)fail(`${sourceOwner} release transition drift ${releaseMatch[1]} -> ${releaseMatch[2]}`);if(CURRENT!==sourceCurrent)fail(`governed current release ${CURRENT} does not match release owner ${sourceCurrent}`);
 
 if(CURRENT==='8.24'){
@@ -52,6 +60,23 @@ if(CURRENT==='8.24'){
   if(project?.engineering?.deliveryBranch!=='axis-825-set-lock')fail('8.25 delivery branch drift');
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.25 must be governed as intended product behavior change');
   if(!(decision?.sequence===11&&decision?.base_release==='8.24.1'&&decision?.release==='8.25'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('8.25 version decision must be 8.24.1 → 8.25 / bump / sequence 11 / product-ui');
+}else if(CURRENT==='8.27'){
+  const sealed827=STATUS==='production-certified'&&SEALED==='8.27'&&RUNTIME_SHA==='d6044f0b30a92c007dd2fbab5792c2aa62dfd485'&&SEALED_PR===160;
+  const candidate827=STATUS==='candidate'&&SEALED==='8.26.5'&&RUNTIME_SHA==='5bf575730c5c8de542c603d40b0f8b780204a342'&&SEALED_PR===158;
+  if(!sealed827&&!candidate827)fail('8.27 Production seal identity drift');
+  if(CANDIDATE_PR!==160||project?.engineering?.pullRequest!==160)fail('8.27 PR identity must remain #160');
+  if(project?.engineering?.activeMilestone!=='AXIS 8.27 — Reality Route')fail('8.27 milestone drift');
+  const r=project?.engineering?.realityRoute;
+  if(r?.pureOwner!=='lib/axis-reality-route.mjs'||r?.projectionSchema!=='axis.reality-route.v1'||r?.temporaryConstraintSchema!=='axis.execution-constraints.v1'||r?.newStorageNamespace!==false||r?.flowDefinitionMutation!==false||r?.historicalEncounterRewrite!==false)fail('8.27 Reality Route governance drift');
+  if(sealed827){
+    if(project?.production?.candidateRelease!=='8.27'||project?.production?.candidateStatus!=='production-sealed')fail('8.27 sealed candidate status drift');
+    if(r?.status!=='production-sealed-8.27'||r?.productionRuntimeSha!==RUNTIME_SHA)fail('8.27 Reality Route seal state drift');
+    if(!(decision?.sequence===24&&decision?.base_release==='8.27'&&decision?.release==='8.27'&&decision?.decision==='confirm'&&decision?.change_class==='governance'))fail('8.27 governance closeout decision drift');
+  }else{
+    if(project?.production?.candidateRelease!=='8.27'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.27 candidate Production state drift');
+    if(r?.status!=='8.27-release-candidate')fail('8.27 candidate Reality Route state drift');
+    if(!(decision?.sequence===23&&decision?.base_release==='8.26.5'&&decision?.release==='8.27'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.27 candidate version decision drift');
+  }
 }else if(CURRENT==='8.23'){
   if(candidate){if(STATUS!=='candidate'||SEALED!=='8.22')fail('8.23 candidate baseline drift')}else if(STATUS!=='production-certified')fail('sealed 8.23 must be production-certified');
 }
@@ -79,6 +104,14 @@ if(CURRENT==='8.25'){
   for(const [text,label,want] of [[currentWorkflow,'Current Release',2],[edgeWorkflow,'EdgeOne Production',2],[customWorkflow,'axis.juele.fun',2],[vercelWorkflow,'fixed Vercel Production',1]])if(count(text,'node scripts/axis-8241-dock-occlusion-smoke.mjs')!==want)fail(`${label} lost the physical proof that chains into Set Lock`);
 }
 
+if(CURRENT==='8.27'){
+  const releaseIdentity=read('scripts/prepare-827-release-identity.mjs');
+  if(!releaseIdentity.includes("await import('./axis-827-reality-route-smoke.mjs')"))fail('8.27 Reality Route smoke chain is not installed by release identity convergence');
+  for(const [text,label,want] of [[currentWorkflow,'Current Release',2],[edgeWorkflow,'EdgeOne Production',2],[customWorkflow,'axis.juele.fun',2],[vercelWorkflow,'fixed Vercel Production',1]]){
+    if(count(text,'node scripts/axis-8262-active-rest-selector-smoke.mjs')<want)fail(`${label} lost the inherited physical chain that reaches AXIS 8.27 Reality Route smoke ${want} time(s)`);
+  }
+}
+
 const production=project?.production||{};if(production.evidenceScope!=='product-runtime-seal-snapshot'||production.latestDeploymentIsAuthority!==false)fail('Production evidence authority drift');if(String(production.sealedRelease||SEALED)!==SEALED)fail('Production sealedRelease drift');
 const evidenceSemantics=String(production.evidenceSemantics||'');if(CURRENT==='8.24'&&!evidenceSemantics.includes('last fully sealed AXIS 8.23'))fail('8.24 candidate evidence semantics must preserve the 8.23 seal snapshot');if(CURRENT==='8.24.1'&&!evidenceSemantics.includes('last fully sealed AXIS 8.24'))fail('8.24.1 candidate evidence semantics must preserve the 8.24 seal snapshot');if(CURRENT==='8.25'&&!evidenceSemantics.includes('last fully sealed AXIS 8.24.1'))fail('8.25 candidate evidence semantics must preserve the 8.24.1 seal snapshot');
 const vercel=production.vercel||{};if(vercel.sourceSha!==RUNTIME_SHA||vercel.state!=='READY'||vercel.target!=='production')fail('Vercel sealed evidence identity drift');if(!success(vercel.exactManifestParity)||!success(vercel.chromiumProductionFlow))fail('Vercel exact parity / current flow proof is not sealed');
@@ -99,6 +132,12 @@ if(CURRENT==='8.25'){
   if(vercel.deploymentId!=='dpl_5P7gF35XDzSAkHoLwmpJ3PQJsT2w'||Number(vercel.productionGateRunId)!==34744363573||Number(vercel.publicAliasGateRunId)!==34744363564)fail('8.24.1 Vercel seal evidence drift');
   if(edge.deploymentId!=='dpp8w54o5vox'||Number(edge.verificationRunId)!==34744342607||Number(edge.verificationArtifactId)!==10313706251||edge.verificationArtifactSha256!=='935377f26bedd69522c35e2b0886fbc5a6f276348e0f4ab555361540e9c7a8d6')fail('8.24.1 EdgeOne seal evidence drift');
   if(Number(custom.verificationRunId)!==34744342633)fail('8.24.1 custom-domain seal evidence drift');
+}
+if(CURRENT==='8.27'&&STATUS==='production-certified'){
+  if(vercel.deploymentId!=='dpl_5dNTyZpuRcqV8vDGRvYi9GC8KGYm'||Number(vercel.currentReleaseGateRunId)!==37333415838||Number(vercel.deepCompatibilityGateRunId)!==37333415780||Number(vercel.productionGateRunId)!==37333475667||Number(vercel.publicAliasGateRunId)!==37333475632)fail('8.27 Vercel seal evidence drift');
+  if(edge.deploymentId!=='dpmrug23mtim'||Number(edge.verificationRunId)!==37333415798)fail('8.27 EdgeOne seal evidence drift');
+  if(Number(custom.verificationRunId)!==37333415692)fail('8.27 custom-domain seal evidence drift');
+  if(combined.customDomain!=='success')fail('8.27 combined custom-domain seal drift');
 }
 
 if(owners?.baselineRelease!==CURRENT)fail('owner registry must describe current release');
@@ -136,7 +175,7 @@ if(CURRENT==='8.25'){
 if(!String(project?.engineering?.flow?.status||'').startsWith('production-sealed')||project?.engineering?.flow?.uiImplemented!==true||project?.engineering?.flow?.completionUnit!=='whole-object-item'||project?.engineering?.flow?.currentItemDirectActive!==true||project?.engineering?.flow?.detourQuickRecordOnly!==true||project?.engineering?.flow?.metricOpticalCenterTolerancePx!==0.5)fail('inherited whole-item Flow governance drift');
 
 for(const [label,text] of [['README',readme],['HANDOFF',handoff],['CURRENT_RELEASE',currentRelease],['CURRENT_WORK',currentWork]]){has(text,`AXIS ${CURRENT}`,label);has(text,RUNTIME_SHA,label);if(candidate)has(text,SEALED,label)}
-has(readme,`**Current release: ${CURRENT}**`,'README');const releasePr=candidate?CANDIDATE_PR:SEALED_PR;has(handoff,`#${releasePr}`,'HANDOFF release PR');has(currentRelease,`#${releasePr}`,'CURRENT_RELEASE release PR');has(currentRelease,'runtime seal baseline','CURRENT_RELEASE durable baseline semantics');has(currentRelease,'not a self-referential requirement','CURRENT_RELEASE non-self-referential semantics');has(currentWork,project.engineering.activeMilestone,'CURRENT_WORK');has(currentWork,'governed target branch: `main`','CURRENT_WORK');
+has(readme,`**Current release: ${CURRENT}**`,'README');const releasePr=candidate?CANDIDATE_PR:SEALED_PR;has(handoff,`#${releasePr}`,'HANDOFF release PR');has(currentRelease,`#${releasePr}`,'CURRENT_RELEASE release PR');if(candidate){has(currentRelease,'runtime seal baseline','CURRENT_RELEASE durable baseline semantics');has(currentRelease,'not a self-referential requirement','CURRENT_RELEASE non-self-referential semantics')}else{has(currentRelease,'product/runtime SHA','CURRENT_RELEASE exact sealed runtime semantics');has(currentRelease,'Later governance-only commits','CURRENT_RELEASE governance/runtime authority separation')}has(currentWork,project.engineering.activeMilestone,'CURRENT_WORK');has(currentWork,'governed target branch: `main`','CURRENT_WORK');
 if(candidate){for(const [label,text] of [['README',readme],['HANDOFF',handoff],['CURRENT_RELEASE',currentRelease],['CURRENT_WORK',currentWork]])if(!/candidate|Release candidate|候选/i.test(text))fail(`${label} does not explicitly mark ${CURRENT} as candidate`);const joined=[readme,handoff,currentRelease,currentWork].join('\n');for(const forbidden of [`AXIS **${CURRENT}** is the current sealed`,`AXIS ${CURRENT} is Production-sealed`,`Status: Production sealed — AXIS ${CURRENT}`])if(joined.includes(forbidden))fail(`candidate documentation overstates ${CURRENT} Production seal`)}
 
 const portable=new Set(project?.crossPlatform?.portableContracts||[]);for(const id of ['axis.domain.v1','axis.data.v1','axis.flow.v1','axis.flow-provenance.v1'])if(!portable.has(id))fail(`portable contract missing · ${id}`);if(project?.crossPlatform?.foundationId!=='axis-native-foundation-0'||project?.crossPlatform?.nativeRepository!=='INDEPENDENTWU/AXIS-iOS')fail('cross-platform foundation governance drift');

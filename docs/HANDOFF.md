@@ -1,18 +1,32 @@
 # AXIS Engineering Handoff
 
-Governed milestone: `AXIS 8.27 — Reality Route`.
+Governed release: `AXIS 8.27 — Reality Route`.
 
 ## Current release state
 
-AXIS **8.27 — Reality Route** is a Release candidate in PR **#160**, branch `feature/827-reality-route`.
+AXIS **8.27** is **Production-sealed**.
 
-The last Production-sealed product/runtime remains **AXIS 8.26.5** at:
+Exact Product/runtime authority:
 
 ```text
-5bf575730c5c8de542c603d40b0f8b780204a342
+d6044f0b30a92c007dd2fbab5792c2aa62dfd485
 ```
 
-Sealed release PR: **#158**. Provider evidence remains attached to that exact runtime SHA until 8.27 earns a new exact Production certification chain.
+Release PR: **#160**.
+
+The exact PR head `f79a25f10ac723ac7f6775a8b5c817b8fd884767` was 30 / 30 green before merge. Exact merged-main and deployment certification was 29 / 29 green.
+
+Production evidence:
+
+- Vercel deployment `dpl_5dNTyZpuRcqV8vDGRvYi9GC8KGYm`
+- fixed public alias `https://axis-five-puce.vercel.app`
+- Vercel Production Gate `37333475667`
+- Public Alias Gate `37333475632`
+- EdgeOne Production run `37333415798`, deployment `dpmrug23mtim`
+- `https://axisfitness-mirror-9x91gveo.edgeone.cool`
+- `axis.juele.fun` Production run `37333415692`
+
+Later governance-only commits do not replace the product/runtime seal above.
 
 ## Product model to preserve
 
@@ -29,56 +43,42 @@ Authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, 
 
 No orchestration feature may create a second Session, Encounter, Active, recorder, or persistence owner.
 
-## AXIS 8.27 Reality Route
+## Reality Route ownership
 
-Reality Route answers one deterministic question:
+Pure owner: `lib/axis-reality-route.mjs`.
 
-> Given the saved Flow, what has actually happened, what is active now, and what temporary constraint exists, what should the continuation route be?
+Portable projection contract: `axis.reality-route.v1`.
 
-The platform-neutral owner is `lib/axis-reality-route.mjs`.
+Temporary constraint contract: `axis.execution-constraints.v1`.
 
-Its projection schema is `axis.reality-route.v1`. Its temporary constraint schema is `axis.execution-constraints.v1`.
+Reality Route derives current continuation from Flow intent + actual execution facts + temporary constraints.
 
-The first supported operation is **稍后**:
+The 8.27 user operation is **稍后**. A current item may be deferred only before it has entered the existing Active lifecycle. Deferred items return after the immediate route.
+
+Reality Route may derive `current`, `next`, `remaining`, `deferred`, `dropped`, and `reasonCodes`.
+
+It may not mutate saved Flow definitions, rewrite historical Encounters, create `axis_route_*` storage, become a Session/Encounter writer, become a recorder/Active owner, or require network/AI.
+
+Temporary execution constraints persist only inside `axis_v60_state.flowRun.temporaryConstraints`.
+
+## Debt rules established by 8.27
+
+Release-line compatibility should be capability-based where behavior ownership persists across versions. A historical contract must not depend on a version whitelist when the actual invariant can be detected directly.
+
+Build-time compatibility must not silently relabel an existing owner as new ownership. Existing Media IndexedDB is allowed; Reality Route creating a second persistence namespace is not.
+
+New runtime semantics must be compiled into the established Flow ownership boundary. Do not append a shadow runtime with separate lexical ownership.
+
+Flow-created Sessions must continue through the canonical Session truth constructor so Profile / Goal snapshots remain identical to ordinary Sessions.
+
+## Next work
+
+8.27 is closed. Any new product behavior needs a fresh version decision.
+
+The next bounded Reality Route slice may add richer temporary constraints, but the decision function must stay platform-neutral:
 
 ```text
-Intent:
-下拉 → 划船 → 肩推
-
-Constraint:
-下拉暂时不可用
-
-Reality Route:
-current   划船
-next      肩推
-deferred  下拉
+events → reducer → state → projection → decisions
 ```
 
-This does not reorder or rewrite the saved Flow. It does not create an Encounter. It writes only `temporaryConstraints.deferredStepRefs` inside the existing `axis_v60_state.flowRun` owner.
-
-When the immediate route is exhausted, deferred items return in original Flow order. A step that has already entered the existing Active lifecycle is authoritative and cannot be deferred.
-
-Manual detour records remain real Encounters but do not consume the current Flow step unless they are the canonical current-item completion path.
-
-## Ownership boundary
-
-8.27 may derive `current`, `next`, `remaining`, `deferred`, `dropped`, and `reasonCodes`.
-
-It may not:
-
-- mutate `axis.flow.v1` definitions;
-- rewrite historical Encounter or `axis.flow-provenance.v1` facts;
-- create an `axis_route_*` storage namespace;
-- become a Session/Encounter writer;
-- become a recorder or Active owner;
-- require network or AI.
-
-The browser bridge delegates to existing app-owned FlowRun and existing v61/v82/v87 factual owners. Native implementations must consume the same pure semantics rather than reproduce browser-specific decision logic.
-
-## Release requirements
-
-Version authority is **8.26.5 → 8.27 / bump / sequence 23 / product-runtime**.
-
-The stage is not complete until the exact PR #160 head is green in pure contracts plus Chromium and iPhone-like WebKit, merges exactly, and the resulting merged-main artifact is certified through Vercel, EdgeOne, and `axis.juele.fun`.
-
-Do not begin the next product slice before that seal is established.
+Do not start a second owner or rewrite history to make the route look clean.

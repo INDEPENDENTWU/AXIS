@@ -241,12 +241,12 @@
     },
     {
       "capability": "flow-reality-route-827",
-      "status": "derived-runtime-release-candidate",
+      "status": "derived-runtime-production-sealed",
       "owner": "lib/axis-reality-route.mjs + existing app.js Flow orchestration bridge",
       "contract": "axis.reality-route.v1",
       "storage": "axis_v60_state.flowRun.temporaryConstraints",
       "delegatesTo": "existing app-owned FlowRun + existing Session/Encounter/Active/recorder owners",
-      "notes": "Projects current, next, remaining and deferred route state from the active FlowRun and execution facts. Only temporary deferredStepRefs may persist inside the existing flowRun owner. Reusable Flow definitions and historical Encounters remain immutable; no new storage namespace, writer, network or AI authority."
+      "notes": "Production-sealed in AXIS 8.27 at exact runtime d6044f0b30a92c007dd2fbab5792c2aa62dfd485. Reality Route remains a derived execution projection: temporary defer constraints live inside the existing FlowRun owner; reusable Flow definitions, Encounter history, Session/Active/recorder ownership, network and AI authority are unchanged."
     }
   ],
   "rules": [
