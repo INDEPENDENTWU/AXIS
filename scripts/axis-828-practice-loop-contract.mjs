@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {projectPracticeLoop,PRACTICE_LOOP_SCHEMA_ID,PRACTICE_LOOP_VERSION} from '../lib/axis-practice-loop.mjs';
+
+const steps=[{id:'s1',objectRef:'a'},{id:'s2',objectRef:'b'},{id:'s3',objectRef:'c'}];
+const route=(overrides={})=>({schema:'axis.reality-route.v1',runtimeVersion:'8.27',flowRef:'f',status:'active',current:steps[0],next:steps[1],remaining:steps,deferred:[],dropped:[],completedStepRefs:[],observedEncounterStepRefs:[],completedWithoutEncounter:[],constraints:{schema:'axis.execution-constraints.v1',deferredStepRefs:[]},currentDeferred:false,counts:{total:3,completed:0,dropped:0,deferred:0,remaining:3},reasonCodes:[],...overrides});
+const run=(overrides={})=>({schema:'axis.flow-run.v1',id:'r',flowRef:'f',status:'active',startedAt:100,steps,consumedStepRefs:[],skippedStepRefs:[],currentEncounterId:null,currentStepRef:null,...overrides});
+const before=JSON.stringify({route:route(),run:run()});
+let x=projectPracticeLoop({route:route(),run:run(),session:{id:'S'}});
+assert.equal(x.schema,PRACTICE_LOOP_SCHEMA_ID);assert.equal(PRACTICE_LOOP_VERSION,'8.28');assert.equal(x.phase,'ready');assert.equal(x.action.kind,'start-current');assert.equal(x.action.requiresPrompt,false);assert.equal(x.progress.position,1);
+x=projectPracticeLoop({route:route({counts:{total:3,completed:1,dropped:0,deferred:0,remaining:2},current:steps[1],next:steps[2],remaining:steps.slice(1)}),run:run({lastCompletedAt:200,gapStartedAt:200,consumedStepRefs:['s1']})});
+assert.equal(x.phase,'between-items');assert.equal(x.current.id,'s2');assert.equal(x.progress.position,2);
+x=projectPracticeLoop({route:route(),run:run({currentEncounterId:'E1',currentStepRef:'s1'}),active:{id:'E1',status:'active',elapsedMs:12000,estimateMs:60000}});
+assert.equal(x.phase,'executing');assert.equal(x.continuity.activeAuthoritative,true);
+x=projectPracticeLoop({route:route(),run:run({currentEncounterId:'E1',currentStepRef:'s1'}),active:{id:'E1',status:'paused',elapsedMs:14000}});
+assert.equal(x.phase,'paused');assert.equal(x.action.kind,'resume-current');
+x=projectPracticeLoop({route:route(),run:run({currentEncounterId:'E1',currentStepRef:'s1'}),active:null});
+assert.equal(x.phase,'recovering');assert.equal(x.action.kind,'wait-for-active-owner');
+x=projectPracticeLoop({route:route({status:'complete',current:null,next:null,remaining:[],counts:{total:3,completed:3,dropped:0,deferred:0,remaining:0},reasonCodes:['route-complete']}),run:run({status:'complete',consumedStepRefs:['s1','s2','s3']})});
+assert.equal(x.phase,'complete');assert.equal(x.action.kind,'none');
+assert.equal(JSON.stringify({route:route(),run:run()}),before,'projection mutated caller input');
+const source=fs.readFileSync(new URL('../lib/axis-practice-loop.mjs',import.meta.url),'utf8');
+for(const forbidden of ['window.','document.','localStorage','indexedDB','fetch(','XMLHttpRequest','WebSocket','navigator.'])assert.equal(source.includes(forbidden),false,'pure Practice Loop contains '+forbidden);
+console.log('[AXIS 8.28 Practice Loop contract] PASS · ready/between/executing/paused/recovering/complete · resume-safe · prompt-free restore · pure projection');
