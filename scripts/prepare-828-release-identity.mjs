@@ -89,6 +89,7 @@ for(const [f,a,b] of [
   write(f,s);
 }
 
+await import('./prepare-828-governance-state.mjs');
 await import('./axis-828-governance-compat.mjs');
 if(touches<10)fail('public identity convergence suspiciously small: '+touches);
 console.log('[AXIS 8.28 release identity] PASS · '+FROM+' -> '+VERSION+' · '+touches+' moving identity assertion(s) advanced');
