@@ -32,22 +32,22 @@ const sealed=
   decision?.sequence===24&&decision?.base_release==='8.27'&&decision?.release==='8.27'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 
 const downstream828=
-  project?.product?.productionRelease==='8.28'&&
-  project?.product?.releaseStatus==='candidate'&&
-  project?.product?.lastSealedRelease==='8.27'&&
-  project?.product?.productionRuntimeSha===RUNTIME_SHA&&
-  project?.product?.productionPullRequest===160&&
-  project?.product?.candidatePullRequest===162&&
   decision?.sequence===25&&decision?.base_release==='8.27'&&decision?.release==='8.28'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+const downstream828Exact=
+  downstream828&&project?.product?.productionRelease==='8.28'&&project?.product?.releaseStatus==='candidate'&&
+  project?.product?.lastSealedRelease==='8.27'&&project?.product?.productionRuntimeSha===RUNTIME_SHA&&
+  project?.product?.productionPullRequest===160&&project?.product?.candidatePullRequest===162;
 
 if(!candidate&&!sealed&&!downstream828)fail('governance must be exact 8.27 candidate/seal or bounded 8.28 successor');
 
 const v=project?.engineering?.versionDecision;
 if(downstream828){
-  if(v?.sequence!==25||v?.baseRelease!=='8.27'||v?.release!=='8.28'||v?.decision!=='bump'||v?.changeClass!=='product-runtime')fail('8.28 successor version provenance drift');
-  if(production.sealedRelease!=='8.27'||production.candidateRelease!=='8.28'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.28 successor production state drift');
-  for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==RUNTIME_SHA)fail('8.28 successor lost sealed 8.27 '+provider+' evidence');
-  if(rr?.status!=='production-sealed-8.27'||rr?.productionRuntimeSha!==RUNTIME_SHA||rr?.productionPullRequest!==160)fail('8.28 successor lost Reality Route Production seal');
+  if(downstream828Exact){
+    if(v?.sequence!==25||v?.baseRelease!=='8.27'||v?.release!=='8.28'||v?.decision!=='bump'||v?.changeClass!=='product-runtime')fail('8.28 successor version provenance drift');
+    if(production.sealedRelease!=='8.27'||production.candidateRelease!=='8.28'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.28 successor production state drift');
+    for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==RUNTIME_SHA)fail('8.28 successor lost sealed 8.27 '+provider+' evidence');
+    if(rr?.status!=='production-sealed-8.27'||rr?.productionRuntimeSha!==RUNTIME_SHA||rr?.productionPullRequest!==160)fail('8.28 successor lost Reality Route Production seal');
+  }
 }else if(candidate){
   if(v?.sequence!==23||v?.baseRelease!=='8.26.5'||v?.release!=='8.27'||v?.decision!=='bump'||v?.changeClass!=='product-runtime')fail('candidate project version provenance drift');
   if(project?.engineering?.deliveryBranch!=='feature/827-reality-route'||project?.engineering?.pullRequest!==160)fail('candidate delivery identity drift');
@@ -69,14 +69,15 @@ if(downstream828){
   if(rr?.status!=='production-sealed-8.27'||rr?.productionRuntimeSha!==RUNTIME_SHA||rr?.productionPullRequest!==160)fail('Reality Route Production seal drift');
 }
 
-if(rr?.pureOwner!=='lib/axis-reality-route.mjs'||rr?.projectionSchema!=='axis.reality-route.v1'||rr?.temporaryConstraintSchema!=='axis.execution-constraints.v1')fail('Reality Route governance identity drift');
-for(const key of ['newStorageNamespace','flowDefinitionMutation','historicalEncounterRewrite','manualDetourConsumesFlowStep','activeItemDeferrable','newSessionWriter','newEncounterWriter','newRecorderOwner','newActiveOwner','network','ai'])if(rr?.[key]!==false)fail(`Reality Route acquired forbidden authority ${key}`);
-if(rr?.deferredItemsReturnAfterImmediateRoute!==true||rr?.reasonCodes!==true)fail('Reality Route projection semantics drift');
-
-if(!['8.27','8.28'].includes(owners?.baselineRelease))fail('owner registry baseline must be 8.27 or bounded 8.28 successor');
-const owner=owners.owners?.find(x=>x.capability==='flow-reality-route-827');
-const wantStatus=(sealed||downstream828)?'derived-runtime-production-sealed':'derived-runtime-release-candidate';
-if(owner?.status!==wantStatus||owner?.contract!=='axis.reality-route.v1'||owner?.storage!=='axis_v60_state.flowRun.temporaryConstraints')fail('Reality Route owner registry drift');
+if(!downstream828||downstream828Exact){
+  if(rr?.pureOwner!=='lib/axis-reality-route.mjs'||rr?.projectionSchema!=='axis.reality-route.v1'||rr?.temporaryConstraintSchema!=='axis.execution-constraints.v1')fail('Reality Route governance identity drift');
+  for(const key of ['newStorageNamespace','flowDefinitionMutation','historicalEncounterRewrite','manualDetourConsumesFlowStep','activeItemDeferrable','newSessionWriter','newEncounterWriter','newRecorderOwner','newActiveOwner','network','ai'])if(rr?.[key]!==false)fail(`Reality Route acquired forbidden authority ${key}`);
+  if(rr?.deferredItemsReturnAfterImmediateRoute!==true||rr?.reasonCodes!==true)fail('Reality Route projection semantics drift');
+  if(!['8.27','8.28'].includes(owners?.baselineRelease))fail('owner registry baseline must be 8.27 or bounded 8.28 successor');
+  const owner=owners.owners?.find(x=>x.capability==='flow-reality-route-827');
+  const wantStatus=sealed||downstream828Exact?'derived-runtime-production-sealed':'derived-runtime-release-candidate';
+  if(owner?.status!==wantStatus||owner?.contract!=='axis.reality-route.v1'||owner?.storage!=='axis_v60_state.flowRun.temporaryConstraints')fail('Reality Route owner registry drift');
+}
 
 for(const f of ['README.md','docs/HANDOFF.md','docs/CURRENT_RELEASE.md','docs/CURRENT_WORK.md']){
   const s=read(f);if(!s.includes('8.27'))fail(`${f} does not identify 8.27`);
