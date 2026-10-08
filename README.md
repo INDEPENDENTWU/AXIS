@@ -2,7 +2,7 @@
 
 Local-first practice software built around what actually happened.
 
-**Current candidate: 8.29 — Recording Friction Collapse** · **Last Production-sealed: AXIS 8.28** · [Open AXIS](https://axis-five-puce.vercel.app) · [Current release](docs/CURRENT_RELEASE.md) · [Engineering handoff](docs/HANDOFF.md)
+**Current release: 8.29** · **Recording Friction Collapse candidate** · **Last Production-sealed: AXIS 8.28** · [Open AXIS](https://axis-five-puce.vercel.app) · [Current release](docs/CURRENT_RELEASE.md) · [Engineering handoff](docs/HANDOFF.md)
 
 AXIS is a **Personal Evolution Engine**. Object is reusable practice semantics, Flow is intent, Reality Route follows actual constraints, Active is present execution, Encounter is frozen fact, Evidence is attached to actual history, and Evolution is a read-only projection of change.
 
