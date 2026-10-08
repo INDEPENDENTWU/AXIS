@@ -92,7 +92,7 @@ for(const f of inheritedSupportFiles){
  if(!source.includes('inherited829')){
    const token="const inherited828=info.version==='8.28'&&info.baseVersion==='8.28';";
    if(!source.includes(token))fail('Active rest inherited 8.28 declaration missing');
-   source=source.replace(token,token+"\\nconst inherited829=info.version==='8.29'&&info.baseVersion==='8.29';");
+   source=source.replace(token,token+"\nconst inherited829=info.version==='8.29'&&info.baseVersion==='8.29';");
    source=source.replace('||inherited828;', '||inherited828||inherited829;');
    source=source.replace("const mode=inherited828?", "const mode=inherited829?'inherited by 8.29':inherited828?");
  }
@@ -102,7 +102,7 @@ for(const f of inheritedSupportFiles){
  const f='scripts/axis-8262-active-rest-selector-smoke.mjs';let source=read(f);
  source=source.replaceAll("window.__AXIS_RELEASE__==='8.28'","window.__AXIS_RELEASE__==='8.29'");
  const chain="await import('./axis-829-recording-friction-smoke.mjs');";
- if(!source.includes(chain))source+='\\nif(process.env.AXIS_SKIP_829_RECORDING!==\\'1\\')'+chain+'\\n';
+ if(!source.includes(chain))source+='\nif(process.env.AXIS_SKIP_829_RECORDING!==\'1\')'+chain+'\n';
  write(f,source);
 }
 {
@@ -122,7 +122,7 @@ for(const f of inheritedSupportFiles){
  const next="if(CURRENT==='8.29'){sourceOwner='prepare-829-recording-friction.mjs';sourceCurrent='8.29';sourceFrom='8.28'}";
  if(!source.includes(next)){
    if(!source.includes(anchor))fail('8.28 production source-owner anchor missing');
-   source=source.replace(anchor,anchor+'\\n'+next);
+   source=source.replace(anchor,anchor+'\n'+next);
  }
  const pivot="}else if(CURRENT==='8.28'){";
  if(!source.includes("8.29 must be candidate over sealed 8.28")){
@@ -137,7 +137,7 @@ for(const f of inheritedSupportFiles){
      "  const recording=project?.engineering?.recordingFriction;",
      "  if(recording?.status!=='8.29-release-candidate'||recording?.pureOwner!=='lib/axis-recording-continuity.mjs'||recording?.projectionSchema!=='axis.recording-continuity.v1'||recording?.newStorageNamespace!==false||recording?.newRecorderOwner!==false||recording?.newEncounterWriter!==false)fail('8.29 derived recorder governance drift');",
      pivot
-   ].join('\\n');
+   ].join('\n');
    if(!source.includes(pivot))fail('Production 8.28 candidate block missing');
    source=source.replace(pivot,block);
  }
@@ -151,4 +151,4 @@ for(const f of inheritedSupportFiles){
 await import('./prepare-829-governance-state.mjs');
 await import('./axis-829-governance-compat.mjs');
 if(inheritedIdentityTouches+touches<10)fail('public identity convergence suspiciously small: '+(inheritedIdentityTouches+touches));
-console.log('[AXIS 8.28 release identity] PASS · '+FROM+' -> '+VERSION+' · '+inheritedIdentityTouches+' inherited + '+touches+' explicit identity assertion(s) advanced');
+console.log('[AXIS 8.29 release identity] PASS · '+FROM+' -> '+VERSION+' · '+inheritedIdentityTouches+' inherited + '+touches+' explicit identity assertion(s) advanced');
