@@ -48,7 +48,12 @@ const sealed828=
   project?.product?.productionPullRequest===162&&project?.product?.candidatePullRequest===162&&
   decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 
-if(!sealed8265&&!candidate827&&!sealed827&&!downstream828&&!sealed828)fail('current governance must be sealed 8.26.5, 8.27 candidate/seal, or bounded 8.28 successor/seal');
+const downstream829=
+  project?.product?.productionRelease==='8.29'&&project?.product?.releaseStatus==='candidate'&&
+  project?.product?.lastSealedRelease==='8.28'&&project?.product?.productionRuntimeSha==='df67fc0a20c0c34a79341315c8c85b5461acfe44'&&
+  project?.product?.productionPullRequest===162&&project?.product?.candidatePullRequest===164&&
+  decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+if(!sealed8265&&!candidate827&&!sealed827&&!downstream828&&!sealed828&&!downstream829)fail('current governance must be sealed 8.26.5, 8.27 candidate/seal, or bounded 8.28 successor/seal');
 
 const production=project?.production||{};
 if(sealed827){
@@ -59,6 +64,9 @@ if(sealed827){
 }else if(sealed828){
   if(production.sealedRelease!=='8.28'||production.candidateStatus!=='production-sealed'||production.latestDeploymentIsAuthority!==false)fail('8.28 successor seal drift');
   if(production.vercel?.sourceSha!==project.product.productionRuntimeSha||production.edgeOne?.sourceSha!==project.product.productionRuntimeSha||production.customDomain?.sourceSha!==project.product.productionRuntimeSha)fail('8.28 provider source authority drift');
+}else if(downstream829){
+  if(production.sealedRelease!=='8.28'||production.candidateRelease!=='8.29'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.29 candidate Production boundary drift');
+  for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!=='df67fc0a20c0c34a79341315c8c85b5461acfe44')fail('8.29 lost sealed 8.28 provider '+provider);
 }else if(downstream828){
   if(production.sealedRelease!=='8.27'||production.candidateRelease!=='8.28'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.28 successor production state drift');
   if(production.vercel?.deploymentId!=='dpl_5dNTyZpuRcqV8vDGRvYi9GC8KGYm'||production.vercel?.sourceSha!==RUNTIME_827)fail('8.28 successor lost 8.27 Vercel seal');
@@ -78,7 +86,7 @@ if(continuity?.status!=='production-sealed-8.26-inherited')fail('8.26 inherited 
 for(const key of ['pausedTruthOwnerUnchanged','restStateBreathingSpace','restStateGrouped','restStateTonalCue','reducedMotionSafe'])if(rest?.[key]!==true)fail(`8.26.1 rest-state capability missing ${key}`);
 if(!String(rest?.status||'').startsWith('production-sealed-8.26.1'))fail('8.26.1 inherited rest-state seal drift');
 
-if(!['8.26.5','8.27','8.28'].includes(owners?.baselineRelease))fail('owner registry baseline drift');
+if(!['8.26.5','8.27','8.28','8.29'].includes(owners?.baselineRelease))fail('owner registry baseline drift');
 const continuityOwner=owners.owners?.find(x=>x.capability==='active-continuity-826');
 const restOwner=owners.owners?.find(x=>x.capability==='active-rest-state-8261');
 if(continuityOwner?.status!=='presentation-and-coordination-production-sealed'||continuityOwner?.storage!=='none')fail('8.26 sealed owner registry drift');
@@ -90,9 +98,9 @@ for(const p of [
   'postbuild-8265-recording-review-geometry-contract.mjs'
 ])if(!fs.existsSync(p))fail(`release surface missing ${p}`);
 
-if(candidate827||sealed827||downstream828||sealed828){
+if(candidate827||sealed827||downstream828||sealed828||downstream829){
   for(const p of ['lib/axis-reality-route.mjs','prepare-827-reality-route.mjs','postbuild-827-reality-route-contract.mjs','scripts/axis-827-governance-compat.mjs'])if(!fs.existsSync(p))fail(`8.27 release surface missing ${p}`);
   await import('./axis-827-governance-compat.mjs');
 }
 
-console.log(`[AXIS 8.26.1 governance compat] PASS · inherited 8.26/8.26.1 truth preserved inside ${sealed828?'sealed 8.28':downstream828?'8.28 candidate':sealed827?'sealed 8.27':candidate827?'8.27 candidate':'sealed 8.26.5'}`);
+console.log(`[AXIS 8.26.1 governance compat] PASS · inherited 8.26/8.26.1 truth preserved inside ${downstream829?'8.29 candidate':sealed828?'sealed 8.28':downstream828?'8.28 candidate':sealed827?'sealed 8.27':candidate827?'8.27 candidate':'sealed 8.26.5'}`);
