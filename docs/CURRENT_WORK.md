@@ -41,7 +41,7 @@ Make Repeat Record easy without ever blurring prior evidence into present fact. 
 - Chromium and iPhone-like WebKit physical tests
 - PR #164 exact-head green → merge exact SHA → Vercel/EdgeOne/custom-domain certification → governance-only seal
 
-Cross-platform foundation: `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`. The 8.29 contract is a portable projection, not a competing native source of truth.
+Cross-platform foundation: `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`. Portable contracts remain `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.reality-route.v1`, `axis.execution-constraints.v1`, `axis.practice-loop.v1`, `axis.recording-continuity.v1`, and `axis.report-range.v1`. The 8.29 contract is a portable projection, not a competing native source of truth.
 
 ## Next planned stage
 
