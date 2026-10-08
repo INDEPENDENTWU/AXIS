@@ -42,6 +42,8 @@ Practice Loop remains derived on top of Reality Route, FlowRun, Active and Sessi
 - closeout PR #163 exact head must be entirely green and merge into `main`
 - resulting governance-only merge SHA does **not** replace product runtime SHA
 
+The preceding **AXIS 8.27 — Reality Route** Production seal remains preserved historically at `d6044f0b30a92c007dd2fbab5792c2aa62dfd485`.
+
 ## Cross-platform continuity
 
 Foundation remains `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`.
