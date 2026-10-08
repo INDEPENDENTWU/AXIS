@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 26,
+  "sequence": 27,
   "base_release": "8.28",
-  "release": "8.28",
-  "decision": "confirm",
-  "change_class": "governance",
-  "summary": "Confirm AXIS 8.28 Practice Loop Production certification at exact merged-main runtime SHA df67fc0a20c0c34a79341315c8c85b5461acfe44 without changing the certified product runtime. Governance-only merge SHA must not replace runtime authority."
+  "release": "8.29",
+  "decision": "bump",
+  "change_class": "product-runtime",
+  "summary": "Reduce Record friction with explicit, schema-compatible prior-confirmed values, continuity of unsaved in-sheet values across presentation rerenders, and at-most-one in-flight canonical save without creating another fact, session, recorder, storage or active owner."
 }
