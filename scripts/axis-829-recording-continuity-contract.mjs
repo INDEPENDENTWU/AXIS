@@ -36,6 +36,12 @@ p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',min:0,ma
 assert.equal(p.count,0,'malformed historical limits cannot prove metric compatibility');
 p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',min:0,max:1000}],previous,metrics:{weight:80}});
 assert.equal(p.values.weight,'80','identical historical bounds must retain valid recall');
+p=projectRecordingRecall({schema,previous,metrics:{weight:'  ',reps:[],completed:null,pace:'banana'}});
+assert.equal(p.count,0,'blank strings and arrays must not be converted to fabricated zero');
+p=projectRecordingRecall({schema,previous,metrics:{weight:'0x10',reps:{},completed:null,pace:'banana'}});
+assert.equal(p.count,0,'non-decimal or non-scalar legacy values must never be recalled');
+p=projectRecordingRecall({schema,previous,metrics:{weight:' 80 ',reps:'8',completed:false,pace:'5:30'}});
+assert.equal(p.count,4,'valid decimal strings and confirmed facts must remain recallable');
 const source=fs.readFileSync(new URL('../lib/axis-recording-continuity.mjs',import.meta.url),'utf8');
 for(const forbidden of ['window.','document.','localStorage','indexedDB','fetch(','XMLHttpRequest','WebSocket','navigator.'])
   assert.ok(!source.includes(forbidden),'pure recall contains '+forbidden);
