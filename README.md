@@ -2,43 +2,37 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.28** · **Release candidate** · last Production-sealed: **AXIS 8.27** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md)
+**Current release: 8.28** · **Production-sealed** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md)
 
 AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Flow describes intended continuity, Reality Route follows what is actually possible now, Encounters freeze what happened, Evidence anchors those facts, and Evolution reveals change without inventing a second history.
 
-The exact Production runtime seal remains:
+Exact Production product/runtime SHA:
 
 ```text
-d6044f0b30a92c007dd2fbab5792c2aa62dfd485
+df67fc0a20c0c34a79341315c8c85b5461acfe44
 ```
 
-That SHA is AXIS 8.27 from PR #160. The bounded candidate is **AXIS 8.28 — Practice Loop Convergence**, PR **#162**.
+**AXIS 8.28 — Practice Loop Convergence** was delivered by [PR #162](https://github.com/INDEPENDENTWU/AXIS/pull/162) and independently certified on Vercel, EdgeOne and `axis.juele.fun`. Governance-only closeout is PR **#163**, which records that certification without changing the runtime authority.
 
-## AXIS 8.28 — Practice Loop Convergence
-
-8.28 makes the established product pieces behave like one continuous experience:
+## Practice Loop
 
 ```text
-Flow intent
-→ Reality Route
-→ current Active execution
-→ Encounter fact
-→ next real action
+Flow intent → Reality Route → Active execution → Encounter fact → next real action
 ```
 
-A user can launch a Flow, leave the app, return, continue the exact current item, pause it, return again, and remain on the same factual state without a new confirmation flow, duplicate Encounter, second Active owner, or new persistence namespace.
+The portable `axis.practice-loop.v1` projection makes one coherent and recoverable experience out of existing owners. On reloading, backgrounding or returning to AXIS, the interface reprojects reality rather than starting an unnecessary confirmation or new Session. It preserves the same active and paused item, and historical Encounters are never fabricated.
 
-The portable projection is `axis.practice-loop.v1`. It derives UI phase only: ready, between-items, executing, paused, recovering, settling, or complete. It does not own facts.
+Practice Loop is derived presentation/continuity only. It creates no new authoritative state, storage, recorder, Session or Active system.
 
 ## Product rules
 
 **Reality is authoritative.** Intent never overwrites what actually happened.
 
-**Local first.** Core practice works without account, network, or model calls.
+**Local first.** Practice works without account, network or model calls.
 
-**One fact, one owner.** Practice Loop is projection, not a second Session/Encounter/Active system.
+**One fact, one owner.** The Practice Loop projection delegates to existing Flow, Reality Route, Active, Session and Encounter truth.
 
-**Continuity without fiction.** Reloading may restore presentation, never manufacture progress.
+**Evidence before interpretation.** Trends and recommendations cannot rewrite recorded facts.
 
 Authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`.
 
