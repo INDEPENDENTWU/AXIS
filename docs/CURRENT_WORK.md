@@ -3,44 +3,44 @@
 Governed active milestone: `AXIS 8.28 — Practice Loop Convergence`.
 governed target branch: `main`.
 
-Bounded delivery branch: `feature/828-practice-loop-convergence` · PR **#162**.
-Version decision: **8.27 → 8.28 / bump / sequence 25 / product-runtime**.
+Bounded delivery branch: `governance/828-production-seal` · PR **#163**.
+Version decision: **8.28 → 8.28 / confirm / sequence 26 / governance**.
 repository governance remains authoritative over conversation history.
 
 Chat history is not authoritative project memory. Conversation history is supplemental only. Repository governance, exact commits, built artifacts, and provider certification are authoritative.
 
 ## Production baseline at start of this work
 
-AXIS **8.27 — Reality Route** is the last Production-sealed baseline.
+AXIS **8.28 — Practice Loop Convergence** has completed product delivery and Production certification.
 
-- exact sealed product/runtime SHA: `d6044f0b30a92c007dd2fbab5792c2aa62dfd485`
-- sealed release PR: **#160**
+- product PR: **#162**
+- exact green product head: `dee53456da37beff3dae815407c77ba2598c0887` — **31 / 31 SUCCESS**
+- exact merged-main runtime SHA: `df67fc0a20c0c34a79341315c8c85b5461acfe44`
+- merged-main suite: **30 / 30 SUCCESS**
+- Vercel: `dpl_3FLstNd9rvptfaA3YP1THwWfoazF` and Production Gate `37759655524`
+- public alias: `37759655542`
+- EdgeOne: deployment `dpxaahz57drn`, run `37759608127`
+- custom domain: `37759608391`
 - protected stores: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, `axis_v42_media`
 
 ## Active change
 
-**AXIS 8.28 — Practice Loop Convergence** is a Release candidate.
+Governance-only Production seal closeout for AXIS 8.28. This changes no product behavior, frontend build semantics, storage schema, Session or Encounter writer, Active owner or recorder. It records provider evidence against the exact merged-main product runtime. The governance-only merge commit must not replace runtime authority.
 
-This stage does not add a second workflow engine. It creates one pure `axis.practice-loop.v1` projection over Reality Route + existing FlowRun + existing v82/v87 Active + existing Session truth, then uses that projection to keep the visible practice loop coherent across reload/background/foreground boundaries.
-
-The visible phases are ready, between-items, executing, paused, recovering, settling, and complete. Restoration never asks the user to reconfirm already-persisted truth.
+Practice Loop remains derived on top of Reality Route, FlowRun, Active and Session. Reload or return must not require a prompt or duplicate an Encounter.
 
 ## Validation for this work
 
-The 8.28 stage is complete only when:
-
-- pure projection proves every loop phase deterministically;
-- launch → reload preserves the current Flow item without fabricating an Encounter;
-- current item start delegates to the existing Active owner;
-- reload during Active preserves the same Encounter and current step;
-- pause → reload returns to the same paused item;
-- no new localStorage/IndexedDB namespace exists;
-- no second Session, Encounter, recorder or Active owner exists;
-- reusable Flow intent and historical Encounter truth remain immutable;
-- Chromium and iPhone-like WebKit prove the same physical continuity;
-- one exact PR #162 head is fully green;
-- that exact head merges;
-- the exact merged-main artifact passes Vercel, EdgeOne and `axis.juele.fun` certification.
+- release/status/seal authority is **8.28 / production-certified / Production-sealed**
+- version decision is **sequence 26 confirm/governance**
+- product/runtime SHA remains exact `df67fc0a20c0c34a79341315c8c85b5461acfe44`
+- Production evidence entries all bind to the same SHA and recorded successful runs
+- `latestDeploymentIsAuthority=false`
+- Practice Loop owner is `derived-runtime-production-sealed`
+- deterministic build preserves the final sealed governance instead of rewriting it to candidate
+- inherited repository, governance, cross-platform and runtime checks remain green
+- closeout PR #163 exact head must be entirely green and merge into `main`
+- resulting governance-only merge SHA does **not** replace product runtime SHA
 
 ## Cross-platform continuity
 
@@ -50,4 +50,4 @@ Portable contracts include `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `ax
 
 ## Next planned stage
 
-Do not begin Record friction collapse or Evolution Truth v2 until 8.28 is exact-head green, merged, and Production-certified. After the Practice Loop seal, the next bounded stage is recording friction reduction while preserving confirmed-fact semantics.
+Open the next bounded product-runtime stage only after governance seal is merged and verified. Prioritize **8.29 Recording Friction Collapse**: preserve confirmed facts while minimizing interaction cost, then evolve metric-aware truth displays without score fabrication.
