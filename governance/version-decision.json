@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 25,
-  "base_release": "8.27",
+  "sequence": 26,
+  "base_release": "8.28",
   "release": "8.28",
-  "decision": "bump",
-  "change_class": "product-runtime",
-  "summary": "Converge Flow, Reality Route, the existing Active lifecycle, and Session continuity into one resume-safe Practice Loop projection with prompt-free restoration and no new factual owner."
+  "decision": "confirm",
+  "change_class": "governance",
+  "summary": "Confirm AXIS 8.28 Practice Loop Production certification at exact merged-main runtime SHA df67fc0a20c0c34a79341315c8c85b5461acfe44 without changing the certified product runtime. Governance-only merge SHA must not replace runtime authority."
 }

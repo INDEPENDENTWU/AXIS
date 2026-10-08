@@ -4,62 +4,61 @@
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
     "productionRelease": "8.28",
-    "releaseStatus": "candidate",
-    "lastSealedRelease": "8.27",
-    "productionRuntimeSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
-    "productionPullRequest": 160,
+    "releaseStatus": "production-certified",
+    "lastSealedRelease": "8.28",
+    "productionRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
+    "productionPullRequest": 162,
     "candidatePullRequest": 162,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
-    "sealedRelease": "8.27",
-    "sealedAt": "2026-10-05",
+    "sealedRelease": "8.28",
+    "sealedAt": "2026-10-08",
     "candidateRelease": "8.28",
-    "candidateStatus": "pending-exact-head-and-merged-main-certification",
+    "candidateStatus": "production-sealed",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "Provider IDs and source SHA below remain the fully sealed AXIS 8.27 certification snapshot at d6044f0b30a92c007dd2fbab5792c2aa62dfd485. AXIS 8.28 Practice Loop Convergence is a product-runtime candidate and may replace the seal only after exact-head, merged-main, Vercel, EdgeOne and axis.juele.fun certification.",
+    "evidenceSemantics": "AXIS 8.28 Practice Loop Convergence is Production-sealed at exact merged-main runtime SHA df67fc0a20c0c34a79341315c8c85b5461acfe44. Provider IDs and verification runs refer to the certified product/runtime artifact. Later governance-only commits or provider redeploys do not replace runtime authority.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
-      "deploymentId": "dpl_5dNTyZpuRcqV8vDGRvYi9GC8KGYm",
-      "deploymentUrl": "https://axis-dr2eeefzm-independentwus-projects.vercel.app",
-      "sourceSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
+      "deploymentId": "dpl_3FLstNd9rvptfaA3YP1THwWfoazF",
+      "deploymentUrl": "https://axis-3gr3qcc9j-independentwus-projects.vercel.app",
+      "publicUrl": "https://axis-five-puce.vercel.app",
+      "sourceSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
       "state": "READY",
       "target": "production",
-      "publicUrl": "https://axis-five-puce.vercel.app",
-      "currentReleaseGateRunId": 37333415838,
-      "deepCompatibilityGateRunId": 37333415780,
-      "productionGateRunId": 37333475667,
-      "publicAliasGateRunId": 37333475632,
+      "currentReleaseGateRunId": 37759608238,
+      "deepCompatibilityGateRunId": 37759608259,
+      "productionGateRunId": 37759655524,
+      "publicAliasGateRunId": 37759655542,
       "exactManifestParity": "success",
-      "chromiumProductionFlow": "success",
-      "webkitCurrentReleaseFlow": "not-required-by-fixed-vercel-gate"
+      "chromiumProductionFlow": "success"
     },
     "edgeOne": {
       "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
       "projectId": "makers-bxiu1vmyd0ba",
       "policy": "exact-prebuilt-artifact-mirror",
-      "verificationRunId": 37333415798,
-      "sourceSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
+      "verificationRunId": 37759608127,
+      "sourceSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
       "packageContract": "success",
       "deployProduction": "success",
       "boundedFixedDomainConvergence": "success",
       "vercelApiParity": "success",
       "chromiumProductionFlow": "success",
       "webkitProductionFlow": "success",
-      "deploymentId": "dpmrug23mtim"
+      "deploymentId": "dpxaahz57drn"
     },
     "customDomain": {
       "publicUrl": "https://axis.juele.fun",
-      "verificationRunId": 37333415692,
-      "sourceSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
+      "verificationRunId": 37759608391,
+      "sourceSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
       "exactParity": "success",
       "chromiumProductionFlow": "success",
       "webkitProductionFlow": "success"
     },
     "combinedStatus": {
-      "sourceSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
+      "sourceSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
       "vercel": "success",
       "edgeOneProduction": "success",
       "customDomain": "success"
@@ -67,28 +66,28 @@
   },
   "engineering": {
     "activeMilestone": "AXIS 8.28 — Practice Loop Convergence",
-    "activePhase": "Product runtime candidate — one resume-safe practice loop across Flow, Reality Route, Active and Session",
+    "activePhase": "Production-sealed — resume-safe Flow → Reality Route → Active → Encounter → continuation",
     "activeBranch": "main",
-    "deliveryBranch": "feature/828-practice-loop-convergence",
+    "deliveryBranch": "main",
     "pullRequest": 162,
     "pullRequestDraft": false,
     "baselineRelease": "8.28",
-    "baselineRuntimeSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
-    "lastSealedRelease": "8.27",
-    "lastSealedRuntimeSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
+    "baselineRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
+    "lastSealedRelease": "8.28",
+    "lastSealedRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
     "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
     "phase1ResolverProofSha": "2892d8807e6d2688cb366019d64c6e9b573fcb66",
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed.",
-    "intendedProductBehaviorChange": true,
+    "intendedProductBehaviorChange": false,
     "nextProductRelease": "8.28",
     "versionDecision": {
-      "sequence": 25,
-      "baseRelease": "8.27",
+      "sequence": 26,
+      "baseRelease": "8.28",
       "release": "8.28",
-      "decision": "bump",
-      "changeClass": "product-runtime"
+      "decision": "confirm",
+      "changeClass": "governance"
     },
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
@@ -440,7 +439,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Finish AXIS 8.28 Practice Loop Convergence on exact PR #162 head, prove launch/reload/Active/pause continuity in Chromium and iPhone-like WebKit, merge exact green head, then certify exact merged-main Vercel, EdgeOne and axis.juele.fun.",
+    "nextSlice": "Begin the next bounded AXIS stage only with a fresh version decision. Prioritize reducing Recording friction while preserving confirmed-fact semantics, then metric-aware Evolution truth and Home continuity.",
     "recordingReviewGeometry": {
       "status": "production-sealed-8.26.5-inherited",
       "baseRelease": "8.26.4",
@@ -510,7 +509,7 @@
       }
     },
     "practiceLoop": {
-      "status": "8.28-release-candidate",
+      "status": "production-sealed-8.28",
       "principle": "one visible practice loop over existing intent, execution and fact owners",
       "pureOwner": "lib/axis-practice-loop.mjs",
       "projectionSchema": "axis.practice-loop.v1",
@@ -548,7 +547,21 @@
         "Vercel",
         "EdgeOne",
         "axis.juele.fun"
-      ]
+      ],
+      "productionRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
+      "productionPullRequest": 162,
+      "productionCertification": {
+        "exactHeadSha": "dee53456da37beff3dae815407c77ba2598c0887",
+        "mergedMainSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
+        "exactHeadWorkflowRuns": "31/31 success",
+        "mergedMainWorkflowRuns": "30/30 success",
+        "vercelDeploymentId": "dpl_3FLstNd9rvptfaA3YP1THwWfoazF",
+        "vercelProductionGateRunId": 37759655524,
+        "publicAliasGateRunId": 37759655542,
+        "edgeOneProductionRunId": 37759608127,
+        "edgeOneDeploymentId": "dpxaahz57drn",
+        "customDomainRunId": 37759608391
+      }
     }
   },
   "compatibility": {

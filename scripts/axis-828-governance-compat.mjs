@@ -6,24 +6,40 @@ const write=(f,s)=>fs.writeFileSync(f,s);
 const json=f=>{try{return JSON.parse(read(f))}catch(e){fail('invalid '+f+': '+e.message)}};
 const SEALED_SHA='d6044f0b30a92c007dd2fbab5792c2aa62dfd485';
 const project=json('governance/project-state.json'),decision=json('governance/version-decision.json'),owners=json('governance/owners.json');
+const RUNTIME_828='df67fc0a20c0c34a79341315c8c85b5461acfe44';
+const sealed=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 
-if(project?.product?.productionRelease!=='8.28'||project?.product?.releaseStatus!=='candidate'||project?.product?.lastSealedRelease!=='8.27'||project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==160||project?.product?.candidatePullRequest!==162)fail('8.28 candidate identity drift');
-if(decision?.sequence!==25||decision?.base_release!=='8.27'||decision?.release!=='8.28'||decision?.decision!=='bump'||decision?.change_class!=='product-runtime')fail('8.28 version decision drift');
+if(project?.product?.productionRelease!=='8.28'||project?.product?.candidatePullRequest!==162)fail('8.28 product identity drift');
+if(sealed){
+  if(project?.product?.releaseStatus!=='production-certified'||project?.product?.lastSealedRelease!=='8.28'||project?.product?.productionRuntimeSha!==RUNTIME_828||project?.product?.productionPullRequest!==162)fail('exact 8.28 Production seal drift');
+}else if(project?.product?.releaseStatus!=='candidate'||project?.product?.lastSealedRelease!=='8.27'||project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==160)fail('8.28 candidate identity drift');
+if(!sealed&&(decision?.sequence!==25||decision?.base_release!=='8.27'||decision?.release!=='8.28'||decision?.decision!=='bump'||decision?.change_class!=='product-runtime'))fail('8.28 candidate version decision drift');
 const v=project?.engineering?.versionDecision;
-if(v?.sequence!==25||v?.baseRelease!=='8.27'||v?.release!=='8.28'||v?.decision!=='bump'||v?.changeClass!=='product-runtime')fail('project version provenance drift');
-if(project?.engineering?.deliveryBranch!=='feature/828-practice-loop-convergence'||project?.engineering?.pullRequest!==162)fail('delivery identity drift');
+if(sealed){
+  if(v?.sequence!==26||v?.baseRelease!=='8.28'||v?.release!=='8.28'||v?.decision!=='confirm'||v?.changeClass!=='governance')fail('sealed project version provenance drift');
+}else if(v?.sequence!==25||v?.baseRelease!=='8.27'||v?.release!=='8.28'||v?.decision!=='bump'||v?.changeClass!=='product-runtime')fail('candidate project version provenance drift');
+if(project?.engineering?.deliveryBranch!==(sealed?'main':'feature/828-practice-loop-convergence')||project?.engineering?.pullRequest!==162)fail('delivery identity drift');
 
 const production=project?.production||{};
-if(production.sealedRelease!=='8.27'||production.candidateRelease!=='8.28'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('candidate/sealed production state drift');
-for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==SEALED_SHA)fail('8.28 candidate incorrectly relabeled sealed '+provider+' evidence');
+if(production.sealedRelease!==(sealed?'8.28':'8.27')||production.candidateRelease!=='8.28'||production.candidateStatus!==(sealed?'production-sealed':'pending-exact-head-and-merged-main-certification'))fail('candidate/sealed production state drift');
+if(production.evidenceScope!=='product-runtime-seal-snapshot'||production.latestDeploymentIsAuthority!==false)fail('Production authority drift');
+for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==(sealed?RUNTIME_828:SEALED_SHA))fail('Production provider source identity drift '+provider);
+if(sealed){
+ const v=production.vercel||{},e=production.edgeOne||{},c=production.customDomain||{},all=production.combinedStatus||{};
+ if(v.deploymentId!=='dpl_3FLstNd9rvptfaA3YP1THwWfoazF'||v.state!=='READY'||v.target!=='production'||Number(v.productionGateRunId)!==37759655524||Number(v.publicAliasGateRunId)!==37759655542||v.exactManifestParity!=='success'||v.chromiumProductionFlow!=='success')fail('8.28 exact Vercel Production certification drift');
+ if(e.deploymentId!=='dpxaahz57drn'||Number(e.verificationRunId)!==37759608127||e.packageContract!=='success'||e.deployProduction!=='success'||e.vercelApiParity!=='success'||e.chromiumProductionFlow!=='success'||e.webkitProductionFlow!=='success')fail('8.28 exact EdgeOne Production certification drift');
+ if(Number(c.verificationRunId)!==37759608391||c.publicUrl!=='https://axis.juele.fun'||c.exactParity!=='success'||c.chromiumProductionFlow!=='success'||c.webkitProductionFlow!=='success')fail('8.28 exact custom domain certification drift');
+ if(all.sourceSha!==RUNTIME_828||all.vercel!=='success'||all.edgeOneProduction!=='success'||all.customDomain!=='success')fail('8.28 combined Production seal drift');
+}
 
 const loop=project?.engineering?.practiceLoop||{};
-if(loop.status!=='8.28-release-candidate'||loop.pureOwner!=='lib/axis-practice-loop.mjs'||loop.projectionSchema!=='axis.practice-loop.v1'||loop.reloadSafe!==true||loop.promptOnRestore!==false)fail('Practice Loop governance identity drift');
+if(loop.status!==(sealed?'production-sealed-8.28':'8.28-release-candidate')||loop.pureOwner!=='lib/axis-practice-loop.mjs'||loop.projectionSchema!=='axis.practice-loop.v1'||loop.reloadSafe!==true||loop.promptOnRestore!==false)fail('Practice Loop governance identity drift');
+if(sealed&&(loop.productionRuntimeSha!==RUNTIME_828||loop.productionPullRequest!==162||loop.productionCertification?.mergedMainSha!==RUNTIME_828))fail('Practice Loop runtime certification provenance drift');
 for(const key of ['newStorageNamespace','flowDefinitionMutation','historicalEncounterRewrite','newSessionWriter','newEncounterWriter','newRecorderOwner','newActiveOwner','network','ai'])if(loop[key]!==false)fail('Practice Loop acquired forbidden authority '+key);
 
 if(owners?.baselineRelease!=='8.28')fail('owner baseline must be 8.28');
 const owner=owners.owners?.find(x=>x.capability==='practice-loop-convergence-828');
-if(owner?.status!=='derived-runtime-release-candidate'||owner?.contract!=='axis.practice-loop.v1'||owner?.storage!=='none')fail('Practice Loop owner registry drift');
+if(owner?.status!==(sealed?'derived-runtime-production-sealed':'derived-runtime-release-candidate')||owner?.contract!=='axis.practice-loop.v1'||owner?.storage!=='none')fail('Practice Loop owner registry drift');
 
 for(const f of ['README.md','docs/HANDOFF.md','docs/CURRENT_RELEASE.md','docs/CURRENT_WORK.md']){
   const s=read(f);if(!s.includes('8.28')||!s.includes('8.27'))fail(f+' does not preserve candidate/sealed identity');
@@ -66,4 +82,4 @@ for(const f of ['README.md','docs/HANDOFF.md','docs/CURRENT_RELEASE.md','docs/CU
   write(f,s);
 }
 
-console.log('[AXIS 8.28 governance compat] PASS · candidate PR #162 over exact sealed 8.27 runtime · Practice Loop remains derived continuity projection');
+console.log('[AXIS 8.28 governance compat] PASS · '+(sealed?'Production-sealed exact runtime '+RUNTIME_828:'candidate PR #162 over exact sealed 8.27 runtime')+' · Practice Loop remains derived continuity projection');
