@@ -74,6 +74,7 @@ const STEPS=[
   'prepare-8265-recording-review-geometry.mjs',
   'prepare-827-reality-route.mjs',
   'prepare-828-practice-loop.mjs',
+  'prepare-829-recording-friction.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
