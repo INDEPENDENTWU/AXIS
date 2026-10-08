@@ -37,7 +37,8 @@ const downstream828Exact=
   downstream828&&project?.product?.productionRelease==='8.28'&&project?.product?.releaseStatus==='candidate'&&
   project?.product?.lastSealedRelease==='8.27'&&project?.product?.productionRuntimeSha===RUNTIME_SHA&&
   project?.product?.productionPullRequest===160&&project?.product?.candidatePullRequest===162;
-const downstream829=decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
+const downstream829=sealed829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const seal828Stage=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 const sealed828=
   decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&

@@ -4,6 +4,8 @@ const LAST='df67fc0a20c0c34a79341315c8c85b5461acfe44';
 const read=f=>JSON.parse(fs.readFileSync(f,'utf8'));
 const write=(f,x)=>fs.writeFileSync(f,JSON.stringify(x,null,2)+'\n');
 const decision=read('governance/version-decision.json');
+const sealCloseout=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
+if(!sealCloseout){
 if(decision?.sequence!==27||decision?.base_release!=='8.28'||decision?.release!=='8.29'||decision?.decision!=='bump'||decision?.change_class!=='product-runtime')throw Error('[AXIS 8.29 governance] expected version decision sequence 27');
 {
  const f='governance/project-state.json',x=read(f);
@@ -26,3 +28,9 @@ if(decision?.sequence!==27||decision?.base_release!=='8.28'||decision?.release!=
  write(f,x);
 }
 console.log('[AXIS 8.29 governance] exact candidate state restored after inherited build stages');
+
+}else{
+  await import('./prepare-829-sealed-governance.mjs');
+  const p=read('governance/project-state.json');
+  if(p.product?.releaseStatus!=='production-certified'||p.product?.productionRuntimeSha!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171')throw Error('8.29 governance closeout did not preserve certified merged-main runtime');
+}

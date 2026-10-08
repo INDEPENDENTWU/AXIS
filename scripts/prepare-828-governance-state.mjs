@@ -5,7 +5,8 @@ const read=f=>JSON.parse(fs.readFileSync(f,'utf8'));
 const write=(f,x)=>fs.writeFileSync(f,JSON.stringify(x,null,2)+'\n');
 const decision=read('governance/version-decision.json');
 const sealCloseout=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-const downstream829=decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+const seal829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
+const downstream829=seal829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 if(!sealCloseout&&!downstream829){
 
 
