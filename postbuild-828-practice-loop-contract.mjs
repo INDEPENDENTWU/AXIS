@@ -5,7 +5,8 @@ const read=f=>{if(!fs.existsSync(f))fail('missing '+f);return fs.readFileSync(f,
 const info=JSON.parse(read('axis-build.json'));
 const runtime=read('axis-core.js'),css=read('axis-style.css'),core=read('lib/axis-practice-loop.mjs');
 
-if(info.version!=='8.28'||info.baseVersion!=='8.28')fail('release identity '+info.version+'/'+info.baseVersion);
+const inherited829=info.version==='8.29'&&info.baseVersion==='8.29';
+if(!(info.version==='8.28'&&info.baseVersion==='8.28')&&!inherited829)fail('release identity '+info.version+'/'+info.baseVersion);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('canonical topology drift');
 for(const gate of ['realityRoute827','realityRoutePureProjection827','realityRouteExistingOwnersPreserved827'])if(info.gates?.[gate]!==true)fail('inherited Reality Route gate missing '+gate);
 for(const marker of ['__AXIS_828_PRACTICE_LOOP__',"schema:'axis.practice-loop.v1'",'axis828Core.projectPracticeLoop','axis828PracticeLoopProjection','practiceLoop=function','data-axis-practice-loop-status','pageshow','visibilitychange'])if(!runtime.includes(marker))fail('runtime marker missing '+marker);
@@ -21,3 +22,5 @@ fs.writeFileSync('axis-build.json',JSON.stringify(info,null,2)+'\n');
 await import('./scripts/axis-828-practice-loop-contract.mjs');
 await import('./scripts/axis-828-governance-compat.mjs');
 console.log('[AXIS 8.28 Practice Loop contract] PASS · one derived loop projection · reload continuity · existing factual owners preserved · canonical single runtime unchanged');
+
+if(inherited829)await import('./postbuild-829-recording-friction-contract.mjs');
