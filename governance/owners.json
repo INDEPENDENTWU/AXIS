@@ -250,12 +250,12 @@
     },
     {
       "capability": "practice-loop-convergence-828",
-      "status": "derived-runtime-release-candidate",
+      "status": "derived-runtime-production-sealed",
       "owner": "lib/axis-practice-loop.mjs + existing app.js Flow presentation bridge",
       "contract": "axis.practice-loop.v1",
       "storage": "none",
       "delegatesTo": "Production-sealed Reality Route + existing app-owned FlowRun/Session/Encounter owners + existing v82/v87 Active lifecycle",
-      "notes": "Projects one resume-safe user-visible loop. It may observe existing state and refresh presentation on pageshow/visibilitychange, but may not write training facts, duplicate lifecycle owners, create storage, or require network/AI."
+      "notes": "Production-sealed in AXIS 8.28 at exact runtime df67fc0a20c0c34a79341315c8c85b5461acfe44. Practice Loop is derived presentation/continuity over Flow, Reality Route, Active and Session; it creates no new Encounter, Session, recorder, Active, persistence, network or AI owner."
     }
   ],
   "rules": [
