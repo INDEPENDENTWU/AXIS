@@ -42,6 +42,17 @@ p=projectRecordingRecall({schema,previous,metrics:{weight:'0x10',reps:{},complet
 assert.equal(p.count,0,'non-decimal or non-scalar legacy values must never be recalled');
 p=projectRecordingRecall({schema,previous,metrics:{weight:' 80 ',reps:'8',completed:false,pace:'5:30'}});
 assert.equal(p.count,4,'valid decimal strings and confirmed facts must remain recallable');
+// The real recorder may snapshot pace as text while retaining a pace key.
+const paceText={key:'pace',type:'text',unit:'min/km',presentation:'pace'};
+const pacePrevious={id:'pace-evidence',time:123,metricSchemaSnapshot:[{...paceText}]};
+const paceRecall=raw=>projectRecordingRecall({schema:[paceText],previous:pacePrevious,metrics:{pace:raw}});
+assert.equal(paceRecall('5:30').values.pace,'5:30','canonical text-typed pace must recall valid clock format');
+assert.equal(paceRecall('5:3').values.pace,'5:03','canonical pace should normalize short seconds');
+assert.equal(paceRecall('5.5').values.pace,'5:30','numeric minute form must use canonical pace semantics');
+for(const malformed of ['banana','5:99','-2:30','five minutes',{},[],Infinity]){
+  assert.equal(paceRecall(malformed).count,0,'malformed pace incorrectly reused: '+String(malformed));
+}
+assert.equal(paceRecall('5:30').sourceEncounterId,'pace-evidence','pace reuse provenance was lost');
 const source=fs.readFileSync(new URL('../lib/axis-recording-continuity.mjs',import.meta.url),'utf8');
 for(const forbidden of ['window.','document.','localStorage','indexedDB','fetch(','XMLHttpRequest','WebSocket','navigator.'])
   assert.ok(!source.includes(forbidden),'pure recall contains '+forbidden);
