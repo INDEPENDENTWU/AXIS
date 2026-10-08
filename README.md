@@ -12,6 +12,8 @@ Exact Production product/runtime SHA:
 df67fc0a20c0c34a79341315c8c85b5461acfe44
 ```
 
+The previously sealed **AXIS 8.27 — Reality Route** product runtime was `d6044f0b30a92c007dd2fbab5792c2aa62dfd485`. Its immutable historical evidence is preserved.
+
 **AXIS 8.28 — Practice Loop Convergence** was delivered by [PR #162](https://github.com/INDEPENDENTWU/AXIS/pull/162) and independently certified on Vercel, EdgeOne and `axis.juele.fun`. Governance-only closeout is PR **#163**, which records that certification without changing the runtime authority.
 
 ## Practice Loop
