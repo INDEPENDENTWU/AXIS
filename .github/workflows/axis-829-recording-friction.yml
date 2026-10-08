@@ -1,0 +1,86 @@
+name: AXIS 8.29 Recording Friction Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Recording pure projection
+        run: node scripts/axis-829-recording-continuity-contract.mjs
+      - name: Build exact candidate
+        run: node build-release.mjs
+      - name: Verify canonical Recording contract
+        run: node postbuild-829-recording-friction-contract.mjs
+
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact candidate
+        run: node build-release.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-829-chromium.log 2>&1 &
+          sleep 1
+      - name: Chromium Recording proof
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+          AXIS_SKIP_828_PRACTICE_LOOP: "1"
+          AXIS_SKIP_829_RECORDING: "1"
+        run: node scripts/axis-829-recording-friction-smoke.mjs
+      - name: Log on failure
+        if: failure()
+        run: cat /tmp/axis-829-chromium.log || true
+
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Build exact candidate
+        run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-829-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone-like WebKit Recording proof
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+          AXIS_SKIP_828_PRACTICE_LOOP: "1"
+          AXIS_SKIP_829_RECORDING: "1"
+        run: node scripts/axis-829-recording-friction-smoke.mjs
+      - name: Log on failure
+        if: failure()
+        run: cat /tmp/axis-829-webkit.log || true
