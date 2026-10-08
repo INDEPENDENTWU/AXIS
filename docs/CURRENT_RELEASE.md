@@ -1,37 +1,48 @@
 # Current Release — AXIS 8.28
 
-**Status: Release candidate**
+**Status: Production-sealed**
 
-AXIS **8.28 — Practice Loop Convergence** is the current governed product-runtime candidate.
+AXIS **8.28 — Practice Loop Convergence** is the Production-certified release.
 
-## Candidate identity
+## Exact release identity
 
-- candidate PR: **#162**
-- delivery branch: `feature/828-practice-loop-convergence`
-- base release: **8.27**
-- version decision: **8.27 → 8.28 / bump / sequence 25 / product-runtime**
-- architecture: `canonical-single-runtime`
-- deterministic build: `node build-release.mjs`
-- intended topology: **1 initial JavaScript request / 0 dynamic runtime chunks**
-
-## Last Production-sealed baseline
-
-The last Production-sealed release remains **AXIS 8.27**, release PR **#160**, exact product/runtime SHA:
+- product release PR: **#162**
+- exact green PR head: `dee53456da37beff3dae815407c77ba2598c0887` — **31 / 31 SUCCESS**
+- exact merged-main product/runtime SHA:
 
 ```text
-d6044f0b30a92c007dd2fbab5792c2aa62dfd485
+df67fc0a20c0c34a79341315c8c85b5461acfe44
 ```
 
-Its provider evidence remains authoritative while 8.28 is a candidate. This runtime seal baseline is not a self-referential requirement: 8.28 replaces it only after one exact PR head is green, the exact merged-main product artifact is known, and that artifact completes Vercel, EdgeOne and `axis.juele.fun` certification.
+- product version decision: **8.27 → 8.28 / bump / sequence 25 / product-runtime**
+- governance closeout decision: **8.28 → 8.28 / confirm / sequence 26 / governance**
+- governance closeout: **PR #163**; governance-only merge commits are not product-runtime authority
+- deterministic release build: `node build-release.mjs`
+- architecture: `canonical-single-runtime`, **1 initial JavaScript request / 0 dynamic runtime chunks**
 
-## 8.28 behavior
+## Exact Production certification
 
-Practice Loop is a pure platform-neutral projection over existing Reality Route, FlowRun, Active and Session truth.
+All provider evidence below refers to product/runtime SHA `df67fc0a20c0c34a79341315c8c85b5461acfe44`.
 
-It derives one visible phase: `ready`, `between-items`, `executing`, `paused`, `recovering`, `settling`, or `complete`.
+| Surface | Exact evidence |
+| --- | --- |
+| Vercel | production deployment `dpl_3FLstNd9rvptfaA3YP1THwWfoazF` · READY · `https://axis-five-puce.vercel.app` |
+| Vercel fixed Production Gate | run `37759655524` · exact 8.28 manifest parity · Chromium Practice Loop |
+| Public Production Alias Gate | run `37759655542` · exact alias/source parity |
+| EdgeOne | deployment `dpxaahz57drn` · run `37759608127` · `https://axisfitness-mirror-9x91gveo.edgeone.cool` |
+| EdgeOne browser proof | same 8.28 manifest/source, 7 API contracts parity, Chromium and iPhone-like WebKit Practice Loop |
+| Custom domain | run `37759608391` · `https://axis.juele.fun` · exact 8.28 manifest/runtime, 7 API contracts parity, Chromium and iPhone-like WebKit Practice Loop |
 
-Reload and foreground restoration are prompt-free because no new decision is being made: the UI simply reprojects already-persisted truth. Existing Active truth remains authoritative. No Flow definition, Encounter, Session, recorder, Active owner, or storage namespace is created.
+Merged-main release family: **30 / 30 SUCCESS**, including Current Release `37759608238`, Deep Compatibility `37759608259`, and Practice Loop `37759608066` gates.
 
-## Completion condition
+## Sealed behavior
 
-8.28 is not Production-sealed until one exact PR #162 head passes pure contract plus Chromium/iPhone-like WebKit launch → reload → Active → reload → pause → reload continuity, merges exactly, and the exact merged-main artifact passes Vercel, EdgeOne and `axis.juele.fun` Production certification.
+Practice Loop is a pure platform-neutral projection over Reality Route, FlowRun, Active and Session truth. It derives `ready`, `between-items`, `executing`, `paused`, `recovering`, `settling` and `complete` states.
+
+Returning from the background or reloading reprojects the stored factual state without prompting, fabricating an Encounter, modifying Flow intent or adding a second Active/Session/recorder/storage owner.
+
+The previous 8.27 Reality Route seal remains a historical certified product baseline at `d6044f0b30a92c007dd2fbab5792c2aa62dfd485`.
+
+## Production authority
+
+The exact Production product/runtime SHA above is authoritative. **Later governance-only commits or provider redeploys do not replace this runtime authority.** `latestDeploymentIsAuthority=false` is preserved in repository governance.
