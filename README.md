@@ -2,44 +2,39 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.28** · **Production-sealed** · [Open AXIS](https://axis-five-puce.vercel.app) · [Engineering handoff](docs/HANDOFF.md) · [Current work](docs/CURRENT_WORK.md)
+**Current release: 8.29** · **Recording Friction Collapse candidate** · **Last Production-sealed: AXIS 8.28** · [Open AXIS](https://axis-five-puce.vercel.app) · [Current release](docs/CURRENT_RELEASE.md) · [Engineering handoff](docs/HANDOFF.md)
 
-AXIS is a **Personal Evolution Engine**. Objects describe reusable practice, Flow describes intended continuity, Reality Route follows what is actually possible now, Encounters freeze what happened, Evidence anchors those facts, and Evolution reveals change without inventing a second history.
+AXIS is a **Personal Evolution Engine**. Object is reusable practice semantics, Flow is intent, Reality Route follows actual constraints, Active is present execution, Encounter is frozen fact, Evidence is attached to actual history, and Evolution is a read-only projection of change.
 
-Exact Production product/runtime SHA:
+## AXIS 8.29 — Recording Friction Collapse
+
+A focused refinement of the existing app-owned Recorder:
+
+- Previously confirmed Encounter values are available as clearly identified *suggestions*, not as new facts.
+- The projection reuses only metric keys with matching historical metric type and unit; invalid or incompatible values are excluded.
+- Live edits in the same recorder are not lost merely because presentation re-renders.
+- Rapid duplicate save attempts cannot enter two concurrent canonical save transactions.
+- A user must still confirm the current Encounter using the existing save action.
+- No new recorder, Session, Active, Encounter or storage owner is introduced.
+
+Pure portable contract: `axis.recording-continuity.v1`.
+
+**Release status:** 8.29 candidate, PR #164; Production authority remains the exact AXIS 8.28 runtime:
 
 ```text
 df67fc0a20c0c34a79341315c8c85b5461acfe44
 ```
 
-The previously sealed **AXIS 8.27 — Reality Route** product runtime was `d6044f0b30a92c007dd2fbab5792c2aa62dfd485`. Its immutable historical evidence is preserved.
-
-**AXIS 8.28 — Practice Loop Convergence** was delivered by [PR #162](https://github.com/INDEPENDENTWU/AXIS/pull/162) and independently certified on Vercel, EdgeOne and `axis.juele.fun`. Governance-only closeout is PR **#163**, which records that certification without changing the runtime authority.
-
-## Practice Loop
-
-```text
-Flow intent → Reality Route → Active execution → Encounter fact → next real action
-```
-
-The portable `axis.practice-loop.v1` projection makes one coherent and recoverable experience out of existing owners. On reloading, backgrounding or returning to AXIS, the interface reprojects reality rather than starting an unnecessary confirmation or new Session. It preserves the same active and paused item, and historical Encounters are never fabricated.
-
-Practice Loop is derived presentation/continuity only. It creates no new authoritative state, storage, recorder, Session or Active system.
+AXIS 8.28 was delivered by PR #162 and Production-sealed by governance PR #163; its Vercel, EdgeOne and custom-domain certification remains authoritative until the 8.29 candidate completes the same exact merged-main certification chain.
 
 ## Product rules
 
-**Reality is authoritative.** Intent never overwrites what actually happened.
+**Reality before intent.** An old value is a suggestion, never this time's confirmed fact.
 
-**Local first.** Practice works without account, network or model calls.
+**Local first.** Practice doesn't depend on account, network or AI.
 
-**One fact, one owner.** The Practice Loop projection delegates to existing Flow, Reality Route, Active, Session and Encounter truth.
+**One fact, one owner.** The canonical app recorder remains the sole Encounter writer.
 
-**Evidence before interpretation.** Trends and recommendations cannot rewrite recorded facts.
+Authoritative stores stay `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`.
 
-Authoritative stores remain `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak`, and `axis_v42_media`.
-
-Release build:
-
-```bash
-node build-release.mjs
-```
+Build: `node build-release.mjs`.

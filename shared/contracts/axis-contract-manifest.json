@@ -39,7 +39,10 @@
     "realityRouteNoSecondTrainingStore": true,
     "practiceLoopPure": true,
     "practiceLoopResumeSafe": true,
-    "practiceLoopNoSecondTrainingStore": true
+    "practiceLoopNoSecondTrainingStore": true,
+    "recordingContinuityPure": true,
+    "recordingPreviousConfirmedOnly": true,
+    "recordingSingleEncounterOwner": true
   },
   "platforms": {
     "web": {
@@ -54,5 +57,6 @@
   },
   "realityRoute": "axis.reality-route.v1",
   "executionConstraints": "axis.execution-constraints.v1",
-  "practiceLoop": "axis.practice-loop.v1"
+  "practiceLoop": "axis.practice-loop.v1",
+  "recordingContinuity": "axis.recording-continuity.v1"
 }

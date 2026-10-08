@@ -1,0 +1,77 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {projectRecordingRecall,RECORDING_CONTINUITY_SCHEMA} from '../lib/axis-recording-continuity.mjs';
+
+const schema=[{key:'weight',type:'number',unit:'kg',min:0,max:1000},{key:'reps',type:'count',unit:'次',min:0,max:100},{key:'completed',type:'boolean',unit:''},{key:'pace',type:'pace',unit:'min/km'}];
+const previous={id:'E-1',time:12345,metricSchemaSnapshot:schema.map(x=>({...x}))};
+const metrics={weight:80,reps:8,completed:false,pace:'5:30',ghost:40};
+const before=JSON.stringify({schema,previous,metrics});
+let p=projectRecordingRecall({schema,previous,metrics});
+assert.equal(p.schema,RECORDING_CONTINUITY_SCHEMA);
+assert.equal(p.count,4);assert.equal(p.values.weight,'80');assert.equal(p.values.reps,'8');assert.equal(p.values.completed,'0');assert.equal(p.values.pace,'5:30');assert.equal(p.values.ghost,undefined);
+assert.equal(JSON.stringify({schema,previous,metrics}),before,'pure recall mutated historical facts');
+assert.ok(p.reasonCodes.includes('explicit-user-confirmation-required'));
+
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'lb'}],previous,metrics});
+assert.equal(p.count,0,'changed unit must not silently inherit previous facts');
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg'}],previous:{id:'legacy'},metrics});
+assert.equal(p.count,0,'unsnapshotted legacy data must not masquerade as compatible');
+p=projectRecordingRecall({schema,previous,metrics:{weight:Infinity,reps:3.5,completed:null,pace:'banana'}});
+assert.equal(p.count,0,'invalid inputs were suggested');
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',max:50}],previous,metrics});
+assert.equal(p.count,0,'metric bounds must apply to reuse suggestions');
+// Historical bounds are part of immutable metric meaning, not merely a
+// validation window for the old numeric value.
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',min:0,max:2000}],previous,metrics});
+assert.equal(p.count,0,'widened current max must not reuse an old bounded measurement');
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',min:5,max:1000}],previous,metrics});
+assert.equal(p.count,0,'changed historical minimum must prevent recall');
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',max:1000}],previous,metrics});
+assert.equal(p.count,0,'omitted historical minimum must not be treated as equivalent');
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',min:'0',max:'1000'}],previous,metrics});
+assert.equal(p.count,1,'equivalent numeric bound representations must remain compatible');
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',min:'invalid',max:1000}],previous,metrics});
+assert.equal(p.count,0,'malformed current limits cannot prove metric compatibility');
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',min:0,max:1000}],previous:{...previous,metricSchemaSnapshot:[{key:'weight',type:'number',unit:'kg',min:'invalid',max:1000}]},metrics});
+assert.equal(p.count,0,'malformed historical limits cannot prove metric compatibility');
+p=projectRecordingRecall({schema:[{key:'weight',type:'number',unit:'kg',min:0,max:1000}],previous,metrics:{weight:80}});
+assert.equal(p.values.weight,'80','identical historical bounds must retain valid recall');
+p=projectRecordingRecall({schema,previous,metrics:{weight:'  ',reps:[],completed:null,pace:'banana'}});
+assert.equal(p.count,0,'blank strings and arrays must not be converted to fabricated zero');
+p=projectRecordingRecall({schema,previous,metrics:{weight:'0x10',reps:{},completed:null,pace:'banana'}});
+assert.equal(p.count,0,'non-decimal or non-scalar legacy values must never be recalled');
+p=projectRecordingRecall({schema,previous,metrics:{weight:' 80 ',reps:'8',completed:false,pace:'5:30'}});
+assert.equal(p.count,4,'valid decimal strings and confirmed facts must remain recallable');
+// The real recorder may snapshot pace as text while retaining a pace key.
+const paceText={key:'pace',type:'text',unit:'min/km',presentation:'pace'};
+const pacePrevious={id:'pace-evidence',time:123,metricSchemaSnapshot:[{...paceText}]};
+const paceRecall=raw=>projectRecordingRecall({schema:[paceText],previous:pacePrevious,metrics:{pace:raw}});
+assert.equal(paceRecall('5:30').values.pace,'5:30','canonical text-typed pace must recall valid clock format');
+assert.equal(paceRecall('5:3').values.pace,'5:03','canonical pace should normalize short seconds');
+assert.equal(paceRecall('5.5').values.pace,'5:30','numeric minute form must use canonical pace semantics');
+for(const malformed of ['banana','5:99','-2:30','five minutes',{},[],Infinity]){
+  assert.equal(paceRecall(malformed).count,0,'malformed pace incorrectly reused: '+String(malformed));
+}
+assert.equal(paceRecall('5:30').sourceEncounterId,'pace-evidence','pace reuse provenance was lost');
+// Quantitative and boolean metrics may use choice presentations; no typed
+// branch may bypass the immutable option/meaning compatibility contract.
+const choices=[{value:'6',label:'Moderate'},{value:'8',label:'Hard'}];
+const numericChoice={key:'effort',type:'number',unit:'/10',presentation:'choice',options:choices};
+const choicePrior={id:'choice-1',time:55,metricSchemaSnapshot:[structuredClone(numericChoice)]};
+const choiceRecall=(definition,value)=>projectRecordingRecall({schema:[definition],previous:choicePrior,metrics:{effort:value}});
+assert.equal(choiceRecall(numericChoice,6).values.effort,'6','matching typed choice must recall normally');
+assert.equal(choiceRecall(numericChoice,7).count,0,'number outside allowed choice options must be rejected');
+assert.equal(choiceRecall({...numericChoice,options:[{value:'7',label:'Low'}]},6).count,0,
+  'changed choice option value must not inherit old numeric fact');
+assert.equal(choiceRecall({...numericChoice,options:[{value:'6',label:'Reinterpreted'},{value:'8',label:'Hard'}]},6).count,0,
+  'same value with a changed choice label must not inherit old meaning');
+assert.equal(choiceRecall({...numericChoice,options:[]},6).count,0,'empty choice options must fail closed');
+const boolChoice={key:'done',type:'boolean',unit:'',presentation:'choice',options:[{value:'1',label:'Yes'}]};
+const boolPrevious={id:'bool-choice',metricSchemaSnapshot:[structuredClone(boolChoice)]};
+assert.equal(projectRecordingRecall({schema:[boolChoice],previous:boolPrevious,metrics:{done:true}}).values.done,'1');
+assert.equal(projectRecordingRecall({schema:[boolChoice],previous:boolPrevious,metrics:{done:false}}).count,0,
+  'boolean choice must reject values outside the allowed set');
+const source=fs.readFileSync(new URL('../lib/axis-recording-continuity.mjs',import.meta.url),'utf8');
+for(const forbidden of ['window.','document.','localStorage','indexedDB','fetch(','XMLHttpRequest','WebSocket','navigator.'])
+  assert.ok(!source.includes(forbidden),'pure recall contains '+forbidden);
+console.log('[AXIS 8.29 recording continuity] PASS · compatible historical suggestions · unit/type/identical historical bounds validation · explicit confirmation · no fabricated Encounter · pure projection');

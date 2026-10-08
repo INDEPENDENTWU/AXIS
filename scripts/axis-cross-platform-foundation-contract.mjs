@@ -31,6 +31,7 @@ assert.equal(manifest.normalizedStateFixture,'axis.normalized-state-fixture.v1')
 assert.equal(manifest.realityRoute,'axis.reality-route.v1');
 assert.equal(manifest.executionConstraints,'axis.execution-constraints.v1');
 assert.equal(manifest.practiceLoop,'axis.practice-loop.v1');
+assert.equal(manifest.recordingContinuity,'axis.recording-continuity.v1');
 for(const [k,v] of Object.entries(manifest.invariants||{}))assert.equal(v,true,`manifest invariant ${k} is not sealed true`);
 
 const eventSchema=readJson(path.join(ROOT,'shared/contracts/axis-event-v1.schema.json'));
@@ -39,12 +40,14 @@ const normalizedStateSchema=readJson(path.join(ROOT,'shared/contracts/axis-norma
 const realityRouteSchema=readJson(path.join(ROOT,'shared/contracts/axis-reality-route-v1.schema.json'));
 const executionConstraintSchema=readJson(path.join(ROOT,'shared/contracts/axis-execution-constraints-v1.schema.json'));
 const practiceLoopSchema=readJson(path.join(ROOT,'shared/contracts/axis-practice-loop-v1.schema.json'));
+const recordingContinuitySchema=readJson(path.join(ROOT,'shared/contracts/axis-recording-continuity-v1.schema.json'));
 assert.equal(eventSchema.$id,'axis.event.v1');
 assert.equal(exchangeSchema.$id,'axis.exchange.v1');
 assert.equal(normalizedStateSchema.$id,'axis.normalized-state-fixture.v1');
 assert.equal(realityRouteSchema.$id,'axis.reality-route.v1');
 assert.equal(executionConstraintSchema.$id,'axis.execution-constraints.v1');
 assert.equal(practiceLoopSchema.$id,'axis.practice-loop.v1');
+assert.equal(recordingContinuitySchema.$id,'axis.recording-continuity.v1');
 
 const closeOpen=(a,t)=>{
   const x=a.intervals.at(-1);

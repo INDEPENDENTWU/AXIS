@@ -1,0 +1,10 @@
+/* AXIS 8.29 — Recording Friction Collapse */
+.axis829RecordContext{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ margin:0 2px 12px;padding:0 0 10px;border-bottom:1px solid var(--line2);
+}
+.axis829RecordContext span{min-width:0;color:var(--dim);font-size:10px;line-height:1.5}
+.axis829RecordContext button{flex:0 0 auto;min-height:38px;padding:0 12px;border-radius:12px;background:var(--s2);color:var(--text);font-size:10.5px;font-weight:600}
+.axis829RecordContext button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+@media(max-width:390px){.axis829RecordContext{gap:6px}.axis829RecordContext span{font-size:9.5px}.axis829RecordContext button{padding:0 9px}}
+@media(prefers-reduced-motion:reduce){.axis829RecordContext button{transition:none!important}}

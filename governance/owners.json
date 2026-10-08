@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "baselineRelease": "8.28",
+  "baselineRelease": "8.29",
   "owners": [
     {
       "capability": "training-state",
@@ -256,6 +256,15 @@
       "storage": "none",
       "delegatesTo": "Production-sealed Reality Route + existing app-owned FlowRun/Session/Encounter owners + existing v82/v87 Active lifecycle",
       "notes": "Production-sealed in AXIS 8.28 at exact runtime df67fc0a20c0c34a79341315c8c85b5461acfe44. Practice Loop is derived presentation/continuity over Flow, Reality Route, Active and Session; it creates no new Encounter, Session, recorder, Active, persistence, network or AI owner."
+    },
+    {
+      "capability": "recording-friction-collapse-829",
+      "status": "derived-presentation-release-candidate",
+      "owner": "lib/axis-recording-continuity.mjs + existing app.js recording bridge",
+      "contract": "axis.recording-continuity.v1",
+      "storage": "none",
+      "delegatesTo": "existing app.js+v874 Recorder, canonical app.js Encounter append, existing FlowRun/Active lifecycle",
+      "notes": "Historical values are suggestions only. In-sheet draft edits must survive rerender; in-flight save has one owner. No new storage or fact writer."
     }
   ],
   "rules": [
@@ -278,6 +287,7 @@
     "AXIS 8.26.4 may only align the canonical v87Rest presentation with the existing Adjust utility row and remove plan-complete residue; it may not acquire pause/resume, timer, Session, Encounter, Flow, persistence, network or AI authority.",
     "Changing an owner requires explicit handoff, regression proof, and retirement of the previous writer.",
     "AXIS 8.27 Reality Route is derived execution projection only. Deferring a not-yet-started current step may update axis_v60_state.flowRun.temporaryConstraints.deferredStepRefs, but cannot mutate Flow definitions, consume a step, create an Encounter, or defer an already-active item.",
-    "AXIS 8.28 Practice Loop is a derived continuity/presentation projection. Reload restoration may re-render existing truth without prompts but cannot fabricate Encounters, mutate reusable Flow intent, or become a Session/Active/recorder/storage owner."
+    "AXIS 8.28 Practice Loop is a derived continuity/presentation projection. Reload restoration may re-render existing truth without prompts but cannot fabricate Encounters, mutate reusable Flow intent, or become a Session/Active/recorder/storage owner.",
+    "AXIS 8.29 Recording Continuity may derive previous compatible confirmed metric values and guard the existing save transaction in flight, but must not write an Encounter, mutate previous facts, or create any recorder, Active, Session or storage owner."
   ]
 }

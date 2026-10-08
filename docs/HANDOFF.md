@@ -1,55 +1,25 @@
 # AXIS Engineering Handoff
 
-Governed release: `AXIS 8.28 — Practice Loop Convergence`.
+**Governed milestone:** AXIS 8.29 — Recording Friction Collapse.
 
-## Current release state
-
-AXIS **8.28** is **Production-sealed**.
-
-Exact product/runtime authority:
+**Status:** product-runtime candidate in PR #164. The last Production-sealed release remains AXIS 8.28 at exact runtime:
 
 ```text
 df67fc0a20c0c34a79341315c8c85b5461acfe44
 ```
 
-Product PR: **#162**. Exact PR head `dee53456da37beff3dae815407c77ba2598c0887` was **31 / 31 SUCCESS**. Exact merged-main release certification was **30 / 30 SUCCESS**.
+Product PR #162 and governance PR #163 sealed AXIS 8.28. All its Production provider evidence remains tied to that SHA.
 
-Production evidence:
+## 8.29 implementation boundary
 
-- Vercel deployment `dpl_3FLstNd9rvptfaA3YP1THwWfoazF`
-- fixed public alias `https://axis-five-puce.vercel.app`
-- Vercel gate `37759655524`, public alias gate `37759655542`
-- EdgeOne deployment `dpxaahz57drn`, run `37759608127`
-- custom domain `https://axis.juele.fun`, run `37759608391`
-- Chromium and iPhone-like WebKit Practice Loop proof on EdgeOne and custom domain
-- all provider source commitments equal `df67fc0a20c0c34a79341315c8c85b5461acfe44`
+The canonical `app.js+v874` recorder and app-owned `state.active.events.push` remain the only factual writers. The new pure `lib/axis-recording-continuity.mjs` projects compatible previously-confirmed values from immutable Encounter schema snapshots. It creates no persistence owner.
 
-The governance-only closeout is PR **#163**, version decision sequence 26. Later governance-only commits or deployments are not a new product/runtime release.
+The bridge may show those values as draft suggestions, restore unsaved input on same-Object re-render, and prevent overlapping asynchronous save operations. A new Encounter is created only after an explicit current save. Previous Encounter and Flow definitions are never modified.
 
-## Product authority to preserve
+Portable contract: `axis.recording-continuity.v1`. All historical portable contracts, including `axis.practice-loop.v1`, remain inherited.
 
-Reality is authoritative.
+## Release protocol
 
-- **Object** — reusable practice semantics.
-- **Flow** — intended continuity.
-- **Reality Route** — current continuation under actual execution and constraints.
-- **Practice Loop** — derived visible phase and next action over existing truth.
-- **Active** — canonical live execution.
-- **Encounter** — immutable actual fact.
-- **Evidence** — material anchored to real Encounters.
-- **Evolution** — read-only reveal over actual history.
+Version decision: **8.28 → 8.29 / bump / sequence 27 / product-runtime**.
 
-Authoritative stores: `axis_v60_state`, `axis_v8_meta`, `axis_v89_speak` and `axis_v42_media`.
-
-## AXIS 8.28
-
-Pure owner: `lib/axis-practice-loop.mjs`.
-Portable contract: `axis.practice-loop.v1`.
-
-Practice Loop projects ready / between-items / executing / paused / recovering / settling / complete and restores from persisted state when the app is reloaded or foregrounded. It cannot rewrite reusable Flow, fabricate Encounter progression or create another Session, recorder, Active, persistence, network or AI owner.
-
-The previous 8.27 Reality Route product/runtime seal remains `d6044f0b30a92c007dd2fbab5792c2aa62dfd485`.
-
-## Next bounded delivery
-
-After #163 exact-head green, merge governance-only, verify that `main` still records `df67fc0a20c0c34a79341315c8c85b5461acfe44` as product/runtime authority, and begin the next product-runtime stage with a fresh version decision. Do not relabel the governance merge SHA as Product runtime.
+Exact-head pure contract and Chromium/iPhone WebKit smoke → exact SHA merge of PR #164 → exact merged-main Vercel/EdgeOne/custom-domain verification → separate governance-only closeout. Do not rewrite 8.28 production certificate as 8.29 before those checks.
