@@ -41,6 +41,8 @@ Make Repeat Record easy without ever blurring prior evidence into present fact. 
 - Chromium and iPhone-like WebKit physical tests
 - PR #164 exact-head green → merge exact SHA → Vercel/EdgeOne/custom-domain certification → governance-only seal
 
+Cross-platform foundation: `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`. The 8.29 contract is a portable projection, not a competing native source of truth.
+
 ## Next planned stage
 
 After 8.29 Production seal, next bounded stage should consolidate readable History and Evidence, then build metric-aware Evolution truth. Do not move those responsibilities into the recorder.
