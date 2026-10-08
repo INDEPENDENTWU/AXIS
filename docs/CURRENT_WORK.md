@@ -5,6 +5,7 @@ governed target branch: `main`.
 
 Bounded delivery branch: `feature/829-recording-friction-collapse` · PR **#164**.
 Version decision: **8.28 → 8.29 / bump / sequence 27 / product-runtime**.
+Release status: **8.29 product-runtime candidate**; the last Production-sealed authority remains AXIS 8.28.
 repository governance remains authoritative over conversation history.
 
 Chat history is not authoritative project memory. Repository governance, exact commits, built artifacts and provider verification are authoritative.
