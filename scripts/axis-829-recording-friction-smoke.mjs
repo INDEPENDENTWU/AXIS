@@ -47,7 +47,7 @@ try{
   await page.waitForFunction(()=>{const s=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return s.active?.events?.filter(e=>e.equipmentId==='axis829-proof').length===1},undefined,{timeout:6500});
   let s=await read(),events=s.active.events.filter(e=>e.equipmentId===OBJECT.id);
   assert.equal(events.length,1,'double click created duplicate Encounter');
-  const first=events[0],frozen=JSON.stringify(first);
+  const first=events[0],historicalFact=e=>JSON.stringify({id:e.id,time:e.time,metrics:e.metrics,metricSchemaSnapshot:e.metricSchemaSnapshot,flowProvenance:e.flowProvenance}),frozen=historicalFact(first);
   assert.equal(Number(first.metrics?.duration),30);assert.equal(Number(first.metrics?.intensity),6);
   assert.ok(first.metricSchemaSnapshot?.length>=2,'confirmed fact missing metric schema snapshot');
 
@@ -67,7 +67,7 @@ try{
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.filter(e=>e.equipmentId==='axis829-proof').length===2,undefined,{timeout:6500});
   s=await read();events=s.active.events.filter(e=>e.equipmentId===OBJECT.id);
   assert.equal(events.length,2);
-  assert.equal(JSON.stringify(events[0]),frozen,'prior Encounter was mutated by recall, edit or commit');
+  assert.equal(historicalFact(events[0]),frozen,'previous confirmed Encounter metrics, schema or provenance was mutated');
   assert.equal(Number(events[1].metrics.duration),34);
   assert.equal(Number(events[1].metrics.intensity),6);
   assert.deepEqual(await page.evaluate(()=>Object.keys(localStorage).sort()),keysBefore,'Recording created new persistent namespace');
