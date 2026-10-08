@@ -62,14 +62,23 @@ if(CURRENT==='8.24'){
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.25 must be governed as intended product behavior change');
   if(!(decision?.sequence===11&&decision?.base_release==='8.24.1'&&decision?.release==='8.25'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('8.25 version decision must be 8.24.1 → 8.25 / bump / sequence 11 / product-ui');
 }else if(CURRENT==='8.28'){
-  if(!candidate||STATUS!=='candidate'||SEALED!=='8.27')fail('8.28 must be candidate over sealed 8.27');
-  if(RUNTIME_SHA!=='d6044f0b30a92c007dd2fbab5792c2aa62dfd485'||SEALED_PR!==160)fail('8.28 candidate lost exact 8.27 seal baseline');
-  if(project?.production?.candidateRelease!=='8.28'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.28 Production candidate state drift');
-  if(CANDIDATE_PR!==162||project?.engineering?.pullRequest!==162)fail('8.28 candidate PR must be #162');
-  if(project?.engineering?.activeMilestone!=='AXIS 8.28 — Practice Loop Convergence'||project?.engineering?.deliveryBranch!=='feature/828-practice-loop-convergence')fail('8.28 milestone/delivery identity drift');
-  if(!(decision?.sequence===25&&decision?.base_release==='8.27'&&decision?.release==='8.28'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.28 version decision drift');
+  if(CANDIDATE_PR!==162||project?.engineering?.pullRequest!==162)fail('8.28 product PR must remain #162');
+  if(project?.engineering?.activeMilestone!=='AXIS 8.28 — Practice Loop Convergence')fail('8.28 milestone drift');
   const l=project?.engineering?.practiceLoop;
-  if(l?.status!=='8.28-release-candidate'||l?.projectionSchema!=='axis.practice-loop.v1'||l?.reloadSafe!==true||l?.promptOnRestore!==false)fail('8.28 Practice Loop governance drift');
+  if(l?.pureOwner!=='lib/axis-practice-loop.mjs'||l?.projectionSchema!=='axis.practice-loop.v1'||l?.reloadSafe!==true||l?.promptOnRestore!==false||l?.newStorageNamespace!==false||l?.flowDefinitionMutation!==false||l?.historicalEncounterRewrite!==false)fail('8.28 Practice Loop projection drift');
+  if(STATUS==='production-certified'){
+    if(SEALED!=='8.28'||RUNTIME_SHA!=='df67fc0a20c0c34a79341315c8c85b5461acfe44'||SEALED_PR!==162)fail('8.28 exact product/runtime seal drift');
+    if(project?.production?.candidateRelease!=='8.28'||project?.production?.candidateStatus!=='production-sealed'||project?.production?.latestDeploymentIsAuthority!==false)fail('8.28 Production governance drift');
+    if(project?.engineering?.deliveryBranch!=='main'||project?.engineering?.baselineRuntimeSha!==RUNTIME_SHA||project?.engineering?.lastSealedRuntimeSha!==RUNTIME_SHA||project?.engineering?.intendedProductBehaviorChange!==false)fail('8.28 sealed engineering runtime provenance drift');
+    if(!(decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance'))fail('8.28 governance closeout decision drift');
+    if(l?.status!=='production-sealed-8.28'||l?.productionRuntimeSha!==RUNTIME_SHA||l?.productionPullRequest!==162)fail('8.28 Practice Loop certification drift');
+  }else if(STATUS==='candidate'){
+    if(SEALED!=='8.27'||RUNTIME_SHA!=='d6044f0b30a92c007dd2fbab5792c2aa62dfd485'||SEALED_PR!==160)fail('8.28 candidate lost exact 8.27 seal baseline');
+    if(project?.production?.candidateRelease!=='8.28'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.28 candidate Production state drift');
+    if(project?.engineering?.deliveryBranch!=='feature/828-practice-loop-convergence')fail('8.28 candidate delivery identity drift');
+    if(!(decision?.sequence===25&&decision?.base_release==='8.27'&&decision?.release==='8.28'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.28 candidate version decision drift');
+    if(l?.status!=='8.28-release-candidate')fail('8.28 Practice Loop candidate status drift');
+  }else fail('unexpected AXIS 8.28 release status '+STATUS);
 }else if(CURRENT==='8.27'){
   const sealed827=STATUS==='production-certified'&&SEALED==='8.27'&&RUNTIME_SHA==='d6044f0b30a92c007dd2fbab5792c2aa62dfd485'&&SEALED_PR===160;
   const candidate827=STATUS==='candidate'&&SEALED==='8.26.5'&&RUNTIME_SHA==='5bf575730c5c8de542c603d40b0f8b780204a342'&&SEALED_PR===158;
