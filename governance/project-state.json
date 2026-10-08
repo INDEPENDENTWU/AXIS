@@ -3,23 +3,23 @@
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.28",
-    "releaseStatus": "production-certified",
+    "productionRelease": "8.29",
+    "releaseStatus": "candidate",
     "lastSealedRelease": "8.28",
     "productionRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
     "productionPullRequest": 162,
-    "candidatePullRequest": 162,
+    "candidatePullRequest": 164,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
     "sealedRelease": "8.28",
     "sealedAt": "2026-10-08",
-    "candidateRelease": "8.28",
-    "candidateStatus": "production-sealed",
+    "candidateRelease": "8.29",
+    "candidateStatus": "pending-exact-head-and-merged-main-certification",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "AXIS 8.28 Practice Loop Convergence is Production-sealed at exact merged-main runtime SHA df67fc0a20c0c34a79341315c8c85b5461acfe44. Provider IDs and verification runs refer to the certified product/runtime artifact. Later governance-only commits or provider redeploys do not replace runtime authority.",
+    "evidenceSemantics": "Existing Vercel, EdgeOne and custom domain provider evidence stays tied to exact Production-sealed 8.28 runtime df67fc0a20c0c34a79341315c8c85b5461acfe44. AXIS 8.29 is only a product-runtime candidate until exact-head, merged-main and provider certification.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
       "deploymentId": "dpl_3FLstNd9rvptfaA3YP1THwWfoazF",
@@ -65,13 +65,13 @@
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.28 — Practice Loop Convergence",
-    "activePhase": "Production-sealed — resume-safe Flow → Reality Route → Active → Encounter → continuation",
+    "activeMilestone": "AXIS 8.29 — Recording Friction Collapse",
+    "activePhase": "Product-runtime candidate — explicit confirmed-value recall, non-destructive recorder rerender, idempotent in-flight canonical save",
     "activeBranch": "main",
-    "deliveryBranch": "main",
-    "pullRequest": 162,
+    "deliveryBranch": "feature/829-recording-friction-collapse",
+    "pullRequest": 164,
     "pullRequestDraft": false,
-    "baselineRelease": "8.28",
+    "baselineRelease": "8.29",
     "baselineRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
     "lastSealedRelease": "8.28",
     "lastSealedRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
@@ -80,14 +80,14 @@
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed.",
-    "intendedProductBehaviorChange": false,
-    "nextProductRelease": "8.28",
+    "intendedProductBehaviorChange": true,
+    "nextProductRelease": "8.29",
     "versionDecision": {
-      "sequence": 26,
+      "sequence": 27,
       "baseRelease": "8.28",
-      "release": "8.28",
-      "decision": "confirm",
-      "changeClass": "governance"
+      "release": "8.29",
+      "decision": "bump",
+      "changeClass": "product-runtime"
     },
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
@@ -439,7 +439,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Begin the next bounded AXIS stage only with a fresh version decision. Prioritize reducing Recording friction while preserving confirmed-fact semantics, then metric-aware Evolution truth and Home continuity.",
+    "nextSlice": "Prove AXIS 8.29 Record continuity in Chromium and iPhone-like WebKit, including previous metric compatibility, edited draft preservation, repeated-save suppression and the existing Flow/Encounter handoff. Merge exact green head, certify exact merged-main Vercel/EdgeOne/axis.juele.fun, close governance seal.",
     "recordingReviewGeometry": {
       "status": "production-sealed-8.26.5-inherited",
       "baseRelease": "8.26.4",
@@ -562,6 +562,36 @@
         "edgeOneDeploymentId": "dpxaahz57drn",
         "customDomainRunId": 37759608391
       }
+    },
+    "recordingFriction": {
+      "status": "8.29-release-candidate",
+      "pureOwner": "lib/axis-recording-continuity.mjs",
+      "projectionSchema": "axis.recording-continuity.v1",
+      "existingRecorderOwner": "app.js+v874",
+      "existingEncounterOwner": "app.js",
+      "priorConfirmedMetricsAreOnlySuggestions": true,
+      "needsExplicitSave": true,
+      "compatibleTypeAndUnitRequired": true,
+      "inSheetRerenderPreservesEdits": true,
+      "oneInFlightSave": true,
+      "newStorageNamespace": false,
+      "newSessionWriter": false,
+      "newEncounterWriter": false,
+      "newRecorderOwner": false,
+      "newActiveOwner": false,
+      "historicalEncounterRewrite": false,
+      "flowDefinitionMutation": false,
+      "network": false,
+      "ai": false,
+      "browsers": [
+        "chromium",
+        "webkit"
+      ],
+      "productionProviders": [
+        "Vercel",
+        "EdgeOne",
+        "axis.juele.fun"
+      ]
     }
   },
   "compatibility": {
@@ -610,7 +640,8 @@
       "axis.report-range.v1",
       "axis.reality-route.v1",
       "axis.execution-constraints.v1",
-      "axis.practice-loop.v1"
+      "axis.practice-loop.v1",
+      "axis.recording-continuity.v1"
     ],
     "rule": "Shared product/data semantics are portable; Web implementation accidents are not domain contracts."
   },
