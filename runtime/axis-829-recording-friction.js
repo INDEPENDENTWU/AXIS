@@ -21,13 +21,13 @@ function axis829PreviousValue(m,previous){
   return recall.values[String(m?.key||m?.id||'')]??'';
 }
 function axis829RecorderIdentity(eq,schema){
+  // Preserve a draft only for the identical effective recorder definition.
+  // Options, presentation, bounds and all other value-bearing schema fields
+  // participate, so schema edits cannot smuggle old choices into a new fact.
   return JSON.stringify([
     String(eq?.id||''),
     axis821RecordingExecutionMode(eq),
-    (Array.isArray(schema)?schema:[]).map(m=>[
-      String(m?.key??m?.id??''),String(m?.type||''),String(m?.unit||''),
-      m?.min??null,m?.max??null
-    ])
+    Array.isArray(schema)?schema:[]
   ]);
 }
 function axis829CaptureDraft(){
