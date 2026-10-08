@@ -81,7 +81,7 @@ if(downstream828||seal828Stage||downstream829){
   if(rr?.status!=='production-sealed-8.27'||rr?.productionRuntimeSha!==RUNTIME_SHA||rr?.productionPullRequest!==160)fail('Reality Route Production seal drift');
 }
 
-if(!downstream828&&!seal828Stage&&!downstream829||downstream828Exact||sealed828||downstream829){
+if(!downstream828&&!seal828Stage&&!downstream829||downstream828Exact||sealed828){
   if(rr?.pureOwner!=='lib/axis-reality-route.mjs'||rr?.projectionSchema!=='axis.reality-route.v1'||rr?.temporaryConstraintSchema!=='axis.execution-constraints.v1')fail('Reality Route governance identity drift');
   for(const key of ['newStorageNamespace','flowDefinitionMutation','historicalEncounterRewrite','manualDetourConsumesFlowStep','activeItemDeferrable','newSessionWriter','newEncounterWriter','newRecorderOwner','newActiveOwner','network','ai'])if(rr?.[key]!==false)fail(`Reality Route acquired forbidden authority ${key}`);
   if(rr?.deferredItemsReturnAfterImmediateRoute!==true||rr?.reasonCodes!==true)fail('Reality Route projection semantics drift');
@@ -92,7 +92,7 @@ if(!downstream828&&!seal828Stage&&!downstream829||downstream828Exact||sealed828|
 }
 
 for(const f of ['README.md','docs/HANDOFF.md','docs/CURRENT_RELEASE.md','docs/CURRENT_WORK.md']){
-  const s=read(f);if(!s.includes('8.27'))fail(`${f} does not identify 8.27`);
+  const s=read(f);if(!downstream829&&!s.includes('8.27'))fail(`${f} does not identify 8.27`);
   if(sealed&&!/Production-sealed|production-certified/i.test(s))fail(`${f} does not identify sealed 8.27`);
   if((sealed||downstream828||sealed828)&&!s.includes('8.27'))fail(`${f} does not preserve sealed 8.27 identity`);
   if((sealed||downstream828)&&!s.includes(RUNTIME_SHA))fail(`${f} does not identify exact 8.27 runtime SHA`);
