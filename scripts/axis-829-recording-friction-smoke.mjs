@@ -76,6 +76,26 @@ try{
   assert.equal(historicalFact(events[0]),frozen,'previous confirmed Encounter metrics, schema or provenance was mutated');
   assert.equal(Number(events[1].metrics.duration),34);
   assert.equal(Number(events[1].metrics.intensity),6);
+
+  // Object schema change is another real inherited rerender route. Changing
+  // presentation/options alone must invalidate unsaved values from the old
+  // control definition even if the metric key, type, unit and bounds agree.
+  await openNext();
+  await page.locator('[data-axis818-metric="duration"]').fill('47');
+  await page.evaluate(id=>{
+    const obj=state.profile.customEq.find(x=>x.id===id);
+    const next=obj.metricSchema.map(m=>({...m}));
+    next[0].presentation='timer';
+    next[0].options=[{value:'10',label:'Ten'}];
+    window.dispatchEvent(new CustomEvent('axis:object-schema-changed',{
+      detail:{id,schema:next,metricSchemaVersion:'8.29-test-schema-shift'}
+    }));
+  },OBJECT.id);
+  assert.notEqual(await page.locator('[data-axis818-metric="duration"]').inputValue(),'47',
+    'schema presentation/options change illegally restored old draft');
+  assert.equal((await read()).active.events.filter(e=>e.equipmentId===OBJECT.id).length,2,
+    'changing recorder schema wrote another Encounter');
+
   assert.deepEqual(await page.evaluate(()=>Object.keys(localStorage).sort()),keysBefore,'Recording created new persistent namespace');
 
   const overflow=await page.evaluate(()=>Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)-innerWidth);
