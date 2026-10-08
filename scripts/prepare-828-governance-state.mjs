@@ -5,7 +5,8 @@ const read=f=>JSON.parse(fs.readFileSync(f,'utf8'));
 const write=(f,x)=>fs.writeFileSync(f,JSON.stringify(x,null,2)+'\n');
 const decision=read('governance/version-decision.json');
 const sealCloseout=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-if(!sealCloseout){
+const downstream829=decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+if(!sealCloseout&&!downstream829){
 
 
 {
@@ -31,11 +32,11 @@ if(!sealCloseout){
   Object.assign(loop,{status:'derived-runtime-release-candidate',contract:'axis.practice-loop.v1',storage:'none'});
   write(f,x);
 }
- }else{
+ }else if(sealCloseout){
   await import('./prepare-828-sealed-governance.mjs');
   const project=read('governance/project-state.json'),owners=read('governance/owners.json'),runtime='df67fc0a20c0c34a79341315c8c85b5461acfe44';
   if(project.product?.productionRelease!=='8.28'||project.product?.releaseStatus!=='production-certified'||project.product?.productionRuntimeSha!==runtime||project.product?.lastSealedRelease!=='8.28'||project.production?.sealedRelease!=='8.28'||project.production?.latestDeploymentIsAuthority!==false)throw Error('[AXIS 8.28 governance state] sealed runtime authority drift');
   const owner=owners.owners?.find(x=>x.capability==='practice-loop-convergence-828');
   if(owner?.status!=='derived-runtime-production-sealed'||owner?.storage!=='none')throw Error('[AXIS 8.28 governance state] sealed Practice Loop owner drift');
 }
-console.log('[AXIS 8.28 governance state] '+(sealCloseout?'exact Production seal preserved':'exact candidate state restored after historical release transforms'));
+console.log('[AXIS 8.28 governance state] '+(downstream829?'downstream 8.29 governance preserved':sealCloseout?'exact Production seal preserved':'exact candidate state restored after historical release transforms'));
