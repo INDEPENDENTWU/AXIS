@@ -32,6 +32,7 @@ if(!sealCloseout){
   write(f,x);
 }
  }else{
+  await import('./prepare-828-sealed-governance.mjs');
   const project=read('governance/project-state.json'),owners=read('governance/owners.json'),runtime='df67fc0a20c0c34a79341315c8c85b5461acfe44';
   if(project.product?.productionRelease!=='8.28'||project.product?.releaseStatus!=='production-certified'||project.product?.productionRuntimeSha!==runtime||project.product?.lastSealedRelease!=='8.28'||project.production?.sealedRelease!=='8.28'||project.production?.latestDeploymentIsAuthority!==false)throw Error('[AXIS 8.28 governance state] sealed runtime authority drift');
   const owner=owners.owners?.find(x=>x.capability==='practice-loop-convergence-828');
