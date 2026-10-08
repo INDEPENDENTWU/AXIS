@@ -10,6 +10,8 @@ AXIS **8.29 — Recording Friction Collapse** is the governed product-runtime ca
 - pure portable projection: `axis.recording-continuity.v1`
 - runtime topology: canonical-single-runtime, one initial JavaScript request, zero dynamic chunks
 
+AXIS 8.28 remains the exact **runtime seal baseline**. This is a historical Production certificate for the previous version, **not a self-referential requirement** for the 8.29 candidate to already be sealed. AXIS 8.29 cannot replace that runtime authority until its own exact merged-main and provider certification is complete.
+
 ## Last Production-sealed release
 
 **AXIS 8.28 — Practice Loop Convergence** was released by PR #162, closed by governance PR #163, and certified at exact product/runtime SHA:
