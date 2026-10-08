@@ -82,15 +82,14 @@ try{
   // control definition even if the metric key, type, unit and bounds agree.
   await openNext();
   await page.locator('[data-axis818-metric="duration"]').fill('47');
-  await page.evaluate(id=>{
-    const obj=state.profile.customEq.find(x=>x.id===id);
-    const next=obj.metricSchema.map(m=>({...m}));
+  await page.evaluate(({id,schema})=>{
+    const next=schema.map(m=>({...m}));
     next[0].presentation='timer';
     next[0].options=[{value:'10',label:'Ten'}];
     window.dispatchEvent(new CustomEvent('axis:object-schema-changed',{
       detail:{id,schema:next,metricSchemaVersion:'8.29-test-schema-shift'}
     }));
-  },OBJECT.id);
+  },{id:OBJECT.id,schema:OBJECT.metricSchema});
   assert.notEqual(await page.locator('[data-axis818-metric="duration"]').inputValue(),'47',
     'schema presentation/options change illegally restored old draft');
   assert.equal((await read()).active.events.filter(e=>e.equipmentId===OBJECT.id).length,2,
