@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis.recording-continuity.v1",
+  "title": "AXIS Recording Recall Projection v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "sourceEncounterId",
+    "sourceTime",
+    "values",
+    "count",
+    "reasonCodes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "axis.recording-continuity.v1"
+    },
+    "sourceEncounterId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sourceTime": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "values": {
+      "type": "object"
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reasonCodes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
