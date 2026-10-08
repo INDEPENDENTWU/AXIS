@@ -9,6 +9,25 @@ const project=json('governance/project-state.json'),decision=json('governance/ve
 const RUNTIME_828='df67fc0a20c0c34a79341315c8c85b5461acfe44';
 const sealed=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 
+const downstream829=
+  decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&
+  decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+
+if(downstream829){
+  const certified='df67fc0a20c0c34a79341315c8c85b5461acfe44';
+  if(project?.product?.productionRelease!=='8.29'||project?.product?.releaseStatus!=='candidate'||
+     project?.product?.lastSealedRelease!=='8.28'||project?.product?.productionRuntimeSha!==certified||
+     project?.product?.productionPullRequest!==162||project?.product?.candidatePullRequest!==164)fail('8.29 successor lost exact 8.28 production authority');
+  if(project?.production?.sealedRelease!=='8.28'||project?.production?.candidateRelease!=='8.29'||
+     project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification'||
+     project?.production?.latestDeploymentIsAuthority!==false)fail('8.29 candidate/seal boundary drift');
+  for(const p of ['vercel','edgeOne','customDomain'])if(project?.production?.[p]?.sourceSha!==certified)fail('sealed 8.28 provider source drift '+p);
+  if(project?.engineering?.practiceLoop?.status!=='production-sealed-8.28'||project?.engineering?.practiceLoop?.productionRuntimeSha!==certified)fail('8.28 Practice Loop seal lost');
+  const owner=owners.owners?.find(o=>o.capability==='practice-loop-convergence-828');
+  if(owner?.status!=='derived-runtime-production-sealed'||owner?.storage!=='none')fail('certified Practice Loop owner boundary drift');
+  if(owners.baselineRelease!=='8.29')fail('successor owner baseline drift');
+  console.log('[AXIS 8.28 governance compat] PASS · sealed Practice Loop inherited inside 8.29 candidate');
+}else{
 if(project?.product?.productionRelease!=='8.28'||project?.product?.candidatePullRequest!==162)fail('8.28 product identity drift');
 if(sealed){
   if(project?.product?.releaseStatus!=='production-certified'||project?.product?.lastSealedRelease!=='8.28'||project?.product?.productionRuntimeSha!==RUNTIME_828||project?.product?.productionPullRequest!==162)fail('exact 8.28 Production seal drift');
@@ -83,3 +102,5 @@ for(const f of ['README.md','docs/HANDOFF.md','docs/CURRENT_RELEASE.md','docs/CU
 }
 
 console.log('[AXIS 8.28 governance compat] PASS · '+(sealed?'Production-sealed exact runtime '+RUNTIME_828:'candidate PR #162 over exact sealed 8.27 runtime')+' · Practice Loop remains derived continuity projection');
+
+}
