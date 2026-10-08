@@ -53,6 +53,24 @@ for(const malformed of ['banana','5:99','-2:30','five minutes',{},[],Infinity]){
   assert.equal(paceRecall(malformed).count,0,'malformed pace incorrectly reused: '+String(malformed));
 }
 assert.equal(paceRecall('5:30').sourceEncounterId,'pace-evidence','pace reuse provenance was lost');
+// Quantitative and boolean metrics may use choice presentations; no typed
+// branch may bypass the immutable option/meaning compatibility contract.
+const choices=[{value:'6',label:'Moderate'},{value:'8',label:'Hard'}];
+const numericChoice={key:'effort',type:'number',unit:'/10',presentation:'choice',options:choices};
+const choicePrior={id:'choice-1',time:55,metricSchemaSnapshot:[structuredClone(numericChoice)]};
+const choiceRecall=(definition,value)=>projectRecordingRecall({schema:[definition],previous:choicePrior,metrics:{effort:value}});
+assert.equal(choiceRecall(numericChoice,6).values.effort,'6','matching typed choice must recall normally');
+assert.equal(choiceRecall(numericChoice,7).count,0,'number outside allowed choice options must be rejected');
+assert.equal(choiceRecall({...numericChoice,options:[{value:'7',label:'Low'}]},6).count,0,
+  'changed choice option value must not inherit old numeric fact');
+assert.equal(choiceRecall({...numericChoice,options:[{value:'6',label:'Reinterpreted'},{value:'8',label:'Hard'}]},6).count,0,
+  'same value with a changed choice label must not inherit old meaning');
+assert.equal(choiceRecall({...numericChoice,options:[]},6).count,0,'empty choice options must fail closed');
+const boolChoice={key:'done',type:'boolean',unit:'',presentation:'choice',options:[{value:'1',label:'Yes'}]};
+const boolPrevious={id:'bool-choice',metricSchemaSnapshot:[structuredClone(boolChoice)]};
+assert.equal(projectRecordingRecall({schema:[boolChoice],previous:boolPrevious,metrics:{done:true}}).values.done,'1');
+assert.equal(projectRecordingRecall({schema:[boolChoice],previous:boolPrevious,metrics:{done:false}}).count,0,
+  'boolean choice must reject values outside the allowed set');
 const source=fs.readFileSync(new URL('../lib/axis-recording-continuity.mjs',import.meta.url),'utf8');
 for(const forbidden of ['window.','document.','localStorage','indexedDB','fetch(','XMLHttpRequest','WebSocket','navigator.'])
   assert.ok(!source.includes(forbidden),'pure recall contains '+forbidden);
