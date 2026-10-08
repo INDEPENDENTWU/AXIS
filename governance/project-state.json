@@ -3,23 +3,23 @@
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.27",
-    "releaseStatus": "production-certified",
+    "productionRelease": "8.28",
+    "releaseStatus": "candidate",
     "lastSealedRelease": "8.27",
     "productionRuntimeSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
     "productionPullRequest": 160,
-    "candidatePullRequest": 160,
+    "candidatePullRequest": 162,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
     "sealedRelease": "8.27",
     "sealedAt": "2026-10-05",
-    "candidateRelease": "8.27",
-    "candidateStatus": "production-sealed",
+    "candidateRelease": "8.28",
+    "candidateStatus": "pending-exact-head-and-merged-main-certification",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "AXIS 8.27 Reality Route is Production-sealed at exact merged-main runtime SHA d6044f0b30a92c007dd2fbab5792c2aa62dfd485. Provider IDs and verification run IDs below are the certification snapshot for that exact artifact; later governance-only commits or provider redeploys do not replace this runtime authority.",
+    "evidenceSemantics": "Provider IDs and source SHA below remain the fully sealed AXIS 8.27 certification snapshot at d6044f0b30a92c007dd2fbab5792c2aa62dfd485. AXIS 8.28 Practice Loop Convergence is a product-runtime candidate and may replace the seal only after exact-head, merged-main, Vercel, EdgeOne and axis.juele.fun certification.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
       "deploymentId": "dpl_5dNTyZpuRcqV8vDGRvYi9GC8KGYm",
@@ -66,13 +66,13 @@
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.27 — Reality Route",
-    "activePhase": "Production-sealed — deterministic reality-driven continuation with temporary defer semantics",
+    "activeMilestone": "AXIS 8.28 — Practice Loop Convergence",
+    "activePhase": "Product runtime candidate — one resume-safe practice loop across Flow, Reality Route, Active and Session",
     "activeBranch": "main",
-    "deliveryBranch": "main",
-    "pullRequest": 160,
+    "deliveryBranch": "feature/828-practice-loop-convergence",
+    "pullRequest": 162,
     "pullRequestDraft": false,
-    "baselineRelease": "8.27",
+    "baselineRelease": "8.28",
     "baselineRuntimeSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
     "lastSealedRelease": "8.27",
     "lastSealedRuntimeSha": "d6044f0b30a92c007dd2fbab5792c2aa62dfd485",
@@ -81,14 +81,14 @@
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed.",
-    "intendedProductBehaviorChange": false,
-    "nextProductRelease": "8.27",
+    "intendedProductBehaviorChange": true,
+    "nextProductRelease": "8.28",
     "versionDecision": {
-      "sequence": 24,
+      "sequence": 25,
       "baseRelease": "8.27",
-      "release": "8.27",
-      "decision": "confirm",
-      "changeClass": "governance"
+      "release": "8.28",
+      "decision": "bump",
+      "changeClass": "product-runtime"
     },
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
@@ -440,7 +440,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Start the next bounded Reality Route product slice only with a fresh version decision. The natural continuation is richer temporary execution constraints while keeping Flow intent immutable, Encounter truth authoritative, and route projection platform-neutral.",
+    "nextSlice": "Finish AXIS 8.28 Practice Loop Convergence on exact PR #162 head, prove launch/reload/Active/pause continuity in Chromium and iPhone-like WebKit, merge exact green head, then certify exact merged-main Vercel, EdgeOne and axis.juele.fun.",
     "recordingReviewGeometry": {
       "status": "production-sealed-8.26.5-inherited",
       "baseRelease": "8.26.4",
@@ -508,6 +508,47 @@
         "edgeOneProductionRunId": 37333415798,
         "customDomainRunId": 37333415692
       }
+    },
+    "practiceLoop": {
+      "status": "8.28-release-candidate",
+      "principle": "one visible practice loop over existing intent, execution and fact owners",
+      "pureOwner": "lib/axis-practice-loop.mjs",
+      "projectionSchema": "axis.practice-loop.v1",
+      "derivesFrom": [
+        "axis.reality-route.v1",
+        "axis_v60_state.flowRun",
+        "existing v82/v87 Active truth",
+        "existing Session truth"
+      ],
+      "phases": [
+        "idle",
+        "ready",
+        "between-items",
+        "executing",
+        "paused",
+        "recovering",
+        "settling",
+        "complete"
+      ],
+      "reloadSafe": true,
+      "promptOnRestore": false,
+      "pageshowRefresh": true,
+      "visibilityRefresh": true,
+      "newStorageNamespace": false,
+      "flowDefinitionMutation": false,
+      "historicalEncounterRewrite": false,
+      "newSessionWriter": false,
+      "newEncounterWriter": false,
+      "newRecorderOwner": false,
+      "newActiveOwner": false,
+      "network": false,
+      "ai": false,
+      "chromiumAndWebKitRequired": true,
+      "productionProofRequired": [
+        "Vercel",
+        "EdgeOne",
+        "axis.juele.fun"
+      ]
     }
   },
   "compatibility": {
@@ -555,7 +596,8 @@
       "axis.flow-provenance.v1",
       "axis.report-range.v1",
       "axis.reality-route.v1",
-      "axis.execution-constraints.v1"
+      "axis.execution-constraints.v1",
+      "axis.practice-loop.v1"
     ],
     "rule": "Shared product/data semantics are portable; Web implementation accidents are not domain contracts."
   },

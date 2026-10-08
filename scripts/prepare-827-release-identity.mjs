@@ -115,9 +115,10 @@ for(const row of [
 
 const sealDecision=JSON.parse(read('governance/version-decision.json'));
 const sealCloseout=sealDecision?.sequence===24&&sealDecision?.base_release==='8.27'&&sealDecision?.release==='8.27'&&sealDecision?.decision==='confirm'&&sealDecision?.change_class==='governance';
+const downstreamRelease=sealDecision?.release&&sealDecision.release!=='8.27';
 const RUNTIME_SHA_827='d6044f0b30a92c007dd2fbab5792c2aa62dfd485';
 
-{
+if(!downstreamRelease){
   const f='governance/project-state.json',x=JSON.parse(read(f));
   x.product.productionRelease=VERSION;
   x.product.candidatePullRequest=PR;
@@ -141,7 +142,7 @@ const RUNTIME_SHA_827='d6044f0b30a92c007dd2fbab5792c2aa62dfd485';
   }
   write(f,JSON.stringify(x,null,2)+'\n');
 }
-{
+if(!downstreamRelease){
   const f='governance/owners.json',x=JSON.parse(read(f));x.baselineRelease=VERSION;
   let owner=x.owners&&x.owners.find(o=>o.capability==='flow-reality-route-827');
   if(!owner){owner={capability:'flow-reality-route-827',status:'derived-runtime-release-candidate',owner:'lib/axis-reality-route.mjs + existing app.js Flow orchestration bridge',contract:'axis.reality-route.v1',storage:'axis_v60_state.flowRun.temporaryConstraints',delegatesTo:'existing app-owned FlowRun + existing Session/Encounter/Active/recorder owners',notes:'Derived route projection only; no new factual authority.'};x.owners.push(owner)}
@@ -154,4 +155,4 @@ const RUNTIME_SHA_827='d6044f0b30a92c007dd2fbab5792c2aa62dfd485';
 await import('./axis-827-governance-compat.mjs');
 
 if(inheritedIdentityTouches+touches<12)fail('public identity convergence suspiciously small: inherited '+inheritedIdentityTouches+' + explicit '+touches);
-console.log('[AXIS 8.27 release identity] PASS · '+FROM+' -> '+VERSION+' · '+inheritedIdentityTouches+' inherited + '+touches+' explicit identity assertion(s) advanced · '+(sealCloseout?'production seal preserved':'candidate governance'));
+console.log('[AXIS 8.27 release identity] PASS · '+FROM+' -> '+VERSION+' · '+inheritedIdentityTouches+' inherited + '+touches+' explicit identity assertion(s) advanced · '+(downstreamRelease?'downstream governance preserved':sealCloseout?'production seal preserved':'candidate governance'));

@@ -9,11 +9,12 @@ const SEALED_SHA='5bf575730c5c8de542c603d40b0f8b780204a342',RUNTIME_827='d6044f0
 const sealed8265=project?.product?.productionRelease==='8.26.5'&&project?.product?.releaseStatus==='production-certified'&&decision?.sequence===22;
 const candidate827=project?.product?.productionRelease==='8.27'&&project?.product?.releaseStatus==='candidate'&&project?.product?.lastSealedRelease==='8.26.5'&&project?.product?.productionRuntimeSha===SEALED_SHA&&project?.product?.candidatePullRequest===160&&decision?.sequence===23&&decision?.base_release==='8.26.5'&&decision?.release==='8.27'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const sealed827=project?.product?.productionRelease==='8.27'&&project?.product?.releaseStatus==='production-certified'&&project?.product?.lastSealedRelease==='8.27'&&project?.product?.productionRuntimeSha===RUNTIME_827&&project?.product?.productionPullRequest===160&&decision?.sequence===24&&decision?.base_release==='8.27'&&decision?.release==='8.27'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-if(!sealed8265&&!candidate827&&!sealed827)fail('current governance must be sealed 8.26.5, exact 8.27 candidate, or sealed 8.27');
-if(!sealed827&&(project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==158))fail('8.26.5 Production baseline drift');
-if(sealed827&&(project?.product?.productionRuntimeSha!==RUNTIME_827||project?.product?.productionPullRequest!==160))fail('8.27 Production seal drift');
+const downstream828=project?.product?.productionRelease==='8.28'&&project?.product?.releaseStatus==='candidate'&&project?.product?.lastSealedRelease==='8.27'&&project?.product?.productionRuntimeSha===RUNTIME_827&&project?.product?.productionPullRequest===160&&project?.product?.candidatePullRequest===162&&decision?.sequence===25&&decision?.base_release==='8.27'&&decision?.release==='8.28'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+if(!sealed8265&&!candidate827&&!sealed827&&!downstream828)fail('current governance must be sealed 8.26.5, 8.27 candidate/seal, or bounded 8.28 successor');
+if(!sealed827&&!downstream828&&(project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==158))fail('8.26.5 Production baseline drift');
+if((sealed827||downstream828)&&(project?.product?.productionRuntimeSha!==RUNTIME_827||project?.product?.productionPullRequest!==160))fail('8.27 Production seal drift');
 
-if(!['8.25.1','8.26.5','8.27'].includes(owners?.baselineRelease))fail(`owner baseline drift ${owners?.baselineRelease}`);
+if(!['8.25.1','8.26.5','8.27','8.28'].includes(owners?.baselineRelease))fail(`owner baseline drift ${owners?.baselineRelease}`);
 const morph=project?.engineering?.activeInlineSetMorph;
 for(const key of ['postFactOnly','inStageFactRow','stableStageGeometry','nonOverlapping','railConfirmation','buttonReturn','clockSettle','boundedHaptic','reducedMotionSafe'])if(morph?.[key]!==true)fail(`Inline Set Morph inherited capability missing ${key}`);
 if(morph?.status!=='production-sealed-8.25.1-inherited'||morph?.fullScreenOverlay!==false||morph?.pointerEvents!==false)fail('8.25.1 presentation boundary drift');
@@ -31,4 +32,4 @@ if(owners?.baselineRelease!=='8.25.1'){
 
 for(const p of ['prepare-8251-inline-set-morph.mjs','postbuild-8251-inline-set-morph-contract.mjs','styles/axis-8251-inline-set-morph.css','prepare-826-active-continuity.mjs','prepare-8261-active-rest-state.mjs','prepare-8262-active-rest-selector.mjs','prepare-8263-active-rest-convergence.mjs','prepare-8264-active-rest-utility-rail.mjs','prepare-8265-recording-review-geometry.mjs'])if(!fs.existsSync(p))fail(`inherited/current release surface missing ${p}`);
 
-console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside ${sealed827?'sealed 8.27':candidate827?'8.27 candidate':'sealed 8.26.5'}`);
+console.log(`[AXIS 8.25.1 governance compat] PASS · sealed 8.25.1 boundary preserved inside ${downstream828?'8.28 candidate':sealed827?'sealed 8.27':candidate827?'8.27 candidate':'sealed 8.26.5'}`);

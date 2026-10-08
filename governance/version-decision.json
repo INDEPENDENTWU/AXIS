@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 24,
+  "sequence": 25,
   "base_release": "8.27",
-  "release": "8.27",
-  "decision": "confirm",
-  "change_class": "governance",
-  "summary": "Record the exact AXIS 8.27 Reality Route Production certification at merged-main SHA d6044f0b30a92c007dd2fbab5792c2aa62dfd485 without changing product/runtime behavior."
+  "release": "8.28",
+  "decision": "bump",
+  "change_class": "product-runtime",
+  "summary": "Converge Flow, Reality Route, the existing Active lifecycle, and Session continuity into one resume-safe Practice Loop projection with prompt-free restoration and no new factual owner."
 }
