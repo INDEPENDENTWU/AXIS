@@ -58,6 +58,12 @@ try{
   await page.locator('[data-axis818-metric="duration"]').fill('33');
   await page.evaluate(()=>window.__AXIS_829_RECORDING__.render());
   assert.equal(await page.locator('[data-axis818-metric="duration"]').inputValue(),'33','live unsaved draft lost on presentation rerender');
+  // Real inherited re-entry: AXIS 8.20 clears the canonical render key and
+  // rebuilds the recorder. A direct render() call alone does not cover this.
+  assert.equal(await page.evaluate(id=>window.__AXIS_EXECUTABLE_OBJECTS__.beginQuickRecorder(id),OBJECT.id),true,
+    'canonical Quick Recorder re-entry failed');
+  assert.equal(await page.locator('[data-axis818-metric="duration"]').inputValue(),'33',
+    'Quick Recorder key invalidation discarded the unsaved same-object draft');
   assert.equal((await read()).active.events.filter(e=>e.equipmentId===OBJECT.id).length,1,'render duplicated historical facts');
   const reuse=page.locator('[data-axis829-reuse]');
   if(ENGINE==='webkit')await reuse.tap();else await reuse.click();
@@ -75,5 +81,5 @@ try{
   const overflow=await page.evaluate(()=>Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)-innerWidth);
   assert.ok(overflow<=1,'390px horizontal overflow '+overflow);
   assert.deepEqual(errors,[],'page errors:\n'+errors.join('\n'));
-  console.log('[AXIS 8.29 Recording '+ENGINE+'] PASS · Flow one-shot Record → double-click single Encounter → compatible last-value suggestion → draft rerender retention → explicit reuse → next canonical fact · immutable history · no new storage');
+  console.log('[AXIS 8.29 Recording '+ENGINE+'] PASS · Flow one-shot Record → double-click single Encounter → compatible last-value suggestion → draft rerender + Quick Recorder re-entry retention → explicit reuse → next canonical fact · immutable history · no new storage');
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
