@@ -37,6 +37,7 @@ const downstream828Exact=
   downstream828&&project?.product?.productionRelease==='8.28'&&project?.product?.releaseStatus==='candidate'&&
   project?.product?.lastSealedRelease==='8.27'&&project?.product?.productionRuntimeSha===RUNTIME_SHA&&
   project?.product?.productionPullRequest===160&&project?.product?.candidatePullRequest===162;
+const downstream829=decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const seal828Stage=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 const sealed828=
   decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&
@@ -45,10 +46,10 @@ const sealed828=
   project?.product?.lastSealedRelease==='8.28'&&project?.product?.productionRuntimeSha==='df67fc0a20c0c34a79341315c8c85b5461acfe44'&&
   project?.product?.productionPullRequest===162&&project?.product?.candidatePullRequest===162;
 
-if(!candidate&&!sealed&&!downstream828&&!seal828Stage)fail('governance must be exact 8.27 candidate/seal or governed 8.28 successor/seal');
+if(!candidate&&!sealed&&!downstream828&&!seal828Stage&&!downstream829)fail('governance must be exact 8.27 candidate/seal or governed 8.28 successor/seal');
 
 const v=project?.engineering?.versionDecision;
-if(downstream828||seal828Stage){
+if(downstream828||seal828Stage||downstream829){
   if(sealed828){
     if(production.sealedRelease!=='8.28'||production.candidateStatus!=='production-sealed'||production.latestDeploymentIsAuthority!==false)fail('8.28 successor Production seal boundary drift');
     if(rr?.status!=='production-sealed-8.27'||rr?.productionRuntimeSha!==RUNTIME_SHA||rr?.productionPullRequest!==160)fail('8.28 seal lost inherited Reality Route authority');
@@ -80,11 +81,11 @@ if(downstream828||seal828Stage){
   if(rr?.status!=='production-sealed-8.27'||rr?.productionRuntimeSha!==RUNTIME_SHA||rr?.productionPullRequest!==160)fail('Reality Route Production seal drift');
 }
 
-if(!downstream828&&!seal828Stage||downstream828Exact||sealed828){
+if(!downstream828&&!seal828Stage&&!downstream829||downstream828Exact||sealed828||downstream829){
   if(rr?.pureOwner!=='lib/axis-reality-route.mjs'||rr?.projectionSchema!=='axis.reality-route.v1'||rr?.temporaryConstraintSchema!=='axis.execution-constraints.v1')fail('Reality Route governance identity drift');
   for(const key of ['newStorageNamespace','flowDefinitionMutation','historicalEncounterRewrite','manualDetourConsumesFlowStep','activeItemDeferrable','newSessionWriter','newEncounterWriter','newRecorderOwner','newActiveOwner','network','ai'])if(rr?.[key]!==false)fail(`Reality Route acquired forbidden authority ${key}`);
   if(rr?.deferredItemsReturnAfterImmediateRoute!==true||rr?.reasonCodes!==true)fail('Reality Route projection semantics drift');
-  if(!['8.27','8.28'].includes(owners?.baselineRelease))fail('owner registry baseline must be 8.27 or bounded 8.28 successor');
+  if(!['8.27','8.28','8.29'].includes(owners?.baselineRelease))fail('owner registry baseline must be 8.27 or bounded 8.28 successor');
   const owner=owners.owners?.find(x=>x.capability==='flow-reality-route-827');
   const wantStatus=sealed||downstream828Exact||sealed828?'derived-runtime-production-sealed':'derived-runtime-release-candidate';
   if(owner?.status!==wantStatus||owner?.contract!=='axis.reality-route.v1'||owner?.storage!=='axis_v60_state.flowRun.temporaryConstraints')fail('Reality Route owner registry drift');
@@ -122,4 +123,4 @@ for(const f of ['lib/axis-reality-route.mjs','scripts/axis-827-reality-route-con
   write(f,s);
 }
 
-console.log(`[AXIS 8.27 governance compat] PASS · ${sealed828?'inherited by Production-sealed 8.28':downstream828?'inherited by bounded 8.28 successor':sealed?'Production-sealed exact runtime '+RUNTIME_SHA:'exact PR #160 candidate over sealed 8.26.5'} · Reality Route remains derived execution projection`);
+console.log(`[AXIS 8.27 governance compat] PASS · ${downstream829?'inherited by 8.29 candidate':sealed828?'inherited by Production-sealed 8.28':downstream828?'inherited by bounded 8.28 successor':sealed?'Production-sealed exact runtime '+RUNTIME_SHA:'exact PR #160 candidate over sealed 8.26.5'} · Reality Route remains derived execution projection`);
