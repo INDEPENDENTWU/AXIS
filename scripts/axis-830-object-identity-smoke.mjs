@@ -44,11 +44,12 @@ try{
   // Real ranked-search paths: two movements with the same base ID must not converge.
   await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('recording'));
   await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:3000});
-  await page.locator('#eqSearch').fill('划船');
-  await page.waitForFunction(()=>document.querySelector('#v873SmartResults')?.classList.contains('show'),undefined,{timeout:3000});
+  await page.locator('#eqSearch').fill('坐姿划船');
+  await page.waitForFunction(()=>document.querySelector('#v873SmartResults')?.classList.contains('show')&&document.querySelector('#v873SmartResults [data-v8124-pick="seated-row"]'),undefined,{timeout:3000});
+  await page.locator('#eqSearch').fill('胸托划船');
+  await page.waitForFunction(()=>document.querySelector('#v873SmartResults')?.classList.contains('show')&&document.querySelector('#v873SmartResults [data-v8124-pick="chest-row"]')&&document.querySelector('#v873SmartResults [data-v8124-pick="custom-identity-proof"]'),undefined,{timeout:3000});
   const queryIds=await page.locator('#v873SmartResults [data-v8124-pick]').evaluateAll(xs=>xs.map(x=>x.dataset.v8124Pick));
-  assert.ok(queryIds.includes('seated-row')&&queryIds.includes('chest-row'),'search merged separate row variations '+queryIds.join(','));
-  assert.ok(queryIds.includes('custom-identity-proof'),'same-name personal Object was hidden');
+  assert.ok(queryIds.includes('chest-row')&&queryIds.includes('custom-identity-proof'),'same-name canonical and personal IDs collapsed '+queryIds.join(','));
   await tap(page.locator('#v873SmartResults [data-v8124-pick="chest-row"]').first());
   await page.waitForFunction(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id==='chest-row',undefined,{timeout:3000});
 
