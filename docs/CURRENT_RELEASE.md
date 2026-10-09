@@ -1,33 +1,41 @@
 # Current Release — AXIS 8.29
 
-**Status: Release candidate**
+**Status: Production-certified · Recording Friction Collapse**
 
-AXIS **8.29 — Recording Friction Collapse** is the governed product-runtime candidate, not yet Production-sealed.
-
-- candidate PR: **#164**
-- branch: `feature/829-recording-friction-collapse`
-- version decision: **8.28 → 8.29 / bump / sequence 27 / product-runtime**
-- pure portable projection: `axis.recording-continuity.v1`
-- runtime topology: canonical-single-runtime, one initial JavaScript request, zero dynamic chunks
-
-AXIS 8.28 remains the exact **runtime seal baseline**. This is a historical Production certificate for the previous version, **not a self-referential requirement** for the 8.29 candidate to already be sealed. AXIS 8.29 cannot replace that runtime authority until its own exact merged-main and provider certification is complete.
-
-## Last Production-sealed release
-
-**AXIS 8.28 — Practice Loop Convergence** was released by PR #162, closed by governance PR #163, and certified at exact product/runtime SHA:
+Product PR **#164** was merged to `main` at the exact product/runtime SHA:
 
 ```text
-df67fc0a20c0c34a79341315c8c85b5461acfe44
+4a9c73b2ea5330b9cffad3f9e322eb6970dfe171
 ```
 
-Vercel deployment: `dpl_3FLstNd9rvptfaA3YP1THwWfoazF`; EdgeOne deployment: `dpxaahz57drn`; custom domain: `https://axis.juele.fun`. The Production provider evidence remains tied to AXIS 8.28 until 8.29 certifies its exact merged-main artifact.
+The verified PR head was `8dc4d80f17c061b81a294963c4723f1d6d7e826e`: **33 / 33 successful PR workflows**. On that exact merged-main product commit, **28 push workflow runs** concluded as **27 success, 1 cancelled (Branch hygiene), 0 failure**. Inherited Flow, Replay, Practice Loop, and cross-platform contract gates remain subject to their existing validations.
 
-## Bounded 8.29 behavior
+## Production provider certificate
 
-A current Record remains a separate user-confirmed fact. Last Encounter metrics may appear as suggested initial values only when the historical snapshot proves the same metric type and unit. In-sheet edits survive a same-Object re-render. A save transaction cannot overlap another save transaction for the same recorder invocation.
+| Provider | Exact 8.29 evidence |
+| --- | --- |
+| Vercel | Git production deployment `dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1`; READY, source `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`, no alias error; Current Release Gate `37831475540`, Deep Compatibility Gate `37831475524` |
+| EdgeOne | Exact prebuilt mirror deployment `dpfctvvd321b`; run `37831475199`, including Chromium/WebKit live checks |
+| Custom domain | `https://axis.juele.fun`; run `37831475553`, attempt **2**, exact parity plus Chromium/WebKit success |
 
-No new localStorage/IndexedDB namespace, Session writer, Encounter writer, Active owner or recorder is allowed. Reusable Flow definitions and immutable Encounter history are not edited.
+The canonical Vercel deployment has a verified successful GitHub commit status. There is no independently confirmed exact-main `AXIS Production Gate` run number in this certificate; that field is `null`, rather than pointing to a different workflow. EdgeOne Production commit status is success.
 
-## Completion condition
+Auditable snapshot: `governance/production-certifications/8.29.json`. These are **product-runtime SHA** observations, not assertions that every future redeployment is the same build.
 
-Pure contract, Chromium and iPhone-like WebKit physical tests, inherited 8.28 and 8.27 checks, and one exact PR #164 head all green; exact merge; then exact merged-main Vercel, EdgeOne and `axis.juele.fun` certification, followed by a separate governance-only closeout.
+**Later governance-only commits do not replace the certified product/runtime SHA.** `product.productionRuntimeSha` remains `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`, regardless of the governance merge commit identity.
+
+## Previous release and inheritance
+
+AXIS **8.28 — Practice Loop Convergence** was previously Production-sealed at `df67fc0a20c0c34a79341315c8c85b5461acfe44` (product PR **#162**, governance PR **#163**). Its evidence stays historical; its behavior is inherited in AXIS 8.29.
+
+AXIS 8.29 preserves existing Object, Flow, Active, Session, Encounter, media and storage ownership. Confirmed prior values are only compatible suggestions. Unsaved draft values survive same-recorder rerenders; in-flight repeated saves are suppressed. No prior fact is mutated.
+
+## Release governance
+
+Decision: **8.29 → 8.29 / confirm / sequence 28 / governance**.
+
+This closeout changes only governance, verification compatibility and documentation. No new recorder, session owner, storage namespace or Encounter writer is allowed.
+
+## Next planned bounded stage
+
+**AXIS 8.30 — Object Identity Integrity**, followed by the Playable Practice line: PLAY THIS → AIR → TAKE → FORK. Object catalog identity is a precondition for reliable record provenance and safely shareable challenges. These future capabilities are **planned, not part of AXIS 8.29**.

@@ -26,7 +26,7 @@ if(candidate){
   if(recording.status!=='8.29-release-candidate'||owner.status!=='derived-presentation-release-candidate')fail('candidate owner state');
 }else{
   const cert=json('governance/production-certifications/8.29.json');
-  if(cert.release!=='8.29'||cert.productRuntimeSha!==SEALED||cert.productPullRequest!==164||cert.exactHeadSha!=='8dc4d80f17c061b81a294963c4723f1d6d7e826e'||cert.exactHeadSuccess!==32)fail('certificate release/head mismatch');
+  if(cert.release!=='8.29'||cert.productRuntimeSha!==SEALED||cert.productPullRequest!==164||cert.exactHeadSha!=='8dc4d80f17c061b81a294963c4723f1d6d7e826e'||cert.exactHeadSuccess!==33)fail('certificate release/head mismatch');
   if(p.product.releaseStatus!=='production-certified'||p.product.lastSealedRelease!=='8.29'||p.product.productionRuntimeSha!==SEALED||p.product.productionPullRequest!==164)fail('certified product identity drift');
   if(p.production.sealedRelease!=='8.29'||p.production.candidateRelease!=='8.29'||p.production.candidateStatus!=='production-sealed')fail('certified status drift');
   if(p.engineering.deliveryBranch!=='main'||p.engineering.pullRequest!==164||p.engineering.versionDecision?.sequence!==28||p.engineering.versionDecision?.decision!=='confirm'||p.engineering.intendedProductBehaviorChange!==false)fail('certified engineering version drift');

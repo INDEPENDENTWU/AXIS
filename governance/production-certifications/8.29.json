@@ -1,0 +1,58 @@
+{
+  "schema": "axis.production-certificate.v1",
+  "release": "8.29",
+  "certifiedAt": "2026-10-09",
+  "productRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+  "productPullRequest": 164,
+  "exactHeadSha": "8dc4d80f17c061b81a294963c4723f1d6d7e826e",
+  "exactHeadSuccess": 33,
+  "mergedMainWorkflows": {
+    "headSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+    "total": 28,
+    "success": 27,
+    "cancelled": 1,
+    "failed": 0,
+    "scope": "push workflows for exact product/runtime merged-main; cancelled Branch hygiene is not a failed product gate"
+  },
+  "vercel": {
+    "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
+    "deploymentId": "dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1",
+    "deploymentUrl": "https://axis-gsqjf43pa-independentwus-projects.vercel.app",
+    "publicUrl": "https://axis-five-puce.vercel.app",
+    "readyState": "READY",
+    "target": "production",
+    "source": "git",
+    "sourceSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+    "sourceRef": "main",
+    "aliasError": null,
+    "gitCommitStatus": "success",
+    "currentReleaseGateRunId": 37831475540,
+    "deepCompatibilityGateRunId": 37831475524,
+    "productionGateRunId": null,
+    "productionGateSemantics": "Vercel git production deployment READY with matching exact product SHA; no separate exact-main AXIS Production Gate run asserted"
+  },
+  "edgeOne": {
+    "projectId": "makers-bxiu1vmyd0ba",
+    "deploymentId": "dpfctvvd321b",
+    "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
+    "verificationRunId": 37831475199,
+    "sourceSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+    "packageContract": "success",
+    "deployProduction": "success",
+    "vercelApiParity": "success",
+    "chromiumProductionFlow": "success",
+    "webkitProductionFlow": "success",
+    "gitCommitStatus": "success"
+  },
+  "customDomain": {
+    "publicUrl": "https://axis.juele.fun",
+    "verificationRunId": 37831475553,
+    "runAttempt": 2,
+    "sourceSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+    "exactParity": "success",
+    "chromiumProductionFlow": "success",
+    "webkitProductionFlow": "success"
+  },
+  "previousSealedRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
+  "nextBoundedStage": "AXIS 8.30 — Object Identity Integrity; Playable Practice / PLAY THIS and AIR follow only after Object identity correctness."
+}
