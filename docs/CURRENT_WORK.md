@@ -11,7 +11,15 @@ governed target branch: `main`.
 
 Repository governance, artifact identity and provider evidence are authoritative; conversation history is not project governance.
 
-## AXIS 8.29 closure evidence
+## Production baseline at start of this work
+
+Prior AXIS 8.28 Production-sealed runtime: `df67fc0a20c0c34a79341315c8c85b5461acfe44` (product PR #162, governance PR #163). Product 8.29 runtime was promoted separately by PR #164; this governance PR is a non-product seal closeout.
+
+## Active change
+
+8.29 Recording Friction Collapse is the product change already merged and provider verified. This governance-only closeout certifies that existing product without adding behavior or factual writers.
+
+## Validation for this work
 
 - Version decision **sequence 28**: `8.29 → 8.29 / confirm / governance`. No product/runtime behavior change in this closeout.
 - Product PR exact head `8dc4d80f17c061b81a294963c4723f1d6d7e826e`: **33/33** successful PR workflows.
@@ -24,7 +32,9 @@ Repository governance, artifact identity and provider evidence are authoritative
 
 AXIS 8.29 implemented safe previous-value suggestions, same-recorder draft continuity, and an in-flight save guard, without creating any competing Encounter, Session, Active, media or storage writer.
 
-## Next approved milestone, NOT YET STARTED
+## Next planned stage
+
+### Approved milestone — NOT YET STARTED
 
 **AXIS 8.30 — Object Identity Integrity.** Preserve correct per-item identity across full catalog, suggestions, search, Quick selection, recent, custom objects, Object Recorder, Flow, History and Evolution. Protect historical fact provenance and do not silently split ambiguous old events.
 
