@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const fail=m=>{throw Error('[AXIS 8.29 postbuild] '+m)};
 const read=f=>{if(!fs.existsSync(f))fail('missing '+f);return fs.readFileSync(f,'utf8')};
 const info=JSON.parse(read('axis-build.json')),runtime=read('axis-core.js'),css=read('axis-style.css');
-if(info.version!=='8.29'||info.baseVersion!=='8.29')fail('release identity '+info.version+'/'+info.baseVersion);
+if(!['8.29','8.30'].includes(info.version)||info.baseVersion!==info.version)fail('release identity '+info.version+'/'+info.baseVersion);
 if(info.architecture!=='canonical-single-runtime'||info.requests?.initialJavascript!==1||info.requests?.dynamicJavascript!==0||info.assets?.chunks?.length!==0)fail('runtime topology drift');
 for(const gate of ['practiceLoop828','practiceLoopPureProjection828','realityRoute827','realityRouteExistingOwnersPreserved827'])if(info.gates?.[gate]!==true)fail('inherited capability missing '+gate);
 for(const marker of ['__AXIS_829_RECORDING__','axis829Core.projectRecordingRecall','axis829CaptureDraft','axis829DecorateRecorder','axis829SaveInFlight','axis829PreviousValue','axis829RecordContext','data-axis829-reuse'])if(!runtime.includes(marker)&&!css.includes(marker))fail('recording runtime marker missing '+marker);
