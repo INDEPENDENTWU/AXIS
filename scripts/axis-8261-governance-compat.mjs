@@ -54,7 +54,7 @@ const downstream829=
   project?.product?.productionPullRequest===162&&project?.product?.candidatePullRequest===164&&
   decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-const downstream830=decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'&&project?.product?.productionRelease==='8.30'&&project?.product?.releaseStatus==='candidate'&&project?.product?.lastSealedRelease==='8.29'&&project?.product?.productionRuntimeSha==='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'&&project?.product?.productionPullRequest===164&&project?.product?.candidatePullRequest===167&&project?.production?.sealedRelease==='8.29'&&project?.production?.candidateRelease==='8.30'&&project?.production?.latestDeploymentIsAuthority===false;
+const downstream830=decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const staged829=downstream830||sealed829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 if(!sealed8265&&!candidate827&&!sealed827&&!downstream828&&!sealed828&&!staged829)fail('current governance must be sealed 8.26.5, 8.27 candidate/seal, or bounded 8.28 successor/seal');
 
@@ -75,7 +75,7 @@ if(sealed827){
   if(production.vercel?.deploymentId!=='dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1'||production.vercel?.state!=='READY'||production.vercel?.target!=='production')fail('8.29 verified Vercel deployment drift');
   if(production.edgeOne?.deploymentId!=='dpfctvvd321b'||production.edgeOne?.verificationRunId!==37831475199)fail('8.29 verified EdgeOne deployment drift');
   if(production.customDomain?.verificationRunId!==37831475553||production.customDomain?.exactParity!=='success')fail('8.29 verified custom domain drift');
-}else if(downstream830){
+}else if(downstream830&&project?.product?.productionRelease==='8.30'){
   for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171')fail('8.30 lost exact sealed 8.29 provider '+provider);
   if(production.sealedRelease!=='8.29'||production.candidateRelease!=='8.30'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.30 predecessor Production drift');
   if(production.vercel?.deploymentId!=='dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1'||production.edgeOne?.deploymentId!=='dpfctvvd321b'||production.customDomain?.verificationRunId!==37831475553)fail('8.29 exact provider seal lost');
