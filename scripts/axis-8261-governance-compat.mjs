@@ -66,6 +66,14 @@ if(sealed827){
 }else if(sealed828){
   if(production.sealedRelease!=='8.28'||production.candidateStatus!=='production-sealed'||production.latestDeploymentIsAuthority!==false)fail('8.28 successor seal drift');
   if(production.vercel?.sourceSha!==project.product.productionRuntimeSha||production.edgeOne?.sourceSha!==project.product.productionRuntimeSha||production.customDomain?.sourceSha!==project.product.productionRuntimeSha)fail('8.28 provider source authority drift');
+}else if(sealed829Stage){
+  const exact='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171';
+  if(project?.product?.productionRelease!=='8.29'||project?.product?.releaseStatus!=='production-certified'||project?.product?.lastSealedRelease!=='8.29'||project?.product?.productionRuntimeSha!==exact||project?.product?.productionPullRequest!==164)fail('8.29 exact product seal drift');
+  if(production.sealedRelease!=='8.29'||production.candidateRelease!=='8.29'||production.candidateStatus!=='production-sealed'||production.latestDeploymentIsAuthority!==false)fail('8.29 sealed Production status drift');
+  for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==exact)fail('8.29 sealed provider source drift '+provider);
+  if(production.vercel?.deploymentId!=='dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1'||production.vercel?.state!=='READY'||production.vercel?.target!=='production')fail('8.29 verified Vercel deployment drift');
+  if(production.edgeOne?.deploymentId!=='dpfctvvd321b'||production.edgeOne?.verificationRunId!==37831475199)fail('8.29 verified EdgeOne deployment drift');
+  if(production.customDomain?.verificationRunId!==37831475553||production.customDomain?.exactParity!=='success')fail('8.29 verified custom domain drift');
 }else if(downstream829){
   if(production.sealedRelease!=='8.28'||production.candidateRelease!=='8.29'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.29 candidate Production boundary drift');
   for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!=='df67fc0a20c0c34a79341315c8c85b5461acfe44')fail('8.29 lost sealed 8.28 provider '+provider);
@@ -100,9 +108,9 @@ for(const p of [
   'postbuild-8265-recording-review-geometry-contract.mjs'
 ])if(!fs.existsSync(p))fail(`release surface missing ${p}`);
 
-if(candidate827||sealed827||downstream828||sealed828||downstream829){
+if(candidate827||sealed827||downstream828||sealed828||downstream829||sealed829Stage){
   for(const p of ['lib/axis-reality-route.mjs','prepare-827-reality-route.mjs','postbuild-827-reality-route-contract.mjs','scripts/axis-827-governance-compat.mjs'])if(!fs.existsSync(p))fail(`8.27 release surface missing ${p}`);
   await import('./axis-827-governance-compat.mjs');
 }
 
-console.log(`[AXIS 8.26.1 governance compat] PASS · inherited 8.26/8.26.1 truth preserved inside ${downstream829?'8.29 candidate':sealed828?'sealed 8.28':downstream828?'8.28 candidate':sealed827?'sealed 8.27':candidate827?'8.27 candidate':'sealed 8.26.5'}`);
+console.log(`[AXIS 8.26.1 governance compat] PASS · inherited 8.26/8.26.1 truth preserved inside ${sealed829Stage?'sealed 8.29':downstream829?'8.29 candidate':sealed828?'sealed 8.28':downstream828?'8.28 candidate':sealed827?'sealed 8.27':candidate827?'8.27 candidate':'sealed 8.26.5'}`);
