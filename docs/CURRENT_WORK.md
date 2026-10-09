@@ -2,8 +2,8 @@
 
 **Governed milestone:** AXIS 8.30 — Object Identity Integrity.
 governed target branch: `main`.
-**Bounded delivery branch:** `feature/830-object-identity-integrity` · PR **#167** (product candidate, pending certification).
-**Version decision:** sequence 29 · **8.29 → 8.30 / bump / product-runtime**.
+Bounded delivery branch: `feature/830-object-identity-integrity` · PR **#167**.
+Version decision: **8.29 → 8.30 / bump / sequence 29 / product-runtime**.
 **Status:** unreleased product-runtime candidate, last Production-sealed release **8.29**.
 
 ## Production baseline at start of this work
@@ -25,3 +25,7 @@ Full source audit `scripts/axis-830-object-identity-audit.mjs --enforce`, build/
 After full 8.30 merged-main Production certification and independent governance seal, **AXIS 8.31 — Playable Runtime Foundation**, then PLAY THIS, AIR, TAKE and FORK.
 
 Cross-platform foundation remains `axis-native-foundation-0` from `INDEPENDENTWU/AXIS-iOS`. Conversation history is supplemental only; repository state and verified evidence are authoritative.
+
+## Durable source and native compatibility
+
+repository governance remains authoritative. Chat history is not authoritative project memory. Portable inherited contracts: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`. The native foundation remains `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`; platform-specific camera and haptic capabilities stay separately declared. The local-first Web app and established factual owners remain authoritative for this candidate.
