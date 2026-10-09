@@ -52,3 +52,7 @@ Each product release requires a fresh decision, bounded PR, pure invariants, Chr
 ## Inherited cross-platform authority
 
 Portable contracts include `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.reality-route.v1`, `axis.execution-constraints.v1`, `axis.practice-loop.v1`, `axis.recording-continuity.v1`, and `axis.report-range.v1`. Cross-platform foundation is `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`; no new native owner is created by this governance closeout.
+
+## AXIS 8.30 preparatory branch (not shipped)
+
+Identity inventory and invariants in `feature/830-object-identity-integrity`; source of truth remains sealed AXIS 8.29 until a governed product bump, exact test proof and Production seal. See `docs/AXIS_830_OBJECT_IDENTITY.md`. Do not infer 8.30 product behavior from this non-runtime preparatory branch.

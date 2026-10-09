@@ -53,3 +53,9 @@ Acceptance conditions:
 Order: **8.31 Runtime → 8.32 local PLAY THIS → 8.33 shareable PLAY THIS → 8.34 AIR → 8.35 integration → 8.36 TAKE → 8.37 FORK → 8.38 launch convergence**. This roadmap is **not a claim of implementation**.
 
 Do not introduce public sharing, new capture writers or Playable persistence in the 8.29 seal. Local-first core history remains private by default. Future shared challenge endpoints require minimized public data, expiration/revocation, abuse control, and cross-provider consistency.
+
+## In-progress bounded branch — AXIS 8.30 Object Identity Integrity
+
+`feature/830-object-identity-integrity` begins from governance-sealed AXIS 8.29 `6713b47576e902c2015c63b7bb82b23691ec7a3c`. Its first slice is a read-only Object identity inventory and remediation contract in `docs/AXIS_830_OBJECT_IDENTITY.md`; it does **not** change the current public 8.29 product or pretend 8.30 is released. The source-level risks include legacy `baseId` routing and historical same-name selection fallback.
+
+Authoritative next step: separately inspect, repair and physically prove every displayed catalog Object selects and persists its own stable identity. Legacy ambiguous Encounters remain immutable. When a product behavior change is admitted, issue a fresh sequence 29 version bump and preserve the exact-head / merged-main / governance-seal protocol. PLAY THIS and AIR remain planned after 8.30.
