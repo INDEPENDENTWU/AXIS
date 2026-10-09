@@ -1,7 +1,7 @@
 # AXIS Current Work
 
 **Governed milestone:** AXIS 8.30 — Object Identity Integrity.
-**Governed target branch:** `main`.
+governed target branch: `main`.
 **Bounded delivery branch:** `feature/830-object-identity-integrity` · PR **#167** (product candidate, pending certification).
 **Version decision:** sequence 29 · **8.29 → 8.30 / bump / product-runtime**.
 **Status:** unreleased product-runtime candidate, last Production-sealed release **8.29**.

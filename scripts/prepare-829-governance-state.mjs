@@ -7,8 +7,9 @@ const decision=read('governance/version-decision.json');
 const downstream830=decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const sealCloseout=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 if(downstream830){
+  await import('./prepare-829-sealed-governance.mjs');
   const p=read('governance/project-state.json');
-  if(p.product?.productionRelease!=='8.30'||p.product?.productionRuntimeSha!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'||p.product?.lastSealedRelease!=='8.29'||p.production?.sealedRelease!=='8.29'||p.production?.candidateRelease!=='8.30')throw Error('[AXIS 8.29 governance] 8.30 lost sealed 8.29 runtime');
+  if(p.product?.productionRelease!=='8.29'||p.product?.releaseStatus!=='production-certified'||p.product?.productionRuntimeSha!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'||p.production?.sealedRelease!=='8.29')throw Error('[AXIS 8.29 governance] predecessor certificate restoration drift');
 }else if(!sealCloseout){
 if(decision?.sequence!==27||decision?.base_release!=='8.28'||decision?.release!=='8.29'||decision?.decision!=='bump'||decision?.change_class!=='product-runtime')throw Error('[AXIS 8.29 governance] expected version decision sequence 27');
 {

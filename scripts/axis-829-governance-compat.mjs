@@ -6,11 +6,11 @@ const json=f=>JSON.parse(read(f));
 const LAST='df67fc0a20c0c34a79341315c8c85b5461acfe44',SEALED='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171';
 const p=json('governance/project-state.json'),d=json('governance/version-decision.json'),o=json('governance/owners.json');
 const candidate=d.sequence===27&&d.base_release==='8.28'&&d.release==='8.29'&&d.decision==='bump'&&d.change_class==='product-runtime';
-const downstream830=d.sequence===29&&d.base_release==='8.29'&&d.release==='8.30'&&d.decision==='bump'&&d.change_class==='product-runtime'&&p.product?.productionRelease==='8.30'&&p.product?.releaseStatus==='candidate'&&p.product?.lastSealedRelease==='8.29'&&p.product?.productionRuntimeSha===SEALED&&p.product?.productionPullRequest===164&&p.product?.candidatePullRequest===167;
+const downstream830=d.sequence===29&&d.base_release==='8.29'&&d.release==='8.30'&&d.decision==='bump'&&d.change_class==='product-runtime';
 const certified=d.sequence===28&&d.base_release==='8.29'&&d.release==='8.29'&&d.decision==='confirm'&&d.change_class==='governance';
 if(!candidate&&!certified&&!downstream830)fail('unknown 8.29 version-decision sequence');
 if(!downstream830&&(p.product?.productionRelease!=='8.29'||p.product?.candidatePullRequest!==164))fail('8.29 product identity');
-if(o.baselineRelease!==(downstream830?'8.30':'8.29'))fail('owner baseline drift');
+if(o.baselineRelease!==(downstream830&&p.product?.productionRelease==='8.30'?'8.30':'8.29'))fail('owner baseline drift');
 if(p.production?.latestDeploymentIsAuthority!==false||p.production?.evidenceScope!=='product-runtime-seal-snapshot')fail('production authority boundary');
 const recording=p.engineering?.recordingFriction;
 if(recording?.pureOwner!=='lib/axis-recording-continuity.mjs'||recording?.projectionSchema!=='axis.recording-continuity.v1')fail('recording contract identity');
@@ -23,7 +23,10 @@ let expectedSha=LAST;
 if(downstream830){
   const cert=json('governance/production-certifications/8.29.json');
   if(cert.productRuntimeSha!==SEALED||cert.productPullRequest!==164||cert.release!=='8.29')fail('8.30 lost exact 8.29 certificate');
-  if(p.product.productionRuntimeSha!==SEALED||p.product.productionPullRequest!==164||p.product.lastSealedRelease!=='8.29'||p.production.sealedRelease!=='8.29'||p.production.candidateRelease!=='8.30'||p.production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.30 must inherit sealed 8.29 product');
+  if(p.product.productionRuntimeSha!==SEALED||p.product.productionPullRequest!==164||p.product.lastSealedRelease!=='8.29'||p.production.sealedRelease!=='8.29')fail('8.30 must inherit sealed 8.29 product');
+  if(p.product.productionRelease==='8.30'){
+    if(p.product.releaseStatus!=='candidate'||p.product.candidatePullRequest!==167||p.production.candidateRelease!=='8.30'||p.production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.30 exact candidate state drift');
+  }else if(p.product.productionRelease!=='8.29'||p.product.releaseStatus!=='production-certified'||p.production.candidateRelease!=='8.29'||p.production.candidateStatus!=='production-sealed')fail('8.29 inherited build state drift');
   if(recording.status!=='production-sealed-8.29'||recording.productionRuntimeSha!==SEALED||owner.status!=='derived-presentation-production-sealed')fail('8.29 recording owner lost during 8.30');
   for(const prov of ['vercel','edgeOne','customDomain'])if(p.production?.[prov]?.sourceSha!==SEALED)fail('8.30 provider provenance changed '+prov);
   expectedSha=SEALED;
