@@ -42,5 +42,18 @@ for(const file of [...fs.readdirSync('.').filter(x=>/^postbuild-.*\.mjs$/.test(x
  next=next.replaceAll("'8.29'];","'8.29','8.30'];");
  if(next!==src){write(file,next);changed++}
 }
+// Moving-current test expectations are updated only after historical per-release
+// transforms. Retain old named-version contracts at their original build stages.
+{
+ const f='scripts/axis-819-object-recording-smoke.mjs';let x=read(f),a="await chooseObject('lat','高位下拉');",b="await chooseObject('lat-pulldown','高位下拉');";
+ if(x.split(a).length!==2)fail('8.19 built-current native selection assertion drift');
+ write(f,x.replace(a,b));
+}
+{
+ const f='scripts/axis-813-shadow-browser.mjs';let x=read(f);
+ const re=/assert\.ok\(\[([^\]]+)\]\.includes\(EXPECTED\), `unexpected public patch \$\{EXPECTED\}`\);/;
+ const match=x.match(re);if(!match||match[1].includes("'8.30'"))fail('8.13 current patch assertion drift');
+ write(f,x.replace(re,(_,items)=>"assert.ok(["+items+",'8.30'].includes(EXPECTED), `unexpected public patch \$\{EXPECTED\}`);"));
+}
 if(changed<10)fail('8.30 inherited release checks suspiciously small: '+changed);
 console.log('[AXIS 8.30 release identity] 8.29 → 8.30 · '+changed+' inherited check files updated, previous certificate untouched');
