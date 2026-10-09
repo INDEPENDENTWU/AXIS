@@ -10,7 +10,8 @@ const RUNTIME_828='df67fc0a20c0c34a79341315c8c85b5461acfe44';
 const sealed=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 
 const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-const downstream829=sealed829Stage||(
+const downstream830=decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'&&project?.product?.productionRelease==='8.30'&&project?.product?.releaseStatus==='candidate'&&project?.product?.lastSealedRelease==='8.29'&&project?.product?.productionRuntimeSha==='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'&&project?.product?.productionPullRequest===164&&project?.product?.candidatePullRequest===167&&project?.production?.sealedRelease==='8.29'&&project?.production?.candidateRelease==='8.30'&&project?.production?.latestDeploymentIsAuthority===false;
+const downstream829=downstream830||sealed829Stage||(
   decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&
   decision?.decision==='bump'&&decision?.change_class==='product-runtime');
 
@@ -41,6 +42,7 @@ if(downstream829){
     // state while the sequence 27 decision remains the bounded authority.
     // Exact 8.29 candidate identity is enforced by final 8.29 governance.
     if(!project?.engineering?.realityRoute)fail('inherited Reality Route capability missing');
+    if(downstream830){if(owners.baselineRelease!=='8.30'||project.engineering.versionDecision?.sequence!==29||project.engineering.recordingFriction?.status!=='production-sealed-8.29')fail('8.30 predecessor owner/version drift');for(const p of ['vercel','edgeOne','customDomain'])if(project.production?.[p]?.sourceSha!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171')fail('8.30 exact inherited provider drift '+p);}
   }
   console.log('[AXIS 8.28 governance compat] PASS · sealed Practice Loop inherited inside 8.29 candidate');
 }else{

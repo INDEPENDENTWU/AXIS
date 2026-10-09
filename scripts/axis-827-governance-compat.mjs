@@ -38,7 +38,8 @@ const downstream828Exact=
   project?.product?.lastSealedRelease==='8.27'&&project?.product?.productionRuntimeSha===RUNTIME_SHA&&
   project?.product?.productionPullRequest===160&&project?.product?.candidatePullRequest===162;
 const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-const downstream829=sealed829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+const downstream830=decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'&&project?.product?.productionRelease==='8.30'&&project?.product?.releaseStatus==='candidate'&&project?.product?.lastSealedRelease==='8.29'&&project?.product?.productionRuntimeSha==='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'&&project?.product?.productionPullRequest===164&&project?.product?.candidatePullRequest===167&&project?.production?.sealedRelease==='8.29'&&project?.production?.candidateRelease==='8.30'&&project?.production?.latestDeploymentIsAuthority===false;
+const downstream829=downstream830||sealed829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const seal828Stage=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 const sealed828=
   decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&

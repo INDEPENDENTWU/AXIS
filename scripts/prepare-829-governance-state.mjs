@@ -4,8 +4,12 @@ const LAST='df67fc0a20c0c34a79341315c8c85b5461acfe44';
 const read=f=>JSON.parse(fs.readFileSync(f,'utf8'));
 const write=(f,x)=>fs.writeFileSync(f,JSON.stringify(x,null,2)+'\n');
 const decision=read('governance/version-decision.json');
+const downstream830=decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const sealCloseout=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-if(!sealCloseout){
+if(downstream830){
+  const p=read('governance/project-state.json');
+  if(p.product?.productionRelease!=='8.30'||p.product?.productionRuntimeSha!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'||p.product?.lastSealedRelease!=='8.29'||p.production?.sealedRelease!=='8.29'||p.production?.candidateRelease!=='8.30')throw Error('[AXIS 8.29 governance] 8.30 lost sealed 8.29 runtime');
+}else if(!sealCloseout){
 if(decision?.sequence!==27||decision?.base_release!=='8.28'||decision?.release!=='8.29'||decision?.decision!=='bump'||decision?.change_class!=='product-runtime')throw Error('[AXIS 8.29 governance] expected version decision sequence 27');
 {
  const f='governance/project-state.json',x=read(f);

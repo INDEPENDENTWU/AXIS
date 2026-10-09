@@ -6,10 +6,11 @@ const json=f=>JSON.parse(read(f));
 const LAST='df67fc0a20c0c34a79341315c8c85b5461acfe44',SEALED='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171';
 const p=json('governance/project-state.json'),d=json('governance/version-decision.json'),o=json('governance/owners.json');
 const candidate=d.sequence===27&&d.base_release==='8.28'&&d.release==='8.29'&&d.decision==='bump'&&d.change_class==='product-runtime';
+const downstream830=d.sequence===29&&d.base_release==='8.29'&&d.release==='8.30'&&d.decision==='bump'&&d.change_class==='product-runtime'&&p.product?.productionRelease==='8.30'&&p.product?.releaseStatus==='candidate'&&p.product?.lastSealedRelease==='8.29'&&p.product?.productionRuntimeSha===SEALED&&p.product?.productionPullRequest===164&&p.product?.candidatePullRequest===167;
 const certified=d.sequence===28&&d.base_release==='8.29'&&d.release==='8.29'&&d.decision==='confirm'&&d.change_class==='governance';
-if(!candidate&&!certified)fail('unknown 8.29 version-decision sequence');
-if(p.product?.productionRelease!=='8.29'||p.product?.candidatePullRequest!==164)fail('8.29 product identity');
-if(o.baselineRelease!=='8.29')fail('owner baseline drift');
+if(!candidate&&!certified&&!downstream830)fail('unknown 8.29 version-decision sequence');
+if(!downstream830&&(p.product?.productionRelease!=='8.29'||p.product?.candidatePullRequest!==164))fail('8.29 product identity');
+if(o.baselineRelease!==(downstream830?'8.30':'8.29'))fail('owner baseline drift');
 if(p.production?.latestDeploymentIsAuthority!==false||p.production?.evidenceScope!=='product-runtime-seal-snapshot')fail('production authority boundary');
 const recording=p.engineering?.recordingFriction;
 if(recording?.pureOwner!=='lib/axis-recording-continuity.mjs'||recording?.projectionSchema!=='axis.recording-continuity.v1')fail('recording contract identity');
@@ -19,7 +20,14 @@ if(p.engineering?.practiceLoop?.status!=='production-sealed-8.28'||p.engineering
 const owner=o.owners?.find(x=>x.capability==='recording-friction-collapse-829');
 if(owner?.contract!=='axis.recording-continuity.v1'||owner?.storage!=='none')fail('derived owner identity');
 let expectedSha=LAST;
-if(candidate){
+if(downstream830){
+  const cert=json('governance/production-certifications/8.29.json');
+  if(cert.productRuntimeSha!==SEALED||cert.productPullRequest!==164||cert.release!=='8.29')fail('8.30 lost exact 8.29 certificate');
+  if(p.product.productionRuntimeSha!==SEALED||p.product.productionPullRequest!==164||p.product.lastSealedRelease!=='8.29'||p.production.sealedRelease!=='8.29'||p.production.candidateRelease!=='8.30'||p.production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.30 must inherit sealed 8.29 product');
+  if(recording.status!=='production-sealed-8.29'||recording.productionRuntimeSha!==SEALED||owner.status!=='derived-presentation-production-sealed')fail('8.29 recording owner lost during 8.30');
+  for(const prov of ['vercel','edgeOne','customDomain'])if(p.production?.[prov]?.sourceSha!==SEALED)fail('8.30 provider provenance changed '+prov);
+  expectedSha=SEALED;
+}else if(candidate){
   if(p.product.releaseStatus!=='candidate'||p.product.lastSealedRelease!=='8.28'||p.product.productionRuntimeSha!==LAST||p.product.productionPullRequest!==162)fail('candidate predecessor seal drift');
   if(p.production.sealedRelease!=='8.28'||p.production.candidateRelease!=='8.29'||p.production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('candidate evidence boundary');
   if(p.engineering.deliveryBranch!=='feature/829-recording-friction-collapse'||p.engineering.pullRequest!==164||p.engineering.versionDecision?.sequence!==27||p.engineering.versionDecision?.decision!=='bump')fail('candidate delivery/version identity');
@@ -42,4 +50,4 @@ if(candidate)for(const provider of ['vercel','edgeOne','customDomain'])if(p.prod
 for(const f of ['README.md','docs/CURRENT_RELEASE.md','docs/CURRENT_WORK.md','docs/HANDOFF.md']){
  const s=read(f);if(!s.includes('8.29')||!s.includes('8.28')||!s.includes(expectedSha))fail('release document identity '+f);
 }
-console.log('[AXIS 8.29 governance] PASS · '+(certified?'Production-sealed at exact merged-main '+SEALED:'candidate over sealed 8.28')+' · one recorder/Encounter owner');
+console.log('[AXIS 8.29 governance] PASS · '+(downstream830?'inherited exact 8.29 seal inside 8.30':certified?'Production-sealed at exact merged-main '+SEALED:'candidate over sealed 8.28')+' · one recorder/Encounter owner');
