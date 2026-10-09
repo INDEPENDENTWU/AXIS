@@ -63,14 +63,23 @@ if(CURRENT==='8.24'){
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.25 must be governed as intended product behavior change');
   if(!(decision?.sequence===11&&decision?.base_release==='8.24.1'&&decision?.release==='8.25'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('8.25 version decision must be 8.24.1 → 8.25 / bump / sequence 11 / product-ui');
 }else if(CURRENT==='8.29'){
-  if(!candidate||STATUS!=='candidate'||SEALED!=='8.28')fail('8.29 must be candidate over sealed 8.28');
-  if(RUNTIME_SHA!=='df67fc0a20c0c34a79341315c8c85b5461acfe44'||SEALED_PR!==162)fail('8.29 candidate lost exact 8.28 Production seal');
-  if(CANDIDATE_PR!==164||project?.engineering?.pullRequest!==164||project?.engineering?.deliveryBranch!=='feature/829-recording-friction-collapse')fail('8.29 product PR identity drift');
-  if(project?.production?.candidateRelease!=='8.29'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification'||project?.production?.latestDeploymentIsAuthority!==false)fail('8.29 candidate Production boundary drift');
-  if(project?.engineering?.activeMilestone!=='AXIS 8.29 — Recording Friction Collapse')fail('8.29 governed milestone drift');
-  if(!(decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.29 product-runtime decision drift');
+  if(CANDIDATE_PR!==164||project?.engineering?.pullRequest!==164)fail('8.29 product PR identity drift');
+  if(project?.engineering?.activeMilestone!=='AXIS 8.29 — Recording Friction Collapse')fail('8.29 milestone drift');
   const rf=project?.engineering?.recordingFriction;
-  if(rf?.status!=='8.29-release-candidate'||rf?.pureOwner!=='lib/axis-recording-continuity.mjs'||rf?.projectionSchema!=='axis.recording-continuity.v1'||rf?.newStorageNamespace!==false||rf?.newRecorderOwner!==false||rf?.newEncounterWriter!==false)fail('8.29 Recording continuity owner drift');
+  if(rf?.pureOwner!=='lib/axis-recording-continuity.mjs'||rf?.projectionSchema!=='axis.recording-continuity.v1'||rf?.newStorageNamespace!==false||rf?.newRecorderOwner!==false||rf?.newEncounterWriter!==false)fail('8.29 Recording owner drift');
+  if(STATUS==='candidate'){
+    if(!candidate||SEALED!=='8.28'||RUNTIME_SHA!=='df67fc0a20c0c34a79341315c8c85b5461acfe44'||SEALED_PR!==162)fail('8.29 must be candidate over sealed 8.28');
+    if(project?.engineering?.deliveryBranch!=='feature/829-recording-friction-collapse'||project?.production?.candidateRelease!=='8.29'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.29 candidate Production boundary drift');
+    if(!(decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.29 candidate version decision');
+  }else if(STATUS==='production-certified'){
+    const certificate=json('governance/production-certifications/8.29.json');
+    if(candidate||SEALED!=='8.29'||RUNTIME_SHA!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'||SEALED_PR!==164)fail('8.29 certified product runtime mismatch');
+    if(project?.production?.candidateRelease!=='8.29'||project?.production?.candidateStatus!=='production-sealed'||project?.production?.latestDeploymentIsAuthority!==false)fail('8.29 certified Production authority');
+    for(const p of ['vercel','edgeOne','customDomain'])if(project?.production?.[p]?.sourceSha!==RUNTIME_SHA)fail('8.29 certified provider provenance '+p);
+    if(project?.production?.vercel?.deploymentId!==certificate.vercel.deploymentId||project?.production?.edgeOne?.deploymentId!==certificate.edgeOne.deploymentId||project?.production?.customDomain?.verificationRunId!==certificate.customDomain.verificationRunId)fail('8.29 certificate provider evidence drift');
+    if(project?.engineering?.deliveryBranch!=='main'||rf?.status!=='production-sealed-8.29')fail('8.29 production handoff drift');
+    if(!(decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance'))fail('8.29 closeout decision drift');
+  }else fail('unexpected AXIS 8.29 release status '+STATUS);
 }else if(CURRENT==='8.28'){
   if(CANDIDATE_PR!==162||project?.engineering?.pullRequest!==162)fail('8.28 product PR must remain #162');
   if(project?.engineering?.activeMilestone!=='AXIS 8.28 — Practice Loop Convergence')fail('8.28 milestone drift');

@@ -259,12 +259,12 @@
     },
     {
       "capability": "recording-friction-collapse-829",
-      "status": "derived-presentation-release-candidate",
+      "status": "derived-presentation-production-sealed",
       "owner": "lib/axis-recording-continuity.mjs + existing app.js recording bridge",
       "contract": "axis.recording-continuity.v1",
       "storage": "none",
       "delegatesTo": "existing app.js+v874 Recorder, canonical app.js Encounter append, existing FlowRun/Active lifecycle",
-      "notes": "Historical values are suggestions only. In-sheet draft edits must survive rerender; in-flight save has one owner. No new storage or fact writer."
+      "notes": "Production-sealed at exact runtime 4a9c73b2ea5330b9cffad3f9e322eb6970dfe171. Read-only recall and transient recorder draft preservation; canonical app Encounter/Session/Active/media owners unchanged."
     }
   ],
   "rules": [

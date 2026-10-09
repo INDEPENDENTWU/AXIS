@@ -9,13 +9,21 @@ const project=json('governance/project-state.json'),decision=json('governance/ve
 const RUNTIME_828='df67fc0a20c0c34a79341315c8c85b5461acfe44';
 const sealed=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 
-const downstream829=
+const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
+const downstream829=sealed829Stage||(
   decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&
-  decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+  decision?.decision==='bump'&&decision?.change_class==='product-runtime');
 
 if(downstream829){
   const certified='df67fc0a20c0c34a79341315c8c85b5461acfe44';
   if(project?.product?.productionRelease==='8.29'){
+  if(sealed829Stage){
+    const run='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171';
+    if(project.product.releaseStatus!=='production-certified'||project.product.lastSealedRelease!=='8.29'||project.product.productionRuntimeSha!==run||project.product.productionPullRequest!==164||project.product.candidatePullRequest!==164)fail('8.29 sealed runtime authority drift');
+    if(project.production?.sealedRelease!=='8.29'||project.production?.candidateStatus!=='production-sealed'||project.production?.latestDeploymentIsAuthority!==false)fail('8.29 seal production boundary drift');
+    for(const prov of ['vercel','edgeOne','customDomain'])if(project.production?.[prov]?.sourceSha!==run)fail('8.29 sealed provider mismatch '+prov);
+    if(owners.baselineRelease!=='8.29')fail('8.29 sealed owners baseline drift');
+  }else{
   if(project?.product?.productionRelease!=='8.29'||project?.product?.releaseStatus!=='candidate'||
      project?.product?.lastSealedRelease!=='8.28'||project?.product?.productionRuntimeSha!==certified||
      project?.product?.productionPullRequest!==162||project?.product?.candidatePullRequest!==164)fail('8.29 successor lost exact 8.28 production authority');
@@ -27,6 +35,7 @@ if(downstream829){
   const owner=owners.owners?.find(o=>o.capability==='practice-loop-convergence-828');
   if(owner?.status!=='derived-runtime-production-sealed'||owner?.storage!=='none')fail('certified Practice Loop owner boundary drift');
   if(owners.baselineRelease!=='8.29')fail('successor owner baseline drift');
+  }
   }else{
     // Earlier deterministic release builders temporarily expose prior product
     // state while the sequence 27 decision remains the bounded authority.
