@@ -31,7 +31,7 @@ for(const item of catalog){
 const examples=[['run','treadmill'],['seated-row','chest-row'],['leg-curl','seated-curl'],['leg-curl','lying-curl']];
 for(const [a,b]of examples)assert.ok(byId.has(a)&&byId.has(b)&&a!==b,'missing distinct Object identity '+a+' / '+b);
 const probes=[
-  {id:'legacy-quick-selected-historical-name',file:'prepare-8123-canonical-library-selection.mjs',pattern:/const hist=allEvents\(\)\.find\(x=>x\.name===n\)/},
+  {id:'legacy-quick-selected-historical-name',file:'prepare-8123-canonical-library-selection.mjs',pattern:/return null;const hist=allEvents\(\)\.find\(x=>x\.name===n\)/},
   {id:'classic-selected-uses-base-id',file:'prepare-8123-canonical-library-selection.mjs',pattern:/lib\.baseId\s*\|\|\s*lib\.id/},
   {id:'library-pick-uses-base-id',file:'prepare-8123-canonical-library-selection.mjs',pattern:/item\.baseId\s*\|\|\s*item\.id/},
   {id:'smart-search-pick-uses-base-id',file:'prepare-8124-settings-catalog-polish.mjs',pattern:/pickId\s*:\s*x\.baseId\s*\|\|\s*x\.id/},
