@@ -31,6 +31,7 @@ for(const file of [...fs.readdirSync('.').filter(x=>/^postbuild-.*\.mjs$/.test(x
  if(excluded.has(file)||file.startsWith('scripts/prepare-830'))continue;
  let src=read(file),next=src;
  next=next.replaceAll("window.__AXIS_RELEASE__==='8.29'","window.__AXIS_RELEASE__==='8.30'");
+ next=next.replaceAll("assert.equal(x.release,'8.29')","assert.equal(x.release,'8.30')");
  next=next.replaceAll("window.__AXIS_RELEASE__),'8.29'","window.__AXIS_RELEASE__),'8.30'");
  for(const field of ['info.version','info.baseVersion','contract.publicVersion','contract.stableBaseVersion','manifest.version','manifest.baseVersion','candidate.version','candidate.baseVersion','EXPECTED','CURRENT_VERSION','VERSION']){
   next=next.replaceAll(field+"!=='8.29'",field+"!=='8.30'");
