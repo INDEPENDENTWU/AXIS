@@ -55,5 +55,25 @@ for(const file of [...fs.readdirSync('.').filter(x=>/^postbuild-.*\.mjs$/.test(x
  const match=x.match(re);if(!match||match[1].includes("'8.30'"))fail('8.13 current patch assertion drift');
  write(f,x.replace(re,(_,items)=>"assert.ok(["+items+",'8.30'].includes(EXPECTED), `unexpected public patch \$\{EXPECTED\}`);"));
 }
+// AXIS 8.30 current-test convergence is strictly after historical prepares.
+{
+ const f='prepare-8123-ci-stability.mjs',x=read(f);
+ const point=" if(oldCount===0&&newCount===1)return src;";
+ const fix=" if(oldCount===0&&newCount===1)return src;\n if(label==='Shadow public patch family'&&oldCount===0&&newCount===0){const old=\"'8.12.2','8.30'\",cur=\"'8.12.2','8.12.3','8.30'\";if(src.split(old).length-1===1)return src.replace(old,cur);if(src.split(cur).length-1===1)return src;}";
+ if(x.split(point).length!==2)fail('8.12.3 CI adapter integration drift');
+ write(f,x.replace(point,fix));
+}
+{
+ const f='scripts/axis-816-capture-evidence-smoke.mjs',x=read(f),from="assert.equal(boot.release,'8.29');",to="assert.equal(boot.release,'8.30');";
+ if(x.split(from).length!==2)fail('8.16 built-current release assertion drift');
+ write(f,x.replace(from,to));
+}
+{
+ const f='scripts/axis-819-object-recording-smoke.mjs';let x=read(f);
+ const from="await chooseObject('lat-pulldown','高位下拉');";
+ const to="assert.equal(await page.evaluate(()=>window.__AXIS_SELECT_EQUIPMENT__?.('lat',true)),true,'legacy base Object selection is no longer available');await page.waitForFunction(()=>window.__AXIS_CAPTURE__?.snapshot?.().selectedEq==='lat',undefined,{timeout:3000});";
+ if(x.split(from).length!==2)fail('8.19 legacy base/Object regression assertion drift');
+ write(f,x.replace(from,to));
+}
 if(changed<10)fail('8.30 inherited release checks suspiciously small: '+changed);
 console.log('[AXIS 8.30 release identity] 8.29 → 8.30 · '+changed+' inherited check files updated, previous certificate untouched');
