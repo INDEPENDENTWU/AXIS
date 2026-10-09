@@ -3,23 +3,23 @@
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.29",
-    "releaseStatus": "production-certified",
+    "productionRelease": "8.30",
+    "releaseStatus": "candidate",
     "lastSealedRelease": "8.29",
     "productionRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
     "productionPullRequest": 164,
-    "candidatePullRequest": 164,
+    "candidatePullRequest": 167,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
     "sealedRelease": "8.29",
     "sealedAt": "2026-10-09",
-    "candidateRelease": "8.29",
-    "candidateStatus": "production-sealed",
+    "candidateRelease": "8.30",
+    "candidateStatus": "pending-exact-head-and-merged-main-certification",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "AXIS 8.29 is Production-sealed at certified exact product/runtime merged-main 4a9c73b2ea5330b9cffad3f9e322eb6970dfe171. Governance-only commits and subsequent provider redeploys never replace that runtime authority.",
+    "evidenceSemantics": "The certified 8.29 product/runtime and provider deployments remain authority until the exact 8.30 merged product commit passes full Production certification.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
       "deploymentId": "dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1",
@@ -67,13 +67,13 @@
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.29 — Recording Friction Collapse",
-    "activePhase": "Production-sealed — compatible confirmed recall, preserved drafts, canonical save guard",
+    "activeMilestone": "AXIS 8.30 — Object Identity Integrity",
+    "activePhase": "Product-runtime candidate — canonical catalog identity end-to-end",
     "activeBranch": "main",
-    "deliveryBranch": "main",
-    "pullRequest": 164,
-    "pullRequestDraft": false,
-    "baselineRelease": "8.29",
+    "deliveryBranch": "feature/830-object-identity-integrity",
+    "pullRequest": 167,
+    "pullRequestDraft": true,
+    "baselineRelease": "8.30",
     "baselineRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
     "lastSealedRelease": "8.29",
     "lastSealedRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
@@ -82,14 +82,14 @@
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed.",
-    "intendedProductBehaviorChange": false,
-    "nextProductRelease": "8.29",
+    "intendedProductBehaviorChange": true,
+    "nextProductRelease": "8.30",
     "versionDecision": {
-      "sequence": 28,
+      "sequence": 29,
       "baseRelease": "8.29",
-      "release": "8.29",
-      "decision": "confirm",
-      "changeClass": "governance"
+      "release": "8.30",
+      "decision": "bump",
+      "changeClass": "product-runtime"
     },
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
@@ -441,7 +441,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Next bounded AXIS 8.30 — Object Identity Integrity: audit and repair distinct catalog, search-picker, and recording Object identities with explicit historical compatibility before introducing Playable Practice (PLAY THIS, AIR, TAKE, FORK).",
+    "nextSlice": "Certify exact stable Object IDs across every selection and Encounter writer, preserve legacy records, then PLAY THIS runtime 8.31.",
     "recordingReviewGeometry": {
       "status": "production-sealed-8.26.5-inherited",
       "baseRelease": "8.26.4",
@@ -654,6 +654,28 @@
         "previousSealedRuntimeSha": "df67fc0a20c0c34a79341315c8c85b5461acfe44",
         "nextBoundedStage": "AXIS 8.30 — Object Identity Integrity; Playable Practice / PLAY THIS and AIR follow only after Object identity correctness."
       }
+    },
+    "objectIdentity": {
+      "status": "8.30-release-candidate",
+      "schema": "axis.object-identity.v1",
+      "sourceOwner": "v873-exercise-library.js + canonical app.js selection and v61 classic recording",
+      "audit": "scripts/axis-830-object-identity-audit.mjs",
+      "canonicalIdPreserved": true,
+      "baseIdIsOnlyFamilyMetadata": true,
+      "ambiguousHistoryRelabel": false,
+      "historicalEncounterRewrite": false,
+      "newEncounterWriter": false,
+      "newRecorderOwner": false,
+      "newStorageNamespace": false,
+      "newSessionWriter": false,
+      "newActiveOwner": false,
+      "network": false,
+      "ai": false,
+      "browsers": [
+        "chromium",
+        "webkit"
+      ],
+      "baselineProductRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171"
     }
   },
   "compatibility": {

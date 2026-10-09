@@ -69,3 +69,7 @@ Authoritative next step: separately inspect, repair and physically prove every d
 - This post-governance verification does **not** change the certified AXIS 8.29 **product** runtime SHA `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`.
 - Durable follow-up: [Object Identity Integrity — Issue #166](https://github.com/INDEPENDENTWU/AXIS/issues/166).
 
+
+## Formal 8.30 product admission
+
+**Version-decision sequence 29** · `8.29 → 8.30 / bump / product-runtime`. Candidate delivery `feature/830-object-identity-integrity`, tracked by [PR #167](https://github.com/INDEPENDENTWU/AXIS/pull/167) and [Issue #166](https://github.com/INDEPENDENTWU/AXIS/issues/166). **No merged 8.30 product SHA and no Production certification yet.** Preserve previous sealed 8.29 exact product/runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`. The only permitted fact writers remain the existing app and classic owners. After exact-head testing, independently certify the merged product before performing any governance-only promotion.
