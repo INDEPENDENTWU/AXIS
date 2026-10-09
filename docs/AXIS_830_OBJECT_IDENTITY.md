@@ -1,6 +1,6 @@
 # AXIS 8.30 — Object Identity Integrity
 
-**Status:** bounded implementation preparation; not yet a product release.
+**Status:** Phase A identity inventory committed; initial Phase B source corrections committed and awaiting governed 8.30 version bump, build, automated proof and release certification. **Not shipped.**
 **Baseline:** AXIS 8.29 exact Production-sealed runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`, governance PR #165.
 **Target branch:** `feature/830-object-identity-integrity`.
 
@@ -31,7 +31,7 @@ Distinct native catalog entries can select the same older base equipment ID. Thi
 - Run `node scripts/axis-830-object-identity-audit.mjs --json` to capture reproducible collision evidence.
 - Move the audit to `--enforce` only when every identified route is fixed.
 
-### B. Exact-path corrections
+### B. Exact-path corrections — source patch in progress
 - Route native Library and ranked search selection by `id`, not by `baseId`.
 - Expose a read-only current selection projection for classic recording; historical same-name data cannot override explicit current selection.
 - Keep metadata/metric-schema fallback separate from event identity; avoid creating duplicate custom Objects as a selection workaround.
@@ -42,6 +42,10 @@ Distinct native catalog entries can select the same older base equipment ID. Thi
 - Specifically assert two distinct displayed movements create two distinct new Encounter `equipmentId` values, and existing stored events are unchanged.
 - Chromium and iPhone-like WebKit; repeat after page reload, PWA-style reentry and edited schema.
 - Exact-head green → protected merge → Vercel, EdgeOne, custom-domain certification → governance-only seal.
+
+## Current implementation head
+
+Initial source-only patch `7396cf07dacfa5e4a58f074156d47fab2894b60e` changes the legacy canonical catalog builder, ranked search picker, direct smart input, and read-only source risk probe. It routes selection by `id` and prefers explicit active Object identity. **Not yet tested as a built product, not merged, not certified.** Full category, historical fallback, classic writing, Flow and WebKit evidence is still required; additional integration fixes may be needed. The 8.30 version bump and CI are an admission condition before a normal merge.
 
 ## Next product direction
 

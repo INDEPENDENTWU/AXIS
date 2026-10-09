@@ -55,4 +55,4 @@ Portable contracts include `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `ax
 
 ## AXIS 8.30 preparatory branch (not shipped)
 
-Identity inventory and invariants in `feature/830-object-identity-integrity`; source of truth remains sealed AXIS 8.29 until a governed product bump, exact test proof and Production seal. See `docs/AXIS_830_OBJECT_IDENTITY.md`. Do not infer 8.30 product behavior from this non-runtime preparatory branch.
+Identity inventory plus initial identity-routing source patch on `feature/830-object-identity-integrity` (first implementation head `7396cf07dacfa5e4a58f074156d47fab2894b60e`, not yet built or tested); source of truth remains sealed AXIS 8.29 until a governed product bump, exact test proof and Production seal. See `docs/AXIS_830_OBJECT_IDENTITY.md`. Do not infer 8.30 product behavior from this non-runtime preparatory branch.
