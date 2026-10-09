@@ -98,6 +98,7 @@ const STEPS=[
   'postbuild-819-upo-seal.mjs',
   'postbuild-822-evolution-replay-contract.mjs',
   'postbuild-823-replay-evidence-continuity-contract.mjs',
+  'postbuild-830-runtime-convergence.mjs',
   'postbuild-830-object-identity-contract.mjs',
   'verify-88-watermark.mjs'
 ];
