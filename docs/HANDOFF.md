@@ -59,3 +59,13 @@ Do not introduce public sharing, new capture writers or Playable persistence in 
 `feature/830-object-identity-integrity` begins from governance-sealed AXIS 8.29 `6713b47576e902c2015c63b7bb82b23691ec7a3c`. It contains a read-only Object identity inventory and initial unreleased routing corrections in `prepare-8123-canonical-library-selection.mjs`, `prepare-8124-settings-catalog-polish.mjs` and `v873-smart-input.js`. These changes exist **only on the 8.30 development branch**; they do not change current public 8.29 or imply 8.30 is released. The current source candidate has **no built-product, Chromium, WebKit, provider or migration verification**. The source-level risks include legacy `baseId` routing and historical same-name selection fallback.
 
 Authoritative next step: separately inspect, repair and physically prove every displayed catalog Object selects and persists its own stable identity. Legacy ambiguous Encounters remain immutable. When a product behavior change is admitted, issue a fresh sequence 29 version bump and preserve the exact-head / merged-main / governance-seal protocol. PLAY THIS and AIR remain planned after 8.30.
+
+## AXIS 8.29 post-governance merged-main certification
+
+- Governance PR [#165](https://github.com/INDEPENDENTWU/AXIS/pull/165) merged at `6713b47576e902c2015c63b7bb82b23691ec7a3c`; exact governance PR head 27/27 successful.
+- Governance-main push workflow results: **27 total, 26 success, 1 cancelled Branch hygiene, 0 failure**.
+- Vercel Git Production `dpl_8F4YQkfxRbVRRDZQw8CXkqSfPXrW` READY, exact governance-main commit `6713b47576e902c2015c63b7bb82b23691ec7a3c`; EdgeOne Production mirror run `37900944883` success; GitHub commit provider statuses success.
+- Custom-domain run `37900945013` attempt **3** success, `axis.juele.fun` parity + Chromium/WebKit. Attempts 1 and 2 failed at the immediate post-reload UI text assertion in `scripts/axis-828-practice-loop-smoke.mjs:47` after runtime phase had restored; maintain a bounded UI-convergence check in subsequent governed test work.
+- This post-governance verification does **not** change the certified AXIS 8.29 **product** runtime SHA `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`.
+- Durable follow-up: [Object Identity Integrity — Issue #166](https://github.com/INDEPENDENTWU/AXIS/issues/166).
+

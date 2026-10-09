@@ -4,6 +4,15 @@
 **Baseline:** AXIS 8.29 exact Production-sealed runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`, governance PR #165.
 **Target branch:** `feature/830-object-identity-integrity`.
 
+## AXIS 8.29 post-governance merged-main certification
+
+- Governance PR [#165](https://github.com/INDEPENDENTWU/AXIS/pull/165) merged at `6713b47576e902c2015c63b7bb82b23691ec7a3c`; exact governance PR head 27/27 successful.
+- Governance-main push workflow results: **27 total, 26 success, 1 cancelled Branch hygiene, 0 failure**.
+- Vercel Git Production `dpl_8F4YQkfxRbVRRDZQw8CXkqSfPXrW` READY, exact governance-main commit `6713b47576e902c2015c63b7bb82b23691ec7a3c`; EdgeOne Production mirror run `37900944883` success; GitHub commit provider statuses success.
+- Custom-domain run `37900945013` attempt **3** success, `axis.juele.fun` parity + Chromium/WebKit. Attempts 1 and 2 failed at the immediate post-reload UI text assertion in `scripts/axis-828-practice-loop-smoke.mjs:47` after runtime phase had restored; maintain a bounded UI-convergence check in subsequent governed test work.
+- This post-governance verification does **not** change the certified AXIS 8.29 **product** runtime SHA `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`.
+- Durable follow-up: [Object Identity Integrity — Issue #166](https://github.com/INDEPENDENTWU/AXIS/issues/166).
+
 ## Problem and evidence
 
 Distinct native catalog entries can select the same older base equipment ID. This is a factual integrity defect, not a naming/translation defect. Confirmed source risk points:

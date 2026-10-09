@@ -56,3 +56,13 @@ Portable contracts include `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `ax
 ## AXIS 8.30 preparatory branch (not shipped)
 
 Identity inventory plus initial identity-routing source patch on `feature/830-object-identity-integrity` (first implementation head `7396cf07dacfa5e4a58f074156d47fab2894b60e`, not yet built or tested); source of truth remains sealed AXIS 8.29 until a governed product bump, exact test proof and Production seal. See `docs/AXIS_830_OBJECT_IDENTITY.md`. Do not infer 8.30 product behavior from this non-runtime preparatory branch.
+
+## AXIS 8.29 post-governance merged-main certification
+
+- Governance PR [#165](https://github.com/INDEPENDENTWU/AXIS/pull/165) merged at `6713b47576e902c2015c63b7bb82b23691ec7a3c`; exact governance PR head 27/27 successful.
+- Governance-main push workflow results: **27 total, 26 success, 1 cancelled Branch hygiene, 0 failure**.
+- Vercel Git Production `dpl_8F4YQkfxRbVRRDZQw8CXkqSfPXrW` READY, exact governance-main commit `6713b47576e902c2015c63b7bb82b23691ec7a3c`; EdgeOne Production mirror run `37900944883` success; GitHub commit provider statuses success.
+- Custom-domain run `37900945013` attempt **3** success, `axis.juele.fun` parity + Chromium/WebKit. Attempts 1 and 2 failed at the immediate post-reload UI text assertion in `scripts/axis-828-practice-loop-smoke.mjs:47` after runtime phase had restored; maintain a bounded UI-convergence check in subsequent governed test work.
+- This post-governance verification does **not** change the certified AXIS 8.29 **product** runtime SHA `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`.
+- Durable follow-up: [Object Identity Integrity — Issue #166](https://github.com/INDEPENDENTWU/AXIS/issues/166).
+
