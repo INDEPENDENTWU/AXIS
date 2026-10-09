@@ -3,6 +3,11 @@
 Governed active milestone: `AXIS 8.29 — Recording Friction Collapse`.
 governed target branch: `main`.
 
+Bounded delivery branch: `governance/829-production-seal` · PR **#165**.
+Version decision: **8.29 → 8.29 / confirm / sequence 28 / governance**.
+repository governance remains authoritative over conversation history.
+Chat history is not authoritative project memory. Conversation history is supplemental only; the exact repository state and verified provider evidence are the project source of truth.
+
 **Status: 8.29 Production-certified.** Product PR **#164** merged; exact product/runtime SHA:
 
 ```text
