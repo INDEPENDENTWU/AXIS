@@ -56,6 +56,7 @@ try{
   });
   console.log('[AXIS 8.30 internal ranked search diagnostic]',JSON.stringify(catalogDiagnostic));
   assert.ok(catalogDiagnostic.native.exists,'canonical chest-row missing from live native library');
+  assert.deepEqual(catalogDiagnostic.indexed?.nativeMissing||[],[],'some canonical native IDs were silently dropped from ranked catalog');
   assert.ok(catalogDiagnostic.indexed?.matched?.some(x=>x.id==='chest-row'),
     'canonical chest-row omitted from indexed search candidates: '+JSON.stringify(catalogDiagnostic));
   await page.waitForFunction(()=>document.querySelector('#v873SmartResults')?.classList.contains('show')&&document.querySelector('#v873SmartResults [data-v8124-pick="chest-row"]')&&document.querySelector('#v873SmartResults [data-v8124-pick="custom-identity-proof"]'),undefined,{timeout:3000});
