@@ -148,14 +148,14 @@ function axis8124CatalogItems(){
  for(const x of (window.__AXIS_873_LIBRARY__||LIB))add({...x,pickId:x.id});
  const api=window.__AXIS_EQUIPMENT_PICKER_DATA__;for(const x of api?.personal?.(40)||[])add({...x,aliases:[],muscles:x.muscles||[],pickId:x.id,metaText:x.custom?'我的 自定义':'我的 已使用'},true);
  for(const b of $$('#eqList [data-eq]')){const name=b.querySelector('b')?.textContent?.trim();if(name)add({id:b.dataset.eq,pickId:b.dataset.eq,name,aliases:[],muscles:[],type:/有氧/.test(b.textContent)?'cardio':'strength',metaText:b.textContent},false)}
- // Reconcile every live built-in by canonical ID after My/Recent overlays.
+ // The final canonical native pass is authoritative; a family-label or personal projection cannot suppress or shadow a native ID.
  // Use indexed traversal so a derived search iterator cannot omit a native ID.
  const liveNative=window.__AXIS_873_LIBRARY__||LIB;
  for(let i=0;i<liveNative.length;i++){
   const native=liveNative[i];
   if(!native?.id||!native?.name)continue;
   const id=String(native.id);
-  if(!byId.has(id))byId.set(id,{...native,id,pickId:id});
+  byId.set(id,{...native,id,pickId:id});
  }
  return [...byId.values()]
 }
