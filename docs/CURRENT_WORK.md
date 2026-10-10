@@ -17,7 +17,7 @@ The initial EdgeOne attempt-1 WebKit transient failure remains in its workflow h
 
 ## Authority
 
-`app.js` remains the Encounter/Session writer; `v61` remains the classic set writer. `axis.object-identity.v1` is derived resolution only. No historic mutation, new recorder writer, data migration, new storage or AI/network authority. The prior 8.29 certificate remains immutable.
+`app.js` remains the Encounter/Session writer; `v61` remains the classic set writer. `axis.object-identity.v1` is derived resolution only. No historic mutation, new recorder writer, data migration, new storage or AI/network authority. The prior 8.29 product/runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` and certificate remain immutable.
 
 ## Next planned stage
 

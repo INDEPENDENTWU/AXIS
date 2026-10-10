@@ -19,7 +19,7 @@ const downstream829=downstream830||sealed829Stage||(
 if(downstream829){
   const certified='df67fc0a20c0c34a79341315c8c85b5461acfe44';
   if(project?.product?.productionRelease==='8.29'){
-  if(sealed829Stage){
+  if(sealed829Stage||(sealed830&&project?.product?.productionRelease==='8.29')){
     const run='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171';
     if(project.product.releaseStatus!=='production-certified'||project.product.lastSealedRelease!=='8.29'||project.product.productionRuntimeSha!==run||project.product.productionPullRequest!==164||project.product.candidatePullRequest!==164)fail('8.29 sealed runtime authority drift');
     if(project.production?.sealedRelease!=='8.29'||project.production?.candidateStatus!=='production-sealed'||project.production?.latestDeploymentIsAuthority!==false)fail('8.29 seal production boundary drift');

@@ -68,7 +68,7 @@ if(sealed827){
 }else if(sealed828){
   if(production.sealedRelease!=='8.28'||production.candidateStatus!=='production-sealed'||production.latestDeploymentIsAuthority!==false)fail('8.28 successor seal drift');
   if(production.vercel?.sourceSha!==project.product.productionRuntimeSha||production.edgeOne?.sourceSha!==project.product.productionRuntimeSha||production.customDomain?.sourceSha!==project.product.productionRuntimeSha)fail('8.28 provider source authority drift');
-}else if(sealed829Stage){
+}else if(sealed829Stage||(sealed830&&project?.product?.productionRelease==='8.29')){
   const exact='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171';
   if(project?.product?.productionRelease!=='8.29'||project?.product?.releaseStatus!=='production-certified'||project?.product?.lastSealedRelease!=='8.29'||project?.product?.productionRuntimeSha!==exact||project?.product?.productionPullRequest!==164)fail('8.29 exact product seal drift');
   if(production.sealedRelease!=='8.29'||production.candidateRelease!=='8.29'||production.candidateStatus!=='production-sealed'||production.latestDeploymentIsAuthority!==false)fail('8.29 sealed Production status drift');

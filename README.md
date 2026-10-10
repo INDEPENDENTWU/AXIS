@@ -17,6 +17,8 @@ AXIS is a Personal Evolution Engine. Object represents reusable practice meaning
 
 [Production certificate](governance/production-certifications/8.30.json) · [Current Release](docs/CURRENT_RELEASE.md) · [Object identity contract](docs/AXIS_830_OBJECT_IDENTITY.md).
 
+**Predecessor:** AXIS 8.29 Product runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` (separate immutable certificate).
+
 ## Build and governance
 
 `node build-release.mjs` produces the canonical single runtime. Product release approval requires exact-head PR CI, exact merged-main CI, Vercel and EdgeOne deployments, and independent custom-domain Chromium/WebKit production checks. Governance is sealed separately from product code.
