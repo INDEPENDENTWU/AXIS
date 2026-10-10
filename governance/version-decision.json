@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 30,
+  "sequence": 31,
   "base_release": "8.30",
-  "release": "8.30",
-  "decision": "confirm",
-  "change_class": "governance",
-  "summary": "Confirm exact AXIS 8.30 merged product-runtime after 34/34 PR gates, 30/30 merged-main push gates, Vercel READY, EdgeOne attempt-2 Chromium/WebKit and custom-domain production proofs; preserve product SHA and previous immutable certificate."
+  "release": "8.31",
+  "decision": "bump",
+  "change_class": "product-runtime",
+  "summary": "AXIS 8.31 Playable Runtime Foundation: pure executable intent/command protocol and strict integration with existing Flow, Active and Encounter truth owners. Distinct canonical IDs, no second writer; preserve exact certified 8.30 Production until independent 8.31 acceptance."
 }
