@@ -24,8 +24,9 @@ let expectedSha=LAST;
 if(downstream830){
   const prior=json('governance/production-certifications/8.29.json');
   if(prior.productRuntimeSha!==SEALED||prior.productPullRequest!==164||prior.release!=='8.29')fail('8.30 lost exact 8.29 certificate');
-  const expected=sealed830?'eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f':SEALED;
-  if(p.product.productionRuntimeSha!==expected||p.product.productionPullRequest!==(sealed830?167:164)||p.product.lastSealedRelease!==(sealed830?'8.30':'8.29')||p.production.sealedRelease!==(sealed830?'8.30':'8.29'))fail('8.30 product seal authority drift');
+  const atPredecessorRestoration=sealed830&&p.product.productionRelease==='8.29';
+  const expected=sealed830&&!atPredecessorRestoration?'eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f':SEALED;
+  if(p.product.productionRuntimeSha!==expected||p.product.productionPullRequest!==(sealed830&&!atPredecessorRestoration?167:164)||p.product.lastSealedRelease!==(sealed830&&!atPredecessorRestoration?'8.30':'8.29')||p.production.sealedRelease!==(sealed830&&!atPredecessorRestoration?'8.30':'8.29'))fail('8.30 product seal authority drift');
   if(p.product.productionRelease==='8.30'){
     if(sealed830){
       const cert=json('governance/production-certifications/8.30.json');
