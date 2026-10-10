@@ -3,6 +3,12 @@ const fail=m=>{throw new Error('[AXIS 8.31 Playable owner bridge] '+m)};
 const read=p=>fs.readFileSync(p,'utf8'),write=(p,s)=>fs.writeFileSync(p,s);
 const f='app.js';let code=read(f);
 const core=read('lib/axis-playable-execution.mjs').replaceAll('export const ','const ').replaceAll('export function ','function ');
+// Existing 8.18 resolver predates the split native Object catalog. Resolve exact
+// 8.30 canonical IDs first; do not turn a baseId or matching name into identity.
+const previous="function axis818Eq(ref){if(!ref)return null;if(typeof ref==='object'&&ref.id)return ref;const id=String(ref),xs=[...(state.profile?.customEq||[]),...BASE_EQ];return xs.find(x=>x.id===id||x.name===id)||null}";
+const replacement="function axis818Eq(ref){if(!ref)return null;if(typeof ref==='object'&&ref.id)return ref;const id=String(ref),personal=(state.profile?.customEq||[]).filter(x=>x?.id===id),native=(window.__AXIS_873_LIBRARY__||[]).filter(x=>x?.id===id);if(personal.length+native.length>1)return null;if(personal.length===1)return personal[0];if(native.length===1)return native[0];const xs=[...(state.profile?.customEq||[]),...BASE_EQ];return xs.find(x=>x.id===id||x.name===id)||null}";
+if(code.split(previous).length!==2)fail('legacy 8.18 metric/Object resolver exact anchor drift');
+code=code.replace(previous,replacement);
 const anchor="window.__AXIS_FLOW_RUNTIME__={";
 if(code.split(anchor).length!==2)fail('app-owned Flow API anchor drift');
 if(code.includes('window.__AXIS_831_PLAYABLE__'))fail('duplicate Playable owner');
