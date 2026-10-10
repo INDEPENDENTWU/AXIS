@@ -49,6 +49,7 @@ try{
   await page.locator('#eqSearch').fill('胸托划船');
   const identityDiagnostic=await page.evaluate(()=>({custom:(JSON.parse(localStorage.getItem('axis_v60_state')||'{}').profile?.customEq||[]).map(x=>({id:x.id,name:x.name})),personal:window.__AXIS_EQUIPMENT_PICKER_DATA__?.personal?.(60)?.map(x=>({id:x.id,name:x.name})),native:(window.__AXIS_873_LIBRARY__||[]).filter(x=>x.id==='chest-row').map(x=>({id:x.id,name:x.name})),query:document.querySelector('#eqSearch')?.value,items:[...document.querySelectorAll('#v873SmartResults [data-v8124-pick]')].map(b=>({id:b.dataset.v8124Pick,name:b.querySelector('b')?.textContent||''}))}));
   console.log('[AXIS 8.30 search identity diagnostic]',JSON.stringify(identityDiagnostic));
+  console.log('[AXIS 8.30 internal ranked search diagnostic]',JSON.stringify(await page.evaluate(()=>window.__AXIS_830_TEST_CATALOG__?.('胸托划船')||null)));
   await page.waitForFunction(()=>document.querySelector('#v873SmartResults')?.classList.contains('show')&&document.querySelector('#v873SmartResults [data-v8124-pick="chest-row"]')&&document.querySelector('#v873SmartResults [data-v8124-pick="custom-identity-proof"]'),undefined,{timeout:3000});
   const queryIds=await page.locator('#v873SmartResults [data-v8124-pick]').evaluateAll(xs=>xs.map(x=>x.dataset.v8124Pick));
   assert.ok(queryIds.includes('chest-row')&&queryIds.includes('custom-identity-proof'),'same-name canonical and personal IDs collapsed '+queryIds.join(','));
