@@ -12,7 +12,7 @@ Certified exact merged-main **product/runtime SHA**: `dddce5401e80087a7ccceb43ec
 
 [8.31 immutable Production certificate](governance/production-certifications/8.31.json) · [Current Release](docs/CURRENT_RELEASE.md) · [Playable design](docs/AXIS_831_PLAYABLE_RUNTIME.md) · [Issue #169](https://github.com/INDEPENDENTWU/AXIS/issues/169).
 
-Previously Production-sealed AXIS 8.30: `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f` ([immutable certificate](governance/production-certifications/8.30.json)).
+Previously Production-sealed AXIS 8.29: `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` (historic certificate). Previously Production-sealed AXIS 8.30: `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f` ([immutable certificate](governance/production-certifications/8.30.json)).
 
 ## Architecture
 

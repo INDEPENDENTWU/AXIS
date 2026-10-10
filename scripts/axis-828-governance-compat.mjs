@@ -10,7 +10,8 @@ const RUNTIME_828='df67fc0a20c0c34a79341315c8c85b5461acfe44';
 const sealed=decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 
 const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-const downstream831=(decision?.sequence===31&&decision?.base_release==='8.30'&&decision?.release==='8.31'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime');
+const sealed831=(decision?.sequence===32&&decision?.base_release==='8.31'&&decision?.release==='8.31'&&decision?.decision==='confirm'&&decision?.change_class==='governance'&&project.product?.productionRelease==='8.31'&&project.product?.releaseStatus==='production-certified'&&project.product?.productionRuntimeSha==='dddce5401e80087a7ccceb43ec466f1ad7abb505');
+const downstream831=(decision?.sequence===31&&decision?.base_release==='8.30'&&decision?.release==='8.31'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime' )||sealed831;
 const sealed830=(decision?.sequence===30&&decision?.base_release==='8.30'&&decision?.release==='8.30'&&decision?.decision==='confirm'&&decision?.change_class==='governance')||downstream831;
 const downstream830=(decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime')||sealed830;
 const downstream829=downstream830||sealed829Stage||(

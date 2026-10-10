@@ -6,13 +6,25 @@ Bounded delivery branch: `governance/831-exact-production-seal` · PR **#170** w
 Version decision: **8.31 → 8.31 / confirm / sequence 32 / governance**.
 **Status:** Production-sealed at exact product/runtime `dddce5401e80087a7ccceb43ec466f1ad7abb505`, independent governance-only PR undergoing separate CI acceptance.
 
+## Production baseline at start of this work
+
+Previous certified product/runtime AXIS 8.30 remains `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f` as immutable history.
+
+## Active change
+
+Governance-only confirmation of already merged and deployed AXIS 8.31; no functional or factual runtime changes.
+
+## Validation for this work
+
+Full product, merged-main and provider evidence follows; governance PR must independently pass exact-head checks before merge.
+
 ## Evidence and immutable authority
 
 Previous 8.30 certified runtime `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`, product PR #167 and governance PR #168; 8.30 certificate remains immutable.
 
 8.31 PR #170 head `7f6396ff769c3d045d50cc6ff7403672d4a02bd5`: 35 successes plus 1 cancelled hygiene, 0 failures. Merged-main `dddce5401e80087a7ccceb43ec466f1ad7abb505`: 33/33 workflow success. Vercel READY, EdgeOne Production exact prebuilt mirror, `axis.juele.fun` real Chromium/WebKit. [8.31 immutable certificate](../governance/production-certifications/8.31.json).
 
-One app-owned Flow/Active/Encounter factual authority; PlayableSpec is derived executable intent, no extra storage, Session/Encounter writer, implicit completion, network, AI or timer. The portable contracts `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.playable.v1` retain exact semantics. Chat history is not authoritative project memory.
+The native foundation `axis-native-foundation-0` is shared with `INDEPENDENTWU/AXIS-iOS`. One app-owned Flow/Active/Encounter factual authority; PlayableSpec is derived executable intent, no extra storage, Session/Encounter writer, implicit completion, network, AI or timer. The portable contracts `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.playable.v1` retain exact semantics. Chat history is not authoritative project memory.
 
 ## Next planned stage
 
