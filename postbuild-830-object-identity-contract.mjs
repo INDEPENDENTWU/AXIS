@@ -11,7 +11,7 @@ if((js.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('canonical E
  if(i<0||j<0||js.indexOf(marker,i+marker.length)>=0)fail('unique final catalog projection missing');
  const region=js.slice(i,j);
  if(!/for\s*\(\s*const x of \(window\.__AXIS_873_LIBRARY__\s*\|\|\s*LIB\)\s*\)/.test(region)||!region.includes('pickId:x.id'))fail('final ranked search must index live canonical IDs');
- if(!region.includes('byId.set(id,{...native,id,pickId:id})'))fail('final native IDs must override stale family/personal catalog projection');
+ if(!region.includes('byId.set(id,{...native,id,pickId:id})')){const i=region.indexOf('liveNative');fail('final native IDs must override stale family/personal catalog projection; observed='+JSON.stringify({regionLength:region.length,liveNativeIndex:i,ending:region.slice(-1100),nearLive:i<0?null:region.slice(Math.max(0,i-110),i+650)}))}
 }
 if(!info.gates?.recordingContinuity829||!info.gates?.practiceLoop828||!info.gates?.realityRoute827)fail('inherited release gates missing');
 Object.assign(info.gates,{objectIdentity830:true,objectStableCanonicalId830:true,objectHistoricFactsUnchanged830:true,objectOneEncounterWriter830:true});
