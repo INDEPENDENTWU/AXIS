@@ -2,6 +2,8 @@
 
 **Governed milestone:** AXIS 8.30 — Object Identity Integrity.
 governed target branch: `main`.
+Bounded delivery branch: `governance/830-exact-production-seal` · PR **#168**.
+Version decision: **8.30 → 8.30 / confirm / sequence 30 / governance**.
 **Status:** Production-sealed at exact product/runtime `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`.
 **Product PR:** #167 · **Independent governance decision:** 8.30 → 8.30 / confirm / sequence 30 / governance.
 
@@ -28,6 +30,8 @@ Providers: Vercel READY `dpl_ASBJRgKpMJonNnNBtd1XeumdZ36T`; EdgeOne `dpb4uzrph6w
 The initial EdgeOne attempt-1 WebKit transient failure remains in its workflow history and certification record. It was resolved by rerunning the same exact SHA; no runtime/test assertion was relaxed. Certified provider evidence is stored in `governance/production-certifications/8.30.json`.
 
 ## Authority
+
+The repository governance remains authoritative for release identity; chat history is supplemental context only.
 
 `app.js` remains the Encounter/Session writer; `v61` remains the classic set writer. `axis.object-identity.v1` is derived resolution only. No historic mutation, new recorder writer, data migration, new storage or AI/network authority. The prior 8.29 product/runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` and certificate remain immutable.
 
