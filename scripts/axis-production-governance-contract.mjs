@@ -64,13 +64,25 @@ if(CURRENT==='8.24'){
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.25 must be governed as intended product behavior change');
   if(!(decision?.sequence===11&&decision?.base_release==='8.24.1'&&decision?.release==='8.25'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('8.25 version decision must be 8.24.1 → 8.25 / bump / sequence 11 / product-ui');
  }else if(CURRENT==='8.30'){
-  if(!candidate||STATUS!=='candidate'||SEALED!=='8.29'||RUNTIME_SHA!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'||SEALED_PR!==164)fail('8.30 lost exact sealed 8.29 product runtime');
-  if(CANDIDATE_PR!==167||project?.engineering?.pullRequest!==167||project?.engineering?.deliveryBranch!=='feature/830-object-identity-integrity')fail('8.30 candidate delivery PR drift');
-  if(project?.production?.candidateRelease!=='8.30'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.30 candidate production status');
-  if(!(decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.30 version decision drift');
-  for(const prov of ['vercel','edgeOne','customDomain'])if(project.production?.[prov]?.sourceSha!==RUNTIME_SHA)fail('8.30 predecessor provider overwritten '+prov);
-  const id=project?.engineering?.objectIdentity;
-  if(id?.status!=='8.30-release-candidate'||id?.historicalEncounterRewrite!==false||id?.newEncounterWriter!==false||id?.newStorageNamespace!==false||id?.network!==false||id?.ai!==false)fail('8.30 bounded Object identity ownership');
+ const id=project?.engineering?.objectIdentity;
+ if(id?.historicalEncounterRewrite!==false||id?.newEncounterWriter!==false||id?.newStorageNamespace!==false||id?.network!==false||id?.ai!==false)fail('8.30 canonical Object identity ownership');
+ if(STATUS==='candidate'){
+  if(!candidate||SEALED!=='8.29'||RUNTIME_SHA!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'||SEALED_PR!==164)fail('8.30 candidate lost 8.29 seal');
+  if(CANDIDATE_PR!==167||project?.engineering?.pullRequest!==167||project?.engineering?.deliveryBranch!=='feature/830-object-identity-integrity')fail('8.30 candidate delivery drift');
+  if(project?.production?.candidateRelease!=='8.30'||project?.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification'||id?.status!=='8.30-release-candidate')fail('8.30 candidate state');
+  if(!(decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.30 candidate decision');
+  for(const prov of ['vercel','edgeOne','customDomain'])if(project.production?.[prov]?.sourceSha!==RUNTIME_SHA)fail('8.30 candidate predecessor '+prov);
+ }else if(STATUS==='production-certified'){
+  const cert=json('governance/production-certifications/8.30.json');
+  if(candidate||SEALED!=='8.30'||RUNTIME_SHA!=='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f'||SEALED_PR!==167||CANDIDATE_PR!==167)fail('8.30 sealed Runtime identity');
+  if(cert.productRuntimeSha!==RUNTIME_SHA||cert.productPullRequest!==167||cert.exactHeadSuccess!==34||cert.mergedMainWorkflows?.success!==30||cert.mergedMainWorkflows?.failed!==0||cert.edgeOne?.runAttempt!==2)fail('8.30 certificate proof');
+  if(project.production?.candidateRelease!=='8.30'||project.production?.candidateStatus!=='production-sealed'||project.production?.latestDeploymentIsAuthority!==false)fail('8.30 sealed Production authority');
+  if(project.engineering?.deliveryBranch!=='main'||project.engineering?.intendedProductBehaviorChange!==false||project.engineering?.lastSealedRuntimeSha!==RUNTIME_SHA||id?.status!=='production-sealed-8.30')fail('8.30 engineering closeout drift');
+  if(!(decision?.sequence===30&&decision?.base_release==='8.30'&&decision?.release==='8.30'&&decision?.decision==='confirm'&&decision?.change_class==='governance'))fail('8.30 independent confirmation version decision drift');
+  for(const prov of ['vercel','edgeOne','customDomain'])if(project.production?.[prov]?.sourceSha!==RUNTIME_SHA)fail('8.30 certified '+prov+' provenance drift');
+  if(project.production.vercel?.deploymentId!==cert.vercel?.deploymentId||project.production.vercel?.state!=='READY'||project.production.edgeOne?.deploymentId!==cert.edgeOne?.deploymentId||project.production.customDomain?.verificationRunId!==cert.customDomain?.verificationRunId)fail('8.30 certified provider evidence divergence');
+  if(project.production?.combinedStatus?.sourceSha!==RUNTIME_SHA||project.production?.combinedStatus?.vercel!=='success'||project.production?.combinedStatus?.edgeOneProduction!=='success'||project.production?.combinedStatus?.customDomain!=='success')fail('8.30 combined evidence drift');
+ }else fail('8.30 unknown release status '+STATUS);
  }else if(CURRENT==='8.29'){
   if(CANDIDATE_PR!==164||project?.engineering?.pullRequest!==164)fail('8.29 product PR identity drift');
   if(project?.engineering?.activeMilestone!=='AXIS 8.29 — Recording Friction Collapse')fail('8.29 milestone drift');
