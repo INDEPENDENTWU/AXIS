@@ -39,7 +39,7 @@ The current unshipped design stage is **8.32a — Local PLAY THIS Experience Con
 
 1. Audit final canonical build order and add only the missing safe browser-side compiler/entry adapter without a new fact owner.
 2. Replace or delegate the existing Object/Flow action *in place*; preserve one action owner and the already shipped Home/Active geometry, focus, safe-area and locale/theme semantics.
-3. Require actual Chronicle/Encounter/FlowRun owner acknowledgements; no synthetic completion or blind stale command replay.
+3. Require actual Encounter/FlowRun owner acknowledgements; no synthetic completion or blind stale command replay.
 4. Implement and execute the 20-scenario acceptance matrix and real 320–430px Chromium/iPhone-like WebKit visual checks. The experience-standard aesthetic review remains a human-inspected release gate.
 5. Product PR exact Head all required CI green → SHA-leased merge → merged-main Production verification on canonical Vercel, EdgeOne and official domain → independent governance seal.
 
