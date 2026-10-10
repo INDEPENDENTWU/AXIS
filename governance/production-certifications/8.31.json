@@ -19,7 +19,19 @@
     "success": 33,
     "cancelled": 0,
     "failed": 0,
-    "scope": "exact merged-main push workflow conclusions"
+    "scope": "30 exact merged-main push workflow conclusions plus 3 deployment_status workflow conclusions, all at the same certified product/runtime SHA",
+    "byEvent": {
+      "push": {
+        "total": 30,
+        "success": 30,
+        "failed": 0
+      },
+      "deployment_status": {
+        "total": 3,
+        "success": 3,
+        "failed": 0
+      }
+    }
   },
   "vercel": {
     "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
