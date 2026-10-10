@@ -10,6 +10,7 @@ one('pickId:x.baseId||x.id','pickId:x.id','native ranked-search exact ID');
 one('const target=item.baseId||item.id','const target=item.id','native library exact ID');
 one('id:lib.baseId||lib.id','id:lib.id','classic recorder native exact ID');
 one('lib.find(e=>e.baseId===id)','null','ambiguous baseId resolver removal');
+one('if(!byId.has(id))byId.set(id,{...native,id,pickId:id});','byId.set(id,{...native,id,pickId:id});','native canonical precedence in assembled search');
 {
  const signature='function axis8124CatalogItems()',from=code.indexOf(signature),end=from<0?-1:code.indexOf('function axis8124CatalogRanked(',from);
  if(from<0||end<0||code.indexOf(signature,from+signature.length)>=0)fail('one canonical catalog projection function required');
