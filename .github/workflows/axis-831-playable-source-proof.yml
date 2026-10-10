@@ -1,0 +1,39 @@
+name: AXIS 8.31a Playable Source Proof
+
+on:
+  push:
+    branches:
+      - feature/831-playable-runtime-foundation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Verify pure Playable compiler syntax
+        run: |
+          node --check lib/axis-playable.mjs
+          node --check scripts/axis-831-playable-smoke.mjs
+      - name: Verify portable PlayableSpec schema
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const spec=JSON.parse(fs.readFileSync('shared/contracts/axis-playable-v1.schema.json','utf8'));
+          assert.equal(spec.$id,'axis.playable.v1');
+          assert.equal(spec.additionalProperties,false);
+          assert.equal(spec.properties.steps.maxItems,32);
+          const source=fs.readFileSync('lib/axis-playable.mjs','utf8');
+          for(const prohibited of ['localStorage.', 'indexedDB.', 'window.', 'document.', 'navigator.', 'fetch(', 'new WebSocket(', 'eval('])assert.equal(source.includes(prohibited),false,'portable source has forbidden runtime authority '+prohibited);
+          console.log('[AXIS 8.31a portable schema] PASS');
+          NODE
+      - name: Real normalized Object and Flow pure tests
+        run: node scripts/axis-831-playable-smoke.mjs
