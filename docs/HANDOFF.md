@@ -29,3 +29,5 @@ This is the exact merged-main product/runtime SHA, not the governance PR head/me
 ## Next stage
 
 AXIS 8.32 local PLAY THIS UI is not shipped or sealed in 8.31; require a separate product scope and version decision.
+
+Historical AXIS 8.29 production runtime: `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` (immutable preceding seal).

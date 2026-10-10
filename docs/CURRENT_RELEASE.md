@@ -24,3 +24,5 @@ The **runtime seal baseline** is `dddce5401e80087a7ccceb43ec466f1ad7abb505`. 8.3
 ## Next bounded stage
 
 8.32 PLAY THIS is planned but not part of 8.31. No second Encounter writer, store, recorder, automatic completion or AI/network authority was added by 8.31.
+
+Historical AXIS 8.29 production runtime: `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` (immutable preceding seal).
