@@ -81,6 +81,12 @@ if(sealed827){
   for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==(sealed830?'eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f':'4a9c73b2ea5330b9cffad3f9e322eb6970dfe171'))fail('8.30 lost exact sealed 8.29 provider '+provider);
   if(production.sealedRelease!==(sealed830?'8.30':'8.29')||production.candidateRelease!=='8.30'||production.candidateStatus!==(sealed830?'production-sealed':'pending-exact-head-and-merged-main-certification'))fail('8.30 predecessor Production drift');
   if(production.vercel?.deploymentId!==(sealed830?'dpl_ASBJRgKpMJonNnNBtd1XeumdZ36T':'dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1')||production.edgeOne?.deploymentId!==(sealed830?'dpb4uzrph6wm':'dpfctvvd321b')||production.customDomain?.verificationRunId!==(sealed830?38013000220:37831475553))fail('8.29 exact provider seal lost');
+}else if(downstream831&&project?.product?.productionRelease==='8.31'){
+  const sha='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f';
+  if(project.product.releaseStatus!=='candidate'||project.product.lastSealedRelease!=='8.30'||project.product.productionRuntimeSha!==sha||project.product.productionPullRequest!==167||project.product.candidatePullRequest!==170)fail('8.31 successor discarded 8.30 product authority');
+  if(production.sealedRelease!=='8.30'||production.candidateRelease!=='8.31'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.31 successor Production candidate boundary');
+  for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==sha)fail('8.31 inherited certified provider '+provider);
+  if(production.vercel?.deploymentId!=='dpl_ASBJRgKpMJonNnNBtd1XeumdZ36T'||production.edgeOne?.deploymentId!=='dpb4uzrph6wm'||production.customDomain?.verificationRunId!==38013000220)fail('8.31 retained 8.30 snapshot drift');
 }else if(downstream829){
   if(production.sealedRelease!=='8.28'||production.candidateRelease!=='8.29'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.29 candidate Production boundary drift');
   for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!=='df67fc0a20c0c34a79341315c8c85b5461acfe44')fail('8.29 lost sealed 8.28 provider '+provider);
@@ -103,7 +109,7 @@ if(continuity?.status!=='production-sealed-8.26-inherited')fail('8.26 inherited 
 for(const key of ['pausedTruthOwnerUnchanged','restStateBreathingSpace','restStateGrouped','restStateTonalCue','reducedMotionSafe'])if(rest?.[key]!==true)fail(`8.26.1 rest-state capability missing ${key}`);
 if(!String(rest?.status||'').startsWith('production-sealed-8.26.1'))fail('8.26.1 inherited rest-state seal drift');
 
-if(!['8.26.5','8.27','8.28','8.29','8.30'].includes(owners?.baselineRelease))fail('owner registry baseline drift');
+if(!['8.26.5','8.27','8.28','8.29','8.30','8.31'].includes(owners?.baselineRelease))fail('owner registry baseline drift');
 const continuityOwner=owners.owners?.find(x=>x.capability==='active-continuity-826');
 const restOwner=owners.owners?.find(x=>x.capability==='active-rest-state-8261');
 if(continuityOwner?.status!=='presentation-and-coordination-production-sealed'||continuityOwner?.storage!=='none')fail('8.26 sealed owner registry drift');
