@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 29,
-  "base_release": "8.29",
+  "sequence": 30,
+  "base_release": "8.30",
   "release": "8.30",
-  "decision": "bump",
-  "change_class": "product-runtime",
-  "summary": "Introduce AXIS 8.30 Object Identity Integrity: preserve distinct canonical Object IDs across native catalog selection, Quick/classic recording and Encounter attribution. Historical ambiguous data is immutable; inherited 8.29 Product runtime remains sealed until exact 8.30 certification."
+  "decision": "confirm",
+  "change_class": "governance",
+  "summary": "Confirm exact AXIS 8.30 merged product-runtime after 34/34 PR gates, 30/30 merged-main push gates, Vercel READY, EdgeOne attempt-2 Chromium/WebKit and custom-domain production proofs; preserve product SHA and previous immutable certificate."
 }

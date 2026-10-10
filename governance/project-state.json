@@ -4,34 +4,34 @@
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
     "productionRelease": "8.30",
-    "releaseStatus": "candidate",
-    "lastSealedRelease": "8.29",
-    "productionRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
-    "productionPullRequest": 164,
+    "releaseStatus": "production-certified",
+    "lastSealedRelease": "8.30",
+    "productionRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+    "productionPullRequest": 167,
     "candidatePullRequest": 167,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
-    "sealedRelease": "8.29",
-    "sealedAt": "2026-10-09",
+    "sealedRelease": "8.30",
+    "sealedAt": "2026-10-10",
     "candidateRelease": "8.30",
-    "candidateStatus": "pending-exact-head-and-merged-main-certification",
+    "candidateStatus": "production-sealed",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "The certified 8.29 product/runtime and provider deployments remain authority until the exact 8.30 merged product commit passes full Production certification.",
+    "evidenceSemantics": "AXIS 8.30 certified product/runtime exactly eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f. Separate governance commits and subsequent redeployments do not replace product authority.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
-      "deploymentId": "dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1",
-      "deploymentUrl": "https://axis-gsqjf43pa-independentwus-projects.vercel.app",
+      "deploymentId": "dpl_ASBJRgKpMJonNnNBtd1XeumdZ36T",
+      "deploymentUrl": "https://axis-pzk6hyoux-independentwus-projects.vercel.app",
       "publicUrl": "https://axis-five-puce.vercel.app",
-      "sourceSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+      "sourceSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
       "state": "READY",
       "target": "production",
       "source": "git",
       "aliasError": null,
-      "currentReleaseGateRunId": 37831475540,
-      "deepCompatibilityGateRunId": 37831475524,
+      "currentReleaseGateRunId": 38013000146,
+      "deepCompatibilityGateRunId": 38013000507,
       "productionGateRunId": null,
       "exactManifestParity": "success",
       "chromiumProductionFlow": "success",
@@ -41,26 +41,27 @@
       "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
       "projectId": "makers-bxiu1vmyd0ba",
       "policy": "exact-prebuilt-artifact-mirror",
-      "verificationRunId": 37831475199,
-      "sourceSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+      "verificationRunId": 38013000237,
+      "runAttempt": 2,
+      "sourceSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
       "packageContract": "success",
       "deployProduction": "success",
       "boundedFixedDomainConvergence": "success",
       "vercelApiParity": "success",
       "chromiumProductionFlow": "success",
       "webkitProductionFlow": "success",
-      "deploymentId": "dpfctvvd321b"
+      "deploymentId": "dpb4uzrph6wm"
     },
     "customDomain": {
       "publicUrl": "https://axis.juele.fun",
-      "verificationRunId": 37831475553,
-      "sourceSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+      "verificationRunId": 38013000220,
+      "sourceSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
       "exactParity": "success",
       "chromiumProductionFlow": "success",
       "webkitProductionFlow": "success"
     },
     "combinedStatus": {
-      "sourceSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+      "sourceSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
       "vercel": "success",
       "edgeOneProduction": "success",
       "customDomain": "success"
@@ -68,28 +69,28 @@
   },
   "engineering": {
     "activeMilestone": "AXIS 8.30 — Object Identity Integrity",
-    "activePhase": "Product-runtime candidate — canonical catalog identity end-to-end",
+    "activePhase": "Production-sealed — native/custom canonical identities verified through confirmed Encounter and reload",
     "activeBranch": "main",
-    "deliveryBranch": "feature/830-object-identity-integrity",
+    "deliveryBranch": "main",
     "pullRequest": 167,
-    "pullRequestDraft": true,
+    "pullRequestDraft": false,
     "baselineRelease": "8.30",
-    "baselineRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
-    "lastSealedRelease": "8.29",
-    "lastSealedRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+    "baselineRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+    "lastSealedRelease": "8.30",
+    "lastSealedRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
     "phase0ProofSha": "84310744b528441f3fa8d3feb51e8ed149e02b78",
     "phase1ResolverProofSha": "2892d8807e6d2688cb366019d64c6e9b573fcb66",
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed.",
-    "intendedProductBehaviorChange": true,
+    "intendedProductBehaviorChange": false,
     "nextProductRelease": "8.30",
     "versionDecision": {
-      "sequence": 29,
-      "baseRelease": "8.29",
+      "sequence": 30,
+      "baseRelease": "8.30",
       "release": "8.30",
-      "decision": "bump",
-      "changeClass": "product-runtime"
+      "decision": "confirm",
+      "changeClass": "governance"
     },
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
@@ -441,7 +442,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Certify exact stable Object IDs across every selection and Encounter writer, preserve legacy records, then PLAY THIS runtime 8.31.",
+    "nextSlice": "Next bounded AXIS 8.31 Playable Runtime Foundation: specify safe playable execution contract, then verify locally before sharing.",
     "recordingReviewGeometry": {
       "status": "production-sealed-8.26.5-inherited",
       "baseRelease": "8.26.4",
@@ -656,7 +657,7 @@
       }
     },
     "objectIdentity": {
-      "status": "8.30-release-candidate",
+      "status": "production-sealed-8.30",
       "schema": "axis.object-identity.v1",
       "sourceOwner": "v873-exercise-library.js + canonical app.js selection and v61 classic recording",
       "audit": "scripts/axis-830-object-identity-audit.mjs",
@@ -675,7 +676,16 @@
         "chromium",
         "webkit"
       ],
-      "baselineProductRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171"
+      "baselineProductRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+      "productionRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+      "productionPullRequest": 167,
+      "productionCertification": {
+        "release": "8.30",
+        "certificatePath": "governance/production-certifications/8.30.json",
+        "exactHeadSuccess": 34,
+        "mergedMainSuccess": 30,
+        "providerCount": 3
+      }
     }
   },
   "compatibility": {
