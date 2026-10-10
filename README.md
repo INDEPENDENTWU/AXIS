@@ -6,6 +6,8 @@ Local-first practice software built around what actually happened.
 
 **Next product candidate: AXIS 8.31 — Playable Runtime Foundation** ([Draft PR #170](https://github.com/INDEPENDENTWU/AXIS/pull/170)). 8.31 is not released. It introduces a bounded PlayableSpec execution protocol that resolves exact native/custom Object identity, projects execution from existing Flow/Active/Encounter facts and delegates only explicitly requested commands to existing app owners. It creates no independent history, storage, recorder, Active lifecycle or AI/network dependency.
 
+Previously sealed AXIS 8.29 product/runtime: `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` (immutable prior release certificate).
+
 Certified 8.30 **product/runtime**: `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`. Independent 8.30 Governance SHA: `7eb7aa3a16723119d7f15f6243ce18a0d98b734a`. The former—not a later governance/deployment SHA—remains Production authority until 8.31 is independently certified.
 
 [Playable Runtime design](docs/AXIS_831_PLAYABLE_RUNTIME.md) · [Current Release](docs/CURRENT_RELEASE.md) · [8.30 production certificate](governance/production-certifications/8.30.json) · [8.31 delivery issue](https://github.com/INDEPENDENTWU/AXIS/issues/169).
