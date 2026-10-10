@@ -19,7 +19,7 @@ let cmd=planPlayableCommand({projection:phase,action:'launch',requestId:'click-1
 assert.equal(dispatchPlayableCommand({spec,attemptId,command:{...cmd,sourceRef:'forged-flow'},owner}).status,'stale','forged source cannot redirect command');
 assert.equal(dispatchPlayableCommand({spec,attemptId,command:cmd,owner}).status,'accepted');
 assert.equal(dispatchPlayableCommand({spec,attemptId,command:cmd,owner}).status,'stale','repeated launch cannot run twice');
-phase=projectPlayableExecution({spec,owner:owner.snapshot(),attemptId});assert.equal(phase.phase,'awaiting-fact');
+phase=projectPlayableExecution({spec,owner:owner.snapshot(),attemptId});assert.equal(phase.phase,'awaiting-fact');assert.equal(phase.canRequest,'start-current','sets must use authoritative Active start');
 assert.equal(projectPlayableExecution({spec,owner:{...owner.snapshot(),active:{status:'active',objectRef:'custom-identity-proof'}},attemptId}).reasonCodes[0],'foreign-active-owner','foreign active cannot impersonate current playable item');
 assert.equal(projectPlayableExecution({spec,owner:{...owner.snapshot(),active:{status:'active',objectRef:'chest-row'}},attemptId}).phase,'executing','real exact current Active may own execution');
 assert.equal(planPlayableCommand({projection:phase,action:'advance',requestId:'cheat'}).ok,false,'no fake completion');

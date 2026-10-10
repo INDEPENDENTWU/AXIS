@@ -38,55 +38,48 @@ try{
  assert.equal(start.result.status,'accepted');assert.equal(start.repeated.status,'stale','Flow must not relaunch on double-click');
  assert.equal(start.run.flowRef,flow.id);assert.equal(start.projected.phase,'awaiting-fact','Live Flow owner snapshot: '+JSON.stringify(start));
  assert.equal((await snapshot()).active?.events?.length||0,start.prior,'Playable launch cannot invent an Encounter');
- const selected=await page.evaluate(({spec})=>{
+ const launched=await page.evaluate(({spec})=>{
   const p=window.__AXIS_831_PLAYABLE__;
-  const projection=p.project(spec,'attempt-1'),command=p.plan(projection,'select-current','req-select');
-  return {command,result:p.dispatch(spec,'attempt-1',command),selected:window.__AXIS_SELECTED_EQUIPMENT__?.()?.id};
+  const ready=p.project(spec,'attempt-1');
+  const command=p.plan(ready,'start-current','req-start-object');
+  const result=p.dispatch(spec,'attempt-1',command);
+  const repeated=p.dispatch(spec,'attempt-1',command);
+  return {ready,command,result,repeated,run:window.__AXIS_FLOW_RUNTIME__.run(),projection:p.project(spec,'attempt-1')};
  },{spec});
- assert.equal(selected.result.status,'accepted');assert.equal(selected.selected,'chest-row','existing Flow selection lost exact canonical Object');
- let projected=await page.evaluate(spec=>window.__AXIS_831_PLAYABLE__.project(spec,'attempt-1'),spec);
- assert.equal(projected.phase,'awaiting-fact');
- assert.equal(await page.evaluate(({spec})=>window.__AXIS_831_PLAYABLE__.plan(window.__AXIS_831_PLAYABLE__.project(spec,'attempt-1'),'advance','premature').ok,{spec}),false,'no early advancement without Encounter');
- if(await page.locator('#scanSheet.show').count()){
-  await tap(page.locator('#scanSheet [data-close="scanSheet"]').first());
-  await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:5000});
- }
- await page.waitForFunction(()=>document.querySelector('#quickRecordBtn')&&document.querySelector('#dock')?.classList.contains('show'),undefined,{timeout:5000});
- await tap(page.locator('#quickRecordBtn'));
- await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:5000});
- await tap(page.locator('#v8Other'));
- await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:5000});
- const name=await page.evaluate(()=>(window.__AXIS_873_LIBRARY__||[]).find(x=>x.id==='chest-row')?.name);
- assert.ok(name,'canonical native Object disappeared from catalog');
- await page.locator('#eqSearch').fill(name);
- await page.waitForFunction(()=>!!document.querySelector('#v873SmartResults [data-v8124-pick="chest-row"]'),undefined,{timeout:4500});
- await tap(page.locator('#v873SmartResults [data-v8124-pick="chest-row"]').first());
- await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:4500});
- for(const input of await page.locator('#axis818MetricRecorder.show [data-axis818-metric]').all()){
-  const key=await input.getAttribute('data-axis818-metric');
-  if(['weight','reps','sets','duration','intensity'].includes(key))await input.fill(key==='weight'?'25':key==='duration'?'4':'8');
- }
- await tap(page.locator('#saveScan'));
- await page.waitForFunction(()=>{const s=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return (s.active?.events||[]).some(e=>e.equipmentId==='chest-row'&&e.flowProvenance?.flowStepRef==='chest-first');},undefined,{timeout:8000});
- const saved=(await snapshot());const event=saved.active.events.find(x=>x.flowProvenance?.flowStepRef==='chest-first');
- assert.equal(event.equipmentId,'chest-row');assert.equal(event.flowProvenance.flowRef,flow.id);
- assert.equal(JSON.stringify(saved.sessions[0].events[0]),old,'legacy history changed');
+ assert.equal(launched.ready.canRequest,'start-current','sets Object must delegate into canonical Active owner');
+ assert.equal(launched.result.status,'accepted','real Active start must be accepted with confirmed existing Encounter: '+JSON.stringify(launched));
+ assert.equal(launched.repeated.status,'stale','repeated Active start cannot create a second Encounter');
+ assert.equal(launched.run.currentStepRef,'chest-first');
+ assert.equal(launched.projection.phase,'executing','live Active must own item execution');
+ const saved=(await snapshot());
+ const event=saved.active.events.find(x=>x.id===launched.run.currentEncounterId);
+ assert.ok(event,'existing Flow/Active owner must have committed a factual Encounter');
+ assert.equal(event.equipmentId,'chest-row','canonical Object identity changed');
+ assert.equal(event.flowProvenance?.flowStepRef,'chest-first','Flow step provenance lost');
+ assert.equal(event.flowProvenance?.flowRef,flow.id,'Flow ref provenance lost');
+ assert.equal(saved.active.events.filter(e=>e.id===event.id).length,1,'duplicate start created another Encounter');
+ assert.equal(JSON.stringify(saved.sessions[0].events[0]),old,'legacy family event was changed');
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_831_PLAYABLE__,undefined,{timeout:18000});
- const advanced=await page.evaluate(spec=>{
-  const p=window.__AXIS_831_PLAYABLE__,flow=window.__AXIS_FLOW_RUNTIME__;
-  const phase=p.project(spec,'attempt-1'),command=p.plan(phase,'advance','req-complete');
-  const result=p.dispatch(spec,'attempt-1',command),repeated=p.dispatch(spec,'attempt-1',command);
-  return {phase,command,result,repeated,final:p.project(spec,'attempt-1'),run:flow.run()};
- },spec);
- assert.equal(advanced.phase.phase,'ready-to-advance','must restore actual Encounter before advancement');
- assert.equal(advanced.command.evidenceId,event.id);
- assert.equal(advanced.result.status,'accepted');
- assert.equal(advanced.repeated.status,'stale');
- assert.equal(advanced.final.phase,'complete');
- assert.equal(advanced.run.consumedStepRefs.length,1);
- const final=await snapshot();assert.equal(final.active.events.filter(x=>x.id===event.id).length,1,'Playable duplicated canonical Encounter');
- assert.equal(JSON.stringify(final.sessions[0].events[0]),old);
+ const onReload=await page.evaluate(spec=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),projected:window.__AXIS_831_PLAYABLE__?.project(spec,'attempt-1'),active:window.__AXIS_ACTIVE_RUNTIME__?.get?.(JSON.parse(localStorage.getItem('axis_v60_state')||'{}').flowRun?.currentEncounterId)}),spec);
+ assert.equal(onReload.projected.phase,'executing','reload must restore existing real Active rather than auto-confirm completion: '+JSON.stringify(onReload));
+ assert.equal(onReload.projected.evidenceId,event.id);
+ const finished=await page.evaluate(({id,spec})=>{
+  const owner=window.__AXIS_ACTIVE_RUNTIME__,flow=window.__AXIS_FLOW_RUNTIME__,p=window.__AXIS_831_PLAYABLE__;
+  const realBefore=owner.get?.(id),result=owner.finish?.(id);
+  return {realBefore,result,run:flow.run?.(),activity:owner.get?.(id),projected:p.project(spec,'attempt-1')};
+ },{id:event.id,spec});
+ assert.equal(finished.realBefore?.status,'active','existing Active owner was not active');
+ assert.equal(finished.result,true,'only canonical Active finish may settle whole item');
+ assert.equal(finished.run?.status,'complete','FlowRun should be completed by existing Owner after actual Active finish: '+JSON.stringify(finished));
+ assert.ok(finished.run.consumedStepRefs.includes('chest-first'),'canonical FlowRun must consume exact step');
+ assert.equal(finished.projected.phase,'complete','confirmed whole-item completion must be projected without invented history: '+JSON.stringify(finished));
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_831_PLAYABLE__,undefined,{timeout:18000});
+ const persisted=await page.evaluate(spec=>window.__AXIS_831_PLAYABLE__.project(spec,'attempt-1'),spec);
+ assert.equal(persisted.phase,'complete','reload completion must derive only from canonical saved Flow and Encounter');
+ const final=await snapshot();assert.equal(final.active.events.filter(x=>x.id===event.id).length,1,'playable retry doubled the Encounter');
+ assert.equal(JSON.stringify(final.sessions[0].events[0]),old,'legacy generic history changed');
  assert.deepEqual(pageErrors,[],'browser runtime errors: '+pageErrors.join('\n'));
- console.log('[AXIS 8.31 Playable '+ENGINE+'] PASS · existing Flow owner launch/selection · real Quick Record confirmed exact Encounter provenance · reload · verified advancement · duplicate/stale safe · legacy history unchanged');
+ console.log('[AXIS 8.31 Playable '+ENGINE+'] PASS · existing Flow owner launch/selection · real existing Active item confirmed exact Encounter provenance · reload · verified advancement · duplicate/stale safe · legacy history unchanged');
 }finally{await context.close().catch(()=>{});await browser.close().catch(()=>{})}
