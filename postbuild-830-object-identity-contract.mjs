@@ -6,6 +6,7 @@ if(info.version!=='8.30'||info.baseVersion!=='8.30'||info.architecture!=='canoni
 for(const marker of ['__AXIS_SELECT_EQUIPMENT__','__AXIS_SELECTED_EQUIPMENT__','axis8124CatalogItems','data-v8124-pick','axis829SaveInFlight','function eqById(','function selectEq('])if(!js.includes(marker))fail('missing runtime identity/recorder '+marker);
 for(const forbidden of ['pickId:x.baseId||x.id','const target=item.baseId||item.id','lib.find(e=>e.baseId===id)','id:lib.baseId||lib.id'])if(js.includes(forbidden))fail('unsafe base-family selection survives '+forbidden);
 if((js.match(/state\.active\.events\.push\(/g)||[]).length!==1)fail('canonical Encounter writer drift');
+if(!js.includes('for(const x of (window.__AXIS_873_LIBRARY__||LIB))'))fail('final runtime indexed stale library instead of expanded live catalog');
 if(!info.gates?.recordingContinuity829||!info.gates?.practiceLoop828||!info.gates?.realityRoute827)fail('inherited release gates missing');
 Object.assign(info.gates,{objectIdentity830:true,objectStableCanonicalId830:true,objectHistoricFactsUnchanged830:true,objectOneEncounterWriter830:true});
 info.axis830={schema:'axis.object-identity.v1',candidate:true,previousSealedProductSha:'4a9c73b2ea5330b9cffad3f9e322eb6970dfe171',canonicalId:true,baseIdOnlyMetadata:true,historicalRewrite:false,newStorage:false,newRecorder:false,newEncounterWriter:false};

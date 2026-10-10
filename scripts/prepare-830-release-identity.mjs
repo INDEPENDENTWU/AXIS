@@ -87,5 +87,19 @@ for(const file of [...fs.readdirSync('.').filter(x=>/^postbuild-.*\.mjs$/.test(x
  x=x.replace(start,"await page.waitForFunction(()=>!document.querySelector('#axis818MetricRecorder')?.classList.contains('show'),undefined,{timeout:3500});"+start);
  write(f,x);
 }
+// A completed-session fixture may cross UTC midnight within 5 minutes.
+// Keep the same-day production behavior assertion and make the fixture truly current.
+{
+ const f='scripts/axis-882-completion-camera-smoke.mjs',x=read(f),from="end=now-5*60000,start=end-32*60000",to="end=now-1000,start=end-32*60000";
+ if(x.split(from).length!==2)fail('8.8.2 completed session date fixture drift');
+ write(f,x.replace(from,to));
+}
+{
+ const f='scripts/axis-882-smoke.mjs',x=read(f);
+ const target="await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:2400});";
+ const diag="console.log('[AXIS 8.30 inherited Active diagnostic]',JSON.stringify(await page.evaluate(()=>({core:(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return{id:c.active?.id,events:(c.active?.events||[]).slice(-3).map(e=>({id:e.id,equipmentId:e.equipmentId,name:e.name}))}})(),meta:(()=>{const v=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}');return Object.fromEntries(Object.entries(v.events||{}).slice(-3).map(([id,x])=>[id,{status:x.activity?.status}]))})(),home:window.__AXIS_HOME_STATE__,today:document.querySelector('#todayView')?.className,sheets:[...document.querySelectorAll('.sheetWrap.show')].map(x=>x.id),activeNode:document.querySelector('#v87Now')?.className}))));";
+ if(x.split(target).length!==2)fail('8.8.2 inherited Active diagnostic anchor drift');
+ write(f,x.replace(target,diag+"\n"+target));
+}
 if(changed<10)fail('8.30 inherited release checks suspiciously small: '+changed);
 console.log('[AXIS 8.30 release identity] 8.29 → 8.30 · '+changed+' inherited check files updated, previous certificate untouched');
