@@ -2,7 +2,7 @@
 
 Local-first practice software built around what actually happened.
 
-**Current public release: 8.30 — Production-sealed** · [Open AXIS](https://axis.juele.fun) · [Engineering handoff](docs/HANDOFF.md).
+**Current release: 8.31 — Product-runtime candidate (NOT Production-certified). Current public Production release: 8.30 — sealed** · [Open AXIS](https://axis.juele.fun) · [Engineering handoff](docs/HANDOFF.md).
 
 **Next product candidate: AXIS 8.31 — Playable Runtime Foundation** ([Draft PR #170](https://github.com/INDEPENDENTWU/AXIS/pull/170)). 8.31 is not released. It introduces a bounded PlayableSpec execution protocol that resolves exact native/custom Object identity, projects execution from existing Flow/Active/Encounter facts and delegates only explicitly requested commands to existing app owners. It creates no independent history, storage, recorder, Active lifecycle or AI/network dependency.
 
