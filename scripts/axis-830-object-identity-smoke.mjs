@@ -16,6 +16,13 @@ const startQuick=async id=>{
   // 8.20 beginQuickRecorder is only for explicit custom metric schemas. Native Objects
   // must enter through the real Quick Record + canonical picker, not that private bridge.
   const entry=await page.evaluate(()=>({url:location.pathname,core:window.__AXIS_CORE_INTERACTIVE__,quickReady:window.__AXIS_QUICK_READY__,dock:document.querySelector('#dock')?.className,quickCount:document.querySelectorAll('#quickRecordBtn').length,quickSheet:document.querySelector('#quickRecordSheet')?.className,eqSheet:document.querySelector('#eqSheet')?.className,scanSheet:document.querySelector('#scanSheet')?.className,active:(()=>{const s=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return {id:s.active?.id,events:s.active?.events?.length}})()}));console.log('[AXIS 8.30 Quick entry]',id,JSON.stringify(entry));assert.equal(entry.quickCount,1,'Quick Record entry missing in real product runtime');
+  // A successful Recording picker selection already opens Scan Review; close that
+  // real modal before accessing the separately owned Quick Record dock entry.
+  if(await page.locator('#scanSheet.show').count()){
+    await tap(page.locator('#scanSheet [data-close="scanSheet"]').first());
+    await page.waitForFunction(()=>!document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:5000});
+  }
+  await page.waitForFunction(()=>document.querySelector('#quickRecordBtn')&&document.querySelector('#dock')?.classList.contains('show'),undefined,{timeout:5000});
   await tap(page.locator('#quickRecordBtn'));
   await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:4500});
   await tap(page.locator('#v8Other'));
