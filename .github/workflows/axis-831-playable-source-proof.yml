@@ -37,3 +37,5 @@ jobs:
           NODE
       - name: Real normalized Object and Flow pure tests
         run: node scripts/axis-831-playable-smoke.mjs
+      - name: Canonical owner evidence and idempotent command simulation
+        run: node scripts/axis-831-playable-execution-smoke.mjs
