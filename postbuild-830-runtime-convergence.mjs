@@ -19,14 +19,14 @@ one('if(!byId.has(id))byId.set(id,{...native,id,pickId:id});','byId.set(id,{...n
   const nameOwner="const byName=new Map(),add=(x,prefer=false)=>{if(!x?.name||!x?.pickId)return;const k=norm(x.name),old=byName.get(k);if(!old||prefer)byName.set(k,x)};";
   if(!segment.includes(nameOwner)||!segment.includes('return [...byName.values()]'))fail('unexpected inherited name-dedup catalog layout; refuse blind rewrite');
   segment=segment.replace(nameOwner,"const byId=new Map(),add=(x,prefer=false)=>{const id=String(x?.id||x?.pickId||'');if(!id||!x?.name||!x?.pickId)return;const old=byId.get(id);if(!old||prefer)byId.set(id,{...x,id})};");
-  segment=segment.replace('return [...byName.values()]',\`const liveNative=window.__AXIS_873_LIBRARY__||LIB;
+  segment=segment.replace('return [...byName.values()]',`const liveNative=window.__AXIS_873_LIBRARY__||LIB;
  for(let i=0;i<liveNative.length;i++){
   const native=liveNative[i];
   if(!native?.id||!native?.name)continue;
   const id=String(native.id);
   byId.set(id,{...native,id,pickId:id});
  }
- return [...byId.values()]\`);
+ return [...byId.values()]`);
   changes.push('retire inherited name-dedup and restore native ID identity');
  }
 
