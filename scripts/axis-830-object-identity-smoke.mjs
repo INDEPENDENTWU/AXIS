@@ -49,7 +49,15 @@ try{
   await page.locator('#eqSearch').fill('胸托划船');
   const identityDiagnostic=await page.evaluate(()=>({custom:(JSON.parse(localStorage.getItem('axis_v60_state')||'{}').profile?.customEq||[]).map(x=>({id:x.id,name:x.name})),personal:window.__AXIS_EQUIPMENT_PICKER_DATA__?.personal?.(60)?.map(x=>({id:x.id,name:x.name})),native:(window.__AXIS_873_LIBRARY__||[]).filter(x=>x.id==='chest-row').map(x=>({id:x.id,name:x.name})),query:document.querySelector('#eqSearch')?.value,items:[...document.querySelectorAll('#v873SmartResults [data-v8124-pick]')].map(b=>({id:b.dataset.v8124Pick,name:b.querySelector('b')?.textContent||''}))}));
   console.log('[AXIS 8.30 search identity diagnostic]',JSON.stringify(identityDiagnostic));
-  console.log('[AXIS 8.30 internal ranked search diagnostic]',JSON.stringify(await page.evaluate(()=>window.__AXIS_830_TEST_CATALOG__?.('胸托划船')||null)));
+  const catalogDiagnostic=await page.evaluate(()=>{
+    const native=(window.__AXIS_873_LIBRARY__||[]).find(x=>x.id==='chest-row');
+    const indexed=window.__AXIS_830_TEST_CATALOG__?.('胸托划船')||null;
+    return{native:{exists:!!native,id:native?.id,name:native?.name,ownKeys:native?Object.keys(native):[]},indexed};
+  });
+  console.log('[AXIS 8.30 internal ranked search diagnostic]',JSON.stringify(catalogDiagnostic));
+  assert.ok(catalogDiagnostic.native.exists,'canonical chest-row missing from live native library');
+  assert.ok(catalogDiagnostic.indexed?.matched?.some(x=>x.id==='chest-row'),
+    'canonical chest-row omitted from indexed search candidates: '+JSON.stringify(catalogDiagnostic));
   await page.waitForFunction(()=>document.querySelector('#v873SmartResults')?.classList.contains('show')&&document.querySelector('#v873SmartResults [data-v8124-pick="chest-row"]')&&document.querySelector('#v873SmartResults [data-v8124-pick="custom-identity-proof"]'),undefined,{timeout:3000});
   const queryIds=await page.locator('#v873SmartResults [data-v8124-pick]').evaluateAll(xs=>xs.map(x=>x.dataset.v8124Pick));
   assert.ok(queryIds.includes('chest-row')&&queryIds.includes('custom-identity-proof'),'same-name canonical and personal IDs collapsed '+queryIds.join(','));
@@ -68,13 +76,23 @@ try{
     assert.ok(saved.some(e=>e.equipmentId===id),'confirmed Encounter lost exact ID '+id);
     assert.equal(JSON.stringify((await stored()).sessions[0].events[0]),oldBefore,'historic base-family Encounter was mutated');
   }
+  // Same visible name must lead to two separate confirmed Encounters, not just two search buttons.
+  await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('recording'));
+  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:3000});
+  await page.locator('#eqSearch').fill('胸托划船');
+  await page.waitForFunction(()=>document.querySelector('#v873SmartResults [data-v8124-pick="custom-identity-proof"]'),undefined,{timeout:3000});
+  await tap(page.locator('#v873SmartResults [data-v8124-pick="custom-identity-proof"]').first());
+  await page.waitForFunction(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id==='custom-identity-proof',undefined,{timeout:3000});
+  await startQuick('custom-identity-proof');
+  assert.equal(JSON.stringify((await stored()).sessions[0].events[0]),oldBefore,
+    'custom Encounter rewrote historical base-family evidence');
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:15000});
   const final=await stored(),newIds=final.active.events.map(e=>e.equipmentId);
-  for(const id of cases)assert.ok(newIds.includes(id),'reload lost independently saved '+id);
+  for(const id of [...cases,'custom-identity-proof'])assert.ok(newIds.includes(id),'reload lost independently saved '+id);
   assert.equal(JSON.stringify(final.sessions[0].events[0]),oldBefore,'reload changed historic immutable Encounter');
   assert.deepEqual(errors,[],'uncaught page error:\n'+errors.join('\n'));
-  console.log('[AXIS 8.30 Object Identity '+ENGINE+'] PASS · native/personal search split · 6 exact selections → real confirmed Encounter IDs → reload · historic generic base ID immutable');
+  console.log('[AXIS 8.30 Object Identity '+ENGINE+'] PASS · native/personal search split · 6 native + 1 same-label custom exact selections → real confirmed Encounter IDs → reload · historic generic base ID immutable');
 }finally{
   await context.close().catch(()=>{});
   await browser.close().catch(()=>{});
