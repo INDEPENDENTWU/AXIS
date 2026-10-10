@@ -1,22 +1,26 @@
 # Current Release — AXIS 8.31
 
-**Status: product-runtime candidate; NOT Production-sealed.** AXIS 8.31 — Playable Runtime Foundation, Draft PR #170, version decision sequence 31 `8.30 → 8.31 / bump / product-runtime`.
+**Status: Production-certified — Playable Runtime Foundation.** Product PR #170, governance-only confirmation sequence 32.
 
-## Previous sealed production authority — AXIS 8.30
+## Certified exact product/runtime SHA
 
-Certified exact product/runtime: `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`. Product PR #167. Governance PR #168 merged at `7eb7aa3a16723119d7f15f6243ce18a0d98b734a`. The governance merged-main completed 28/28 CI and Vercel/EdgeOne/custom-domain Chromium/WebKit acceptance. [Immutable 8.30 production certificate](../governance/production-certifications/8.30.json) retains product SHA, provider evidence and the original EdgeOne attempt-1 failure followed by attempt-2 success.
+```text
+dddce5401e80087a7ccceb43ec466f1ad7abb505
+```
 
-The inherited AXIS 8.29 Runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` remains historically sealed in its own certificate. No old generic Encounter ID is rewritten by this candidate.
+Later governance-only commits and Vercel/EdgeOne redeployments do not replace the exact product/runtime SHA.
 
-## 8.31 candidate scope
+## Acceptance evidence
 
-- Versioned `axis.playable.v1` spec, exact canonical Object/Flow intent and deep immutable metric snapshot.
-- `axis.playable-execution.v1` pure state projection from the existing FlowRun/Active/current Encounter truth; `axis.playable-command.v1` gate re-evaluates each explicitly requested action against the latest canonical owner state.
-- Existing app.js Flow API owns `launch`, `selectCurrent`, `advance`; app.js Encounter and v61/v82/v87 owners remain responsible for confirmed facts and execution. No parallel timer or new durable store.
-- Not 8.32 PLAY THIS UI, not sharing, AIR, TAKE, FORK or a new account/cloud service.
+- PR #170 exact head `7f6396ff769c3d045d50cc6ff7403672d4a02bd5`: 35 successful workflows; 1 cancelled Branch hygiene run separately preserved, 0 failed.
+- Exact merged-main `dddce5401e80087a7ccceb43ec466f1ad7abb505`: 33/33 workflows passed with no failures.
+- Vercel Production `dpl_EwhKGdCcWn85LyN1gNPAR1Ybvmrq`, READY, main source `dddce5401e80087a7ccceb43ec466f1ad7abb505`, [Production gate](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38063653692).
+- EdgeOne Production `dpndawz2o9le`: exact prebuilt artifact/API parity and real Chromium/WebKit, [verification](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38063617617).
+- [axis.juele.fun](https://axis.juele.fun): exact parity, real Chromium/WebKit, [verification](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38063617630).
+- [Immutable 8.31 Production certificate](../governance/production-certifications/8.31.json) and [8.30 predecessor](../governance/production-certifications/8.30.json).
 
-**Release blocker:** 8.31 Draft PR #170 requires full exact-head green, real Chromium/iPhone-like WebKit recording/reload proof, protected merge, merged-main Vercel/EdgeOne/`axis.juele.fun` certification and a separate Governance Seal. No claim of public 8.31 availability is valid until then.
+The **runtime seal baseline** is `dddce5401e80087a7ccceb43ec466f1ad7abb505`. 8.31's prior candidate state was **not a self-referential requirement** to be certified before testing; acceptance is now independently evidenced.
 
-## Non-self-referential release admission
+## Next bounded stage
 
-The certified AXIS 8.30 product/runtime SHA is the **runtime seal baseline** for this candidate. The exact-head and merged-main acceptance of 8.31 is **not a self-referential requirement** that 8.31 already be deployed or Production-certified before the candidate may be tested. Independently proven 8.31 acceptance must occur before certification and public promotion.
+8.32 PLAY THIS is planned but not part of 8.31. No second Encounter writer, store, recorder, automatic completion or AI/network authority was added by 8.31.

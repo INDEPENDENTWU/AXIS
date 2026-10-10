@@ -1,0 +1,75 @@
+{
+  "schema": "axis.production-certificate.v1",
+  "release": "8.31",
+  "certifiedAt": "2026-10-10",
+  "productRuntimeSha": "dddce5401e80087a7ccceb43ec466f1ad7abb505",
+  "productPullRequest": 170,
+  "exactHeadSha": "7f6396ff769c3d045d50cc6ff7403672d4a02bd5",
+  "exactHeadSuccess": 35,
+  "exactHeadRuns": {
+    "total": 36,
+    "success": 35,
+    "cancelled": 1,
+    "failed": 0,
+    "cancelledWorkflow": "Branch hygiene"
+  },
+  "mergedMainWorkflows": {
+    "headSha": "dddce5401e80087a7ccceb43ec466f1ad7abb505",
+    "total": 33,
+    "success": 33,
+    "cancelled": 0,
+    "failed": 0,
+    "scope": "exact merged-main push workflow conclusions"
+  },
+  "vercel": {
+    "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
+    "deploymentId": "dpl_EwhKGdCcWn85LyN1gNPAR1Ybvmrq",
+    "deploymentUrl": "https://axis-h3rqpiltz-independentwus-projects.vercel.app",
+    "publicUrl": "https://axis-five-puce.vercel.app",
+    "readyState": "READY",
+    "target": "production",
+    "source": "git",
+    "sourceSha": "dddce5401e80087a7ccceb43ec466f1ad7abb505",
+    "sourceRef": "main",
+    "aliasError": null,
+    "gitCommitStatus": "success",
+    "currentReleaseGateRunId": 38063617613,
+    "deepCompatibilityGateRunId": 38063617692,
+    "productionGateRunId": 38063653692,
+    "chromiumProductionFlow": "success"
+  },
+  "edgeOne": {
+    "projectId": "makers-bxiu1vmyd0ba",
+    "deploymentId": "dpndawz2o9le",
+    "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
+    "verificationRunId": 38063617617,
+    "runAttempt": 1,
+    "sourceSha": "dddce5401e80087a7ccceb43ec466f1ad7abb505",
+    "packageContract": "success",
+    "deployProduction": "success",
+    "boundedFixedDomainConvergence": "success",
+    "vercelApiParity": "success",
+    "chromiumProductionFlow": "success",
+    "webkitProductionFlow": "success",
+    "gitCommitStatus": "success"
+  },
+  "customDomain": {
+    "publicUrl": "https://axis.juele.fun",
+    "verificationRunId": 38063617630,
+    "runAttempt": 1,
+    "sourceSha": "dddce5401e80087a7ccceb43ec466f1ad7abb505",
+    "exactParity": "success",
+    "chromiumProductionFlow": "success",
+    "webkitProductionFlow": "success"
+  },
+  "playable": {
+    "workflowRunId": 38063617591,
+    "pureContract": "success",
+    "chromiumRealEncounterReload": "success",
+    "webkitRealEncounterReload": "success",
+    "noSecondEncounterWriter": true
+  },
+  "previousSealedRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+  "previousGovernanceMergeSha": "7eb7aa3a16723119d7f15f6243ce18a0d98b734a",
+  "nextBoundedStage": "AXIS 8.32 — local PLAY THIS surface, not part of 8.31."
+}

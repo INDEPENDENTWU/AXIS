@@ -133,7 +133,7 @@ if(CURRENT==='8.25'){
 }
 
 if(CURRENT==='8.31'){
- if(STATUS!=='candidate'||SEALED!=='8.30'||PROD_SHA!=='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f'||project.product.candidatePullRequest!==170)fail('8.31 exact sealed predecessor must be retained');
+ if(STATUS==='candidate'){if(SEALED!=='8.30'||PROD_SHA!=='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f'||project.product.candidatePullRequest!==170)fail('8.31 sealed predecessor lost')}else if(STATUS==='production-certified'){if(SEALED!=='8.31'||PROD_SHA!=='dddce5401e80087a7ccceb43ec466f1ad7abb505'||project.product.productionPullRequest!==170)fail('8.31 sealed SHA mismatch')}else fail('8.31 invalid status '+STATUS);
  if(project.engineering?.playableRuntime?.newEncounterWriter!==false||project.engineering?.playableRuntime?.newActiveOwner!==false)fail('8.31 extra factual writer');
  if(!read('build-release.mjs').includes("'prepare-831-playable-runtime.mjs'"))fail('8.31 candidate not integrated into canonical build');
 }
