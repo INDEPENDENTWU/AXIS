@@ -67,7 +67,8 @@ if(CURRENT==='8.24'){
  }else if(CURRENT==='8.31'){
  const playable=project?.engineering?.playableRuntime;
  const proof=json('governance/production-certifications/8.30.json');
- if(STATUS!=='candidate'||!candidate||SEALED!=='8.30'||RUNTIME_SHA!=='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f'||SEALED_PR!==167||CANDIDATE_PR!==170)fail('8.31 must inherit exact certified 8.30 Runtime');
+ if(STATUS==='candidate'){
+ if(!candidate||SEALED!=='8.30'||RUNTIME_SHA!=='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f'||SEALED_PR!==167||CANDIDATE_PR!==170)fail('8.31 must inherit exact certified 8.30 Runtime');
  if(proof.productRuntimeSha!==RUNTIME_SHA||proof.productPullRequest!==167||proof.mergedMainWorkflows?.success!==30)fail('8.31 immutable predecessor certificate');
  if(project.production?.candidateRelease!=='8.31'||project.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification'||project.production?.latestDeploymentIsAuthority!==false)fail('8.31 unsealed candidate status');
  if(project.engineering?.pullRequest!==170||project.engineering?.deliveryBranch!=='feature/831-playable-runtime-foundation'||project.engineering?.intendedProductBehaviorChange!==true)fail('8.31 product delivery truth');
@@ -77,6 +78,17 @@ if(CURRENT==='8.24'){
  for(const provider of ['vercel','edgeOne','customDomain'])if(project.production?.[provider]?.sourceSha!==RUNTIME_SHA)fail('8.31 inherited provider provenance '+provider);
  const owner=owners.owners?.find(x=>x.capability==='playable-runtime-foundation-831');
  if(owner?.status!=='derived-execution-release-candidate'||owner?.storage!=='none'||owner.contract!=='axis.playable.v1')fail('8.31 derived owner registry mismatch');
+ }else if(STATUS==='production-certified'){
+  const cert=json('governance/production-certifications/8.31.json');
+  if(candidate||SEALED!=='8.31'||RUNTIME_SHA!=='dddce5401e80087a7ccceb43ec466f1ad7abb505'||SEALED_PR!==170||CANDIDATE_PR!==170)fail('8.31 certified runtime SHA');
+  if(cert.productRuntimeSha!==RUNTIME_SHA||cert.productPullRequest!==170||cert.exactHeadSuccess!==35||cert.mergedMainWorkflows?.success!==33||cert.edgeOne?.deploymentId!=='dpndawz2o9le')fail('8.31 immutable certificate mismatch');
+  if(project.production?.candidateStatus!=='production-sealed'||project.production?.latestDeploymentIsAuthority!==false||project.engineering?.intendedProductBehaviorChange!==false)fail('8.31 independent governance status');
+  if(!(decision?.sequence===32&&decision?.base_release==='8.31'&&decision?.release==='8.31'&&decision?.decision==='confirm'&&decision?.change_class==='governance'))fail('8.31 governance version confirm');
+  if(project.engineering?.playableRuntime?.status!=='production-sealed-8.31'||owners.owners?.find(x=>x.capability==='playable-runtime-foundation-831')?.status!=='derived-execution-production-sealed')fail('8.31 sealed Playable owner');
+  for(const key of ['vercel','edgeOne','customDomain'])if(project.production?.[key]?.sourceSha!==RUNTIME_SHA)fail('8.31 exact provider SHA '+key);
+  if(project.production.vercel?.deploymentId!==cert.vercel.deploymentId||project.production.edgeOne?.deploymentId!==cert.edgeOne.deploymentId||project.production.customDomain?.verificationRunId!==cert.customDomain.verificationRunId)fail('8.31 certificate provider mismatch');
+  if(project.production.combinedStatus?.sourceSha!==RUNTIME_SHA||project.production.combinedStatus?.vercel!=='success'||project.production.combinedStatus?.edgeOneProduction!=='success'||project.production.combinedStatus?.customDomain!=='success')fail('8.31 provider combined status');
+ }else fail('unsupported 8.31 release status '+STATUS);
  }else if(CURRENT==='8.30'){
  const id=project?.engineering?.objectIdentity;
  if(id?.historicalEncounterRewrite!==false||id?.newEncounterWriter!==false||id?.newStorageNamespace!==false||id?.network!==false||id?.ai!==false)fail('8.30 canonical Object identity ownership');

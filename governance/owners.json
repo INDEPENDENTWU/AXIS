@@ -277,12 +277,12 @@
     },
     {
       "capability": "playable-runtime-foundation-831",
-      "status": "derived-execution-release-candidate",
+      "status": "derived-execution-production-sealed",
       "owner": "lib/axis-playable.mjs + lib/axis-playable-execution.mjs; app-owned Flow API bridge",
       "contract": "axis.playable.v1",
       "storage": "none",
       "delegatesTo": "canonical app.js FlowRun/Session/Encounter, existing v61 recorder and v82/v87 Active",
-      "notes": "Source-stage 8.31 product candidate. Explicit idempotent command handoff only; no independent storage, fact writer, timer, completion, AI or network authority."
+      "notes": "Exact certified merged-main product dddce5401e80087a7ccceb43ec466f1ad7abb505; real Chromium/WebKit Encounter + reload, no new writer/timer/storage/AI/network."
     }
   ],
   "rules": [

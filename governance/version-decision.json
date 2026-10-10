@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 31,
-  "base_release": "8.30",
+  "sequence": 32,
+  "base_release": "8.31",
   "release": "8.31",
-  "decision": "bump",
-  "change_class": "product-runtime",
-  "summary": "AXIS 8.31 Playable Runtime Foundation: pure executable intent/command protocol and strict integration with existing Flow, Active and Encounter truth owners. Distinct canonical IDs, no second writer; preserve exact certified 8.30 Production until independent 8.31 acceptance."
+  "decision": "confirm",
+  "change_class": "governance",
+  "summary": "Independent 8.31 confirmation: 35 successful exact PR head workflows, 33 successful merged-main workflows, Vercel READY, EdgeOne Production and axis.juele.fun Chromium/WebKit, immutable product/runtime SHA retained."
 }

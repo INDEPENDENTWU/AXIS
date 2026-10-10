@@ -1,25 +1,33 @@
 # AXIS Engineering Handoff
 
-**Governed candidate:** AXIS 8.31 — Playable Runtime Foundation · version decision `8.30 → 8.31` / `bump` / sequence **31** / `product-runtime`.
+**Current governed release:** AXIS 8.31 — Playable Runtime Foundation.
+**Production status:** Production-certified. **Governed target branch:** `main`.
+**Product PR:** #170. **Independent confirmation:** sequence 32, `8.31 → 8.31 / confirm / governance`.
 
-**Delivery:** `feature/831-playable-runtime-foundation` · Draft PR [#170](https://github.com/INDEPENDENTWU/AXIS/pull/170) · [Issue #169](https://github.com/INDEPENDENTWU/AXIS/issues/169). **No 8.31 product/runtime merged or shipped yet.**
+## Certified product/runtime SHA
 
-## Exact sealed predecessor
+```text
+dddce5401e80087a7ccceb43ec466f1ad7abb505
+```
 
-8.30 certified product/runtime SHA `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`, product PR #167, independent governance PR #168 merged at `7eb7aa3a16723119d7f15f6243ce18a0d98b734a`. 28/28 governance-main CI and Vercel, EdgeOne and `axis.juele.fun` production proof succeeded after seal. 8.30 certificate: `governance/production-certifications/8.30.json`. 8.29 prior product/runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` retains its own certificate. Never conflate the governance merge, latest redeploy and the certified product/runtime authority.
+This is the exact merged-main product/runtime SHA, not the governance PR head/merge commit or a later Vercel deploy. Previously certified 8.30 runtime `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f` remains immutable.
 
-## 8.31b implementation contract
+## Production verification
 
-`lib/axis-playable.mjs` exact Object/Flow compiler; `axis.playable.v1` portable contract. `lib/axis-playable-execution.mjs` pure, deterministic `projectPlayableExecution`, `planPlayableCommand`, `dispatchPlayableCommand`. `scripts/prepare-831-playable-integration.mjs` injects the app-owned bridge `window.__AXIS_831_PLAYABLE__` in the canonical single Runtime, with no dynamic import or extra network request.
+- Product PR #170 exact head `7f6396ff769c3d045d50cc6ff7403672d4a02bd5`: 35 success, one cancelled Branch hygiene, no failed gates.
+- Product merged-main `dddce5401e80087a7ccceb43ec466f1ad7abb505`: 33/33 passed, Chromium/iPhone-like WebKit Playable → confirmed Encounter → reload → idempotent Flow advancement.
+- Vercel READY `dpl_EwhKGdCcWn85LyN1gNPAR1Ybvmrq`, exact main SHA; Production gate #38063653692.
+- EdgeOne Production `dpndawz2o9le`, exact prebuilt/API parity and Chromium/WebKit #38063617617.
+- `axis.juele.fun` exact domain parity, Chromium/WebKit #38063617630.
 
-The only allowed dispatch targets are existing Flow API `launch`, `selectCurrent`, `advance` or existing exact Object selection. Confirmed Encounter facts are matched by exact `event.id`, `equipmentId`, `flowProvenance.flowRef` and `flowStepRef`; a stored `lastEncounterId` or family `baseId` alone never authorizes progression. Duplicate/replayed commands are re-projected from live owner state; no Playable-local transaction store, Session writer, Encounter writer, AI authority or parallel timer.
+[Immutable production certificate](../governance/production-certifications/8.31.json) and historical [8.30 certificate](../governance/production-certifications/8.30.json) hold authoritative links and proof.
 
-8.31b source-stage tests succeeded; full deterministic 8.31 build, all CI, browser verification and provider certifications still require evidence and correction. This remains a Draft product PR.
+## Runtime contract and factual ownership
 
-## Real validation and closeout
+`axis.playable.v1`, `axis.playable-execution.v1`, `axis.playable-command.v1` are derived. Existing app.js FlowRun, Encounter, v61 recording, v82/v87 Active and Media owners remain authoritative. Exact canonical Object IDs and real provenance/timestamp are mandatory. No second writer, automatic completion, AI or network authority.
 
-Pure compiler/projection adversarial test, build-chain contract, canonical assembled single Runtime, real native/custom Object/Flow selection and user-confirmed fact in Chromium and iPhone-like WebKit, reload/replay, stale command rejection, no duplicate Encounter, no revised historical generic facts. After exact-head green only, SHA-leased merge, merged-main Production Vercel READY, EdgeOne exact prebuilt mirror and `axis.juele.fun` live browser parity. Independent governance-only 8.31 seal retains the certified product SHA.
+## Next stage
 
-## Cross-platform and roadmap
+AXIS 8.32 local PLAY THIS UI is not shipped or sealed in 8.31; require a separate product scope and version decision.
 
-Preserve `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`; no unversioned native semantic fork. 8.32 PLAY THIS local, 8.33 sharing, AIR, TAKE and FORK are future bounded stages, none included now.
+Historical AXIS 8.29 production runtime: `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` (immutable preceding seal).
