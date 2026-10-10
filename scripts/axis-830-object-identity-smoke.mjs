@@ -13,10 +13,20 @@ const json=(r,o)=>r.fulfill({status:200,contentType:'application/json',headers:{
 for(const [pattern,data] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>json(r,data));
 const stored=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
 const startQuick=async id=>{
-  assert.equal(await page.evaluate(x=>window.__AXIS_EXECUTABLE_OBJECTS__?.beginQuickRecorder?.(x),id),true,'Quick Record did not accept exact '+id);
-  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#saveScan'),undefined,{timeout:5000});
-  await page.waitForFunction(()=>document.querySelector('#axis818MetricRecorder')?.querySelectorAll('[data-axis818-metric]').length>0,undefined,{timeout:4000});
-  for(const input of await page.locator('#axis818MetricRecorder [data-axis818-metric]').all()){
+  // 8.20 beginQuickRecorder is only for explicit custom metric schemas. Native Objects
+  // must enter through the real Quick Record + canonical picker, not that private bridge.
+  await tap(page.locator('#quickRecordBtn'));
+  await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:4500});
+  await tap(page.locator('#v8Other'));
+  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:4500});
+  const name=await page.evaluate(x=>(window.__AXIS_873_LIBRARY__||[]).find(e=>e.id===x)?.name||(JSON.parse(localStorage.getItem('axis_v60_state')||'{}').profile?.customEq||[]).find(e=>e.id===x)?.name||'',id);
+  assert.ok(name,'Quick Record has no catalog name for '+id);
+  await page.locator('#eqSearch').fill(name);
+  await page.waitForFunction(x=>!!document.querySelector('#v873SmartResults [data-v8124-pick="'+x+'"]'),id,{timeout:4500});
+  await tap(page.locator('#v873SmartResults [data-v8124-pick="'+id+'"]').first());
+  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&!!document.querySelector('#saveScan'),undefined,{timeout:4500});
+  assert.equal(await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),id,'Quick Record picked a different canonical ID');
+  for(const input of await page.locator('#axis818MetricRecorder.show [data-axis818-metric]').all()){
     const key=await input.getAttribute('data-axis818-metric');
     if(['duration','weight','reps','sets','intensity'].includes(key))await input.fill(key==='duration'?'4':key==='weight'?'25':key==='intensity'?'5':'8');
   }
@@ -24,7 +34,7 @@ const startQuick=async id=>{
   await page.waitForFunction(x=>{
     const state=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');
     return (state.active?.events||[]).some(e=>e.equipmentId===x.id&&e.time>=x.since)
-  },{id,since:globalThis.Date.now()-15000},{timeout:6500});
+  },{id,since:Date.now()-15000},{timeout:6500});
 };
 try{
   assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:15000}))?.ok());
