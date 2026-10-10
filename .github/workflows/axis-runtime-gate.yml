@@ -94,6 +94,8 @@ jobs:
         run: node scripts/axis-881-smoke.mjs
       - name: Prepare inherited Active state diagnostic (8.30 only)
         run: node scripts/axis-830-active-regression-probe.mjs
+      - name: Audit compiled 8.8.2 visual-memory regression fixture
+        run: nl -ba scripts/axis-882-smoke.mjs | sed -n '60,96p'
       - name: AXIS 8.8.2 home + local memory + quick media + sound + geometry regression
         env:
           AXIS_URL: http://127.0.0.1:4173
