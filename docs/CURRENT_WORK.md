@@ -29,3 +29,12 @@ Cross-platform foundation remains `axis-native-foundation-0` from `INDEPENDENTWU
 ## Durable source and native compatibility
 
 repository governance remains authoritative. Chat history is not authoritative project memory. Portable inherited contracts: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`. The native foundation remains `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`; platform-specific camera and haptic capabilities stay separately declared. The local-first Web app and established factual owners remain authoritative for this candidate.
+
+## 2026-10-10 verification checkpoint — PR #167
+
+- The **8.30 product candidate remains unreleased**. No product merge, Production certification or Governance Seal has occurred. AXIS 8.29 remains the authoritative release.
+- Browser evidence from run [38010491087](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38010491087): the final assembled catalog had previously replaced canonical ID indexing with name-keyed deduplication. The corrected final build now reports `nativeMissing: []`, and exposes distinct `chest-row` and `custom-identity-proof` entries with the same visible label. This is a **search/index proof only**, not an Encounter save or release seal.
+- Build repair: `postbuild-830-runtime-convergence.mjs` explicitly retires the later name-based override and reconciles the final native catalog by canonical ID. `postbuild-830-object-identity-contract.mjs` rejects builds that omit final native precedence. The full ID inventory is asserted by `scripts/axis-830-object-identity-smoke.mjs`.
+- Next blocker: after search succeeded, Chromium run 38010491087 reached `Quick Record did not accept exact chest-row`. The 8.20 `beginQuickRecorder` bridge is intentionally restricted to explicit metric-schema Objects and is not the native Quick Record route. The current smoke was corrected to exercise the visible Quick Record/picker/save route; the replacement remains **unverified pending fresh Chromium/WebKit execution**.
+- Independent compatibility blocker: the inherited 8.8.2 Active view still fails to become visible after the legacy recording flow in Chromium and WebKit. Diagnose state and canonical presentation ownership without weakening the inherited assertion.
+- Mandatory closeout: exact PR head **all required workflows green**; protected merge; exact merged-main Vercel, EdgeOne and custom-domain Production evidence; a **separate** governance-only seal. Do not begin 8.31 early.

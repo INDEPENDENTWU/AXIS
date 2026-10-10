@@ -73,3 +73,13 @@ Authoritative next step: separately inspect, repair and physically prove every d
 ## Formal 8.30 product admission
 
 **Version-decision sequence 29** · `8.29 → 8.30 / bump / product-runtime`. Candidate delivery `feature/830-object-identity-integrity`, tracked by [PR #167](https://github.com/INDEPENDENTWU/AXIS/pull/167) and [Issue #166](https://github.com/INDEPENDENTWU/AXIS/issues/166). **No merged 8.30 product SHA and no Production certification yet.** Preserve previous sealed 8.29 exact product/runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`. The only permitted fact writers remain the existing app and classic owners. After exact-head testing, independently certify the merged product before performing any governance-only promotion.
+
+## AXIS 8.30 handoff — 2026-10-10, unsealed PR #167
+
+**Branch:** `feature/830-object-identity-integrity`; **latest recorded development head:** `6d4f9a661acb870dfb61a06bb056b9591cadf577` before this documentation-only commit. The authoritative head must be re-read from PR #167. AXIS 8.29 remains Production-sealed; 8.30 is **not published**.
+
+**Confirmed progress:** a late build stage had overwritten the ID-preserving search projection with `byName` deduplication. Source changes alone could not fix the shipped candidate. The final assembled catalog convergence now restores an ID-keyed projection with native precedence. [Chromium job 114089101674](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38010491087) reports zero missing native IDs and separate same-label `chest-row` and `custom-identity-proof` search candidates.
+
+**Unresolved gates:** the same job then stopped on an invalid smoke-test entry assumption: `beginQuickRecorder` is reserved for explicit metric schemas, so native Quick Record needs the real Quick Record picker route. The updated smoke uses that route but has not yet passed. The separate inherited 8.8.2 Active presentation test still times out on both engines. Never infer full Encounter integrity from passing search indexing, and never suppress these failures.
+
+**Next maintainer operation:** inspect the **latest exact-head CI** on PR #167. First correct the remaining real Quick Record or smoke routing failure, then physically prove native/custom IDs through selection, confirmed save, reload and unmodified historic facts in Chromium and WebKit. Diagnose the inherited Active transition separately and preserve its geometry and ownership contracts. Re-run all required CI, perform exact-head merge and merged-main provider Production certification, then issue an independent 8.30 Governance Seal. No 8.31 changes until that evidence is complete.

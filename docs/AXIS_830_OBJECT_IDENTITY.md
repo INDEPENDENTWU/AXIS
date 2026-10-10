@@ -1,6 +1,6 @@
 # AXIS 8.30 — Object Identity Integrity
 
-**Status:** Phase A identity inventory committed; initial Phase B source corrections committed and awaiting governed 8.30 version bump, build, automated proof and release certification. **Not shipped.**
+**Status:** Governed 8.30 product-runtime candidate and version bump integrated on Draft PR #167. Final assembled search-ID repair has browser evidence; confirmed Encounter/Quick Record and inherited Active browser gates remain open. **Not merged, not shipped, not certified.**
 **Baseline:** AXIS 8.29 exact Production-sealed runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`, governance PR #165.
 **Target branch:** `feature/830-object-identity-integrity`.
 
@@ -52,7 +52,7 @@ Distinct native catalog entries can select the same older base equipment ID. Thi
 - Chromium and iPhone-like WebKit; repeat after page reload, PWA-style reentry and edited schema.
 - Exact-head green → protected merge → Vercel, EdgeOne, custom-domain certification → governance-only seal.
 
-## Current implementation head
+## Original source baseline
 
 Initial source-only patch `7396cf07dacfa5e4a58f074156d47fab2894b60e` changes the legacy canonical catalog builder, ranked search picker, direct smart input, and read-only source risk probe. It routes selection by `id` and prefers explicit active Object identity. **Not yet tested as a built product, not merged, not certified.** Full category, historical fallback, classic writing, Flow and WebKit evidence is still required; additional integration fixes may be needed. The 8.30 version bump and CI are an admission condition before a normal merge.
 
@@ -63,3 +63,11 @@ Once 8.30 is sealed, AXIS can safely introduce **Playable Practice**: PLAY THIS 
 ## Release governance
 
 The audit slice is intentionally **non-runtime** and does not change the governed 8.29 product version. Subsequent behavior-changing 8.30 commits require a new `version-decision.json` sequence 29 `bump` / `product-runtime`, bounded new release identity, independent test gates and Production certification before merge. `main` remains on exact sealed 8.29 until then.
+
+## Exact-head engineering evidence — 2026-10-10
+
+The original `prepare-8124` canonical-ID source projection was overwritten later in the assembled build by a `byName` catalog. That late owner collapsed same-label entries and omitted the native `chest-row` and `ski` IDs from search. The 8.30 convergence now explicitly converts the **final runtime** back to an ID-keyed projection and reconciles native IDs as authoritative. In Chromium run `38010491087`, the actual search debug returned `nativeMissing: []` and separate native/personal `chest-row` / `custom-identity-proof` candidates.
+
+This result does **not** certify confirmed Encounter persistence. That run next exposed a test-path mismatch: the 8.20 `beginQuickRecorder` method is deliberately limited to Objects with explicit metric schemas; native Objects use normal Quick Record. The candidate browser smoke has been switched to the visible UI workflow for native IDs, pending exact-head engine results. Inherited 8.8.2 Active-state failure is separately unresolved in both engines.
+
+Acceptance remains fail-closed: green source/build contracts and successful search indexing cannot substitute for a real selection → save → reload proof, historic fact immutability or the inherited Runtime Gate. Do not merge or seal until all required CI succeeds.
