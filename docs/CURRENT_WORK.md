@@ -5,6 +5,18 @@ governed target branch: `main`.
 **Status:** Production-sealed at exact product/runtime `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`.
 **Product PR:** #167 · **Independent governance decision:** 8.30 → 8.30 / confirm / sequence 30 / governance.
 
+## Production baseline at start of this work
+
+Inherited certified AXIS 8.29 product runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`, product PR #164 and governance PR #165. It remained authoritative until AXIS 8.30 passed its independent merged-main and provider certification.
+
+## Active change
+
+The 8.30 canonical Object identity correction has been completed and Production-sealed at `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`. No further 8.30 product code change is active; the independent governance closeout only records certification.
+
+## Validation for this work
+
+Exact product PR #167 head: 34/34 successful checks. Merged-main product SHA: 30/30 successful push workflows. EdgeOne attempt-2 verification, Vercel READY, and custom-domain Chromium/WebKit proofs are archived in the exact 8.30 Production certificate.
+
 ## Completed delivery
 
 Native/custom Object identity is preserved through real catalog search, UI selection, Quick Record save and reload in Chromium and iPhone-like WebKit. Six native Objects and one same-label custom Object were checked against confirmed Encounter `equipmentId`; old generic historical facts remained unchanged.
