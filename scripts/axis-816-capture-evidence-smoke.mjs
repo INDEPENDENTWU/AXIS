@@ -76,7 +76,11 @@ try{
 
  await tap(page.locator('#v816CaptureDone'));await page.waitForFunction(()=>!document.querySelector('#reviewStage')?.classList.contains('hidden'),undefined,{timeout:1500});assert.equal(await page.locator('#reviewStage #film img').count(),4);assert.equal(await page.locator('#reviewStage #film video').count(),1);assert.equal(await page.locator('#reviewStage #film video[autoplay]').count(),0);
  await page.evaluate(()=>window.__AXIS_CAPTURE__.prepareQuick('row'));
- await tap(page.locator('#saveScan'));await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.length===1}catch{return false}},undefined,{timeout:5000});
+ for(const el of await page.locator('#axis818MetricRecorder.show [data-axis818-metric]').all()){const key=await el.getAttribute('data-axis818-metric');if(['duration','weight','reps','sets','intensity'].includes(key))await el.fill(key==='weight'?'25':key==='duration'?'4':'8')}
+  await tap(page.locator('#saveScan'));
+  try{await page.waitForFunction(()=>{try{return JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.length===1}catch{return false}},undefined,{timeout:5000})}catch(err){
+    const diag=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return{activeEvents:(s.active?.events||[]).map(e=>({id:e.id,equipmentId:e.equipmentId})),selected:window.__AXIS_SELECTED_EQUIPMENT__?.()?.id,scan:document.querySelector('#scanSheet')?.className,review:document.querySelector('#reviewStage')?.className,metricFields:[...document.querySelectorAll('#axis818MetricRecorder [data-axis818-metric]')].map(e=>({key:e.dataset.axis818Metric,value:e.value})),capture:window.__AXIS_CAPTURE__?.draft?.()?.intent,recorder:window.__AXIS_829_RECORDING__?.schema}});console.error('[AXIS 8.31 inherited 8.16 Capture save diagnostic]',JSON.stringify({diag,errors}));throw err
+  }
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')).active.events[0]);assert.equal(saved.frameRefs.length,4,'canonical event did not preserve all deliberate photos');assert.ok(saved.clipRef,'explicit 8.16 video did not persist to the existing clipRef schema');assert.equal(saved.frameRefs[0].startsWith(`F-${saved.id}-`),true);assert.equal(saved.clipRef,`V-${saved.id}`);
  for(const ref of [...saved.frameRefs,saved.clipRef])assert.ok(await page.evaluate(async r=>!!(await window.__AXIS_MEDIA_READ__.get(r)),ref),`stored media missing ${ref}`);
 
