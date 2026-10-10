@@ -75,5 +75,10 @@ for(const file of [...fs.readdirSync('.').filter(x=>/^postbuild-.*\.mjs$/.test(x
  if(x.split(from).length!==2)fail('8.19 legacy base/Object regression assertion drift');
  write(f,x.replace(from,to));
 }
+{
+ const f='scripts/axis-818-object-focus-smoke.mjs',x=read(f),from="assert.equal(boot.release,'8.29','public runtime identity did not converge');",to="assert.equal(boot.release,'8.30','public runtime identity did not converge');";
+ if(x.split(from).length!==2)fail('8.18 built-current Focus version assertion drift');
+ write(f,x.replace(from,to));
+}
 if(changed<10)fail('8.30 inherited release checks suspiciously small: '+changed);
 console.log('[AXIS 8.30 release identity] 8.29 → 8.30 · '+changed+' inherited check files updated, previous certificate untouched');
