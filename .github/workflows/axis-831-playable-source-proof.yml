@@ -43,3 +43,9 @@ jobs:
         run: |
           node --check scripts/prepare-831-playable-integration.mjs
           node scripts/axis-831-playable-bridge-contract.mjs
+      - name: Compile canonical 8.31 release and assert owner/governance convergence
+        run: |
+          node build-release.mjs > /tmp/axis-831-build.log 2>&1 || { tail -n 140 /tmp/axis-831-build.log; exit 1; }
+          node scripts/axis-production-governance-contract.mjs
+          node scripts/axis-repository-contract.mjs
+          node scripts/axis-831-playable-bridge-contract.mjs
