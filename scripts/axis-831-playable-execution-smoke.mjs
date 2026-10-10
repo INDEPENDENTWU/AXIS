@@ -20,6 +20,8 @@ assert.equal(dispatchPlayableCommand({spec,attemptId,command:{...cmd,sourceRef:'
 assert.equal(dispatchPlayableCommand({spec,attemptId,command:cmd,owner}).status,'accepted');
 assert.equal(dispatchPlayableCommand({spec,attemptId,command:cmd,owner}).status,'stale','repeated launch cannot run twice');
 phase=projectPlayableExecution({spec,owner:owner.snapshot(),attemptId});assert.equal(phase.phase,'awaiting-fact');
+assert.equal(projectPlayableExecution({spec,owner:{...owner.snapshot(),active:{status:'active',objectRef:'custom-identity-proof'}},attemptId}).reasonCodes[0],'foreign-active-owner','foreign active cannot impersonate current playable item');
+assert.equal(projectPlayableExecution({spec,owner:{...owner.snapshot(),active:{status:'active',objectRef:'chest-row'}},attemptId}).phase,'executing','real exact current Active may own execution');
 assert.equal(planPlayableCommand({projection:phase,action:'advance',requestId:'cheat'}).ok,false,'no fake completion');
 const ev1={id:'ev-1',time:now,equipmentId:'chest-row',flowProvenance:{schema:'axis.flow-provenance.v1',flowRef:'flow-831',flowStepRef:'step-a',objectRef:'chest-row'}};
 state.flowRun.lastEncounterId='ev-1';
