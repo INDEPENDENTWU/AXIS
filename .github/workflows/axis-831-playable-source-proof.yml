@@ -39,3 +39,7 @@ jobs:
         run: node scripts/axis-831-playable-smoke.mjs
       - name: Canonical owner evidence and idempotent command simulation
         run: node scripts/axis-831-playable-execution-smoke.mjs
+      - name: Verify Playable owner bridge boundary
+        run: |
+          node --check scripts/prepare-831-playable-integration.mjs
+          node scripts/axis-831-playable-bridge-contract.mjs
