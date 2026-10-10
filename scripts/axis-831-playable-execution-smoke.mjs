@@ -33,8 +33,8 @@ phase=projectPlayableExecution({spec,owner:owner.snapshot(),attemptId});assert.e
 state.flowRun.lastEncounterId='ev-2';state.encounters.push({id:'ev-2',time:now+1,equipmentId:'custom-identity-proof',flowProvenance:{schema:'axis.flow-provenance.v1',flowRef:'flow-831',flowStepRef:'step-b',objectRef:'custom-identity-proof'}});
 phase=projectPlayableExecution({spec,owner:owner.snapshot(),attemptId});const advance2=planPlayableCommand({projection:phase,action:'advance',requestId:'click-3'});assert.equal(dispatchPlayableCommand({spec,attemptId,command:advance2,owner}).status,'accepted');
 phase=projectPlayableExecution({spec,owner:owner.snapshot(),attemptId});assert.equal(phase.phase,'complete');assert.equal(phase.canRequest,'none');
-state.encounters=[];assert.equal(projectPlayableExecution({spec,owner:owner.snapshot(),attemptId}).phase,'blocked','deleted historical facts cannot continue to prove completion');
 assert.equal(state.encounters.length,2,'no Encounter writer in Playable bridge');
+state.encounters=[];assert.equal(projectPlayableExecution({spec,owner:owner.snapshot(),attemptId}).phase,'blocked','deleted historical facts cannot continue to prove completion');
 const objectReady=projectPlayableExecution({spec:object,owner:{selectedObjectId:'row'},attemptId});assert.equal(objectReady.phase,'ready');
 assert.equal(projectPlayableExecution({spec:object,owner:{selectedObjectId:'chest-row'},attemptId}).phase,'selected');
 assert.equal(projectPlayableExecution({spec:object,owner:{selectedObjectId:'chest-row',encounters:[ev1]},attemptId}).phase,'selected','historical fact cannot complete a new attempt');
