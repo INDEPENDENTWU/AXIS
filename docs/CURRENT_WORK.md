@@ -33,4 +33,4 @@ The initial EdgeOne attempt-1 WebKit transient failure remains in its workflow h
 
 ## Next planned stage
 
-**AXIS 8.31 — Playable Runtime Foundation.** Start only as a separately governed product candidate; PLAY THIS, AIR, TAKE and FORK require independent admission and proof. The foundation remains `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`; portable contracts and local-first history remain authoritative.
+**AXIS 8.31 — Playable Runtime Foundation.** Start only as a separately governed product candidate; PLAY THIS, AIR, TAKE and FORK require independent admission and proof. The foundation remains `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`; portable contracts `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, and `axis.report-range.v1` and local-first history remain authoritative. Chat history is not authoritative project memory. Conversation history is supplemental only; repository evidence controls release identity.
