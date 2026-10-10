@@ -145,7 +145,7 @@ try{window.__AXIS_EXERCISE_TAXONOMY__={version:'8.12.4',owner:'v873-native-libra
  const searchBlock=String.raw`
 function axis8124CatalogItems(){
  const byId=new Map(),add=(x,prefer=false)=>{if(!x?.id||!x?.name||!x?.pickId)return;const k=String(x.id),old=byId.get(k);if(!old||prefer)byId.set(k,x)};
- for(const x of LIB)add({...x,pickId:x.id});
+ for(const x of (window.__AXIS_873_LIBRARY__||LIB))add({...x,pickId:x.id});
  const api=window.__AXIS_EQUIPMENT_PICKER_DATA__;for(const x of api?.personal?.(40)||[])add({...x,aliases:[],muscles:x.muscles||[],pickId:x.id,metaText:x.custom?'我的 自定义':'我的 已使用'},true);
  for(const b of $$('#eqList [data-eq]')){const name=b.querySelector('b')?.textContent?.trim();if(name)add({id:b.dataset.eq,pickId:b.dataset.eq,name,aliases:[],muscles:[],type:/有氧/.test(b.textContent)?'cardio':'strength',metaText:b.textContent},false)}
  return [...byId.values()]

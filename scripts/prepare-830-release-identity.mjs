@@ -80,5 +80,12 @@ for(const file of [...fs.readdirSync('.').filter(x=>/^postbuild-.*\.mjs$/.test(x
  if(x.split(from).length!==2)fail('8.18 built-current Focus version assertion drift');
  write(f,x.replace(from,to));
 }
+{
+ const f='scripts/axis-819-object-recording-smoke.mjs';let x=read(f);
+ const start="assert.equal(await page.locator('#axis818MetricRecorder').isVisible(),false,'legacy Object inherited schema-driven recorder');";
+ if(x.split(start).length!==2)fail('8.19 legacy recorder settle check changed');
+ x=x.replace(start,"await page.waitForFunction(()=>!document.querySelector('#axis818MetricRecorder')?.classList.contains('show'),undefined,{timeout:3500});"+start);
+ write(f,x);
+}
 if(changed<10)fail('8.30 inherited release checks suspiciously small: '+changed);
 console.log('[AXIS 8.30 release identity] 8.29 → 8.30 · '+changed+' inherited check files updated, previous certificate untouched');
