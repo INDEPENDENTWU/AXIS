@@ -15,6 +15,21 @@ one('if(!byId.has(id))byId.set(id,{...native,id,pickId:id});','byId.set(id,{...n
  const signature='function axis8124CatalogItems()',from=code.indexOf(signature),end=from<0?-1:code.indexOf('function axis8124CatalogRanked(',from);
  if(from<0||end<0||code.indexOf(signature,from+signature.length)>=0)fail('one canonical catalog projection function required');
  let segment=code.slice(from,end);
+ if(segment.includes('const byName=new Map()')){
+  const nameOwner="const byName=new Map(),add=(x,prefer=false)=>{if(!x?.name||!x?.pickId)return;const k=norm(x.name),old=byName.get(k);if(!old||prefer)byName.set(k,x)};";
+  if(!segment.includes(nameOwner)||!segment.includes('return [...byName.values()]'))fail('unexpected inherited name-dedup catalog layout; refuse blind rewrite');
+  segment=segment.replace(nameOwner,"const byId=new Map(),add=(x,prefer=false)=>{const id=String(x?.id||x?.pickId||'');if(!id||!x?.name||!x?.pickId)return;const old=byId.get(id);if(!old||prefer)byId.set(id,{...x,id})};");
+  segment=segment.replace('return [...byName.values()]',\`const liveNative=window.__AXIS_873_LIBRARY__||LIB;
+ for(let i=0;i<liveNative.length;i++){
+  const native=liveNative[i];
+  if(!native?.id||!native?.name)continue;
+  const id=String(native.id);
+  byId.set(id,{...native,id,pickId:id});
+ }
+ return [...byId.values()]\`);
+  changes.push('retire inherited name-dedup and restore native ID identity');
+ }
+
  const old=/for\s*\(\s*const x of LIB\s*\)/g;
  const live=/for\s*\(\s*const x of \(window\.__AXIS_873_LIBRARY__\s*\|\|\s*LIB\)\s*\)/g;
  const originals=[...segment.matchAll(old)].length,converged=[...segment.matchAll(live)].length;
