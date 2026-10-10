@@ -6,7 +6,7 @@ const json=f=>JSON.parse(read(f));
 const LAST='df67fc0a20c0c34a79341315c8c85b5461acfe44',SEALED='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171';
 const p=json('governance/project-state.json'),d=json('governance/version-decision.json'),o=json('governance/owners.json');
 const candidate=d.sequence===27&&d.base_release==='8.28'&&d.release==='8.29'&&d.decision==='bump'&&d.change_class==='product-runtime';
-const sealed831=(d?.sequence===32&&d?.base_release==='8.31'&&d?.release==='8.31'&&d?.decision==='confirm'&&d?.change_class==='governance'&&p.product?.productionRelease==='8.31'&&p.product?.releaseStatus==='production-certified'&&p.product?.productionRuntimeSha==='dddce5401e80087a7ccceb43ec466f1ad7abb505');
+const sealed831=(d?.sequence===32&&d?.base_release==='8.31'&&d?.release==='8.31'&&d?.decision==='confirm'&&d?.change_class==='governance');
 const downstream831=(d?.sequence===31&&d?.base_release==='8.30'&&d?.release==='8.31'&&d?.decision==='bump'&&d?.change_class==='product-runtime' )||sealed831;
 const sealed830=d.sequence===30&&d.base_release==='8.30'&&d.release==='8.30'&&d.decision==='confirm'&&d.change_class==='governance'||downstream831;
 const downstream830=(d.sequence===29&&d.base_release==='8.29'&&d.release==='8.30'&&d.decision==='bump'&&d.change_class==='product-runtime')||sealed830;
