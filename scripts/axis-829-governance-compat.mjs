@@ -28,7 +28,7 @@ if(downstream830){
   if(prior.productRuntimeSha!==SEALED||prior.productPullRequest!==164||prior.release!=='8.29')fail('8.30 lost exact 8.29 certificate');
   const atPredecessorRestoration=sealed830&&p.product.productionRelease==='8.29';
   const expected=sealed830&&!atPredecessorRestoration?'eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f':SEALED;
-  if(!sealed831&&(p.product.productionRuntimeSha!==expected||p.product.productionPullRequest!==(sealed830&&!atPredecessorRestoration?167:164)||p.product.lastSealedRelease!==(sealed830&&!atPredecessorRestoration?'8.30':'8.29')||p.production.sealedRelease!==(sealed830&&!atPredecessorRestoration?'8.30':'8.29')))fail('8.30 product seal authority drift');
+  if((!sealed831||p.product.productionRelease!=='8.31')&&(p.product.productionRuntimeSha!==expected||p.product.productionPullRequest!==(sealed830&&!atPredecessorRestoration?167:164)||p.product.lastSealedRelease!==(sealed830&&!atPredecessorRestoration?'8.30':'8.29')||p.production.sealedRelease!==(sealed830&&!atPredecessorRestoration?'8.30':'8.29')))fail('8.30 product seal authority drift');
   if(p.product.productionRelease==='8.30'){
     if(sealed830){
       const cert=json('governance/production-certifications/8.30.json');
@@ -42,8 +42,8 @@ if(downstream830){
     if(p.product.releaseStatus!=='candidate'||p.product.lastSealedRelease!=='8.30'||p.product.productionRuntimeSha!=='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f'||p.product.productionPullRequest!==167||p.product.candidatePullRequest!==170||p.production.candidateRelease!=='8.31'||p.production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.31 successor lost exact 8.30 certificate and state');
   }else if(p.product.productionRelease!=='8.29'||p.product.releaseStatus!=='production-certified'||p.production.candidateRelease!=='8.29'||p.production.candidateStatus!=='production-sealed')fail('8.29 inherited build state drift');
   if(recording.status!=='production-sealed-8.29'||recording.productionRuntimeSha!==SEALED||owner.status!=='derived-presentation-production-sealed')fail('8.29 recording owner lost during 8.30');
-  for(const prov of ['vercel','edgeOne','customDomain'])if(p.production?.[prov]?.sourceSha!==(sealed831?'dddce5401e80087a7ccceb43ec466f1ad7abb505':expected))fail('inherited 8.30/8.31 provider provenance changed '+prov);
-  expectedSha=sealed831?'dddce5401e80087a7ccceb43ec466f1ad7abb505':expected;
+  for(const prov of ['vercel','edgeOne','customDomain'])if(p.production?.[prov]?.sourceSha!==(sealed831&&p.product.productionRelease==='8.31'?'dddce5401e80087a7ccceb43ec466f1ad7abb505':expected))fail('inherited 8.30/8.31 provider provenance changed '+prov);
+  expectedSha=sealed831&&p.product.productionRelease==='8.31'?'dddce5401e80087a7ccceb43ec466f1ad7abb505':expected;
 }else if(candidate){
   if(p.product.releaseStatus!=='candidate'||p.product.lastSealedRelease!=='8.28'||p.product.productionRuntimeSha!==LAST||p.product.productionPullRequest!==162)fail('candidate predecessor seal drift');
   if(p.production.sealedRelease!=='8.28'||p.production.candidateRelease!=='8.29'||p.production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('candidate evidence boundary');
