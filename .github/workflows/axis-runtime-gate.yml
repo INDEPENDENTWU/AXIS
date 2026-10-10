@@ -92,6 +92,8 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-881-smoke.mjs
+      - name: Prepare inherited Active state diagnostic (8.30 only)
+        run: node scripts/axis-830-active-regression-probe.mjs
       - name: AXIS 8.8.2 home + local memory + quick media + sound + geometry regression
         env:
           AXIS_URL: http://127.0.0.1:4173
@@ -156,6 +158,8 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-881-smoke.mjs
+      - name: Prepare inherited WebKit Active diagnostic (8.30 only)
+        run: node scripts/axis-830-active-regression-probe.mjs
       - name: iPhone WebKit AXIS 8.8.2 regression
         env:
           AXIS_URL: http://127.0.0.1:4173

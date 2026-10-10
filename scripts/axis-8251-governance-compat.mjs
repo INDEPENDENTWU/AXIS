@@ -13,12 +13,13 @@ const downstream828=project?.product?.productionRelease==='8.28'&&project?.produ
 const sealed828=project?.product?.productionRelease==='8.28'&&project?.product?.releaseStatus==='production-certified'&&project?.product?.lastSealedRelease==='8.28'&&project?.product?.productionRuntimeSha==='df67fc0a20c0c34a79341315c8c85b5461acfe44'&&project?.product?.productionPullRequest===162&&project?.product?.candidatePullRequest===162&&decision?.sequence===26&&decision?.base_release==='8.28'&&decision?.release==='8.28'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
 const downstream829=project?.product?.productionRelease==='8.29'&&project?.product?.releaseStatus==='candidate'&&project?.product?.lastSealedRelease==='8.28'&&project?.product?.productionRuntimeSha==='df67fc0a20c0c34a79341315c8c85b5461acfe44'&&project?.product?.productionPullRequest===162&&project?.product?.candidatePullRequest===164&&decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-const staged829=sealed829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+const downstream830=decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+const staged829=downstream830||sealed829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 if(!sealed8265&&!candidate827&&!sealed827&&!downstream828&&!sealed828&&!staged829)fail('current governance must be sealed 8.26.5, 8.27 candidate/seal, or bounded 8.28 successor');
 if(!sealed827&&!downstream828&&!sealed828&&!staged829&&(project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==158))fail('8.26.5 Production baseline drift');
 if((sealed827||downstream828)&&(project?.product?.productionRuntimeSha!==RUNTIME_827||project?.product?.productionPullRequest!==160))fail('8.27 Production seal drift');
 
-if(!['8.25.1','8.26.5','8.27','8.28','8.29'].includes(owners?.baselineRelease))fail(`owner baseline drift ${owners?.baselineRelease}`);
+if(!['8.25.1','8.26.5','8.27','8.28','8.29','8.30'].includes(owners?.baselineRelease))fail(`owner baseline drift ${owners?.baselineRelease}`);
 const morph=project?.engineering?.activeInlineSetMorph;
 for(const key of ['postFactOnly','inStageFactRow','stableStageGeometry','nonOverlapping','railConfirmation','buttonReturn','clockSettle','boundedHaptic','reducedMotionSafe'])if(morph?.[key]!==true)fail(`Inline Set Morph inherited capability missing ${key}`);
 if(morph?.status!=='production-sealed-8.25.1-inherited'||morph?.fullScreenOverlay!==false||morph?.pointerEvents!==false)fail('8.25.1 presentation boundary drift');

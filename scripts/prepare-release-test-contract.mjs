@@ -98,4 +98,14 @@ if(version==='8.12.3'){
   if(!fs.existsSync('prepare-8123-ci-stability.mjs'))throw new Error('AXIS 8.12.3 CI stability contract is missing');
   execFileSync(process.execPath,['prepare-8123-ci-stability.mjs'],{stdio:'inherit'});
 }
+
+if(version==='8.30'){
+  const p='scripts/axis-882-smoke.mjs';let s=fs.readFileSync(p,'utf8');
+  const target="await page.waitForFunction(()=>document.querySelector('#v87Now')?.classList.contains('show'),undefined,{timeout:2400});";
+  if(!s.includes(target))throw new Error('[8.30 Active] inherited wait anchor missing after final test alignment');
+  const probe="console.log('[AXIS 8.30 Active preflight]',JSON.stringify(await page.evaluate(()=>{const c=JSON.parse(localStorage.getItem('axis_v60_state')||'{}'),m=JSON.parse(localStorage.getItem('axis_v8_meta')||'{}');return{active:c.active?.id||null,events:c.active?.events?.map(x=>({id:x.id,equipmentId:x.equipmentId,name:x.name}))||[],sessions:c.sessions?.length||0,metadata:Object.keys(m.events||{}),home:window.__AXIS_HOME_STATE__,now:document.querySelector('#v87Now')?.className,quick:!!document.querySelector('#quickRecordBtn'),scan:document.querySelector('#scanSheet')?.className}})));" ;
+  if(!s.includes('[AXIS 8.30 Active preflight]'))s=s.replace(target,probe+'\n'+target);
+  fs.writeFileSync(p,s);
+}
+
 console.log(`[AXIS test contract] browser assertions aligned to ${version} · no stale release assertions · release flow aligned`);

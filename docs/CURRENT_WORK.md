@@ -1,54 +1,40 @@
 # AXIS Current Work
 
-Governed active milestone: `AXIS 8.29 — Recording Friction Collapse`.
+**Governed milestone:** AXIS 8.30 — Object Identity Integrity.
 governed target branch: `main`.
-
-Bounded delivery branch: `governance/829-production-seal` · PR **#165**.
-Version decision: **8.29 → 8.29 / confirm / sequence 28 / governance**.
-repository governance remains authoritative over conversation history.
-Chat history is not authoritative project memory. Conversation history is supplemental only; the exact repository state and verified provider evidence are the project source of truth.
-
-**Status: 8.29 Production-certified.** Product PR **#164** merged; exact product/runtime SHA:
-
-```text
-4a9c73b2ea5330b9cffad3f9e322eb6970dfe171
-```
-
-Repository governance, artifact identity and provider evidence are authoritative; conversation history is not project governance.
+Bounded delivery branch: `feature/830-object-identity-integrity` · PR **#167**.
+Version decision: **8.29 → 8.30 / bump / sequence 29 / product-runtime**.
+**Status:** unreleased product-runtime candidate, last Production-sealed release **8.29**.
 
 ## Production baseline at start of this work
 
-Prior AXIS 8.28 Production-sealed runtime: `df67fc0a20c0c34a79341315c8c85b5461acfe44` (product PR #162, governance PR #163). Product 8.29 runtime was promoted separately by PR #164; this governance PR is a non-product seal closeout.
+Certified product/runtime SHA `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`; product PR #164, governance PR #165. Governance closeout merged at `6713b47576e902c2015c63b7bb82b23691ec7a3c`: exact main push 26/27 successful plus one cancelled hygiene, 0 failed. Vercel and EdgeOne statuses success; custom domain run `37900945013` eventually success at attempt 3. The earlier WebKit transient assertion failures are retained in #165 post-merge comments.
 
 ## Active change
 
-8.29 Recording Friction Collapse is the product change already merged and provider verified. This governance-only closeout certifies that existing product without adding behavior or factual writers.
+Stable native ID on selection, search and classic quick recording. Audit native and expanded libraries, custom and historical fallback before accepting a final identity claim. Preserve same-name historical source as a historical fact only, not a new Object selection override.
+
+No new data writer; `baseId` is not a canonical Object ID. Old ambiguous Encounters remain immutable.
 
 ## Validation for this work
 
-- Version decision **sequence 28**: `8.29 → 8.29 / confirm / governance`. No product/runtime behavior change in this closeout.
-- Product PR exact head `8dc4d80f17c061b81a294963c4723f1d6d7e826e`: **33/33** successful PR workflows.
-- Product exact merged-main push runs: **28** total, **27 success / 1 cancelled (Branch hygiene) / 0 failed**.
-- Vercel `dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1` READY, source commit exact; Current Release `37831475540` and Deep Compatibility `37831475524`.
-- EdgeOne `dpfctvvd321b`, verification run `37831475199` including Chromium and WebKit.
-- `axis.juele.fun` exact parity + Chromium/WebKit success, run `37831475553`, **attempt 2**.
-- Certificate: `governance/production-certifications/8.29.json`. Later governance-only commits do not alter product/runtime SHA.
-- Prior sealed AXIS 8.28 exact runtime: `df67fc0a20c0c34a79341315c8c85b5461acfe44` (product PR #162, governance PR #163).
-
-AXIS 8.29 implemented safe previous-value suggestions, same-recorder draft continuity, and an in-flight save guard, without creating any competing Encounter, Session, Active, media or storage writer.
+Full source audit `scripts/axis-830-object-identity-audit.mjs --enforce`, build/release contract, actual Chromium and WebKit selection→save→reload proof, and historical provenance checks must all pass on exact PR head. **No product merge until all successful**.
 
 ## Next planned stage
 
-### Approved milestone — NOT YET STARTED
+After full 8.30 merged-main Production certification and independent governance seal, **AXIS 8.31 — Playable Runtime Foundation**, then PLAY THIS, AIR, TAKE and FORK.
 
-**AXIS 8.30 — Object Identity Integrity.** Preserve correct per-item identity across full catalog, suggestions, search, Quick selection, recent, custom objects, Object Recorder, Flow, History and Evolution. Protect historical fact provenance and do not silently split ambiguous old events.
+Cross-platform foundation remains `axis-native-foundation-0` from `INDEPENDENTWU/AXIS-iOS`. Conversation history is supplemental only; repository state and verified evidence are authoritative.
 
-Object IDs discovered as a risk at the catalog projection include `run` versus `treadmill`, `seated-row` versus `chest-row`, and `leg-curl` versus `seated-curl` and `lying-curl` due to shared baseId selection.
+## Durable source and native compatibility
 
-After 8.30 is Production-sealed, the separately governed Playable Practice sequence is: **8.31 Playable Runtime, 8.32 local PLAY THIS, 8.33 real sharing, 8.34 AIR, 8.35 PLAY THIS × AIR, 8.36 TAKE, 8.37 FORK, 8.38 Product Convergence**.
+repository governance remains authoritative. Chat history is not authoritative project memory. Portable inherited contracts: `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.report-range.v1`. The native foundation remains `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`; platform-specific camera and haptic capabilities stay separately declared. The local-first Web app and established factual owners remain authoritative for this candidate.
 
-Each product release requires a fresh decision, bounded PR, pure invariants, Chromium/WebKit tests, exact-head green, exact merged-main Production verification, and separate governance-only seal. Do not preemptively upgrade this 8.29 governance commit to release 8.30 or add new product behavior.
+## 2026-10-10 verification checkpoint — PR #167
 
-## Inherited cross-platform authority
-
-Portable contracts include `axis.domain.v1`, `axis.data.v1`, `axis.flow.v1`, `axis.flow-provenance.v1`, `axis.reality-route.v1`, `axis.execution-constraints.v1`, `axis.practice-loop.v1`, `axis.recording-continuity.v1`, and `axis.report-range.v1`. Cross-platform foundation is `axis-native-foundation-0` in `INDEPENDENTWU/AXIS-iOS`; no new native owner is created by this governance closeout.
+- The **8.30 product candidate remains unreleased**. No product merge, Production certification or Governance Seal has occurred. AXIS 8.29 remains the authoritative release.
+- Browser evidence from run [38010491087](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38010491087): the final assembled catalog had previously replaced canonical ID indexing with name-keyed deduplication. The corrected final build now reports `nativeMissing: []`, and exposes distinct `chest-row` and `custom-identity-proof` entries with the same visible label. This is a **search/index proof only**, not an Encounter save or release seal.
+- Build repair: `postbuild-830-runtime-convergence.mjs` explicitly retires the later name-based override and reconciles the final native catalog by canonical ID. `postbuild-830-object-identity-contract.mjs` rejects builds that omit final native precedence. The full ID inventory is asserted by `scripts/axis-830-object-identity-smoke.mjs`.
+- Next blocker: after search succeeded, Chromium run 38010491087 reached `Quick Record did not accept exact chest-row`. The 8.20 `beginQuickRecorder` bridge is intentionally restricted to explicit metric-schema Objects and is not the native Quick Record route. The current smoke was corrected to exercise the visible Quick Record/picker/save route; the replacement remains **unverified pending fresh Chromium/WebKit execution**.
+- Independent compatibility blocker: the inherited 8.8.2 Active view still fails to become visible after the legacy recording flow in Chromium and WebKit. Diagnose state and canonical presentation ownership without weakening the inherited assertion.
+- Mandatory closeout: exact PR head **all required workflows green**; protected merge; exact merged-main Vercel, EdgeOne and custom-domain Production evidence; a **separate** governance-only seal. Do not begin 8.31 early.

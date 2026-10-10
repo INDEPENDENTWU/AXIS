@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "baselineRelease": "8.29",
+  "baselineRelease": "8.30",
   "owners": [
     {
       "capability": "training-state",
@@ -265,6 +265,15 @@
       "storage": "none",
       "delegatesTo": "existing app.js+v874 Recorder, canonical app.js Encounter append, existing FlowRun/Active lifecycle",
       "notes": "Production-sealed at exact runtime 4a9c73b2ea5330b9cffad3f9e322eb6970dfe171. Read-only recall and transient recorder draft preservation; canonical app Encounter/Session/Active/media owners unchanged."
+    },
+    {
+      "capability": "canonical-object-identity-830",
+      "status": "derived-resolution-release-candidate",
+      "owner": "v873-exercise-library.js + existing app.js selectedEq; classic v61 ID projection",
+      "contract": "axis.object-identity.v1",
+      "storage": "none",
+      "delegatesTo": "existing app.js and v61 fact writers; no new persistence",
+      "notes": "Selection/picker/catalog routes preserve each distinct canonical Object ID, not baseId. Generic historical IDs stay unchanged; no migration."
     }
   ],
   "rules": [

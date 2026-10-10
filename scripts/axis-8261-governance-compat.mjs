@@ -54,7 +54,8 @@ const downstream829=
   project?.product?.productionPullRequest===162&&project?.product?.candidatePullRequest===164&&
   decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-const staged829=sealed829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+const downstream830=decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
+const staged829=downstream830||sealed829Stage||decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 if(!sealed8265&&!candidate827&&!sealed827&&!downstream828&&!sealed828&&!staged829)fail('current governance must be sealed 8.26.5, 8.27 candidate/seal, or bounded 8.28 successor/seal');
 
 const production=project?.production||{};
@@ -74,6 +75,10 @@ if(sealed827){
   if(production.vercel?.deploymentId!=='dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1'||production.vercel?.state!=='READY'||production.vercel?.target!=='production')fail('8.29 verified Vercel deployment drift');
   if(production.edgeOne?.deploymentId!=='dpfctvvd321b'||production.edgeOne?.verificationRunId!==37831475199)fail('8.29 verified EdgeOne deployment drift');
   if(production.customDomain?.verificationRunId!==37831475553||production.customDomain?.exactParity!=='success')fail('8.29 verified custom domain drift');
+}else if(downstream830&&project?.product?.productionRelease==='8.30'){
+  for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!=='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171')fail('8.30 lost exact sealed 8.29 provider '+provider);
+  if(production.sealedRelease!=='8.29'||production.candidateRelease!=='8.30'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.30 predecessor Production drift');
+  if(production.vercel?.deploymentId!=='dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1'||production.edgeOne?.deploymentId!=='dpfctvvd321b'||production.customDomain?.verificationRunId!==37831475553)fail('8.29 exact provider seal lost');
 }else if(downstream829){
   if(production.sealedRelease!=='8.28'||production.candidateRelease!=='8.29'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification')fail('8.29 candidate Production boundary drift');
   for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!=='df67fc0a20c0c34a79341315c8c85b5461acfe44')fail('8.29 lost sealed 8.28 provider '+provider);
@@ -96,7 +101,7 @@ if(continuity?.status!=='production-sealed-8.26-inherited')fail('8.26 inherited 
 for(const key of ['pausedTruthOwnerUnchanged','restStateBreathingSpace','restStateGrouped','restStateTonalCue','reducedMotionSafe'])if(rest?.[key]!==true)fail(`8.26.1 rest-state capability missing ${key}`);
 if(!String(rest?.status||'').startsWith('production-sealed-8.26.1'))fail('8.26.1 inherited rest-state seal drift');
 
-if(!['8.26.5','8.27','8.28','8.29'].includes(owners?.baselineRelease))fail('owner registry baseline drift');
+if(!['8.26.5','8.27','8.28','8.29','8.30'].includes(owners?.baselineRelease))fail('owner registry baseline drift');
 const continuityOwner=owners.owners?.find(x=>x.capability==='active-continuity-826');
 const restOwner=owners.owners?.find(x=>x.capability==='active-rest-state-8261');
 if(continuityOwner?.status!=='presentation-and-coordination-production-sealed'||continuityOwner?.storage!=='none')fail('8.26 sealed owner registry drift');
@@ -108,7 +113,7 @@ for(const p of [
   'postbuild-8265-recording-review-geometry-contract.mjs'
 ])if(!fs.existsSync(p))fail(`release surface missing ${p}`);
 
-if(candidate827||sealed827||downstream828||sealed828||downstream829||sealed829Stage){
+if(candidate827||sealed827||downstream828||sealed828||downstream829||sealed829Stage||downstream830){
   for(const p of ['lib/axis-reality-route.mjs','prepare-827-reality-route.mjs','postbuild-827-reality-route-contract.mjs','scripts/axis-827-governance-compat.mjs'])if(!fs.existsSync(p))fail(`8.27 release surface missing ${p}`);
   await import('./axis-827-governance-compat.mjs');
 }
