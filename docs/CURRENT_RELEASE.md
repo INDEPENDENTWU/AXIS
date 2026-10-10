@@ -1,33 +1,34 @@
 # Current Release — AXIS 8.30
 
-**Status: product-runtime candidate — Object Identity Integrity.** Not merged, not Production-sealed.
+**Status: Production-certified — Object Identity Integrity.** Product PR #167 · governance-only confirmation sequence 30.
 
-Product target **PR #167**: distinct displayed native Object IDs must be maintained through search/picker, selected Equipment, Quick and classic recording, saved Encounter and History/Evolution. Any old ambiguous base-family Encounter remains an immutable historical fact; no unsupported reassignment.
-
-## Production baseline (currently certified)
-
-AXIS **8.29** remains the Production-sealed release. Its exact **product/runtime SHA** is:
+## Certified product/runtime SHA
 
 ```text
-4a9c73b2ea5330b9cffad3f9e322eb6970dfe171
+eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f
 ```
 
-Product PR #164, governance PR #165 (exact merged governance-main `6713b47576e902c2015c63b7bb82b23691ec7a3c`). Vercel `dpl_BJz2iaThLqFnPbTDJ4RTQdDPKNY1`, EdgeOne `dpfctvvd321b` and `axis.juele.fun` were certified for that product runtime; post-governance merge 26 successful workflows, 1 cancelled Branch hygiene, no failures. Latest governance merge deployment is not a new product SHA.
+This is the exact merged-main **product/runtime SHA**, not a governance merge SHA or subsequent deployment commit. Later governance-only commits and new provider redeployments must not replace this identifier.
 
-This `8.29` exact certified product SHA is the **runtime seal baseline**, **not a self-referential requirement** for an 8.30 product PR; only after a new exact merged-main product SHA is verified may Production authority advance.
+## Evidence
 
-## 8.30 candidate contract
+- Exact product PR #167 head `31fdcaf5b78ef15968c3540821e5d32cf3806dd3`: 34/34 PR workflows succeeded.
+- Exact product merged-main SHA `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`: 30/30 push workflows succeeded on latest completed attempts, none outstanding or failed.
+- Vercel Git Production `dpl_ASBJRgKpMJonNnNBtd1XeumdZ36T`: READY, `main`, source SHA exact.
+- EdgeOne Production mirror `dpb4uzrph6wm`: [run #38013000237](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38013000237), **attempt 2** success; deploy, API parity, Chromium and iPhone WebKit. Attempt 1 failed a post-reload Practice Loop presentation assertion and is retained as a historical test failure.
+- [Custom domain run #38013000220](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38013000220): `axis.juele.fun` exact parity and Chromium/WebKit success.
+- Provider commit statuses Vercel and EdgeOne: `success`.
 
-- Canonical `id` is authoritative for every new selection and persisted Encounter; `baseId` is only optional family metadata.
-- Ambiguous alias/name never silently chooses an unrelated history Object; explicit selection prevails.
-- Read-only identity audit, exact build contract, Chromium/WebKit actual save/reload proof and provenance mutation checks.
-- No historical Encounter rewrite, second Recorder, new storage, network or AI dependency.
-- Existing Flow/Active/Session and Evidence remain authoritative.
+Machine-readable evidence: [governance/production-certifications/8.30.json](../governance/production-certifications/8.30.json).
 
-## Promotion criteria
+## Invariants
 
-Exact green PR head for #167 → protected merged-main → Vercel, EdgeOne and `axis.juele.fun` → governance certificate and independent seal. No candidate is marked Production-certified ahead of those steps.
+Canonical `id` is authoritative for newly confirmed native/custom Object facts. `baseId` is family metadata only. Same-label sources remain distinct. Old ambiguous Encounters are immutable and are not retroactively given an invented movement identity. The established app-owned Encounter/Session writer and v61 classic set writer remain unchanged.
 
-## Planned successor
+## Previous seal
 
-AXIS **8.31 Playable Runtime**, then PLAY THIS and AIR, subject to measured product acceptance.
+AXIS **8.29** product/runtime SHA `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` · product PR #164 · governance PR #165. Its certificate remains preserved at `governance/production-certifications/8.29.json`.
+
+## Next bounded release
+
+AXIS **8.31 — Playable Runtime Foundation**. It remains planned, not implemented by this seal.

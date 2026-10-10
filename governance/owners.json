@@ -268,12 +268,12 @@
     },
     {
       "capability": "canonical-object-identity-830",
-      "status": "derived-resolution-release-candidate",
+      "status": "derived-resolution-production-sealed",
       "owner": "v873-exercise-library.js + existing app.js selectedEq; classic v61 ID projection",
       "contract": "axis.object-identity.v1",
       "storage": "none",
-      "delegatesTo": "existing app.js and v61 fact writers; no new persistence",
-      "notes": "Selection/picker/catalog routes preserve each distinct canonical Object ID, not baseId. Generic historical IDs stay unchanged; no migration."
+      "delegatesTo": "existing app.js and v61 canonical fact writers",
+      "notes": "Sealed at exact merged-main product/runtime eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f. Native, custom, search and Quick Record ID preservation confirmed on Chromium/WebKit; previous generic historical Encounters remain immutable. No new persistence writer."
     }
   ],
   "rules": [

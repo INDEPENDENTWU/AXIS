@@ -1,0 +1,69 @@
+{
+  "schema": "axis.production-certificate.v1",
+  "release": "8.30",
+  "certifiedAt": "2026-10-10",
+  "productRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+  "productPullRequest": 167,
+  "exactHeadSha": "31fdcaf5b78ef15968c3540821e5d32cf3806dd3",
+  "exactHeadSuccess": 34,
+  "mergedMainWorkflows": {
+    "headSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+    "total": 30,
+    "success": 30,
+    "cancelled": 0,
+    "failed": 0,
+    "scope": "exact merged-main push workflow final successful conclusions; EdgeOne first failed attempt retained separately"
+  },
+  "vercel": {
+    "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
+    "deploymentId": "dpl_ASBJRgKpMJonNnNBtd1XeumdZ36T",
+    "deploymentUrl": "https://axis-pzk6hyoux-independentwus-projects.vercel.app",
+    "publicUrl": "https://axis-five-puce.vercel.app",
+    "readyState": "READY",
+    "target": "production",
+    "source": "git",
+    "sourceSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+    "sourceRef": "main",
+    "aliasError": null,
+    "gitCommitStatus": "success",
+    "currentReleaseGateRunId": 38013000146,
+    "deepCompatibilityGateRunId": 38013000507,
+    "productionGateRunId": null,
+    "productionGateSemantics": "Verified Git production deployment READY with source SHA exact merged-main; no separate production-gate run is asserted"
+  },
+  "edgeOne": {
+    "projectId": "makers-bxiu1vmyd0ba",
+    "deploymentId": "dpb4uzrph6wm",
+    "publicUrl": "https://axisfitness-mirror-9x91gveo.edgeone.cool",
+    "verificationRunId": 38013000237,
+    "runAttempt": 2,
+    "sourceSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+    "packageContract": "success",
+    "deployProduction": "success",
+    "boundedFixedDomainConvergence": "success",
+    "vercelApiParity": "success",
+    "chromiumProductionFlow": "success",
+    "webkitProductionFlow": "success",
+    "gitCommitStatus": "success",
+    "priorAttempt": {
+      "runAttempt": 1,
+      "conclusion": "failure",
+      "failedStep": "iPhone WebKit real EdgeOne current release flow",
+      "diagnosis": "8.28 Practice Loop post-reload presentation assertion; no build/deploy/API/Chromium failure",
+      "sourceSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f"
+    },
+    "resolution": "Exact same product SHA, job retry attempt 2 passed without code or test relaxation"
+  },
+  "customDomain": {
+    "publicUrl": "https://axis.juele.fun",
+    "verificationRunId": 38013000220,
+    "runAttempt": 1,
+    "sourceSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
+    "exactParity": "success",
+    "chromiumProductionFlow": "success",
+    "webkitProductionFlow": "success"
+  },
+  "previousSealedRuntimeSha": "4a9c73b2ea5330b9cffad3f9e322eb6970dfe171",
+  "previousGovernanceMergeSha": "6713b47576e902c2015c63b7bb82b23691ec7a3c",
+  "nextBoundedStage": "AXIS 8.31 — Playable Runtime Foundation; no 8.31 runtime feature introduced by this governance seal."
+}

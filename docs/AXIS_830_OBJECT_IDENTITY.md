@@ -1,5 +1,9 @@
 # AXIS 8.30 — Object Identity Integrity
 
+**Authoritative closeout:** [8.30 production certificate](../governance/production-certifications/8.30.json) · exact runtime `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`. Earlier phase narratives below are historical development evidence, not current release status.
+
+## Engineering history and original acceptance scope
+
 **Status:** Governed 8.30 product-runtime candidate and version bump integrated on Draft PR #167. Final assembled search-ID repair has browser evidence; confirmed Encounter/Quick Record and inherited Active browser gates remain open. **Not merged, not shipped, not certified.**
 **Baseline:** AXIS 8.29 exact Production-sealed runtime `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171`, governance PR #165.
 **Target branch:** `feature/830-object-identity-integrity`.
