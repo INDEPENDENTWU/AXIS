@@ -21,7 +21,7 @@ if(!sealed8265&&!candidate827&&!sealed827&&!downstream828&&!sealed828&&!staged82
 if(!sealed827&&!downstream828&&!sealed828&&!staged829&&(project?.product?.productionRuntimeSha!==SEALED_SHA||project?.product?.productionPullRequest!==158))fail('8.26.5 Production baseline drift');
 if((sealed827||downstream828)&&(project?.product?.productionRuntimeSha!==RUNTIME_827||project?.product?.productionPullRequest!==160))fail('8.27 Production seal drift');
 
-if(!['8.25.1','8.26.5','8.27','8.28','8.29','8.30'].includes(owners?.baselineRelease))fail(`owner baseline drift ${owners?.baselineRelease}`);
+if(!['8.25.1','8.26.5','8.27','8.28','8.29','8.30','8.31'].includes(owners?.baselineRelease))fail(`owner baseline drift ${owners?.baselineRelease}`);
 const morph=project?.engineering?.activeInlineSetMorph;
 for(const key of ['postFactOnly','inStageFactRow','stableStageGeometry','nonOverlapping','railConfirmation','buttonReturn','clockSettle','boundedHaptic','reducedMotionSafe'])if(morph?.[key]!==true)fail(`Inline Set Morph inherited capability missing ${key}`);
 if(morph?.status!=='production-sealed-8.25.1-inherited'||morph?.fullScreenOverlay!==false||morph?.pointerEvents!==false)fail('8.25.1 presentation boundary drift');
