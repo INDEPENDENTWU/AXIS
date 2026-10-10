@@ -24,3 +24,6 @@ Current versions:
 - `axis.normalized-state-fixture.v1` — strict typed input for normalized golden-state fixtures before semantic reduction
 
 Version changes require an explicit compatibility/migration decision and corresponding golden fixtures. Metric and Flow contracts are additive to the existing domain/data v1 foundation: they do not replace the current Web persistence owners, create a second training store or reinterpret historical workout facts.
+
+- `axis.playable.v1` — 8.31 bounded local executable intent, exact Object/Flow identity, immutable resolved metric/execution snapshot; never Session or Encounter fact
+- `axis.playable-execution.v1` and `axis.playable-command.v1` — derived owner state and explicitly preflighted handoff; no second recorder/Active/Encounter owner

@@ -6,7 +6,7 @@ if(m.version!=='8.31'||m.baseVersion!=='8.31'||m.architecture!=='canonical-singl
 if(d.sequence!==31||d.base_release!=='8.30'||d.release!=='8.31')fail('unadmitted 8.31 version decision');
 for(const t of ['__AXIS_831_PLAYABLE__','axis831ExistingOwner','playableEventMatch','confirmed-canonical-encounter','owner-state-not-ready','newSessionWriter:false,newEncounterWriter:false,newActiveOwner:false'])if(!js.includes(t))fail('assembled Runtime missing '+t);
 for(const t of ['state.active.events.push(','state.sessions.push(','localStorage.setItem('])if(read('scripts/prepare-831-playable-integration.mjs').includes(t))fail('second fact/store writer in Playable integration');
-if(!m.gates?.objectIdentityCanonicalId)fail('8.30 canonical identity gate not inherited');
+if(!m.gates?.objectIdentity830)fail('8.30 canonical identity gate not inherited');
 m.gates.playableExecution=true;m.playable={schema:'axis.playable.v1',executionSchema:'axis.playable-execution.v1',bridge:'__AXIS_831_PLAYABLE__',readOnlyCompiler:true,existingFactWriterOnly:true,network:false};
 fs.writeFileSync('axis-build.json',JSON.stringify(m,null,2)+'\n');
 console.log('[AXIS 8.31 postbuild Playable] PASS · exact 8.31 canonical runtime + 8.30 identity + no competing facts');

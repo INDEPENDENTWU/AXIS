@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "baselineRelease": "8.30",
+  "baselineRelease": "8.31",
   "owners": [
     {
       "capability": "training-state",
@@ -274,6 +274,15 @@
       "storage": "none",
       "delegatesTo": "existing app.js and v61 canonical fact writers",
       "notes": "Sealed at exact merged-main product/runtime eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f. Native, custom, search and Quick Record ID preservation confirmed on Chromium/WebKit; previous generic historical Encounters remain immutable. No new persistence writer."
+    },
+    {
+      "capability": "playable-runtime-foundation-831",
+      "status": "derived-execution-release-candidate",
+      "owner": "lib/axis-playable.mjs + lib/axis-playable-execution.mjs; app-owned Flow API bridge",
+      "contract": "axis.playable.v1",
+      "storage": "none",
+      "delegatesTo": "canonical app.js FlowRun/Session/Encounter, existing v61 recorder and v82/v87 Active",
+      "notes": "Source-stage 8.31 product candidate. Explicit idempotent command handoff only; no independent storage, fact writer, timer, completion, AI or network authority."
     }
   ],
   "rules": [

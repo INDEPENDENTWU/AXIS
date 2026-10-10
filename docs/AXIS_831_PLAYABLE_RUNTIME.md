@@ -1,6 +1,6 @@
 # AXIS 8.31 — Playable Runtime Foundation
 
-**Status:** 8.31a source-contract groundwork on a separate feature branch. This document does not promote the public release: AXIS 8.30 stays the only Production-sealed release until an explicit, independently certified 8.31 product merge.
+**Status:** 8.31b product-runtime Draft candidate PR #170, version decision sequence 31; not Production-certified. Pure execution projection and existing app Flow/Active/Encounter bridge admitted, browser and full release validation pending. This document does not promote the public release: AXIS 8.30 stays the only Production-sealed release until an explicit, independently certified 8.31 product merge.
 
 **Admission:** AXIS 8.30 Governance PR #168 merged-main `7eb7aa3a16723119d7f15f6243ce18a0d98b734a`, 28/28 push gates green; Vercel, EdgeOne and `axis.juele.fun` certified. Immutable AXIS 8.30 **product/runtime** `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`. [Delivery issue #169](https://github.com/INDEPENDENTWU/AXIS/issues/169).
 

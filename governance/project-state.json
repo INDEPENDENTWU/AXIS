@@ -3,23 +3,23 @@
   "product": {
     "name": "AXIS",
     "identity": "Personal Evolution Engine",
-    "productionRelease": "8.30",
-    "releaseStatus": "production-certified",
+    "productionRelease": "8.31",
+    "releaseStatus": "candidate",
     "lastSealedRelease": "8.30",
     "productionRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
     "productionPullRequest": 167,
-    "candidatePullRequest": 167,
+    "candidatePullRequest": 170,
     "architecture": "canonical-single-runtime",
     "releaseBuildCommand": "node build-release.mjs"
   },
   "production": {
     "sealedRelease": "8.30",
     "sealedAt": "2026-10-10",
-    "candidateRelease": "8.30",
-    "candidateStatus": "production-sealed",
+    "candidateRelease": "8.31",
+    "candidateStatus": "pending-exact-head-and-merged-main-certification",
     "evidenceScope": "product-runtime-seal-snapshot",
     "latestDeploymentIsAuthority": false,
-    "evidenceSemantics": "AXIS 8.30 certified product/runtime exactly eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f. Separate governance commits and subsequent redeployments do not replace product authority.",
+    "evidenceSemantics": "AXIS 8.30 product/runtime and provider evidence remain sealed authority until independent 8.31 Production acceptance.",
     "vercel": {
       "projectId": "prj_8JJhe0nj2CryZb4xHoHV1WBffn8f",
       "deploymentId": "dpl_ASBJRgKpMJonNnNBtd1XeumdZ36T",
@@ -68,13 +68,13 @@
     }
   },
   "engineering": {
-    "activeMilestone": "AXIS 8.30 — Object Identity Integrity",
-    "activePhase": "Production-sealed — native/custom canonical identities verified through confirmed Encounter and reload",
+    "activeMilestone": "AXIS 8.31 — Playable Runtime Foundation",
+    "activePhase": "Product-runtime candidate — derived execution and explicit canonical owner handoff",
     "activeBranch": "main",
-    "deliveryBranch": "main",
-    "pullRequest": 167,
-    "pullRequestDraft": false,
-    "baselineRelease": "8.30",
+    "deliveryBranch": "feature/831-playable-runtime-foundation",
+    "pullRequest": 170,
+    "pullRequestDraft": true,
+    "baselineRelease": "8.31",
     "baselineRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
     "lastSealedRelease": "8.30",
     "lastSealedRuntimeSha": "eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f",
@@ -83,14 +83,14 @@
     "phase1ResolverProof": "all nine baseline PR workflow families success; AXIS 8.21 Flow contract step success in Cross-Platform Foundation Gate",
     "phase1BProofSha": "289fd1b2cdcbcb4e1cfa56402372b8005daadfa4",
     "phase1BProof": "all nine baseline PR workflow families success; immutable axis.flow-provenance.v1 contract sealed.",
-    "intendedProductBehaviorChange": false,
-    "nextProductRelease": "8.30",
+    "intendedProductBehaviorChange": true,
+    "nextProductRelease": "8.31",
     "versionDecision": {
-      "sequence": 30,
+      "sequence": 31,
       "baseRelease": "8.30",
-      "release": "8.30",
-      "decision": "confirm",
-      "changeClass": "governance"
+      "release": "8.31",
+      "decision": "bump",
+      "changeClass": "product-runtime"
     },
     "foundation": {
       "objectTruth": "metricSchema on canonical Object truth",
@@ -442,7 +442,7 @@
       "changesPrimaryTapSemantics": false,
       "newTrainingOwnerAllowed": false
     },
-    "nextSlice": "Next bounded AXIS 8.31 Playable Runtime Foundation: specify safe playable execution contract, then verify locally before sharing.",
+    "nextSlice": "8.31c physical Chromium/WebKit owner and reload proofs; no 8.32 UI or sharing announced.",
     "recordingReviewGeometry": {
       "status": "production-sealed-8.26.5-inherited",
       "baseRelease": "8.26.4",
@@ -686,6 +686,35 @@
         "mergedMainSuccess": 30,
         "providerCount": 3
       }
+    },
+    "playableRuntime": {
+      "status": "8.31-release-candidate",
+      "pureCompiler": "lib/axis-playable.mjs",
+      "pureExecution": "lib/axis-playable-execution.mjs",
+      "portableContract": "axis.playable.v1",
+      "commandContract": "axis.playable-command.v1",
+      "executionContract": "axis.playable-execution.v1",
+      "browserBridge": "window.__AXIS_831_PLAYABLE__",
+      "integration": "scripts/prepare-831-playable-integration.mjs",
+      "sourceOwners": [
+        "app.js FlowRun",
+        "app.js Encounter",
+        "existing v61 recorder",
+        "existing v82/v87 Active"
+      ],
+      "canonicalObjectIds": true,
+      "flowProvenanceRequired": true,
+      "realFactRequired": true,
+      "duplicateRequestSafe": true,
+      "newStorageNamespace": false,
+      "newSessionWriter": false,
+      "newEncounterWriter": false,
+      "newRecorderOwner": false,
+      "newActiveOwner": false,
+      "autoCompletion": false,
+      "network": false,
+      "ai": false,
+      "share": false
     }
   },
   "compatibility": {
@@ -735,7 +764,8 @@
       "axis.reality-route.v1",
       "axis.execution-constraints.v1",
       "axis.practice-loop.v1",
-      "axis.recording-continuity.v1"
+      "axis.recording-continuity.v1",
+      "axis.playable.v1"
     ],
     "rule": "Shared product/data semantics are portable; Web implementation accidents are not domain contracts."
   },
