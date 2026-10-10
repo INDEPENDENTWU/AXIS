@@ -36,7 +36,7 @@ try{
  },{flow,spec});
  assert.equal(start.ready.phase,'ready');assert.equal(start.command.ok,true);
  assert.equal(start.result.status,'accepted');assert.equal(start.repeated.status,'stale','Flow must not relaunch on double-click');
- assert.equal(start.run.flowRef,flow.id);assert.equal(start.projected.phase,'awaiting-fact');
+ assert.equal(start.run.flowRef,flow.id);assert.equal(start.projected.phase,'awaiting-fact','Live Flow owner snapshot: '+JSON.stringify(start));
  assert.equal((await snapshot()).active?.events?.length||0,start.prior,'Playable launch cannot invent an Encounter');
  const selected=await page.evaluate(({spec})=>{
   const p=window.__AXIS_831_PLAYABLE__;

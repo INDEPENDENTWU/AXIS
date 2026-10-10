@@ -6,6 +6,8 @@ Bounded delivery branch: `feature/831-playable-runtime-foundation` · PR **#170*
 Version decision: **8.30 → 8.31 / bump / sequence 31 / product-runtime**.
 **Status:** Draft product candidate; not merged, published, Production-certified or governed as a seal.
 
+**Current sealed baseline:** AXIS 8.30 is Production-sealed; AXIS 8.31 remains an unsealed candidate.
+
 ## Production baseline at start of this work
 
 Certified AXIS 8.30 product Runtime `eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f`, product PR #167 and independent governance PR #168 (governance merged-main `7eb7aa3a16723119d7f15f6243ce18a0d98b734a`). After 28/28 governance-main CI plus Vercel/EdgeOne/`axis.juele.fun` Chromium/WebKit, 8.30 is formally sealed. Prior 8.29 product `4a9c73b2ea5330b9cffad3f9e322eb6970dfe171` and 8.28 `df67fc0a20c0c34a79341315c8c85b5461acfe44` remain immutable historical seals.
