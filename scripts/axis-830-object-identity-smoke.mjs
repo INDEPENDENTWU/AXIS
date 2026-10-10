@@ -15,6 +15,7 @@ const stored=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_sta
 const startQuick=async id=>{
   // 8.20 beginQuickRecorder is only for explicit custom metric schemas. Native Objects
   // must enter through the real Quick Record + canonical picker, not that private bridge.
+  const entry=await page.evaluate(()=>({url:location.pathname,core:window.__AXIS_CORE_INTERACTIVE__,quickReady:window.__AXIS_QUICK_READY__,dock:document.querySelector('#dock')?.className,quickCount:document.querySelectorAll('#quickRecordBtn').length,quickSheet:document.querySelector('#quickRecordSheet')?.className,eqSheet:document.querySelector('#eqSheet')?.className,scanSheet:document.querySelector('#scanSheet')?.className,active:(()=>{const s=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return {id:s.active?.id,events:s.active?.events?.length}})()}));console.log('[AXIS 8.30 Quick entry]',id,JSON.stringify(entry));assert.equal(entry.quickCount,1,'Quick Record entry missing in real product runtime');
   await tap(page.locator('#quickRecordBtn'));
   await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:4500});
   await tap(page.locator('#v8Other'));
@@ -42,7 +43,7 @@ try{
   const historic={id:'E-LEGACY',equipmentId:'row',name:'划船',kind:'strength',time:now-120000,weight:40,reps:10,sets:3,metricSchemaSnapshot:[{key:'weight',unit:'kg'}]};
   await page.evaluate(({now,historic})=>{
     localStorage.clear();
-    localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[{id:'H',start:now-180000,end:now-100000,events:[historic]}],active:{id:'A-830',start:now-30000,events:[]},flows:[],flowRun:null,profile:{customEq:[{id:'custom-identity-proof',name:'胸托划船',type:'strength',custom:true,pattern:'pull',muscles:['背部'],effect:''}],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
+    localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[{id:'H',start:now-180000,end:now-100000,events:[historic]}],active:null,flows:[],flowRun:null,profile:{customEq:[{id:'custom-identity-proof',name:'胸托划船',type:'strength',custom:true,pattern:'pull',muscles:['背部'],effect:''}],memories:[]},prefs:{scanSeconds:3,captureDefaultMode:'photo',captureDefaultFacing:'environment'}}));
     localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
   },{now,historic});
   await page.reload({waitUntil:'domcontentloaded'});
