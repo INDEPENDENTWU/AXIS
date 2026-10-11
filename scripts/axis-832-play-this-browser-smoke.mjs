@@ -16,9 +16,16 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});await wait();
  const bridge=await page.evaluate(()=>({play:window.__AXIS_832_PLAY_THIS__?.version,owner:window.__AXIS_832_PLAY_THIS__?.owner,newWriter:window.__AXIS_832_PLAY_THIS__?.newEncounterWriter,compile:window.__AXIS_832_PLAY_THIS__?.compile?.('object','chest-row')?.source?.ref}));
  assert.equal(bridge.play,'8.32');assert.equal(bridge.newWriter,false);assert.equal(bridge.compile,'chest-row','real in-browser compiler not available');
- const object=page.locator('#eqSheet .axis832ObjectGo[data-axis832-object="chest-row"]').first();
- assert.ok(await object.count(),'no canonical Object PLAY THIS entry');
- await page.evaluate(()=>document.querySelector('#eqSheet')?.classList.add('show'));
+ const opened=await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick')===true);
+ assert.equal(opened,true,'canonical Object picker cannot be opened');
+ await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#v8710Cards'));
+ await page.locator('#eqSearch').fill('胸托划船');
+ const object=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+ await object.waitFor({state:'visible',timeout:5000});
+ assert.equal(await page.locator('#v8710Cards [data-v877-lib="chest-row"]').count(),1,'original canonical picker selection disappeared');
+ const bounds=await object.boundingBox();
+ assert.ok(bounds&&bounds.height>=44,'PLAY THIS tap target below 44px');
+ assert.ok(bounds.x>=0&&bounds.x+bounds.width<=390,'PLAY THIS horizontally clipped');
  await tap(object);
  const saved=await initial();
  assert.equal(saved.active?.events?.length||0,0,'Object selection must not fabricate Encounter');
@@ -43,4 +50,4 @@ try{
  await page.screenshot({path:'/tmp/axis-832-flow-'+ENGINE+'.png',fullPage:true});
  assert.deepEqual(errors,[],'browser errors in PLAY THIS path');
  console.log('[AXIS 8.32 PLAY THIS '+ENGINE+'] PASS · real browser Object compile+selection · one-tap saved Flow owner delegation · exact ID · double request safe');
-}catch(e){console.error('[AXIS 8.32 browser]',JSON.stringify({engine:ENGINE,error:String(e),errors}));throw e}finally{await browser.close()}
+}catch(e){await page.screenshot({path:'/tmp/axis-832-failure-'+ENGINE+'.png',fullPage:true}).catch(()=>{});console.error('[AXIS 8.32 browser]',JSON.stringify({engine:ENGINE,error:String(e),errors}));throw e}finally{await browser.close()}

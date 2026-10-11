@@ -87,6 +87,13 @@ if(sealed827){
  if(cert.productRuntimeSha!==exact||cert.productPullRequest!==170||project.product.lastSealedRelease!=='8.31'||project.product.productionRuntimeSha!==exact||project.product.productionPullRequest!==170||production.sealedRelease!=='8.31'||production.candidateStatus!=='production-sealed'||production.latestDeploymentIsAuthority!==false)fail('8.31 sealed exact-runtime state');
  for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==exact)fail('8.31 exact sealed provider '+provider);
  if(production.vercel?.deploymentId!==cert.vercel.deploymentId||production.edgeOne?.deploymentId!==cert.edgeOne.deploymentId||production.customDomain?.verificationRunId!==cert.customDomain.verificationRunId)fail('8.31 sealed provider evidence drift');
+}else if(sealed831&&project?.product?.productionRelease==='8.32'){
+ const exact='dddce5401e80087a7ccceb43ec466f1ad7abb505',cert=json('governance/production-certifications/8.31.json');
+ if(decision?.sequence!==33||decision?.decision!=='bump'||decision?.release!=='8.32'||decision?.change_class!=='product-runtime')fail('8.32 candidate version decision drift');
+ if(cert.productRuntimeSha!==exact||cert.productPullRequest!==170||project.product.releaseStatus!=='candidate'||project.product.lastSealedRelease!=='8.31'||project.product.productionRuntimeSha!==exact||project.product.productionPullRequest!==170||project.product.candidatePullRequest!==174)fail('8.32 lost certified 8.31 product authority');
+ if(production.sealedRelease!=='8.31'||production.candidateRelease!=='8.32'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification'||production.latestDeploymentIsAuthority!==false)fail('8.32 erroneously claims Production');
+ for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==exact)fail('8.32 lost certified 8.31 provider '+provider);
+ if(production.vercel?.deploymentId!==cert.vercel.deploymentId||production.edgeOne?.deploymentId!==cert.edgeOne.deploymentId||production.customDomain?.verificationRunId!==cert.customDomain.verificationRunId)fail('8.32 predecessor provider evidence drift');
 }else if(downstream831&&project?.product?.productionRelease==='8.31'){
   const sha='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f';
   if(project.product.releaseStatus!=='candidate'||project.product.lastSealedRelease!=='8.30'||project.product.productionRuntimeSha!==sha||project.product.productionPullRequest!==167||project.product.candidatePullRequest!==170)fail('8.31 successor discarded 8.30 product authority');

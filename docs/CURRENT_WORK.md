@@ -2,7 +2,7 @@
 
 **Governed milestone:** AXIS 8.32 — Local PLAY THIS.
 governed target branch: `main`.
-Bounded delivery branch: `feature/832-play-this-local-entry`, candidate PR **#174**.
+Bounded delivery branch: `feature/832-play-this-local-entry` · PR **#174**.
 Version decision: **8.31 → 8.32 / bump / sequence 33 / product-runtime**.
 **Status:** 8.32 candidate only; not merged, deployed or production-certified. The public Production-certified product/runtime remains **AXIS 8.31**, exact SHA `dddce5401e80087a7ccceb43ec466f1ad7abb505`.
 
