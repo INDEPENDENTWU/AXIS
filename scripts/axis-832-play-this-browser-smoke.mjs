@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+const ENGINE=process.env.AXIS_ENGINE||'chromium',BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core');
+const browser=await (ENGINE==='webkit'?mod.webkit:mod.chromium).launch(ENGINE==='webkit'?{headless:true}:{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']});
+const context=await browser.newContext({viewport:{width:390,height:844},isMobile:ENGINE==='webkit',hasTouch:true,deviceScaleFactor:2,locale:'zh-CN'});
+const page=await context.newPage(),errors=[];
+page.on('pageerror',e=>errors.push(String(e.stack||e)));
+const tap=async loc=>ENGINE==='webkit'?loc.tap():loc.click();
+const respond=(r,data)=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data),headers:{'cache-control':'no-store','access-control-allow-origin':'*'}});
+for(const [pattern,data] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>respond(r,data));
+const wait=()=>page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_RELEASE__==='8.32'&&window.__AXIS_832_PLAY_THIS__&&window.__AXIS_831_PLAYABLE__&&window.__AXIS_QUICK_RECORD__,undefined,{timeout:20000});
+const initial=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
+try{
+ await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:18000});
+ await page.evaluate(()=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3}}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))});
+ await page.reload({waitUntil:'domcontentloaded'});await wait();
+ const bridge=await page.evaluate(()=>({play:window.__AXIS_832_PLAY_THIS__?.version,owner:window.__AXIS_832_PLAY_THIS__?.owner,newWriter:window.__AXIS_832_PLAY_THIS__?.newEncounterWriter,compile:window.__AXIS_832_PLAY_THIS__?.compile?.('object','chest-row')?.source?.ref}));
+ assert.equal(bridge.play,'8.32');assert.equal(bridge.newWriter,false);assert.equal(bridge.compile,'chest-row','real in-browser compiler not available');
+ const object=page.locator('#eqSheet .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+ assert.ok(await object.count(),'no canonical Object PLAY THIS entry');
+ await page.evaluate(()=>document.querySelector('#eqSheet')?.classList.add('show'));
+ await tap(object);
+ const saved=await initial();
+ assert.equal(saved.active?.events?.length||0,0,'Object selection must not fabricate Encounter');
+ assert.equal(await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),'chest-row','selected exact Object changed');
+ await page.screenshot({path:'/tmp/axis-832-object-'+ENGINE+'.png',fullPage:true});
+ // Isolate real Flow entry from the Object context without creating a fake owner.
+ await page.evaluate(()=>document.querySelector('#eqSheet')?.classList.remove('show'));
+ const flow={schema:'axis.flow.v1',id:'axis832-flow-browser',title:'今天的练习',steps:[{id:'first',objectRef:'chest-row'}]};
+ const compiled=await page.evaluate(flow=>{const a=window.__AXIS_FLOW_RUNTIME__;a.saveFlow(flow);window.__AXIS_821_FLOW_SURFACE__.render();return window.__AXIS_832_PLAY_THIS__.compile('flow',flow.id)},flow);
+ assert.equal(compiled.steps[0].objectRef,'chest-row');
+ const home=page.locator('#axis821FlowHome [data-axis-flow-start="axis832-flow-browser"]');
+ await page.evaluate(()=>document.querySelectorAll('.sheetWrap.show').forEach(x=>x.classList.remove('show')));
+ await page.waitForFunction(()=>document.querySelector('#axis821FlowHome [data-axis-flow-start="axis832-flow-browser"]')!==null);
+ await tap(home);
+ const result=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),ready:window.__AXIS_831_PLAYABLE__?.version,quickOwner:window.__AXIS_QUICK_RECORD__?.owner,second:window.__AXIS_832_PLAY_THIS__?.startFlow('axis832-flow-browser')}));
+ assert.equal(result.run?.flowRef,flow.id,'real canonical FlowRun must own launched practice');
+ assert.equal(result.ready,'8.31');assert.equal(result.quickOwner,'v61');
+ assert.equal(result.run?.steps?.[0]?.objectRef,'chest-row');
+ assert.equal(result.second,true,'same Flow continues through existing owner without relaunch');
+ const events=(await initial()).active?.events||[];
+ assert.ok(events.length<=1,'duplicate start must not write multiple Encounters');
+ await page.screenshot({path:'/tmp/axis-832-flow-'+ENGINE+'.png',fullPage:true});
+ assert.deepEqual(errors,[],'browser errors in PLAY THIS path');
+ console.log('[AXIS 8.32 PLAY THIS '+ENGINE+'] PASS · real browser Object compile+selection · one-tap saved Flow owner delegation · exact ID · double request safe');
+}catch(e){console.error('[AXIS 8.32 browser]',JSON.stringify({engine:ENGINE,error:String(e),errors}));throw e}finally{await browser.close()}
