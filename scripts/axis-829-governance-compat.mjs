@@ -6,7 +6,8 @@ const json=f=>JSON.parse(read(f));
 const LAST='df67fc0a20c0c34a79341315c8c85b5461acfe44',SEALED='4a9c73b2ea5330b9cffad3f9e322eb6970dfe171';
 const p=json('governance/project-state.json'),d=json('governance/version-decision.json'),o=json('governance/owners.json');
 const candidate=d.sequence===27&&d.base_release==='8.28'&&d.release==='8.29'&&d.decision==='bump'&&d.change_class==='product-runtime';
-const candidate832=d?.sequence===33&&d?.base_release==='8.31'&&d?.release==='8.32'&&d?.decision==='bump'&&d?.change_class==='product-runtime'&&p.product?.productionRelease==='8.32'&&p.product?.releaseStatus==='candidate';
+const downstream832=d?.sequence===33&&d?.base_release==='8.31'&&d?.release==='8.32'&&d?.decision==='bump'&&d?.change_class==='product-runtime';
+const candidate832=downstream832&&p.product?.productionRelease==='8.32'&&p.product?.releaseStatus==='candidate';
 const sealed831=(d?.sequence===32&&d?.base_release==='8.31'&&d?.release==='8.31'&&d?.decision==='confirm'&&d?.change_class==='governance')||(d?.sequence===33&&d?.base_release==='8.31'&&d?.release==='8.32'&&d?.decision==='bump'&&d?.change_class==='product-runtime');
 const downstream831=(d?.sequence===31&&d?.base_release==='8.30'&&d?.release==='8.31'&&d?.decision==='bump'&&d?.change_class==='product-runtime' )||sealed831;
 const sealed830=d.sequence===30&&d.base_release==='8.30'&&d.release==='8.30'&&d.decision==='confirm'&&d.change_class==='governance'||downstream831;
@@ -70,7 +71,7 @@ if(downstream830){
 if(candidate)for(const provider of ['vercel','edgeOne','customDomain'])if(p.production?.[provider]?.sourceSha!==LAST)fail('candidate preserved 8.28 evidence drift '+provider);
 for(const f of ['README.md','docs/CURRENT_RELEASE.md','docs/CURRENT_WORK.md','docs/HANDOFF.md']){
  const s=read(f);
- if(candidate832){
+ if(downstream832){
    // Historical 8.29 provenance is verified by the immutable certificate above.
    // A new candidate handoff must identify its 8.31 predecessor, not duplicate
    // historic release prose just to satisfy an inherited string search.
