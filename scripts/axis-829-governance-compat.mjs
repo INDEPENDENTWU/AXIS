@@ -69,6 +69,12 @@ if(downstream830){
 }
 if(candidate)for(const provider of ['vercel','edgeOne','customDomain'])if(p.production?.[provider]?.sourceSha!==LAST)fail('candidate preserved 8.28 evidence drift '+provider);
 for(const f of ['README.md','docs/CURRENT_RELEASE.md','docs/CURRENT_WORK.md','docs/HANDOFF.md']){
- const s=read(f);if(!s.includes('8.29')||(!downstream830&&!s.includes('8.28'))||!s.includes(expectedSha))fail('release document identity '+f);
+ const s=read(f);
+ if(candidate832){
+   // Historical 8.29 provenance is verified by the immutable certificate above.
+   // A new candidate handoff must identify its 8.31 predecessor, not duplicate
+   // historic release prose just to satisfy an inherited string search.
+   if(!s.includes('8.32')||!s.includes('8.31')||!s.includes('dddce5401e80087a7ccceb43ec466f1ad7abb505'))fail('8.32 handoff lost the certified 8.31 predecessor '+f);
+ }else if(!s.includes('8.29')||(!downstream830&&!s.includes('8.28'))||!s.includes(expectedSha))fail('release document identity '+f);
 }
 console.log('[AXIS 8.29 governance] PASS · '+(downstream830?'inherited exact 8.29 seal inside 8.30':certified?'Production-sealed at exact merged-main '+SEALED:'candidate over sealed 8.28')+' · one recorder/Encounter owner');

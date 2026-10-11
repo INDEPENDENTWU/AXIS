@@ -2,7 +2,7 @@
 
 Local-first practice software built around what actually happened.
 
-**Current release: 8.31** · **Production-sealed** · [Open AXIS](https://axis.juele.fun) · [Engineering handoff](docs/HANDOFF.md).
+**Current release: 8.32** · **unmerged product candidate** (PR #174); **8.31 remains Production-sealed** · [Open AXIS](https://axis.juele.fun) · [Engineering handoff](docs/HANDOFF.md).
 
 ## AXIS 8.31 — Playable Runtime Foundation
 
@@ -20,4 +20,4 @@ Object → Flow → Active → Encounter → Evidence → Evolution. Reusable in
 
 ## Release discipline
 
-Exact-head CI → protected product merge → merged-main Vercel/EdgeOne/`axis.juele.fun` real browser acceptance → independent governance seal. 8.32 local PLAY THIS, sharing, AIR, TAKE and FORK are future bounded stages not contained in 8.31.
+Exact-head CI → protected product merge → merged-main Vercel/EdgeOne/`axis.juele.fun` real browser acceptance → independent governance seal. 8.32 local PLAY THIS is an unmerged candidate requiring full exact-head and real-browser validation; sharing, AIR, TAKE and FORK remain excluded future stages.
