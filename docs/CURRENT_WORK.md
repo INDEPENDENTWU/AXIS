@@ -4,7 +4,8 @@
 governed target branch: `main`.
 Bounded delivery branch: `feature/832-play-this-local-entry` · PR **#174**.
 Version decision: **8.31 → 8.32 / bump / sequence 33 / product-runtime**.
-**Status:** 8.32 candidate only; not merged, deployed or production-certified. The public Production-certified product/runtime remains **AXIS 8.31**, exact SHA `dddce5401e80087a7ccceb43ec466f1ad7abb505`.
+**Status:** 8.32 candidate only; not merged, deployed or production-certified.
+**Production-sealed baseline:** AXIS 8.31 remains the only certified live runtime; the 8.32 PR is not Production-sealed. The repository governance remains authoritative for version, deployment, ownership, and acceptance evidence (repository governance remains authoritative). The public Production-certified product/runtime remains **AXIS 8.31**, exact SHA `dddce5401e80087a7ccceb43ec466f1ad7abb505`.
 
 ## Production baseline at start of this work
 
