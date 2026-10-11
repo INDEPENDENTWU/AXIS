@@ -36,6 +36,7 @@ if(CURRENT==='8.28'){sourceOwner='prepare-828-practice-loop.mjs';sourceCurrent='
 if(CURRENT==='8.29'){sourceOwner='prepare-829-recording-friction.mjs';sourceCurrent='8.29';sourceFrom='8.28'}
 if(CURRENT==='8.30'){sourceOwner='prepare-830-object-identity.mjs';sourceCurrent='8.30';sourceFrom='8.29'}
 if(CURRENT==='8.31'){sourceOwner='prepare-831-playable-runtime.mjs';sourceCurrent='8.31';sourceFrom='8.30'}
+if(CURRENT==='8.32'){sourceOwner='prepare-832-play-this.mjs';sourceCurrent='8.32';sourceFrom='8.31'}
 const releaseOwner=read(sourceOwner),releaseMatch=releaseOwner.match(/const FROM='([^']+)',VERSION='([^']+)'/);if(!releaseMatch)fail(`${sourceOwner} current release identity missing`);if(releaseMatch[1]!==sourceFrom||releaseMatch[2]!==sourceCurrent)fail(`${sourceOwner} release transition drift ${releaseMatch[1]} -> ${releaseMatch[2]}`);if(CURRENT!==sourceCurrent)fail(`governed current release ${CURRENT} does not match release owner ${sourceCurrent}`);
 
 if(CURRENT==='8.24'){
@@ -64,7 +65,18 @@ if(CURRENT==='8.24'){
   if(project?.engineering?.deliveryBranch!=='axis-825-set-lock')fail('8.25 delivery branch drift');
   if(project?.engineering?.intendedProductBehaviorChange!==true)fail('8.25 must be governed as intended product behavior change');
   if(!(decision?.sequence===11&&decision?.base_release==='8.24.1'&&decision?.release==='8.25'&&decision?.decision==='bump'&&decision?.change_class==='product-ui'))fail('8.25 version decision must be 8.24.1 → 8.25 / bump / sequence 11 / product-ui');
- }else if(CURRENT==='8.31'){
+ }else if(CURRENT==='8.32'){
+ const predecessor=json('governance/production-certifications/8.31.json');
+ const next=project.engineering?.playThis,owner=owners.owners?.find(x=>x.capability==='play-this-entry-832');
+ if(!candidate||STATUS!=='candidate'||SEALED!=='8.31'||RUNTIME_SHA!=='dddce5401e80087a7ccceb43ec466f1ad7abb505'||SEALED_PR!==170||CANDIDATE_PR!==174)fail('8.32 must retain exact sealed 8.31 runtime until independent certification');
+ if(predecessor.productRuntimeSha!==RUNTIME_SHA||predecessor.productPullRequest!==170||predecessor.exactHeadSuccess!==35)fail('8.32 lost predecessor certification');
+ if(project.production?.sealedRelease!=='8.31'||project.production?.candidateRelease!=='8.32'||project.production?.candidateStatus!=='pending-exact-head-and-merged-main-certification'||project.production?.latestDeploymentIsAuthority!==false)fail('8.32 candidate attempts Production authority');
+ if(project.engineering?.pullRequest!==174||project.engineering?.deliveryBranch!=='feature/832-play-this-local-entry'||project.engineering?.intendedProductBehaviorChange!==true)fail('8.32 product delivery mismatch');
+ if(!(decision?.sequence===33&&decision?.base_release==='8.31'&&decision?.release==='8.32'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime'))fail('8.32 exact version decision mismatch');
+ if(next?.status!=='8.32-product-candidate'||next?.compiler!=='lib/axis-playable.mjs'||next?.execution!=='window.__AXIS_831_PLAYABLE__'||next?.newEncounterWriter!==false||next?.newStorageNamespace!==false||next?.newRecorder!==false||next?.newActiveOwner!==false)fail('8.32 cannot add secondary recording or persistence authority');
+ if(owner?.status!=='product-candidate-presentation-only'||owner?.storage!=='none'||owner?.contract!=='axis.playable.v1')fail('8.32 single presenter ownership');
+ for(const provider of ['vercel','edgeOne','customDomain'])if(project.production?.[provider]?.sourceSha!==RUNTIME_SHA)fail('8.32 altered existing 8.31 provider authority');
+}else if(CURRENT==='8.31'){
  const playable=project?.engineering?.playableRuntime;
  const proof=json('governance/production-certifications/8.30.json');
  if(STATUS==='candidate'){
