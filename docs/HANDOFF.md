@@ -27,6 +27,14 @@ This is the exact merged-main product/runtime SHA, not the governance PR head/me
 `axis.playable.v1`, `axis.playable-execution.v1`, `axis.playable-command.v1` are derived. Existing app.js FlowRun, Encounter, v61 recording, v82/v87 Active and Media owners remain authoritative. Exact canonical Object IDs and real provenance/timestamp are mandatory. No second writer, automatic completion, AI or network authority.
 
 
+## 8.32b implementation — active candidate
+
+**Current feature branch:** `feature/832-play-this-local-entry` based on design-only 8.32a main `c6a76b617b9df5fe43975354bdabba1d25c3d3e7`. **Version decision:** sequence 33, `8.31 → 8.32 / bump / product-runtime`. **Status:** candidate and CI pending; no 8.32 public Production authority.
+
+Actual implementation files: `prepare-832-play-this.mjs`, `scripts/prepare-832-release-identity.mjs`, `scripts/prepare-832-play-this-integration.mjs`, `scripts/prepare-832-governance-state.mjs`, `postbuild-832-play-this-contract.mjs`, and bounded `build-release.mjs` integration. Existing app.js Flow/Object/Recorder owners are invoked; compiler is bundled from portable `lib/axis-playable.mjs` (and established dependencies), not rewritten. Source proof, real browser tests and required release gates must pass before any merge.
+
+The 8.32a 20 Gherkin scenarios remain **unwired specifications**, not passing automated UI tests. Keep Issue [#172](https://github.com/INDEPENDENTWU/AXIS/issues/172) open through 8.32 product merge and independent seal. Preserve existing 8.31 product certificate and no second writer. Continue to audit `main` protection debt in Issue #58.
+
 ## Current engineering work — AXIS 8.32a (contract-only)
 
 The 8.31 Production seal is **closed**, not still awaiting certification: product PR #170; governance PR #171 merged into `f0cd8fbd86d1d63b7b8b14e705abbfed1ff2843b`, exact governance PR 29/29 successful, governance merged-main 29/29 push plus 3/3 deployment-status workflow successes. Vercel Git Production READY, EdgeOne and `axis.juele.fun` Chromium and iPhone-like WebKit green. Issue #169 is closed.
