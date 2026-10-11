@@ -6,6 +6,8 @@ for(const t of ['prepare-832-release-identity.mjs','prepare-832-play-this-integr
 for(const t of ['lib/axis-object-capabilities.mjs','lib/axis-metric-schema.mjs','lib/axis-flow.mjs','lib/axis-playable.mjs','compilePlayableSpec','axis832StartFlow','axis832StartObject','axis832Pending','__AXIS_831_PLAYABLE__','axis832ObjectGo','axis821FlowSurfaceStart(id)'])assert.ok(preparation.includes(t),'missing coordinator '+t);
 for(const t of ['localStorage.setItem(','indexedDB.open(','state.active.events.push(','state.sessions.push(','fetch(','new WebSocket('])assert.equal(preparation.includes(t),false,'new store/fact/network owner '+t);
 assert.ok(preparation.includes('if(axis832Pending)return false'),'synchronous double activation must be blocked');
+assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY THIS must inject into the existing 8.31 app-owned bridge, not depend on a historical file tail');
+assert.equal(preparation.includes('app closure drift'),false,'app tail assumptions are forbidden in the canonical compiled source');
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
 assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
 assert.ok(preparation.includes("bridge.dispatch(spec,attemptId,cmd).status==='accepted'"),'must respect existing owner acknowledgement');
