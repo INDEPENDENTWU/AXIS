@@ -29,6 +29,8 @@ This is the exact merged-main product/runtime SHA, not the governance PR head/me
 
 ## 8.32b implementation — active candidate
 
+Product candidate PR **#174** remains Draft, unmerged and not Production-certified. It does not replace the immutable 8.31 Runtime.
+
 **Current feature branch:** `feature/832-play-this-local-entry` based on design-only 8.32a main `c6a76b617b9df5fe43975354bdabba1d25c3d3e7`. **Version decision:** sequence 33, `8.31 → 8.32 / bump / product-runtime`. **Status:** candidate and CI pending; no 8.32 public Production authority.
 
 Actual implementation files: `prepare-832-play-this.mjs`, `scripts/prepare-832-release-identity.mjs`, `scripts/prepare-832-play-this-integration.mjs`, `scripts/prepare-832-governance-state.mjs`, `postbuild-832-play-this-contract.mjs`, and bounded `build-release.mjs` integration. Existing app.js Flow/Object/Recorder owners are invoked; compiler is bundled from portable `lib/axis-playable.mjs` (and established dependencies), not rewritten. Source proof, real browser tests and required release gates must pass before any merge.

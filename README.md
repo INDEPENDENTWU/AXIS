@@ -4,6 +4,10 @@ Local-first practice software built around what actually happened.
 
 **Current release: 8.32** · **unmerged product candidate** (PR #174); **8.31 remains Production-sealed** · [Open AXIS](https://axis.juele.fun) · [Engineering handoff](docs/HANDOFF.md).
 
+## AXIS 8.32 — Local PLAY THIS (candidate only)
+
+[PR #174](https://github.com/INDEPENDENTWU/AXIS/pull/174) is an unmerged product candidate. Object and Flow entry must pass real browser, exact-Head, merged-main and independent Production certification before being described as shipped. The live public version remains 8.31.
+
 ## AXIS 8.31 — Playable Runtime Foundation
 
 `axis.playable.v1` compiles portable canonical Object/Flow intent; deterministic projection and explicit command dispatch use existing app-owned Flow, Active and Encounter truth. Real confirmed Encounter + reload and replay safety were validated on Chromium and iPhone-like WebKit. No parallel history, storage, Active owner, fact writer, AI authority or network dependency.

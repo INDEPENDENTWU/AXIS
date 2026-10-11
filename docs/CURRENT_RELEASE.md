@@ -14,6 +14,8 @@ Product PR #170, independent governance PR #171. All certified 8.31 Production-p
 
 ## 8.32 unsealed candidate
 
+Candidate product PR **#174** is a Draft and has not merged; production remains independently certified at 8.31.
+
 8.32 introduces a source-grounded local PLAY THIS entry within the existing Object selector and Flow Home. It is a new user-facing product behavior; command intent is still not a confirmed Encounter. No share, AIR, TAKE, FORK, second Recorder, fact writer or network dependency is introduced. See [8.32 product contract](AXIS_832_PLAY_THIS_EXPERIENCE.md), [visual quality standard](EXPERIENCE_QUALITY_STANDARD.md) and [active work](CURRENT_WORK.md).
 
 **No 8.32 exact product/runtime SHA, Production deployment, provider parity or Governance Seal may be claimed before independent evidence exists.** Only 8.31 remains sealed until exact PR-head and merged-main tests are complete.
