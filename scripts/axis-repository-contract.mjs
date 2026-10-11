@@ -132,6 +132,13 @@ if(CURRENT==='8.25'){
   if(setLock?.status!=='presentation-only-release-candidate'||setLock?.storage!=='none'||!String(setLock?.notes||'').includes('after done > prevDone'))fail('8.25 Set Lock owner registry drift');
 }
 
+if(CURRENT==='8.32'){
+ const pr=project.engineering?.pullRequest;
+ if(STATUS!=='candidate'||SEALED!=='8.31'||PROD_SHA!=='dddce5401e80087a7ccceb43ec466f1ad7abb505'||project.product.candidatePullRequest!==174||pr!==174)fail('8.32 must preserve sealed 8.31 and exact product candidate #174');
+ if(project.engineering?.versionDecision?.sequence!==33||project.engineering.versionDecision?.decision!=='bump'||project.engineering.versionDecision?.release!=='8.32')fail('8.32 version decision drift');
+ if(project.engineering?.playThis?.newEncounterWriter!==false||project.engineering.playThis?.newRecorder!==false||project.engineering.playThis?.newStorageNamespace!==false)fail('8.32 parallel fact authority');
+ if(!read('build-release.mjs').includes("'prepare-832-play-this.mjs'"))fail('8.32 product not reachable from canonical build');
+}
 if(CURRENT==='8.31'){
  if(STATUS==='candidate'){if(SEALED!=='8.30'||PROD_SHA!=='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f'||project.product.candidatePullRequest!==170)fail('8.31 sealed predecessor lost')}else if(STATUS==='production-certified'){if(SEALED!=='8.31'||PROD_SHA!=='dddce5401e80087a7ccceb43ec466f1ad7abb505'||project.product.productionPullRequest!==170)fail('8.31 sealed SHA mismatch')}else fail('8.31 invalid status '+STATUS);
  if(project.engineering?.playableRuntime?.newEncounterWriter!==false||project.engineering?.playableRuntime?.newActiveOwner!==false)fail('8.31 extra factual writer');
