@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const read=f=>fs.readFileSync(f,'utf8');
 const driver=read('prepare-832-play-this.mjs'),preparation=read('scripts/prepare-832-play-this-integration.mjs'),quality=read('docs/EXPERIENCE_QUALITY_STANDARD.md');
 for(const t of ['prepare-832-release-identity.mjs','prepare-832-play-this-integration.mjs','prepare-832-governance-state.mjs'])assert.ok(driver.includes(t),'missing 8.32 admission '+t);
-for(const t of ['v8710-live-catalog.js','axis832CatalogCard','axis832CatalogItems','lib/axis-object-capabilities.mjs','lib/axis-metric-schema.mjs','lib/axis-flow.mjs','lib/axis-playable.mjs','compilePlayableSpec','axis832StartFlow','axis832StartObject','axis832Pending','__AXIS_831_PLAYABLE__','axis832ObjectGo','axis821FlowSurfaceStart(id)'])assert.ok(preparation.includes(t),'missing coordinator '+t);
+for(const t of ['legacy=eqAll().filter','v8710-live-catalog.js','axis832CatalogCard','axis832CatalogItems','lib/axis-object-capabilities.mjs','lib/axis-metric-schema.mjs','lib/axis-flow.mjs','lib/axis-playable.mjs','compilePlayableSpec','axis832StartFlow','axis832StartObject','axis832Pending','__AXIS_831_PLAYABLE__','axis832ObjectGo','axis821FlowSurfaceStart(id)'])assert.ok(preparation.includes(t),'missing coordinator '+t);
 for(const t of ['localStorage.setItem(','indexedDB.open(','state.active.events.push(','state.sessions.push(','fetch(','new WebSocket('])assert.equal(preparation.includes(t),false,'new store/fact/network owner '+t);
 assert.ok(preparation.includes('if(axis832Pending)return false'),'synchronous double activation must be blocked');
 assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY THIS must inject into the existing 8.31 app-owned bridge, not depend on a historical file tail');

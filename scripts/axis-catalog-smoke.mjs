@@ -20,7 +20,7 @@ const ready=async()=>{
   await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true,undefined,{timeout:5000});
   await page.waitForFunction(()=>window.__AXIS_CANONICAL_88__?.state==='ready',undefined,{timeout:7000});
 };
-const names=()=>page.locator('#v8710Cards > button:visible b').allInnerTexts();
+const names=()=>page.locator('#v8710Cards > .axis832CatalogCard > [data-v877-lib]:visible b').allInnerTexts();
 const settledNames=async(wait=240)=>{await page.waitForTimeout(wait);return names()};
 const category=async label=>{
   await page.locator(`#v8710Cats [data-v8710-cat="${label}"]`).click();
@@ -37,7 +37,7 @@ const openCatalog=async()=>{
     await page.waitForFunction(()=>document.querySelector('#quickRecordSheet')?.classList.contains('show'),undefined,{timeout:1200});
   }
   await page.locator('#v8Other').click();
-  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#v8710Cards > button'),undefined,{timeout:1600});
+  await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#v8710Cards > .axis832CatalogCard > [data-v877-lib]'),undefined,{timeout:1600});
   await page.waitForTimeout(260);
 };
 
