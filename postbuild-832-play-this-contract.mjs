@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+const read=p=>fs.readFileSync(p,'utf8'),fail=m=>{throw Error('[AXIS 8.32 postbuild] '+m)};
+const manifest=JSON.parse(read('axis-build.json')),runtime=read('axis-core.js'),css=read('axis-style.css'),d=JSON.parse(read('governance/version-decision.json'));
+if(manifest.version!=='8.32'||manifest.baseVersion!=='8.32'||manifest.architecture!=='canonical-single-runtime')fail('8.32 candidate identity missing');
+if(d.sequence!==33||d.base_release!=='8.31'||d.release!=='8.32'||d.decision!=='bump'||d.change_class!=='product-runtime')fail('candidate release decision missing');
+for(const t of ['__AXIS_831_PLAYABLE__','axis832StartFlow','axis832StartObject','axis832Compile','compilePlayableSpec','axis832Pending','axis832ObjectGo'])if(!runtime.includes(t))fail('assembled runtime missing '+t);
+if(!css.includes('.axis832ObjectGo'))fail('assembled theme geometry missing');
+const source=read('scripts/prepare-832-play-this-integration.mjs');
+for(const t of ['localStorage.setItem(','indexedDB.open(','state.active.events.push(','state.sessions.push('])if(source.includes(t))fail('new writer in 8.32 presentation '+t);
+manifest.gates.playThis832=true;
+manifest.playThis={contract:'axis.playable.v1',surface:'existing Object/Flow',factOwner:'existing app Flow/Active/Recorder/Encounter',newStorage:false,network:false,share:false};
+fs.writeFileSync('axis-build.json',JSON.stringify(manifest,null,2)+'\n');
+console.log('[AXIS 8.32 postbuild] PASS · canonical local PLAY THIS entry; existing factual owners only');
