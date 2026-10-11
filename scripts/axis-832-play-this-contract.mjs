@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=f=>fs.readFileSync(f,'utf8');
+const driver=read('prepare-832-play-this.mjs'),preparation=read('scripts/prepare-832-play-this-integration.mjs'),quality=read('docs/EXPERIENCE_QUALITY_STANDARD.md');
+for(const t of ['prepare-832-release-identity.mjs','prepare-832-play-this-integration.mjs','prepare-832-governance-state.mjs'])assert.ok(driver.includes(t),'missing 8.32 admission '+t);
+for(const t of ['lib/axis-object-capabilities.mjs','lib/axis-metric-schema.mjs','lib/axis-flow.mjs','lib/axis-playable.mjs','compilePlayableSpec','axis832StartFlow','axis832StartObject','axis832Pending','axis831','axis832ObjectGo','axis821FlowSurfaceStart(id)'])assert.ok(preparation.includes(t),'missing coordinator '+t);
+for(const t of ['localStorage.setItem(','indexedDB.open(','state.active.events.push(','state.sessions.push(','fetch(','new WebSocket('])assert.equal(preparation.includes(t),false,'new store/fact/network owner '+t);
+assert.ok(preparation.includes('if(axis832Pending)return false'),'synchronous double activation must be blocked');
+assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
+assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
+assert.ok(preparation.includes("bridge.dispatch(spec,attemptId,cmd).status==='accepted'"),'must respect existing owner acknowledgement');
+assert.ok(quality.includes('One visual hierarchy'),'presentation quality contract lost');
+const version=JSON.parse(read('governance/version-decision.json'));
+assert.deepEqual([version.sequence,version.base_release,version.release,version.decision,version.change_class],[33,'8.31','8.32','bump','product-runtime']);
+console.log('[AXIS 8.32 source contract] PASS · pure source compiler reuse · one app presentation owner · local user action and no second factual writer');
