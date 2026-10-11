@@ -1,0 +1,95 @@
+name: AXIS 8.32 PLAY THIS Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Validate entry and single owner contract
+        run: |
+          node --check scripts/prepare-832-release-identity.mjs
+          node --check scripts/prepare-832-play-this-integration.mjs
+          node --check scripts/prepare-832-governance-state.mjs
+          node scripts/axis-832-play-this-contract.mjs
+      - name: Canonical 8.32 candidate build
+        run: |
+          node build-release.mjs
+          node postbuild-832-play-this-contract.mjs
+          node scripts/axis-production-governance-contract.mjs
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node build-release.mjs
+      - name: Prepare Chromium
+        run: |
+          npm install --no-save playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-832-chromium.log 2>&1 &
+          sleep 1
+      - name: Native Object and saved Flow browser proof
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-832-play-this-browser-smoke.mjs
+      - name: Browser diagnostic
+        if: failure()
+        run: tail -n 80 /tmp/axis-832-chromium.log || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: axis-832-chromium-screenshots
+          path: /tmp/axis-832-*-chromium.png
+          if-no-files-found: ignore
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node build-release.mjs
+      - name: Prepare iPhone WebKit
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - name: Serve candidate
+        run: |
+          python3 -m http.server 4173 >/tmp/axis-832-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone WebKit Object and Flow browser proof
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-832-play-this-browser-smoke.mjs
+      - name: Browser diagnostic
+        if: failure()
+        run: tail -n 80 /tmp/axis-832-webkit.log || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: axis-832-webkit-screenshots
+          path: /tmp/axis-832-*-webkit.png
+          if-no-files-found: ignore
