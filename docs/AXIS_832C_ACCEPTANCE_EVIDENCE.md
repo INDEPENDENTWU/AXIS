@@ -83,3 +83,20 @@ The source fix is limited to 8.32's presentation coordinator: an explicit reques
 **Coverage limitations:** P13 now proves a genuine offline stored Encounter through canonical owner dispatch and reload, but not the full offline Recorder **UI confirmation** sequence. P18 now proves real Home repeat; P11 rapid physical UI double-tap is not separately established. P15 screenshots are captured but still require optical light/dark/locale review. P16 full accessibility, P17 theme-first-paint, P19 focus/overlay handoff, P20 measured cold/warm performance, and complete 20/20 runnable scenarios remain release gates.
 
 **Release state:** No new Preview, Production alias switch, merged-main certification, domain promotion or independent 8.32 Governance Seal. Continue 8.32c remaining experience/acceptance work before 8.32d release certification and subsequent controlled Production release.
+
+## 2026-10-13 — 8.32d-1 accessible entry and Recorder handoff evidence
+
+**Exact tested Product HEAD:** `4acc6e112a879590146ef1e63a4600c623b96418`. PR #174 is still Draft. Production remains certified **8.31**, unchanged.
+
+Two real accessibility regressions were reproduced before remediation:
+
+1. When a focused Object catalog action was rerendered by a search/catalog refresh, the focused DOM node was replaced and keyboard focus disappeared. The 8.32 catalog presentation wrapper now preserves focus by exact Object ID only when the same button survives the rerender; it does not steal focus from the search field or generate a second catalog.
+2. The actual existing Recorder opened and the Object picker closed, but active focus remained on `document.body`. The 8.32 entry now transfers focus *after the sheet becomes visible*, with at most two animation frames of retry, and **never moves focus if the user is already interacting inside the Recorder**. No second Recorder, writer, storage key, timer or network owner is created.
+
+The P16/P19 real browser test now asserts that focus survives catalog refresh, that the Object picker is closed, that exactly one Recorder and capture owner are mounted, and that focus is within the Recorder when it becomes interactive.
+
+The 8.32 Object controls now use the existing `--axis-ui` font token with bounded CSS scaling instead of hardcoded 11–12px typography. Labels can wrap without clipping while retaining 44px minimum targets; a 320px / enlarged `--axis-ui:24px` / English `Start practice` acceptance sample verifies computed font size, full control geometry, no horizontal overflow and screenshot capture.
+
+**Exact-source local gate proof:** on SHA `4acc6e112a879590146ef1e63a4600c623b96418`, the isolated worktree `scripts/axis-832-local-gate.sh` ran the canonical 103-step build, required source and governance contracts, and five historical/current browser suites in **both Chromium and WebKit Playwright 1.64**. `/tmp/axis-832-832d-4acc6e112a87/status.json` reports `exitCode:0`, `engines:"chromium webkit"`, `actionsUsed:false`, `productionCertified:false`. P16 enlarged text and P19 focus handoff passed in both engines.
+
+**Not certified:** pinned WebKit 1.55 compatibility, actual human optical review of four viewport/theme/locale screenshot pairs, full assistive technology reading/focus order, supported light-theme first paint (the existing app is predominantly dark), strict 20/20 automation and Product Production provider readback. A green local smoke gate **is not** a Production seal. No new Preview or Production deployments were requested.

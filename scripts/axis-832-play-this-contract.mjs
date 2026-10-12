@@ -10,8 +10,9 @@ assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY T
 assert.equal(preparation.includes('app closure drift'),false,'app tail assumptions are forbidden in the canonical compiled source');
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
 for(const token of ['axis832FocusRecorder();','focusedRef','matching.focus({preventScroll:true})'])assert.ok(preparation.includes(token),'accessible focus continuity source guard missing '+token);
+for(const token of ['font-size:clamp(12px,calc(var(--axis-ui,15px)*.9),20px)','white-space:normal;overflow-wrap:anywhere'])assert.ok(preparation.includes(token),'P16 scaled label contract missing '+token);
 const focusBrowser=read('scripts/axis-832-play-this-browser-smoke.mjs');
-for(const token of ['P19 keyboard focus failed to hand off into Recorder','focused Object lost its keyboard position after catalog refresh'])assert.ok(focusBrowser.includes(token),'P16/P19 browser regression guard missing '+token);
+for(const token of ['P19 keyboard focus failed to hand off into Recorder','focused Object lost its keyboard position after catalog refresh','P16 enlarged label clipped'])assert.ok(focusBrowser.includes(token),'P16/P19 browser regression guard missing '+token);
 assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
 assert.ok(preparation.includes("run&&run.status!=='complete'"),'only completed runs may be restarted');
 assert.ok(preparation.includes("run?.status==='complete'?api.launch(id)"),'P18 repeat must use existing Flow owner');
