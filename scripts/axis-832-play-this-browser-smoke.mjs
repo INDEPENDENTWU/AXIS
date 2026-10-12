@@ -48,6 +48,58 @@ try{
  const events=(await initial()).active?.events||[];
  assert.ok(events.length<=1,'duplicate start must not write multiple Encounters');
  await page.screenshot({path:'/tmp/axis-832-flow-'+ENGINE+'.png',fullPage:true});
+
+console.log('[AXIS 8.32c acceptance] exact custom Object / offline entry / cross-Flow conflict / reload / viewport geometry');
+const reset832=async(customs=[])=>{
+ await page.evaluate(items=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:items,memories:[]},prefs:{scanSeconds:3}}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))},customs);
+ await page.reload({waitUntil:'domcontentloaded'});await wait();
+};
+const custom832={id:'custom-practice-832',name:'非常长的自定义训练设备名称 测试精确身份',type:'cardio',pattern:'cardio',muscles:['心肺'],effect:'custom exact identity',custom:true,metricSchema:[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1,min:0},{key:'resistance',label:'阻力',type:'number',unit:'档',step:.5,min:0}],metricSchemaVersion:'8.21',executionMode:'timed',recording:{version:2,metrics:['duration','resistance'],executionMode:'timed'}};
+await reset832([custom832]);
+assert.equal(await page.evaluate(()=>window.__AXIS_832_PLAY_THIS__?.compile('object','custom-practice-832')?.source?.ref),'custom-practice-832','P02 custom compiler did not preserve exact identity');
+assert.equal(await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick')),true);
+await page.locator('#eqSearch').fill('非常长的自定义训练设备名称');
+const customButton=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="custom-practice-832"]').first();
+await customButton.waitFor({state:'visible',timeout:5000});
+for(const width of [320,360,390,430]){
+ await page.setViewportSize({width,height:844});
+ const box=await customButton.boundingBox();
+ assert.ok(box&&box.width>0&&box.height>=44&&box.x>=-1&&box.x+box.width<=width+1,'P15 Object CTA clipped at '+width+'px: '+JSON.stringify(box));
+ const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+ assert.ok(overflow<=1,'P15 Object horizontal overflow '+width+': '+overflow);
+ await page.screenshot({path:'/tmp/axis-832c-custom-'+width+'-'+ENGINE+'.png',fullPage:true});
+}
+await page.evaluate(()=>{document.documentElement.lang='en';document.querySelector('#eqSearch')?.dispatchEvent(new Event('input',{bubbles:true}))});
+assert.equal((await customButton.innerText()).trim(),'Start practice','localized custom action is inconsistent');
+const started=Date.now();await tap(customButton);
+await page.waitForFunction(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id==='custom-practice-832',undefined,{timeout:4500});
+assert.equal(await page.locator('#scanSheet.show').count(),1,'P02 custom Object did not open the existing recorder');
+const customFact=await initial();
+assert.equal(customFact.active?.events?.length||0,0,'P02 Object entry fabricated a canonical Encounter');
+console.log('[AXIS 8.32c acceptance] P02/P15 custom exact Object + visual width + English PASS · action-to-owner elapsed ms='+String(Date.now()-started));
+await reset832([]);
+await context.setOffline(true);
+const offlineStart=await page.evaluate(()=>window.__AXIS_832_PLAY_THIS__?.startObject('chest-row'));
+assert.equal(offlineStart,true,'P13 local Object action requires online services');
+assert.equal(await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),'chest-row','P13 offline Object identity changed');
+assert.equal((await initial()).active?.events?.length||0,0,'P13 offline entry fabricated Encounter');
+await context.setOffline(false);
+await reset832([]);
+const flowA={schema:'axis.flow.v1',id:'axis832c-flow-a',title:'A Practice',steps:[{id:'a1',objectRef:'chest-row'}]};
+const flowB={schema:'axis.flow.v1',id:'axis832c-flow-b',title:'B Practice',steps:[{id:'b1',objectRef:'lat-pulldown'}]};
+const runA=await page.evaluate(([a,b])=>{const api=window.__AXIS_FLOW_RUNTIME__;api.saveFlow(a);api.saveFlow(b);return window.__AXIS_832_PLAY_THIS__.startFlow(a.id)},[flowA,flowB]);
+assert.equal(runA,true,'P04 first Flow launch was rejected');
+const runningBefore=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),events:JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.length||0}));
+assert.equal(runningBefore.run?.flowRef,flowA.id);
+const other=await page.evaluate(id=>window.__AXIS_832_PLAY_THIS__.startFlow(id),flowB.id);
+assert.equal(other,false,'P06 second Flow must not replace a different running Flow');
+const runningAfter=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),events:JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.length||0}));
+assert.equal(runningAfter.run?.flowRef,flowA.id);
+assert.equal(runningAfter.events,runningBefore.events,'P06 different Flow generated Encounter');
+await page.reload({waitUntil:'domcontentloaded'});await wait();
+assert.equal(await page.evaluate(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.flowRef),flowA.id,'P12 reload lost canonical FlowRun');
+console.log('[AXIS 8.32c acceptance] P06/P12/P13 foreign Flow guard + reload + real offline PASS');
+
  assert.deepEqual(errors,[],'browser errors in PLAY THIS path');
  console.log('[AXIS 8.32 PLAY THIS '+ENGINE+'] PASS · real browser Object compile+selection · one-tap saved Flow owner delegation · exact ID · double request safe');
 }catch(e){await page.screenshot({path:'/tmp/axis-832-failure-'+ENGINE+'.png',fullPage:true}).catch(()=>{});console.error('[AXIS 8.32 browser]',JSON.stringify({engine:ENGINE,error:String(e),errors}));throw e}finally{await browser.close()}
