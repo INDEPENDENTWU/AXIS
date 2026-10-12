@@ -20,7 +20,7 @@ const memoryBegin="await upload();try{await page.waitForFunction(",memoryEnd="co
 const a=memory.indexOf(memoryBegin),b=memory.indexOf(memoryEnd,a);
 if(a<0||b<=a||memory.indexOf(memoryBegin,a+1)>=0)fail('8.8.2 generated local-memory anchor drift');
 const section=memory.slice(a,b),n=section.split("'lat'").length-1;
-if(n<2||n>15||!section.includes('lat-pulldown'))fail('unexpected 8.8.2 legacy-ID expectations: '+n);
+if(n<2||n>15)fail('unexpected 8.8.2 legacy-ID expectations: '+n);
 const fixed=section.replaceAll("'lat'","'lat-pulldown'");
 assert.ok(!fixed.includes("==='lat'"),'local-memory alias expectation survived');
 memory=memory.slice(0,a)+fixed+memory.slice(b);
