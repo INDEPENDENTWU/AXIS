@@ -43,3 +43,11 @@ This development commit requests `[skip ci]`: do not count skipped checks as suc
 ## Local gate entry point
 
 Run `bash scripts/axis-832-local-gate.sh` from an Actions-free feature checkout with local Chromium, Playwright Core and Playwright WebKit installed. The script refuses `main`, compiles the canonical candidate, runs the inherited 8.26/8.8.2 and new 8.32 smoke tests in both engines, saves screenshots/logs outside the checkout and never calls GitHub Actions or deploys. This is a **smoke-level local gate**, not all 20 acceptance scenarios or a Production seal. Fail closed on missing browsers or any assertion.
+
+## 2026-10-12 — 8.32c real environment acceptance evidence
+
+A Vercel Sandbox clone at exact candidate `1a214f885737ac3dbcd52cb8570fcd8731b7f965` reproduced a **full source build failure**: the initial 8.32b-R test adapter assumed a later local-vision transform had already run. After changing the adapter to assert the actual post-build canonical replay (rather than seek a legacy `'lat'` expression), the local full `node build-release.mjs`, `postbuild-832-play-this-contract.mjs`, and `axis-production-governance-contract.mjs` passed. The first explicit Git Preview deployment `dpl_7zaA4RdYmTfLxzPDXXtAMMU9arQa` failed on the original candidate SHA, confirming this build blocker.
+
+Chromium browser evidence on that patched sandbox: `axis-832-play-this-browser-smoke.mjs` PASS, generated `axis-826-active-continuity-smoke.mjs` PASS. The 8.8.2 replay saved an exact native `lat-pulldown` memory with real full/center/zones signatures and `usable:true`; the visible status was `请确认`, **not** `本地认出`. The repaired test keeps the canonical identity/signature assertions and accepts the explicitly human-confirmed state instead of fabricating an automatic recognition label. The rest-state portion of the inherited 8.8.2 regression currently remains UNVERIFIED: after one set the canonical Active owner was active/planComplete, and the old immediate `rest` expectation timed out. Never count that test green without genuine new proof.
+
+No production alias, immutable 8.31 certificate, or independent Governance Seal was changed. Full Chromium/WebKit and all 20 scenarios are **not complete**.
