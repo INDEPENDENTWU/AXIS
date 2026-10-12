@@ -10,6 +10,9 @@ assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY T
 assert.equal(preparation.includes('app closure drift'),false,'app tail assumptions are forbidden in the canonical compiled source');
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
 assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
+assert.ok(preparation.includes("run&&run.status!=='complete'"),'only completed runs may be restarted');
+assert.ok(preparation.includes("run?.status==='complete'?api.launch(id)"),'P18 repeat must use existing Flow owner');
+assert.ok(read('scripts/axis-832-local-gate.sh').includes('axis-832-real-world-browser-smoke'),'P13/P18 must be in exact-head local gate');
 assert.ok(preparation.includes("bridge.dispatch(spec,attemptId,cmd).status==='accepted'"),'must respect existing owner acknowledgement');
 assert.ok(quality.includes('One visual hierarchy'),'presentation quality contract lost');
 const version=JSON.parse(read('governance/version-decision.json'));

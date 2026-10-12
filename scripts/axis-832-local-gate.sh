@@ -58,7 +58,7 @@ SERVER_PID=$!
 sleep 1
 kill -0 "$SERVER_PID" 2>/dev/null || { echo "Local server could not start" >&2; exit 1; }
 for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
-  for test in axis-831-playable-browser-smoke axis-826-active-continuity-smoke axis-882-smoke axis-832-play-this-browser-smoke; do
+  for test in axis-831-playable-browser-smoke axis-826-active-continuity-smoke axis-882-smoke axis-832-play-this-browser-smoke axis-832-real-world-browser-smoke; do
     AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" CHROME_BIN="$CHROME_BIN" \
       node "scripts/$test.mjs" 2>&1 | tee "$REPORT_DIR/$test-$engine.log"
   done
