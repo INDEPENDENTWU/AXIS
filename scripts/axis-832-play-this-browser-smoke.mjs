@@ -157,6 +157,19 @@ assert.equal(await hant.evaluate(el=>document.activeElement===el),true,'P16 keyb
 await page.evaluate(()=>document.querySelector('#eqSearch')?.dispatchEvent(new Event('input',{bubbles:true})));
 assert.equal(await page.evaluate(()=>document.activeElement?.dataset?.axis832Object),'chest-row','P16 focused Object lost its keyboard position after catalog refresh');
 
+await page.setViewportSize({width:320,height:844});
+await page.evaluate(()=>{document.documentElement.style.setProperty('--axis-ui','24px');document.documentElement.lang='en';});
+await page.locator('#eqSearch').fill('胸托划船');
+const enlarged=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+await enlarged.waitFor({state:'visible',timeout:4500});
+const metrics=await enlarged.evaluate(el=>({size:parseFloat(getComputedStyle(el).fontSize),width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,text:el.textContent?.trim()}));
+assert.equal(metrics.text,'Start practice','P16 enlarged text lost locale');
+assert.ok(metrics.size>=19&&metrics.height>=44,'P16 enlarged text did not scale inside 44px target: '+JSON.stringify(metrics));
+assert.ok(metrics.scrollWidth<=metrics.clientWidth+1&&metrics.scrollHeight<=metrics.clientHeight+1,'P16 enlarged label clipped: '+JSON.stringify(metrics));
+assert.ok(metrics.documentOverflow<=1,'P16 enlarged control caused horizontal overflow: '+JSON.stringify(metrics));
+await page.screenshot({path:'/tmp/axis-832c-enlarged-320-'+ENGINE+'.png',fullPage:true});
+console.log('[AXIS 8.32 P16] PASS · enlarged en label remains legible at 320 CSS pixels');
+
 console.log('[AXIS 8.32c] P03 P09 P10 P14 P16 P17 PARTIAL browser assertions PASS');
 
  assert.deepEqual(errors,[],'browser errors in PLAY THIS path');
