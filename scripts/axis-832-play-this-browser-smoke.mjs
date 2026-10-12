@@ -75,6 +75,13 @@ const started=Date.now();await tap(customButton);
 await page.waitForFunction(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id==='custom-practice-832',undefined,{timeout:4500});
 await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:5500});
 assert.equal(await page.locator('#scanSheet.show').count(),1,'P02 custom Object did not open the existing recorder');
+await page.waitForFunction(()=>document.querySelector('#scanSheet')?.contains(document.activeElement),undefined,{timeout:1500});
+const handoff=await page.evaluate(()=>({picker:document.querySelector('#eqSheet')?.classList.contains('show'),captureOwners:document.querySelectorAll('[data-axis-capture-owner]').length,recorderNodes:document.querySelectorAll('#scanSheet').length,focusInside:document.querySelector('#scanSheet')?.contains(document.activeElement)}));
+assert.equal(handoff.picker,false,'P19 Object sheet remains over Recorder');
+assert.equal(handoff.recorderNodes,1,'P19 duplicate recorder overlay');
+assert.equal(handoff.captureOwners,1,'P19 duplicate Recorder owner');
+assert.equal(handoff.focusInside,true,'P19 keyboard focus failed to hand off into Recorder');
+console.log('[AXIS 8.32 P19] PASS · one Recorder owner and overlay, focus transferred from Object picker');
 const customFact=await initial();
 assert.equal(customFact.active?.events?.length||0,0,'P02 Object entry fabricated a canonical Encounter');
 console.log('[AXIS 8.32c acceptance] P02/P15 custom exact Object + visual width + English PASS · action-to-owner elapsed ms='+String(Date.now()-started));
@@ -147,6 +154,9 @@ await hant.waitFor({state:'visible',timeout:4500});
 assert.equal((await hant.innerText()).trim(),'開始練習','P17 zh-Hant action not localized');
 await hant.focus();
 assert.equal(await hant.evaluate(el=>document.activeElement===el),true,'P16 keyboard focus missing');
+await page.evaluate(()=>document.querySelector('#eqSearch')?.dispatchEvent(new Event('input',{bubbles:true})));
+assert.equal(await page.evaluate(()=>document.activeElement?.dataset?.axis832Object),'chest-row','P16 focused Object lost its keyboard position after catalog refresh');
+
 console.log('[AXIS 8.32c] P03 P09 P10 P14 P16 P17 PARTIAL browser assertions PASS');
 
  assert.deepEqual(errors,[],'browser errors in PLAY THIS path');

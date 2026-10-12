@@ -9,6 +9,9 @@ assert.ok(preparation.includes('if(axis832Pending)return false'),'synchronous do
 assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY THIS must inject into the existing 8.31 app-owned bridge, not depend on a historical file tail');
 assert.equal(preparation.includes('app closure drift'),false,'app tail assumptions are forbidden in the canonical compiled source');
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
+for(const token of ['axis832FocusRecorder();','focusedRef','matching.focus({preventScroll:true})'])assert.ok(preparation.includes(token),'accessible focus continuity source guard missing '+token);
+const focusBrowser=read('scripts/axis-832-play-this-browser-smoke.mjs');
+for(const token of ['P19 keyboard focus failed to hand off into Recorder','focused Object lost its keyboard position after catalog refresh'])assert.ok(focusBrowser.includes(token),'P16/P19 browser regression guard missing '+token);
 assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
 assert.ok(preparation.includes("run&&run.status!=='complete'"),'only completed runs may be restarted');
 assert.ok(preparation.includes("run?.status==='complete'?api.launch(id)"),'P18 repeat must use existing Flow owner');
