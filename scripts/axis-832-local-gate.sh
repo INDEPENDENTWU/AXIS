@@ -7,10 +7,11 @@ for tool in git node python3; do
   command -v "$tool" >/dev/null 2>&1 || { echo "Missing: $tool" >&2; exit 2; }
 done
 BRANCH="$(git branch --show-current)"
-if [[ "$BRANCH" == main || "$BRANCH" == master || -z "$BRANCH" ]]; then
-  echo "Refusing a mutating candidate build on main/master or detached HEAD" >&2
+if [[ "$BRANCH" == main || "$BRANCH" == master ]]; then
+  echo "Refusing a candidate build on main/master" >&2
   exit 2
 fi
+if [[ -z "$BRANCH" ]]; then BRANCH="detached-exact-head"; fi
 HEAD_SHA="$(git rev-parse HEAD)"
 REPORT_DIR="${AXIS_LOCAL_REPORT_DIR:-$(dirname "$ROOT")/axis-832-local-evidence-${HEAD_SHA:0:10}}"
 PORT="${AXIS_LOCAL_PORT:-4173}"
