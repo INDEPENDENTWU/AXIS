@@ -58,10 +58,27 @@ SERVER_PID=$!
 sleep 1
 kill -0 "$SERVER_PID" 2>/dev/null || { echo "Local server could not start" >&2; exit 1; }
 for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
-  for test in axis-831-playable-browser-smoke axis-826-active-continuity-smoke axis-882-smoke axis-832-play-this-browser-smoke axis-832-real-world-browser-smoke; do
-    AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" CHROME_BIN="$CHROME_BIN" \
+  for test in axis-831-playable-browser-smoke axis-826-active-continuity-smoke axis-882-smoke axis-832-play-this-browser-smoke axis-832-real-world-browser-smoke axis-832d-timing-browser-smoke; do
+    AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" CHROME_BIN="$CHROME_BIN" AXIS_TIMING_REPORT_DIR="$REPORT_DIR" \
       node "scripts/$test.mjs" 2>&1 | tee "$REPORT_DIR/$test-$engine.log"
   done
+done
+# P20 owns factual metrics; confirm each requested engine wrote exact-head evidence.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_GATE_REPORT_DIR="$REPORT_DIR" AXIS_GATE_ENGINE="$engine" AXIS_GATE_HEAD="$HEAD_SHA" node --input-type=module -e '
+    import fs from "node:fs";
+    import assert from "node:assert/strict";
+    const r=JSON.parse(fs.readFileSync(process.env.AXIS_GATE_REPORT_DIR+"/axis-832d-p20-"+process.env.AXIS_GATE_ENGINE+".json","utf8"));
+    assert.equal(r.sha,process.env.AXIS_GATE_HEAD);
+    assert.equal(r.engine,process.env.AXIS_GATE_ENGINE);
+    for(const k of ["coldBoot","objectEntry","flowDoubleTap","warmActiveReload"]){
+      assert.ok(Number.isFinite(r.actions[k]?.elapsedMs)&&r.actions[k].elapsedMs>0,"Missing measured "+k);
+      assert.equal(r.actions[k].visual.width,390);
+    }
+    assert.equal(r.actions.objectEntry.selected,"chest-row");
+    assert.ok(r.actions.flowDoubleTap.ownerVisible.active||r.actions.flowDoubleTap.ownerVisible.recorder);
+    assert.equal(r.actions.flowDoubleTap.flowRunId,r.actions.warmActiveReload.flowRunId);
+  '
 done
 for file in /tmp/axis-832-*.png /tmp/axis-832c-*.png; do
   if [[ -f "$file" && "$file" -nt "$REPORT_DIR/identity.txt" ]]; then cp "$file" "$REPORT_DIR/"; fi

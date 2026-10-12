@@ -1,0 +1,77 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {performance} from 'node:perf_hooks';
+import {execFileSync} from 'node:child_process';
+const ENGINE=process.env.AXIS_ENGINE||'chromium',BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const {chromium,webkit}=await import('playwright');
+const browser=await (ENGINE==='webkit'?webkit:chromium).launch(ENGINE==='chromium'?{headless:true,args:['--no-sandbox'],executablePath:process.env.CHROME_BIN||undefined}:{headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,hasTouch:true,isMobile:ENGINE==='webkit',locale:'zh-CN',reducedMotion:'reduce'});
+const page=await context.newPage();
+const jsErrors=[];
+page.on('pageerror',e=>jsErrors.push(String(e)));
+await page.addInitScript(()=>{
+ window.__AXIS_LAYOUT_MEASURE__={total:0,available:false,count:0};
+ try{
+  if(PerformanceObserver.supportedEntryTypes?.includes('layout-shift')){
+   window.__AXIS_LAYOUT_MEASURE__.available=true;
+   new PerformanceObserver(list=>{for(const e of list.getEntries())if(!e.hadRecentInput){window.__AXIS_LAYOUT_MEASURE__.total+=e.value;window.__AXIS_LAYOUT_MEASURE__.count++}}).observe({type:'layout-shift',buffered:true});
+  }
+ }catch{}
+});
+const json=(r,data)=>r.fulfill({status:200,contentType:'application/json',headers:{'cache-control':'no-store','access-control-allow-origin':'*'},body:JSON.stringify(data)});
+for(const [pattern,data] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>json(r,data));
+const wait=()=>page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_RELEASE__==='8.32'&&window.__AXIS_832_PLAY_THIS__&&window.__AXIS_FLOW_RUNTIME__,undefined,{timeout:20000});
+const round=x=>Math.round(x*10)/10;
+const frame=()=>page.evaluate(()=>({width:innerWidth,height:innerHeight,lang:document.documentElement.lang,theme:document.documentElement.dataset.theme||null,colorScheme:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light',forcedColors:matchMedia('(forced-colors: active)').matches,shift:window.__AXIS_LAYOUT_MEASURE__?.available?Math.round(window.__AXIS_LAYOUT_MEASURE__.total*10000)/10000:null,shiftSupported:!!window.__AXIS_LAYOUT_MEASURE__?.available,shiftEvents:window.__AXIS_LAYOUT_MEASURE__?.count||0,horizontalOverflow:Math.max(0,document.documentElement.scrollWidth-document.documentElement.clientWidth),nav:performance.getEntriesByType('navigation')[0]&&{domContentLoadedMs:Math.round(performance.getEntriesByType('navigation')[0].domContentLoadedEventEnd*10)/10,transferSize:performance.getEntriesByType('navigation')[0].transferSize}}));
+const state=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
+const report={schema:'axis.832d.browser-timings.v1',sha:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf-8'}).trim(),engine:ENGINE,browserVersion:browser.version(),sampleType:'single local sandbox; not a production latency guarantee',owner:'existing canonical Flow/Active/Recorder',at:new Date().toISOString(),actions:{},warnings:[]};
+try{
+ const start=performance.now();
+ assert.ok((await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:20000}))?.ok());
+ await wait();
+ report.actions.coldBoot={elapsedMs:round(performance.now()-start),intentionalActions:0,visual:await frame()};
+ await page.evaluate(()=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3}}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))});
+ await page.reload({waitUntil:'domcontentloaded'});await wait();
+ assert.equal(await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick')),true,'P20 Object picker missing');
+ await page.locator('#eqSearch').fill('胸托划船');
+ const object=page.locator('#v8710Cards [data-axis832-object="chest-row"]').first();
+ await object.waitFor({state:'visible',timeout:5000});
+ const t1=performance.now();
+ await (ENGINE==='webkit'?object.tap():object.click());
+ await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#scanSheet')?.contains(document.activeElement),undefined,{timeout:5000});
+ report.actions.objectEntry={elapsedMs:round(performance.now()-t1),intentionalActions:1,ownerInteractive:true,selected:await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),visual:await frame()};
+ assert.equal(report.actions.objectEntry.selected,'chest-row','P20 Object handoff canonical identity lost');
+ assert.equal((await state()).active?.events?.length||0,0,'P20 Object entry fabricated an Encounter');
+ await page.locator('#scanSheet [data-close="scanSheet"]').first().click();
+ await page.evaluate(()=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3}}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))});
+ await page.reload({waitUntil:'domcontentloaded'});await wait();
+ const flow={schema:'axis.flow.v1',id:'axis832d-perf-flow',title:'Canonical latency check',steps:[{id:'first',objectRef:'chest-row'}]};
+ await page.evaluate(f=>window.__AXIS_FLOW_RUNTIME__.saveFlow(f),flow);
+ await page.reload({waitUntil:'domcontentloaded'});await wait();
+ const flowButton=page.locator('#axis821FlowHome [data-axis-flow-start="axis832d-perf-flow"]').first();
+ await flowButton.waitFor({state:'visible',timeout:5000});
+ const center=await flowButton.boundingBox();assert.ok(center&&center.width>=44&&center.height>=44,'P11 Flow button not reachable');
+ const t2=performance.now();
+ await page.mouse.dblclick(center.x+center.width/2,center.y+center.height/2,{delay:30});
+ await page.waitForFunction(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.flowRef==='axis832d-perf-flow'&&window.__AXIS_FLOW_RUNTIME__?.run?.()?.status==='active',undefined,{timeout:5000});
+ const after=await state();
+ const flowUi=await page.evaluate(()=>({recorderOpen:!!document.querySelector('#scanSheet.show'),activeOpen:!!document.querySelector('#v87Now.show'),flowRailReady:!!document.querySelector('#axis821FlowHome [data-axis-flow-record],#axis821FlowHome [data-axis-flow-resume]'),run:window.__AXIS_FLOW_RUNTIME__?.run?.()}));
+ report.actions.flowDoubleTap={elapsedMs:round(performance.now()-t2),intentionalActions:2,flowRunId:after.flowRun?.id,flowRef:after.flowRun?.flowRef,canonicalEncounterIds:(after.active?.events||[]).map(x=>x.id),ownerVisible:{recorder:flowUi.recorderOpen,active:flowUi.activeOpen,flowRail:flowUi.flowRailReady},visual:await frame()};
+ assert.equal(after.flowRun?.flowRef,'axis832d-perf-flow','P11 Flow double tap wrong owner');
+ assert.ok(flowUi.activeOpen||flowUi.recorderOpen,'P20 Flow entry did not reveal the existing interactive owner');
+ assert.ok((after.active?.events?.length||0)<=1,'P11 rapid UI double activation duplicated Encounter');
+ const firstRunId=after.flowRun?.id;
+ const t3=performance.now();
+ await page.reload({waitUntil:'domcontentloaded'});await wait();
+ const warm=await state();
+ report.actions.warmActiveReload={elapsedMs:round(performance.now()-t3),intentionalActions:0,flowRunId:warm.flowRun?.id,visual:await frame()};
+ assert.equal(warm.flowRun?.id,firstRunId,'P12 in-progress Flow lost on warm reload');
+ assert.equal(warm.flowRun?.status,'active','P12 in-progress Flow state changed');
+ assert.deepEqual(jsErrors,[],'browser exceptions during performance run');
+ const destination=process.env.AXIS_TIMING_REPORT_DIR||process.env.AXIS_LOCAL_REPORT_DIR||'/tmp';
+ fs.mkdirSync(destination,{recursive:true});
+ const target=path.join(destination,'axis-832d-p20-'+ENGINE+'.json');
+ fs.writeFileSync(target,JSON.stringify(report,null,2)+'\n');
+ console.log('[AXIS 8.32d P11/P12/P20] PASS '+JSON.stringify({sha:report.sha,engine:ENGINE,measurements:Object.fromEntries(Object.entries(report.actions).map(([k,v])=>[k,v.elapsedMs])),report:target,layoutShiftSupported:Object.values(report.actions).every(x=>x.visual?.shiftSupported)}));
+}catch(e){console.error('[AXIS 8.32d P20] FAIL',String(e),JSON.stringify(report));throw e}finally{await browser.close()}

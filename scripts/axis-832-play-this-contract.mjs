@@ -11,6 +11,9 @@ assert.equal(preparation.includes('app closure drift'),false,'app tail assumptio
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
 for(const token of ['axis832FocusRecorder();','focusedRef','matching.focus({preventScroll:true})'])assert.ok(preparation.includes(token),'accessible focus continuity source guard missing '+token);
 for(const token of ['font-size:clamp(12px,calc(var(--axis-ui,15px)*.9),20px)','white-space:normal;overflow-wrap:anywhere'])assert.ok(preparation.includes(token),'P16 scaled label contract missing '+token);
+const timingBrowser=read('scripts/axis-832d-timing-browser-smoke.mjs');
+for(const token of ['page.mouse.dblclick','warmActiveReload','axis-832d-p20-','__AXIS_LAYOUT_MEASURE__','flowRunId','ownerVisible'])assert.ok(timingBrowser.includes(token),'P11/P12/P20 factual browser timing guard missing '+token);
+assert.ok(read('scripts/axis-832-local-gate.sh').includes('axis-832d-timing-browser-smoke')&&read('scripts/axis-832-local-gate.sh').includes('AXIS_GATE_REPORT_DIR'),'P20 measured report must remain in exact-head gate');
 const focusBrowser=read('scripts/axis-832-play-this-browser-smoke.mjs');
 for(const token of ['P19 keyboard focus failed to hand off into Recorder','focused Object lost its keyboard position after catalog refresh','P16 enlarged label clipped'])assert.ok(focusBrowser.includes(token),'P16/P19 browser regression guard missing '+token);
 assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
