@@ -1,0 +1,47 @@
+import assert from 'node:assert/strict';
+import {chromium,webkit} from 'playwright';
+const engine=process.env.AXIS_ENGINE||'chromium',base=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const b=await (engine==='webkit'?webkit:chromium).launch(engine==='chromium'?{headless:true,args:['--no-sandbox']}:{headless:true});
+const context=await b.newContext({viewport:{width:390,height:844},locale:'zh-CN'});
+for(const [pat,val] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await context.route(pat,r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(val)}));
+const a=await context.newPage(),snap=p=>p.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
+const load=async p=>{await p.goto(base,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_832_PLAY_THIS__&&window.__AXIS_FLOW_RUNTIME__,undefined,{timeout:16000})};
+try{
+ await load(a);
+ await a.evaluate(()=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3}}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))});
+ await a.reload({waitUntil:'domcontentloaded'});await a.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true);
+ const flowA={schema:'axis.flow.v1',id:'axis-p12-tab-A',title:'Tab A Owner',steps:[{id:'s1',objectRef:'chest-row'}]};
+ const flowB={schema:'axis.flow.v1',id:'axis-p12-tab-B',title:'Tab B Foreign',steps:[{id:'s1',objectRef:'chest-row'}]};
+ await a.evaluate(fs=>fs.forEach(f=>window.__AXIS_FLOW_RUNTIME__.saveFlow(f)),[flowA,flowB]);
+ const stale=await context.newPage();
+ await load(stale);
+ const aResult=await a.evaluate(id=>window.__AXIS_832_PLAY_THIS__.startFlow(id),flowA.id);
+ const initial=await snap(a);
+ const staleMemory=await stale.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__.run(),stored:JSON.parse(localStorage.getItem('axis_v60_state')||'{}').flowRun}));
+ await stale.waitForFunction(()=>document.querySelector('#axis821FlowHome [data-axis-flow-start="axis-p12-tab-A"]')?.textContent.includes('继续当前练习'),undefined,{timeout:4000});
+ assert.equal(await stale.locator('#axis821FlowHome [data-axis-flow-start="axis-p12-tab-A"]').getAttribute('aria-label'),'继续当前练习','P12 cross-tab Home action did not reflect active owner');
+ const bResult=await stale.evaluate(id=>window.__AXIS_832_PLAY_THIS__.startFlow(id),flowB.id);
+ const staleUI=await stale.evaluate(()=>({flowCtas:Array.from(document.querySelectorAll('[data-axis-flow-start]')).map(b=>b.getAttribute('data-axis-flow-start')),flowHome:document.querySelector('#axis821FlowHome')?.dataset.state}));
+ console.log('P12_STALE_UI',JSON.stringify(staleUI));
+ assert.ok(staleUI.flowCtas.every(id=>id!==flowB.id),'P12 stale tab exposed competing Flow B start action');
+ const existingOwnerButton=stale.locator('#axis821FlowHome [data-axis-flow-start="axis-p12-tab-A"]').first();
+ if(await existingOwnerButton.count()){await existingOwnerButton.click({timeout:5000})}
+ else assert.equal(staleUI.flowCtas.length,0,'P12 stale Flow CTA did not resolve to canonical owner');
+ const afterVisibleAttempt=await snap(a);
+ assert.equal(afterVisibleAttempt.flowRun?.id,initial.flowRun?.id,'P12 visible stale foreign Flow action overwrote canonical run');
+ assert.deepEqual((afterVisibleAttempt.active?.events||[]).map(e=>e.id),(initial.active?.events||[]).map(e=>e.id),'P12 visible stale foreign Flow action created Encounter');
+ const persisted=await snap(a);
+ const inMemory=await stale.evaluate(()=>window.__AXIS_FLOW_RUNTIME__.run());
+ console.log('P12_TWO_TABS',JSON.stringify({engine,aResult,bResult,initialRun:initial.flowRun?.id,initialRef:initial.flowRun?.flowRef,staleMemoryBefore:staleMemory.run?.flowRef,staleStorageBefore:staleMemory.stored?.flowRef,persistedRef:persisted.flowRun?.flowRef,persistedRun:persisted.flowRun?.id,inMemoryRef:inMemory?.flowRef,encounters:persisted.active?.events?.length||0}));
+ assert.equal(aResult,true,'first owner did not start');
+ assert.equal(bResult,false,'P12 stale foreign tab accepted a conflicting flow');
+ assert.equal(persisted.flowRun?.id,initial.flowRun?.id,'P12 stale tab overwritten canonical FlowRun');
+ assert.equal(persisted.flowRun?.flowRef,flowA.id,'P12 foreign flow overtook original');
+ assert.deepEqual((persisted.active?.events||[]).map(e=>e.id),(initial.active?.events||[]).map(e=>e.id),'P12 stale foreign request changed canonical Encounter history');
+ await stale.reload({waitUntil:'domcontentloaded'});
+ await stale.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__&&window.__AXIS_FLOW_RUNTIME__,undefined,{timeout:15000});
+ const recovered=await stale.evaluate(()=>window.__AXIS_FLOW_RUNTIME__.run());
+ assert.equal(recovered?.id,initial.flowRun?.id,'P12 stale tab reload did not recover exact authoritative Run');
+ assert.equal(recovered?.flowRef,flowA.id,'P12 stale tab did not return to active Flow owner');
+ console.log('[AXIS 8.32 P12 '+engine+'] PASS · two live tabs · stale foreign Flow rejected · exact active FlowRun preserved');
+}finally{await b.close()}

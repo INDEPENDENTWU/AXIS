@@ -10,6 +10,9 @@ assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY T
 assert.equal(preparation.includes('app closure drift'),false,'app tail assumptions are forbidden in the canonical compiled source');
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
 for(const token of ["existing?.phase==='selected'",'existing.sourceRef===id','alreadySelected','pick(id,true)===true'])assert.ok(preparation.includes(token),'P08/P13 canonical same Object reentry guard missing '+token);
+const staleTabBrowser=read('scripts/axis-832d5-stale-tabs-browser-smoke.mjs');
+for(const token of ['context.newPage()','stale foreign tab accepted','foreign Flow action','aria-label','recovered?.id','active?.events'])assert.ok(staleTabBrowser.includes(token),'P12 same-owner cross-tab browser assertion absent '+token);
+for(const token of ["axis832ReflectExternalFlow","axis_v60_state","axis832Copy('continue')"])assert.ok(preparation.includes(token),'P12 read-only stale-tab presentation guard missing '+token);
 const offlineRecorder=read('scripts/axis-832d4-offline-recorder-browser-smoke.mjs');
 for(const token of ['c.setOffline(true)','#saveScan','offline save did not survive reload','saved.id','axis_832'])assert.ok(offlineRecorder.includes(token),'P13 true original UI offline save contract missing '+token);
 const visualBrowser=read('scripts/axis-832d3-visual-browser-smoke.mjs');

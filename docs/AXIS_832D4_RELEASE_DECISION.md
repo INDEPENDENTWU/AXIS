@@ -42,3 +42,7 @@ Playwright 1.55's WebKit installer reports that Ubuntu **26.04** is unsupported.
 ## Release governance
 
 No new Preview deployments, GitHub Actions runs, main merge, Production promotion, provider/EdgeOne/domain readbacks or new 8.32 Governance Seal occurred. Remain **Draft** and **Production 8.31**. Remaining exact release gates: the new commit's isolated dual-engine gate; supported light/first-paint optical signoff; complete assistive/keyboard/touch and stale concurrent UI acceptance; pinned WebKit 1.55 in supported environment; measured long-tail performance decision; then review → merge exact certified head → deploy official Production → verify runtime provider, EdgeOne, official domain and data persistence → independent Governance Seal. Do not claim 8.32 released until all gates and actual official readbacks pass.
+
+## 2026-10-13 — P12 cross-tab evidence supplement
+
+`scripts/axis-832d5-stale-tabs-browser-smoke.mjs` now covers **two live actual browser tabs**, not just same-tab reload: separate Flow references, stale tab foreign launch rejection, unchanged canonical FlowRun/Encounter IDs, visible Home action to *Continue current practice* (accessible label), same-owner re-entry and recovery after reload. Chromium/WebKit Playwright 1.64 passed the isolated test; see `docs/AXIS_832D5_STALE_TAB_ACCEPTANCE.md`. P12 remains **Partial** until pending-command and slower-device replay proof is complete. No pinned WebKit 1.55 evidence or Production certification implied.
