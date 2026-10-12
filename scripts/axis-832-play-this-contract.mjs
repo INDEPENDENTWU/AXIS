@@ -9,6 +9,9 @@ assert.ok(preparation.includes('if(axis832Pending)return false'),'synchronous do
 assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY THIS must inject into the existing 8.31 app-owned bridge, not depend on a historical file tail');
 assert.equal(preparation.includes('app closure drift'),false,'app tail assumptions are forbidden in the canonical compiled source');
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
+for(const token of ["existing?.phase==='selected'",'existing.sourceRef===id','alreadySelected','pick(id,true)===true'])assert.ok(preparation.includes(token),'P08/P13 canonical same Object reentry guard missing '+token);
+const visualBrowser=read('scripts/axis-832d3-visual-browser-smoke.mjs');
+for(const token of ['context.setOffline(true)','return','data-axis832-object','focusWithinRecorder','cancel altered canonical Encounter'])assert.ok(visualBrowser.includes(token),'8.32d3 true Recorder visual loop guard missing '+token);
 for(const token of ['axis832FocusRecorder();','focusedRef','matching.focus({preventScroll:true})'])assert.ok(preparation.includes(token),'accessible focus continuity source guard missing '+token);
 for(const token of ['font-size:clamp(12px,calc(var(--axis-ui,15px)*.9),20px)','white-space:normal;overflow-wrap:anywhere'])assert.ok(preparation.includes(token),'P16 scaled label contract missing '+token);
 const timingBrowser=read('scripts/axis-832d-timing-browser-smoke.mjs');

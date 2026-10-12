@@ -58,10 +58,29 @@ SERVER_PID=$!
 sleep 1
 kill -0 "$SERVER_PID" 2>/dev/null || { echo "Local server could not start" >&2; exit 1; }
 for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
-  for test in axis-831-playable-browser-smoke axis-826-active-continuity-smoke axis-882-smoke axis-832-play-this-browser-smoke axis-832-real-world-browser-smoke axis-832d-timing-browser-smoke; do
-    AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" CHROME_BIN="$CHROME_BIN" AXIS_TIMING_REPORT_DIR="$REPORT_DIR" \
+  for test in axis-831-playable-browser-smoke axis-826-active-continuity-smoke axis-882-smoke axis-832-play-this-browser-smoke axis-832-real-world-browser-smoke axis-832d-timing-browser-smoke axis-832d3-visual-browser-smoke; do
+    AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" CHROME_BIN="$CHROME_BIN" AXIS_TIMING_REPORT_DIR="$REPORT_DIR" AXIS_D3_EVIDENCE_DIR="$REPORT_DIR" \
       node "scripts/$test.mjs" 2>&1 | tee "$REPORT_DIR/$test-$engine.log"
   done
+done
+# P15/P16/P17/P19/P13/P14 exact-source browser loop and screenshot manifest.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_D3_HEAD="$HEAD_SHA" AXIS_D3_ENGINE="$engine" AXIS_D3_REPORT_DIR="$REPORT_DIR" node --input-type=module -e '
+    import fs from "node:fs";
+    import assert from "node:assert/strict";
+    const r=JSON.parse(fs.readFileSync(process.env.AXIS_D3_REPORT_DIR+"/axis-832d3-visual-"+process.env.AXIS_D3_ENGINE+".json","utf8"));
+    assert.equal(r.head,process.env.AXIS_D3_HEAD);
+    assert.equal(r.engine,process.env.AXIS_D3_ENGINE);
+    assert.equal(r.samples.length,7);
+    assert.equal(r.screenshots.length,10);
+    for(const a of r.samples){
+      assert.ok(a.cancelPure&&a.returnedAndReopened&&a.focusPreserved&&a.originalOwnerOnly);
+      assert.equal(a.picker.documentOverflow,0);
+      assert.ok(a.picker.cta.width>=44&&a.picker.cta.height>=44);
+      assert.ok(a.recorder.focusWithinRecorder);
+    }
+    for(const p of r.screenshots)assert.ok(fs.existsSync(process.env.AXIS_D3_REPORT_DIR+"/"+p),"missing screenshot "+p);
+  '
 done
 # P20 owns factual metrics; confirm each requested engine wrote exact-head evidence.
 for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
