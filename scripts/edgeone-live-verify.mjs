@@ -3,6 +3,8 @@ import fs from 'node:fs';
 const logPath='/tmp/axis-edgeone-deploy.log';
 const goldenBase=process.env.VERCEL_GOLDEN_URL||'https://axis-five-puce.vercel.app';
 const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+const standalone=process.env.AXIS_EDGEONE_STANDALONE==='1';
+if(standalone&&(!/^[0-9a-f]{40}$/i.test(process.env.AXIS_RELEASE_SHA||'')||local.sourceCommit!==process.env.AXIS_RELEASE_SHA))throw new Error('[AXIS EdgeOne standalone] prebuilt artifact must match exact release SHA');
 const result={baseUrl:'',runnerUnauthenticatedStatus:null,authenticatedStatus:null,manifestParity:false,runtimeMarker:false,convergenceAttempts:0,convergedAt:null,api:{},accessModel:'project-domain-region-dependent; durable mainland access requires custom domain/policy',error:'',verifiedAt:new Date().toISOString()};
 let fatal=null;
 const fail=msg=>{throw new Error(`[AXIS EdgeOne live] ${msg}`)};
@@ -29,6 +31,7 @@ try{
       if(root.status===200&&runtimeMarker&&mismatches.length===0){
         result.runtimeMarker=true;
         result.manifestParity=true;
+        result.standaloneSourceVerified=standalone;
         result.convergedAt=new Date().toISOString();
         break;
       }
@@ -39,8 +42,20 @@ try{
   }
   if(!result.manifestParity||!result.runtimeMarker)fail(`deployment did not converge to exact ${local.version} / ${local.sourceCommit} after ${result.convergenceAttempts} attempts · ${last}`);
 
-  for(const path of ['/api/ai-status','/api/ai-capabilities','/api/cloud-status','/api/owner-config','/api/analyze','/api/insight','/api/label']){const [edge,golden]=await Promise.all([request(edgeUrl(path,result.convergenceAttempts),{json:true}),request(new URL(path,goldenBase),{json:true})]);result.api[path]={edgeStatus:edge.status,goldenStatus:golden.status,edgeJson:!!edge.data,goldenJson:!!golden.data,statusParity:edge.status===golden.status,jsonParity:(!!edge.data)===(!!golden.data)};if(edge.status!==golden.status)fail(`${path} status parity ${edge.status} != ${golden.status}`);if((!!edge.data)!==(!!golden.data))fail(`${path} JSON contract parity mismatch`)}
+  for(const path of ['/api/ai-status','/api/ai-capabilities','/api/cloud-status','/api/owner-config','/api/analyze','/api/insight','/api/label']){
+  const edge=await request(edgeUrl(path,result.convergenceAttempts),{json:true});
+  if(standalone){
+    // If Vercel cannot deploy, the exact source manifest and EdgeOne's own JSON API are the authority.
+    result.api[path]={edgeStatus:edge.status,edgeJson:!!edge.data,vercelCompared:false};
+    if(edge.status>=500||!edge.data||typeof edge.data!=='object'||edge.status<200)fail(`${path} is not a live JSON API on EdgeOne (${edge.status})`);
+  }else{
+    const golden=await request(new URL(path,goldenBase),{json:true});
+    result.api[path]={edgeStatus:edge.status,goldenStatus:golden.status,edgeJson:!!edge.data,goldenJson:!!golden.data,statusParity:edge.status===golden.status,jsonParity:(!!edge.data)===(!!golden.data)};
+    if(edge.status!==golden.status)fail(`${path} status parity ${edge.status} != ${golden.status}`);
+    if((!!edge.data)!==(!!golden.data))fail(`${path} JSON contract parity mismatch`);
+  }
+}
 }catch(err){fatal=err;result.error=String(err?.message||err||'unknown live verification error').slice(0,1200)}
 result.verifiedAt=new Date().toISOString();
 fs.writeFileSync('/tmp/edgeone-live-result.json',JSON.stringify(result,null,2)+'\n');if(fatal)throw fatal;
-console.log(`[AXIS EdgeOne live] authenticated deployment converged and verified ${result.baseUrl} · attempts=${result.convergenceAttempts} · runner unauthenticated=${result.runnerUnauthenticatedStatus} · exact ${local.version} manifest/source parity · ${Object.keys(result.api).length} API contracts match Vercel`);
+console.log(`[AXIS EdgeOne live] ${standalone?'standalone exact-source':'Vercel-parity'} deployment converged and verified ${result.baseUrl} · attempts=${result.convergenceAttempts} · runner unauthenticated=${result.runnerUnauthenticatedStatus} · exact ${local.version} manifest/source parity · ${Object.keys(result.api).length} API contracts ${standalone?'verified directly':'match Vercel'}`);

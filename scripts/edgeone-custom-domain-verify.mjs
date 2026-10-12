@@ -3,6 +3,8 @@ import fs from 'node:fs';
 const customBaseRaw=process.env.EDGEONE_CUSTOM_DOMAIN_URL||'';
 const goldenBase=process.env.VERCEL_GOLDEN_URL||'https://axis-five-puce.vercel.app';
 const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+const standalone=process.env.AXIS_EDGEONE_STANDALONE==='1';
+if(standalone&&(!/^[0-9a-f]{40}$/i.test(process.env.AXIS_RELEASE_SHA||'')||local.sourceCommit!==process.env.AXIS_RELEASE_SHA))throw new Error('[AXIS EdgeOne custom domain] standalone expected SHA differs from artifact');
 const output='/tmp/edgeone-custom-domain-result.json';
 const result={baseUrl:'',status:null,manifestParity:false,runtimeMarker:false,hostnameStable:false,convergenceAttempts:0,convergedAt:null,api:{},error:'',verifiedAt:new Date().toISOString()};
 let fatal=null;
@@ -43,13 +45,19 @@ try{
   }
   if(!result.manifestParity||!result.runtimeMarker||!result.hostnameStable)fail(`axis.juele.fun did not converge to exact ${local.version} / ${local.sourceCommit} after ${result.convergenceAttempts} attempts · ${last}`);
   for(const path of ['/api/ai-status','/api/ai-capabilities','/api/cloud-status','/api/owner-config','/api/analyze','/api/insight','/api/label']){
-    const [custom,golden]=await Promise.all([request(new URL(path,customBase),{json:true}),request(new URL(path,goldenBase),{json:true})]);
-    result.api[path]={customStatus:custom.status,goldenStatus:golden.status,customJson:!!custom.data,goldenJson:!!golden.data,statusParity:custom.status===golden.status,jsonParity:(!!custom.data)===(!!golden.data)};
-    if(custom.status!==golden.status)fail(`${path} status parity ${custom.status} != ${golden.status}`);
-    if((!!custom.data)!==(!!golden.data))fail(`${path} JSON contract parity mismatch`);
+    const custom=await request(new URL(path,customBase),{json:true});
+    if(standalone){
+      result.api[path]={customStatus:custom.status,customJson:!!custom.data,vercelCompared:false};
+      if(custom.status>=500||custom.status<200||!custom.data||typeof custom.data!=='object')fail(`${path} not available as JSON API on official domain (${custom.status})`);
+    }else{
+      const golden=await request(new URL(path,goldenBase),{json:true});
+      result.api[path]={customStatus:custom.status,goldenStatus:golden.status,customJson:!!custom.data,goldenJson:!!golden.data,statusParity:custom.status===golden.status,jsonParity:(!!custom.data)===(!!golden.data)};
+      if(custom.status!==golden.status)fail(`${path} status parity ${custom.status} != ${golden.status}`);
+      if((!!custom.data)!==(!!golden.data))fail(`${path} JSON contract parity mismatch`);
+    }
   }
 }catch(err){fatal=err;result.error=String(err?.message||err||'unknown custom-domain verification error').slice(0,1200)}
 result.verifiedAt=new Date().toISOString();
 fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n');
 if(fatal)throw fatal;
-console.log(`[AXIS custom domain] verified ${result.baseUrl} · exact ${local.version} / ${local.sourceCommit} · HTTPS hostname stable · manifest/runtime parity · ${Object.keys(result.api).length} API contracts match Vercel`);
+console.log(`[AXIS custom domain] ${standalone?'standalone exact-source':'Vercel-parity'} verified ${result.baseUrl} · exact ${local.version} / ${local.sourceCommit} · HTTPS hostname stable · manifest/runtime parity · ${Object.keys(result.api).length} API contracts ${standalone?'verified directly':'match Vercel'}`);

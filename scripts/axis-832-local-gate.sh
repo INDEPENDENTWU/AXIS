@@ -45,8 +45,12 @@ trap cleanup EXIT
 node --check scripts/prepare-832-inherited-regressions.mjs
 node --check scripts/prepare-832-play-this-integration.mjs
 node --check scripts/axis-832-play-this-contract.mjs
+node --check scripts/axis-edgeone-fallback-release.mjs
+node --check scripts/edgeone-live-verify.mjs
+node --check scripts/edgeone-custom-domain-verify.mjs
 node scripts/axis-832-play-this-contract.mjs 2>&1 | tee "$REPORT_DIR/source.log"
 node build-release.mjs 2>&1 | tee "$REPORT_DIR/build.log"
+node scripts/edgeone-prebuilt-verify.mjs 2>&1 | tee "$REPORT_DIR/edgeone-prebuilt.log"
 node postbuild-832-play-this-contract.mjs 2>&1 | tee "$REPORT_DIR/postbuild.log"
 node scripts/axis-production-governance-contract.mjs 2>&1 | tee "$REPORT_DIR/governance.log"
 grep -Fq 'safety.foreignStatus' scripts/axis-826-active-continuity-smoke.mjs
