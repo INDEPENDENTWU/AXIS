@@ -10,6 +10,8 @@ assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY T
 assert.equal(preparation.includes('app closure drift'),false,'app tail assumptions are forbidden in the canonical compiled source');
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
 for(const token of ["existing?.phase==='selected'",'existing.sourceRef===id','alreadySelected','pick(id,true)===true'])assert.ok(preparation.includes(token),'P08/P13 canonical same Object reentry guard missing '+token);
+const offlineRecorder=read('scripts/axis-832d4-offline-recorder-browser-smoke.mjs');
+for(const token of ['c.setOffline(true)','#saveScan','offline save did not survive reload','saved.id','axis_832'])assert.ok(offlineRecorder.includes(token),'P13 true original UI offline save contract missing '+token);
 const visualBrowser=read('scripts/axis-832d3-visual-browser-smoke.mjs');
 for(const token of ['context.setOffline(true)','return','data-axis832-object','focusWithinRecorder','cancel altered canonical Encounter'])assert.ok(visualBrowser.includes(token),'8.32d3 true Recorder visual loop guard missing '+token);
 for(const token of ['axis832FocusRecorder();','focusedRef','matching.focus({preventScroll:true})'])assert.ok(preparation.includes(token),'accessible focus continuity source guard missing '+token);
