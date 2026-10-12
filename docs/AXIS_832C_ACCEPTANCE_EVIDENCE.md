@@ -63,3 +63,23 @@ In a real headless WebKit browser via Playwright **1.64.0** (Ubuntu 26, dependen
 **Still open before AXIS 8.32 Production:** complete user-visible recovery affordances on active/invalid/missing states, genuine offline *confirmation* of Encounter rather than offline entry alone, P11 rapid real UI tapping, P12 partial-Encounter stale UI replay, P15 light-theme optical screenshot audit for every specified locale/width, P16 assistive-technology and font-enlargement audit, P17 no wrong-theme flash, P18 completed Flow explicit repeat, P19 handoff overlay/keyboard checks, P20 cold/warm measurements and source report, plus main-merged provider-domain readbacks and a new independent Governance Seal. Do not silently convert this partial acceptance into a passing 20/20 claim.
 
 **Release decision:** Keep PR #174 Draft and existing 8.31 Production intact. User requested direct official releases when a capability is genuinely ready; no new Preview deployments were created as part of this run. Next work is **8.32c completion → 8.32d release-quality visual and interaction closure → exact merged-main Production certification**, with deployment only after these remaining gates pass.
+
+## 2026-10-13 — Exact-source Flow repeat and offline-owner validation
+
+**Product source SHA:** `8395eb10798d9bf9e277350924bb27c0cb840e4d`. PR #174 remains Draft. AXIS 8.31 remains the only Production-certified release.
+
+The acceptance entry `scripts/axis-832-local-gate.sh` completed with **exit code 0** after checking out this exact HEAD in an isolated, clean Git worktree (no generated-file contamination). It executed the canonical **103 deterministic build steps**, the 8.32 source/postbuild contracts, Production governance *source* contract, and five browser suites in **both Chromium and WebKit**:
+
+- `axis-831-playable-browser-smoke`: exact existing-owner Encounter, Flow provenance, reload and advancement.
+- `axis-826-active-continuity-smoke`: protection of an in-progress foreign Active.
+- `axis-882-smoke`: personal visual memory, no phantom rest on plan completion, manual finish, countdown and historical continuity.
+- `axis-832-play-this-browser-smoke`: native/custom entry, identity collisions, missing/invalid Flow, cancellation purity, offline entry, 320–430px geometry, partial focus/reduced-motion/locale assertions.
+- `axis-832-real-world-browser-smoke`: offline browser state with **canonical Active Encounter actually committed** by the existing 8.31 owner; exact Flow provenance and post-reload history; **real Home `再来一次` button click**, new FlowRun ID and new Encounter ID, earlier history preserved and immediate repeated activation idempotent.
+
+The source fix is limited to 8.32's presentation coordinator: an explicit request on a **completed** Flow uses the existing Flow runtime `launch(id)`, retaining non-destructive foreign/active conflict protections. No new persistence namespace, writer or synthetic Encounter is introduced.
+
+**Local gate evidence:** `/tmp/axis-832-evidence-8395eb10798d/status.json`, recorded exact product HEAD `8395eb10798d9bf9e277350924bb27c0cb840e4d`, engines `chromium webkit`, `exitCode:0`, `actionsUsed:false`, `productionCertified:false`. The sandbox execution used **Playwright 1.64.0**; the official pinned WebKit 1.55 compatibility gate remains separate and has **not** been claimed as passed.
+
+**Coverage limitations:** P13 now proves a genuine offline stored Encounter through canonical owner dispatch and reload, but not the full offline Recorder **UI confirmation** sequence. P18 now proves real Home repeat; P11 rapid physical UI double-tap is not separately established. P15 screenshots are captured but still require optical light/dark/locale review. P16 full accessibility, P17 theme-first-paint, P19 focus/overlay handoff, P20 measured cold/warm performance, and complete 20/20 runnable scenarios remain release gates.
+
+**Release state:** No new Preview, Production alias switch, merged-main certification, domain promotion or independent 8.32 Governance Seal. Continue 8.32c remaining experience/acceptance work before 8.32d release certification and subsequent controlled Production release.
