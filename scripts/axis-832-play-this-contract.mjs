@@ -16,6 +16,8 @@ for(const token of ['P19 keyboard focus failed to hand off into Recorder','focus
 assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
 assert.ok(preparation.includes("run&&run.status!=='complete'"),'only completed runs may be restarted');
 assert.ok(preparation.includes("run?.status==='complete'?api.launch(id)"),'P18 repeat must use existing Flow owner');
+assert.ok(preparation.includes("canonicalRun?.status==='active'&&canonicalRun.flowRef===id")&&preparation.includes('return axis832Current();'),'P04 transient handoff must recover using canonical existing FlowRun');
+assert.ok(read('scripts/axis-832-play-this-browser-smoke.mjs').includes('P04 user cannot reach the real owner within two actions'),'P04 real owner fallback assertion absent');
 assert.ok(read('scripts/axis-832-local-gate.sh').includes('axis-832-real-world-browser-smoke'),'P13/P18 must be in exact-head local gate');
 assert.ok(preparation.includes("bridge.dispatch(spec,attemptId,cmd).status==='accepted'"),'must respect existing owner acknowledgement');
 assert.ok(quality.includes('One visual hierarchy'),'presentation quality contract lost');

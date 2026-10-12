@@ -97,6 +97,10 @@ const flowA={schema:'axis.flow.v1',id:'axis832c-flow-a',title:'A Practice',steps
 const flowB={schema:'axis.flow.v1',id:'axis832c-flow-b',title:'B Practice',steps:[{id:'b1',objectRef:'lat-pulldown'}]};
 const runA=await page.evaluate(([a,b])=>{const api=window.__AXIS_FLOW_RUNTIME__;api.saveFlow(a);api.saveFlow(b);return window.__AXIS_832_PLAY_THIS__.startFlow(a.id)},[flowA,flowB]);
 assert.equal(runA,true,'P04 first Flow launch was rejected');
+await page.waitForFunction(()=>!!document.querySelector('#scanSheet.show,#v87Now.show,#axis821FlowHome [data-axis-flow-record]'),undefined,{timeout:5000});
+const entryOwner=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),selected:window.__AXIS_SELECTED_EQUIPMENT__?.()?.id,recorder:document.querySelector('#scanSheet')?.classList.contains('show')}));
+assert.equal(entryOwner.run?.flowRef,flowA.id,'P04 accepted Flow is not owned by canonical FlowRun');
+assert.ok(entryOwner.recorder||entryOwner.run?.currentEncounterId||entryOwner.selected==='chest-row','P04 user cannot reach the real owner within two actions');
 const runningBefore=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),events:JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.length||0}));
 assert.equal(runningBefore.run?.flowRef,flowA.id);
 const other=await page.evaluate(id=>window.__AXIS_832_PLAY_THIS__.startFlow(id),flowB.id);
