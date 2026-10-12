@@ -46,3 +46,7 @@ No new Preview deployments, GitHub Actions runs, main merge, Production promotio
 ## 2026-10-13 — P12 cross-tab evidence supplement
 
 `scripts/axis-832d5-stale-tabs-browser-smoke.mjs` now covers **two live actual browser tabs**, not just same-tab reload: separate Flow references, stale tab foreign launch rejection, unchanged canonical FlowRun/Encounter IDs, visible Home action to *Continue current practice* (accessible label), same-owner re-entry and recovery after reload. Chromium/WebKit Playwright 1.64 passed the isolated test; see `docs/AXIS_832D5_STALE_TAB_ACCEPTANCE.md`. P12 remains **Partial** until pending-command and slower-device replay proof is complete. No pinned WebKit 1.55 evidence or Production certification implied.
+
+## 2026-10-13 — P11 mobile touch & WebKit pinned-version update
+
+P11 now includes actual `touchscreen.tap` repeated activation and cancellation on the real 360px Object CTA in Chromium/WebKit1.64 and test-only WebKit1.55, with exact one Recorder/owner and unchanged canonical history. This improves the **Partial** P11 coverage (does not make all multi-gesture/accessibility paths complete). Exact fixed Playwright1.55 WebKit26.0 runs are documented separately: eight suites first-run green, one historical 8.8.2 long-press timeout, unchanged rerun green twice, all under Ubuntu26 compatibility libs rather than a supported native OS. See `docs/AXIS_832D6_TOUCH_PINNED_COMPAT.md`. Production seal remains withheld.
