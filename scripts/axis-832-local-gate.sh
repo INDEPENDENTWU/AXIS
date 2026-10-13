@@ -155,6 +155,12 @@ AXIS_D12_HEAD="$HEAD_SHA" AXIS_D12_REPORT_DIR="$REPORT_DIR" node --input-type=mo
   assert.equal(a.productionCertified,false);
   assert.ok(a.themeContractGap.includes("dark"));
 '
+
+# P16 dialog/focus semantics on original Object picker. Browser-only, not a VoiceOver seal.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_D13_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" node scripts/axis-832d13-accessibility-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d13-accessibility-$engine.log"
+  test "$(grep -c '\[AXIS d13\] PASS' "$REPORT_DIR/axis-832d13-accessibility-$engine.log")" -eq 3
+done
 for file in /tmp/axis-832-*.png /tmp/axis-832c-*.png; do
   if [[ -f "$file" && "$file" -nt "$REPORT_DIR/identity.txt" ]]; then cp "$file" "$REPORT_DIR/"; fi
 done
