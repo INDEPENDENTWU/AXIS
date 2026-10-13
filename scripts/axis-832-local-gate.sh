@@ -124,6 +124,22 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
     assert.equal(r.actions.flowDoubleTap.flowRunId,r.actions.warmActiveReload.flowRunId);
   '
 done
+
+# P15/P16/P20 simulated 200% pinch and CPU throttle (not a physical-device seal).
+if [[ " $(printenv AXIS_LOCAL_ENGINES || echo 'chromium webkit') " == *" chromium "* ]]; then
+  AXIS_URL="http://127.0.0.1:$PORT" AXIS_D11_REPORT="$REPORT_DIR/axis-832d11-mobile.json" node scripts/axis-832d11-mobile-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d11-mobile-chromium.log"
+  AXIS_D11_HEAD="$HEAD_SHA" AXIS_D11_REPORT_DIR="$REPORT_DIR" node --input-type=module -e '
+    import assert from "node:assert/strict";
+    import fs from "node:fs";
+    const a=JSON.parse(fs.readFileSync(process.env.AXIS_D11_REPORT_DIR+"/axis-832d11-mobile.json","utf8"));
+    assert.equal(a.head,process.env.AXIS_D11_HEAD);
+    assert.equal(a.engine,"chromium");
+    assert.deepEqual(a.cases.map(x=>x.width),[320,390,430]);
+    assert.ok(a.cases.every(x=>x.zoom.scale>=1.9 && x.zoom.guide.bottom<=x.zoom.cards.y+1));
+    assert.equal(a.slowEntryMs.length,4);
+    assert.equal(a.productionCertified,false);
+  '
+fi
 for file in /tmp/axis-832-*.png /tmp/axis-832c-*.png; do
   if [[ -f "$file" && "$file" -nt "$REPORT_DIR/identity.txt" ]]; then cp "$file" "$REPORT_DIR/"; fi
 done
