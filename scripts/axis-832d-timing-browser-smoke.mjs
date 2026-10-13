@@ -37,10 +37,14 @@ try{
  await page.locator('#eqSearch').fill('胸托划船');
  const object=page.locator('#v8710Cards [data-axis832-object="chest-row"]').first();
  await object.waitFor({state:'visible',timeout:5000});
+ const preObjectTapVisual=await frame();
  const t1=performance.now();
  await (ENGINE==='webkit'?object.tap():object.click());
  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('#scanSheet')?.contains(document.activeElement),undefined,{timeout:5000});
- report.actions.objectEntry={elapsedMs:round(performance.now()-t1),intentionalActions:1,ownerInteractive:true,selected:await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),visual:await frame()};
+ const postObjectTapVisual=await frame();
+ const tapShift=preObjectTapVisual.shiftSupported&&postObjectTapVisual.shiftSupported?round(Math.max(0,postObjectTapVisual.shift-preObjectTapVisual.shift)):null;
+ report.actions.objectEntry={elapsedMs:round(performance.now()-t1),intentionalActions:1,ownerInteractive:true,selected:await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),visual:postObjectTapVisual,layoutShiftBeforeTap:preObjectTapVisual.shift,layoutShiftAddedDuringHandoff:tapShift};
+ if(tapShift!==null)assert.ok(tapShift<=0.05,'P20 Object-to-Recorder handoff caused unexpected layout shift '+tapShift);
  assert.equal(report.actions.objectEntry.selected,'chest-row','P20 Object handoff canonical identity lost');
  assert.equal((await state()).active?.events?.length||0,0,'P20 Object entry fabricated an Encounter');
  await page.locator('#scanSheet [data-close="scanSheet"]').first().click();
