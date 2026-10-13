@@ -62,8 +62,8 @@ SERVER_PID=$!
 sleep 1
 kill -0 "$SERVER_PID" 2>/dev/null || { echo "Local server could not start" >&2; exit 1; }
 for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
-  for test in axis-831-playable-browser-smoke axis-826-active-continuity-smoke axis-882-smoke axis-832-play-this-browser-smoke axis-832-real-world-browser-smoke axis-832d-timing-browser-smoke axis-832d3-visual-browser-smoke axis-832d4-offline-recorder-browser-smoke axis-832d5-stale-tabs-browser-smoke axis-832d6-touch-repeat-browser-smoke; do
-    AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" CHROME_BIN="$CHROME_BIN" AXIS_TIMING_REPORT_DIR="$REPORT_DIR" AXIS_D3_EVIDENCE_DIR="$REPORT_DIR" \
+  for test in axis-831-playable-browser-smoke axis-826-active-continuity-smoke axis-882-smoke axis-832-play-this-browser-smoke axis-832-real-world-browser-smoke axis-832d-timing-browser-smoke axis-832d3-visual-browser-smoke axis-832d4-offline-recorder-browser-smoke axis-832d5-stale-tabs-browser-smoke axis-832d6-touch-repeat-browser-smoke axis-832d7-a11y-browser-smoke; do
+    AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" CHROME_BIN="$CHROME_BIN" AXIS_TIMING_REPORT_DIR="$REPORT_DIR" AXIS_D3_EVIDENCE_DIR="$REPORT_DIR" AXIS_D7_EVIDENCE_DIR="$REPORT_DIR" \
       node "scripts/$test.mjs" 2>&1 | tee "$REPORT_DIR/$test-$engine.log"
   done
 done
@@ -84,6 +84,27 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
       assert.ok(a.recorder.focusWithinRecorder);
     }
     for(const p of r.screenshots)assert.ok(fs.existsSync(process.env.AXIS_D3_REPORT_DIR+"/"+p),"missing screenshot "+p);
+  '
+done
+# P15/P16/P17 large-text optical geometry, visible focus, contrast and locale.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_D7_HEAD="$HEAD_SHA" AXIS_D7_ENGINE="$engine" AXIS_D7_REPORT_DIR="$REPORT_DIR" node --input-type=module -e '
+    import fs from "node:fs";
+    import assert from "node:assert/strict";
+    const r=JSON.parse(fs.readFileSync(process.env.AXIS_D7_REPORT_DIR+"/axis-832d7-a11y-"+process.env.AXIS_D7_ENGINE+".json","utf8"));
+    assert.equal(r.head,process.env.AXIS_D7_HEAD);
+    assert.equal(r.engine,process.env.AXIS_D7_ENGINE);
+    assert.equal(r.samples.length,14);
+    assert.equal(r.screenshots.length,8);
+    for(const a of r.samples){
+      const f=a.facts;
+      assert.ok(f.keyboardReached && f.contrastRatio >= 4.5);
+      assert.ok(f.guide?.bottom <= f.cards?.y+1);
+      assert.notEqual(f.itemTitleWhiteSpace,"nowrap");
+      assert.ok(f.button.width>=44&&f.button.height>=44);
+      assert.ok(f.documentWidth<=f.viewportWidth+1);
+    }
+    for(const p of r.screenshots)assert.ok(fs.existsSync(process.env.AXIS_D7_REPORT_DIR+"/"+p),"missing screenshot "+p);
   '
 done
 # P20 owns factual metrics; confirm each requested engine wrote exact-head evidence.

@@ -10,6 +10,9 @@ assert.ok(preparation.includes('code=code.replace(bridgeAnchor,runtime'),'PLAY T
 assert.equal(preparation.includes('app closure drift'),false,'app tail assumptions are forbidden in the canonical compiled source');
 assert.ok(preparation.includes('axis832Conflict()'),'Object must not steal Active/Flow');
 for(const token of ["existing?.phase==='selected'",'existing.sourceRef===id','alreadySelected','pick(id,true)===true'])assert.ok(preparation.includes(token),'P08/P13 canonical same Object reentry guard missing '+token);
+const visualA11y=read('scripts/axis-832d7-a11y-browser-smoke.mjs');
+for(const token of ['keyboard Tab cannot reach','enlarged guide text overlaps Object cards','contrastRatio>=4.5','a11y-'])assert.ok(visualA11y.includes(token),'8.32d7 optical/a11y test guard missing '+token);
+for(const token of ['accessibilityCss','v8710GuideHead{box-sizing:border-box','Browse without knowing the name','不知道名稱也可以'])assert.ok(preparation.includes(token),'8.32d7 layout/locale fix missing '+token);
 const touchBrowser=read('scripts/axis-832d6-touch-repeat-browser-smoke.mjs');
 for(const token of ['page.touchscreen.tap(x,y)','firstToSecondTouchMs','P11 rapid double touch manufactured','visual.owners','visual.recorders','cancellation after fast touch'])assert.ok(touchBrowser.includes(token),'P11 real touch rapid handoff guard missing '+token);
 const staleTabBrowser=read('scripts/axis-832d5-stale-tabs-browser-smoke.mjs');
