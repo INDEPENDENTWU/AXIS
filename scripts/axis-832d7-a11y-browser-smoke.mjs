@@ -24,6 +24,10 @@ const cssFacts=()=>page.evaluate(()=>{
 });
 try{
  await page.goto(base,{waitUntil:'domcontentloaded'});
+ const viewportPolicy=await page.locator('meta[name="viewport"]').getAttribute('content');
+ assert.ok(viewportPolicy?.includes('width=device-width')&&viewportPolicy?.includes('viewport-fit=cover'),'P16 viewport geometry missing');
+ assert.doesNotMatch(viewportPolicy,/user-scalable\s*=\s*(?:no|0)|maximum-scale\s*=\s*1(?:\.0)?/i,'P16 page disables user pinch zoom');
+ report.viewportPolicy=viewportPolicy;
  await page.evaluate(v=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify(v));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))},initial);
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__&&window.__AXIS_832_PLAY_THIS__,undefined,{timeout:20000});
