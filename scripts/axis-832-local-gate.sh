@@ -140,6 +140,21 @@ if [[ " $(printenv AXIS_LOCAL_ENGINES || echo 'chromium webkit') " == *" chromiu
     assert.equal(a.productionCertified,false);
   '
 fi
+
+# P15/P17 explicit source-scoped dark first-paint audit; this does NOT certify System/Light preference support.
+AXIS_URL="http://127.0.0.1:$PORT" AXIS_D12_REPORT="$REPORT_DIR/axis-832d12-firstpaint.json" node scripts/axis-832d12-theme-firstpaint-audit.mjs 2>&1 | tee "$REPORT_DIR/axis-832d12-firstpaint.log"
+AXIS_D12_HEAD="$HEAD_SHA" AXIS_D12_REPORT_DIR="$REPORT_DIR" node --input-type=module -e '
+  import assert from "node:assert/strict";
+  import fs from "node:fs";
+  const a=JSON.parse(fs.readFileSync(process.env.AXIS_D12_REPORT_DIR+"/axis-832d12-firstpaint.json","utf8"));
+  assert.equal(a.head,process.env.AXIS_D12_HEAD);
+  assert.equal(a.total,12);
+  assert.equal(a.observations.filter(x=>x.systemScheme==="light").length,6);
+  assert.equal(a.observations.filter(x=>x.systemScheme==="dark").length,6);
+  assert.ok(a.observations.every(x=>x.firstPaint.rootBg==="rgb(8, 9, 11)" && x.finalBackground==="rgb(8, 9, 11)"));
+  assert.equal(a.productionCertified,false);
+  assert.ok(a.themeContractGap.includes("dark"));
+'
 for file in /tmp/axis-832-*.png /tmp/axis-832c-*.png; do
   if [[ -f "$file" && "$file" -nt "$REPORT_DIR/identity.txt" ]]; then cp "$file" "$REPORT_DIR/"; fi
 done
