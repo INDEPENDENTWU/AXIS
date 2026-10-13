@@ -157,7 +157,7 @@ const hant=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest
 await hant.waitFor({state:'visible',timeout:4500});
 assert.equal((await hant.innerText()).trim(),'開始練習','P17 zh-Hant action not localized');
 await hant.focus();
-assert.equal(await hant.evaluate(el=>document.activeElement===el),true,'P16 keyboard focus missing');
+await page.waitForFunction(()=>document.activeElement?.dataset?.axis832Object==='chest-row',undefined,{timeout:750});await page.waitForTimeout(90);assert.equal(await page.evaluate(()=>document.activeElement?.dataset?.axis832Object),'chest-row','P16 keyboard focus did not survive the catalog render window');
 await page.evaluate(()=>document.querySelector('#eqSearch')?.dispatchEvent(new Event('input',{bubbles:true})));
 assert.equal(await page.evaluate(()=>document.activeElement?.dataset?.axis832Object),'chest-row','P16 focused Object lost its keyboard position after catalog refresh');
 

@@ -69,7 +69,8 @@ jobs:
           if-no-files-found: ignore
   webkit:
     needs: source
-    runs-on: ubuntu-latest
+    # Fixed Playwright 1.55 WebKit requires its supported Ubuntu 24.04 host.
+    runs-on: ubuntu-24.04
     timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
@@ -90,6 +91,13 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-832-play-this-browser-smoke.mjs
+      - name: Pinned WebKit 1.55 historical finish, genuine touch and focus
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: |
+          node scripts/axis-882-smoke.mjs
+          node scripts/axis-832d6-touch-repeat-browser-smoke.mjs
       - name: Browser diagnostic
         if: failure()
         run: tail -n 80 /tmp/axis-832-webkit.log || true
