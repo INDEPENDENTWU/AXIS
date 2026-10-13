@@ -161,6 +161,12 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   AXIS_D13_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" node scripts/axis-832d13-accessibility-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d13-accessibility-$engine.log"
   test "$(grep -c '\[AXIS d13\] PASS' "$REPORT_DIR/axis-832d13-accessibility-$engine.log")" -eq 3
 done
+
+# D14 appearance foundation: 3 locales × 3 preferences in Chromium and WebKit.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_D14_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" node scripts/axis-832d14-theme-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d14-theme-$engine.log"
+  test "$(grep -c '\[AXIS d14\] PASS' "$REPORT_DIR/axis-832d14-theme-$engine.log")" -eq 9
+done
 for file in /tmp/axis-832-*.png /tmp/axis-832c-*.png; do
   if [[ -f "$file" && "$file" -nt "$REPORT_DIR/identity.txt" ]]; then cp "$file" "$REPORT_DIR/"; fi
 done
