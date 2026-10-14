@@ -167,6 +167,12 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   AXIS_D14_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" node scripts/axis-832d14-theme-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d14-theme-$engine.log"
   test "$(grep -c '\[AXIS d14\] PASS' "$REPORT_DIR/axis-832d14-theme-$engine.log")" -eq 9
 done
+
+# D15 Light/Dark five-screen geometry plus Recorder contrast.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_D15_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" AXIS_D15_REPORT_DIR="$REPORT_DIR/axis-832d15-$engine" node scripts/axis-832d15-screen-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d15-$engine.log"
+  test "$(grep -c '\[AXIS d15\] PASS' "$REPORT_DIR/axis-832d15-$engine.log")" -eq 6
+done
 for file in /tmp/axis-832-*.png /tmp/axis-832c-*.png; do
   if [[ -f "$file" && "$file" -nt "$REPORT_DIR/identity.txt" ]]; then cp "$file" "$REPORT_DIR/"; fi
 done

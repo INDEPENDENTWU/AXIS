@@ -1,6 +1,6 @@
 /* AXIS 8.32d14 — semantic theme foundation; last bundled visual layer. */
 html[data-axis-theme="dark"]{color-scheme:dark}
-html[data-axis-theme="light"]{color-scheme:light;--bg:#f6f7fa;--s1:#ffffff;--s2:#f0f2f7;--s3:#e5e9f1;--line:#cfd6e2;--line2:#e0e5ee;--text:#1c2432;--muted:#525f72;--dim:#677489;--accent:#384ac8;--accent2:#3446af;--soft:rgba(56,74,200,.1);--danger:#a32f36;--safe:#267651;--axis-rule:rgba(24,36,55,.12)}
+html[data-axis-theme="light"]{color-scheme:light;--bg:#f6f7fa;--s1:#ffffff;--s2:#f0f2f7;--s3:#e5e9f1;--line:#cfd6e2;--line2:#e0e5ee;--text:#1c2432;--muted:#525f72;--dim:#596579;--accent:#384ac8;--accent2:#3446af;--soft:rgba(56,74,200,.1);--danger:#a32f36;--safe:#267651;--axis-rule:rgba(24,36,55,.12)}
 html[data-axis-theme="light"],html[data-axis-theme="light"] body{background:var(--bg)!important;color:var(--text)!important}
 html[data-axis-theme="light"] .app{color:var(--text)!important}
 html[data-axis-theme="light"] .topbar{background:linear-gradient(180deg,var(--bg) 80%,rgba(246,247,250,0))!important}
@@ -50,3 +50,7 @@ html[data-axis-theme="light"] .axisNowFacts :is(time,span){color:var(--muted)!im
 html[data-axis-theme="light"] .axis821MetricControl,
 html[data-axis-theme="light"] .v8710Cards .axis832CatalogCard,
 html[data-axis-theme="light"] .coverageCell{background:var(--s1)!important;color:var(--text)!important;border-color:var(--line2)!important}
+
+/* d15: Recorder primary muscle chips must not inherit pale-on-paper dark palette. */
+html[data-axis-theme="light"] #scanSheet #muscleTags i{background:rgba(56,74,200,.10)!important;color:#3446af!important;border-color:rgba(56,74,200,.22)!important}
+html[data-axis-theme="light"] #scanSheet .sheet :is(.resultRow,.resultRow>b,#equipmentName){color:var(--text)!important}
