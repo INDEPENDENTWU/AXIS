@@ -1,4 +1,4 @@
-name: AXIS EdgeOne Official Production Release
+name: AXIS Dual-Provider Official Production Release
 
 on:
   workflow_dispatch:
@@ -12,17 +12,19 @@ permissions:
   contents: read
 
 concurrency:
-  group: axis-edgeone-official-production
+  group: axis-dual-provider-official-production
   cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       AXIS_RELEASE_SHA: ${{ inputs.release_sha }}
       AXIS_EDGEONE_CONFIRM_SHA: ${{ inputs.release_sha }}
       AXIS_OFFICIAL_DOMAIN_URL: https://axis.juele.fun
+      AXIS_VERCEL_PROJECT_ID: prj_8JJhe0nj2CryZb4xHoHV1WBffn8f
+      AXIS_VERCEL_TEAM_ID: team_o4AYEAPceiqKe8Cn7B3LJhGG
     steps:
       - name: Check out remotely merged main only
         uses: actions/checkout@v4
@@ -35,9 +37,10 @@ jobs:
         with:
           node-version: 20.18.0
 
-      - name: Require independent release approval and EdgeOne credential
+      - name: Require independent release approval and both provider credentials
         env:
           EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+          VERCEL_API_TOKEN: ${{ secrets.VERCEL_API_TOKEN }}
           AXIS_EDGEONE_ADMISSION_JSON: ${{ secrets.AXIS_EDGEONE_ADMISSION_JSON }}
         shell: bash
         run: |
@@ -45,6 +48,7 @@ jobs:
           [[ "$AXIS_RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::A full exact merged-main SHA is mandatory'; exit 2; }
           test "$(git rev-parse HEAD)" = "$AXIS_RELEASE_SHA" || { echo '::error::The requested release is not the checked-out main'; exit 2; }
           test -n "${EDGEONE_API_TOKEN:-}" || { echo '::error::EDGEONE_API_TOKEN is missing'; exit 2; }
+          test -n "${VERCEL_API_TOKEN:-}" || { echo '::error::VERCEL_API_TOKEN is missing; no production publishing'; exit 2; }
           test -n "${AXIS_EDGEONE_ADMISSION_JSON:-}" || { echo '::error::AXIS_EDGEONE_ADMISSION_JSON is missing; no Production deploy'; exit 2; }
           umask 077
           printf '%s' "$AXIS_EDGEONE_ADMISSION_JSON" > "$RUNNER_TEMP/axis-release-admission.json"
@@ -60,6 +64,11 @@ jobs:
 
       - name: Fail-closed approval and source checks — no deployment
         run: node scripts/axis-edgeone-fallback-release.mjs --check
+
+      - name: Publish once to Vercel Git Production and verify exact fixed alias
+        env:
+          VERCEL_API_TOKEN: ${{ secrets.VERCEL_API_TOKEN }}
+        run: node scripts/axis-vercel-official-release.mjs
 
       - name: Install official EdgeOne CLI
         run: npm install -g edgeone
@@ -101,7 +110,7 @@ jobs:
           node scripts/axis-8241-dock-occlusion-smoke.mjs
           node scripts/axis-8262-active-rest-selector-smoke.mjs
 
-      - name: Verify EdgeOne and official-domain evidence matches accepted source
+      - name: Verify BOTH provider manifests and official-domain evidence match accepted source
         shell: bash
         run: |
           set -euo pipefail
@@ -109,11 +118,12 @@ jobs:
           import fs from 'node:fs';
           const exact=process.env.AXIS_RELEASE_SHA;
           const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+          const vercel=JSON.parse(fs.readFileSync('/tmp/axis-vercel-official-result.json','utf8'));
           const edge=JSON.parse(fs.readFileSync('/tmp/edgeone-live-result.json','utf8'));
           const domain=JSON.parse(fs.readFileSync('/tmp/edgeone-custom-domain-result.json','utf8'));
-          if(local.sourceCommit!==exact || !edge.manifestParity || !edge.runtimeMarker || !domain.manifestParity || !domain.runtimeMarker || !domain.hostnameStable) throw Error('Official runtime/source parity not certified');
+          if(local.sourceCommit!==exact || vercel.sourceCommit!==exact || vercel.version!==local.version || !vercel.ready || !edge.manifestParity || !edge.runtimeMarker || !domain.manifestParity || !domain.runtimeMarker || !domain.hostnameStable) throw Error('Official runtime/source parity not certified');
           if(new URL(domain.baseUrl).hostname!=='axis.juele.fun')throw Error('Official hostname not certified');
-          console.log('AXIS official EdgeOne release verified · '+local.version+' · '+exact);
+          console.log('AXIS official Vercel + EdgeOne release verified · '+local.version+' · '+exact);
           NODE
 
       - name: Delete independent approval material
