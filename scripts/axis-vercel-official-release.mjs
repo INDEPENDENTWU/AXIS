@@ -41,9 +41,12 @@ async function api(url,init={}){
 let details=null;
 const existing=await manifestAt(alias);
 if(parity(existing)){
- // Idempotent recovery: already served at the fixed public alias, do not consume another build.
- fs.writeFileSync(results,JSON.stringify({sourceCommit:sha,version:manifest.version,ready:true,alias,provider:'vercel',reusedExisting:true,verifiedAt:new Date().toISOString()},null,2)+'\n');
- console.log('[AXIS Vercel official release] existing fixed alias already exact; no new deployment');
+ // Idempotent recovery: source-matching public alias is not enough without provider identity.
+ const served=await api('https://api.vercel.com/v13/deployments/'+encodeURIComponent('axis-five-puce.vercel.app')+'?teamId='+encodeURIComponent(team));
+ const servedSha=served.meta?.githubCommitSha||served.gitSource?.sha||served.gitSource?.commitSha;
+ if(servedSha!==sha||served.readyState!=='READY'||!String(served.id||'').startsWith('dpl_'))fatal('matching alias lacks exact provider deployment identity');
+ fs.writeFileSync(results,JSON.stringify({sourceCommit:sha,version:manifest.version,deploymentId:served.id,ready:true,alias,provider:'vercel',reusedExisting:true,verifiedAt:new Date().toISOString()},null,2)+'\n',{mode:0o600});
+ console.log('[AXIS Vercel official release] verified existing exact deployment '+served.id+'; no extra build');
  process.exit(0);
 }
 const endpoint='https://api.vercel.com/v13/deployments?teamId='+encodeURIComponent(team);
