@@ -44,7 +44,7 @@ jobs:
           NODE
 
   deploy-production:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Retired automatic publishing: only the separately admitted official-release workflow may publish.\n    if: ${{ false }}
     needs: package-contract
     runs-on: ubuntu-latest
     timeout-minutes: 50
