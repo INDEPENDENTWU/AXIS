@@ -194,6 +194,12 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   AXIS_D16_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" AXIS_D16_REPORT_DIR="$REPORT_DIR/axis-832d16-$engine" node scripts/axis-832d16-active-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d16-$engine.log"
   test "$(grep -c '\[AXIS d16\] PASS' "$REPORT_DIR/axis-832d16-$engine.log")" -eq 6
 done
+
+# D17 actual Active scroll beneath original camera/nav rails — 2 engines x 2 themes x 3 screens.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_D17_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" AXIS_D17_REPORT_DIR="$REPORT_DIR/axis-832d17-$engine" node scripts/axis-832d17-scroll-rail-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d17-$engine.log"
+  test "$(grep -c '\[AXIS d17\] PASS' "$REPORT_DIR/axis-832d17-$engine.log")" -eq 6
+done
 for file in /tmp/axis-832-*.png /tmp/axis-832c-*.png; do
   if [[ -f "$file" && "$file" -nt "$REPORT_DIR/identity.txt" ]]; then cp "$file" "$REPORT_DIR/"; fi
 done

@@ -64,3 +64,17 @@ html[data-axis-theme] #v87Now .v87Actions>#v87AdjustBtn{min-height:44px!importan
 html[data-axis-theme] #v87Now.axis821ActiveStage .axis821StageControls{row-gap:14px!important}
 html[data-axis-theme] #v87Now.axis821ActiveStage .axis821StageControls>#v87AdjustBtn{margin-top:0!important;align-self:center!important}
 html[data-axis-theme="light"] #v87Now #v87Finish,html[data-axis-theme="light"] #v87Now #v87Finish span{color:var(--muted)!important}
+
+/* AXIS 8.32d17 — original iPhone screenshot: dock/nav must be opaque rails
+   over scrolling Active and legacy large timers, below existing sheets (z:100). */
+html body #dock.captureDock.v8-dual{
+  z-index:85!important;
+  background:var(--bg)!important;
+  isolation:isolate!important;
+}
+html body .nav.v82Nav{
+  z-index:86!important;
+  background:var(--bg)!important;
+  isolation:isolate!important;
+}
+html[data-axis-theme="light"] body .nav.v82Nav{background:var(--bg)!important}
