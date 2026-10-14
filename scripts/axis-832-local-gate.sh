@@ -174,6 +174,13 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   test "$(grep -c '\[AXIS d15\] PASS' "$REPORT_DIR/axis-832d15-$engine.log")" -eq 6
 done
 
+
+# D16 inherited Active Home visual contract — must stay green when touch geometry changes.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" node scripts/axis-821-active-home-visual-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-821-active-visual-$engine.log"
+  test "$(grep -Fc '[AXIS 8.21 Active Home visual' "$REPORT_DIR/axis-821-active-visual-$engine.log")" -eq 2
+done
+
 # D16 Active real-Recorder ownership, 44px controls, rem stress and reload.
 for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   AXIS_D16_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" AXIS_D16_REPORT_DIR="$REPORT_DIR/axis-832d16-$engine" node scripts/axis-832d16-active-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d16-$engine.log"

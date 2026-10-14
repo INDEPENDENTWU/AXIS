@@ -50,8 +50,10 @@ for(const [engine,launcher] of [['chromium',chromium],['webkit',webkit]]){
     assert.ok(first.docWidth<=first.width+1,'Active horizontal overflow');
     for(const name of ['finish','adjust','toggle','primary']){
       const c=first[name];assert.ok(c&&c.w>=44&&c.h>=44,name+' touch size '+JSON.stringify(c));
+      if(name==='finish')assert.ok(c.w>=92,'legacy branded hold width must remain >=92px');
       assert.ok(c.x>=-1&&c.right<=first.width+1,name+' horizontally clipped');
     }
+    assert.ok(first.adjust.y-Math.max(first.primary.bottom,first.toggle.bottom)>=4,'Active Adjust must remain visually separated from primary actions');
     assert.ok(first.hintContrast>=4.5,'Active finish hint unreadable '+JSON.stringify(first));
     assert.ok(first.stage.bottom<=first.nav.y+2,'Active content hidden under dock');
     const switched=theme==='light'?'dark':'light';
