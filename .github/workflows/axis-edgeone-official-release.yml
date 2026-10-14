@@ -88,26 +88,68 @@ jobs:
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
 
-      - name: Real Chromium practice/recording continuity on official domain
+      - name: Chromium full inherited practice and continuity on official domain
         env:
           AXIS_URL: https://axis.juele.fun
           AXIS_ENGINE: chromium
         shell: bash
         run: |
           set -euo pipefail
-          node scripts/axis-821-flow-runtime-smoke.mjs
+          node scripts/axis-821-portable-backup-smoke.mjs
+          node scripts/axis-821-portable-backup-v2-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
+          node scripts/axis-823-replay-evidence-continuity-smoke.mjs
+          node scripts/axis-824-active-stage-tactile-smoke.mjs
           node scripts/axis-8241-dock-occlusion-smoke.mjs
+          node scripts/axis-826-active-continuity-smoke.mjs
           node scripts/axis-8262-active-rest-selector-smoke.mjs
 
-      - name: Real pinned WebKit practice/recording continuity on official domain
+      - name: WebKit full inherited practice and continuity on official domain
         env:
           AXIS_URL: https://axis.juele.fun
           AXIS_ENGINE: webkit
         shell: bash
         run: |
           set -euo pipefail
-          node scripts/axis-821-flow-runtime-smoke.mjs
+          node scripts/axis-821-portable-backup-smoke.mjs
+          node scripts/axis-821-portable-backup-v2-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
+          node scripts/axis-823-replay-evidence-continuity-smoke.mjs
+          node scripts/axis-824-active-stage-tactile-smoke.mjs
           node scripts/axis-8241-dock-occlusion-smoke.mjs
+          node scripts/axis-826-active-continuity-smoke.mjs
+          node scripts/axis-8262-active-rest-selector-smoke.mjs
+
+      - name: Chromium full inherited practice and continuity on fixed Vercel Production alias
+        env:
+          AXIS_URL: https://axis-five-puce.vercel.app
+          AXIS_ENGINE: chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/axis-821-portable-backup-smoke.mjs
+          node scripts/axis-821-portable-backup-v2-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
+          node scripts/axis-823-replay-evidence-continuity-smoke.mjs
+          node scripts/axis-824-active-stage-tactile-smoke.mjs
+          node scripts/axis-8241-dock-occlusion-smoke.mjs
+          node scripts/axis-826-active-continuity-smoke.mjs
+          node scripts/axis-8262-active-rest-selector-smoke.mjs
+
+      - name: WebKit full inherited practice and continuity on fixed Vercel Production alias
+        env:
+          AXIS_URL: https://axis-five-puce.vercel.app
+          AXIS_ENGINE: webkit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/axis-821-portable-backup-smoke.mjs
+          node scripts/axis-821-portable-backup-v2-smoke.mjs
+          node scripts/axis-822-evolution-replay-smoke.mjs
+          node scripts/axis-823-replay-evidence-continuity-smoke.mjs
+          node scripts/axis-824-active-stage-tactile-smoke.mjs
+          node scripts/axis-8241-dock-occlusion-smoke.mjs
+          node scripts/axis-826-active-continuity-smoke.mjs
           node scripts/axis-8262-active-rest-selector-smoke.mjs
 
       - name: Verify BOTH provider manifests and official-domain evidence match accepted source
