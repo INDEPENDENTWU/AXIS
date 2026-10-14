@@ -175,6 +175,14 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
 done
 
 
+
+# D16 inherited 8.26.4 rest/Adjust baseline + full pause/resume utility rail contract.
+# The deterministic build injects the historic baseline assertion into this script.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" node scripts/axis-8262-active-rest-selector-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-8264-rest-utility-$engine.log"
+  grep -Fq "[AXIS 8.26.3 Active Rest Convergence $engine] PASS" "$REPORT_DIR/axis-8264-rest-utility-$engine.log"
+done
+
 # D16 inherited Active Home visual contract — must stay green when touch geometry changes.
 for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" node scripts/axis-821-active-home-visual-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-821-active-visual-$engine.log"

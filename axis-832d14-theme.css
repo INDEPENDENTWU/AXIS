@@ -58,4 +58,9 @@ html[data-axis-theme="light"] #scanSheet .sheet :is(.resultRow,.resultRow>b,#equ
 /* AXIS 8.32d16: original Active hold-to-finish and Adjust remain reachable in both themes. */
 #v87Now #v87Finish{min-height:44px!important;min-width:92px!important}
 html[data-axis-theme] #v87Now .v87Actions>#v87AdjustBtn{min-height:44px!important;min-width:44px!important;height:44px!important;margin-top:8px!important;box-sizing:border-box!important}
+/* The 8.26.4 utility rest clock occupies a fixed 32px grid row. Center the
+   44px Adjust hit target on that clock, not 8px below it. Give the previous
+   control row 14px of separation so centering does not make controls collide. */
+html[data-axis-theme] #v87Now.axis821ActiveStage .axis821StageControls{row-gap:14px!important}
+html[data-axis-theme] #v87Now.axis821ActiveStage .axis821StageControls>#v87AdjustBtn{margin-top:0!important;align-self:center!important}
 html[data-axis-theme="light"] #v87Now #v87Finish,html[data-axis-theme="light"] #v87Now #v87Finish span{color:var(--muted)!important}
