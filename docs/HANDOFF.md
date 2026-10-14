@@ -1,5 +1,18 @@
 # AXIS Engineering Handoff
 
+## Current unreleased release-candidate handoff (2026-10-15)
+
+The immutable certified public Product/runtime remains **8.31**, source `dddce5401e80087a7ccceb43ec466f1ad7abb505`. AXIS **8.32 is not deployed, merged or sealed**.
+
+- **Combined final candidate:** Draft PR **#175**, `release/832-edgeone-first-admission` targeting `main`. Its source includes product Draft PR **#174**, so a future accepted release should merge the combined candidate **once**, not merge both PRs independently.
+- **Last fully executed local gate:** clean source commit `ae21195f120995a0451a9892f1f871f9a4547adf` — 103-step build + Chromium/WebKit local gate exited 0; source and browser emulation only, `productionCertified:false`. Subsequent commits must earn new exact-head CI before merging.
+- **Formal release admission remains NO-GO:** P11/P12/P15/P16/P17/P20 physical iOS/Android, actual VoiceOver/TalkBack, OS text zoom/safe-area and iPhone scroll rail, and low-end tail-latency need independently documented evidence. No P01–P20 approval is issued.
+- **Official release policy:** avoid routine Vercel Preview; once the *merged main* version is genuinely admitted, run a single manual Vercel + EdgeOne Production release and verify both fixed public origins, `axis.juele.fun`, data and installed Safari PWA. A separately verified immutable 8.32 governance seal comes **after** real provider readbacks.
+- **No official Production mutation in this phase.** Do not display a fictitious 8.32 release on the 8.31 installed product.
+
+See PR #175's exact-head engineering evidence and Issue #172 for the outstanding physical acceptance. Previous certified 8.31 evidence and all historical records below remain authoritative.
+
+
 **Current governed release:** AXIS 8.31 — Playable Runtime Foundation.
 **Production status:** Production-certified. **Governed target branch:** `main`.
 **Product PR:** #170. **Independent confirmation:** sequence 32, `8.31 → 8.31 / confirm / governance`.
