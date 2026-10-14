@@ -1,0 +1,120 @@
+name: AXIS EdgeOne Official Production Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: "Exact accepted 40-character merged-main source commit"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: axis-edgeone-official-production
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      AXIS_RELEASE_SHA: ${{ inputs.release_sha }}
+      AXIS_EDGEONE_CONFIRM_SHA: ${{ inputs.release_sha }}
+      EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+      AXIS_EDGEONE_ADMISSION_JSON: ${{ secrets.AXIS_EDGEONE_ADMISSION_JSON }}
+      AXIS_OFFICIAL_DOMAIN_URL: https://axis.juele.fun
+    steps:
+      - name: Check out remotely merged main only
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up canonical Node release toolchain
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+
+      - name: Require independent release approval and EdgeOne credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$AXIS_RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo '::error::A full exact merged-main SHA is mandatory'; exit 2; }
+          test "$(git rev-parse HEAD)" = "$AXIS_RELEASE_SHA" || { echo '::error::The requested release is not the checked-out main'; exit 2; }
+          test -n "${EDGEONE_API_TOKEN:-}" || { echo '::error::EDGEONE_API_TOKEN is missing'; exit 2; }
+          test -n "${AXIS_EDGEONE_ADMISSION_JSON:-}" || { echo '::error::AXIS_EDGEONE_ADMISSION_JSON is missing; no Production deploy'; exit 2; }
+          umask 077
+          printf '%s' "$AXIS_EDGEONE_ADMISSION_JSON" > "$RUNNER_TEMP/axis-release-admission.json"
+          echo "AXIS_EDGEONE_ADMISSION_FILE=$RUNNER_TEMP/axis-release-admission.json" >> "$GITHUB_ENV"
+          echo 'External exact-main acceptance provided (contents withheld).'
+
+      - name: Build source-stamped canonical artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          GITHUB_SHA="$AXIS_RELEASE_SHA" node build-release.mjs
+          node scripts/edgeone-prebuilt-verify.mjs
+
+      - name: Fail-closed approval and source checks — no deployment
+        run: node scripts/axis-edgeone-fallback-release.mjs --check
+
+      - name: Install official EdgeOne CLI
+        run: npm install -g edgeone
+
+      - name: Publish once to EdgeOne Production and verify the official domain
+        run: node scripts/axis-edgeone-fallback-release.mjs --publish
+
+      - name: Prepare real public-domain browser verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright-core@1.55.0 playwright@1.55.0
+          npx playwright install --with-deps webkit
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+
+      - name: Real Chromium practice/recording continuity on official domain
+        env:
+          AXIS_URL: https://axis.juele.fun
+          AXIS_ENGINE: chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/axis-821-flow-runtime-smoke.mjs
+          node scripts/axis-8241-dock-occlusion-smoke.mjs
+          node scripts/axis-8262-active-rest-selector-smoke.mjs
+
+      - name: Real pinned WebKit practice/recording continuity on official domain
+        env:
+          AXIS_URL: https://axis.juele.fun
+          AXIS_ENGINE: webkit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/axis-821-flow-runtime-smoke.mjs
+          node scripts/axis-8241-dock-occlusion-smoke.mjs
+          node scripts/axis-8262-active-rest-selector-smoke.mjs
+
+      - name: Verify EdgeOne and official-domain evidence matches accepted source
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const exact=process.env.AXIS_RELEASE_SHA;
+          const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+          const edge=JSON.parse(fs.readFileSync('/tmp/edgeone-live-result.json','utf8'));
+          const domain=JSON.parse(fs.readFileSync('/tmp/edgeone-custom-domain-result.json','utf8'));
+          if(local.sourceCommit!==exact || !edge.manifestParity || !edge.runtimeMarker || !domain.manifestParity || !domain.runtimeMarker || !domain.hostnameStable) throw Error('Official runtime/source parity not certified');
+          if(new URL(domain.baseUrl).hostname!=='axis.juele.fun')throw Error('Official hostname not certified');
+          console.log('AXIS official EdgeOne release verified · '+local.version+' · '+exact);
+          NODE
+
+      - name: Delete independent approval material
+        if: always()
+        shell: bash
+        run: |
+          if test -n "${AXIS_EDGEONE_ADMISSION_FILE:-}" && test -f "$AXIS_EDGEONE_ADMISSION_FILE"; then rm -f "$AXIS_EDGEONE_ADMISSION_FILE"; fi
