@@ -5,9 +5,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "git": {
-    "deploymentEnabled": {
-      "**": false
-    }
+    "deploymentEnabled": false
   },
   "functions": {
     "api/analyze.js": {
