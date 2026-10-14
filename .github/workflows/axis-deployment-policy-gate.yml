@@ -9,6 +9,14 @@ on:
       - '.github/workflows/axis-public-production-alias-gate.yml'
       - '.github/workflows/axis-production-deployment-gate.yml'
       - '.github/workflows/axis-deployment-policy-gate.yml'
+      - '.github/workflows/axis-edgeone-official-release.yml'
+      - '.github/workflows/axis-edgeone-production-mirror.yml'
+      - '.github/workflows/axis-custom-domain-production.yml'
+      - 'scripts/axis-vercel-official-release.mjs'
+      - '.github/workflows/axis-edgeone-official-release.yml'
+      - '.github/workflows/axis-edgeone-production-mirror.yml'
+      - '.github/workflows/axis-custom-domain-production.yml'
+      - 'scripts/axis-vercel-official-release.mjs'
       - 'docs/DEPLOYMENT_POLICY.md'
   push:
     branches:
@@ -33,7 +41,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
-      - name: Verify Vercel main-only deployment policy
+      - name: Verify manual final-only Vercel + EdgeOne publishing policy
         run: node scripts/verify-vercel-deployment-policy.mjs
       - name: Verify release-aware browser test contract
         run: |
