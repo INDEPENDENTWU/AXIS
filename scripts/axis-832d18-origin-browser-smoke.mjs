@@ -13,7 +13,7 @@ const source='e'.repeat(40);
 const results=[];
 try{
  for(const kind of ['ready','mismatch','unavailable']){
-  const ctx=await browser.newContext({viewport:{width:390,height:844},locale:'zh-CN',deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true});
+  const ctx=await browser.newContext({viewport:{width:390,height:844},locale:kind==='unavailable'?'en-US':kind==='mismatch'?'zh-TW':'zh-CN',deviceScaleFactor:2,isMobile:ENGINE==='webkit',hasTouch:true});
   const page=await ctx.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(String(e)));
   for(const [pattern,body] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]]){
@@ -28,13 +28,15 @@ try{
   await page.waitForFunction(()=>['ready','mismatch','unavailable'].includes(document.querySelector('#axisOriginReport')?.dataset.axisOriginState),null,{timeout:10000});
   const observed=await page.evaluate(()=>{
    const el=document.querySelector('#axisOriginReport');
-   return{state:el.dataset.axisOriginState,text:el.textContent,lang:document.documentElement.lang,host:location.hostname,liveRuntime:window.__AXIS_RELEASE__};
+   return{state:el.dataset.axisOriginState,text:el.textContent,lang:document.documentElement.lang,host:location.hostname,liveRuntime:window.__AXIS_RELEASE__,label:el.getAttribute('aria-label')};
   });
   assert.equal(observed.state,kind==='ready'?'ready':kind,'installed provenance must classify version truth accurately');
   assert.ok(observed.text.includes(observed.host),'always show actual installed origin hostname');
   if(kind==='ready')assert.ok(observed.text.includes(source.slice(0,9)));
   if(kind==='mismatch')assert.ok(observed.text.includes('版本不一致'),'stale manifest should not silently claim a matched runtime');
-  if(kind==='unavailable')assert.ok(observed.text.includes('無法讀取'),'unavailable manifest still identifies origin');
+  if(kind==='unavailable'){assert.ok(observed.text.includes('Cannot read version'),'unavailable manifest still identifies origin');assert.equal(observed.label,'Version and website source')}
+  if(kind==='mismatch')assert.equal(observed.label,'版本與網站來源');
+  if(kind==='ready')assert.equal(observed.label,'版本与网站来源');
   assert.deepEqual(errors,[],'Settings readout must not add runtime errors');
   results.push({engine:ENGINE,case:kind,...observed});
   await ctx.close();
