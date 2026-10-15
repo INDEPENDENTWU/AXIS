@@ -39,7 +39,7 @@ if(process.argv.includes('--self-test')){
  const pass=parseDeployOutput('[cli] publishing\n'+line,project);
  assert.equal(pass.projectId,project);
  assert.equal(pass.deploymentId,'dp_42');
- assert.equal(pass.url,url);
+ assert.equal(pass.url,new URL(url).href);
  assert.deepEqual(parseDeployOutput('EDGEONE_DEPLOY_URL='+url+'\nEDGEONE_PROJECT_ID='+project,project).projectId,project);
  for(const [source,id] of [[line,'makers-wrong'],[line,''],['{"status":"error","error":"unauthorized"}',project],['EDGEONE_DEPLOY_URL='+url,project],[JSON.stringify({status:'success',url:'http://bad.site',projectId:project,deploymentId:'dp_2'}),project],[JSON.stringify({status:'success',url,projectId:project}),project]]){
   assert.throws(()=>parseDeployOutput(source,id));
