@@ -200,6 +200,11 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   AXIS_D17_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" AXIS_D17_REPORT_DIR="$REPORT_DIR/axis-832d17-$engine" node scripts/axis-832d17-scroll-rail-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d17-$engine.log"
   test "$(grep -c '\[AXIS d17\] PASS' "$REPORT_DIR/axis-832d17-$engine.log")" -eq 6
 done
+# d18: actual installed host/build identity is read-only, with stale/cache and offline fallbacks.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" AXIS_D18_REPORT_DIR="$REPORT_DIR" CHROME_BIN="$CHROME_BIN" node scripts/axis-832d18-origin-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d18-$engine.log"
+done
+
 for file in /tmp/axis-832-*.png /tmp/axis-832c-*.png; do
   if [[ -f "$file" && "$file" -nt "$REPORT_DIR/identity.txt" ]]; then cp "$file" "$REPORT_DIR/"; fi
 done
