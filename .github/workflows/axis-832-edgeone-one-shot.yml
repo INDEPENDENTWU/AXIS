@@ -141,20 +141,23 @@ jobs:
             const url=host.url+path+(path==='/axis-build.json'?'?_recheck='+Date.now():'');
             const resp=await fetch(url,{signal:AbortSignal.timeout(15000),redirect:'follow',headers:{'Cache-Control':'no-cache'}});
             const s=await resp.text();let json=null;
-            if(path==='/axis-build.json'){try{json=JSON.parse(s)}catch{}}
-            return {http:resp.status,jsonType:resp.headers.get('content-type')||'',sha:json?.sourceCommit||'',version:json?.version||'',core:json?.assets?.core||'',css:json?.assets?.css||'',runtimeHash:json?.canonical?.runtimeHash||'',runtime:(path==='/'&&s.includes('canonical-8.32'))};
+            if(path==='/axis-build.json'||path==='/api/owner-config'){try{json=JSON.parse(s)}catch{}}
+            return {http:resp.status,jsonType:resp.headers.get('content-type')||'',sha:json?.sourceCommit||'',version:json?.version||'',core:json?.assets?.core||'',css:json?.assets?.css||'',runtimeHash:json?.canonical?.runtimeHash||'',runtime:(path==='/'&&s.includes('canonical-8.32')),ownerLocked:(path==='/api/owner-config'&&resp.status===503&&json?.error==='owner_lock_not_configured'&&json?.env==='AXIS_OWNER_TOKEN')};
            }catch(e){return {http:0,error:String(e.message||e).slice(0,100)}}
           }
           let success=false;
           for(let attempt=1;attempt<=4;attempt++){
            const data={};
            for(const host of endpoints){data[host.name]={};for(const path of paths){data[host.name][path]=await probe(host,path)}}
-           const v=data.vercel['/axis-build.json'],o=data.official['/axis-build.json'];
-           const exact= v.http===200&&o.http===200&&v.sha===expected&&o.sha===expected&&v.version==='8.32'&&o.version==='8.32'&&v.core===o.core&&v.css===o.css&&v.runtimeHash===o.runtimeHash&&data.vercel['/'].runtime&&data.official['/'].runtime;
+           const v=data.vercel['/axis-build.json'],e=data.edgeone['/axis-build.json'],o=data.official['/axis-build.json'];
+           const exact= [v,e,o].every(x=>x.http===200&&x.sha===expected&&x.version==='8.32')&&[e,o].every(x=>x.core===v.core&&x.css===v.css&&x.runtimeHash===v.runtimeHash)&&endpoints.every(host=>data[host.name]['/'].http===200&&data[host.name]['/'].runtime);
            const apiPaths=paths.filter(p=>p.startsWith('/api/'));
-           const apiOk=apiPaths.every(p=>data.official[p].http>=200&&data.official[p].http<500&&data.vercel[p].http>=200&&data.vercel[p].http<500);
+           const availableApis=apiPaths.filter(p=>p!=='/api/owner-config');
+           const apiOk=availableApis.every(p=>endpoints.every(host=>data[host.name][p].http===200));
+           const ownerLocked=endpoints.every(host=>data[host.name]['/api/owner-config'].ownerLocked===true);
            for(const host of endpoints){const x=data[host.name];console.log('[readback '+attempt+'] '+host.name+' manifest='+x['/axis-build.json'].http+' '+x['/axis-build.json'].version+' sha='+x['/axis-build.json'].sha.slice(0,9)+' root='+x['/'].http+' runtime='+!!x['/'].runtime+' APIs '+apiPaths.map(p=>p+'='+x[p].http).join(' '));}
-           if(exact&&apiOk){console.log('DUAL SOURCE PARITY + OFFICIAL JSON API VERIFIED at exact '+expected);success=true;break}
+           console.log('[readback '+attempt+'] sourceAssetParity='+exact+' availableJsonApis='+apiOk+' ownerLockConsistent='+ownerLocked+' coreHash='+v.core+' cssHash='+v.css+' runtimeHash='+v.runtimeHash);
+           if(exact&&apiOk&&ownerLocked){console.log('VERIFIED 8.32 · BOTH ORIGINAL PROVIDERS + OFFICIAL DOMAIN EXACT SOURCE/ASSET PARITY · PUBLIC JSON APIs 200 · OWNER ADMIN ENDPOINT INTENTIONALLY 503 BECAUSE AXIS_OWNER_TOKEN UNCONFIGURED ON ALL THREE · FULL SERVICE/PHYSICAL ACCEPTANCE AND GOVERNANCE SEAL NOT CLAIMED · '+expected);success=true;break}
            if(attempt<4)await new Promise(r=>setTimeout(r,12000));
           }
           if(!success){console.error('PRODUCTION READBACK NOT COMPLETE; no deployment or rollback attempted');process.exitCode=1}
