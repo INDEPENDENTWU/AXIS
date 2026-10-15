@@ -65,13 +65,25 @@ jobs:
       - name: Fail-closed approval and source checks — no deployment
         run: node scripts/axis-edgeone-fallback-release.mjs --check
 
+      - name: Install official EdgeOne CLI and isolated read-only Makers SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install -g edgeone
+          mkdir -p "$RUNNER_TEMP/axis-makers-preflight"
+          npm install --prefix "$RUNNER_TEMP/axis-makers-preflight" --no-save --ignore-scripts @edgeone/makers-sdk
+          echo "AXIS_MAKERS_SDK_ROOT=$RUNNER_TEMP/axis-makers-preflight" >> "$GITHUB_ENV"
+
+      - name: Verify both existing provider projects and current public baseline before any deployment
+        env:
+          VERCEL_API_TOKEN: ${{ secrets.VERCEL_API_TOKEN }}
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+        run: node scripts/axis-dual-provider-preflight.mjs --check
+
       - name: Publish once to Vercel Git Production and verify exact fixed alias
         env:
           VERCEL_API_TOKEN: ${{ secrets.VERCEL_API_TOKEN }}
         run: node scripts/axis-vercel-official-release.mjs
-
-      - name: Install official EdgeOne CLI
-        run: npm install -g edgeone
 
       - name: Publish once to EdgeOne Production and verify the official domain
         env:
