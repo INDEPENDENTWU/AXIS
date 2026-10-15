@@ -112,3 +112,50 @@ jobs:
             /tmp/edgeone-custom-domain-result.json
           if-no-files-found: ignore
           retention-days: 7
+
+  verify-read-only:
+    if: "github.event.head_commit.message == 'ops(8.32): verify live dual provider without redeploy'"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Read-only source, runtime and JSON API checks on current production origins
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Probe Vercel, existing EdgeOne mirror and official custom domain; never deploy
+        shell: bash
+        env:
+          EXACT_SHA: 5ea6bab7ebad7daf5868e32f1c98209a35647231
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const expected=process.env.EXACT_SHA;
+          const endpoints=[
+           {name:'vercel',url:'https://axis-five-puce.vercel.app',required:true},
+           {name:'edgeone',url:'https://axisfitness-mirror-9x91gveo.edgeone.cool',required:false},
+           {name:'official',url:'https://axis.juele.fun',required:true}
+          ];
+          const paths=['/','/axis-build.json','/api/owner-config','/api/ai-status','/api/cloud-status','/api/ai-capabilities'];
+          async function probe(host,path){
+           try{
+            const url=host.url+path+(path==='/axis-build.json'?'?_recheck='+Date.now():'');
+            const resp=await fetch(url,{signal:AbortSignal.timeout(15000),redirect:'follow',headers:{'Cache-Control':'no-cache'}});
+            const s=await resp.text();let json=null;
+            if(path==='/axis-build.json'){try{json=JSON.parse(s)}catch{}}
+            return {http:resp.status,jsonType:resp.headers.get('content-type')||'',sha:json?.sourceCommit||'',version:json?.version||'',core:json?.assets?.core||'',css:json?.assets?.css||'',runtimeHash:json?.canonical?.runtimeHash||'',runtime:(path==='/'&&s.includes('canonical-8.32'))};
+           }catch(e){return {http:0,error:String(e.message||e).slice(0,100)}}
+          }
+          let success=false;
+          for(let attempt=1;attempt<=4;attempt++){
+           const data={};
+           for(const host of endpoints){data[host.name]={};for(const path of paths){data[host.name][path]=await probe(host,path)}}
+           const v=data.vercel['/axis-build.json'],o=data.official['/axis-build.json'];
+           const exact= v.http===200&&o.http===200&&v.sha===expected&&o.sha===expected&&v.version==='8.32'&&o.version==='8.32'&&v.core===o.core&&v.css===o.css&&v.runtimeHash===o.runtimeHash&&data.vercel['/'].runtime&&data.official['/'].runtime;
+           const apiPaths=paths.filter(p=>p.startsWith('/api/'));
+           const apiOk=apiPaths.every(p=>data.official[p].http>=200&&data.official[p].http<500&&data.vercel[p].http>=200&&data.vercel[p].http<500);
+           for(const host of endpoints){const x=data[host.name];console.log('[readback '+attempt+'] '+host.name+' manifest='+x['/axis-build.json'].http+' '+x['/axis-build.json'].version+' sha='+x['/axis-build.json'].sha.slice(0,9)+' root='+x['/'].http+' runtime='+!!x['/'].runtime+' APIs '+apiPaths.map(p=>p+'='+x[p].http).join(' '));}
+           if(exact&&apiOk){console.log('DUAL SOURCE PARITY + OFFICIAL JSON API VERIFIED at exact '+expected);success=true;break}
+           if(attempt<4)await new Promise(r=>setTimeout(r,12000));
+          }
+          if(!success){console.error('PRODUCTION READBACK NOT COMPLETE; no deployment or rollback attempted');process.exitCode=1}
+          NODE
