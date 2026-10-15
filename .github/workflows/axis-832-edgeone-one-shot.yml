@@ -1,0 +1,114 @@
+name: AXIS 8.32 one-time exact existing EdgeOne release
+on:
+  push:
+    branches: [release/832-edgeone-one-shot]
+    paths: [.github/workflows/axis-832-edgeone-one-shot.yml]
+permissions:
+  contents: read
+concurrency:
+  group: axis-832-one-time-edgeone
+  cancel-in-progress: false
+jobs:
+  production:
+    if: github.event.head_commit.message == 'ops(8.32): release exact main to existing EdgeOne once'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 65
+    env:
+      AXIS_RELEASE_SHA: 5ea6bab7ebad7daf5868e32f1c98209a35647231
+      AXIS_EDGEONE_STANDALONE: '1'
+      VERCEL_GOLDEN_URL: https://axis-five-puce.vercel.app
+      EDGEONE_CUSTOM_DOMAIN_URL: https://axis.juele.fun
+    steps:
+      - name: Checkout exact merged main, not candidate branch
+        uses: actions/checkout@v4
+        with:
+          ref: 5ea6bab7ebad7daf5868e32f1c98209a35647231
+          persist-credentials: false
+      - name: Setup build environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Require unmodified authoritative main and build exact release
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$AXIS_RELEASE_SHA"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$AXIS_RELEASE_SHA"
+          GITHUB_SHA="$AXIS_RELEASE_SHA" node build-release.mjs
+          node scripts/edgeone-prebuilt-verify.mjs
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const x=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+          if(x.version!=='8.32'||x.baseVersion!=='8.32'||x.sourceCommit!==process.env.AXIS_RELEASE_SHA)throw Error('Unexpected source or version');
+          NODE
+      - name: Read-only verify the original Vercel artifact and EdgeOne project identity
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${EDGEONE_API_TOKEN:-}" || { echo '::error::Existing EdgeOne secret absent. No provider mutated.'; exit 2; }
+          mkdir -p "$RUNNER_TEMP/axis-makers-preflight"
+          npm install --prefix "$RUNNER_TEMP/axis-makers-preflight" --no-save --ignore-scripts @edgeone/makers-sdk
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import {createRequire} from 'node:module';
+          import {pathToFileURL} from 'node:url';
+          const sha=process.env.AXIS_RELEASE_SHA;
+          const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
+          const v=await fetch('https://axis-five-puce.vercel.app/axis-build.json?_release_preflight='+Date.now(),{headers:{'Cache-Control':'no-store'},signal:AbortSignal.timeout(20000)});
+          if(!v.ok)throw Error('Existing Vercel Production unavailable');
+          const remote=await v.json();
+          for(const [label,a,b] of [['version',remote.version,'8.32'],['baseVersion',remote.baseVersion,'8.32'],['sourceCommit',remote.sourceCommit,sha],['core',remote.assets?.core,local.assets?.core],['css',remote.assets?.css,local.assets?.css],['runtimeHash',remote.canonical?.runtimeHash,local.canonical?.runtimeHash]])if(a!==b)throw Error('Existing Vercel source parity failed '+label);
+          const dir=path.join(process.env.RUNNER_TEMP,'axis-makers-preflight');
+          const req=createRequire(path.join(dir,'package.json'));
+          const {Makers}=await import(pathToFileURL(req.resolve('@edgeone/makers-sdk')).href);
+          const sdk=new Makers({token:process.env.EDGEONE_API_TOKEN,timeout:20,retries:1});
+          const expectedName='axisfitness-mirror', expectedId='makers-bxiu1vmyd0ba';
+          const page=await sdk.projects.list({name:expectedName,page:0,pageSize:10});
+          const matches=(page?.items||[]).filter(p=>p?.name===expectedName&&p?.projectId===expectedId);
+          if(matches.length!==1)throw Error('Existing EdgeOne project not uniquely verified; do not create a project');
+          const p=await sdk.projects.get({projectId:expectedId});
+          if(p.projectId!==expectedId||p.name!==expectedName||['deleted','deleting','disabled','suspended'].includes(String(p.status||'').toLowerCase()))throw Error('EdgeOne existing project identity invalid');
+          if(!['global','china'].includes(sdk.region))throw Error('EdgeOne token issuing region unknown');
+          fs.writeFileSync('/tmp/axis-provider-preflight.json',JSON.stringify({schema:'axis.832.provider-preflight.v1',sourceCommit:sha,vercel:{projectId:'prj_8JJhe0nj2CryZb4xHoHV1WBffn8f'},edgeOne:{projectId:expectedId,name:expectedName,site:sdk.region}},null,2),{mode:0o600});
+          fs.appendFileSync(process.env.GITHUB_ENV,'AXIS_EDGEONE_SITE='+sdk.region+'\n');
+          console.log('[AXIS 8.32] PASS · exact merged-main source, live Vercel artifact, previously certified existing EdgeOne project and issuer site. No mutation.');
+          NODE
+      - name: Install official EdgeOne CLI
+        run: npm install -g edgeone
+      - name: Publish to the original EdgeOne project once and require authenticated deploy proof
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          edgeone pages deploy . -n axisfitness-mirror -e production --site "$AXIS_EDGEONE_SITE" --json -t "$EDGEONE_API_TOKEN" > /tmp/axis-edgeone-deploy.log 2>&1 || { echo '::error::Existing EdgeOne Production deploy did not finish. No retry requested.'; exit 1; }
+          node scripts/axis-edgeone-deploy-proof.mjs --parse
+          rm -f /tmp/axis-edgeone-deploy.log
+      - name: Verify existing EdgeOne domain and custom official domain
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/edgeone-live-verify.mjs
+          node scripts/edgeone-custom-domain-verify.mjs
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const edge=JSON.parse(fs.readFileSync('/tmp/edgeone-live-result.json','utf8'));
+          const domain=JSON.parse(fs.readFileSync('/tmp/edgeone-custom-domain-result.json','utf8'));
+          const proof=JSON.parse(fs.readFileSync('/tmp/axis-edgeone-deploy-proof.json','utf8'));
+          if(proof.sourceCommit!==process.env.AXIS_RELEASE_SHA||proof.projectId!=='makers-bxiu1vmyd0ba'||!edge.manifestParity||!edge.runtimeMarker||!domain.manifestParity||!domain.runtimeMarker||!domain.hostnameStable)throw Error('Exact EdgeOne/custom-domain production verification failed');
+          console.log('[AXIS 8.32] LIVE · both hosts source identical to Vercel merged-main; real-device acceptance risks in Issue #177 remain unsealed');
+          NODE
+      - name: Save nonsecret provider verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axis-832-one-shot-edgeone-verification
+          path: |
+            /tmp/edgeone-live-result.json
+            /tmp/edgeone-custom-domain-result.json
+          if-no-files-found: ignore
+          retention-days: 7
