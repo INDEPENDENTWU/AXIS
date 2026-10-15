@@ -20,6 +20,14 @@ if(!workflow.includes('AXIS_MAKERS_SDK_ROOT=')||!workflow.includes('AXIS_EDGEONE
 const eScript=fs.readFileSync('scripts/axis-edgeone-fallback-release.mjs','utf8');
 if(!eScript.includes("'--site',providerSite")||!eScript.includes('axis-provider-preflight.json'))fail('EdgeOne CLI must require preflight evidence and explicit token region');
 execFileSync(process.execPath,['scripts/axis-dual-provider-preflight.mjs','--self-test'],{stdio:'inherit',timeout:15000});
+const parser=fs.readFileSync('scripts/axis-edgeone-deploy-proof.mjs','utf8');
+if(!parser.includes('axis.832.edgeone-deployment-proof.v1')||!parser.includes('projectId!==expectedProjectId'))fail('structured EdgeOne existing-project proof missing');
+if(!eScript.includes("'--json'")||!eScript.includes('scripts/axis-edgeone-deploy-proof.mjs')||!eScript.includes("'--parse'"))fail('EdgeOne Production must use structured CLI proof verification before live checks');
+const eLive=fs.readFileSync('scripts/edgeone-live-verify.mjs','utf8');
+if(!eLive.includes('axis-edgeone-deploy-proof.json')||!eLive.includes('preflight.edgeOne?.projectId'))fail('live EdgeOne verification must bind to the exact preflight project ID');
+if(!workflow.includes("edge.projectId!==provider.edgeOne?.projectId"))fail('dual-provider final seal must include exact EdgeOne project ID');
+execFileSync(process.execPath,['scripts/axis-edgeone-deploy-proof.mjs','--self-test'],{stdio:'inherit',timeout:15000});
+
 
 // Verify the YAML job condition as an independent line. A comment containing
 // a literal "\n    if:" must never be misclassified as a disabled deployment.
