@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const logPath='/tmp/axis-edgeone-deploy.log';
+const proofPath='/tmp/axis-edgeone-deploy-proof.json';
 const goldenBase=process.env.VERCEL_GOLDEN_URL||'https://axis-five-puce.vercel.app';
 const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
 const standalone=process.env.AXIS_EDGEONE_STANDALONE==='1';
@@ -12,9 +12,13 @@ const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function request(url,{json=false,method='GET'}={}){const r=await fetch(url,{method,redirect:'follow',headers:{'Cache-Control':'no-cache','Pragma':'no-cache'},signal:AbortSignal.timeout(15000)});const text=await r.text();let data=null;if(json){try{data=JSON.parse(text)}catch{}}return{status:r.status,ok:r.ok,text,data,url:r.url}}
 const parityFields=remote=>[['version',remote?.version,local.version],['baseVersion',remote?.baseVersion,local.baseVersion],['sourceCommit',remote?.sourceCommit,local.sourceCommit],['architecture',remote?.architecture,local.architecture],['core',remote?.assets?.core,local.assets?.core],['css',remote?.assets?.css,local.assets?.css],['runtimeHash',remote?.canonical?.runtimeHash,local.canonical?.runtimeHash],['initialJavascript',remote?.requests?.initialJavascript,local.requests?.initialJavascript],['dynamicJavascript',remote?.requests?.dynamicJavascript,local.requests?.dynamicJavascript]];
 try{
-  if(!fs.existsSync(logPath))fail('deployment log missing');
-  const log=fs.readFileSync(logPath,'utf8'),match=log.match(/Deploy URL:\s*(https:\/\/[^\s\u001b]+)/);if(!match)fail('deploy URL missing from EdgeOne CLI output');
-  const deployUrl=new URL(match[1]),authParams=new URLSearchParams(deployUrl.search),baseUrl=deployUrl.origin;result.baseUrl=baseUrl;
+  if(!fs.existsSync(proofPath))fail('EdgeOne exact-project deployment proof missing');
+  const proof=JSON.parse(fs.readFileSync(proofPath,'utf8'));
+  const preflight=JSON.parse(fs.readFileSync('/tmp/axis-provider-preflight.json','utf8'));
+  if(proof.schema!=='axis.832.edgeone-deployment-proof.v1'||proof.sourceCommit!==local.sourceCommit||proof.projectId!==preflight.edgeOne?.projectId||proof.sourceCommit!==preflight.sourceCommit)fail('EdgeOne proof did not confirm the approved existing project and exact source');
+  const deployUrl=new URL(proof.url),authParams=new URLSearchParams(deployUrl.search),baseUrl=deployUrl.origin;result.baseUrl=baseUrl;
+  result.projectId=proof.projectId;
+  result.deploymentId=proof.deploymentId;
   const edgeUrl=(path,attempt=0)=>{const u=new URL(path,baseUrl);for(const [k,v] of authParams)u.searchParams.set(k,v);u.searchParams.set('_axis_verify',`${Date.now()}-${attempt}`);return u};
   try{result.runnerUnauthenticatedStatus=(await request(baseUrl)).status}catch{result.runnerUnauthenticatedStatus=0}
 
