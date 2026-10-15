@@ -3,7 +3,8 @@ import fs from 'node:fs';
 const fail=message=>{throw Error('[AXIS 8.32d18 provenance] '+message)};
 const file='index.html';
 const original=fs.readFileSync(file,'utf8');
-const anchor='<div class="versionLine">';
+// Historical preparation stamps aria-label and data-release attributes before 8.32.
+const anchor='<div class="versionLine"';
 if(original.split(anchor).length!==2)fail('expected one inherited Settings footer');
 if(original.includes('id="axisOriginReport"'))fail('duplicate origin readout');
 
