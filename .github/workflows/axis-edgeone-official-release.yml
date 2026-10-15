@@ -174,8 +174,10 @@ jobs:
           const local=JSON.parse(fs.readFileSync('axis-build.json','utf8'));
           const vercel=JSON.parse(fs.readFileSync('/tmp/axis-vercel-official-result.json','utf8'));
           const edge=JSON.parse(fs.readFileSync('/tmp/edgeone-live-result.json','utf8'));
+          const provider=JSON.parse(fs.readFileSync('/tmp/axis-provider-preflight.json','utf8'));
           const domain=JSON.parse(fs.readFileSync('/tmp/edgeone-custom-domain-result.json','utf8'));
           if(local.sourceCommit!==exact || vercel.sourceCommit!==exact || vercel.version!==local.version || !vercel.ready || !edge.manifestParity || !edge.runtimeMarker || !domain.manifestParity || !domain.runtimeMarker || !domain.hostnameStable) throw Error('Official runtime/source parity not certified');
+          if(edge.projectId!==provider.edgeOne?.projectId || !edge.deploymentId || provider.sourceCommit!==exact) throw Error('EdgeOne did not attest to the original existing project and provider deployment ID');
           if(new URL(domain.baseUrl).hostname!=='axis.juele.fun')throw Error('Official hostname not certified');
           console.log('AXIS official Vercel + EdgeOne release verified · '+local.version+' · '+exact);
           NODE
