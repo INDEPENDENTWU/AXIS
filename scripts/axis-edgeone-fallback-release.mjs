@@ -37,10 +37,16 @@ if(prebuilt.status!==0)fail('EdgeOne prebuilt contract failed: '+(prebuilt.stder
 console.log('[AXIS EdgeOne fallback] ACCEPTED · exact remote main '+exact+' · '+version+' · P01–P20 · pinned WebKit · approved admission · '+action);
 if(action==='--check')process.exit(0);
 if(confirm!==exact)fail('AXIS_EDGEONE_CONFIRM_SHA must explicitly match admitted commit');
+// Preflight pins the account region; CLI auto-geolocation must never choose a different site.
+const providerSite=String(process.env.AXIS_EDGEONE_SITE||'').trim();
+if(!['global','china'].includes(providerSite))fail('EdgeOne token issuing site not verified by read-only preflight; no publishing');
+if(!fs.existsSync('/tmp/axis-provider-preflight.json'))fail('dual-provider preflight evidence missing');
+const pf=json('/tmp/axis-provider-preflight.json');
+if(pf.schema!=='axis.832.provider-preflight.v1'||pf.sourceCommit!==exact||pf.edgeOne?.name!=='axisfitness-mirror'||pf.edgeOne?.site!==providerSite)fail('provider preflight identity mismatch');
 const token=String(process.env.EDGEONE_API_TOKEN||'');
 if(!token)fail('EDGEONE_API_TOKEN unavailable in executing environment; do not paste it into chat or source');
 const project='axisfitness-mirror';
-const deployment=spawnSync('edgeone',['pages','deploy','.','-n',project,'-e','production','-t',token],{encoding:'utf8',timeout:900000,env:process.env,maxBuffer:8*1024*1024});
+const deployment=spawnSync('edgeone',['pages','deploy','.','-n',project,'-e','production','--site',providerSite,'-t',token],{encoding:'utf8',timeout:900000,env:process.env,maxBuffer:8*1024*1024});
 const scrub=(s)=>String(s||'').split(token).join('[REDACTED]').replace(/eo_token=[^\s\u001b]+/g,'eo_token=[REDACTED]');
 const stderr=scrub(deployment.stderr);
 const rawLog='/tmp/axis-edgeone-deploy.log';
