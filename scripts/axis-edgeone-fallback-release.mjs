@@ -46,7 +46,7 @@ if(pf.schema!=='axis.832.provider-preflight.v1'||pf.sourceCommit!==exact||pf.edg
 const token=String(process.env.EDGEONE_API_TOKEN||'');
 if(!token)fail('EDGEONE_API_TOKEN unavailable in executing environment; do not paste it into chat or source');
 const project='axisfitness-mirror';
-const deployment=spawnSync('edgeone',['pages','deploy','.','-n',project,'-e','production','--site',providerSite,'-t',token],{encoding:'utf8',timeout:900000,env:process.env,maxBuffer:8*1024*1024});
+const deployment=spawnSync('edgeone',['pages','deploy','.','-n',project,'-e','production','--site',providerSite,'--json','-t',token],{encoding:'utf8',timeout:900000,env:process.env,maxBuffer:8*1024*1024});
 const scrub=(s)=>String(s||'').split(token).join('[REDACTED]').replace(/eo_token=[^\s\u001b]+/g,'eo_token=[REDACTED]');
 const stderr=scrub(deployment.stderr);
 const rawLog='/tmp/axis-edgeone-deploy.log';
@@ -54,8 +54,12 @@ const rawText=String(deployment.stdout||'')+'\n'+String(deployment.stderr||'');
 fs.writeFileSync(rawLog,rawText,{mode:0o600});
 process.on('exit',()=>{
  try{fs.writeFileSync('/tmp/axis-edgeone-deploy-redacted.log',scrub(fs.readFileSync(rawLog,'utf8')),{mode:0o600});fs.unlinkSync(rawLog)}catch{}
+ try{fs.unlinkSync('/tmp/axis-edgeone-deploy-proof.json')}catch{}
 });
 if(deployment.status!==0)fail('EdgeOne CLI Production deployment rejected: '+stderr.slice(0,700));
+const proofRun=spawnSync(process.execPath,['scripts/axis-edgeone-deploy-proof.mjs','--parse'],{encoding:'utf8',env:{...process.env,AXIS_RELEASE_SHA:exact},timeout:15000});
+if(proofRun.status!==0)fail('EdgeOne CLI returned no authenticated, exact-existing-project deployment proof; manual provider reconciliation required');
+console.log(String(proofRun.stdout||'').trim());
 const env={...process.env,AXIS_EDGEONE_STANDALONE:'1',AXIS_RELEASE_SHA:exact};
 const verify=spawnSync(process.execPath,['scripts/edgeone-live-verify.mjs'],{encoding:'utf8',env,timeout:420000,maxBuffer:8*1024*1024});
 if(verify.status!==0)fail('EdgeOne deployment exists but independent runtime and API verification failed: '+String(verify.stderr).slice(0,1000));
