@@ -24,6 +24,8 @@ try{
    :r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({version:kind==='mismatch'?'8.31':'8.32',sourceCommit:source})}));
   await page.goto(BASE,{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>Boolean(window.__AXIS_CORE_INTERACTIVE__),null,{timeout:20000});
+  // Test the actual document language that the in-app diagnostic observes.
+  await page.evaluate(lang=>{document.documentElement.lang=lang},kind==='mismatch'?'zh-Hant':kind==='unavailable'?'en':'zh-Hans');
   await page.locator('#settingsBtn').click();
   await page.waitForFunction(()=>['ready','mismatch','unavailable'].includes(document.querySelector('#axisOriginReport')?.dataset.axisOriginState),null,{timeout:10000});
   const observed=await page.evaluate(()=>{
