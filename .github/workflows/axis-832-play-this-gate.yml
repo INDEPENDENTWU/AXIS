@@ -58,6 +58,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-832-play-this-browser-smoke.mjs
+      - name: Read-only installed origin and stale build identity
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-832d18-origin-browser-smoke.mjs
       - name: Browser diagnostic
         if: failure()
         run: tail -n 80 /tmp/axis-832-chromium.log || true
@@ -98,6 +103,11 @@ jobs:
         run: |
           node scripts/axis-882-smoke.mjs
           node scripts/axis-832d6-touch-repeat-browser-smoke.mjs
+      - name: Read-only installed origin and stale build identity
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-832d18-origin-browser-smoke.mjs
       - name: Browser diagnostic
         if: failure()
         run: tail -n 80 /tmp/axis-832-webkit.log || true
