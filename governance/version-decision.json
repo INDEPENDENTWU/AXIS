@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 32,
+  "sequence": 33,
   "base_release": "8.31",
-  "release": "8.31",
-  "decision": "confirm",
-  "change_class": "governance",
-  "summary": "Independent 8.31 confirmation: 35 successful exact PR head workflows, 33 successful merged-main workflows, Vercel READY, EdgeOne Production and axis.juele.fun Chromium/WebKit, immutable product/runtime SHA retained."
+  "release": "8.32",
+  "decision": "bump",
+  "change_class": "product-runtime",
+  "summary": "8.32 product candidate: canonical Object and saved Flow PLAY THIS entry uses existing 8.31 Playable projection, Flow/Active/Recorder facts and exact Object identities; first user-facing local practice path, no new storage or factual writer."
 }

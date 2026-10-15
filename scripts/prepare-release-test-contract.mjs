@@ -90,7 +90,13 @@ if(version==='8.8.2'){
   if(!fs.existsSync('scripts/prepare-882-test-flow.mjs'))throw new Error('AXIS 8.8.2 test-flow convergence is missing');
   execFileSync(process.execPath,['scripts/prepare-882-test-flow.mjs'],{stdio:'inherit'});
 }
-if(version==='8.9'||version.startsWith('8.9.')||modern810){
+if(version==='8.32'){
+ const test=fs.readFileSync('scripts/axis-882-smoke.mjs','utf8');
+ if(!test.includes("best?.id==='lat-pulldown'")||!test.includes("[AXIS 8.32 inherited rest]")||!test.includes("short press must not finish the Active owner"))
+  throw new Error("[AXIS 8.32 test flow] canonical identity, rest and long-press regression unverified");
+ console.log('[AXIS 8.32 test flow] PASS · existing fixture aligned by canonical 8.32 build; skip outdated 8.9 rewriter');
+}
+if(version!=='8.32'&&(version==='8.9'||version.startsWith('8.9.')||modern810)){
   if(!fs.existsSync('scripts/prepare-89-test-flow.mjs'))throw new Error('AXIS 8.9 test-flow convergence is missing');
   execFileSync(process.execPath,['scripts/prepare-89-test-flow.mjs'],{stdio:'inherit'});
 }

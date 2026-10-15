@@ -1,5 +1,18 @@
 # AXIS Engineering Handoff
 
+## Current unreleased release-candidate handoff (2026-10-15)
+
+The immutable certified public Product/runtime remains **8.31**, source `dddce5401e80087a7ccceb43ec466f1ad7abb505`. AXIS **8.32 is not deployed, merged or sealed**.
+
+- **Combined final candidate:** Draft PR **#175**, `release/832-edgeone-first-admission` targeting `main`. Its source includes product Draft PR **#174**, so a future accepted release should merge the combined candidate **once**, not merge both PRs independently.
+- **Last fully executed local gate:** clean source commit `ae21195f120995a0451a9892f1f871f9a4547adf` — 103-step build + Chromium/WebKit local gate exited 0; source and browser emulation only, `productionCertified:false`. Subsequent commits must earn new exact-head CI before merging.
+- **Formal release admission remains NO-GO:** P11/P12/P15/P16/P17/P20 physical iOS/Android, actual VoiceOver/TalkBack, OS text zoom/safe-area and iPhone scroll rail, and low-end tail-latency need independently documented evidence. No P01–P20 approval is issued.
+- **Official release policy:** avoid routine Vercel Preview; once the *merged main* version is genuinely admitted, run a single manual Vercel + EdgeOne Production release and verify both fixed public origins, `axis.juele.fun`, data and installed Safari PWA. A separately verified immutable 8.32 governance seal comes **after** real provider readbacks.
+- **No official Production mutation in this phase.** Do not display a fictitious 8.32 release on the 8.31 installed product.
+
+See PR #175's exact-head engineering evidence and Issue #172 for the outstanding physical acceptance. Previous certified 8.31 evidence and all historical records below remain authoritative.
+
+
 **Current governed release:** AXIS 8.31 — Playable Runtime Foundation.
 **Production status:** Production-certified. **Governed target branch:** `main`.
 **Product PR:** #170. **Independent confirmation:** sequence 32, `8.31 → 8.31 / confirm / governance`.
@@ -26,6 +39,16 @@ This is the exact merged-main product/runtime SHA, not the governance PR head/me
 
 `axis.playable.v1`, `axis.playable-execution.v1`, `axis.playable-command.v1` are derived. Existing app.js FlowRun, Encounter, v61 recording, v82/v87 Active and Media owners remain authoritative. Exact canonical Object IDs and real provenance/timestamp are mandatory. No second writer, automatic completion, AI or network authority.
 
+
+## 8.32b implementation — active candidate
+
+Product candidate PR **#174** remains Draft, unmerged and not Production-certified. It does not replace the immutable 8.31 Runtime.
+
+**Current feature branch:** `feature/832-play-this-local-entry` based on design-only 8.32a main `c6a76b617b9df5fe43975354bdabba1d25c3d3e7`. **Version decision:** sequence 33, `8.31 → 8.32 / bump / product-runtime`. **Status:** candidate and CI pending; no 8.32 public Production authority.
+
+Actual implementation files: `prepare-832-play-this.mjs`, `scripts/prepare-832-release-identity.mjs`, `scripts/prepare-832-play-this-integration.mjs`, `scripts/prepare-832-governance-state.mjs`, `postbuild-832-play-this-contract.mjs`, and bounded `build-release.mjs` integration. Existing app.js Flow/Object/Recorder owners are invoked; compiler is bundled from portable `lib/axis-playable.mjs` (and established dependencies), not rewritten. Source proof, real browser tests and required release gates must pass before any merge.
+
+The 8.32a 20 Gherkin scenarios remain **unwired specifications**, not passing automated UI tests. Keep Issue [#172](https://github.com/INDEPENDENTWU/AXIS/issues/172) open through 8.32 product merge and independent seal. Preserve existing 8.31 product certificate and no second writer. Continue to audit `main` protection debt in Issue #58.
 
 ## Current engineering work — AXIS 8.32a (contract-only)
 

@@ -1,0 +1,80 @@
+/* AXIS 8.32d14 — semantic theme foundation; last bundled visual layer. */
+html[data-axis-theme="dark"]{color-scheme:dark}
+html[data-axis-theme="light"]{color-scheme:light;--bg:#f6f7fa;--s1:#ffffff;--s2:#f0f2f7;--s3:#e5e9f1;--line:#cfd6e2;--line2:#e0e5ee;--text:#1c2432;--muted:#525f72;--dim:#596579;--accent:#384ac8;--accent2:#3446af;--soft:rgba(56,74,200,.1);--danger:#a32f36;--safe:#267651;--axis-rule:rgba(24,36,55,.12)}
+html[data-axis-theme="light"],html[data-axis-theme="light"] body{background:var(--bg)!important;color:var(--text)!important}
+html[data-axis-theme="light"] .app{color:var(--text)!important}
+html[data-axis-theme="light"] .topbar{background:linear-gradient(180deg,var(--bg) 80%,rgba(246,247,250,0))!important}
+html[data-axis-theme="light"] #dock{background:var(--bg)!important}
+html[data-axis-theme="light"] .sheetWrap{background:rgba(29,39,58,.34)!important}
+html[data-axis-theme="light"] .sheet,html[data-axis-theme="light"] .finishCard{background:var(--s1)!important;color:var(--text)!important;border-color:var(--line)!important;box-shadow:0 -18px 66px rgba(28,38,57,.12)!important}
+html[data-axis-theme="light"] #settingsBtn.v877Control,html[data-axis-theme="light"] #settingsBtn{background:linear-gradient(145deg,#fff,#edf0f7)!important;color:var(--text)!important;box-shadow:inset 0 0 0 1px rgba(32,44,63,.16),0 8px 24px rgba(32,44,63,.08)!important}
+html[data-axis-theme="light"] .v877ControlGlyph i{background:#647188!important}
+html[data-axis-theme="light"] .v877ControlGlyph b{background:var(--accent)!important;box-shadow:0 0 0 3px var(--soft)!important}
+html[data-axis-theme="light"] :is(.sessionLead,.metricPair>div,.section,.settingLink,.settingPlain,.lineInput,.axis832CatalogCard,.axis832ObjectLine,.eqItem,#activeHome,#historyView){color:var(--text)!important}
+html[data-axis-theme="light"] :is(.eqItem,.axis832ObjectLine,.settingLink,.settingPlain,.metricPair,.settingsList,.section){border-color:var(--line2)!important}
+html[data-axis-theme="light"] :is(.search,input,select,textarea){color:var(--text)!important;caret-color:var(--accent);background-color:var(--s1)!important;border-color:var(--line)!important}
+html[data-axis-theme="light"] :is(input,textarea)::placeholder{color:var(--dim)}
+html[data-axis-theme="light"] .axis832ObjectGo{background:var(--s2)!important;color:var(--accent)!important;border-color:var(--line)!important}
+html[data-axis-theme="light"] :is(.axis832ObjectGo,.axisThemeChoice):focus-visible{outline:3px solid var(--accent)!important;outline-offset:2px!important}
+html[data-axis-theme="light"] .grabber{background:var(--line)!important}
+html[data-axis-theme="light"] :is(.sheetHead,.pageHead,.brand){color:var(--text)!important}
+html[data-axis-theme="light"] .closeBtn,html[data-axis-theme="light"] .v8710GuideHead{color:var(--muted)!important}
+html[data-axis-theme="light"] :is(#eqSheet,#scanSheet,#settingsSheet) .sheet{background:var(--s1)!important}
+.axisThemeSetting{margin:16px 0 8px;padding:10px 0 12px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.axisThemeSettingLabel{color:var(--muted);font-size:13px;font-weight:600;margin-bottom:9px}
+.axisThemeChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.axisThemeChoice{display:grid;place-items:center;min-height:44px;min-width:0;border:1px solid var(--line)!important;border-radius:12px!important;padding:9px 3px!important;background:var(--s2)!important;color:var(--muted)!important;font-size:13px;font-weight:650;line-height:1.25}
+.axisThemeChoice[aria-pressed="true"]{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important}
+.axisThemeChoice:focus-visible{outline:3px solid var(--accent)!important;outline-offset:2px}
+
+/* Readability repair for inherited hardcoded dark surfaces under Light. */
+html[data-axis-theme="light"] .nav.v82Nav{background:rgba(255,255,255,.97)!important;box-shadow:0 -4px 24px rgba(28,36,50,.09)!important;border-color:var(--line)!important}
+html[data-axis-theme="light"] .nav.v82Nav button{color:var(--muted)!important;background:transparent!important}
+html[data-axis-theme="light"] .nav.v82Nav button.active{background:var(--s2)!important;color:var(--text)!important}
+html[data-axis-theme="light"] #settingsSheet .settingLink>b,
+html[data-axis-theme="light"] #settingsSheet .settingPlain>b,
+html[data-axis-theme="light"] #settingsSheet .sheetHead b{color:var(--text)!important}
+html[data-axis-theme="light"] #settingsSheet .settingLink>span,
+html[data-axis-theme="light"] #settingsSheet .settingPlain>span,
+html[data-axis-theme="light"] #settingsSheet .settingLink span{color:var(--muted)!important}
+html[data-axis-theme="light"] .v8710Cards .axis832CatalogCard>[data-v877-lib]{background:var(--s1)!important;color:var(--text)!important}
+html[data-axis-theme="light"] .v8710Cards .axis832CatalogCard>[data-v877-lib] b{color:var(--text)!important}
+html[data-axis-theme="light"] .v8710Cards .axis832CatalogCard>[data-v877-lib] small{color:var(--muted)!important}
+html[data-axis-theme="light"] .v8710Cards .axis832CatalogCard{background:var(--s2)!important}
+html[data-axis-theme="light"] #muscleTags i{background:var(--soft)!important;color:var(--accent)!important}
+html[data-axis-theme="light"] #captureNow{background:var(--accent)!important;color:#fff!important}
+html[data-axis-theme="light"] #v8710Stop{background:var(--s1)!important;border:1px solid var(--line)!important}
+html[data-axis-theme="light"] #v8710StopBtn{color:var(--accent)!important}
+html[data-axis-theme="light"] .axisNowTop span{color:var(--accent)!important}
+html[data-axis-theme="light"] .axisNowFacts :is(time,span){color:var(--muted)!important}
+html[data-axis-theme="light"] .axis821MetricControl,
+html[data-axis-theme="light"] .v8710Cards .axis832CatalogCard,
+html[data-axis-theme="light"] .coverageCell{background:var(--s1)!important;color:var(--text)!important;border-color:var(--line2)!important}
+
+/* d15: Recorder primary muscle chips must not inherit pale-on-paper dark palette. */
+html[data-axis-theme="light"] #scanSheet #muscleTags i{background:rgba(56,74,200,.10)!important;color:#3446af!important;border-color:rgba(56,74,200,.22)!important}
+html[data-axis-theme="light"] #scanSheet .sheet :is(.resultRow,.resultRow>b,#equipmentName){color:var(--text)!important}
+
+/* AXIS 8.32d16: original Active hold-to-finish and Adjust remain reachable in both themes. */
+#v87Now #v87Finish{min-height:44px!important;min-width:92px!important}
+html[data-axis-theme] #v87Now .v87Actions>#v87AdjustBtn{min-height:44px!important;min-width:44px!important;height:44px!important;margin-top:8px!important;box-sizing:border-box!important}
+/* The 8.26.4 utility rest clock occupies a fixed 32px grid row. Center the
+   44px Adjust hit target on that clock, not 8px below it. Give the previous
+   control row 14px of separation so centering does not make controls collide. */
+html[data-axis-theme] #v87Now.axis821ActiveStage .axis821StageControls{row-gap:14px!important}
+html[data-axis-theme] #v87Now.axis821ActiveStage .axis821StageControls>#v87AdjustBtn{margin-top:0!important;align-self:center!important}
+html[data-axis-theme="light"] #v87Now #v87Finish,html[data-axis-theme="light"] #v87Now #v87Finish span{color:var(--muted)!important}
+
+/* AXIS 8.32d17 — original iPhone screenshot: dock/nav must be opaque rails
+   over scrolling Active and legacy large timers, below existing sheets (z:100). */
+html body #dock.captureDock.v8-dual{
+  z-index:85!important;
+  background:var(--bg)!important;
+  isolation:isolate!important;
+}
+html body .nav.v82Nav{
+  z-index:86!important;
+  background:var(--bg)!important;
+  isolation:isolate!important;
+}
+html[data-axis-theme="light"] body .nav.v82Nav{background:var(--bg)!important}

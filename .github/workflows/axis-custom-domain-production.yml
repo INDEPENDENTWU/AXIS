@@ -33,7 +33,8 @@ jobs:
           NODE
 
   live-production:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Official dual-provider dispatcher now owns post-publish custom-domain verification. Keep this source gate, not an automatic pre-release live probe.
+    if: ${{ false }}
     needs: contract
     runs-on: ubuntu-latest
     timeout-minutes: 35

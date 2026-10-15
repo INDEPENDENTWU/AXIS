@@ -12,12 +12,25 @@ permissions:
 jobs:
   repository-contract:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
+      - name: Assemble only when the audited bump is newer than checked-in Production
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          import {execFileSync} from 'node:child_process';
+          const decision=JSON.parse(fs.readFileSync('governance/version-decision.json','utf8'));
+          const state=JSON.parse(fs.readFileSync('governance/project-state.json','utf8'));
+          if(decision.decision==='bump' && decision.release!==state.product?.productionRelease){
+            execFileSync(process.execPath,['build-release.mjs'],{stdio:'inherit'});
+          }
+          NODE
       - name: Converge exact 8.26.1 governance compatibility
         run: node scripts/axis-8261-governance-compat.mjs
       - name: Verify repository structure and release handoff

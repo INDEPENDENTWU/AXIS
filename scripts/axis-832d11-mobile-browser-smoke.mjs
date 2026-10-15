@@ -1,0 +1,81 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {performance} from 'node:perf_hooks';
+import {chromium} from 'playwright';
+const base=process.env.AXIS_URL||'http://127.0.0.1:4205';
+const head=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+const out=process.env.AXIS_D11_REPORT||'/tmp/axis-832d11-mobile.json';
+const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+const context=await browser.newContext({viewport:{width:320,height:700},isMobile:true,hasTouch:true,deviceScaleFactor:2,locale:'zh-CN',reducedMotion:'reduce'});
+const page=await context.newPage(),errors=[],cases=[];
+page.on('pageerror',err=>errors.push(String(err)));
+const cdp=await context.newCDPSession(page);
+const api=[['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]];
+for(const [pattern,value] of api)await context.route(pattern,route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(value)}));
+const state={version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3}};
+const wait=()=>page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__&&window.__AXIS_832_PLAY_THIS__,undefined,{timeout:20000});
+try{
+ for(const width of [320,390,430]){
+  await page.setViewportSize({width,height:700});
+  const t0=performance.now();
+  await page.goto(base,{waitUntil:'domcontentloaded'});
+  await page.evaluate(v=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify(v));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))},state);
+  await page.reload({waitUntil:'domcontentloaded'});await wait();
+  const boot=performance.now()-t0;
+  const meta=await page.locator('meta[name="viewport"]').getAttribute('content');
+  assert.ok(meta.includes('width=device-width')&&!/user-scalable\s*=\s*(?:no|0)/i.test(meta),'user pinch zoom must be permitted');
+  await page.evaluate(()=>document.documentElement.lang='en');
+  assert.equal(await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__('quick')),true);
+  await page.locator('#eqSearch').fill('胸托划船');
+  const cta=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+  await cta.waitFor({state:'visible'});
+  await cta.scrollIntoViewIfNeeded();
+  await cdp.send('Emulation.setPageScaleFactor',{pageScaleFactor:2});
+  await page.waitForTimeout(100);
+  const facts=await page.evaluate(()=>{
+   const cta=document.querySelector('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]'),guide=document.querySelector('#eqSheet .v8710GuideHead'),cards=document.querySelector('#eqSheet #v8710Cards');
+   const rect=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom,right:r.right}};
+   return {scale:visualViewport.scale,viewportWidth:innerWidth,visualWidth:visualViewport.width,documentWidth:document.documentElement.scrollWidth,cta:rect(cta),guide:rect(guide),cards:rect(cards),label:cta.innerText,focusable:cta.tabIndex>=0};
+  });
+  assert.ok(facts.scale>=1.9&&facts.scale<=2.1,'actual Chromium mobile pinch scale absent');
+  assert.equal(facts.label.trim(),'Start practice','English CTA incorrect under 200% pinch');
+  assert.ok(facts.cta.width>=44&&facts.cta.height>=44,'CTA touch target undersized');
+  assert.ok(facts.guide.bottom<=facts.cards.y+1,'guide overlaps cards under 200% zoom');
+  assert.ok(facts.documentWidth<=width+1,'horizontal document overflow');
+  assert.ok(facts.focusable,'CTA cannot be focused');
+  await cdp.send('Emulation.setPageScaleFactor',{pageScaleFactor:1});
+  await cta.focus();
+  await page.waitForFunction(()=>document.activeElement?.dataset?.axis832Object==='chest-row',null,{timeout:1000});
+  const t1=performance.now();
+  await cta.click();
+  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),null,{timeout:15000});
+  const entry=performance.now()-t1;
+  const snapshot=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return {selected:document.querySelector('#equipmentName')?.textContent?.trim(),ownerCount:document.querySelectorAll('#scanSheet.show').length,encounters:s.active?.events?.length||0,flow:!!s.flowRun}});
+  assert.equal(snapshot.ownerCount,1);assert.equal(snapshot.encounters,0);assert.equal(snapshot.flow,false);
+  cases.push({width,bootMs:Number(boot.toFixed(1)),entryMs:Number(entry.toFixed(1)),zoom:facts,snapshot});
+  await page.locator('#scanSheet [data-close="scanSheet"]').first().click().catch(async()=>{await page.keyboard.press('Escape')});
+  await page.waitForTimeout(80);
+ }
+ await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});
+ await page.setViewportSize({width:390,height:844});
+ const slow=[];
+ for(let n=0;n<4;n++){
+  await page.goto(base,{waitUntil:'domcontentloaded'});await wait();
+  const t=performance.now();
+  assert.equal(await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__('quick')),true);
+  await page.locator('#eqSearch').fill('胸托划船');
+  const cta=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+  await cta.waitFor({state:'visible'});await cta.click();
+  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),null,{timeout:15000});
+  slow.push(Number((performance.now()-t).toFixed(1)));
+  const snap=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('axis_v60_state')||'{}');return {active:s.active?.events?.length||0,run:s.flowRun,owner:document.querySelectorAll('#scanSheet.show').length}});
+  assert.equal(snap.active,0);assert.equal(snap.run,null);assert.equal(snap.owner,1);
+  await page.locator('#scanSheet [data-close="scanSheet"]').first().click().catch(async()=>{await page.keyboard.press('Escape')});
+  await page.reload({waitUntil:'domcontentloaded'});await wait();
+ }
+ assert.deepEqual(errors,[]);
+ const report={schema:'axis.832d11.mobile.pinch.performance.v1',head,engine:'chromium',browserVersion:browser.version(),scope:'Browser-emulated 200% visualViewport pinch and 4x simulated CPU, not physical-device signoff',cases,throttleFactor:4,slowEntryMs:slow,errors,productionCertified:false};
+ fs.writeFileSync(out,JSON.stringify(report,null,2));
+ console.log('[AXIS 8.32d11] PASS',JSON.stringify({head,cases:cases.map(x=>({width:x.width,scale:x.zoom.scale,entryMs:x.entryMs})),slowEntryMs:slow,out}));
+}finally{await browser.close()}

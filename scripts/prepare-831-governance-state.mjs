@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),write=(p,x)=>fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n');
 const d=read('governance/version-decision.json'),certificate=read('governance/production-certifications/8.30.json');
 const base='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f';
-const sealing=d.sequence===32&&d.base_release==='8.31'&&d.release==='8.31'&&d.decision==='confirm'&&d.change_class==='governance';
+const sealing=(d.sequence===32&&d.base_release==='8.31'&&d.release==='8.31'&&d.decision==='confirm'&&d.change_class==='governance')||(d.sequence===33&&d.base_release==='8.31'&&d.release==='8.32'&&d.decision==='bump'&&d.change_class==='product-runtime');
 if(!sealing&&!(d.sequence===31&&d.base_release==='8.30'&&d.release==='8.31'&&d.decision==='bump'&&d.change_class==='product-runtime'))throw Error('[AXIS 8.31 governance] expected candidate bump or sealed confirmation');
 if(certificate.productRuntimeSha!==base||certificate.productPullRequest!==167||certificate.mergedMainWorkflows?.success!==30||certificate.edgeOne?.runAttempt!==2)throw Error('[AXIS 8.31 governance] immutable 8.30 product seal lost');
 const p=read('governance/project-state.json'),o=read('governance/owners.json');

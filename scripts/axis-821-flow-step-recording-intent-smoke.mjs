@@ -73,7 +73,7 @@ try{
  saved=await flowSaved();assert.equal(saved.steps[0].executionOverride,'single','current one-shot compatibility setup did not persist through canonical Flow writer');
  await tap(page.locator(`#axis821FlowHome [data-axis-flow-start="${FLOW.id}"]`));
  await page.waitForFunction(id=>window.__AXIS_FLOW_RUNTIME__?.current?.()?.objectRef===id,OBJECT.id,{timeout:3000});
- await tap(page.locator('#axis821FlowHome [data-axis-flow-record]'));
+ if(!await page.locator('#scanSheet.show [data-axis818-metric="weight"]').count())await tap(page.locator('#axis821FlowHome [data-axis-flow-record]'));
  await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show')&&document.querySelector('[data-axis818-metric="weight"]')&&document.querySelector('[data-axis818-metric="reps"]'),undefined,{timeout:3500});
  assert.equal(await page.locator('[data-axis818-metric="sets"]').count(),0,'canonical recorder ignored Flow step metricOverride');
  await page.locator('[data-axis818-metric="weight"]').fill('42.5');await page.locator('[data-axis818-metric="reps"]').fill('8');await tap(page.locator('#saveScan'));

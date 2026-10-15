@@ -1,0 +1,181 @@
+import assert from 'node:assert/strict';
+const ENGINE=process.env.AXIS_ENGINE||'chromium',BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const mod=ENGINE==='webkit'?await import('playwright'):await import('playwright-core');
+const browser=await (ENGINE==='webkit'?mod.webkit:mod.chromium).launch(ENGINE==='webkit'?{headless:true}:{headless:true,executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']});
+const context=await browser.newContext({viewport:{width:390,height:844},isMobile:ENGINE==='webkit',hasTouch:true,deviceScaleFactor:2,locale:'zh-CN'});
+const page=await context.newPage(),errors=[];
+page.on('pageerror',e=>errors.push(String(e.stack||e)));
+const tap=async loc=>ENGINE==='webkit'?loc.tap():loc.click();
+const respond=(r,data)=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data),headers:{'cache-control':'no-store','access-control-allow-origin':'*'}});
+for(const [pattern,data] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/insight**',{available:false}],['**/api/cloud-status**',{cloud:{configured:false,enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false,capabilities:{}}}]])await page.route(pattern,r=>respond(r,data));
+const wait=()=>page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&window.__AXIS_RELEASE__==='8.32'&&window.__AXIS_832_PLAY_THIS__&&window.__AXIS_831_PLAYABLE__&&window.__AXIS_QUICK_RECORD__,undefined,{timeout:20000});
+const initial=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
+try{
+ await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:18000});
+ await page.evaluate(()=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3}}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))});
+ await page.reload({waitUntil:'domcontentloaded'});await wait();
+ const bridge=await page.evaluate(()=>({play:window.__AXIS_832_PLAY_THIS__?.version,owner:window.__AXIS_832_PLAY_THIS__?.owner,newWriter:window.__AXIS_832_PLAY_THIS__?.newEncounterWriter,compile:window.__AXIS_832_PLAY_THIS__?.compile?.('object','chest-row')?.source?.ref}));
+ assert.equal(bridge.play,'8.32');assert.equal(bridge.newWriter,false);assert.equal(bridge.compile,'chest-row','real in-browser compiler not available');
+ const opened=await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick')===true);
+ assert.equal(opened,true,'canonical Object picker cannot be opened');
+ await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#v8710Cards'));
+ await page.locator('#eqSearch').fill('胸托划船');
+ const object=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+ await object.waitFor({state:'visible',timeout:5000});
+ assert.equal(await page.locator('#v8710Cards [data-v877-lib="chest-row"]').count(),1,'original canonical picker selection disappeared');
+ const bounds=await object.boundingBox();
+ assert.ok(bounds&&bounds.height>=44,'PLAY THIS tap target below 44px');
+ assert.ok(bounds.x>=0&&bounds.x+bounds.width<=390,'PLAY THIS horizontally clipped');
+ await tap(object);
+ const saved=await initial();
+ assert.equal(saved.active?.events?.length||0,0,'Object selection must not fabricate Encounter');
+ assert.equal(await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),'chest-row','selected exact Object changed');
+ await page.screenshot({path:'/tmp/axis-832-object-'+ENGINE+'.png',fullPage:true});
+ // Isolate real Flow entry from the Object context without creating a fake owner.
+ await page.evaluate(()=>document.querySelector('#eqSheet')?.classList.remove('show'));
+ const flow={schema:'axis.flow.v1',id:'axis832-flow-browser',title:'今天的练习',steps:[{id:'first',objectRef:'chest-row'}]};
+ const compiled=await page.evaluate(flow=>{const a=window.__AXIS_FLOW_RUNTIME__;a.saveFlow(flow);window.__AXIS_821_FLOW_SURFACE__.render();return window.__AXIS_832_PLAY_THIS__.compile('flow',flow.id)},flow);
+ assert.equal(compiled.steps[0].objectRef,'chest-row');
+ const home=page.locator('#axis821FlowHome [data-axis-flow-start="axis832-flow-browser"]');
+ await page.evaluate(()=>document.querySelectorAll('.sheetWrap.show').forEach(x=>x.classList.remove('show')));
+ await page.waitForFunction(()=>document.querySelector('#axis821FlowHome [data-axis-flow-start="axis832-flow-browser"]')!==null);
+ await tap(home);
+ const result=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),ready:window.__AXIS_831_PLAYABLE__?.version,quickOwner:window.__AXIS_QUICK_RECORD__?.owner,second:window.__AXIS_832_PLAY_THIS__?.startFlow('axis832-flow-browser')}));
+ assert.equal(result.run?.flowRef,flow.id,'real canonical FlowRun must own launched practice');
+ assert.equal(result.ready,'8.31');assert.equal(result.quickOwner,'v61');
+ assert.equal(result.run?.steps?.[0]?.objectRef,'chest-row');
+ assert.equal(result.second,true,'same Flow continues through existing owner without relaunch');
+ const events=(await initial()).active?.events||[];
+ assert.ok(events.length<=1,'duplicate start must not write multiple Encounters');
+ await page.screenshot({path:'/tmp/axis-832-flow-'+ENGINE+'.png',fullPage:true});
+
+console.log('[AXIS 8.32c acceptance] exact custom Object / offline entry / cross-Flow conflict / reload / viewport geometry');
+const reset832=async(customs=[])=>{
+ await page.evaluate(items=>{localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:items,memories:[]},prefs:{scanSeconds:3}}));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}))},customs);
+ await page.reload({waitUntil:'domcontentloaded'});await wait();
+};
+const custom832={id:'custom-practice-832',name:'非常长的自定义训练设备名称 测试精确身份',type:'cardio',pattern:'cardio',muscles:['心肺'],effect:'custom exact identity',custom:true,metricSchema:[{key:'duration',label:'时间',type:'duration',unit:'分钟',step:1,min:0},{key:'resistance',label:'阻力',type:'number',unit:'档',step:.5,min:0}],metricSchemaVersion:'8.21',executionMode:'timed',recording:{version:2,metrics:['duration','resistance'],executionMode:'timed'}};
+await reset832([custom832]);
+assert.equal(await page.evaluate(()=>window.__AXIS_832_PLAY_THIS__?.compile('object','custom-practice-832')?.source?.ref),'custom-practice-832','P02 custom compiler did not preserve exact identity');
+assert.equal(await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick')),true);
+await page.locator('#eqSearch').fill('非常长的自定义训练设备名称');
+const customButton=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="custom-practice-832"]').first();
+await customButton.waitFor({state:'visible',timeout:5000});
+for(const width of [320,360,390,430]){
+ await page.setViewportSize({width,height:844});
+ const box=await customButton.boundingBox();
+ assert.ok(box&&box.width>0&&box.height>=44&&box.x>=-1&&box.x+box.width<=width+1,'P15 Object CTA clipped at '+width+'px: '+JSON.stringify(box));
+ const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+ assert.ok(overflow<=1,'P15 Object horizontal overflow '+width+': '+overflow);
+ await page.screenshot({path:'/tmp/axis-832c-custom-'+width+'-'+ENGINE+'.png',fullPage:true});
+}
+await page.evaluate(()=>{document.documentElement.lang='en';document.querySelector('#eqSearch')?.dispatchEvent(new Event('input',{bubbles:true}))});
+assert.equal((await customButton.innerText()).trim(),'Start practice','localized custom action is inconsistent');
+const started=Date.now();await tap(customButton);
+await page.waitForFunction(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id==='custom-practice-832',undefined,{timeout:4500});
+await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:5500});
+assert.equal(await page.locator('#scanSheet.show').count(),1,'P02 custom Object did not open the existing recorder');
+await page.waitForFunction(()=>document.querySelector('#scanSheet')?.contains(document.activeElement),undefined,{timeout:1500});
+const handoff=await page.evaluate(()=>({picker:document.querySelector('#eqSheet')?.classList.contains('show'),captureOwners:document.querySelectorAll('[data-axis-capture-owner]').length,recorderNodes:document.querySelectorAll('#scanSheet').length,focusInside:document.querySelector('#scanSheet')?.contains(document.activeElement)}));
+assert.equal(handoff.picker,false,'P19 Object sheet remains over Recorder');
+assert.equal(handoff.recorderNodes,1,'P19 duplicate recorder overlay');
+assert.equal(handoff.captureOwners,1,'P19 duplicate Recorder owner');
+assert.equal(handoff.focusInside,true,'P19 keyboard focus failed to hand off into Recorder');
+console.log('[AXIS 8.32 P19] PASS · one Recorder owner and overlay, focus transferred from Object picker');
+const customFact=await initial();
+assert.equal(customFact.active?.events?.length||0,0,'P02 Object entry fabricated a canonical Encounter');
+console.log('[AXIS 8.32c acceptance] P02/P15 custom exact Object + visual width + English PASS · action-to-owner elapsed ms='+String(Date.now()-started));
+await reset832([]);
+await context.setOffline(true);
+const offlineStart=await page.evaluate(()=>window.__AXIS_832_PLAY_THIS__?.startObject('chest-row'));
+assert.equal(offlineStart,true,'P13 local Object action requires online services');
+assert.equal(await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),'chest-row','P13 offline Object identity changed');
+assert.equal((await initial()).active?.events?.length||0,0,'P13 offline entry fabricated Encounter');
+await context.setOffline(false);
+await reset832([]);
+const flowA={schema:'axis.flow.v1',id:'axis832c-flow-a',title:'A Practice',steps:[{id:'a1',objectRef:'chest-row'}]};
+const flowB={schema:'axis.flow.v1',id:'axis832c-flow-b',title:'B Practice',steps:[{id:'b1',objectRef:'lat-pulldown'}]};
+const runA=await page.evaluate(([a,b])=>{const api=window.__AXIS_FLOW_RUNTIME__;api.saveFlow(a);api.saveFlow(b);return window.__AXIS_832_PLAY_THIS__.startFlow(a.id)},[flowA,flowB]);
+assert.equal(runA,true,'P04 first Flow launch was rejected');
+await page.waitForFunction(()=>!!document.querySelector('#scanSheet.show,#v87Now.show,#axis821FlowHome [data-axis-flow-record]'),undefined,{timeout:5000});
+const entryOwner=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),selected:window.__AXIS_SELECTED_EQUIPMENT__?.()?.id,recorder:document.querySelector('#scanSheet')?.classList.contains('show')}));
+assert.equal(entryOwner.run?.flowRef,flowA.id,'P04 accepted Flow is not owned by canonical FlowRun');
+assert.ok(entryOwner.recorder||entryOwner.run?.currentEncounterId||entryOwner.selected==='chest-row','P04 user cannot reach the real owner within two actions');
+const runningBefore=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),events:JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.length||0}));
+assert.equal(runningBefore.run?.flowRef,flowA.id);
+const other=await page.evaluate(id=>window.__AXIS_832_PLAY_THIS__.startFlow(id),flowB.id);
+assert.equal(other,false,'P06 second Flow must not replace a different running Flow');
+const runningAfter=await page.evaluate(()=>({run:window.__AXIS_FLOW_RUNTIME__?.run?.(),events:JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.length||0}));
+assert.equal(runningAfter.run?.flowRef,flowA.id);
+assert.equal(runningAfter.events,runningBefore.events,'P06 different Flow generated Encounter');
+await page.reload({waitUntil:'domcontentloaded'});await wait();
+assert.equal(await page.evaluate(()=>window.__AXIS_FLOW_RUNTIME__?.run?.()?.flowRef),flowA.id,'P12 reload lost canonical FlowRun');
+console.log('[AXIS 8.32c acceptance] P06/P12/P13 foreign Flow guard + reload + real offline PASS');
+
+
+console.log('[AXIS 8.32c] integrity/accessibility additional browser cases');
+const nativeTitle=await page.evaluate(()=>window.__AXIS_873_LIBRARY__?.find(x=>x.id==='chest-row')?.name);
+assert.ok(nativeTitle,'P03 native truth absent');
+await reset832([{...custom832,id:'custom-832-shared-name',name:nativeTitle}]);
+const identities=await page.evaluate(()=>({native:window.__AXIS_832_PLAY_THIS__.compile('object','chest-row').source.ref,custom:window.__AXIS_832_PLAY_THIS__.compile('object','custom-832-shared-name').source.ref}));
+assert.deepEqual(identities,{native:'chest-row',custom:'custom-832-shared-name'},'P03 matching names must retain exact IDs');
+assert.equal(await page.evaluate(()=>window.__AXIS_832_PLAY_THIS__.startObject('custom-832-shared-name')),true);
+assert.equal(await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),'custom-832-shared-name');
+assert.equal((await initial()).active?.events?.length||0,0,'P03 identity collision created Encounter');
+await reset832([]);
+assert.equal(await page.evaluate(()=>window.__AXIS_832_PLAY_THIS__.startObject('removed-832-object')),false,'P09 missing Object silently substituted');
+assert.equal((await initial()).active?.events?.length||0,0,'P09 missing Object wrote Encounter');
+const invalidFlows=await page.evaluate(()=>{
+ const owner=window.__AXIS_FLOW_RUNTIME__,entry=window.__AXIS_832_PLAY_THIS__;
+ return [
+  ['empty',[]],
+  ['too-long',Array.from({length:33},(_,i)=>({id:'s'+i,objectRef:'chest-row'}))],
+  ['missing-object',[{id:'s1',objectRef:'removed-832-object'}]]
+ ].map(([key,steps])=>{
+  const f={schema:'axis.flow.v1',id:'invalid-832-'+key,title:key,steps};
+  try{owner.saveFlow(f)}catch(e){return{key,rejected:true,at:'save'};}
+  try{entry.compile('flow',f.id);return{key,rejected:false}}catch(e){return{key,rejected:true,at:'compile'};}
+ });
+});
+assert.ok(invalidFlows.length===3&&invalidFlows.every(x=>x.rejected),'P10 invalid Flow accepted: '+JSON.stringify(invalidFlows));
+assert.equal((await initial()).flowRun||null,null,'P10 invalid Flow launched');
+const preCancel=await initial();
+assert.equal(await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick')),true);
+await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:4500});
+await page.locator('#eqSheet [data-close="eqSheet"]').first().click();
+await page.waitForFunction(()=>!document.querySelector('#eqSheet')?.classList.contains('show'),undefined,{timeout:4500});
+const postCancel=await initial();
+assert.equal(postCancel.active?.events?.length||0,preCancel.active?.events?.length||0,'P14 dismiss created Encounter');
+assert.equal(postCancel.flowRun||null,null,'P14 dismiss created FlowRun');
+assert.deepEqual(await page.evaluate(()=>Object.keys(localStorage).filter(k=>k.startsWith('axis_832'))),[],'P14 separate storage namespace');
+await page.emulateMedia({reducedMotion:'reduce'});
+assert.equal(await page.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches),true,'P16 reduced motion not honored');
+await page.evaluate(()=>{document.documentElement.lang='zh-Hant';});
+assert.equal(await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick')),true);
+await page.locator('#eqSearch').fill('胸托划船');
+const hant=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+await hant.waitFor({state:'visible',timeout:4500});
+assert.equal((await hant.innerText()).trim(),'開始練習','P17 zh-Hant action not localized');
+await hant.focus();
+await page.waitForFunction(()=>document.activeElement?.dataset?.axis832Object==='chest-row',undefined,{timeout:750});await page.waitForTimeout(90);assert.equal(await page.evaluate(()=>document.activeElement?.dataset?.axis832Object),'chest-row','P16 keyboard focus did not survive the catalog render window');
+await page.evaluate(()=>document.querySelector('#eqSearch')?.dispatchEvent(new Event('input',{bubbles:true})));
+assert.equal(await page.evaluate(()=>document.activeElement?.dataset?.axis832Object),'chest-row','P16 focused Object lost its keyboard position after catalog refresh');
+
+await page.setViewportSize({width:320,height:844});
+await page.evaluate(()=>{document.documentElement.style.setProperty('--axis-ui','24px');document.documentElement.lang='en';});
+await page.locator('#eqSearch').fill('胸托划船');
+const enlarged=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+await enlarged.waitFor({state:'visible',timeout:4500});
+const metrics=await enlarged.evaluate(el=>({size:parseFloat(getComputedStyle(el).fontSize),width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,documentOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,text:el.textContent?.trim()}));
+assert.equal(metrics.text,'Start practice','P16 enlarged text lost locale');
+assert.ok(metrics.size>=19&&metrics.height>=44,'P16 enlarged text did not scale inside 44px target: '+JSON.stringify(metrics));
+assert.ok(metrics.scrollWidth<=metrics.clientWidth+1&&metrics.scrollHeight<=metrics.clientHeight+1,'P16 enlarged label clipped: '+JSON.stringify(metrics));
+assert.ok(metrics.documentOverflow<=1,'P16 enlarged control caused horizontal overflow: '+JSON.stringify(metrics));
+await page.screenshot({path:'/tmp/axis-832c-enlarged-320-'+ENGINE+'.png',fullPage:true});
+console.log('[AXIS 8.32 P16] PASS · enlarged en label remains legible at 320 CSS pixels');
+
+console.log('[AXIS 8.32c] P03 P09 P10 P14 P16 P17 PARTIAL browser assertions PASS');
+
+ assert.deepEqual(errors,[],'browser errors in PLAY THIS path');
+ console.log('[AXIS 8.32 PLAY THIS '+ENGINE+'] PASS · real browser Object compile+selection · one-tap saved Flow owner delegation · exact ID · double request safe');
+}catch(e){await page.screenshot({path:'/tmp/axis-832-failure-'+ENGINE+'.png',fullPage:true}).catch(()=>{});console.error('[AXIS 8.32 browser]',JSON.stringify({engine:ENGINE,error:String(e),errors}));throw e}finally{await browser.close()}

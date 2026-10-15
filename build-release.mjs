@@ -77,6 +77,7 @@ const STEPS=[
   'prepare-829-recording-friction.mjs',
   'prepare-830-object-identity.mjs',
   'prepare-831-playable-runtime.mjs',
+  'prepare-832-play-this.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
@@ -102,6 +103,7 @@ const STEPS=[
   'postbuild-830-runtime-convergence.mjs',
   'postbuild-830-object-identity-contract.mjs',
   'postbuild-831-playable-contract.mjs',
+  'postbuild-832-play-this-contract.mjs',
   'verify-88-watermark.mjs'
 ];
 

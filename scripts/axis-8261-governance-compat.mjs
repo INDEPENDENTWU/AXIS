@@ -54,7 +54,7 @@ const downstream829=
   project?.product?.productionPullRequest===162&&project?.product?.candidatePullRequest===164&&
   decision?.sequence===27&&decision?.base_release==='8.28'&&decision?.release==='8.29'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime';
 const sealed829Stage=decision?.sequence===28&&decision?.base_release==='8.29'&&decision?.release==='8.29'&&decision?.decision==='confirm'&&decision?.change_class==='governance';
-const sealed831=(decision?.sequence===32&&decision?.base_release==='8.31'&&decision?.release==='8.31'&&decision?.decision==='confirm'&&decision?.change_class==='governance');
+const sealed831=(decision?.sequence===32&&decision?.base_release==='8.31'&&decision?.release==='8.31'&&decision?.decision==='confirm'&&decision?.change_class==='governance')||(decision?.sequence===33&&decision?.base_release==='8.31'&&decision?.release==='8.32'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime');
 const downstream831=(decision?.sequence===31&&decision?.base_release==='8.30'&&decision?.release==='8.31'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime' )||sealed831;
 const sealed830=(decision?.sequence===30&&decision?.base_release==='8.30'&&decision?.release==='8.30'&&decision?.decision==='confirm'&&decision?.change_class==='governance')||downstream831;
 const downstream830=(decision?.sequence===29&&decision?.base_release==='8.29'&&decision?.release==='8.30'&&decision?.decision==='bump'&&decision?.change_class==='product-runtime')||sealed830;
@@ -87,6 +87,13 @@ if(sealed827){
  if(cert.productRuntimeSha!==exact||cert.productPullRequest!==170||project.product.lastSealedRelease!=='8.31'||project.product.productionRuntimeSha!==exact||project.product.productionPullRequest!==170||production.sealedRelease!=='8.31'||production.candidateStatus!=='production-sealed'||production.latestDeploymentIsAuthority!==false)fail('8.31 sealed exact-runtime state');
  for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==exact)fail('8.31 exact sealed provider '+provider);
  if(production.vercel?.deploymentId!==cert.vercel.deploymentId||production.edgeOne?.deploymentId!==cert.edgeOne.deploymentId||production.customDomain?.verificationRunId!==cert.customDomain.verificationRunId)fail('8.31 sealed provider evidence drift');
+}else if(sealed831&&project?.product?.productionRelease==='8.32'){
+ const exact='dddce5401e80087a7ccceb43ec466f1ad7abb505',cert=json('governance/production-certifications/8.31.json');
+ if(decision?.sequence!==33||decision?.decision!=='bump'||decision?.release!=='8.32'||decision?.change_class!=='product-runtime')fail('8.32 candidate version decision drift');
+ if(cert.productRuntimeSha!==exact||cert.productPullRequest!==170||project.product.releaseStatus!=='candidate'||project.product.lastSealedRelease!=='8.31'||project.product.productionRuntimeSha!==exact||project.product.productionPullRequest!==170||project.product.candidatePullRequest!==174)fail('8.32 lost certified 8.31 product authority');
+ if(production.sealedRelease!=='8.31'||production.candidateRelease!=='8.32'||production.candidateStatus!=='pending-exact-head-and-merged-main-certification'||production.latestDeploymentIsAuthority!==false)fail('8.32 erroneously claims Production');
+ for(const provider of ['vercel','edgeOne','customDomain'])if(production?.[provider]?.sourceSha!==exact)fail('8.32 lost certified 8.31 provider '+provider);
+ if(production.vercel?.deploymentId!==cert.vercel.deploymentId||production.edgeOne?.deploymentId!==cert.edgeOne.deploymentId||production.customDomain?.verificationRunId!==cert.customDomain.verificationRunId)fail('8.32 predecessor provider evidence drift');
 }else if(downstream831&&project?.product?.productionRelease==='8.31'){
   const sha='eb38bb5cf3c47b6bdee44c5d0f2588f610aced6f';
   if(project.product.releaseStatus!=='candidate'||project.product.lastSealedRelease!=='8.30'||project.product.productionRuntimeSha!==sha||project.product.productionPullRequest!==167||project.product.candidatePullRequest!==170)fail('8.31 successor discarded 8.30 product authority');
@@ -115,7 +122,7 @@ if(continuity?.status!=='production-sealed-8.26-inherited')fail('8.26 inherited 
 for(const key of ['pausedTruthOwnerUnchanged','restStateBreathingSpace','restStateGrouped','restStateTonalCue','reducedMotionSafe'])if(rest?.[key]!==true)fail(`8.26.1 rest-state capability missing ${key}`);
 if(!String(rest?.status||'').startsWith('production-sealed-8.26.1'))fail('8.26.1 inherited rest-state seal drift');
 
-if(!['8.26.5','8.27','8.28','8.29','8.30','8.31'].includes(owners?.baselineRelease))fail('owner registry baseline drift');
+if(!['8.26.5','8.27','8.28','8.29','8.30','8.31','8.32'].includes(owners?.baselineRelease))fail('owner registry baseline drift');
 const continuityOwner=owners.owners?.find(x=>x.capability==='active-continuity-826');
 const restOwner=owners.owners?.find(x=>x.capability==='active-rest-state-8261');
 if(continuityOwner?.status!=='presentation-and-coordination-production-sealed'||continuityOwner?.storage!=='none')fail('8.26 sealed owner registry drift');

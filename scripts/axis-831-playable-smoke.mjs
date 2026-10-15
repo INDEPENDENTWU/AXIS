@@ -23,6 +23,12 @@ assert.deepEqual(spec.steps.map(x=>x.objectRef),['chest-row','custom-identity-pr
 assert.deepEqual(spec.steps.map(x=>x.repeat),[2,1]);
 assert.equal(spec.steps[1].executionMode,'timed');
 assert.equal(JSON.stringify(flow),flowCopy);
+const zeroMetricComplete={id:'legacy-complete',name:'Complete without numeric metrics',type:'strength',executionMode:'complete',metricSchema:[]};
+const completion=compilePlayableSpec({playableId:'legacy-complete',source:{kind:'object',objectId:'legacy-complete'},objects:[zeroMetricComplete]});
+assert.equal(completion.steps[0].executionMode,'complete');
+assert.deepEqual(completion.steps[0].metricSchemaSnapshot.metrics,[],'complete intent must not invent numeric measurements');
+assert.equal(assertPlayableSpec(completion).source.ref,'legacy-complete');
+assert.throws(()=>assertPlayableSpec({...completion,steps:[{...completion.steps[0],executionMode:'sets'}]}),/metric schema missing/,'non-complete execution must still require real metrics');
 const reject=(cb,label)=>assert.throws(cb,Error,label);
 reject(()=>compilePlayableSpec({playableId:'wrong',source:{kind:'object',objectId:'nonexistent'},objects}),'no invented Object');
 reject(()=>compilePlayableSpec({playableId:'wrong',source:{kind:'object',objectId:'row-family'},objects}),'no baseId fallback');

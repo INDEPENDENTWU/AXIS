@@ -18,6 +18,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+      - name: Assemble governed candidate for static compatibility
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          import {execFileSync} from 'node:child_process';
+          const decision=JSON.parse(fs.readFileSync('governance/version-decision.json','utf8'));
+          const state=JSON.parse(fs.readFileSync('governance/project-state.json','utf8'));
+          if(decision.decision==='bump' && decision.release!==state.product?.productionRelease){
+            execFileSync(process.execPath,['build-release.mjs'],{stdio:'inherit'});
+          }
+          NODE
       - name: Verify inherited server, compiler and smoke syntax
         run: |
           node --input-type=module --check < api/analyze.js
