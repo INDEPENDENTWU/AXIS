@@ -19,34 +19,44 @@ const boot=`<script id="axisOriginBoot">
  const sheet=document.getElementById('settingsSheet');
  if(!report||!sheet)return;
  const host=location.hostname;
- const provider=/(^|\\.)vercel\\.app$/i.test(host)?'Vercel':/(^|\\.)edgeone\\.cool$/i.test(host)?'EdgeOne':host==='axis.juele.fun'?'正式網域':'目前網域';
- const place=host+' · '+provider;
- let requested=false;
+ const provider=/(^|\\.)vercel\\.app$/i.test(host)?'Vercel':/(^|\\.)edgeone\\.cool$/i.test(host)?'EdgeOne':null;
+ const terms={
+  en:{label:'Version and website source',official:'Official domain',generic:'Current domain',pending:'Checking version…',version:'Version',unstamped:'Not stamped',mismatch:'Version mismatch; check cache',unavailable:'Cannot read version; website origin confirmed'},
+  hant:{label:'版本與網站來源',official:'正式網域',generic:'目前網域',pending:'正在核對版本…',version:'版本',unstamped:'未標記',mismatch:'版本不一致，請檢查快取',unavailable:'無法讀取網站版本；來源網域仍可確認'},
+  hans:{label:'版本与网站来源',official:'正式域名',generic:'当前域名',pending:'正在核对版本…',version:'版本',unstamped:'未标记',mismatch:'版本不一致，请检查缓存',unavailable:'无法读取网站版本；来源域名仍可确认'}
+ };
+ let requested=false,version='',source='',status='pending';
  const fmt=s=>String(s||'').trim();
- const render=(line,status)=>{
-   report.textContent=place+' · '+line;
-   report.dataset.axisOriginState=status;
+ const strings=()=>{const l=(document.documentElement.lang||'').toLowerCase();return terms[l.startsWith('en')?'en':l.startsWith('zh-hant')||l.startsWith('zh-tw')?'hant':'hans']};
+ const render=(value)=>{
+  status=value;
+  const t=strings(),place=host+' · '+(provider||(host==='axis.juele.fun'?t.official:t.generic));
+  const stamped=/^[a-f0-9]{40}$/i.test(source)?source.slice(0,9):t.unstamped;
+  const line=value==='pending'?t.pending:value==='unavailable'?t.unavailable:t.version+' '+version+' · '+stamped+(value==='mismatch'?' · '+t.mismatch:'');
+  report.setAttribute('aria-label',t.label);
+  report.textContent=place+' · '+line;
+  report.dataset.axisOriginState=value;
  };
  async function inspect(){
   if(requested)return;requested=true;
-  render('正在核對版本…','pending');
+  render('pending');
   try{
    const url=new URL('/axis-build.json',location.origin);
    const response=await fetch(url.href,{cache:'no-store',credentials:'same-origin'});
    if(!response.ok)throw Error('manifest unavailable');
    const info=await response.json();
-   const version=fmt(info.version),source=fmt(info.sourceCommit);
+   version=fmt(info.version);source=fmt(info.sourceCommit);
    if(!/^\\d+\\.\\d+(?:\\.\\d+)?$/.test(version))throw Error('manifest version unavailable');
    const runtime=fmt(window.__AXIS_RELEASE__||document.documentElement.dataset.axisCanonical);
-   const stamped=/^[a-f0-9]{40}$/i.test(source)?source.slice(0,9):'未標記';
    const drift=runtime&&runtime!==version;
-   render('版本 '+version+' · '+stamped+(drift?' · 版本不一致，請檢查快取':''),drift?'mismatch':'ready');
+   render(drift?'mismatch':'ready');
   }catch{
-   render('無法讀取網站版本；來源網域仍可確認','unavailable');
+   render('unavailable');
   }
  }
  const observe=new MutationObserver(()=>{if(sheet.classList.contains('show'))inspect()});
  observe.observe(sheet,{attributes:true,attributeFilter:['class']});
+ new MutationObserver(()=>render(status)).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
  if(sheet.classList.contains('show'))inspect();
 })();
 </script>`;
