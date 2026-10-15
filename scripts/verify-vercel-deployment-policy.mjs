@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
 
 const fail=(message)=>{throw new Error('[AXIS deployment policy] '+message)};
 const config=JSON.parse(fs.readFileSync('vercel.json','utf8'));
@@ -10,6 +11,16 @@ for(const required of ['workflow_dispatch:',"ref: main",'AXIS_RELEASE_SHA:', 'AX
  if(!workflow.includes(required))fail('dual-provider official admission missing '+required);
 }
 if(!fs.existsSync('scripts/axis-vercel-official-release.mjs'))fail('exact Vercel Production trigger missing');
+const preflight='node scripts/axis-dual-provider-preflight.mjs --check';
+const vPublish='node scripts/axis-vercel-official-release.mjs';
+const ePublish='node scripts/axis-edgeone-fallback-release.mjs --publish';
+const start=workflow.indexOf(preflight),afterV=workflow.indexOf(vPublish),afterE=workflow.indexOf(ePublish);
+if(start<0||afterV<0||afterE<0||!(start<afterV&&afterV<afterE))fail('existing-provider read-only preflight must run before both Production publishers');
+if(!workflow.includes('AXIS_MAKERS_SDK_ROOT=')||!workflow.includes('AXIS_EDGEONE_SITE=' )&&!fs.readFileSync('scripts/axis-dual-provider-preflight.mjs','utf8').includes('AXIS_EDGEONE_SITE='))fail('EdgeOne token issuer site not pinned before publish');
+const eScript=fs.readFileSync('scripts/axis-edgeone-fallback-release.mjs','utf8');
+if(!eScript.includes("'--site',providerSite")||!eScript.includes('axis-provider-preflight.json'))fail('EdgeOne CLI must require preflight evidence and explicit token region');
+execFileSync(process.execPath,['scripts/axis-dual-provider-preflight.mjs','--self-test'],{stdio:'inherit',timeout:15000});
+
 // Verify the YAML job condition as an independent line. A comment containing
 // a literal "\n    if:" must never be misclassified as a disabled deployment.
 const hasDisabledJob=(source,job)=>{
