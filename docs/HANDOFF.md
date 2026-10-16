@@ -1,6 +1,24 @@
 # AXIS Engineering Handoff
 
-## Current unreleased release-candidate handoff (2026-10-15)
+## Current work — 8.32 Light semantic-control correction (2026-10-17)
+
+**Public runtime:** AXIS 8.32 on the original Vercel + EdgeOne providers and `axis.juele.fun`, exact source `5ea6bab7ebad7daf5868e32f1c98209a35647231`; [read-only parity run #38788029148](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38788029148). This public runtime remains in place during this candidate and retains existing factual data and the 8.31 rollback precedent. The independent 8.32 Governance Seal and physical-device signoff are still open in #177.
+
+**Active bounded candidate:** PR #179, branch `fix/832-light-semantic-controls` targeting `main`; root issue #178. Actual iPhone screenshots show repeatable dark-on-dark Save/PDF/hold-to-finish and selected numeric/preset controls, inadvertent white input tiles, cold/warm Report surface split and insufficient camera fallback contrast in Light.
+
+**Scope:** Adjust only presentation in the existing last-bundled `axis-832d14-theme.css`, with consistent Light foreground/surface/selected/disabled pairs. Preserve Dark, media and print contracts, original recorder geometry, single Encounter/Active/Flow/PLAY THIS owner and all user data. First CI candidate exposed a longstanding postbuild historical guard against late `.axis821MetricControl{` geometry re-ownership; revised CSS explicitly restricts changes to presentation-only selectors and never changes the old recorder's base geometries.
+
+**Executable proof:** New `scripts/axis-832d19-light-browser-smoke.mjs`, called from 8.32 GitHub Chromium/pinned WebKit workflow and the isolated local gate. It audits actual compiled CSS computed contrast, selected and disabled states, number input transparency, screen report/PDF colors and performs an actual Object → original Recorder → saved Encounter → Active owner path. Await exact latest SHA test success; do not report a passing test before observing its result. Screenshots and iPhone hands-on optical checks remain separately required.
+
+**Separate PLAY THIS product distinction:** 8.32 Object Start primarily delegates to the same Quick Recorder as legacy "記下", while saved Flow has bounded FlowRun coordination. This is real but is not a sufficiently differentiated guided-execution user experience. Future independent product work should make intent → active execution → ongoing next step → real recorded outcome legible without cloning Recorder, timers or facts. Do not conflate this with a Light styling patch or falsely claim PLAY THIS already offers a separate complete execution journey.
+
+**Merge / release policy:** Keep PR #179 Draft until source build, all inherited CI, real browser color/interaction, and iPhone optical acceptance clear. This PR does not authorize Production mutation, origin switch, migration or new Governance Seal. Fix production bugs separately after the correct exact-head evidence.
+
+---
+
+## Historical handoff (recorded before 8.32 public promotion; superseded for current deploy status)
+
+### Prior candidate handoff (2026-10-15, historical)
 
 The immutable certified public Product/runtime remains **8.31**, source `dddce5401e80087a7ccceb43ec466f1ad7abb505`. AXIS **8.32 is not deployed, merged or sealed**.
 
