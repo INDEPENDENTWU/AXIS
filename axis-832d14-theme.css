@@ -78,3 +78,197 @@ html body .nav.v82Nav{
   isolation:isolate!important;
 }
 html[data-axis-theme="light"] body .nav.v82Nav{background:var(--bg)!important}
+
+
+/*
+ * AXIS 8.32 light-mode semantic-control convergence (P17).
+ * One isolated late theme layer; dark rendering, factual state, record/media
+ * ownership and print/PDF contracts stay unchanged.
+ *
+ * Inherited dark CSS uses var(--text) as a dark button background while still
+ * hardcoding #0a0b0d as its foreground. Under Light, --text is itself dark.
+ * Surface and selection pairs are therefore defined together below.
+ */
+html[data-axis-theme="light"]{
+  --axis-light-on-solid:#ffffff;
+  --axis-light-on-paper:#1c2432;
+  --axis-light-control-bg:#f0f2f7;
+  --axis-light-control-border:#cfd6e2;
+  --axis-light-muted-ink:#525f72;
+  --axis-light-paper:#ffffff;
+  --axis-light-report-paper:#f1f3f7;
+}
+
+/* Shared primary controls: inherited dark-on-dark label was unreadable.
+   Preserve true disabled/pending semantics, never artificially enable a control. */
+html[data-axis-theme="light"] :is(.saveRecord,.captureNow){
+  background:var(--text)!important;
+  color:var(--axis-light-on-solid)!important;
+  border-color:transparent!important;
+}
+html[data-axis-theme="light"] :is(.saveRecord,.captureNow) :is(span,b,strong,small,i){
+  color:inherit!important;
+}
+html[data-axis-theme="light"] :is(.saveRecord,.captureNow):is(:disabled,[aria-disabled="true"]){
+  background:var(--s3)!important;
+  color:var(--axis-light-muted-ink)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:none!important;
+}
+html[data-axis-theme="light"] #scanSheet .captureNow:not(:disabled){
+  background:var(--accent)!important;
+  color:#fff!important;
+}
+
+/* Choice/segmented controls: selected needs a matching foreground, not the
+   legacy black glyph or pale dark-theme lavender. */
+html[data-axis-theme="light"] :is(.quickValues,.choiceStrip,.seg) button.active,
+html[data-axis-theme="light"] :is(.quickValues,.choiceStrip,.seg) button[aria-pressed="true"],
+html[data-axis-theme="light"] #settingsSheet .miniSeg button.active,
+html[data-axis-theme="light"] #reportSheet .axis821ReportRangeBox>button.active{
+  background:var(--accent)!important;
+  color:#fff!important;
+  border-color:var(--accent)!important;
+}
+html[data-axis-theme="light"] :is(.quickValues,.choiceStrip,.seg) button.active :is(b,span,small,i),
+html[data-axis-theme="light"] #settingsSheet .miniSeg button.active :is(b,span,small,i){
+  color:inherit!important;
+}
+html[data-axis-theme="light"] :is(.quickValues,.choiceStrip,.seg,.miniSeg) button:not(.active):not(:disabled){
+  color:var(--muted)!important;
+}
+html[data-axis-theme="light"] :is(.quickValues,.choiceStrip,.seg) button:is(:disabled,[aria-disabled="true"]),
+html[data-axis-theme="light"] #settingsSheet .miniSeg button:is(:disabled,[aria-disabled="true"]){
+  background:var(--s3)!important;
+  color:var(--muted)!important;
+  opacity:1!important;
+  border:1px dashed var(--line)!important;
+}
+
+/* Continuous numeric fields should render as a single coherent stepper, not
+   a white input tile accidentally introduced by the global Light input rule. */
+html[data-axis-theme="light"] .numberMain input,
+html[data-axis-theme="light"] :is(.axis821Stepper,.axis821Direct) input{
+  background:transparent!important;
+  background-color:transparent!important;
+  color:var(--text)!important;
+  -webkit-appearance:none;
+  appearance:none;
+  box-shadow:none!important;
+  border:0!important;
+  font-variant-numeric:tabular-nums;
+}
+html[data-axis-theme="light"] .numberMain em,
+html[data-axis-theme="light"] .axis821Stepper small{
+  color:var(--muted)!important;
+}
+html[data-axis-theme="light"] .axis821MetricControl{
+  background:var(--s2)!important;
+  color:var(--text)!important;
+}
+html[data-axis-theme="light"] :is(.axis821Stepper>div,.axis821Direct){
+  background:var(--s1)!important;
+  border:1px solid var(--line2)!important;
+}
+html[data-axis-theme="light"] .axis821Stepper>button{
+  background:transparent!important;
+  color:var(--text)!important;
+}
+html[data-axis-theme="light"] :is(.axis821Presets,.axis821Rating) button{
+  background:var(--s1)!important;
+  color:var(--muted)!important;
+  border:1px solid var(--line2)!important;
+  min-height:44px;
+}
+html[data-axis-theme="light"] :is(.axis821Presets,.axis821Rating) button.active,
+html[data-axis-theme="light"] :is(.axis821Presets,.axis821Rating) button[aria-pressed="true"],
+html[data-axis-theme="light"] .axis821Toggle button.active,
+html[data-axis-theme="light"] .axis821CustomMetricTypes button.active,
+html[data-axis-theme="light"] .axis821MetricGroups button.active{
+  background:var(--accent)!important;
+  border-color:var(--accent)!important;
+  color:#fff!important;
+}
+html[data-axis-theme="light"] .axis821Toggle{
+  background:var(--s3)!important;
+}
+html[data-axis-theme="light"] .axis821Toggle button:not(.active){
+  color:var(--muted)!important;
+}
+html[data-axis-theme="light"] .axis821MetricGroups button.active :is(b,span){
+  color:#fff!important;
+}
+html[data-axis-theme="light"] .axis821MetricGroups button:not(.active) :is(b,span){
+  color:var(--muted)!important;
+}
+html[data-axis-theme="light"] .axis821CustomMetricFields input{
+  color:var(--text)!important;
+  background:var(--s1)!important;
+  border:1px solid var(--line2)!important;
+}
+html[data-axis-theme="light"] .axis821CustomMetricAdd{
+  background:var(--accent)!important;
+  color:#fff!important;
+}
+
+/* Physical iPhone Active screen: the inherited hold-to-finish shell was a
+   dark gradient with a muted dark label in Light. Keep the hold progress
+   pseudo-element and hit target but use the same neutral visual language. */
+html[data-axis-theme="light"] body #v87Now.axis821ActiveStage .axis821StageFinish{
+  background:var(--s1)!important;
+  color:var(--text)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:none!important;
+}
+html[data-axis-theme="light"] body #v87Now.axis821ActiveStage .axis821StageFinish :is(span,b,strong,small){
+  color:var(--text)!important;
+}
+html[data-axis-theme="light"] body #v87Now.axis821ActiveStage .axis821StageFinish:before{
+  background:conic-gradient(from -90deg,rgba(56,74,200,.34) var(--p,0deg),rgba(56,74,200,.05) 0)!important;
+}
+html[data-axis-theme="light"] body #v87Now.axis821ActiveStage .axis821StageFinish:active{
+  background:var(--s2)!important;
+  border-color:var(--accent)!important;
+  color:var(--text)!important;
+}
+html[data-axis-theme="light"] body #v87Now.axis821ActiveStage .axis821StageFinish:focus-visible{
+  outline:3px solid var(--accent)!important;
+  outline-offset:2px!important;
+}
+
+/* Report: the on-screen preview follows the cool neutral AXIS palette; print
+   intentionally retains its independent white-paper export treatment. */
+html[data-axis-theme="light"] body:not(.axis821ReportPrinting) #reportSheet .reportPreview{
+  background:var(--axis-light-report-paper)!important;
+  color:var(--text)!important;
+  border:1px solid var(--line2)!important;
+}
+html[data-axis-theme="light"] body:not(.axis821ReportPrinting) #reportSheet .axis821ReportPreview :is(.axis821ReportHero b,.axis821ReportRows b,.axis821ReportSectionHead>b){
+  color:var(--text)!important;
+}
+html[data-axis-theme="light"] #reportSheet .axis821ReportRangeBox>button:not(.active):not(:disabled){
+  background:var(--s1)!important;
+  color:var(--text)!important;
+}
+html[data-axis-theme="light"] #reportSheet .axis821ReportIdentity{
+  color:var(--muted)!important;
+}
+
+/* Camera is a deliberately dark media canvas even when the app is Light.
+   Never apply paper text to the live photo/video preview. */
+html[data-axis-theme="light"] #scanSheet .cameraFallback{
+  color:#e8ebf5!important;
+}
+html[data-axis-theme="light"] #scanSheet .camera :is(.cameraFallback span,.cameraFallback b){
+  color:#e8ebf5!important;
+}
+
+/* Original Settings must not use old pale dark-mode active labels. */
+html[data-axis-theme="light"] #settingsSheet :is(.seg,.miniSeg) button:not(.active):not(:disabled){
+  background:var(--s2)!important;
+  color:var(--muted)!important;
+}
+html[data-axis-theme="light"] :is(.axis821Stepper>button,.axis821Presets button,.axis821Rating button,.saveRecord,.axis821StageFinish,.axis821CustomMetricAdd):focus-visible{
+  outline:3px solid var(--accent)!important;
+  outline-offset:2px!important;
+}
