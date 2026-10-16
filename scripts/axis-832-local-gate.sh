@@ -200,6 +200,12 @@ for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   AXIS_D17_ENGINES="$engine" AXIS_URL="http://127.0.0.1:$PORT" AXIS_D17_REPORT_DIR="$REPORT_DIR/axis-832d17-$engine" node scripts/axis-832d17-scroll-rail-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d17-$engine.log"
   test "$(grep -c '\[AXIS d17\] PASS' "$REPORT_DIR/axis-832d17-$engine.log")" -eq 6
 done
+# d19: real built Light contrast, numeric steppers, report and Active/Recorder.
+for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
+  AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" CHROME_BIN="$CHROME_BIN" AXIS_LIGHT_REPORT_DIR="$REPORT_DIR" node scripts/axis-832d19-light-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d19-$engine.log"
+  grep -Fq '[AXIS d19] PASS' "$REPORT_DIR/axis-832d19-$engine.log"
+done
+
 # d18: actual installed host/build identity is read-only, with stale/cache and offline fallbacks.
 for engine in ${AXIS_LOCAL_ENGINES:-chromium webkit}; do
   AXIS_ENGINE="$engine" AXIS_URL="http://127.0.0.1:$PORT" AXIS_D18_REPORT_DIR="$REPORT_DIR" CHROME_BIN="$CHROME_BIN" node scripts/axis-832d18-origin-browser-smoke.mjs 2>&1 | tee "$REPORT_DIR/axis-832d18-$engine.log"
