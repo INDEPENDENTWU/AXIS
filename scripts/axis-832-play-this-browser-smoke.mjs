@@ -16,10 +16,21 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});await wait();
  const bridge=await page.evaluate(()=>({play:window.__AXIS_832_PLAY_THIS__?.version,owner:window.__AXIS_832_PLAY_THIS__?.owner,newWriter:window.__AXIS_832_PLAY_THIS__?.newEncounterWriter,compile:window.__AXIS_832_PLAY_THIS__?.compile?.('object','chest-row')?.source?.ref}));
  assert.equal(bridge.play,'8.32');assert.equal(bridge.newWriter,false);assert.equal(bridge.compile,'chest-row','real in-browser compiler not available');
- const opened=await page.evaluate(()=>window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick')===true);
- assert.equal(opened,true,'canonical Object picker cannot be opened');
- await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#v8710Cards'));
+ // P21: Exercise the ACTUAL user-facing path, not just the internal picker API.
+ // This would catch an installed experience where users see only 記下 and
+ // cannot discover the product's card-level 開始練習 action.
+ const homeQuick=page.locator('#quickRecordBtn');
+ await homeQuick.waitFor({state:'visible',timeout:5500});
+ await tap(homeQuick);
+ await page.locator('#quickRecordSheet.show').waitFor({state:'visible',timeout:5500});
+ const allEquipment=page.locator('#quickRecordSheet #v8Other');
+ await allEquipment.waitFor({state:'visible',timeout:5500});
+ await page.screenshot({path:'/tmp/axis-832-quick-sheet-'+ENGINE+'.png',fullPage:false});
+ await tap(allEquipment);
+ await page.waitForFunction(()=>document.querySelector('#eqSheet')?.classList.contains('show')&&document.querySelector('#v8710Cards'),undefined,{timeout:7000});
+ assert.equal(await page.locator('#quickRecordSheet.show').count(),0,'Quick Record sheet obscures canonical Object picker');
  await page.locator('#eqSearch').fill('胸托划船');
+ await page.screenshot({path:'/tmp/axis-832-play-catalog-'+ENGINE+'.png',fullPage:false});
  const object=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
  await object.waitFor({state:'visible',timeout:5000});
  assert.equal(await page.locator('#v8710Cards [data-v877-lib="chest-row"]').count(),1,'original canonical picker selection disappeared');
