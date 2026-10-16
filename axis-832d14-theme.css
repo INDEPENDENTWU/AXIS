@@ -162,7 +162,7 @@ html[data-axis-theme="light"] .numberMain em,
 html[data-axis-theme="light"] .axis821Stepper small{
   color:var(--muted)!important;
 }
-html[data-axis-theme="light"] .axis821MetricControl{
+html[data-axis-theme="light"] :is(.axis821MetricControl){
   background:var(--s2)!important;
   color:var(--text)!important;
 }
@@ -170,7 +170,7 @@ html[data-axis-theme="light"] :is(.axis821Stepper>div,.axis821Direct){
   background:var(--s1)!important;
   border:1px solid var(--line2)!important;
 }
-html[data-axis-theme="light"] .axis821Stepper>button{
+html[data-axis-theme="light"] :is(.axis821Stepper)>button{
   background:transparent!important;
   color:var(--text)!important;
 }
@@ -178,7 +178,6 @@ html[data-axis-theme="light"] :is(.axis821Presets,.axis821Rating) button{
   background:var(--s1)!important;
   color:var(--muted)!important;
   border:1px solid var(--line2)!important;
-  min-height:44px;
 }
 html[data-axis-theme="light"] :is(.axis821Presets,.axis821Rating) button.active,
 html[data-axis-theme="light"] :is(.axis821Presets,.axis821Rating) button[aria-pressed="true"],
@@ -189,7 +188,7 @@ html[data-axis-theme="light"] .axis821MetricGroups button.active{
   border-color:var(--accent)!important;
   color:#fff!important;
 }
-html[data-axis-theme="light"] .axis821Toggle{
+html[data-axis-theme="light"] :is(.axis821Toggle){
   background:var(--s3)!important;
 }
 html[data-axis-theme="light"] .axis821Toggle button:not(.active){
