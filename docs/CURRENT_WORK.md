@@ -1,5 +1,19 @@
 # AXIS Current Work
 
+## 2026-10-17 — User-reported Light UI corrective candidate (PR #179)
+
+Production 8.32 is publicly served from source `5ea6bab7ebad7daf5868e32f1c98209a35647231` at Vercel, original EdgeOne and `axis.juele.fun`, with [read-only manifest/asset/API parity](https://github.com/INDEPENDENTWU/AXIS/actions/runs/38788029148). This is a deployment fact, **not** an independent 8.32 Governance Seal or complete real-device acceptance; six residual physical cases are tracked in #177.
+
+Current branch `fix/832-light-semantic-controls` / [PR #179](https://github.com/INDEPENDENTWU/AXIS/pull/179) addresses real iPhone screenshots in #178. Fix dark-on-dark Save/PDF and selected value controls, remove global-Light-induced nested white numeric input tiles, repair Active hold-to-finish and report/media text, maintain Dark and existing facts and workflows. Changes are strictly visual; no new product entry or state writer.
+
+**Required acceptance:** canonical exact-source build, source-owner geometry invariants, Chromium plus WebKit computed contrast and full Object→Recorder→Encounter→Active, five-screen/camera/report optical screenshots, native iPhone readback and explicit version decision. `scripts/axis-832d19-light-browser-smoke.mjs` is an additional test, not a substitute for real-device review. Do not merge or deploy the Draft patch until test and version-authority gates actually pass. The version authority forbids silent same-version product/UI bugfix: an approved patch-version strategy must be determined before promotion; do not mislabel product behavior as documentation/governance confirmation merely to make CI green.
+
+**PLAY THIS product finding:** Current Object PLAY THIS delegates to the original Recorder, unlike a distinctive guided/live start experience. Flow has canonical run/continue behavior but the user-visible Object action is too similar to “記下”. Keep this separate from Light correction; a later product design should distinguish prospective live practice from retrospective recording while retaining the same genuine Encounter facts and Active/Flow owners.
+
+---
+
+## Earlier 8.32 product-candidate handoff (historical, predates public promotion)
+
 **Governed milestone:** AXIS 8.32 — Local PLAY THIS.
 governed target branch: `main`.
 Bounded delivery branch: `feature/832-play-this-local-entry` · PR **#174**.
