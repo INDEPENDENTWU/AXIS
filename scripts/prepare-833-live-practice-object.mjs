@@ -17,9 +17,11 @@ app=app.slice(0,i)+addition+app.slice(j);
 const flowHead='function axis832StartFlow(id){';
 if(app.split(flowHead).length!==2)fail('existing Flow start hook drift');
 app=app.replace(flowHead,flowHead+"if(axisPreplayRead()){toast(axisPreplayText('conflict'));return false;}");
-const old="state.active.events.push(e);save();closeSheet('scanSheet');";
-if(app.split(old).length!==2)fail('single canonical Encounter commit anchor required');
-app=app.replace(old,"state.active.events.push(e);save();window.__AXIS_PREPLAY__?.confirmRecorded(e);closeSheet('scanSheet');");
+// Historical Flow convergence relocated the canonical event append into
+// axis821CommitEncounter. Hook only AFTER that established append+save pair.
+const old="state.active.events.push(e);save();";
+if(app.split(old).length!==2)fail('single canonical Encounter append+save anchor required');
+app=app.replace(old,old+"window.__AXIS_PREPLAY__?.confirmRecorded(e);");
 try{new Function(app)}catch(e){fail('generated app.js invalid: '+e.message)}
 write(file,app);
 let style=read(styleFile);
