@@ -1,5 +1,19 @@
 # AXIS Current Work
 
+## Current bounded development — PLAY THIS pre-Encounter P1 (2026-10-17)
+
+**Public AXIS remains 8.32**, exact canonical merged-main `5ea6bab7ebad7daf5868e32f1c98209a35647231` on original Vercel, EdgeOne and `axis.juele.fun`. Historical text below describes earlier 8.32 development and is superseded only for present-day deployment status; no independent 8.32 Governance Seal has been issued and #177 still covers physical acceptance.
+
+**Current draft PR #181** (`feature/833-live-practice-object` → `main`) addresses user-verified issue #180: old Object `開始練習` opened the same `記下` form. The new Object path creates a *prospective* `axis.preplay-intent.v1` draft, shows a real running timer with pause/resume, mode-aware manual set count, review, abandon and reload-resume, and only passes to the old Recorder when the user deliberately requests to save actual outcomes. Existing historical `axis821CommitEncounter` remains the single Encounter writer; the draft retires only via existing queued `axis821FlowAfterCanonicalCommit(e,intent)` after persisted canonical confirmation. The original FlowRun and v82/v87 post-Encounter Active remain separate authoritative owners; Flow cannot replace a prospective active Object practice. No second activity fact writer is introduced.
+
+**Tests / release state:** pure `node --test tests/axis-preplay-intent.test.mjs`, 8.32 inherited Object/Flow browser test updated to reject immediate `#scanSheet`, plus `scripts/axis-833-preplay-browser-smoke.mjs` in existing Chromium/pinned WebKit gate. Candidate Vercel Preview at `https://axis-61qjmcito-independentwus-projects.vercel.app` is READY at exact code commit `691cf92f6be5c48fcab35533ef129ee77a2a3340` (later docs may change PR head) with 8.32 source shell. The official Production sites are unchanged. Do not confuse the successful Preview build with fully passed browser/physical acceptance.
+
+**Admissibility:** version governance still rejects unversioned executable UI product changes. This Draft may not merge/publish before explicit approved release/version authority, exact-head gates, readback and physical iPhone PWA review. Also do not silently absorb Draft light-theme PR #179: it remains separately scoped and needs an explicit coherent merge/release plan. P1 is prospective **Object** practice; full guided Flow, rest automation, polish, offline conflict convergence and final user acceptance remain follow-ups, not falsely claimed complete.
+
+---
+
+## Previous 8.32 work record (historical)
+
 **Governed milestone:** AXIS 8.32 — Local PLAY THIS.
 governed target branch: `main`.
 Bounded delivery branch: `feature/832-play-this-local-entry` · PR **#174**.
