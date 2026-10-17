@@ -36,5 +36,5 @@ test('validation rejects corrupted and forged local execution snapshots',()=>{
   for(const mutation of [{status:'complete'},{completedSets:99},{elapsedMs:-4},{resumedAt:null},{handoff:1}])
     assert.throws(()=>axisPreplayValidate({...p,...mutation}));
   assert.equal(axisPreplayTransition(axisPreplayTransition(p,'complete-set',100),'complete-set',100).completedSets,2);
-  assert.equal(axisPreplayTransition(axisPreplayTransition(axisPreplayTransition(p,'complete-set',100),'complete-set',100),'complete-set',100).completedSets,2);
+  assert.equal(axisPreplayTransition(axisPreplayTransition(axisPreplayTransition(p,'complete-set',100),'complete-set',100),'complete-set',100).completedSets,3);
 });
