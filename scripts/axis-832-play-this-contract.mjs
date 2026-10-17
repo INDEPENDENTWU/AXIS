@@ -36,8 +36,9 @@ const live=read('runtime/axis-preplay-object.js');
 assert.ok(driver.includes('prepare-833-live-practice-object.mjs'),'new prospective practice build integration missing');
 for(const token of ['axisPreplayRead','axisPreplayWrite','axisPreplayTransition','axisPreplayConfirmRecorded','axis832StartObject(id)','axisPreplayOpen','axisPreplayHandle'])
  assert.ok(live.includes(token),'P1 real live practice runtime missing '+token);
-assert.ok(prospective.includes('state.active.events.push(e);save();')&&prospective.includes('confirmRecorded(e)'),
- 'prospective closure only after canonical append and save');
+assert.ok(prospective.includes('function axis821FlowAfterCanonicalCommit(e,intent){')&&prospective.includes('confirmRecorded(e)')&&
+ !prospective.includes('app.replace(old,old+"window.__AXIS_PREPLAY__'),
+ 'prospective closure must extend only the existing canonical postcommit callback');
 assert.ok(pure.includes('axis.preplay-intent.v1')&&!pure.includes('axis_v60_state')&&!pure.includes('axis_v8_meta'),
  'prospective draft cannot become a saved factual owner');
 for(const token of ["#axisPreplaySheet.show","legacy Recorder","axis_preplay_intent_v1"])
