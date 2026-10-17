@@ -99,7 +99,7 @@ function axisPreplayRender(){
  const count=$('#axisPreplayProgress');
  count.hidden=!['sets','rounds'].includes(p.mode);
  setText('#axisPreplaySetLabel',axisPreplayText('sets'));
- setText('#axisPreplaySetValue',p.completedSets+' / '+p.repeat);
+ setText('#axisPreplaySetValue',String(p.completedSets));
  const actions=$('#axisPreplayActions');
  const action=(id,label,cls='')=>'<button type="button" data-preplay="'+id+'" class="'+cls+'">'+label+'</button>';
  const review=p.status==='review';
@@ -108,7 +108,7 @@ function axisPreplayRender(){
    action('back',axisPreplayText('back'))+
    action('abandon',axisPreplayText('abandon'),'axisPreplayQuiet'):
    action(p.status==='running'?'pause':'resume',axisPreplayText(p.status==='running'?'pause':'resume'),'axisPreplaySecondary')+
-   (p.status==='running'&&['sets','rounds'].includes(p.mode)&&p.completedSets<p.repeat?action('complete-set',axisPreplayText('doneSet')):'')+
+   (p.status==='running'&&['sets','rounds'].includes(p.mode)&&p.completedSets<99?action('complete-set',axisPreplayText('doneSet')):'')+
    action('review',axisPreplayText('finish'),'axisPreplayPrimary')+
    action('abandon',axisPreplayText('abandon'),'axisPreplayQuiet');
 }
