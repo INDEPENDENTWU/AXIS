@@ -13,6 +13,10 @@ const frontend=read('runtime/axis-preplay-object.js');
 if(/\bimport\b|\bexport\b/.test(pure))fail('pure helper remains a browser-incompatible module');
 const addition='\n/* AXIS pre-Encounter state engine / existing app closure */\n'+pure+'\n'+frontend+'\n';
 app=app.slice(0,i)+addition+app.slice(j);
+// The prospective Object owner must never be silently replaced by a Flow.
+const flowHead='function axis832StartFlow(id){';
+if(app.split(flowHead).length!==2)fail('existing Flow start hook drift');
+app=app.replace(flowHead,flowHead+"if(axisPreplayRead()){toast(axisPreplayText('conflict'));return false;}");
 const old="state.active.events.push(e);save();closeSheet('scanSheet');";
 if(app.split(old).length!==2)fail('single canonical Encounter commit anchor required');
 app=app.replace(old,"state.active.events.push(e);save();window.__AXIS_PREPLAY__?.confirmRecorded(e);closeSheet('scanSheet');");
