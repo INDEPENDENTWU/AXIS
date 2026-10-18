@@ -269,22 +269,21 @@ window.__AXIS_LIVE_STRENGTH__=Object.freeze({version:'strength-p2',read:axisStre
 D.addEventListener('DOMContentLoaded',axisStrengthRender,{once:true});
 
 
-/* Enhance only events containing confirmed PLAY THIS actual sets.
- * Existing Encounter modal & all old record rendering stay authoritative.
- * The legacy detail may be asynchronously enriched with media before we render. */
-const axisStrengthOriginalOpenEvent=openEvent;
-openEvent=async function axisStrengthEvidenceDetail(id){
- await axisStrengthOriginalOpenEvent(id);
- const e=allEvents().find(x=>x.id===id);
+/* The historical detail uses a sealed atomic stage pipeline. Compose within
+ * its existing detached stage BEFORE axis89CommitDetail performs the only paint,
+ * rather than editing #detail after a staged media swap. */
+const axisStrengthOriginalDetailStage=axis818DetailStage;
+axis818DetailStage=function axisStrengthDetailStage(e,eq,media){
+ const stage=axisStrengthOriginalDetailStage(e,eq,media);
  const actual=Array.isArray(e?.playThis?.actualSets)?e.playThis.actualSets.filter(s=>
   Number.isFinite(Number(s?.weight))&&Number.isInteger(Number(s?.reps))&&
   Number(s.reps)>=1&&Number(s.reps)<=500):[];
- const holder=$('#detail');
- if(!actual.length||!holder||holder.querySelector('.axisStrengthSavedEvidence'))return;
- const html='<div class="axisStrengthSavedEvidence"><div class="mediaTop">'+
-  '<b>PLAY THIS · 逐組實際成果</b><span>'+actual.length+' 組</span></div>'+
-  '<div class="detailList">'+actual.map(s=>'<div class="detailRow">'+
-  '<span>第 '+esc(s.index)+' 組</span><span>'+esc(numFmt(s.weight))+
-  ' kg × '+esc(s.reps)+' 次</span></div>').join('')+'</div></div>';
- holder.insertAdjacentHTML('afterbegin',html);
+ if(!actual.length)return stage;
+ const section=D.createElement('section');section.className='axisStrengthSavedEvidence';
+ section.innerHTML='<div class="mediaTop"><b>PLAY THIS · 逐組實際成果</b><span>'+
+  actual.length+' 組</span></div><div class="detailList">'+actual.map(s=>
+  '<div class="detailRow"><span>第 '+esc(s.index)+' 組</span><span>'+
+  esc(numFmt(s.weight))+' kg × '+esc(s.reps)+' 次</span></div>').join('')+'</div>';
+ stage.insertBefore(section,stage.querySelector('.detailList'));
+ return stage;
 };
