@@ -18,7 +18,7 @@ const report={schema:'axis.832d3.visual-closed-loop.v1',head:execFileSync('git',
 fs.mkdirSync(OUT,{recursive:true});
 const shot=async(name)=>{const target=path.join(OUT,name+'-'+ENGINE+'.png');await page.screenshot({path:target});report.screenshots.push(path.basename(target))};
 const geometry=()=>page.evaluate(()=>{
- const modal=document.querySelector('#eqSheet'),button=document.querySelector('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]'),rec=document.querySelector('#scanSheet'),live=document.querySelector('#axisPreplaySheet');
+ const modal=document.querySelector('#eqSheet'),button=document.querySelector('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]'),rec=document.querySelector('#scanSheet'),live=document.querySelector('#axisStrengthSheet');
  const rect=e=>{const r=e?.getBoundingClientRect();return r&&{x:+r.x.toFixed(1),y:+r.y.toFixed(1),width:+r.width.toFixed(1),height:+r.height.toFixed(1),right:+r.right.toFixed(1),bottom:+r.bottom.toFixed(1)}};
  const b=button&&getComputedStyle(button);
  return{viewport:{w:innerWidth,h:innerHeight},documentOverflow:Math.max(0,document.documentElement.scrollWidth-innerWidth),modal:rect(modal),cta:rect(button),ctaText:button?.textContent?.trim(),fontSize:b?parseFloat(b.fontSize):null,ctaScrollOverflow:button?Math.max(button.scrollWidth-button.clientWidth,button.scrollHeight-button.clientHeight):null,pickerOpen:modal?.classList.contains('show'),recorderOpen:rec?.classList.contains('show'),recorder:rect(rec),focusWithinRecorder:rec?.contains(document.activeElement),liveOpen:live?.classList.contains('show'),live:rect(live),focusWithinLive:live?.contains(document.activeElement),pickerCount:document.querySelectorAll('#eqSheet').length,recorderCount:document.querySelectorAll('#scanSheet').length,captureOwnerCount:document.querySelectorAll('[data-axis-capture-owner]').length};
@@ -52,7 +52,7 @@ try{
    const old=await state();
    if(width===360){await context.setOffline(true);assert.equal(await page.evaluate(()=>navigator.onLine),false,'offline test not offline')}
    await tap(button);
-   try{await page.waitForFunction(()=>document.querySelector('#axisPreplaySheet')?.classList.contains('show')&&document.querySelector('#axisPreplaySheet')?.contains(document.activeElement),undefined,{timeout:5000});}catch(err){console.log('[AXIS d3 live failure]',JSON.stringify({width,language,ui:await geometry()}));throw err}
+   try{await page.waitForFunction(()=>document.querySelector('#axisStrengthSheet')?.classList.contains('show')&&document.querySelector('#axisStrengthSheet')?.contains(document.activeElement),undefined,{timeout:5000});}catch(err){console.log('[AXIS d3 live failure]',JSON.stringify({width,language,ui:await geometry()}));throw err}
    const after=await geometry();
    assert.equal(after.pickerOpen,false,'P19 old picker overlays live practice');
    assert.equal(after.liveOpen,true,'P19 live Object execution surface missing');
@@ -61,12 +61,12 @@ try{
    assert.equal(after.captureOwnerCount,1,'P19 duplicate record capture owner');
    assert.ok(after.focusWithinLive,'P19 keyboard focus outside live practice');
    assert.equal((await state()).active?.events?.length||0,old.active?.events?.length||0,'P14 live start fabricated historical Encounter');
-   assert.equal(await page.evaluate(()=>window.__AXIS_PREPLAY__?.current?.()?.objectId),'chest-row','P14 prospective identity lost');
+   assert.equal(await page.evaluate(()=>window.__AXIS_LIVE_STRENGTH__?.read?.()?.objectId),'chest-row','P14 prospective identity lost');
    if(width===320||width===390||width===430){await shot('live-'+width+'-'+language)}
    await page.evaluate(()=>{window.confirm=()=>true});
-   await page.locator('#axisPreplaySheet [data-preplay="abandon"]').click();
-   await page.waitForFunction(()=>!document.querySelector('#axisPreplaySheet')?.classList.contains('show'),undefined,{timeout:5000});
-   assert.equal(await page.evaluate(()=>localStorage.getItem('axis_preplay_intent_v1')),null,'P14 canceled attempt retained prospectively');
+   await page.locator('#axisStrengthSheet [data-strength="abandon"]').click();
+   await page.waitForFunction(()=>!document.querySelector('#axisStrengthSheet')?.classList.contains('show'),undefined,{timeout:5000});
+   assert.equal(await page.evaluate(()=>localStorage.getItem('axis_play_strength_draft_v1')),null,'P14 canceled attempt retained prospectively');
    const afterCancel=await state();
    assert.deepEqual(afterCancel.active?.events||[],old.active?.events||[],'P14 cancel altered canonical Encounter');
    assert.equal(afterCancel.flowRun||null,old.flowRun||null,'P14 cancel altered FlowRun');
