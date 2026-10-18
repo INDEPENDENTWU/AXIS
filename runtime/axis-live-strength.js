@@ -267,3 +267,24 @@ window.addEventListener('storage',e=>{if(e.key===AXIS_STRENGTH_KEY)axisStrengthR
 window.__AXIS_LIVE_STRENGTH__=Object.freeze({version:'strength-p2',read:axisStrengthRead,
  start:axisLiveStrengthStart,commit:axisStrengthCommit,canonicalWriter:'axis821CommitEncounter'});
 D.addEventListener('DOMContentLoaded',axisStrengthRender,{once:true});
+
+
+/* Enhance only events containing confirmed PLAY THIS actual sets.
+ * Existing Encounter modal & all old record rendering stay authoritative.
+ * The legacy detail may be asynchronously enriched with media before we render. */
+const axisStrengthOriginalOpenEvent=openEvent;
+openEvent=async function axisStrengthEvidenceDetail(id){
+ await axisStrengthOriginalOpenEvent(id);
+ const e=allEvents().find(x=>x.id===id);
+ const actual=Array.isArray(e?.playThis?.actualSets)?e.playThis.actualSets.filter(s=>
+  Number.isFinite(Number(s?.weight))&&Number.isInteger(Number(s?.reps))&&
+  Number(s.reps)>=1&&Number(s.reps)<=500):[];
+ const holder=$('#detail');
+ if(!actual.length||!holder||holder.querySelector('.axisStrengthSavedEvidence'))return;
+ const html='<div class="axisStrengthSavedEvidence"><div class="mediaTop">'+
+  '<b>PLAY THIS · 逐組實際成果</b><span>'+actual.length+' 組</span></div>'+
+  '<div class="detailList">'+actual.map(s=>'<div class="detailRow">'+
+  '<span>第 '+esc(s.index)+' 組</span><span>'+esc(numFmt(s.weight))+
+  ' kg × '+esc(s.reps)+' 次</span></div>').join('')+'</div></div>';
+ holder.insertAdjacentHTML('afterbegin',html);
+};
