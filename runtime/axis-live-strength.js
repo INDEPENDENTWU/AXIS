@@ -155,6 +155,8 @@ function axisStrengthRender(){
    axisStrengthButton('abandon',axisStrengthLabel('discard'),'axisStrengthQuiet');
  }
  $('#axisStrengthContent').innerHTML=markup;
+ const setButton=$('#axisStrengthContent [data-strength="confirm-set"]');
+ if(setButton)setButton.dataset.expectedIndex=String(n+1);
 }
 function axisStrengthOpen(){
  axisStrengthRender();
@@ -238,11 +240,12 @@ function axisStrengthHandle(action,button){
   if(action==='confirm-set'){
    const w=$('#axisStrengthActualWeight')?.value?.trim(),r=$('#axisStrengthActualReps')?.value?.trim();
    if(!w||!r){toast(axisStrengthLabel('invalid'));return}
-   next=axisStrengthUpdate(p,action,Date.now(),{weight:Number(w),reps:Number(r),expectedIndex:p.sets.length+1});
+   next=axisStrengthUpdate(p,action,Date.now(),{weight:Number(w),reps:Number(r),expectedIndex:Number(button.dataset.expectedIndex)});
   }else if(action==='edit-set'){
    const row=button.closest('[data-review-index]'),index=Number(row?.dataset.reviewIndex);
-   next=axisStrengthUpdate(p,action,Date.now(),{index,
-    weight:Number(row.querySelector('[data-field="weight"]').value),reps:Number(row.querySelector('[data-field="reps"]').value)});
+   const w=row.querySelector('[data-field="weight"]').value.trim(),r=row.querySelector('[data-field="reps"]').value.trim();
+   if(!w||!r){toast(axisStrengthLabel('invalid'));return}
+   next=axisStrengthUpdate(p,action,Date.now(),{index,weight:Number(w),reps:Number(r)});
   }else next=axisStrengthUpdate(p,action,Date.now());
   if(!axisStrengthWrite(next))throw Error('save draft failed');
   axisStrengthRender();
@@ -257,7 +260,7 @@ D.addEventListener('change',function axisStrengthPlanChange(e){
  if(!e.target.matches('#axisStrengthTarget,#axisStrengthRestSelect'))return;
  const p=axisStrengthRead();if(!p||p.sets.length||p.phase!=='running')return;
  const targetSets=Number($('#axisStrengthTarget')?.value),restSeconds=Number($('#axisStrengthRestSelect')?.value);
- try{const next=axisStrengthUpdate(p,'plan',Date.now(),{targetSets,restSeconds});if(!axisStrengthWrite(next))throw Error('write failed')}
+ try{const next=axisStrengthUpdate(p,'plan',Date.now(),{targetSets,restSeconds});if(!axisStrengthWrite(next))throw Error('write failed');axisStrengthRender()}
  catch(err){console.warn('[AXIS strength plan]',err);toast(axisStrengthLabel('failure'))}
 },true);
 window.addEventListener('storage',e=>{if(e.key===AXIS_STRENGTH_KEY)axisStrengthRender()});
