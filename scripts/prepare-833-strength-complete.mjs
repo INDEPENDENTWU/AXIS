@@ -25,7 +25,7 @@ if(app.includes('AXIS_STRENGTH_KEY')!==true)fail('Strength runtime injection abs
 const summary='function eventMeta(e){';
 if(app.split(summary).length!==2)fail('Original event summary owner missing');
 app=app.replace(summary,summary+"if(e?.playThis?.actualSets?.length){const a=e.playThis.actualSets,last=a[a.length-1];return a.length+'组 · 最后一组 '+numFmt(last.weight)+'kg × '+last.reps+'次'}");
-try{new Function(app)}catch(e){fail('Final runtime JS syntax: '+e.message)}
+
 // History detail exposes each explicitly performed set without changing old records.
 const legacyDetail="const rows=e.kind==='strength'?[['重量',numFmt(e.weight)+' kg'],['次数',e.reps+' 次'],['组数',e.sets+' 组']]:";
 if(app.split(legacyDetail).length!==2)fail('legacy detail actuals anchor drift');
@@ -37,6 +37,7 @@ const bodyAnchor="$('#detail').innerHTML=media+\`<div class=\"detailList\">";
 if(app.split(bodyAnchor).length!==2)fail('single history detail content owner expected');
 app=app.replace(bodyAnchor,"$('#detail').innerHTML=media+axisPlayBlock+\`<div class=\"detailList\">");
 
+try{new Function(app)}catch(e){fail('Final runtime JS syntax: '+e.message)}
 write('app.js',app);
 const id='/* AXIS PLAY THIS Strength · scoped, semantic surfaces';
 if(css.includes(id))fail('Strength styles duplicated');
