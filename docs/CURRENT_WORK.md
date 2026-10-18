@@ -1,5 +1,22 @@
 # AXIS Current Work
 
+## Current bounded development — PLAY THIS strength P2 (2026-10-19)
+
+**Public state:** AXIS 8.32 remains served from canonical main `5ea6bab7ebad7daf5868e32f1c98209a35647231` at existing Vercel, EdgeOne and `axis.juele.fun`; not touched by this PR. #177 retains physical acceptance/governance limits and the 8.31 rollback precedent.
+
+**Active candidate:** [PR #182](https://github.com/INDEPENDENTWU/AXIS/pull/182), branch `feature/833-play-strength-complete`, superseding non-shippable [#181](https://github.com/INDEPENDENTWU/AXIS/pull/181) for **strength Object** practice. The user explicitly rejected generic P1 timer → old `編輯成果並記下` as the complete product. New P2 begins directly from an Object card, asks for *actual* weight/reps at each set confirmation, handles rest and next set, pause/reload, displays every performed set in an inline editable review, and offers one **完成並儲存** action. There is **no mandatory #scanSheet / 記下 handoff**. Old Quick Record remains intact for retrospective entries. Non-strength cardio/hold and guided multi-step Flow are separate follow-ups and cannot be claimed complete.
+
+**Truth and ownership:** `lib/axis-live-strength.mjs` stores only bounded prospective draft `axis.play-strength.v1` (localStorage `axis_play_strength_draft_v1`). Only explicit set confirmations create prospective actual-set rows. Save calls the original app-owned `axis821CommitEncounter(e,eq)` once, with the confirmed sets in `e.playThis.actualSets`; a readback of `axis_v60_state` must verify the same Attempt ID/Event ID before the draft is retired. `e.weight/reps` summarize the *last* actual set and `e.sets` the confirmed count, avoiding invented equal reps/weights. All media, Active, FlowRun, historical data and backup ownership remain unchanged; no second Recorder/factual writer. Finish/cancel without saving creates no Encounter.
+
+**Code and evidence:** `scripts/prepare-833-strength-complete.mjs` embeds a mode-specific renderer `runtime/axis-live-strength.js` in the canonical existing app closure and reuses exact `axis831ExactFlowEq` IDs. Tests `tests/axis-live-strength.test.mjs` and `scripts/axis-833-strength-full-loop-browser.mjs` assert real user taps, multiple performed sets, mid-practice reload, inline actual corrections, **one** canonical Encounter after direct save and **zero** Recorder popups. [Dedicated CI #39147908642](https://github.com/INDEPENDENTWU/AXIS/actions/runs/39147908642) source, Chromium and WebKit were successful at initial P2 code SHA `ec2cf29a` (later guard/UI changes require exact-head rerun). Updated original 8.32 legacy browser expectations to separate strength Live from original retroactive logging. Current isolated Preview(s) only, no product release admission.
+
+**Release boundary:** Draft #182, version authority intentionally not bypassed. Explicit version bump, all inherited exact-head CI, physical iPhone Safari PWA optical/interaction/contrast and privacy/local data checks, and bounded Vercel+EdgeOne post-merge certification must precede any official deployment or Governance Seal. Separate Draft #179 Light consistency must be reviewed in that release decision. PR #181 remains rejected as a stand-alone product despite its reuse as a compatibility base.
+
+---
+
+## Earlier PLAY THIS P1 prototyping (historical, not shippable)
+
+
 ## Current bounded development — PLAY THIS pre-Encounter P1 (2026-10-17)
 
 **Public AXIS remains 8.32**, exact canonical merged-main `5ea6bab7ebad7daf5868e32f1c98209a35647231` on original Vercel, EdgeOne and `axis.juele.fun`. Historical text below describes earlier 8.32 development and is superseded only for present-day deployment status; no independent 8.32 Governance Seal has been issued and #177 still covers physical acceptance.
