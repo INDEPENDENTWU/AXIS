@@ -211,7 +211,8 @@ function axisStrengthCommit(){
   const match=[...(persisted.active?.events||[]),...(persisted.sessions||[]).flatMap(s=>s.events||[])]
    .find(x=>x.playThis?.attemptId===p.attemptId&&x.id===e.id);
   if(!committed||!match){
-   state.active?.events?.splice(state.active.events.findIndex(x=>x.id===e.id),1);
+   const pos=state.active?.events?.findIndex(x=>x.id===e.id)??-1;
+   if(pos>=0)state.active.events.splice(pos,1);
    if(!existingActive&&!state.active?.events?.length)state.active=null;
    toast(axisStrengthLabel('failure'));return false;
   }
