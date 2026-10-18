@@ -1,5 +1,17 @@
 # AXIS Engineering Handoff
 
+## Active handoff — PLAY THIS Strength P2 (2026-10-19)
+
+- **Authoritative public**: AXIS 8.32 exact main `5ea6bab7ebad7daf5868e32f1c98209a35647231` on original Vercel + EdgeOne + `axis.juele.fun`; unchanged by this work. Local stored media/training unaffected. #177 governance and device acceptance still open.
+- **Development PR**: [#182](https://github.com/INDEPENDENTWU/AXIS/pull/182), branch `feature/833-play-strength-complete` targeting `main`, Draft; replaces rejected [#181](https://github.com/INDEPENDENTWU/AXIS/pull/181) as the product candidate. Its strength Object UI does not force the old `記下` screen. Do not relabel the P1 generic timer as a delivered product. Light-theme PR #179 is separate.
+- **Source**: `lib/axis-live-strength.mjs` contains state machine and explicit performed set facts only, `runtime/axis-live-strength.js` handles prospective timer/sets/rest/reload/review, `scripts/prepare-833-strength-complete.mjs` adds one canonical app-closure integration. `styles/axis-833-live-strength.css` defines isolated responsive themes. Event `playThis.actualSets` holds user-confirmed per-set actuals; summary `weight/reps` is the *last* actual, not a fabricated uniform average. Existing `axis821CommitEncounter(e,eq)` is the sole persisted writer, with readback + per-attempt idempotency and no mandatory Recorder navigation. P1 generic cardio compatibility and canonical FlowRun retained but **not** the final guided experience.
+- **Acceptance**: pure state machine `node --test tests/axis-live-strength.test.mjs`; dedicated [GitHub run #39147908642](https://github.com/INDEPENDENTWU/AXIS/actions/runs/39147908642) initial source, Chromium/WebKit all successful. It covers actual Object entry -> confirm 2 sets -> reload -> modify actuals -> in-place finish/save -> exactly one Encounter and no Recorder. Later refined prevention of rapid taps and plan UI requires latest exact-head proof, not inferred PASS. Inherited 8.32 scripts that expected an immediate Recorder on strength PLAY have been updated to the new valid behavior; old Quick Record offline storage remains a separate test.
+- **Blockers**: product version decision and full inherited CI (including Version Authority) not sealed, real hardware optical/large text/Light/Dark not fully signed off, home-screen installed Safari origin and stored data not available in this environment, no dual Production deployment. Keep Draft and original official source while validating. Do not execute old 8.32 exact-main release workflow for this branch.
+- **Further product scope**: cardio/timed/hold Object modes, robust guided multi-step Flow, optional camera attachment from Live, historical reports with full per-set insight, sharing/TAKE/FORK/AIR. None is claimed shipped by this single strength slice.
+
+## Earlier PLAY THIS P1 handoff (historical, not release approval)
+
+
 ## Active branch handoff — PLAY THIS actual execution, P1 (2026-10-17)
 
 - **Official Production** remains AXIS 8.32, merged main `5ea6bab7ebad7daf5868e32f1c98209a35647231`, at original Vercel/EdgeOne/`axis.juele.fun`. Deployment readbacks were confirmed before this branch. Physical acceptance and independent Governance Seal remain open in #177.
