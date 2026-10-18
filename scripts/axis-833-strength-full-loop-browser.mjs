@@ -67,6 +67,13 @@ try{
  assert.deepEqual(result.playThis.actualSets.map(s=>[s.weight,s.reps]),[[40,12],[42.5,9]]);
  assert.deepEqual([result.weight,result.reps,result.sets],[42.5,9,2],'Legacy summary not truthful');
  assert.equal(await draft(),null,'Saved practice draft must be retired');
+ // The original Encounter detail now displays every confirmed real set.
+ await page.locator('#eventList [data-event="'+result.id+'"]').click();
+ await page.locator('#detailSheet.show').waitFor({state:'visible'});
+ const detail=await page.locator('#detail').innerText();
+ assert.ok(detail.includes('PLAY THIS')&&detail.includes('逐組實際成果'),'Historical detail hid saved set truth');
+ assert.ok(detail.includes('40')&&detail.includes('42.5'),'Historical detail lost different actual weights');
+ await page.locator('#detailSheet [data-close="detailSheet"]').click();
  assert.equal(await page.locator('#scanSheet.show').count(),0,'SAVE MUST NOT require second 記下');
  const postSave=await page.evaluate(()=>window.__AXIS_LIVE_STRENGTH__.commit());
  assert.equal(postSave,false,'Second save after success was incorrectly admitted');
