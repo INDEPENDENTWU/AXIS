@@ -19,6 +19,7 @@ test('strength: confirms actual results, rests, advances to review',()=>{
  assert.equal(axisStrengthRestLeft(p,10800),81);
  assert.throws(()=>axisStrengthUpdate(p,'confirm-set',1900,{weight:40,reps:12,expectedIndex:1}),/not admitted/);
  p=axisStrengthUpdate(p,'rest-done',2000);
+ assert.throws(()=>axisStrengthUpdate(p,'confirm-set',2090,{weight:40,reps:12,expectedIndex:2}),/rapid duplicate/);
  assert.equal(p.phase,'running');
  assert.equal(axisStrengthElapsed(p,2200),1200);
  p=axisStrengthUpdate(p,'confirm-set',2500,{weight:42.5,reps:10,expectedIndex:2});
