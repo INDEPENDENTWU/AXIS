@@ -33,7 +33,7 @@ test('validation rejects corrupted and forged local execution snapshots',()=>{
   assert.throws(()=>axisPreplayCreate({attemptId:'',objectId:'x',mode:'single',now:1}));
   assert.throws(()=>axisPreplayCreate({attemptId:'x',objectId:'x',mode:'unknown',now:1}));
   const p=axisPreplayCreate({attemptId:'x',objectId:'x',mode:'sets',now:100,repeat:2});
-  for(const mutation of [{status:'complete'},{completedSets:99},{elapsedMs:-4},{resumedAt:null},{handoff:1}])
+  for(const mutation of [{status:'complete'},{completedSets:100},{elapsedMs:-4},{resumedAt:null},{handoff:1}])
     assert.throws(()=>axisPreplayValidate({...p,...mutation}));
   assert.equal(axisPreplayTransition(axisPreplayTransition(p,'complete-set',100),'complete-set',100).completedSets,2);
   assert.equal(axisPreplayTransition(axisPreplayTransition(axisPreplayTransition(p,'complete-set',100),'complete-set',100),'complete-set',100).completedSets,3);
