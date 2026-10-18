@@ -27,17 +27,17 @@ try{
  assert.ok(bounds&&bounds.height>=44,'PLAY THIS tap target below 44px');
  assert.ok(bounds.x>=0&&bounds.x+bounds.width<=390,'PLAY THIS horizontally clipped');
  await tap(object);
- await page.locator('#axisPreplaySheet.show').waitFor({state:'visible',timeout:5000});
+ await page.locator('#axisStrengthSheet.show').waitFor({state:'visible',timeout:5000});
  assert.equal(await page.locator('#scanSheet.show').count(),0,'Object PLAY THIS incorrectly opened old 记下 Recorder');
  const saved=await initial();
  assert.equal(saved.active?.events?.length||0,0,'starting prospective Object must not fabricate Encounter');
- assert.equal((await page.evaluate(()=>window.__AXIS_PREPLAY__?.current?.()))?.objectId,'chest-row');
+ assert.equal((await page.evaluate(()=>window.__AXIS_LIVE_STRENGTH__?.read?.()))?.objectId,'chest-row');
  assert.equal(await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),'chest-row','selected exact Object changed');
  await page.screenshot({path:'/tmp/axis-832-object-'+ENGINE+'.png',fullPage:true});
  // Explicitly abandon the independent prospective Object intent; a Flow may not silently steal it.
  await page.evaluate(()=>{
-   localStorage.removeItem('axis_preplay_intent_v1');
-   document.querySelector('#axisPreplaySheet')?.classList.remove('show');
+   localStorage.removeItem('axis_play_strength_draft_v1');
+   document.querySelector('#axisStrengthSheet')?.classList.remove('show');
    document.querySelector('#eqSheet')?.classList.remove('show');
  });
  const flow={schema:'axis.flow.v1',id:'axis832-flow-browser',title:'今天的练习',steps:[{id:'first',objectRef:'chest-row'}]};
