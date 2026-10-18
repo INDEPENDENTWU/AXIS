@@ -15,10 +15,12 @@ try{
  // PLAY THIS now intentionally opens a pre-Encounter live practice instead.
  await page.locator('#quickRecordBtn').click();
  await page.locator('#quickRecordSheet.show').waitFor({state:'visible'});
- const btn=page.locator('#v8Recent [data-qid]').first();
+ await page.locator('#quickRecordSheet #v8Other').click();
+ await page.locator('#eqSearch').fill('胸托划船');
+ const btn=page.locator('#v8710Cards [data-v877-lib="chest-row"]').first();
  await btn.waitFor({state:'visible',timeout:6000});
- const originalObject=await btn.getAttribute('data-qid');
- assert.ok(originalObject,'original Quick Record fallback must resolve exact Object ID');
+ const originalObject='chest-row';
+ assert.equal(await btn.getAttribute('data-v877-lib'),originalObject,'retrospective Object selection must keep exact identity');
  await c.setOffline(true);
  assert.equal(await page.evaluate(()=>navigator.onLine),false,'P13 offline Recorder must not require network');
  await (ENGINE==='webkit'?btn.tap():btn.click());
