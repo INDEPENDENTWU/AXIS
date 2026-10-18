@@ -1,0 +1,78 @@
+import assert from 'node:assert/strict';
+const ENGINE=process.env.AXIS_ENGINE||'chromium',BASE=process.env.AXIS_URL||'http://127.0.0.1:4173';
+const {chromium,webkit}=await import('playwright');
+const browser=await (ENGINE==='webkit'?webkit:chromium).launch(ENGINE==='chromium'?{headless:true,args:['--no-sandbox'],executablePath:process.env.CHROME_BIN||undefined}:{headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,hasTouch:true,isMobile:ENGINE==='webkit',locale:'zh-CN',reducedMotion:'reduce'});
+const page=await context.newPage(),errors=[];
+page.on('pageerror',x=>errors.push(String(x)));
+for(const [pat,val] of [['**/api/ai-status**',{available:false}],['**/api/owner-config**',{ok:true}],['**/api/analyze**',{available:false}],['**/api/cloud-status**',{cloud:{enabled:false}}],['**/api/ai-capabilities**',{ai:{enabled:false}}]])await context.route(pat,r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(val)}));
+const snap=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}'));
+const draft=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('axis_play_strength_draft_v1')||'null'));
+const tap=loc=>ENGINE==='webkit'?loc.tap():loc.click();
+try{
+ await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:25000});
+ await page.evaluate(()=>{
+  localStorage.clear();localStorage.setItem('axis_v60_state',JSON.stringify({
+   version:60,sessions:[],active:null,flows:[],flowRun:null,profile:{customEq:[],memories:[]},prefs:{scanSeconds:3}
+  }));localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
+ });
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>window.__AXIS_CORE_INTERACTIVE__===true&&!!window.__AXIS_LIVE_STRENGTH__,undefined,{timeout:18000});
+ await tap(page.locator('#quickRecordBtn'));
+ await tap(page.locator('#quickRecordSheet #v8Other'));
+ await page.locator('#eqSearch').fill('胸托划船');
+ const object=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+ await object.waitFor({state:'visible',timeout:6000});
+ await tap(object);
+ await page.locator('#axisStrengthSheet.show').waitFor({state:'visible',timeout:6000});
+ assert.equal(await page.locator('#scanSheet.show').count(),0,'Start practice MUST NOT open retrospective Recorder');
+ assert.equal(await page.locator('#axisPreplaySheet.show').count(),0,'Strength must not open generic timer');
+ assert.equal((await snap()).active?.events?.length||0,0,'Starting practice creates a false Encounter');
+ assert.equal((await draft())?.objectId,'chest-row');
+ await page.screenshot({path:'/tmp/axis-strength-start-'+ENGINE+'.png',fullPage:false});
+ // Explicit edit to one sample plan. These values are test fixtures, not training advice.
+ await page.locator('#axisStrengthTarget').fill('2');
+ await page.locator('#axisStrengthTarget').dispatchEvent('change');
+ await page.locator('#axisStrengthRestSelect').selectOption('0');
+ assert.equal((await draft()).targetSets,2);
+ await page.locator('#axisStrengthActualWeight').fill('40');
+ await page.locator('#axisStrengthActualReps').fill('12');
+ await tap(page.locator('#axisStrengthSheet [data-strength="confirm-set"]'));
+ assert.equal((await draft()).sets.length,1);
+ assert.equal((await draft()).phase,'running');
+ assert.equal((await snap()).active?.events?.length||0,0,'Confirming a set prematurely writes an Encounter');
+ await page.screenshot({path:'/tmp/axis-strength-set-'+ENGINE+'.png',fullPage:false});
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>window.__AXIS_LIVE_STRENGTH__&&document.querySelector('#axisStrengthResume')&&!document.querySelector('#axisStrengthResume').hidden);
+ await tap(page.locator('#axisStrengthResume'));
+ await page.locator('#axisStrengthSheet.show').waitFor();
+ assert.equal((await draft()).sets.length,1,'Reload lost actual confirmed set');
+ await page.locator('#axisStrengthActualWeight').fill('42.5');
+ await page.locator('#axisStrengthActualReps').fill('10');
+ await tap(page.locator('#axisStrengthSheet [data-strength="confirm-set"]'));
+ assert.equal((await draft()).phase,'review');
+ assert.equal((await draft()).sets.length,2);
+ assert.equal(await page.locator('#scanSheet.show').count(),0,'Review MUST stay within PLAY THIS');
+ const row=page.locator('#axisStrengthSheet [data-review-index="2"]');
+ await row.locator('[data-field="reps"]').fill('9');
+ await tap(row.locator('[data-strength="edit-set"]'));
+ assert.equal((await draft()).sets[1].reps,9,'Actual result revision was not applied');
+ await page.screenshot({path:'/tmp/axis-strength-review-'+ENGINE+'.png',fullPage:false});
+ const save=page.locator('#axisStrengthSheet [data-strength="save"]');
+ await tap(save);
+ await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.some(e=>e.playThis?.actualSets?.length===2),undefined,{timeout:12000});
+ const state=await snap(),events=state.active?.events||[],result=events.find(x=>x.equipmentId==='chest-row');
+ assert.equal(events.length,1,'More than one canonical Encounter was saved');
+ assert.equal(result.playThis.actualSets.length,2,'Per-set actual data not persisted');
+ assert.deepEqual(result.playThis.actualSets.map(s=>[s.weight,s.reps]),[[40,12],[42.5,9]]);
+ assert.deepEqual([result.weight,result.reps,result.sets],[42.5,9,2],'Legacy summary not truthful');
+ assert.equal(await draft(),null,'Saved practice draft must be retired');
+ assert.equal(await page.locator('#scanSheet.show').count(),0,'SAVE MUST NOT require second 記下');
+ const postSave=await page.evaluate(()=>window.__AXIS_LIVE_STRENGTH__.commit());
+ assert.equal(postSave,false,'Second save after success was incorrectly admitted');
+ assert.equal((await snap()).active?.events?.length,1,'Duplicate save wrote another Encounter');
+ await page.reload({waitUntil:'domcontentloaded'});
+ assert.equal((await snap()).active?.events?.length,1,'Reload lost saved Encounter');
+ assert.deepEqual(errors,[],'Unexpected browser JS errors');
+ console.log('[AXIS strength full loop '+ENGINE+'] PASS · Start → confirmed sets → reload → inline review/edit → direct canonical save; no old Recorder, no duplicate Encounter');
+}finally{await browser.close()}
