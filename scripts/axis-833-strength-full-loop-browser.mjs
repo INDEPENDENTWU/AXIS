@@ -70,6 +70,7 @@ try{
  // The original Encounter detail now displays every confirmed real set.
  await page.locator('#eventList [data-event="'+result.id+'"]').click();
  await page.locator('#detailSheet.show').waitFor({state:'visible'});
+ await page.locator('#detail .axisStrengthSavedEvidence').waitFor({state:'visible',timeout:7000});
  const detail=await page.locator('#detail').innerText();
  assert.ok(detail.includes('PLAY THIS')&&detail.includes('逐組實際成果'),'Historical detail hid saved set truth');
  assert.ok(detail.includes('40')&&detail.includes('42.5'),'Historical detail lost different actual weights');
