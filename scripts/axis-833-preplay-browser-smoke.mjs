@@ -22,7 +22,7 @@ try{
   localStorage.clear();
   localStorage.setItem('axis_v60_state',JSON.stringify({
    version:60,sessions:[],active:null,flows:[],flowRun:null,
-   profile:{customEq:[],memories:[]},prefs:{scanSeconds:3}
+   profile:{customEq:[{id:'p1-cardio-compat',name:'P1有氧測試',type:'cardio',pattern:'cardio',muscles:['心肺'],effect:'',custom:true,metricSchema:[{key:'duration',label:'時間',type:'duration',unit:'分鐘',min:0,step:1}],executionMode:'timed',recording:{version:2,metrics:['duration'],executionMode:'timed'}}],memories:[]},prefs:{scanSeconds:3}
   }));
   localStorage.setItem('axis_v8_meta',JSON.stringify({events:{},prefs:{}}));
   localStorage.setItem('axis_ui_theme_v1','light');
@@ -33,14 +33,14 @@ try{
  assert.equal(await page.evaluate(()=>window.__AXIS_PREPLAY__.newEncounterWriter),false);
  await page.locator('#quickRecordBtn').click();
  await page.locator('#quickRecordSheet #v8Other').click();
- await page.locator('#eqSearch').fill('胸托划船');
- const start=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="chest-row"]').first();
+ await page.locator('#eqSearch').fill('P1有氧測試');
+ const start=page.locator('#v8710Cards .axis832ObjectGo[data-axis832-object="p1-cardio-compat"]').first();
  await start.waitFor({state:'visible'});
  await start.click();
  await page.locator('#axisPreplaySheet.show').waitFor({state:'visible',timeout:5000});
  assert.equal(await page.locator('#scanSheet.show').count(),0,'PLAY THIS must never start in retrospective Recorder');
  let i=await intent();
- assert.equal(i.objectId,'chest-row');assert.equal(i.status,'running');
+ assert.equal(i.objectId,'p1-cardio-compat');assert.equal(i.status,'running');
  assert.equal((await state()).active?.events?.length||0,0,'starting live practice fabricated Encounter');
  assert.equal(Object.keys(JSON.parse(await page.evaluate(()=>localStorage.getItem('axis_v8_meta')||'{}')).events||{}).length,0,
   'starting live practice fabricated canonical Active activity');
@@ -68,7 +68,7 @@ try{
  await submit.click();
  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_v60_state')||'{}').active?.events?.length===1,
   undefined,{timeout:15000});
- assert.equal((await state()).active.events[0].equipmentId,'chest-row');
+ assert.equal((await state()).active.events[0].equipmentId,'p1-cardio-compat');
  assert.equal(await intent(),null,'successfully saved Encounter must retire its prospective draft');
  assert.equal((await state()).active.events.length,1,'unexpected double Encounter');
  await page.screenshot({path:'/tmp/axis-preplay-committed-'+engine+'.png',fullPage:false});
