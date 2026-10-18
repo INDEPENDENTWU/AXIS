@@ -20,7 +20,7 @@ try{
  const before=await state();
  const firstTouchStartedAt=Date.now();
  await page.touchscreen.tap(x,y);
- await page.waitForFunction(()=>document.querySelector('#axisPreplaySheet')?.classList.contains('show'),undefined,{timeout:7000});
+ await page.waitForFunction(()=>document.querySelector('#axisStrengthSheet')?.classList.contains('show'),undefined,{timeout:7000});
  assert.equal(await page.locator('#scanSheet.show').count(),0,'P11 PLAY THIS must not open old Recorder on start');
  const afterFirst=await state();
  assert.deepEqual((afterFirst.active?.events||[]).map(e=>e.id),(before.active?.events||[]).map(e=>e.id),'P11 first touch tap forged Encounter');
@@ -28,7 +28,7 @@ try{
  await page.touchscreen.tap(x,y);
  await page.waitForTimeout(220);
  const afterSecond=await state();
- const visual=await page.evaluate(()=>({live:document.querySelector('#axisPreplaySheet')?.classList.contains('show'),recorder:document.querySelector('#scanSheet')?.classList.contains('show'),pick:document.querySelector('#eqSheet')?.classList.contains('show'),owners:document.querySelectorAll('[data-axis-capture-owner]').length,recorders:document.querySelectorAll('#scanSheet').length,selected:window.__AXIS_SELECTED_EQUIPMENT__?.()?.id,prospective:window.__AXIS_PREPLAY__?.current?.()}));
+ const visual=await page.evaluate(()=>({live:document.querySelector('#axisStrengthSheet')?.classList.contains('show'),recorder:document.querySelector('#scanSheet')?.classList.contains('show'),pick:document.querySelector('#eqSheet')?.classList.contains('show'),owners:document.querySelectorAll('[data-axis-capture-owner]').length,recorders:document.querySelectorAll('#scanSheet').length,selected:window.__AXIS_SELECTED_EQUIPMENT__?.()?.id,prospective:window.__AXIS_LIVE_STRENGTH__?.read?.()}));
  console.log('P11_TOUCH_DOUBLE',JSON.stringify({engine,browser:browser.version(),firstToSecondTouchMs:secondTouchStartedAt-firstTouchStartedAt,visual}));
  assert.deepEqual((afterSecond.active?.events||[]).map(e=>e.id),(before.active?.events||[]).map(e=>e.id),'P11 rapid double touch manufactured a confirmed Encounter');
  assert.equal(afterSecond.flowRun||null,before.flowRun||null,'P11 Object double touch forged FlowRun');
@@ -40,9 +40,9 @@ try{
  assert.equal(visual.selected,'chest-row','P11 double touch lost exact Object identity');
  assert.equal(visual.prospective?.objectId,'chest-row','P11 duplicate tap lost prospective Object identity');
  await page.evaluate(()=>{window.confirm=()=>true});
- await page.locator('#axisPreplaySheet [data-preplay="abandon"]').click();
+ await page.locator('#axisStrengthSheet [data-strength="abandon"]').click();
  assert.deepEqual((await state()).active?.events||[],before.active?.events||[],'P11 cancellation after fast touch created history');
- assert.equal(await page.evaluate(()=>localStorage.getItem('axis_preplay_intent_v1')),null,'P11 abandoned attempt remains persisted');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('axis_play_strength_draft_v1')),null,'P11 abandoned attempt remains persisted');
  assert.deepEqual(errors,[],'browser runtime exceptions');
  console.log('[AXIS 8.32 P11 '+engine+'] PASS · real touchscreen double tap · one original Recorder/capture owner · no duplicate fact · cancel pure');
 }finally{await browser.close()}
