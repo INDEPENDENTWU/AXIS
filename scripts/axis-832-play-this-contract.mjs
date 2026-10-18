@@ -41,7 +41,7 @@ assert.ok(prospective.includes('function axis821FlowAfterCanonicalCommit(e,inten
  'prospective closure must extend only the existing canonical postcommit callback');
 assert.ok(pure.includes('axis.preplay-intent.v1')&&!pure.includes('axis_v60_state')&&!pure.includes('axis_v8_meta'),
  'prospective draft cannot become a saved factual owner');
-for(const token of ["#axisPreplaySheet.show","legacy Recorder","axis_preplay_intent_v1"])
+for(const token of ["#axisStrengthSheet.show","legacy Recorder","axis_play_strength_draft_v1"])
  assert.ok(focusBrowser.includes(token),'real Object start must verify Live and no immediate Recorder: '+token);
 assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
 assert.ok(preparation.includes("run&&run.status!=='complete'"),'only completed runs may be restarted');
