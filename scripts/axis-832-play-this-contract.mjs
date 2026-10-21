@@ -52,7 +52,8 @@ assert.ok(read('scripts/axis-832-local-gate.sh').includes('axis-832-real-world-b
 assert.ok(preparation.includes("bridge.dispatch(spec,attemptId,cmd).status==='accepted'"),'must respect existing owner acknowledgement');
 assert.ok(quality.includes('One visual hierarchy'),'presentation quality contract lost');
 const version=JSON.parse(read('governance/version-decision.json'));
-assert.deepEqual([version.sequence,version.base_release,version.release,version.decision,version.change_class],[33,'8.31','8.32','bump','product-runtime']);
+assert.ok((version.sequence===33&&version.release==='8.32')||(version.sequence===34&&version.release==='8.33'),'8.32 predecessor / explicitly governed 8.33 successor only');
+assert.deepEqual([version.base_release,version.decision,version.change_class],['8.31','bump','product-runtime']);
 const regression=read('scripts/prepare-832-inherited-regressions.mjs');
 for(const token of ['axis-826-active-continuity-smoke.mjs','axis-882-smoke.mjs','lat-pulldown','foreignStatus'])assert.ok(regression.includes(token),'8.32 inherited regression adapter missing '+token);
 console.log('[AXIS 8.32 source contract] PASS · pure source compiler reuse · one app presentation owner · local user action and no second factual writer');
