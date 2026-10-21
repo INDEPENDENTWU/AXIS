@@ -51,6 +51,17 @@ for(const [p,a,b] of [
  if(m[0].includes("8.33"))fail('session reminder already advanced unexpectedly');
  write(p,src.replace(old,m[0].replace(/;$/,"||CURRENT_VERSION==='8.33';")));
 }
+// The 8.9.1 inherited rich-phrase check follows the modern 8.10+ content
+// while retaining its stricter phrase/material proof for every newer release.
+{
+ const p='postbuild-891-contract.mjs',src=read(p);
+ const guard="if(!(version==='8.9.1'||version.startsWith('8.10')";
+ const modern="const modern=version.startsWith('8.10')";
+ if(!src.includes(guard)||!src.includes(modern))fail('8.9.1 inherited rich-language gates changed');
+ let out=src.replace(guard,guard+"||version==='8.33'")
+            .replace(modern,modern+"||version==='8.33'");
+ write(p,out);
+}
 // The existing 8.31 browser proof must still test this candidate runtime and
 // all historical identity/provenance semantics, never silently skip the test.
 {
