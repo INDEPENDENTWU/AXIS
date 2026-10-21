@@ -97,10 +97,8 @@ for(const [p,a,b] of [
 // to the new exactly-matching 8.33 runtime; all content and security clauses
 // remain byte-identical and continue to execute.
 {
- const ps=['postbuild-8101-contract.mjs','postbuild-8102-contract.mjs',
-  'postbuild-8103-contract.mjs','postbuild-811-contract.mjs',
-  'postbuild-812-contract.mjs','postbuild-813-live-route.mjs',
-  'postbuild-8123-contract.mjs','postbuild-8123-field-polish.mjs'];
+ const ps=fs.readdirSync('.').filter(p=>/^postbuild-8.*\\.mjs$/.test(p)&&
+  !['postbuild-831-playable-contract.mjs','postbuild-832-play-this-contract.mjs'].includes(p));
  let count=0;
  for(const p of ps){
   const source=read(p);
