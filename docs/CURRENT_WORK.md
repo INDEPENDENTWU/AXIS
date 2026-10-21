@@ -1,5 +1,16 @@
 # AXIS Current Work
 
+## AXIS 8.33 · Play Strength + Light Release Candidate (2026-10-21)
+
+**governed target branch: `main`.** Controlled **candidate** Draft PR **#183**, `release/833-play-strength-light`, explicit version bump decision #34 (8.31 sealed rollback baseline → 8.33). The official `main` prior to this PR remains 8.32 at SHA `5ea6bab7ebad7daf5868e32f1c98209a35647231`; the last independently certified immutable runtime seal is **8.31**, SHA `dddce5401e80087a7ccceb43ec466f1ad7abb505`. Neither 8.32 deployment nor 8.33 Preview implies a new seal. No Production mutation occurred from this PR.
+
+**Release-scope only:** consolidate [P2 strength PR #182](https://github.com/INDEPENDENTWU/AXIS/pull/182) and [semantic Light PR #179](https://github.com/INDEPENDENTWU/AXIS/pull/179) under [release #183](https://github.com/INDEPENDENTWU/AXIS/pull/183). Original user-verified timer → old Recorder [P1 #181](https://github.com/INDEPENDENTWU/AXIS/pull/181) is rejected as a product. Strength now confirms performed sets, then in-place save to the canonical Encounter, with a truthful per-set history detail. Light theme applies a single late override for action/number/disabled contrast and iOS readability. Existing Quick Record and Flow compatibility retained; guided multi-step Flow is not yet a complete new PLAY experience.
+
+**Admission:** explicit sequence 34 in `governance/version-decision.json` and inherited 8.32 compiler/stage as a predecessor. New `prepare-833-governed-release.mjs` must yield built 8.33 with exact version parity and an immutable 8.31 production rollback identity. All exact-head inherited CI, new Chromium/WebKit strength, dedicated light optical checks and physical iPhone installed-data review must be accepted before main/dual-provider Product Production release. Draft until then; do not substitute preview success for end-user hardware truth.
+
+---
+
+
 ## Current bounded development — PLAY THIS strength P2 (2026-10-19)
 
 **Public state:** AXIS 8.32 remains served from canonical main `5ea6bab7ebad7daf5868e32f1c98209a35647231` at existing Vercel, EdgeOne and `axis.juele.fun`; not touched by this PR. #177 retains physical acceptance/governance limits and the 8.31 rollback precedent.
