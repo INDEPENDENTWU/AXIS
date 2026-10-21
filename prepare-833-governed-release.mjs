@@ -89,7 +89,7 @@ for(const [p,a,b] of [
  const re=/if\(!((?:\[[^\n;]+\])\.includes\(version\))\)fail\(\x60unexpected public version/;
  const m=src.match(re);
  if(!m)fail('8.10 inherited accepted-release list anchor missing');
- src=src.replace(m[0],m[0].replace(m[1],m[1]+"||version==='8.33'"));
+ src=src.replace(m[0],"if(\!("+m[1]+"||version==='8.33'))fail(\x60unexpected public version");
  write(p,src);
 }
 // The existing 8.31 browser proof must still test this candidate runtime and
