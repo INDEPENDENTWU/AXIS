@@ -81,6 +81,17 @@ for(const [p,a,b] of [
  }
  console.log('[AXIS 8.33] extended '+adjusted+' inherited postbuild version-only admission(s); original factual checks retained');
 }
+// The 8.10 verifier's accepted-version array is extended by earlier
+// build stages (so its final contents can differ from the Git source). Admit
+// one successor without changing any audio/language/owner assertions.
+{
+ const p='postbuild-810-contract.mjs';let src=read(p);
+ const re=/if\(!((?:\[[^\n;]+\])\.includes\(version\))\)fail\(\x60unexpected public version/;
+ const m=src.match(re);
+ if(!m)fail('8.10 inherited accepted-release list anchor missing');
+ src=src.replace(m[0],m[0].replace(m[1],m[1]+"||version==='8.33'"));
+ write(p,src);
+}
 // The existing 8.31 browser proof must still test this candidate runtime and
 // all historical identity/provenance semantics, never silently skip the test.
 {
