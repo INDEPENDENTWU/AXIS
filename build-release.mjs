@@ -78,6 +78,7 @@ const STEPS=[
   'prepare-830-object-identity.mjs',
   'prepare-831-playable-runtime.mjs',
   'prepare-832-play-this.mjs',
+  'prepare-833-governed-release.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',
