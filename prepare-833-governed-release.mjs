@@ -100,7 +100,7 @@ for(const [p,a,b] of [
  const ps=['postbuild-8101-contract.mjs','postbuild-8102-contract.mjs',
   'postbuild-8103-contract.mjs','postbuild-811-contract.mjs',
   'postbuild-812-contract.mjs','postbuild-813-live-route.mjs',
-  'postbuild-8123-contract.mjs'];
+  'postbuild-8123-contract.mjs','postbuild-8123-field-polish.mjs'];
  let count=0;
  for(const p of ps){
   const source=read(p);
