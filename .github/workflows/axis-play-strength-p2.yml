@@ -55,6 +55,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-833-strength-full-loop-browser.mjs
+      - name: Consolidated Light semantic contrast and action readability
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-832d19-light-browser-smoke.mjs
       - name: Diagnostics
         if: failure()
         run: tail -n 100 /tmp/axis-strength-chromium.log || true
@@ -85,6 +90,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-833-strength-full-loop-browser.mjs
+      - name: Consolidated Light semantic contrast and action readability
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-832d19-light-browser-smoke.mjs
       - name: Diagnostics
         if: failure()
         run: tail -n 100 /tmp/axis-strength-webkit.log || true
