@@ -1,25 +1,24 @@
-# Current Release — AXIS 8.32
+# Current Release — AXIS 8.33
 
-**Status: Product candidate, NOT Production-certified.** Current public Production-sealed runtime is AXIS **8.31**. This candidate title reflects the version being built for CI (decision **sequence 33, 8.31 → 8.32 bump**), not a Production claim.
+**Status: Release candidate; NOT Production-certified.** 8.33 is an explicit product-runtime bump (decision sequence **34**, release 8.31 → 8.33). This is a candidate declaration, not a statement that deployment or customer upgrade has occurred.
 
-## Immutable current Production authority
+## Immutable runtime seal baseline and public-provider distinction
 
-AXIS 8.31 certified product/runtime SHA:
+Official immutable last *certified* product/runtime: **8.31**, SHA `dddce5401e80087a7ccceb43ec466f1ad7abb505`, product PR #170, certificate `governance/production-certifications/8.31.json`. Its Vercel/EdgeOne/official-domain snapshot remains untouched and is preserved for rollback.
 
-```text
-dddce5401e80087a7ccceb43ec466f1ad7abb505
-```
+The observed `main` source before this candidate was AXIS 8.32, SHA `5ea6bab7ebad7daf5868e32f1c98209a35647231`, served through the existing public origins. This 8.32 deployment is *not* retrospectively issued an independent 8.32 Governance Seal. An independent 8.33 product runtime is **not** a self-referential requirement for its own candidate admission: verify the exact version/build from PR head first, then independently check merged-main providers.
 
-Product PR #170, independent governance PR #171. All certified 8.31 Production-provider facts remain recorded in [immutable 8.31 certificate](../governance/production-certifications/8.31.json). The preceding [8.30 certificate](../governance/production-certifications/8.30.json) remains unchanged.
+## AXIS 8.33 controlled candidate
 
-## 8.32 unsealed candidate
+**Draft PR #183**, branch `release/833-play-strength-light` targets `main` and unifies completed work from draft #182 and light-theme #179.
 
-Candidate product PR **#174** is a Draft and has not merged; production remains independently certified at 8.31.
+- Strength Object PLAY THIS: user-confirmed actual sets, adjustable planned sets and rest, pause/reload recovery, inline review/corrections, **完成並儲存** directly through the existing `axis821CommitEncounter`; no required second `記下` or duplicate fact writer.
+- Historical detail: presents each exact confirmed actual set in the existing atomic rendering pipeline.
+- Light mode: shared semantic surfaces and readable selected/disabled action controls, number steppers, Recorder and Active/report controls; original dark presentation retained.
+- Quick Record remains separate for retrospective facts; guided multi-step Flow and broader timed/cardio/hold execution are later deliverables, not asserted complete.
 
-8.32 introduces a source-grounded local PLAY THIS entry within the existing Object selector and Flow Home. It is a new user-facing product behavior; command intent is still not a confirmed Encounter. No share, AIR, TAKE, FORK, second Recorder, fact writer or network dependency is introduced. See [8.32 product contract](AXIS_832_PLAY_THIS_EXPERIENCE.md), [visual quality standard](EXPERIENCE_QUALITY_STANDARD.md) and [active work](CURRENT_WORK.md).
+**No 8.33 Production SHA, provider parity, official-domain validation, physical Safari signoff or Governance Seal is claimed here.** 
 
-**No 8.32 exact product/runtime SHA, Production deployment, provider parity or Governance Seal may be claimed before independent evidence exists.** Only 8.31 remains sealed until exact PR-head and merged-main tests are complete.
+## Exact-head release gate
 
-## Admission and release gate
-
-8.32 product candidate → full exact-head CI / physical Chromium+WebKit interaction & visual proof → SHA-protected main merge → exact main Vercel Git Production, EdgeOne and official domain → separate Governance Seal. The sealed production runtime identity must not be replaced with a design-only or governance-only commit.
+Version Authority / inherited contract full green → Chromium and iPhone-type WebKit strength + old Quick Record + light contrast → actual iPhone installed PWA, camera/media, safe-area, dynamic text and data recovery approval → exact SHA/main merge → Vercel and EdgeOne independent Production deployment → `axis.juele.fun` readback, data parity, rollback → a separate certifying Governance Seal. Never promote a Preview or rewrite sealed 8.31 evidence merely to make this test green.
