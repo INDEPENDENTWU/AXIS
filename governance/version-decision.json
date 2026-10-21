@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "authority": "governance-audit-only",
-  "sequence": 33,
+  "sequence": 34,
   "base_release": "8.31",
-  "release": "8.32",
+  "release": "8.33",
   "decision": "bump",
   "change_class": "product-runtime",
-  "summary": "8.32 product candidate: canonical Object and saved Flow PLAY THIS entry uses existing 8.31 Playable projection, Flow/Active/Recorder facts and exact Object identities; first user-facing local practice path, no new storage or factual writer."
+  "summary": "AXIS 8.33 controlled candidate: genuine PLAY THIS strength set/rest execution and in-surface exact Encounter save, plus semantic light-theme readability; retains sealed 8.31 fallback and inherited 8.32 entry, with no production promotion before complete exact-head and device acceptance."
 }
