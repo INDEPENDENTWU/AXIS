@@ -41,6 +41,16 @@ for(const [p,a,b] of [
  s=s.replace(anchor,"const successor833=d.sequence===34&&d.base_release==='8.31'&&d.release==='8.33'&&d.decision==='bump'&&d.change_class==='product-runtime';\nif(!productDecision&&!sealedDecision&&!nextDecision&&!successor833)fail");
  write(p,s);
 }
+// 8.8.2 prohibits synthetic unprompted tones; the later 8.10.3 session-duration
+// reminder is a separately admitted exception. Carry forward exactly that
+// inherited sound distinction for 8.33; do not delete the forbidden-cue test.
+{
+ const p='postbuild-882-contract.mjs',src=read(p);
+ const old=/const sessionDurationExtensionCurrent=[^;]+;/;
+ const m=src.match(old);if(!m)fail('sound-boundary compatibility anchor drift');
+ if(m[0].includes("8.33"))fail('session reminder already advanced unexpectedly');
+ write(p,src.replace(old,m[0].replace(/;$/,"||CURRENT_VERSION==='8.33';")));
+}
 // The existing 8.31 browser proof must still test this candidate runtime and
 // all historical identity/provenance semantics, never silently skip the test.
 {
