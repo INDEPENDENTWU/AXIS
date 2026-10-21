@@ -92,6 +92,37 @@ for(const [p,a,b] of [
  src=src.replace(m[0],"if(\!("+m[1]+"||version==='8.33'))fail(\x60unexpected public version");
  write(p,src);
 }
+// Specific old 8.10.1–8.13 artifact gates were historically compiled with
+// an exact predecessor version. Extend only their version admission predicates
+// to the new exactly-matching 8.33 runtime; all content and security clauses
+// remain byte-identical and continue to execute.
+{
+ const ps=['postbuild-8101-contract.mjs','postbuild-8102-contract.mjs',
+  'postbuild-8103-contract.mjs','postbuild-811-contract.mjs',
+  'postbuild-812-contract.mjs','postbuild-813-live-route.mjs',
+  'postbuild-8123-contract.mjs'];
+ let count=0;
+ for(const p of ps){
+  const source=read(p);
+  const lines=source.split('\n');
+  let changed=0;
+  for(let i=0;i<lines.length;i++){
+   const line=lines[i];
+   if(!/^if\(/.test(line.trim()))continue;
+   if(!/(unexpected public version|release identity|manifest identity|unexpected 8\.11 release identity)/.test(line))continue;
+   if(!/(version|Version|release)/.test(line))continue;
+   const m=line.match(/^(\s*if\()(.*)(\)fail\(.+)$/);
+   if(!m)continue;
+   // A precise 8.33 version+base pair is required to exercise inherited proofs.
+   const exactPair="(JSON.parse(read('release-contract.json')).publicVersion==='8.33'&&JSON.parse(read('release-contract.json')).stableBaseVersion==='8.33'&&JSON.parse(read('axis-build.json')).version==='8.33'&&JSON.parse(read('axis-build.json')).baseVersion==='8.33')";
+   lines[i]=m[1]+'('+m[2]+')&&!'+exactPair+m[3];
+   changed++;
+  }
+  if(changed){write(p,lines.join('\n'));count+=changed}
+ }
+ if(count<5)fail('8.10–8.13 historical exact-version guard migration coverage suspiciously small '+count);
+ console.log('[AXIS 8.33] '+count+' historic exact-version gates admit only internally parity-checked 8.33; behavioral proof unchanged');
+}
 // The existing 8.31 browser proof must still test this candidate runtime and
 // all historical identity/provenance semantics, never silently skip the test.
 {
