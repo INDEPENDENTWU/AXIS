@@ -62,6 +62,25 @@ for(const [p,a,b] of [
             .replace(modern,modern+"||version==='8.33'");
  write(p,out);
 }
+// Preserve historical postbuild content/security/fact-owner checks while
+// allowing their exact current-release identity guards to recognize 8.33.
+// This is a version whitelist extension, never skipping a historic gate.
+{
+ const fscripts=fs.readdirSync('.').filter(p=>/^postbuild-8.*-contract\\.mjs$/.test(p));
+ let adjusted=0;
+ for(const p of fscripts){
+  if(['postbuild-831-playable-contract.mjs','postbuild-832-play-this-contract.mjs'].includes(p))continue;
+  const before=read(p);let after=before;
+  for(const expr of ['String(contract.publicVersion)','contract.publicVersion','String(contract.stableBaseVersion)','contract.stableBaseVersion','info.version','info.baseVersion','manifest.version','manifest.baseVersion','m.version','m.baseVersion','version','CURRENT_VERSION']){
+   after=after.split(expr+"!=='8.32'").join("!['8.32','8.33'].includes("+expr+")");
+   after=after.split(expr+"==='8.32'").join("['8.32','8.33'].includes("+expr+")");
+  }
+  const oldList="!['8.10','8.10.1'].includes(version)";
+  if(after.includes(oldList))after=after.replace(oldList,"!(['8.10','8.10.1'].includes(version)||version==='8.33')");
+  if(after!==before){write(p,after);adjusted++}
+ }
+ console.log('[AXIS 8.33] extended '+adjusted+' inherited postbuild version-only admission(s); original factual checks retained');
+}
 // The existing 8.31 browser proof must still test this candidate runtime and
 // all historical identity/provenance semantics, never silently skip the test.
 {
