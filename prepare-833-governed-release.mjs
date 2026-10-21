@@ -139,6 +139,17 @@ for(const [p,a,b] of [
  const m=src.match(re);if(!m)fail('8.16 inherited compositor guard changed');
  write(p,src.replace(m[0],"const compositor818=("+m[1]+")||contract.publicVersion==='8.33';"));
 }
+// Historic 8.30 Object identity verifier must continue verifying the exact
+// canonical 8.33 artifact and all identity/single-writer constraints.
+{
+ const p='postbuild-830-object-identity-contract.mjs',src=read(p);
+ const target=src.split('\n').find(line=>line.includes("incorrect product runtime version/topology")&&line.trim().startsWith('if('));
+ if(!target)fail('8.30 identity version guard changed');
+ const m=target.match(/^(\s*if\()(.*)(\)fail\(.+)$/);
+ if(!m)fail('8.30 identity guard not one-line');
+ const exact="(info.version==='8.33'&&info.baseVersion==='8.33'&&info.architecture==='canonical-single-runtime')";
+ write(p,src.replace(target,m[1]+'('+m[2]+')&&!'+exact+m[3]));
+}
 // The existing 8.31 browser proof must still test this candidate runtime and
 // all historical identity/provenance semantics, never silently skip the test.
 {
