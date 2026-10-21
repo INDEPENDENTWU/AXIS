@@ -1,5 +1,17 @@
 # AXIS Engineering Handoff
 
+## 8.33 governed release-candidate handoff (2026-10-21)
+
+- **Current candidate:** Draft [PR #183](https://github.com/INDEPENDENTWU/AXIS/pull/183), `release/833-play-strength-light` -> `main`. Scope combines verified P2 Strength [PR #182](https://github.com/INDEPENDENTWU/AXIS/pull/182) and semantic Light fixes [PR #179](https://github.com/INDEPENDENTWU/AXIS/pull/179). **Not Production and not sealed**.
+- **Main / rollback:** exact pre-release `main` `5ea6bab7ebad7daf5868e32f1c98209a35647231` (8.32 deployment). Last independently certified 8.31 runtime SHA `dddce5401e80087a7ccceb43ec466f1ad7abb505`; immutable sealed providers and user local data must not be overwritten by an untested candidate.
+- **Version Authority:** new `governance/version-decision.json` sequence **34**, product-runtime bump to **8.33** from base-sealed governance 8.31. `prepare-832-play-this.mjs` retains historical 8.32 stage. New `prepare-833-governed-release.mjs` performs a monotonic 8.32→8.33 candidate identity upgrade; source and finalized build manifest, CURRENT_RELEASE and project-state must agree. Version Authority is a meaningful gate; never disable or claim an unversioned product UI change as a compatibility patch.
+- **Behavior:** strength PLAY THIS live start → confirmed performed sets → rest/next → review/edit → direct original `axis821CommitEncounter` once. `playThis.actualSets` is user-confirmed, old Recorder stays intact, history detail reuses atomic stage. No full guided Flow/cardio promise. Semantic light option pairs background with readable foreground and maintains original Dark.
+- **Required tests:** exact-head 31 inherited workflow families plus P2 Chromium/WebKit complete set/run/save/history and 8.32d19 Light browser contrast tests. Verify preexisting data, camera/media, iOS safe area, dynamic text, installed-origin continuity with a real Safari PWA before announcing Production. Preview is a separate local-storage origin.
+- **Release decision:** pending; no Vercel/EdgeOne Production, no exact-head merge, no Governance Seal. After clean acceptance make a single SHA-locked release with independently verified provider and domain readbacks. Roll back to last proven deployment if historical user data or media fails.
+
+---
+
+
 ## Active handoff — PLAY THIS Strength P2 (2026-10-19)
 
 - **Authoritative public**: AXIS 8.32 exact main `5ea6bab7ebad7daf5868e32f1c98209a35647231` on original Vercel + EdgeOne + `axis.juele.fun`; unchanged by this work. Local stored media/training unaffected. #177 governance and device acceptance still open.
