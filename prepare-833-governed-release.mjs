@@ -121,6 +121,15 @@ for(const [p,a,b] of [
  if(count<5)fail('8.10–8.13 historical exact-version guard migration coverage suspiciously small '+count);
  console.log('[AXIS 8.33] '+count+' historic exact-version gates admit only internally parity-checked 8.33; behavioral proof unchanged');
 }
+// 8.18 intentionally superseded the older center-watermark layout. The
+// 8.15.1 regression verifier must check the *modern* factual watermark on
+// 8.33 rather than reject the already-certified 8.18+ visual behavior.
+{
+ const p='postbuild-8151-regression-contract.mjs',src=read(p);
+ const re=/const centerSuperseded=([^;]+);/;
+ const m=src.match(re);if(!m)fail('inherited watermark supersession guard changed');
+ write(p,src.replace(m[0],'const centerSuperseded=('+m[1]+")||contract.publicVersion==='8.33';"));
+}
 // The existing 8.31 browser proof must still test this candidate runtime and
 // all historical identity/provenance semantics, never silently skip the test.
 {
