@@ -130,6 +130,15 @@ for(const [p,a,b] of [
  const m=src.match(re);if(!m)fail('inherited watermark supersession guard changed');
  write(p,src.replace(m[0],'const centerSuperseded=('+m[1]+")||contract.publicVersion==='8.33';"));
 }
+// 8.18's already-admitted 30fps canvas compositor remains the sole current
+// video owner. The inherited 8.16 test must exercise it on 8.33, not insist
+// on restoring the removed 8.16 direct MediaRecorder configuration.
+{
+ const p='postbuild-816-contract.mjs',src=read(p);
+ const re=/const compositor818=([^;]+);/;
+ const m=src.match(re);if(!m)fail('8.16 inherited compositor guard changed');
+ write(p,src.replace(m[0],"const compositor818=("+m[1]+")||contract.publicVersion==='8.33';"));
+}
 // The existing 8.31 browser proof must still test this candidate runtime and
 // all historical identity/provenance semantics, never silently skip the test.
 {
