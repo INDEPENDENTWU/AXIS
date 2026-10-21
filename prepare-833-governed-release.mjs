@@ -7,7 +7,14 @@ function once(path,a,b){
  const src=read(path);if(src.split(a).length!==2)fail(path+' expected exactly one '+a);
  write(path,src.replace(a,b));
 }
-const decision=JSON.parse(read('governance/version-decision.json'));
+const staged='.axis-833-approved-decision.json';
+if(!fs.existsSync(staged))fail('approved version decision not preserved by bootstrap');
+const approved=read(staged);
+const interim=JSON.parse(read('governance/version-decision.json'));
+if(interim.sequence!==33||interim.release!=='8.32')fail('8.32 inherited version stage not completed');
+const decision=JSON.parse(approved);
+write('governance/version-decision.json',approved);
+fs.unlinkSync(staged);
 if(decision.sequence!==34||decision.base_release!=='8.31'||decision.release!==VERSION||
  decision.decision!=='bump'||decision.change_class!=='product-runtime')
  fail('sequence-34 Product Authority missing; never infer or auto-grant a release');
