@@ -2,6 +2,7 @@ import {execFileSync} from 'node:child_process';
 import fs from 'node:fs';
 
 const STEPS=[
+  'prepare-833-inherited-bootstrap.mjs',
   'prepare-8102-release-compat.mjs',
   'prepare-8103-release-compat.mjs',
   'prepare-811-release-compat.mjs',
@@ -78,6 +79,7 @@ const STEPS=[
   'prepare-830-object-identity.mjs',
   'prepare-831-playable-runtime.mjs',
   'prepare-832-play-this.mjs',
+  'prepare-833-governed-release.mjs',
   'build-hardened.mjs',
   'postbuild-kernel-priority.mjs',
   'postbuild-812-field-hardening.mjs',

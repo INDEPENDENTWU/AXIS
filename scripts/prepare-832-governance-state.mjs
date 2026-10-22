@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),write=(p,x)=>fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n');
 const d=read('governance/version-decision.json'),proof=read('governance/production-certifications/8.31.json');
 const old='dddce5401e80087a7ccceb43ec466f1ad7abb505';
-if(d.sequence!==33||d.base_release!=='8.31'||d.release!=='8.32'||d.decision!=='bump'||d.change_class!=='product-runtime')throw Error('[AXIS 8.32 governance] explicit sequence 33 product bump required');
+if(!((d.sequence===33&&d.release==='8.32')||(d.sequence===34&&d.release==='8.33'))||d.base_release!=='8.31'||d.decision!=='bump'||d.change_class!=='product-runtime')throw Error('[AXIS 8.32 inherited governance] explicit 8.32 predecessor or 8.33 governed successor required');
 if(proof.productRuntimeSha!==old||proof.productPullRequest!==170||proof.exactHeadSuccess!==35)throw Error('[AXIS 8.32 governance] immutable 8.31 certificate changed');
 const p=read('governance/project-state.json'),o=read('governance/owners.json');
 if(p.product?.releaseStatus!=='production-certified'||p.product?.productionRuntimeSha!==old||p.production?.sealedRelease!=='8.31')throw Error('[AXIS 8.32 governance] sealed 8.31 baseline lost');

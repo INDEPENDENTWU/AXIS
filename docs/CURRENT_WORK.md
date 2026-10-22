@@ -1,5 +1,47 @@
 # AXIS Current Work
 
+## AXIS 8.33 · Play Strength + Light Release Candidate (2026-10-21)
+
+**governed target branch: `main`.** Controlled **candidate** Draft PR **#183**, `release/833-play-strength-light`, explicit version bump decision #34 (8.31 sealed rollback baseline → 8.33). The official `main` prior to this PR remains 8.32 at SHA `5ea6bab7ebad7daf5868e32f1c98209a35647231`; the last independently certified immutable runtime seal is **8.31**, SHA `dddce5401e80087a7ccceb43ec466f1ad7abb505`. Neither 8.32 deployment nor 8.33 Preview implies a new seal. No Production mutation occurred from this PR.
+
+**Release-scope only:** consolidate [P2 strength PR #182](https://github.com/INDEPENDENTWU/AXIS/pull/182) and [semantic Light PR #179](https://github.com/INDEPENDENTWU/AXIS/pull/179) under [release #183](https://github.com/INDEPENDENTWU/AXIS/pull/183). Original user-verified timer → old Recorder [P1 #181](https://github.com/INDEPENDENTWU/AXIS/pull/181) is rejected as a product. Strength now confirms performed sets, then in-place save to the canonical Encounter, with a truthful per-set history detail. Light theme applies a single late override for action/number/disabled contrast and iOS readability. Existing Quick Record and Flow compatibility retained; guided multi-step Flow is not yet a complete new PLAY experience.
+
+**Admission:** explicit sequence 34 in `governance/version-decision.json` and inherited 8.32 compiler/stage as a predecessor. New `prepare-833-governed-release.mjs` must yield built 8.33 with exact version parity and an immutable 8.31 production rollback identity. All exact-head inherited CI, new Chromium/WebKit strength, dedicated light optical checks and physical iPhone installed-data review must be accepted before main/dual-provider Product Production release. Draft until then; do not substitute preview success for end-user hardware truth.
+
+---
+
+
+## Current bounded development — PLAY THIS strength P2 (2026-10-19)
+
+**Public state:** AXIS 8.32 remains served from canonical main `5ea6bab7ebad7daf5868e32f1c98209a35647231` at existing Vercel, EdgeOne and `axis.juele.fun`; not touched by this PR. #177 retains physical acceptance/governance limits and the 8.31 rollback precedent.
+
+**Active candidate:** [PR #182](https://github.com/INDEPENDENTWU/AXIS/pull/182), branch `feature/833-play-strength-complete`, superseding non-shippable [#181](https://github.com/INDEPENDENTWU/AXIS/pull/181) for **strength Object** practice. The user explicitly rejected generic P1 timer → old `編輯成果並記下` as the complete product. New P2 begins directly from an Object card, asks for *actual* weight/reps at each set confirmation, handles rest and next set, pause/reload, displays every performed set in an inline editable review, and offers one **完成並儲存** action. There is **no mandatory #scanSheet / 記下 handoff**. Old Quick Record remains intact for retrospective entries. Non-strength cardio/hold and guided multi-step Flow are separate follow-ups and cannot be claimed complete.
+
+**Truth and ownership:** `lib/axis-live-strength.mjs` stores only bounded prospective draft `axis.play-strength.v1` (localStorage `axis_play_strength_draft_v1`). Only explicit set confirmations create prospective actual-set rows. Save calls the original app-owned `axis821CommitEncounter(e,eq)` once, with the confirmed sets in `e.playThis.actualSets`; a readback of `axis_v60_state` must verify the same Attempt ID/Event ID before the draft is retired. `e.weight/reps` summarize the *last* actual set and `e.sets` the confirmed count, avoiding invented equal reps/weights. All media, Active, FlowRun, historical data and backup ownership remain unchanged; no second Recorder/factual writer. Finish/cancel without saving creates no Encounter.
+
+**Code and evidence:** `scripts/prepare-833-strength-complete.mjs` embeds a mode-specific renderer `runtime/axis-live-strength.js` in the canonical existing app closure and reuses exact `axis831ExactFlowEq` IDs. Tests `tests/axis-live-strength.test.mjs` and `scripts/axis-833-strength-full-loop-browser.mjs` assert real user taps, multiple performed sets, mid-practice reload, inline actual corrections, **one** canonical Encounter after direct save and **zero** Recorder popups. [Dedicated CI #39147908642](https://github.com/INDEPENDENTWU/AXIS/actions/runs/39147908642) source, Chromium and WebKit were successful at initial P2 code SHA `ec2cf29a` (later guard/UI changes require exact-head rerun). Updated original 8.32 legacy browser expectations to separate strength Live from original retroactive logging. Current isolated Preview(s) only, no product release admission.
+
+**Release boundary:** Draft #182, version authority intentionally not bypassed. Explicit version bump, all inherited exact-head CI, physical iPhone Safari PWA optical/interaction/contrast and privacy/local data checks, and bounded Vercel+EdgeOne post-merge certification must precede any official deployment or Governance Seal. Separate Draft #179 Light consistency must be reviewed in that release decision. PR #181 remains rejected as a stand-alone product despite its reuse as a compatibility base.
+
+---
+
+## Earlier PLAY THIS P1 prototyping (historical, not shippable)
+
+
+## Current bounded development — PLAY THIS pre-Encounter P1 (2026-10-17)
+
+**Public AXIS remains 8.32**, exact canonical merged-main `5ea6bab7ebad7daf5868e32f1c98209a35647231` on original Vercel, EdgeOne and `axis.juele.fun`. Historical text below describes earlier 8.32 development and is superseded only for present-day deployment status; no independent 8.32 Governance Seal has been issued and #177 still covers physical acceptance.
+
+**Current draft PR #181** (`feature/833-live-practice-object` → `main`) addresses user-verified issue #180: old Object `開始練習` opened the same `記下` form. The new Object path creates a *prospective* `axis.preplay-intent.v1` draft, shows a real running timer with pause/resume, mode-aware manual set count, review, abandon and reload-resume, and only passes to the old Recorder when the user deliberately requests to save actual outcomes. Existing historical `axis821CommitEncounter` remains the single Encounter writer; the draft retires only via existing queued `axis821FlowAfterCanonicalCommit(e,intent)` after persisted canonical confirmation. The original FlowRun and v82/v87 post-Encounter Active remain separate authoritative owners; Flow cannot replace a prospective active Object practice. No second activity fact writer is introduced.
+
+**Tests / release state:** pure `node --test tests/axis-preplay-intent.test.mjs`, 8.32 inherited Object/Flow browser test updated to reject immediate `#scanSheet`, plus `scripts/axis-833-preplay-browser-smoke.mjs` in existing Chromium/pinned WebKit gate. Candidate Vercel Preview at `https://axis-61qjmcito-independentwus-projects.vercel.app` is READY at exact code commit `691cf92f6be5c48fcab35533ef129ee77a2a3340` (later docs may change PR head) with 8.32 source shell. The official Production sites are unchanged. Do not confuse the successful Preview build with fully passed browser/physical acceptance.
+
+**Admissibility:** version governance still rejects unversioned executable UI product changes. This Draft may not merge/publish before explicit approved release/version authority, exact-head gates, readback and physical iPhone PWA review. Also do not silently absorb Draft light-theme PR #179: it remains separately scoped and needs an explicit coherent merge/release plan. P1 is prospective **Object** practice; full guided Flow, rest automation, polish, offline conflict convergence and final user acceptance remain follow-ups, not falsely claimed complete.
+
+---
+
+## Previous 8.32 work record (historical)
+
 **Governed milestone:** AXIS 8.32 — Local PLAY THIS.
 governed target branch: `main`.
 Bounded delivery branch: `feature/832-play-this-local-entry` · PR **#174**.

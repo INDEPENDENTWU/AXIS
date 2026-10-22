@@ -29,7 +29,20 @@ for(const token of ['preObjectTapVisual','layoutShiftBeforeTap','layoutShiftAdde
 for(const token of ['page.mouse.dblclick','warmActiveReload','axis-832d-p20-','__AXIS_LAYOUT_MEASURE__','flowRunId','ownerVisible'])assert.ok(timingBrowser.includes(token),'P11/P12/P20 factual browser timing guard missing '+token);
 assert.ok(read('scripts/axis-832-local-gate.sh').includes('axis-832d-timing-browser-smoke')&&read('scripts/axis-832-local-gate.sh').includes('AXIS_GATE_REPORT_DIR'),'P20 measured report must remain in exact-head gate');
 const focusBrowser=read('scripts/axis-832-play-this-browser-smoke.mjs');
-for(const token of ['P19 keyboard focus failed to hand off into Recorder','focused Object lost its keyboard position after catalog refresh','P16 enlarged label clipped'])assert.ok(focusBrowser.includes(token),'P16/P19 browser regression guard missing '+token);
+for(const token of ['P19 keyboard focus failed to transfer to live practice','focused Object lost its keyboard position after catalog refresh','P16 enlarged label clipped'])assert.ok(focusBrowser.includes(token),'P16/P19 browser regression guard missing '+token);
+const prospective=read('scripts/prepare-833-live-practice-object.mjs');
+const pure=read('lib/axis-preplay-intent.mjs');
+const live=read('runtime/axis-preplay-object.js');
+assert.ok(driver.includes('prepare-833-live-practice-object.mjs'),'new prospective practice build integration missing');
+for(const token of ['axisPreplayRead','axisPreplayWrite','axisPreplayTransition','axisPreplayConfirmRecorded','axis832StartObject(id)','axisPreplayOpen','axisPreplayHandle'])
+ assert.ok(live.includes(token),'P1 real live practice runtime missing '+token);
+assert.ok(prospective.includes('function axis821FlowAfterCanonicalCommit(e,intent){')&&prospective.includes('confirmRecorded(e)')&&
+ !prospective.includes('app.replace(old,old+"window.__AXIS_PREPLAY__'),
+ 'prospective closure must extend only the existing canonical postcommit callback');
+assert.ok(pure.includes('axis.preplay-intent.v1')&&!pure.includes('axis_v60_state')&&!pure.includes('axis_v8_meta'),
+ 'prospective draft cannot become a saved factual owner');
+for(const token of ["#axisStrengthSheet.show","legacy Recorder","axis_play_strength_draft_v1"])
+ assert.ok(focusBrowser.includes(token),'real Object start must verify Live and no immediate Recorder: '+token);
 assert.ok(preparation.includes("run?.status==='active'"),'existing Flow conflict required');
 assert.ok(preparation.includes("run&&run.status!=='complete'"),'only completed runs may be restarted');
 assert.ok(preparation.includes("run?.status==='complete'?api.launch(id)"),'P18 repeat must use existing Flow owner');
@@ -39,7 +52,8 @@ assert.ok(read('scripts/axis-832-local-gate.sh').includes('axis-832-real-world-b
 assert.ok(preparation.includes("bridge.dispatch(spec,attemptId,cmd).status==='accepted'"),'must respect existing owner acknowledgement');
 assert.ok(quality.includes('One visual hierarchy'),'presentation quality contract lost');
 const version=JSON.parse(read('governance/version-decision.json'));
-assert.deepEqual([version.sequence,version.base_release,version.release,version.decision,version.change_class],[33,'8.31','8.32','bump','product-runtime']);
+assert.ok((version.sequence===33&&version.release==='8.32')||(version.sequence===34&&version.release==='8.33'),'8.32 predecessor / explicitly governed 8.33 successor only');
+assert.deepEqual([version.base_release,version.decision,version.change_class],['8.31','bump','product-runtime']);
 const regression=read('scripts/prepare-832-inherited-regressions.mjs');
 for(const token of ['axis-826-active-continuity-smoke.mjs','axis-882-smoke.mjs','lat-pulldown','foreignStatus'])assert.ok(regression.includes(token),'8.32 inherited regression adapter missing '+token);
 console.log('[AXIS 8.32 source contract] PASS · pure source compiler reuse · one app presentation owner · local user action and no second factual writer');
