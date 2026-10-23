@@ -1,5 +1,16 @@
 # AXIS Engineering Handoff
 
+## Active branch handoff — PLAY THIS actual execution, P1 (2026-10-17)
+
+- **Official Production** remains AXIS 8.32, merged main `5ea6bab7ebad7daf5868e32f1c98209a35647231`, at original Vercel/EdgeOne/`axis.juele.fun`. Deployment readbacks were confirmed before this branch. Physical acceptance and independent Governance Seal remain open in #177.
+- **Current isolated candidate**: [PR #181](https://github.com/INDEPENDENTWU/AXIS/pull/181) `feature/833-live-practice-object` implementing live prospective **Object** practice in response to [#180](https://github.com/INDEPENDENTWU/AXIS/issues/180). Draft; NO public Production mutation. Separate [light consistency PR #179](https://github.com/INDEPENDENTWU/AXIS/pull/179) remains Draft.
+- **One source/factual writer**: `lib/axis-preplay-intent.mjs` is a pure state machine. `runtime/axis-preplay-object.js` embedded via `scripts/prepare-833-live-practice-object.mjs` into existing canonical app closure. It uses its own `axis_preplay_intent_v1` reversible local draft for reload recovery, never a saved Encounter/Activity/Flow. `#axisPreplaySheet` is the live UI with a resume affordance on Today. Existing `axis821FlowAfterCanonicalCommit` post-save callback retires the draft only when a matching actual Encounter was persisted by the original Recorder.
+- **Visible behavior**: Object `開始練習` → real live clock with pause/manual set confirmation → review actuals → `編輯成果並記下` → original canonical Quick Recorder and one persisted Encounter. `記下` remains retrospective; dropping a prospective draft writes no historical facts. Stored draft reappears via a quiet Today resume entry after a reload.
+- **Evidence**: [Vercel Preview](https://axis-61qjmcito-independentwus-projects.vercel.app) built and served new JavaScript with hash/source `691cf92f6be5c48fcab35533ef129ee77a2a3340`; pure/unit and Chromium/WebKit exact-head browser checks must individually PASS before merge. Do not substitute Preview READY for functional validation. Version Authority currently fails because no new official release/version decision exists. Maintain 8.32 rollback and full user data; do not overwrite or migrate PWA local storage.
+- **Next priority**: complete browser and physical light/dark optical acceptance; repair only real failures; make controlled version admission decision and then separately assess merge, both provider production deployments and user-data continuity. Guided multi-step Flow execution requires a subsequent specifically scoped implementation; not part of P1.
+
+## Previous release-candidate history (superseded as public deployment status)
+
 ## Current unreleased release-candidate handoff (2026-10-15)
 
 The immutable certified public Product/runtime remains **8.31**, source `dddce5401e80087a7ccceb43ec466f1ad7abb505`. AXIS **8.32 is not deployed, merged or sealed**.
