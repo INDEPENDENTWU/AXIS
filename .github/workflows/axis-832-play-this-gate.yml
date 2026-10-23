@@ -63,6 +63,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-832d18-origin-browser-smoke.mjs
+      - name: 8.32 Light semantic controls · real browser color/Recorder/Active
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-832d19-light-browser-smoke.mjs
       - name: Browser diagnostic
         if: failure()
         run: tail -n 80 /tmp/axis-832-chromium.log || true
@@ -108,6 +113,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-832d18-origin-browser-smoke.mjs
+      - name: 8.32 Light semantic controls · real browser color/Recorder/Active
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-832d19-light-browser-smoke.mjs
       - name: Browser diagnostic
         if: failure()
         run: tail -n 80 /tmp/axis-832-webkit.log || true
