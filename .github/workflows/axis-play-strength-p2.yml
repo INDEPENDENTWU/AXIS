@@ -1,0 +1,96 @@
+name: AXIS PLAY THIS Strength Complete P2
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: strength-p2-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Check real full-loop source contracts and six-mode legacy compatibility
+        run: |
+          node --check lib/axis-live-strength.mjs
+          node --check runtime/axis-live-strength.js
+          node --check scripts/prepare-833-strength-complete.mjs
+          node --test tests/axis-live-strength.test.mjs
+          node --test tests/axis-preplay-intent.test.mjs
+          node scripts/axis-832-play-this-contract.mjs
+      - name: Build the canonical release candidate without publishing
+        run: |
+          node build-release.mjs
+          node postbuild-832-play-this-contract.mjs
+  chromium:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node build-release.mjs
+      - run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - run: |
+          python3 -m http.server 4173 > /tmp/axis-strength-chromium.log 2>&1 &
+          sleep 1
+      - name: Full strength execution and direct canonical Encounter
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-833-strength-full-loop-browser.mjs
+      - name: Diagnostics
+        if: failure()
+        run: tail -n 100 /tmp/axis-strength-chromium.log || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: axis-strength-p2-chromium
+          path: /tmp/axis-strength-*-chromium.png
+          if-no-files-found: ignore
+  webkit:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node build-release.mjs
+      - run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - run: |
+          python3 -m http.server 4173 > /tmp/axis-strength-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone-like strength execution and direct canonical Encounter
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-833-strength-full-loop-browser.mjs
+      - name: Diagnostics
+        if: failure()
+        run: tail -n 100 /tmp/axis-strength-webkit.log || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: axis-strength-p2-webkit
+          path: /tmp/axis-strength-*-webkit.png
+          if-no-files-found: ignore

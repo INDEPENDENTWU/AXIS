@@ -28,6 +28,8 @@ jobs:
           node --check scripts/prepare-832-play-this-integration.mjs
           node --check scripts/prepare-832-governance-state.mjs
           node scripts/axis-832-play-this-contract.mjs
+          node --test tests/axis-preplay-intent.test.mjs
+          node --check scripts/prepare-833-live-practice-object.mjs
       - name: Canonical 8.32 candidate build
         run: |
           node build-release.mjs
@@ -58,6 +60,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: chromium
         run: node scripts/axis-832-play-this-browser-smoke.mjs
+      - name: Live PLAY THIS pre-Encounter end-to-end proof
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-833-preplay-browser-smoke.mjs
       - name: Read-only installed origin and stale build identity
         env:
           AXIS_URL: http://127.0.0.1:4173
@@ -96,6 +103,11 @@ jobs:
           AXIS_URL: http://127.0.0.1:4173
           AXIS_ENGINE: webkit
         run: node scripts/axis-832-play-this-browser-smoke.mjs
+      - name: Live PLAY THIS pre-Encounter end-to-end proof
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-833-preplay-browser-smoke.mjs
       - name: Pinned WebKit 1.55 historical finish, genuine touch and focus
         env:
           AXIS_URL: http://127.0.0.1:4173

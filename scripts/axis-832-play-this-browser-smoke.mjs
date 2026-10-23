@@ -27,12 +27,19 @@ try{
  assert.ok(bounds&&bounds.height>=44,'PLAY THIS tap target below 44px');
  assert.ok(bounds.x>=0&&bounds.x+bounds.width<=390,'PLAY THIS horizontally clipped');
  await tap(object);
+ await page.locator('#axisStrengthSheet.show').waitFor({state:'visible',timeout:5000});
+ assert.equal(await page.locator('#scanSheet.show').count(),0,'Object PLAY THIS incorrectly opened old 记下 Recorder');
  const saved=await initial();
- assert.equal(saved.active?.events?.length||0,0,'Object selection must not fabricate Encounter');
+ assert.equal(saved.active?.events?.length||0,0,'starting prospective Object must not fabricate Encounter');
+ assert.equal((await page.evaluate(()=>window.__AXIS_LIVE_STRENGTH__?.read?.()))?.objectId,'chest-row');
  assert.equal(await page.evaluate(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id),'chest-row','selected exact Object changed');
  await page.screenshot({path:'/tmp/axis-832-object-'+ENGINE+'.png',fullPage:true});
- // Isolate real Flow entry from the Object context without creating a fake owner.
- await page.evaluate(()=>document.querySelector('#eqSheet')?.classList.remove('show'));
+ // Explicitly abandon the independent prospective Object intent; a Flow may not silently steal it.
+ await page.evaluate(()=>{
+   localStorage.removeItem('axis_play_strength_draft_v1');
+   document.querySelector('#axisStrengthSheet')?.classList.remove('show');
+   document.querySelector('#eqSheet')?.classList.remove('show');
+ });
  const flow={schema:'axis.flow.v1',id:'axis832-flow-browser',title:'今天的练习',steps:[{id:'first',objectRef:'chest-row'}]};
  const compiled=await page.evaluate(flow=>{const a=window.__AXIS_FLOW_RUNTIME__;a.saveFlow(flow);window.__AXIS_821_FLOW_SURFACE__.render();return window.__AXIS_832_PLAY_THIS__.compile('flow',flow.id)},flow);
  assert.equal(compiled.steps[0].objectRef,'chest-row');
@@ -73,15 +80,17 @@ await page.evaluate(()=>{document.documentElement.lang='en';document.querySelect
 assert.equal((await customButton.innerText()).trim(),'Start practice','localized custom action is inconsistent');
 const started=Date.now();await tap(customButton);
 await page.waitForFunction(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id==='custom-practice-832',undefined,{timeout:4500});
-await page.waitForFunction(()=>document.querySelector('#scanSheet')?.classList.contains('show'),undefined,{timeout:5500});
-assert.equal(await page.locator('#scanSheet.show').count(),1,'P02 custom Object did not open the existing recorder');
-await page.waitForFunction(()=>document.querySelector('#scanSheet')?.contains(document.activeElement),undefined,{timeout:1500});
-const handoff=await page.evaluate(()=>({picker:document.querySelector('#eqSheet')?.classList.contains('show'),captureOwners:document.querySelectorAll('[data-axis-capture-owner]').length,recorderNodes:document.querySelectorAll('#scanSheet').length,focusInside:document.querySelector('#scanSheet')?.contains(document.activeElement)}));
-assert.equal(handoff.picker,false,'P19 Object sheet remains over Recorder');
-assert.equal(handoff.recorderNodes,1,'P19 duplicate recorder overlay');
-assert.equal(handoff.captureOwners,1,'P19 duplicate Recorder owner');
-assert.equal(handoff.focusInside,true,'P19 keyboard focus failed to hand off into Recorder');
-console.log('[AXIS 8.32 P19] PASS · one Recorder owner and overlay, focus transferred from Object picker');
+await page.waitForFunction(()=>document.querySelector('#axisPreplaySheet')?.classList.contains('show'),undefined,{timeout:5500});
+assert.equal(await page.locator('#scanSheet.show').count(),0,'P02 Object must not open legacy Recorder');
+await page.waitForFunction(()=>document.querySelector('#axisPreplaySheet')?.contains(document.activeElement),undefined,{timeout:1600});
+const handoff=await page.evaluate(()=>({picker:document.querySelector('#eqSheet')?.classList.contains('show'),recorderNodes:document.querySelectorAll('#scanSheet').length,
+ liveVisible:document.querySelector('#axisPreplaySheet')?.classList.contains('show'),
+ focusInside:document.querySelector('#axisPreplaySheet')?.contains(document.activeElement)}));
+assert.equal(handoff.picker,false,'P19 Object picker remains over live practice');
+assert.equal(handoff.recorderNodes,1,'P19 duplicate canonical Recorder');
+assert.equal(handoff.liveVisible,true,'P19 prospective live practice missing');
+assert.equal(handoff.focusInside,true,'P19 keyboard focus failed to transfer to live practice');
+console.log('[AXIS P1 P19] PASS · one live practice before Recorder; canonical Recorder still single');
 const customFact=await initial();
 assert.equal(customFact.active?.events?.length||0,0,'P02 Object entry fabricated a canonical Encounter');
 console.log('[AXIS 8.32c acceptance] P02/P15 custom exact Object + visual width + English PASS · action-to-owner elapsed ms='+String(Date.now()-started));
