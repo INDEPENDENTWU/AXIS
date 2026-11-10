@@ -1,5 +1,16 @@
 # AXIS Engineering Handoff
 
+## Active handoff — AXIS Today / Live / Continuity (2026-11-11)
+
+- **Source & scope**: [Draft PR #184](https://github.com/INDEPENDENTWU/AXIS/pull/184), `feature/834-today-continuity-run`. Current branch combines P2 strength confirmed sets with `lib/axis-continuity-run.mjs`, `runtime/axis-today-continuity.js` and `scripts/prepare-834-today-continuity.mjs`: historical completed-session → Today next step; short/full; same-sheet per-Object progression; canonical finish. Added `lib/axis-live-timed.mjs` and `runtime/axis-live-timed.js`: cardio timer, paused/reloaded state, explicit actual duration/effort confirmation, direct canonical save, with no new Encounter writer.
+- **First-run**: when no relevant completed session exists, show in-place limited exact-Object starters and search/expand the same catalog. `axisContinuityBeginFresh` creates one prospective run, opens a real strength or timed practice, and only after the user confirms a real Encounter does it become an archived session and next-time source. No legacy `記下` handoff for PLAY THIS.
+- **Contracts**: prospective run `axis_continuity_run_v1`; strength draft `axis_play_strength_draft_v1`; timed draft `axis_play_timed_draft_v1` are separate, bounded local intents. Confirmed `e.playThis.actualSets` or `e.playThis.actualDurationMinutes` route through original canonical `axis821CommitEncounter`; skipped/abandoned/paused state never writes a fact. Existing personal IndexedDB image/video assets are never touched by this new scope.
+- **Acceptance**: earlier exactly proven Today/strength 3/3 [#42837137273](https://github.com/INDEPENDENTWU/AXIS/actions/runs/42837137273). Latest expanded tests `tests/axis-live-timed.test.mjs` and `scripts/axis-834-first-use-timed-browser.mjs` require new Chromium and iPhone-like WebKit checks. No physical Safari or public Production assertion. CI infra blocked by ubuntu26/WebKit (#185). Version Authority remains independent of browser acceptance.
+- **Later, separate product discovery**: user asked for original, defensible value from their authentic captured photos/videos as longitudinal personal assets. Do not build speculative scores, scan/record changes or external sharing yet. At appropriate later stage, design opt-in uses that preserve exact media references, provenance, user autonomy and local privacy. The current product stage takes precedence.
+
+---
+
+
 ## Active handoff — PLAY THIS Strength P2 (2026-10-19)
 
 - **Authoritative public**: AXIS 8.32 exact main `5ea6bab7ebad7daf5868e32f1c98209a35647231` on original Vercel + EdgeOne + `axis.juele.fun`; unchanged by this work. Local stored media/training unaffected. #177 governance and device acceptance still open.
