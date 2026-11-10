@@ -56,6 +56,15 @@ try{
  await page.waitForFunction(()=>!!document.querySelector('#axisContinuityToday [data-continuity="start-full"]'));
  assert.equal(await page.locator('#scanSheet.show').count(),0);
  await page.screenshot({path:'/tmp/axis-first-use-continued-'+ENGINE+'.png',fullPage:false});
+ // Rest is a reversible day-local preference, NOT a fabricated workout.
+ await tap(page.locator('#axisContinuityToday [data-continuity="rest"]'));
+ assert.equal((await snapshot()).sessions.length,1);
+ await page.locator('#axisContinuityToday [data-continuity="unrest"]').waitFor({state:'visible'});
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.locator('#axisContinuityToday [data-continuity="unrest"]').waitFor({state:'visible'});
+ assert.equal((await snapshot()).sessions.length,1,'rest day modified training history');
+ await tap(page.locator('#axisContinuityToday [data-continuity="unrest"]'));
+ await page.locator('#axisContinuityToday [data-continuity="start-full"]').waitFor({state:'visible'});
  // A truly different mode: user-authored cardio, independent factual duration.
  await init([{id:'custom-walk',name:'走路計時',type:'cardio',pattern:'cardio',
   muscles:['心肺'],effect:'輕鬆活動',custom:true}]);
@@ -102,6 +111,17 @@ try{
  await tap(page.locator('#axisStrengthSheet [data-continuity="dismiss"]'));
  await page.waitForFunction(()=>!!document.querySelector('#axisContinuityToday [data-continuity="start-full"]'));
  assert.equal(await page.locator('#scanSheet.show').count(),0);
+ // Ending a *new* timed repeat before review never invents an Encounter.
+ await tap(page.locator('#axisContinuityToday [data-continuity="start-full"]'));
+ await page.locator('#axisStrengthSheet.show [data-continuity="stop"]').waitFor({state:'visible'});
+ page.once('dialog',dialog=>dialog.accept());
+ await tap(page.locator('#axisStrengthSheet [data-continuity="stop"]'));
+ await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_continuity_run_v1')||'{}').stage==='done');
+ assert.equal((await plan()).sessionId,null,'unsaved early-stop manufactured a session');
+ assert.equal((await snapshot()).sessions.length,1,'unsaved early-stop appended a workout');
+ assert.equal(await timed(),null);
+ await tap(page.locator('#axisStrengthSheet [data-continuity="dismiss"]'));
+ assert.equal((await snapshot()).active,null);
  assert.deepEqual(errors,[],'JavaScript console errors');
  console.log('[AXIS first use + timed '+ENGINE+'] PASS · no-history first live strength; real confirmed history; cardio timer pause reload review save; next prepared, no Recorder');
 }finally{await browser.close()}
