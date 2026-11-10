@@ -63,7 +63,9 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.__AXIS_CONTINUITY__&&document.querySelector('#axisContinuityToday [data-continuity="next"]'),undefined,{timeout:18000});
  assert.equal((await plan()).stage,'between','reload lost progress');
- await tap(page.locator('#axisContinuityToday [data-continuity="next"]'));
+ // After PWA reload the existing live sheet owns the visible Next action.
+ // The Today resume card remains a secondary entry when the sheet is hidden.
+ await tap(page.locator('#axisStrengthSheet.show [data-continuity="next"]'));
  await page.locator('#axisStrengthSheet.show').waitFor({state:'visible'});
  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('axis_play_strength_draft_v1')||'{}').objectId==='lat',undefined,{timeout:9000});
  await confirmSet(25,9);
