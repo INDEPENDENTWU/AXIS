@@ -80,17 +80,17 @@ await page.evaluate(()=>{document.documentElement.lang='en';document.querySelect
 assert.equal((await customButton.innerText()).trim(),'Start practice','localized custom action is inconsistent');
 const started=Date.now();await tap(customButton);
 await page.waitForFunction(()=>window.__AXIS_SELECTED_EQUIPMENT__?.()?.id==='custom-practice-832',undefined,{timeout:4500});
-await page.waitForFunction(()=>document.querySelector('#axisPreplaySheet')?.classList.contains('show'),undefined,{timeout:5500});
+await page.waitForFunction(()=>document.querySelector('#axisStrengthSheet')?.classList.contains('show'),undefined,{timeout:5500});
 assert.equal(await page.locator('#scanSheet.show').count(),0,'P02 Object must not open legacy Recorder');
-await page.waitForFunction(()=>document.querySelector('#axisPreplaySheet')?.contains(document.activeElement),undefined,{timeout:1600});
+await page.waitForFunction(()=>document.querySelector('#axisStrengthSheet')?.contains(document.activeElement),undefined,{timeout:1600});
 const handoff=await page.evaluate(()=>({picker:document.querySelector('#eqSheet')?.classList.contains('show'),recorderNodes:document.querySelectorAll('#scanSheet').length,
- liveVisible:document.querySelector('#axisPreplaySheet')?.classList.contains('show'),
- focusInside:document.querySelector('#axisPreplaySheet')?.contains(document.activeElement)}));
+ liveVisible:document.querySelector('#axisStrengthSheet')?.classList.contains('show'),
+ focusInside:document.querySelector('#axisStrengthSheet')?.contains(document.activeElement)}));
 assert.equal(handoff.picker,false,'P19 Object picker remains over live practice');
 assert.equal(handoff.recorderNodes,1,'P19 duplicate canonical Recorder');
 assert.equal(handoff.liveVisible,true,'P19 prospective live practice missing');
 assert.equal(handoff.focusInside,true,'P19 keyboard focus failed to transfer to live practice');
-console.log('[AXIS P1 P19] PASS · one live practice before Recorder; canonical Recorder still single');
+console.log('[AXIS current P19] PASS · exact cardio live surface, selected Object, keyboard focus, no Recorder handoff');
 const customFact=await initial();
 assert.equal(customFact.active?.events?.length||0,0,'P02 Object entry fabricated a canonical Encounter');
 console.log('[AXIS 8.32c acceptance] P02/P15 custom exact Object + visual width + English PASS · action-to-owner elapsed ms='+String(Date.now()-started));
