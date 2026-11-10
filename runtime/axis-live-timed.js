@@ -109,6 +109,7 @@ function axisTimedStart(id){
   if(!spec?.steps?.length||spec.steps[0].objectRef!==id)return false;
   const p=axisTimedCreate({attemptId:crypto.randomUUID(),objectId:id,at:Date.now()});
   if(!axisTimedWrite(p))return false;
+  selectEq(id,true);
   closeSheet('eqSheet');$('#quickRecordSheet')?.classList.remove('show');
   return axisTimedOpen();
  }catch(e){console.warn('[AXIS timed start]',e);toast(axisTimedCopy('fail'));return false}
