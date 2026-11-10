@@ -2,7 +2,10 @@
  * Owns only a prospective sequence. All actual sets are written by the existing
  * axis821CommitEncounter. Session finish uses existing completeFinish owner. */
 const AXIS_CONTINUITY_KEY='axis_continuity_run_v1';
-let axisContinuityRestChoice=false,axisContinuityStarterExpanded=false;
+let axisContinuityStarterExpanded=false;
+const AXIS_CONTINUITY_REST_DAY='axis_continuity_rest_day_v1';
+function axisContinuityDate(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function axisContinuityIsRestDay(){try{return localStorage.getItem(AXIS_CONTINUITY_REST_DAY)===axisContinuityDate()}catch{return false}}
 function axisContinuityRaw(){
  try{const value=localStorage.getItem(AXIS_CONTINUITY_KEY);
   return value?axisContinuityValidate(JSON.parse(value)):null}
@@ -54,6 +57,7 @@ function axisContinuityText(k){
   now:'下一次，已準備好',title:'沿用上次完成的動作',return:'可以從較短的一次重新開始。',
   full:'再做一次',short:'今天比較忙 · 精簡版',rest:'今天休息',restHint:'休息不會形成訓練紀錄，也不需要補回錯過的安排。',
   empty:'從一次真正的練習開始',emptyHint:'選擇一個動作，完成後下次可以直接接續。',
+  unrest:'重新選擇練習',stop:'結束本次練習',stopAsk:'要結束這次練習嗎？未保存的動作不會計入成果，已保存的內容會保留。',ended:'已結束，沒有訓練紀錄',
   pick:'選擇動作',continue:'繼續目前練習',next:'進入下一項',finish:'完成本次訓練',
   dismissed:'返回今天',skip:'跳過此項',abandon:'結束這套安排',abandonAsk:'結束本次安排？已保存的訓練紀錄不會刪除。',
   doing:'正在練習',between:'已保存，接下來',done:'本次完成',actual:'已確認完成',
@@ -65,6 +69,7 @@ function axisContinuityText(k){
   now:'Your next practice is ready',title:'Repeat exercises you performed',return:'You can restart with a shorter version.',
   full:'Repeat practice',short:'Short on time · Short version',rest:'Rest today',restHint:'Rest does not create a workout or make-up debt.',
   empty:'Start with a real practice',emptyHint:'Choose an exercise. Your completed work can guide the next session.',
+  unrest:'Choose practice again',stop:'End this practice',stopAsk:'End this practice? Unsaved work will not count; saved results stay intact.',ended:'Finished without a workout record',
   pick:'Choose exercise',continue:'Resume practice',next:'Next exercise',finish:'Finish this practice',
   dismissed:'Back to Today',skip:'Skip this exercise',abandon:'End this sequence',abandonAsk:'End this sequence? Saved workouts stay intact.',
   doing:'In progress',between:'Saved · Up next',done:'Practice complete',actual:'Confirmed',missed:'Skipped',
@@ -98,7 +103,7 @@ function axisContinuityRenderToday(){
  if(p){
   const count=axisContinuityConfirmed(p).length,done=count+p.skipped.length;
   const next=p.steps[p.index],running=p.stage==='running',between=p.stage==='between';
-  const title=p.stage==='done'?axisContinuityText('done'):
+  const title=p.stage==='done'?axisContinuityText(p.sessionId?'done':'ended'):
    p.stage==='complete'?axisContinuityText('finish'):
    axisContinuityName(next);
   host.innerHTML=header+'<h2>'+esc(title)+'</h2>'+
@@ -108,7 +113,7 @@ function axisContinuityRenderToday(){
    btn(p.stage==='done'?'dismiss':running?'resume':between?'next':'finish',
     p.stage==='done'?axisContinuityText('dismissed'):running?axisContinuityText('continue'):between?axisContinuityText('next'):axisContinuityText('finish'),
     'axisContinuityPrimary')+
-   (running?btn('skip',axisContinuityText('skip'),'axisContinuityQuiet'):'');
+   (running?btn('skip',axisContinuityText('skip'),'axisContinuityQuiet')+btn('stop',axisContinuityText('stop'),'axisContinuityQuiet'):'');
   return;
  }
  const source=axisContinuitySource();
@@ -120,6 +125,11 @@ function axisContinuityRenderToday(){
    btn('more',axisContinuityStarterExpanded?'收起其他動作':'檢視更多動作','axisContinuityQuiet');
   axisContinuityStarterDraw();return;
  }
+ if(axisContinuityIsRestDay()){
+  host.innerHTML=header+'<h2>'+axisContinuityText('rest')+'</h2>'+
+   '<p>'+axisContinuityText('restHint')+'</p>'+btn('unrest',axisContinuityText('unrest'),'axisContinuityPrimary');
+  return;
+ }
  const age=source.sourceAt?Math.max(0,Date.now()-source.sourceAt):0;
  const returning=age>7*86400000;
  host.innerHTML=header+'<h2>'+axisContinuityText('now')+'</h2>'+
@@ -129,7 +139,7 @@ function axisContinuityRenderToday(){
   btn('start-full',axisContinuityText('full'),'axisContinuityPrimary')+
   '<div class="axisContinuityAlternates">'+btn('start-short',axisContinuityText('short'))+
   btn('rest',axisContinuityText('rest'))+'</div>'+
-  (axisContinuityRestChoice?'<p class="axisContinuityHint">'+axisContinuityText('restHint')+'</p>':'');
+  '';
 }
 function axisContinuityTagEvent(e){
  const p=axisContinuityRead();
@@ -216,7 +226,7 @@ function axisContinuityRenderStage(){
  if(p.stage==='between')inner+=
   '<p class="axisContinuityTransition">'+axisContinuityText('between')+'</p>'+
   btn('next',axisContinuityText('next'),'axisStrengthPrimary')+
-  btn('abandon',axisContinuityText('abandon'),'axisStrengthQuiet');
+  btn('stop',axisContinuityText('stop'),'axisStrengthQuiet');
  else if(p.stage==='complete')inner+=
   (count===0?'<p>'+axisContinuityText('noSave')+'</p>':'')+
   btn('finish',axisContinuityText('finish'),'axisStrengthPrimary');
@@ -235,6 +245,35 @@ function axisContinuityDecorateTimed(p){
  const run=axisContinuityRead();
  if(run?.stage==='running'&&run.steps[run.index]===p.objectId)
   setText('#axisStrengthKicker','PLAY THIS · '+(run.index+1)+' / '+run.steps.length);
+}
+function axisContinuityOfferStop(draft){
+ const p=axisContinuityRead();
+ if(p?.stage!=='running'||p.steps[p.index]!==draft?.objectId)return;
+ const body=$('#axisStrengthContent');
+ if(body&&!body.querySelector('[data-continuity="stop"]'))
+  body.insertAdjacentHTML('beforeend','<button type="button" data-continuity="stop" class="axisStrengthQuiet">'+axisContinuityText('stop')+'</button>');
+}
+function axisContinuityStop(){
+ const p=axisContinuityRead();
+ if(!p||!['running','between'].includes(p.stage))return false;
+ const pending=axisStrengthRead()||axisTimedRead();
+ if(pending&&pending.objectId!==p.steps[p.index]){
+  toast(axisContinuityText('conflict'));return false}
+ if(!confirm(axisContinuityText('stopAsk')))return false;
+ // Only the matching unsaved draft may be retired. Never alter Encounter media.
+ if(pending){
+  if(axisStrengthRead())localStorage.removeItem(AXIS_STRENGTH_KEY);
+  if(axisTimedRead())localStorage.removeItem(AXIS_TIMED_KEY);
+ }
+ let next=p;
+ try{
+  while(next.stage!=='complete'){
+   if(next.stage==='between')next=axisContinuityNext(next);
+   else if(next.stage==='running')next=axisContinuitySkip(next);
+  }
+  if(!axisContinuityWrite(next))throw Error('cannot persist early finish');
+  axisContinuityFinish();return true;
+ }catch(e){console.warn('[AXIS continuity early stop]',e);toast(axisContinuityText('failed'));return false}
 }
 function axisContinuityFinish(){
  const p=axisContinuityRead();
@@ -266,7 +305,8 @@ function axisContinuityAction(action,button){
  if(action==='starter'){axisContinuityBeginFresh(button?.dataset.objectId);return}
  if(action==='more'){axisContinuityStarterExpanded=!axisContinuityStarterExpanded;axisContinuityRenderToday();return}
  if(action==='start-full'||action==='start-short'){axisContinuityBegin(action==='start-short'?'short':'full');return}
- if(action==='rest'){axisContinuityRestChoice=!axisContinuityRestChoice;axisContinuityRenderToday();return}
+ if(action==='rest'){try{localStorage.setItem(AXIS_CONTINUITY_REST_DAY,axisContinuityDate())}catch{}axisContinuityRenderToday();return}
+ if(action==='unrest'){try{localStorage.removeItem(AXIS_CONTINUITY_REST_DAY)}catch{}axisContinuityRenderToday();return}
  if(!p)return;
  if(action==='resume'){
   if(p.stage==='running')axisContinuityLaunch();
@@ -284,6 +324,7 @@ function axisContinuityAction(action,button){
   catch(e){console.warn('[AXIS continuity next]',e)}return;
  }
  if(action==='finish'){axisContinuityFinish();return}
+ if(action==='stop'){axisContinuityStop();return}
  if(action==='dismiss'&&p.stage==='done'){
   localStorage.removeItem(AXIS_CONTINUITY_KEY);
   $('#axisStrengthSheet')?.classList.remove('show');
