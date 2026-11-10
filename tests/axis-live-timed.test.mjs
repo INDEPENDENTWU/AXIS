@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {axisTimedCreate,axisTimedValidate,axisTimedElapsed,axisTimedUpdate,axisTimedOutcome}
  from '../lib/axis-live-timed.mjs';
-import {axisContinuityCreate,axisContinuityRecorded,axisContinuityPlan}
+import {axisContinuityCreate,axisContinuityRecorded,axisContinuityPlan,axisContinuityNext}
  from '../lib/axis-continuity-run.mjs';
 
 test('prospective timer can pause/reload/resume without inventing an Encounter',()=>{
@@ -44,7 +44,6 @@ test('continuity can reuse truthful cardio history and mix with performed streng
  p=axisContinuityRecorded(p,{id:'actual-set',equipmentId:'row',kind:'strength',
   playThis:{continuity:{runId:'r',stepIndex:0},actualSets:[{index:1}]}});
  assert.equal(p.facts[0].sets,1);
- const {axisContinuityNext}=await import('../lib/axis-continuity-run.mjs');
  p=axisContinuityNext(p);
  assert.throws(()=>axisContinuityRecorded(p,{id:'bad',equipmentId:'walk',kind:'cardio',
   playThis:{continuity:{runId:'r',stepIndex:1},actualDurationMinutes:0}}),/nonmatching/);
