@@ -80,9 +80,9 @@ function axisTimedRender(){
    note+button('save',axisTimedCopy('save'),'axisStrengthPrimary')+
    button('back',axisTimedCopy('back'))+button('discard',axisTimedCopy('discard'),'axisStrengthQuiet');
  }else{
-  view='<div class="axisTimedClock">'+
-   '<span>'+axisTimedCopy('elapsed')+'</span><strong>'+axisTimedFormat(axisTimedElapsed(p,Date.now()))+'</strong></div>'+
-   note+button(p.phase==='running'?'pause':'resume',axisTimedCopy(p.phase==='running'?'pause':'resume'),'axisStrengthPrimary')+
+  // A single live clock already occupies the shared PLAY THIS clock region.
+  // Avoid a second duplicate time tile in the interaction area.
+  view=note+button(p.phase==='running'?'pause':'resume',axisTimedCopy(p.phase==='running'?'pause':'resume'),'axisStrengthPrimary')+
    button('finish',axisTimedCopy('finish'))+
    button('discard',axisTimedCopy('discard'),'axisStrengthQuiet');
  }
