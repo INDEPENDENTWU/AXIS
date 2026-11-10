@@ -355,5 +355,13 @@ window.__AXIS_CONTINUITY__=Object.freeze({
  begin:axisContinuityBegin,finish:axisContinuityFinish,
  noEncounterWriter:true,noSessionWriter:true
 });
+// Refresh contextual Today presentation whenever the original canonical app
+// re-renders (including standalone Recorder/Active saves). No new data owner.
+const axisContinuityOriginalRender=render;
+render=function axisContinuitySharedRender(){
+ const result=axisContinuityOriginalRender.apply(this,arguments);
+ axisContinuityRenderToday();
+ return result;
+};
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',axisContinuityRenderToday,{once:true});
 else axisContinuityRenderToday();
