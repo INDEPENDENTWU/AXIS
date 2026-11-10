@@ -88,6 +88,7 @@ function axisTimedRender(){
  }
  $('#axisStrengthContent').innerHTML=view;
  if(typeof axisContinuityDecorateTimed==='function')axisContinuityDecorateTimed(p);
+ if(typeof axisContinuityOfferStop==='function')axisContinuityOfferStop(p);
  return true;
 }
 function axisTimedOpen(){
