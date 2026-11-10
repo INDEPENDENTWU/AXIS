@@ -1,0 +1,113 @@
+name: AXIS Today Continuity v1
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: axis-834-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Verify historical facts remain separate from prospective run
+        run: |
+          node --check lib/axis-continuity-run.mjs
+          node --check lib/axis-live-timed.mjs
+          node --check runtime/axis-live-timed.js
+          node --test tests/axis-live-timed.test.mjs
+          node --check runtime/axis-today-continuity.js
+          node --check scripts/prepare-834-today-continuity.mjs
+          node --test tests/axis-continuity-run.test.mjs
+          node --test tests/axis-live-strength.test.mjs
+          node --test tests/axis-preplay-intent.test.mjs
+      - name: Complete inherited canonical release build (no publishing)
+        run: |
+          node build-release.mjs
+          node postbuild-832-play-this-contract.mjs
+  chromium:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node build-release.mjs
+      - run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - run: |
+          python3 -m http.server 4173 > /tmp/axis-834-chromium.log 2>&1 &
+          sleep 1
+      - name: Today → Live Objects → Completed session → Next
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-834-continuity-browser.mjs
+      - name: First use and timed cardio end-to-end without Recorder
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-834-first-use-timed-browser.mjs
+      - name: Light semantic contrast and original retrospective Recorder
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: chromium
+        run: node scripts/axis-832d19-light-browser-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: axis-834-chromium
+          path: /tmp/axis-834-*-chromium.png
+          if-no-files-found: ignore
+  webkit:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node build-release.mjs
+      - run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps webkit
+      - run: |
+          python3 -m http.server 4173 > /tmp/axis-834-webkit.log 2>&1 &
+          sleep 1
+      - name: iPhone-like Today → Live Objects → Finish
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-834-continuity-browser.mjs
+      - name: First use and timed cardio end-to-end without Recorder
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-834-first-use-timed-browser.mjs
+      - name: Light semantic contrast and original retrospective Recorder
+        env:
+          AXIS_URL: http://127.0.0.1:4173
+          AXIS_ENGINE: webkit
+        run: node scripts/axis-832d19-light-browser-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: axis-834-webkit
+          path: /tmp/axis-834-*-webkit.png
+          if-no-files-found: ignore

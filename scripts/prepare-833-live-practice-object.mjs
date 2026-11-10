@@ -1,0 +1,32 @@
+import fs from 'node:fs';
+const file='app.js',styleFile='styles.css';
+const read=p=>fs.readFileSync(p,'utf8'),write=(p,s)=>fs.writeFileSync(p,s);
+const fail=s=>{throw Error('[AXIS pre-Encounter Object P1] '+s)};
+let app=read(file);
+const start='function axis832StartObject(id){';
+const end='function axis832StartFlow(id){';
+const i=app.indexOf(start),j=app.indexOf(end,i);
+if(i<0||j<=i||app.indexOf(start,i+start.length)>=0)fail('expected exactly one Object entry owner');
+if(app.includes('AXIS_PREPLAY_KEY'))fail('duplicate practice runtime');
+const pure=read('lib/axis-preplay-intent.mjs').replace(/^export /gm,'');
+const frontend=read('runtime/axis-preplay-object.js');
+if(/\bimport\b|\bexport\b/.test(pure))fail('pure helper remains a browser-incompatible module');
+const addition='\n/* AXIS pre-Encounter state engine / existing app closure */\n'+pure+'\n'+frontend+'\n';
+app=app.slice(0,i)+addition+app.slice(j);
+// The prospective Object owner must never be silently replaced by a Flow.
+const flowHead='function axis832StartFlow(id){';
+if(app.split(flowHead).length!==2)fail('existing Flow start hook drift');
+app=app.replace(flowHead,flowHead+"if(axisPreplayRead()){toast(axisPreplayText('conflict'));return false;}");
+// The canonical Flow/Recorder owner queues axis821FlowAfterCanonicalCommit(e,intent)
+// AFTER the Encounter append and save. Extend that post-commit callback, not
+// the historical append sequence guarded by 8.21 presentation seals.
+const commitCallback='function axis821FlowAfterCanonicalCommit(e,intent){';
+if(app.split(commitCallback).length!==2)fail('single post-Encounter callback expected');
+app=app.replace(commitCallback,commitCallback+"window.__AXIS_PREPLAY__?.confirmRecorded(e);");
+try{new Function(app)}catch(e){fail('generated app.js invalid: '+e.message)}
+write(file,app);
+let style=read(styleFile);
+if(style.includes('One prospective practice sheet'))fail('duplicate styles');
+const css="\n/* One prospective practice sheet. The existing Recorder and v82 Active stay untouched. */\n#axisPreplayResume[hidden],#axisPreplayProgress[hidden]{display:none!important}\n.axisPreplayResume{margin:14px 18px 6px;width:calc(100% - 36px);min-height:50px;border-radius:15px;border:1px solid var(--line2);background:var(--s1);color:var(--text);text-align:left;padding:12px 16px;font-weight:650;font-size:var(--axis-ui,15px);box-sizing:border-box}\n#axisPreplaySheet .axisPreplaySheet{box-sizing:border-box;padding:20px 20px max(30px,env(safe-area-inset-bottom));max-height:calc(100dvh - 70px);overflow:auto;color:var(--text);background:var(--s1)}\n.axisPreplayHeading{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;font-size:12px;font-weight:700;letter-spacing:.035em;color:var(--muted)}\n.axisPreplayClose{width:44px;height:44px;border:1px solid var(--line);background:var(--s2);color:var(--text);border-radius:50%;font-size:26px;line-height:1}\n#axisPreplayName{font-size:clamp(23px,6vw,32px);line-height:1.3;overflow-wrap:anywhere;margin:20px 0 6px}\n.axisPreplayState{font-size:14px;color:var(--muted);margin-bottom:24px}\n.axisPreplayClock{display:flex;flex-direction:column;align-items:center;padding:14px 0 20px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}\n.axisPreplayClock small,.axisPreplayProgress span{font-size:13px;color:var(--muted);font-weight:550}\n.axisPreplayClock strong{font-size:clamp(54px,16vw,82px);line-height:1.15;letter-spacing:-.055em;font-variant-numeric:tabular-nums;color:var(--text)}\n.axisPreplayProgress{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0;border-bottom:1px solid var(--line2)}\n.axisPreplayProgress strong{font-size:22px;color:var(--text);font-variant-numeric:tabular-nums}\n.axisPreplayNote{margin:22px 0 16px;font-size:13px;line-height:1.5;color:var(--muted)}\n.axisPreplayActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}\n.axisPreplayActions button{min-height:52px;padding:10px;border:1px solid var(--line2);background:var(--s2);color:var(--text);font-size:clamp(13px,3.7vw,16px);line-height:1.3;letter-spacing:0;border-radius:15px;font-weight:650}\n.axisPreplayActions .axisPreplayPrimary{grid-column:1/-1;background:var(--accent);border-color:var(--accent);color:#fff}\n.axisPreplayActions .axisPreplayQuiet{background:transparent;color:var(--muted);border-color:transparent}\n.axisPreplayActions button:focus-visible,.axisPreplayResume:focus-visible{outline:3px solid var(--accent);outline-offset:2px}\n@media(max-width:340px){#axisPreplaySheet .axisPreplaySheet{padding-inline:14px}}\n@media(prefers-reduced-motion:reduce){#axisPreplaySheet *,#axisPreplayResume{transition:none!important}}\n";
+write(styleFile,style+'\n'+css);
+console.log('[AXIS P1] prospective Object live execution embedded; original post-Encounter Active and Recorder owners preserved');

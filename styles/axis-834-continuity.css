@@ -1,0 +1,73 @@
+/* AXIS Today / Continuity v1. No new global theme owner. */
+#axisContinuityToday[hidden]{display:none!important}
+.axisContinuityToday{margin:0 0 14px;padding:19px 18px 17px;border-radius:20px;
+ background:var(--s1);color:var(--text);border:1px solid var(--line2);
+ display:flex;flex-direction:column;gap:13px;min-width:0;box-sizing:border-box}
+.axisContinuityToday h2{font-size:clamp(22px,5.6vw,29px);line-height:1.26;letter-spacing:-.027em;
+ margin:0;font-weight:720;overflow-wrap:anywhere;color:var(--text)}
+.axisContinuityToday p{font-size:13px;color:var(--muted);line-height:1.55;margin:0}
+.axisContinuityKicker{font-size:11px;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.axisContinuityKicker span{color:var(--accent)}
+.axisContinuityPlan{border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);
+ padding:3px 0}
+.axisContinuityPlanRow{display:grid;grid-template-columns:29px minmax(0,1fr);gap:9px;
+ align-items:center;min-height:42px;border-bottom:1px solid var(--line2)}
+.axisContinuityPlanRow:last-child{border-bottom:0}
+.axisContinuityPlanRow span{font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.axisContinuityPlanRow b{font-size:14px;font-weight:590;overflow-wrap:anywhere}
+.axisContinuityToday button{border-radius:14px;min-height:48px;padding:11px 14px;
+ font-size:14px;font-weight:650;line-height:1.25;text-align:center;box-sizing:border-box}
+.axisContinuityToday button.axisContinuityPrimary{min-height:54px;
+ background:var(--text);color:var(--bg);border:1px solid var(--text)}
+.axisContinuityToday button.axisContinuityQuiet{background:transparent;color:var(--muted)}
+.axisContinuityAlternates{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.axisContinuityAlternates button{min-width:0;border:1px solid var(--line2);
+ background:var(--s2);color:var(--text)}
+.axisContinuityHint{border-radius:10px;padding:10px;background:var(--s2)}
+.axisContinuityProgress{height:5px;border-radius:999px;background:var(--line);
+ overflow:hidden}
+.axisContinuityProgress>i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+.axisContinuityMeta{font-variant-numeric:tabular-nums}
+body.axisContinuityEnabled #idleHome .sessionLead{display:none!important}
+body.axisContinuityEnabled #idleHome .metricPair{margin-top:22px}
+body.axisContinuityRunActive #activeHome{display:none!important}
+body.axisContinuityRunActive #axisStrengthResume{display:none!important}
+.axisContinuityStageFacts{border-block:1px solid var(--line2);
+ padding:23px 8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.axisContinuityStageFacts strong{font-size:36px;font-weight:680;letter-spacing:-.05em;
+ font-variant-numeric:tabular-nums;color:var(--text)}
+.axisContinuityStageFacts span{font-size:14px;font-weight:630;color:var(--text)}
+.axisContinuityStageFacts small{flex-basis:100%;font-size:12px;color:var(--muted)}
+.axisContinuityTransition{font-size:13px;color:var(--muted);line-height:1.5}
+.axisContinuityToday button:focus-visible,[data-continuity]:focus-visible{
+ outline:3px solid var(--accent);outline-offset:2px}
+@media(max-width:340px){.axisContinuityToday{padding:15px 13px}
+ .axisContinuityAlternates{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.axisContinuityToday *{transition:none!important;animation:none!important}}
+
+/* First-run: one clear decision, no Quick Recorder detour. */
+.axisContinuityStarters{display:grid;gap:8px;max-height:min(48dvh,380px);overflow:auto;overscroll-behavior:contain}
+.axisContinuityToday .axisContinuityStarter{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+ padding:13px 14px;min-height:66px;background:var(--s2);border:1px solid var(--line2);
+ border-radius:13px;text-align:left;color:var(--text)}
+.axisContinuityStarter span{display:flex;flex-direction:column;gap:5px;min-width:0}
+.axisContinuityStarter b{font-size:14px;font-weight:630;overflow-wrap:anywhere}
+.axisContinuityStarter small{font-size:11px;color:var(--muted);font-weight:450}
+.axisContinuityStarter i{font-size:12px;color:var(--accent);font-style:normal;font-weight:650;flex-shrink:0}
+#axisContinuitySearch{box-sizing:border-box;width:100%;min-height:46px;border:1px solid var(--line);
+ background:var(--s2);color:var(--text);padding:10px 13px;border-radius:11px;font-size:16px;outline-offset:2px}
+/* Timed mode reuses the strength execution surface. Inputs are distinct but
+ * never cause a second inner white tile in Light. */
+.axisTimedClock{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+ margin:8px 0 14px;min-height:140px;border-radius:16px;background:var(--s2)}
+.axisTimedClock span{font-size:12px;color:var(--muted)}
+.axisTimedClock strong{font-size:clamp(38px,11vw,53px);font-variant-numeric:tabular-nums;
+ font-weight:690;letter-spacing:-.05em;color:var(--text)}
+.axisTimedNote{font-size:12px;color:var(--muted);line-height:1.5;margin:10px 0}
+.axisTimedReview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.axisTimedReview label{font-size:12px;line-height:1.45;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+.axisTimedReview input,.axisTimedReview select{appearance:none;width:100%;box-sizing:border-box;border:1px solid var(--line);
+ background:var(--s2);color:var(--text);border-radius:12px;min-height:52px;font-size:16px;
+ padding:8px 11px;font-variant-numeric:tabular-nums}
+.axisTimedReview :is(input,select):focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media(max-width:340px){.axisTimedReview{grid-template-columns:1fr}}
