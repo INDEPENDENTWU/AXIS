@@ -1,5 +1,18 @@
 # AXIS Current Work
 
+## Active AXIS product stage — Today / Live / Continuity, first-use and mixed-mode (2026-11-11)
+
+- **Actual executable development**: Draft PR [#184](https://github.com/INDEPENDENTWU/AXIS/pull/184), branch `feature/834-today-continuity-run`. The first 8.34-labelled Today vertical slice passed its exact source, Chromium and WebKit 3/3 at `4b4f150a2e582b7eaf5cebb2feec6ae9fce840fa`. New work extends that source with first-use **direct** Object selection (no retrospective Record), and a bounded `cardio` timed experience that uses the **same PLAY THIS sheet**, explicit pause/resume/review of actual duration + perceived effort, and the original `axis821CommitEncounter` as the sole factual writer. The mixed completion engine includes strength sets and real cardio minutes, never fake sets for timed exercises. Dual-browser exact-head tests are in progress; do not infer success from prior 3/3.
+
+- **User-centred scope**: Today → actual running execution → explicit saved Encounter(s) → one canonical session finalization → next Today. On first use, a small list of exact native/custom Objects appears directly inside Today. On repeat use, a real completed session becomes the proposed plan. The shorter variant is this-run-only; voluntary rest creates no historical Event or training debt. Live mode previews and inputs are not historical facts. The original Quick Record remains separate and unchanged for retrospective capture.
+
+- **Important boundaries**: Full first-party saved multi-step Flow interoperability, hold/rounds/interval variants, full accessibility and real physical iPhone PWA installed-origin verification remain future acceptance. The full inherited CI remains impacted by Playwright's unsupported WebKit on ubuntu26 (issue #185) and product Version Authority; these are not bypassed. The candidate carries inherited 8.32 manifest identity in Preview; **8.34 is only a work-stage label**, not an advertised production release. Official public AXIS 8.32 and existing users' local media/storage remain untouched. Do not merge or publish before exact-head acceptance and release decision.
+
+- **Media asset future exploration (explicitly out of this stage)**: real user-captured photo/video may ultimately become a valuable private, consent-based temporal evidence asset linked to actual training progress, not merely report thumbnails or fabricated AI form grades. No media schema, IndexedDB, sharing, camera, uploads or privacy defaults are modified by this release candidate. Finish the core practice loop first.
+
+---
+
+
 ## Current bounded development — PLAY THIS strength P2 (2026-10-19)
 
 **Public state:** AXIS 8.32 remains served from canonical main `5ea6bab7ebad7daf5868e32f1c98209a35647231` at existing Vercel, EdgeOne and `axis.juele.fun`; not touched by this PR. #177 retains physical acceptance/governance limits and the 8.31 rollback precedent.
