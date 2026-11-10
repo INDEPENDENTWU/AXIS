@@ -30,7 +30,7 @@
 .axisContinuityMeta{font-variant-numeric:tabular-nums}
 body.axisContinuityEnabled #idleHome .sessionLead{display:none!important}
 body.axisContinuityEnabled #idleHome .metricPair{margin-top:22px}
-body.axisContinuityEnabled #activeHome{display:none!important}
+body.axisContinuityRunActive #activeHome{display:none!important}
 body.axisContinuityRunActive #axisStrengthResume{display:none!important}
 .axisContinuityStageFacts{border-block:1px solid var(--line2);
  padding:23px 8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
