@@ -18,7 +18,7 @@ const event=(p,id,sets=2)=>({
  playThis:{continuity:{runId:p.id,stepIndex:p.index},actualSets:Array.from({length:sets},(_,i)=>({index:i+1}))}
 });
 
-test('Today's reusable plan is grounded in a completed session, never synthetic',()=>{
+test("Today's reusable plan is grounded in a completed session, never synthetic",()=>{
  assert.equal(axisContinuityPlan([],resolver),null);
  assert.equal(axisContinuityPlan([{events:[{id:'x',kind:'cardio',equipmentId:'run'}]}],resolver),null);
  assert.deepEqual(axisContinuityPlan([session],resolver),{
