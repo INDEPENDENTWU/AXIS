@@ -18,7 +18,7 @@ subst(owner,'\n/* AXIS Today → Run → Continue */\n'+pure+'\n'+runtime+'\n'+o
 subst("if(!p){$('#axisStrengthSheet')?.classList.remove('show');return}",
  "if(!p){if(axisTimedRender())return;if(axisContinuityRenderStage())return;$('#axisStrengthSheet')?.classList.remove('show');return}");
 subst("$('#axisStrengthContent').innerHTML=markup;\n const setButton=",
- "$('#axisStrengthContent').innerHTML=markup;\n axisContinuityDecorateStrength(p);\n const setButton=");
+ "$('#axisStrengthContent').innerHTML=markup;\n axisContinuityDecorateStrength(p);\n axisContinuityOfferStop(p);\n const setButton=");
 subst("  // Do NOT use old saveScan or introduce another Encounter writer.\n  const committed=axis821CommitEncounter(e,eq);",
  "  // Tag only the matching run step. The Encounter owner remains unchanged.\n  axisContinuityTagEvent(e);\n  // Do NOT use old saveScan or introduce another Encounter writer.\n  const committed=axis821CommitEncounter(e,eq);");
 subst("  localStorage.removeItem(AXIS_STRENGTH_KEY);\n  axisStrengthRender();render();toast(axisStrengthLabel('success'));",
