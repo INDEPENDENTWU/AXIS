@@ -94,6 +94,7 @@ function axisContinuityRenderToday(){
  const host=axisContinuityTodayHost();
  if(!host)return;
  const p=axisContinuityRead();
+ D.body.classList.toggle('axisContinuityRunActive',!!p);
  // Do not displace an unrelated active workout's canonical Today/Active owner.
  if(!p&&state.active){host.hidden=true;D.body.classList.remove('axisContinuityEnabled');return}
  host.hidden=false;D.body.classList.add('axisContinuityEnabled');
