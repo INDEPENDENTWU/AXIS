@@ -2,7 +2,7 @@
  * Owns only a prospective sequence. All actual sets are written by the existing
  * axis821CommitEncounter. Session finish uses existing completeFinish owner. */
 const AXIS_CONTINUITY_KEY='axis_continuity_run_v1';
-let axisContinuityRestChoice=false;
+let axisContinuityRestChoice=false,axisContinuityStarterExpanded=false;
 function axisContinuityRaw(){
  try{const value=localStorage.getItem(AXIS_CONTINUITY_KEY);
   return value?axisContinuityValidate(JSON.parse(value)):null}
@@ -26,6 +26,24 @@ function axisContinuityRead(){
  return p;
 }
 function axisContinuitySource(){return axisContinuityPlan(state.sessions,id=>axis831ExactFlowEq(id))}
+function axisContinuityStarterOptions(){
+ const all=axis832Catalog().filter(x=>['strength','cardio'].includes(x.type)&&
+  axis831ExactFlowEq(x.id)?.type===x.type);
+ const rank=['row','chest-row','lat','treadmill','bike'];
+ return all.sort((a,b)=>{
+  const x=rank.indexOf(a.id),y=rank.indexOf(b.id);
+  return (x<0?999:x)-(y<0?999:y)
+ });
+}
+function axisContinuityStarterDraw(query=''){
+ const out=$('#axisContinuityStarterList');if(!out)return;
+ const q=query.trim().toLocaleLowerCase(),all=axisContinuityStarterOptions();
+ const shown=(axisContinuityStarterExpanded?all:all.slice(0,3)).filter(x=>
+  !q||x.name.toLocaleLowerCase().includes(q)||(x.muscles||[]).some(v=>v.includes(q)));
+ out.innerHTML=shown.map(x=>'<button type="button" class="axisContinuityStarter" data-continuity="starter" data-object-id="'+esc(x.id)+'">'+
+  '<span><b>'+esc(x.name)+'</b><small>'+(x.type==='cardio'?'計時 / 有氧':'力量訓練')+'</small></span><i>開始</i></button>').join('')||
+  '<p>沒有找到符合的動作，可以調整搜尋條件。</p>';
+}
 function axisContinuityName(id){return axis831ExactFlowEq(id)?.name||id}
 function axisContinuityConfirmed(p){
  return p.facts.filter(f=>allEvents().some(e=>e.id===f.eventId&&e.equipmentId===f.objectId&&
@@ -96,8 +114,11 @@ function axisContinuityRenderToday(){
  const source=axisContinuitySource();
  if(!source){
   host.innerHTML=header+'<h2>'+axisContinuityText('empty')+'</h2>'+
-   '<p>'+axisContinuityText('emptyHint')+'</p>'+btn('pick',axisContinuityText('pick'),'axisContinuityPrimary');
-  return;
+   '<p>'+axisContinuityText('emptyHint')+'</p>'+
+   (axisContinuityStarterExpanded?'<input id="axisContinuitySearch" type="search" placeholder="搜尋運動或器械" aria-label="搜尋運動或器械">':'')+
+   '<div id="axisContinuityStarterList" class="axisContinuityStarters"></div>'+
+   btn('more',axisContinuityStarterExpanded?'收起其他動作':'檢視更多動作','axisContinuityQuiet');
+  axisContinuityStarterDraw();return;
  }
  const age=source.sourceAt?Math.max(0,Date.now()-source.sourceAt):0;
  const returning=age>7*86400000;
@@ -128,12 +149,15 @@ function axisContinuityAfterSaved(e){
 function axisContinuityLaunch(){
  const p=axisContinuityRead();
  if(!p||p.stage!=='running')return false;
- const id=p.steps[p.index];
- if(axisStrengthRead()){axisStrengthOpen();return true}
- if(!axis831ExactFlowEq(id)){toast(axisContinuityText('unavailable'));axisContinuityShowTransition();return false}
- const ok=axisLiveStrengthStart(id);
+ const id=p.steps[p.index],eq=axis831ExactFlowEq(id);
+ const strength=axisStrengthRead(),timed=axisTimedRead();
+ if(strength){if(strength.objectId!==id){toast(axisContinuityText('conflict'));return false}return axisStrengthOpen()}
+ if(timed){if(timed.objectId!==id){toast(axisContinuityText('conflict'));return false}return axisTimedOpen()}
+ if(!eq||!['strength','cardio'].includes(eq.type)){
+  toast(axisContinuityText('unavailable'));axisContinuityRenderToday();return false}
+ const ok=eq.type==='cardio'?axisTimedStart(id):axisLiveStrengthStart(id);
  if(!ok){toast(axisContinuityText('failed'));axisContinuityRenderToday();return false}
- if(p.mode==='short'){
+ if(eq.type==='strength'&&p.mode==='short'){
   const draft=axisStrengthRead();
   if(draft&&draft.sets.length===0&&draft.targetSets>2){
    try{const shorter=axisStrengthUpdate(draft,'plan',Date.now(),
@@ -143,9 +167,22 @@ function axisContinuityLaunch(){
  }
  axisContinuityRenderToday();return true;
 }
+function axisContinuityBeginFresh(id){
+ const eq=axis831ExactFlowEq(id);
+ if(!eq||!['strength','cardio'].includes(eq.type)||!axisContinuityStarterOptions().some(x=>x.id===id)||
+  axisContinuityRead()||state.active||axisStrengthRead()||axisTimedRead()||axisPreplayRead()||axis832Conflict()){
+  toast(axisContinuityText('conflict'));return false}
+ try{
+  const p=axisContinuityCreate({id:crypto.randomUUID(),objectIds:[id],mode:'full',now:Date.now()});
+  if(!axisContinuityWrite(p))return false;
+  if(!axisContinuityLaunch()){
+   localStorage.removeItem(AXIS_CONTINUITY_KEY);axisContinuityRenderToday();return false}
+  return true;
+ }catch(e){console.warn('[AXIS continuity first use]',e);return false}
+}
 function axisContinuityBegin(mode){
  const source=axisContinuitySource();
- if(!source||axisContinuityRead()||state.active||axisStrengthRead()||axisPreplayRead()||
+ if(!source||axisContinuityRead()||state.active||axisStrengthRead()||axisTimedRead()||axisPreplayRead()||
   axis832Conflict()){toast(axisContinuityText('conflict'));return false}
  try{
   const p=axisContinuityCreate({id:crypto.randomUUID(),objectIds:source.objectIds,
@@ -159,8 +196,9 @@ function axisContinuityRenderStage(){
  const p=axisContinuityRead();
  if(!p||p.stage==='running')return false;
  axisStrengthHost();
- const count=axisContinuityConfirmed(p).length,sets=axisContinuityConfirmed(p)
-  .reduce((n,f)=>n+f.sets,0);
+ const evidence=axisContinuityConfirmed(p),count=evidence.length,sets=evidence.reduce((n,f)=>n+f.sets,0);
+ const minutes=allEvents().filter(e=>e.playThis?.continuity?.runId===p.id&&e.kind==='cardio')
+  .reduce((n,e)=>n+(Number(e.duration)||0),0);
  const next=p.steps[p.index];
  setText('#axisStrengthKicker','PLAY THIS · '+Math.min(p.index+1,p.steps.length)+' / '+p.steps.length);
  setText('#axisStrengthName',p.stage==='between'?axisContinuityName(next):
@@ -174,7 +212,7 @@ function axisContinuityRenderStage(){
  const btn=(type,title,cls='')=>'<button type="button" data-continuity="'+type+'" class="'+cls+'">'+title+'</button>';
  let inner='<div class="axisContinuityStageFacts">'+
   '<strong>'+count+' / '+p.steps.length+'</strong><span>'+axisContinuityText('actual')+'</span>'+
-  '<small>'+sets+' 組 · '+p.skipped.length+' '+axisContinuityText('missed')+'</small></div>';
+  '<small>'+sets+' 組'+(minutes?' · '+Math.round(minutes*10)/10+' 分鐘':'')+' · '+p.skipped.length+' '+axisContinuityText('missed')+'</small></div>';
  if(p.stage==='between')inner+=
   '<p class="axisContinuityTransition">'+axisContinuityText('between')+'</p>'+
   btn('next',axisContinuityText('next'),'axisStrengthPrimary')+
@@ -192,6 +230,11 @@ function axisContinuityDecorateStrength(p){
  const run=axisContinuityRead();
  if(!run||run.stage!=='running'||run.steps[run.index]!==p.objectId)return;
  setText('#axisStrengthKicker','PLAY THIS · '+(run.index+1)+' / '+run.steps.length);
+}
+function axisContinuityDecorateTimed(p){
+ const run=axisContinuityRead();
+ if(run?.stage==='running'&&run.steps[run.index]===p.objectId)
+  setText('#axisStrengthKicker','PLAY THIS · '+(run.index+1)+' / '+run.steps.length);
 }
 function axisContinuityFinish(){
  const p=axisContinuityRead();
@@ -218,9 +261,10 @@ function axisContinuityFinish(){
  if(!axisContinuityWrite(next))return false;
  axisContinuityRenderStage();render();return true;
 }
-function axisContinuityAction(action){
+function axisContinuityAction(action,button){
  const p=axisContinuityRead();
- if(action==='pick'){window.__AXIS_OPEN_EQUIPMENT_PICKER__?.('quick');return}
+ if(action==='starter'){axisContinuityBeginFresh(button?.dataset.objectId);return}
+ if(action==='more'){axisContinuityStarterExpanded=!axisContinuityStarterExpanded;axisContinuityRenderToday();return}
  if(action==='start-full'||action==='start-short'){axisContinuityBegin(action==='start-short'?'short':'full');return}
  if(action==='rest'){axisContinuityRestChoice=!axisContinuityRestChoice;axisContinuityRenderToday();return}
  if(!p)return;
@@ -230,7 +274,7 @@ function axisContinuityAction(action){
   return;
  }
  if(action==='skip'){
-  if(p.stage!=='running'||axisStrengthRead())return;
+  if(p.stage!=='running'||axisStrengthRead()||axisTimedRead())return;
   try{if(axisContinuityWrite(axisContinuitySkip(p)))axisContinuityRenderStage()}
   catch(e){console.warn('[AXIS continuity skip]',e)}return;
  }
@@ -256,7 +300,10 @@ D.addEventListener('click',function axisContinuityClicks(event){
  const button=event.target.closest?.('[data-continuity]');
  if(!button)return;
  event.preventDefault();event.stopPropagation();
- axisContinuityAction(button.dataset.continuity);
+ axisContinuityAction(button.dataset.continuity,button);
+},true);
+D.addEventListener('input',e=>{
+ if(e.target?.id==='axisContinuitySearch')axisContinuityStarterDraw(e.target.value);
 },true);
 window.addEventListener('storage',e=>{
  if(e.key===AXIS_CONTINUITY_KEY)axisContinuityRenderToday();
